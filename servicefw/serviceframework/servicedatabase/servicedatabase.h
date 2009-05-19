@@ -64,6 +64,7 @@ class DBError
             IfaceImplAlreadyRegistered,
             NotFound,
             SqlError,
+            InvalidSearchCriteria,
             UnknownError
         };
         DBError();
@@ -129,7 +130,7 @@ public:
     int unregisterService(const QString &serviceName);
 
     QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
-    int getService(const QServiceInterfaceDescriptor &interface, ServiceInfo &serviceInfo) const;
+    ServiceInfo getService(const QServiceInterfaceDescriptor &interface, bool *ok=0);
 
     QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
 

@@ -61,3 +61,5 @@ win32 {
     }
 }
 
+testcase:CONFIG += console
+
