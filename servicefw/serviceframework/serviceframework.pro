@@ -34,7 +34,7 @@ DEPENDPATH += servicemetadata \
               serviceresolution \
               servicehandler 
 
-HEADERS +=  ../inc/qserviceglobal.h \
+HEADERS +=  qserviceglobal.h \
             servicemetadata/servicemetadata_p.h \
             servicedatabase/servicedatabase.h \
             servicehandler/qservicemanager.h \
