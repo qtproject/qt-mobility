@@ -10,9 +10,7 @@ INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
 DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 CONFIG+=testcase
 
-!symbian {    
-	QT += sql
-}
+QT += sql
 
 include(../../../common.pri)
 
@@ -22,8 +20,6 @@ SOURCES += tst_servicedatabasetest.cpp
 LIBS += -L$$DESTDIR -lQtServiceFramework
 
 symbian {
-    TARGET.VID = VID_DEFAULT
     TARGET.CAPABILITY = ALL -TCB
-    LIBS += -lsqldb
 }
 
