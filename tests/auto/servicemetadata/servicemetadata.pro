@@ -13,6 +13,5 @@ include(../../../common.pri)
 SOURCES += tst_servicemetadata.cpp
 
 symbian {
-    TARGET.VID = VID_DEFAULT
     TARGET.CAPABILITY = ALL -TCB
 }

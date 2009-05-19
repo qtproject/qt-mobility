@@ -15,6 +15,5 @@ SOURCES += tst_qservicecontext.cpp
 LIBS += -lQtServiceFramework
 
 symbian {
-    TARGET.VID = VID_DEFAULT
     TARGET.CAPABILITY = ALL -TCB
 }

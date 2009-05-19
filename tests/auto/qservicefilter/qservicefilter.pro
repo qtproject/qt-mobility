@@ -10,6 +10,5 @@ include(../../../common.pri)
 LIBS += -lQtServiceFramework
 
 symbian {
-    TARGET.VID = VID_DEFAULT
     TARGET.CAPABILITY = ALL -TCB
 }

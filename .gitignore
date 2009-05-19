@@ -30,3 +30,4 @@ ABLD.BAT
 
 #Carbide project files
 *.project
+plugin_commonU.def
