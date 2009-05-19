@@ -5,3 +5,4 @@
  becomes the new default, and if two services provide the same implementation
  version the choice between them is random
 -Need to finish of deregistration of services
+-refactoring of ServiceDatabase
