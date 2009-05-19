@@ -543,9 +543,12 @@ void ServiceDatabaseUnitTest::getService()
     QCOMPARE(interfaces.count(),1);
 
     QCOMPARE(database.close(), 0);
-    QCOMPARE(database.getService(interfaces[0], service), (int)ServiceDatabase::SFW_ERROR_DATABASE_NOT_OPEN);
+    bool ok;
+    service = database.getService(interfaces[0], &ok);
+    QVERIFY(!ok);
+    QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
     QCOMPARE(database.open(), 0);
-    QCOMPARE(database.getService(interfaces[0], service), 0);
+    service = database.getService(interfaces[0]);
     QVERIFY(service.isValid());
     QVERIFY(compareService(service,  "acme", "C:/TestData/testservice.dll", "Acme services"));
 
@@ -556,19 +559,40 @@ void ServiceDatabaseUnitTest::getService()
     interfaces.clear();
     interfaces =database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),1);
-    QCOMPARE(database.getService(interfaces[0], service), 0);
+    service = database.getService(interfaces[0], &ok);
+    QVERIFY(ok);
     QVERIFY(service.isValid());
     QVERIFY(compareService(service, "skynet", "C:/California/dyson.dll", "Skynet Termination Services"));
 
-    //try a an interface descriptor whose service doesn't exist;
+    //try a service that is composed of multiple plugins
     QServiceInterfaceDescriptor interface;
     interface.d = new QServiceInterfaceDescriptorPrivate;
+    interface.d->serviceName = "DharmaInitiative";
+    interface.d->interfaceName = "com.dharma.electro.discharge";
+    interface.d->major = 8;
+    interface.d->minor = 0;
+    service = database.getService(interface, &ok);
+    QVERIFY(ok);
+    QVERIFY(compareService(service, "DharmaInitiative", "C:/island/pearl.dll",
+                "Department of Heuristics And Research on Material Applications(P)"));
+
+    interface.d->serviceName = "DharmaInitiative";
+    interface.d->interfaceName = "com.dharma.electro.discharge";
+    interface.d->major = 4;
+    interface.d->minor = 0;
+    service = database.getService(interface, &ok);
+    QVERIFY(ok);
+    QVERIFY(compareService(service, "DharmaInitiative", "C:/island/swan.dll",
+                "Department of Heuristics And Research on Material Applications(S)"));
+
+    //try a an interface descriptor whose service doesn't exist;
     interface.d->serviceName = "StarkInd";
     interface.d->interfaceName = "com.omni.device.Accelerometer";
     interface.d->major = 1;
     interface.d->minor = 1;
 
-    QCOMPARE(database.getService(interface, service), (int)ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND);
+    service = database.getService(interface, &ok);
+    QVERIFY(ok); //no error condition occurred, the service simply didn't exist
     QCOMPARE(service.isValid(), false);
 
     //try a an interface descriptor whose interface name doesn't exist;
@@ -577,7 +601,7 @@ void ServiceDatabaseUnitTest::getService()
     interface.d->major = 1;
     interface.d->minor = 1;
 
-    QCOMPARE(database.getService(interface, service), (int)ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND);
+    service = database.getService(interface);
     QCOMPARE(service.isValid(), false);
 
     //try a an interface descriptor whose version name doesn't exist;
@@ -586,13 +610,14 @@ void ServiceDatabaseUnitTest::getService()
     interface.d->major = 1;
     interface.d->minor = 9;
 
-    QCOMPARE(database.getService(interface, service), (int)ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND);
+    service = database.getService(interface);
     QCOMPARE(service.isValid(), false);
 
     //try an invalid descriptor
     interface.d = NULL;
-    QCOMPARE(database.getService(interface, service), (int)ServiceDatabase::SFW_ERROR_INVALID_SEARCH_CRITERIA);
+    service = database.getService(interface);
     QCOMPARE(service.isValid(), false);
+    QCOMPARE(database.lastError().errorCode(), DBError::InvalidSearchCriteria);
 
     QCOMPARE(database.close(), 0);
 }
@@ -987,7 +1012,7 @@ void ServiceDatabaseUnitTest::unregister()
     //try a search by descriptor
     ServiceInfo service;
     QServiceInterfaceDescriptor oldDescriptor = interfaces[0];
-    QCOMPARE(database.getService(oldDescriptor, service),0);
+    service = database.getService(oldDescriptor);
     QCOMPARE(service.isValid(), true);
     QCOMPARE(service.filePath(), QString("C:/OmniInc/omniinc.dll"));
 
@@ -1019,7 +1044,7 @@ void ServiceDatabaseUnitTest::unregister()
     QCOMPARE(interfaces.count(), 0);
 
     //try a search by descriptor
-    QCOMPARE(database.getService(oldDescriptor, service), (int)ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND);
+    service = database.getService(oldDescriptor);
     QCOMPARE(service.isValid(), false);
     QCOMPARE(service.filePath(), QString(""));
 
