@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="com.nokia.Services.TestService" version="1.0.456" capabilities="ReadUserData,WriteUserData">
+ <description>Test service description</description> 
+ <interface name="Test Interface 1">
+   <description>First test interface description</description> 
+ </interface>
+</service>
+
+
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="com.nokia.Services.TestService" version="1.0.456" capabilities="ReadUserData,WriteUserData" filepath=".\testserviceplugin.dll">
+ <description>Test service description</description> 
+ <interface test="Test Module">
+ </interface>
+</service>
+
+
+

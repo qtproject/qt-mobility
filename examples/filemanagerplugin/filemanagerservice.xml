@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="FileManagerService" filepath="serviceframework_filemanagerplugin" >
+    <description>Example file manager service</description>
+    <interface name="com.nokia.qt.examples.FileStorage" version="1.0">
+        <description>Implementation of FileStorageInterface</description>
+    </interface>
+    <interface name="com.nokia.qt.examples.FileTransfer" version="1.0">
+        <description>Implementation of FileTransferInterface</description>
+    </interface>
+</service>

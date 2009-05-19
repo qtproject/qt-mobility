@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="ovi"  filepath="C:/Nokia/ovi.dll" >
+  <description>Ovi Services</description>
+    <interface name="com.nokia.service.contacts" version="2.0" capabilities="ReadUserData,WriteUserData">
+      <description>Contacts management service</description>
+    </interface>
+     <interface name="com.nokia.service.contacts" version="1.7" capabilities="ReadUserData,WriteUserData">
+      <description>Contacts management service</description>
+    </interface>
+    <interface name="com.nokia.service.mail" version="2.1" capabilities="ReadUserData,WriteUserData">
+      <description>Mail management service</description>
+    </interface>
+     <interface name="com.nokia.service.CONTACTS" version="2.1" capabilities="ReadUserData,WriteUserData">
+      <description>Contacts management service</description>
+    </interface>
+    <interface name="com.nokia.service.contacts" version="1.6" capabilities="ReadUserData,WriteUserData">
+      <description>Contacts management service</description>
+    </interface>
+    <interface name="com.nokia.service.contacts" version="1.2" capabilities="ReadUserData,WriteUserData">
+      <description>Contacts management service</description>
+    </interface>
+</service>
+

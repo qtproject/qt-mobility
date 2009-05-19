@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="com.nokia.Services.TestService" filepath=".\testserviceplugin.dll">
+  <interface name="Test Interface 1" version="1.4" >
+  </interface>
+</service>
+
+
+

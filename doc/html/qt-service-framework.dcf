@@ -1,0 +1,81 @@
+<!DOCTYPE DCF>
+<DCF ref="index.html" icon="qt-service-framework.png" imagedir="../../gif" title="Qt Service Framework Reference Documentation">
+<section ref="classes.html" title="Classes">
+    <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
+        <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
+        <keyword ref="qabstractsecuritysession.html#isAllowed">isAllowed</keyword>
+        <section ref="qabstractsecuritysession-members.html" title="List of all members"/>
+    </section>
+    <section ref="qservicecontext.html" title="QServiceContext Class Reference">
+        <keyword ref="qservicecontext.html">QServiceContext</keyword>
+        <keyword ref="qservicecontext.html#ContextType-enum">ContextType</keyword>
+        <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::ServiceFrameworkContext</keyword>
+        <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::ScriptContext</keyword>
+        <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::UserDefined</keyword>
+        <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::DisplayContext</keyword>
+        <keyword ref="qservicecontext.html#clientId-prop">clientId</keyword>
+        <keyword ref="qservicecontext.html#clientId-prop">setClientId</keyword>
+        <keyword ref="qservicecontext.html#clientName-prop">clientName</keyword>
+        <keyword ref="qservicecontext.html#clientName-prop">setClientName</keyword>
+        <keyword ref="qservicecontext.html#notify">notify</keyword>
+        <section ref="qservicecontext-members.html" title="List of all members"/>
+    </section>
+    <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
+        <keyword ref="qservicefilter.html">QServiceFilter</keyword>
+        <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
+        <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
+        <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
+        <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
+        <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
+        <keyword ref="qservicefilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qservicefilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <keyword ref="qservicefilter.html#operator-gt-gt">operator&gt;&gt;</keyword>
+        <section ref="qservicefilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qserviceinterfacedescriptor.html" title="QServiceInterfaceDescriptor Class Reference">
+        <keyword ref="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">PropertyKey</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::ServiceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::FilePath</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#majorVersion">majorVersion</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#minorVersion">minorVersion</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#property">property</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#serviceName">serviceName</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-eq">operator=</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</keyword>
+        <section ref="qserviceinterfacedescriptor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qservicemanager.html" title="QServiceManager Class Reference">
+        <keyword ref="qservicemanager.html">QServiceManager</keyword>
+        <keyword ref="qservicemanager.html#addService">addService</keyword>
+        <keyword ref="qservicemanager.html#defaultServiceInterface">defaultServiceInterface</keyword>
+        <keyword ref="qservicemanager.html#findInterfaces">findInterfaces</keyword>
+        <keyword ref="qservicemanager.html#findServices">findServices</keyword>
+        <keyword ref="qservicemanager.html#getInterface">getInterface</keyword>
+        <keyword ref="qservicemanager.html#loadInterface">loadInterface</keyword>
+        <keyword ref="qservicemanager.html#removeService">removeService</keyword>
+        <keyword ref="qservicemanager.html#serviceAdded">serviceAdded</keyword>
+        <keyword ref="qservicemanager.html#serviceRemoved">serviceRemoved</keyword>
+        <keyword ref="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</keyword>
+        <section ref="qservicemanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qserviceplugininterface.html" title="QServicePluginInterface Class Reference">
+        <keyword ref="qserviceplugininterface.html">QServicePluginInterface</keyword>
+        <keyword ref="qserviceplugininterface.html#createInstance">createInstance</keyword>
+        <keyword ref="qserviceplugininterface.html#installService">installService</keyword>
+        <keyword ref="qserviceplugininterface.html#uninstallService">uninstallService</keyword>
+        <section ref="qserviceplugininterface-members.html" title="List of all members"/>
+    </section>
+</section>
+<section ref="overviews.html" title="Overviews">
+    <section ref="index.html" title="Qt Service Framework Developer Resources">
+        <keyword ref="index.html">Qt Service Framework Developer Resources</keyword>
+    </section>
+</section>
+<section ref="examples.html" title="Tutorial &amp; Examples"/>
+</DCF>

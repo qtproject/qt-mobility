@@ -1,0 +1,495 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+#include <QFile>
+#include "servicemetadata_p.h"
+#include <qserviceinterfacedescriptor_p.h>
+
+//XML tags and attributes
+//General
+#define NAME_TAG  "name"
+#define DESCRIPTION_TAG "description"
+
+//Service related
+#define SERVICE_TAG "service" 
+#define SERVICE_FILEPATH "filepath"
+
+//Interface related
+#define INTERFACE_TAG "interface"
+#define INTERFACE_VERSION "version" 
+#define INTERFACE_CAPABILITY "capabilities"
+
+QT_BEGIN_NAMESPACE
+
+static const char  PATH_SEPARATOR[] = "\\";
+
+/*!
+    \class ServiceMetaData
+
+    Utility class (used by service database) that offers support for 
+    parsing metadata service xml registry file during service registration. \n
+    
+    It uses QXMLStreamReader class for parsing. Supproted Operations are:
+        - Parse the service and interfaces defined in XML file
+        - name, version, capabilitiesList, description and filePath of service can be retrieved
+        - each interface can be retrieved
+*/
+
+/*!
+ *  Class constructor
+ *
+ * @param aXmlFilePath path to the xml file that describes the service. 
+ */
+ServiceMetaData::ServiceMetaData(const QString &aXmlFilePath)
+{
+    xmlDevice = new QFile(aXmlFilePath);
+    ownsXmlDevice = true;
+    latestError = 0;
+}
+
+/*!
+ *  Class constructor
+ *
+ * @param device QIODevice that contains the XML data that describes the service.
+ */
+ServiceMetaData::ServiceMetaData(QIODevice *device)
+{
+    xmlDevice = device;
+    ownsXmlDevice = false;
+    latestError = 0;
+}
+
+/*!
+ *  Class destructor
+ * 
+ */
+ServiceMetaData::~ServiceMetaData()
+{
+    if (ownsXmlDevice)
+        delete xmlDevice;
+}
+
+/*!
+    Sets the device containing the XML data that describes the service to \a device.
+ */
+void ServiceMetaData::setDevice(QIODevice *device)
+{
+    clearMetadata();
+    xmlDevice = device;
+    ownsXmlDevice = false;
+}
+
+/*!
+    Returns the device containing the XML data that describes the service.
+*/
+QIODevice *ServiceMetaData::device() const
+{
+    return xmlDevice;
+}
+
+/*!
+ *  Gets the service name
+ *
+ * @return service name or default value (empty string) if it is not available
+ */
+QString ServiceMetaData::name()
+{
+    return serviceName;
+}
+ 
+/*!
+ *  Sets the path of service implementation file
+ *
+ * @param aFilePath path of service implementation file
+ */
+void ServiceMetaData::setServiceFilePath(const QString &aFilePath)
+{
+    serviceFilePath = aFilePath;
+}
+ 
+/*!
+ *  Gets the path of the service implementation file
+ *
+ * @return service implementation filepath
+ */
+QString ServiceMetaData::filePath()
+{
+    return serviceFilePath;
+}
+ 
+/*!
+ *  Gets the service description
+ *
+ * @return service description or default value (empty string) if it is not available
+ */
+QString ServiceMetaData::description()
+{
+    return serviceDescription;
+}
+ 
+/*!
+   Returns the number of interfaces provided by the service description
+ */
+int ServiceMetaData::interfaceCount()
+{
+    return serviceInterfaces.count();
+}
+ 
+/*!
+   Returns the metadata of the interace at \a index; otherwise
+   returns 0.
+ */
+QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces()
+{
+    return serviceInterfaces;
+} 
+
+/*!
+    Parses the file and extracts the service metadata \n
+    Custom error codes: \n
+    SFW_ERROR_UNABLE_TO_OPEN_FILE in case can not open the XML file \n
+    SFW_ERROR_INVALID_XML_FILE in case service registry is not a valid XML file \n
+    SFW_ERROR_NO_SERVICE in case XML file has no service tag\n
+    @return true if the metadata was read properly, false if there is an error
+ */
+bool ServiceMetaData::extractMetadata()
+{
+    latestError = 0;
+    clearMetadata();                   
+    QXmlStreamReader xmlReader;
+    bool parseError = false;
+    //Open xml file
+    if (!xmlDevice->isOpen() && !xmlDevice->open(QIODevice::ReadOnly)) {
+        latestError = ServiceMetaData::SFW_ERROR_UNABLE_TO_OPEN_FILE;
+        parseError = true;
+    } else {
+        //Load xml content
+        xmlReader.setDevice(xmlDevice);
+        // Read XML doc 
+        while (!xmlReader.atEnd() && !parseError) {
+            xmlReader.readNext();
+            //Found a <service> node, read service related metadata
+            if (xmlReader.isStartElement() && xmlReader.name() == SERVICE_TAG) {
+                if (!processServiceElement(xmlReader)) {
+                    parseError = true;
+                }
+            }
+            else if (xmlReader.isStartElement() && xmlReader.name() != SERVICE_TAG) {
+                latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
+                parseError = true;
+            }
+            else if (xmlReader.tokenType() == QXmlStreamReader::Invalid) {
+                latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
+                parseError = true;
+            }
+        }
+        if (ownsXmlDevice)
+            xmlDevice->close();
+    }
+    if (parseError) {
+        clearMetadata();
+    }
+    return !parseError;
+}
+ 
+/*!
+    Gets the latest parsing error \n
+    @return parsing error(negative value) or 0 in case there is none
+ */
+int ServiceMetaData::getLatestError()
+{
+    return latestError;
+}
+ 
+/*!
+    Gets the value of the attribute from the XML node \n
+    @param aDomElement xml node
+    @param aAttributeName attribute name
+    @param aValue [out] attribute value
+    @return true if the value was read, false otherwise
+ */
+bool ServiceMetaData::getAttributeValue(const QXmlStreamReader &aXMLReader, const QString &aAttributeName, QString &aValue)
+{
+    bool result = false;
+    for (int i = 0; i < aXMLReader.attributes().count(); i++){
+        QXmlStreamAttribute att = aXMLReader.attributes()[i];
+        if (att.name() == aAttributeName) {
+            if (att.value().isNull() || att.value().isEmpty()) {
+                result = false;
+            } else {
+                result = true;
+                aValue = att.value().toString();
+            }
+        }
+    }
+    // Capability attribute is allowed to be empty
+    if (aAttributeName == INTERFACE_CAPABILITY) {
+        result = true;
+    }
+
+    return result;
+}
+  
+/*!
+    Parses and extracts the service metadata from the current xml <service> node \n
+    Custom error codes: \n
+    SFW_ERROR_NO_SERVICE_NAME in case no service name in XML file \n
+    SFW_ERROR_NO_INTERFACE_VERSION in case no interface version in XML file \n
+    SFW_ERROR_PARSE_SERVICE in case can not parse service section in XML file \n
+    SFW_ERROR_NO_SERVICE_FILEPATH in case no service file path in XML file \n
+    SFW_ERROR_INVALID_XML_FILE in case XML file is not valid \n
+    SFW_ERROR_NO_SERVICE_INTERFACE in case no interface defined for service in XML file \n
+    @param aXMLReader xml stream reader 
+    @return true if the metadata was read properly, false if there is an error
+ */
+bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
+{
+    Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG);
+    bool parseError = false;
+
+    if (!getAttributeValue(aXMLReader, NAME_TAG, serviceName)) {
+        latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
+        parseError = true;
+    }
+
+    if (!parseError) {
+        if (!getAttributeValue(aXMLReader, SERVICE_FILEPATH, serviceFilePath)) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
+            parseError = true;
+        }
+    }
+
+    while (!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();  
+        if (aXMLReader.name() == DESCRIPTION_TAG) {
+            serviceDescription = aXMLReader.readElementText();
+        //Found a <interface> node, read module related metadata  
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
+            if (!processInterfaceElement(aXMLReader)) 
+                parseError = true;
+        //Found </service>, leave the loop
+        } else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICE_TAG) {
+            break;
+        } else if (aXMLReader.isEndElement() || aXMLReader.isStartElement()) {
+            latestError = ServiceMetaData::SFW_ERROR_PARSE_SERVICE;
+            parseError = true;            
+        } else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
+            parseError = true;
+        }
+    }
+
+    if (serviceInterfaces.count() == 0 && latestError == 0) {
+        latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
+        parseError = true;
+    }
+    if (parseError) {
+        clearMetadata();
+    }
+    return !parseError;
+}
+
+/*!
+    Parses and extracts the interface metadata from the current xml <interface> node \n
+    Custome error codes: \n
+    SFW_ERROR_NO_INTERFACE_NAME in case no interface name in XML file \n
+    SFW_ERROR_PARSE_INTERFACE in case error parsing interface section \n
+    SFW_ERROR_INVALID_XML_FILE in case XML file is not valid \n
+    @param aXMLReader xml stream reader 
+    @return true if the metadata was read properly, false if there is an error
+ */
+bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
+{
+    Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG);
+    bool parseError = false;
+
+    //Read interface parameter
+    QString tmp;
+    QServiceInterfaceDescriptor aInterface;
+    if (getAttributeValue(aXMLReader, NAME_TAG, tmp)) {
+        aInterface.d = new QServiceInterfaceDescriptorPrivate;
+        aInterface.d->interfaceName = tmp;
+        aInterface.d->serviceName = serviceName;
+        tmp.clear();
+        if (getAttributeValue(aXMLReader, INTERFACE_VERSION, tmp)) {
+            bool success = checkVersion(tmp);
+            if ( success ) {
+                int majorVer = -1;
+                int minorVer = -1;
+                transformVersion(tmp, &majorVer, &minorVer);
+                aInterface.d->major = majorVer;
+                aInterface.d->minor = minorVer;
+                tmp.clear();
+                if (getAttributeValue(aXMLReader, INTERFACE_CAPABILITY, tmp)) {
+                    aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
+                }
+            } else {
+                latestError = ServiceMetaData::SFW_ERROR_INVALID_VERSION;
+                parseError = true;
+            }
+        }
+        else{
+            latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
+            parseError = true;
+        }
+    } else {
+        latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
+        parseError = true;
+    }
+
+    while (!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();
+        //Read interface description
+        if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
+            aInterface.d->properties[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
+        //Found </interface>, leave the loop
+        } else if (aXMLReader.isEndElement() && aXMLReader.name() == INTERFACE_TAG) {
+            break;
+        } else if (aXMLReader.isStartElement() || aXMLReader.isEndElement()) {
+            latestError = ServiceMetaData::SFW_ERROR_PARSE_INTERFACE;
+            parseError = true;
+        } else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
+            latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
+            parseError = true;
+        }
+    }
+
+    if (!parseError) {
+        const QString ident = aInterface.d->interfaceName
+                                + QString::number(aInterface.majorVersion())
+                                + "."
+                                + QString::number(aInterface.minorVersion());
+        if (duplicates.contains(ident.toLower())) {
+            latestError = ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE;
+            parseError = true;
+        } else {
+            duplicates.insert(ident.toLower());
+            serviceInterfaces.append(aInterface);
+            if (!m_latestIndex.contains(aInterface.d->interfaceName)
+                    || lessThan(latestInterfaceVersion(aInterface.d->interfaceName), aInterface))
+
+            {
+                    m_latestIndex[aInterface.d->interfaceName.toLower()] = serviceInterfaces.count() - 1;
+            }
+        }
+    }
+    return !parseError;
+}
+
+QServiceInterfaceDescriptor ServiceMetaData::latestInterfaceVersion(const QString &interfaceName)
+{
+    QServiceInterfaceDescriptor ret;
+    if (m_latestIndex.contains(interfaceName.toLower()))
+        return serviceInterfaces[m_latestIndex[interfaceName.toLower()]];
+    else
+        return ret;
+}
+
+QList<QServiceInterfaceDescriptor> ServiceMetaData::latestInterfaces() const
+{
+    QList<QServiceInterfaceDescriptor> interfaces;
+    QHash<QString,int>::const_iterator i = m_latestIndex.constBegin();
+    while(i != m_latestIndex.constEnd())
+    {
+        interfaces.append(serviceInterfaces[i.value()]);
+        ++i;
+    }
+    return interfaces;
+}
+
+bool ServiceMetaData::lessThan(const QServiceInterfaceDescriptor &d1,
+                                const QServiceInterfaceDescriptor &d2) const
+{
+    return (d1.majorVersion() < d2.majorVersion())
+            || ( d1.majorVersion() == d2.majorVersion()
+                    && d1.minorVersion() < d2.minorVersion());
+
+}
+
+bool ServiceMetaData::checkVersion(const QString &version) const
+{
+    //match x.y as version format
+    QRegExp rx("^([1-9][0-9]*)\\.(0+|[1-9][0-9]*)$");
+    int pos = rx.indexIn(version);
+    QStringList list = rx.capturedTexts();
+    bool success = false;
+    if (pos == 0 && list.count() == 3
+            && rx.matchedLength() == version.length() )
+    {
+        list[1].toInt(&success);
+        if ( success ) {
+            list[2].toInt(&success);
+        }
+    }
+    return success;
+}
+
+void ServiceMetaData::transformVersion(const QString &version, int *major, int *minor) const
+{
+    Q_ASSERT(major != NULL);
+    Q_ASSERT(minor != NULL);
+    if(!checkVersion(version)) {
+        *major = -1;
+        *minor = -1;
+    } else {
+        QRegExp rx("^([1-9][0-9]*)\\.(0+|[1-9][0-9]*)$");
+        rx.indexIn(version);
+        QStringList list = rx.capturedTexts();
+        Q_ASSERT(list.count() == 3);
+        *major = list[1].toInt();
+        *minor = list[2].toInt();
+    }
+}
+
+/*!
+ *  Clears the service metadata
+ *
+ */
+void ServiceMetaData::clearMetadata()
+{
+    serviceName.clear();
+    serviceFilePath.clear();
+    serviceDescription.clear();
+    serviceInterfaces.clear();
+    duplicates.clear();
+    m_latestIndex.clear();
+}
+
+QT_END_NAMESPACE

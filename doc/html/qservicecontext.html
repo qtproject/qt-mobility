@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../servicefw/serviceframework/servicehandler/qservicecontext.cpp -->
+<head>
+  <title>QServiceContext Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QServiceContext Class Reference</h1>
+<p>The QServiceContext class provides context information to services. <a href="#details">More...</a></p>
+<pre>    #include &lt;QServiceContext&gt;</pre><ul>
+<li><a href="qservicecontext-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"/>enum <b><a href="qservicecontext.html#ContextType-enum">ContextType</a></b> { DisplayContext, ScriptContext, ServiceFrameworkContext, UserDefined }</li>
+</ul>
+<a name="properties"></a>
+<h3>Properties</h3>
+<ul>
+<li><div class="fn"/><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> : QString</li>
+<li><div class="fn"/><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> : QString</li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/><b><a href="qservicecontext.html#QServiceContext">QServiceContext</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>virtual <b><a href="qservicecontext.html#dtor.QServiceContext">~QServiceContext</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qservicecontext.html#clientId-prop">clientId</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qservicecontext.html#clientName-prop">clientName</a></b> () const</li>
+<li><div class="fn"/>virtual void <b><a href="qservicecontext.html#notify">notify</a></b> ( ContextType <i>type</i>, const QVariant &amp; <i>data</i> ) = 0</li>
+<li><div class="fn"/>void <b><a href="qservicecontext.html#clientId-prop">setClientId</a></b> ( const QString &amp; <i>id</i> )</li>
+<li><div class="fn"/>void <b><a href="qservicecontext.html#clientName-prop">setClientName</a></b> ( const QString &amp; <i>name</i> )</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QServiceContext class provides context information to services.</p>
+<p>A service context is created by clients and passed on to the service. It enables the opportunity to pass additional context information and errors between services, clients and the service framework.</p>
+<p>Clients must implement this abstract class to receive context information.</p>
+<p>See also <a href="qservicemanager.html">QServiceManager</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="ContextType-enum"></a>enum QServiceContext::ContextType</h3>
+<p>This enum describes the type of context information.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QServiceContext::DisplayContext</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The service provides user visible display text such as an error message.</td></tr>
+<tr><td valign="top"><tt>QServiceContext::ScriptContext</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service provides a script which may be executed by the client.</td></tr>
+<tr><td valign="top"><tt>QServiceContext::ServiceFrameworkContext</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Context information provided by the service framework itself.</td></tr>
+<tr><td valign="top"><tt>QServiceContext::UserDefined</tt></td><td align="center" valign="top"><tt>100</tt></td><td valign="top">The first context type that can be used for service specific context information.</td></tr>
+</table></p>
+<hr />
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="clientId-prop"></a>clientId : QString</h3>
+<p>This property holds the id of the client using the service.</p>
+<p>By default, this value is empty but you can change this by calling setClientId().</p>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"/><b>QString clientId () const</b></li>
+<li><div class="fn"/><b>void setClientId ( const QString &amp; <i>id</i> )</b></li>
+</ul>
+<h3 class="fn"><a name="clientName-prop"></a>clientName : QString</h3>
+<p>This property holds the name of the client using the service.</p>
+<p>By default, this value is empty but you can change this by calling setClientName(). This string is translated and can be shown to the user.</p>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"/><b>QString clientName () const</b></li>
+<li><div class="fn"/><b>void setClientName ( const QString &amp; <i>name</i> )</b></li>
+</ul>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QServiceContext"></a>QServiceContext::QServiceContext ( QObject * <i>parent</i> = 0 )</h3>
+<p>Constrcuts a service context with the given <i>parent</i>.</p>
+<h3 class="fn"><a name="dtor.QServiceContext"></a>QServiceContext::~QServiceContext ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the service context object.</p>
+<h3 class="fn"><a name="notify"></a>void QServiceContext::notify ( <a href="qservicecontext.html#ContextType-enum">ContextType</a> <i>type</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Services may call this function to notify the service client about service related context information of the given <i>type</i>. The contextual information is stored in <i>data</i>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="right"><div align="right">Qt Service Framework</div></td>
+</tr></table></div></address></body>
+</html>

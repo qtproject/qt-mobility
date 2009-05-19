@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service name="Primatech"  filepath="C:/NewYork/hiro.dll" >
+  <description>Primatech Cellular Services</description>
+    <interface name="com.omni.device.Accelerometer" version="1.4" capabilities="SurroundingsDD">
+      <description>Interface that provides accelerometer readings</description>
+    </interface>    
+    <interface name="com.omni.device.Accelerometer" version="1.2" capabilities="SurroundingsDD">
+      <description>Interface that provides accelerometer readings</description>
+    </interface>
+</service>
+

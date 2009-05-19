@@ -1,0 +1,132 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QSERVICEMANAGER_H
+#define QSERVICEMANAGER_H
+
+#include "qserviceglobal.h"
+
+#include "qserviceinterfacedescriptor.h"
+#include "qservicefilter.h"
+
+#include <QObject>
+#include <QList>
+#include <QStringList>
+#include <QDebug>
+
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+class QServiceContext;
+class QAbstractSecuritySession;
+class QServiceFilter;
+class QServiceManagerPrivate;
+class Q_SFW_EXPORT QServiceManager : public QObject
+{
+    Q_OBJECT
+public:
+    explicit QServiceManager(QObject* parent = 0);
+    ~QServiceManager();
+
+    QStringList findServices(const QString& interfaceName = QString()) const;
+    QList<QServiceInterfaceDescriptor> findInterfaces(const QServiceFilter& filter = QServiceFilter()) const;
+    QList<QServiceInterfaceDescriptor> findInterfaces(const QString& serviceName) const;
+
+    QObject* loadInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0);
+    QObject* loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0);
+
+    template <class T>
+    T* getInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
+    {
+        return getInterface<T>(defaultServiceInterface(interfaceName), context, session);
+    }
+
+    template <class T>
+    T* getInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
+    {
+        T* instance = 0;
+        if (descriptor.isValid()) {
+            QObject* obj = loadInterface(descriptor, context, session);
+            if (!obj) return 0;
+
+            //TODO this should really be
+            //instance = qobject_cast<T *>(loadInterface(descriptor, context, session));
+            //check why qobject_cast fails
+            const char* templateClassName = reinterpret_cast<T *>(0)->staticMetaObject.className();
+            const QMetaObject* source = obj->metaObject();
+            do {
+                if (strcmp(templateClassName,source->className())==0) {
+                    instance = static_cast<T *>(obj);
+                    break;
+                }
+                    
+            } while ((source = source->superClass()));
+            if (!instance)
+                delete obj;
+        }
+        return instance;
+    }
+
+    bool addService(const QString& xmlFilePath);
+    bool addService(QIODevice* xmlDevice);
+    bool removeService(const QString& serviceName);
+
+    bool setDefaultServiceForInterface(const QString &service, const QString &interfaceName);
+    bool setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor);
+
+    QServiceInterfaceDescriptor defaultServiceInterface(const QString& interfaceName) const;
+
+Q_SIGNALS:
+    void serviceAdded(const QString& serviceName);
+    void serviceRemoved(const QString& serviceName);
+
+private:
+    QServiceManagerPrivate* d;
+};
+
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif
