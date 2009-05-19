@@ -3,7 +3,6 @@ TARGET = tst_qservicefilter
 INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
 
-DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 CONFIG+=testcase
 
 QT -= gui
