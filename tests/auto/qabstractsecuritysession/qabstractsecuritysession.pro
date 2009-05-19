@@ -4,7 +4,6 @@ INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework/servicehandler \
                ../../../servicefw/serviceframework
 
-DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 CONFIG+=testcase
 
 QT -= gui
