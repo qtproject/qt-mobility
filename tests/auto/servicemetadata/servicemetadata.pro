@@ -1,5 +1,3 @@
-TEMPLATE = app
-TARGET = tst_servicemetadata
 INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
                ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
@@ -7,15 +5,12 @@ INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
 DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 CONFIG+=testcase
 
-QT -= gui
-QT+=testlib 
+QT = core
 
 include(../../../common.pri)
 
 # Input 
 SOURCES += tst_servicemetadata.cpp
-
-LIBS += -lQtServiceFramework
 
 symbian {
     TARGET.VID = VID_DEFAULT

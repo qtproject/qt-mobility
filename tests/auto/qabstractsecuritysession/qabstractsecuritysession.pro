@@ -1,13 +1,10 @@
-TEMPLATE = app
-TARGET = tst_qabstractsecuritysession
 INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework/servicehandler \
                ../../../servicefw/serviceframework
 
 CONFIG+=testcase
 
-QT -= gui
-QT+=testlib 
+QT = core
 
 include(../../../common.pri)
 

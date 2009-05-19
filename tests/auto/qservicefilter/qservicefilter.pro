@@ -1,17 +1,11 @@
-TEMPLATE = app
-TARGET = tst_qservicefilter
+SOURCES += tst_qservicefilter.cpp
 INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
-
 CONFIG+=testcase
 
-QT -= gui
-QT+=testlib
+QT = core
 
 include(../../../common.pri)
-
-# Input 
-SOURCES += tst_qservicefilter.cpp
 
 LIBS += -lQtServiceFramework
 
