@@ -1,8 +1,3 @@
 -implementation to allow interfaces to have arbitrary properties
 -implement signal notification when services are added/removed
--Verify that when the default service for a given interface implementation
- is deleted, another service providing the latest interface implementation
- becomes the new default, and if two services provide the same implementation
- version the choice between them is random
--Need to finish of deregistration of services
 -refactoring of ServiceDatabase
