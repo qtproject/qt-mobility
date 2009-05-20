@@ -402,7 +402,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else {
             duplicates.insert(ident.toLower());
             serviceInterfaces.append(aInterface);
-            if (!m_latestIndex.contains(aInterface.d->interfaceName)
+            if (!m_latestIndex.contains(aInterface.d->interfaceName.toLower())
                     || lessThan(latestInterfaceVersion(aInterface.d->interfaceName), aInterface))
 
             {
