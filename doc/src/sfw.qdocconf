@@ -13,6 +13,8 @@ sourcedirs = ../../servicefw/serviceframework/serviceresolution \
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
+exampledirs = ../../examples
+
 outputdir               = ../html
 
 extraimages.HTML        = qtlogo \

@@ -217,5 +217,12 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QAbstractSecuritySession}
 \endlist
 
+\section2 Examples
+
+\list
+    \o \l{File Manager Plugin Example}
+    \o \l{Bluetooth Transfer Plugin Example}
+    \o \l{Service Browser Example}
+\endlist
 
 */
