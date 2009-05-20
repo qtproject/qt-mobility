@@ -215,6 +215,7 @@
             <contents name="xml-format" title="XML format" level="2"></contents>
             <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="2"></contents>
             <contents name="identifying-services" title="Identifying services" level="1"></contents>
+            <contents name="upgrading-services" title="Upgrading services" level="1"></contents>
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
