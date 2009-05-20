@@ -363,7 +363,9 @@ bool QServiceManager::addService(QIODevice *device)
     Returns true if the unregistration succeeded, and false otherwise.
 
     If a default service implementation is removed and there are other implementations
-    for the same interface the service manager makes a random choice with 
+    for the same interface, the service manager chooses the implementation with the
+    highest version number as the new default.  If there is more than one serivce 
+    with the same version number, the service manager makes a random choice with 
     regards to the new default implementation. If this is 
     not the desired behaviour the default selection should be updated
     via setDefaultServiceForInterface(). 
