@@ -63,7 +63,7 @@ ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
 
 ServiceBrowser::~ServiceBrowser()
 {
-    //unregisterExampleServices();
+    unregisterExampleServices();
 }
 
 void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QListWidgetItem *previous)
