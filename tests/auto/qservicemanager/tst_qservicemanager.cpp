@@ -666,6 +666,12 @@ void tst_QServiceManager::removeService()
     QVERIFY(mgr.removeService("SampleService"));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList());
     QCOMPARE(settings.value("installed").toBool(), false);
+
+    // add it again, should still work
+    buffer.seek(0);
+    QVERIFY(mgr.addService(&buffer));
+    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
+    QCOMPARE(settings.value("installed").toBool(), true);
 }
 
 void tst_QServiceManager::setDefaultServiceForInterface_strings()
