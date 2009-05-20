@@ -127,7 +127,7 @@ public:
     QString databasePath() const;
 
     bool registerService(ServiceMetaData &service);
-    int unregisterService(const QString &serviceName);
+    bool unregisterService(const QString &serviceName);
 
     QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
     ServiceInfo getService(const QServiceInterfaceDescriptor &interface, bool *ok=0);
