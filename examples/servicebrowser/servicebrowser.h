@@ -39,14 +39,55 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
+#ifndef SERVICEBROWSER_H
+#define SERVICEBROWSER_H
 
-#include "mainwindow.h"
+#include <QWidget>
+#include <QObject>
 
-int main(int argc, char *argv[])
+class QAbstractButton;
+class QGroupBox;
+class QListWidget;
+class QListWidgetItem;
+class QPushButton;
+class QRadioButton;
+
+class QServiceManager;
+
+class ServiceBrowser : public QWidget
 {
-    QApplication app(argc, argv);
-    MainWindow mainWin;
-    mainWin.show();
-    return app.exec();
-}
+    Q_OBJECT
+public:
+    ServiceBrowser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~ServiceBrowser();
+
+private slots:
+    void currentInterfaceImplChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void reloadServicesList();
+    void reloadInterfaceImplementationsList();
+    void reloadAttributesList();
+    void setDefaultInterfaceImplementation();
+
+private:
+    void registerExampleServices();
+    void unregisterExampleServices();
+    void reloadAttributesRadioButtonText();
+    void initWidgets();
+
+    QListWidget *servicesListWidget;
+    QListWidget *interfacesListWidget;
+    QListWidget *attributesListWidget;
+
+    QGroupBox *interfacesGroup;
+    QGroupBox *attributesGroup;
+
+    QRadioButton *selectedImplRadioButton;
+    QRadioButton *defaultImplRadioButton;
+
+    QListWidgetItem *showAllServicesItem;
+    QPushButton *defaultInterfaceButton;
+
+    QServiceManager *serviceManager;
+};
+
+#endif

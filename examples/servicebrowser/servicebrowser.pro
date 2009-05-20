@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = servicesdemo
+TARGET = servicebrowser
 INCLUDEPATH += ../../servicefw/serviceframework/servicehandler \
                ../../servicefw/serviceframework/serviceresolution \
                ../../servicefw/serviceframework
@@ -9,8 +9,8 @@ include(../../common.pri)
 QT += gui
 
 # Input 
-HEADERS += mainwindow.h
-SOURCES += mainwindow.cpp \
+HEADERS += servicebrowser.h
+SOURCES += servicebrowser.cpp \
            main.cpp
 
 LIBS += -lQtServiceFramework
