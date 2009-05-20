@@ -146,6 +146,38 @@
     }</pre>
 <p>Call QObject::metaObject() on the implementation instance to get a QMetaObject instance that reveals the dynamically invokable attributes for the instance. These attributes include properties, signals, slots, and methods marked with the Q_INVOKABLE macro. Call QMetaObject::method() to get information about a signal, slot or invokable method, and QMetaObject::property() to access a property of the instance.</p>
 <p>When you know the name of the method you wish to invoke, call QMetaObject::invoke() or QMetaMethod::invoke() to invoke it dynamically. Similarly, QMetaProperty::read() and QMetaProperty::write() can be used to read and modify the value of a property.</p>
+<a name="invoking-attributes-an-example"></a>
+<h3>Invoking attributes: an example</h3>
+<p>Here is an example of invoking attributes on an implementation, using the <a href="filemanagerplugin.html">FileManagerPlugin</a> that is shown in the Service Browser.</p>
+<p>The <a href="filemanagerplugin.html">FileManagerPlugin</a> provides a service called &quot;FileManagerService&quot; in its <tt>filemanagerplugin.xml</tt> service definition. When FileManagerPlugin::createInstance() is called, if the com.nokia.qt.examples.FileStorage interface is requested, it returns an instance of the FileManagerStorage class. The FileManagerStorage class is defined like this:</p>
+<pre>    class FileManagerStorage : public QObject
+    {
+        Q_OBJECT
+        Q_PROPERTY(QString workingDirectory READ workingDirectory WRITE setWorkingDirectory)
+
+    public:
+        FileManagerStorage(QObject *parent = 0);
+
+        void setWorkingDirectory(const QString &amp;path);
+        QString workingDirectory() const;
+
+    signals:
+        void workingDirectoryChanged(const QString &amp;newDir);
+
+    public slots:
+        void copyFile(const QString &amp;currentPath, const QString &amp;newPath);
+
+    private:
+        QString directory;
+    };</pre>
+<p>So if, in the ServiceBrowser application, we select the com.nokia.qt.examples.FileStorage implementation provided by FileManagerService, the browser would display all the dynamically invokable attributes of the FileManagerStorage class:</p>
+<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the QObject parent.)</p>
+<p>To invoke the <tt>copyFile()</tt> slot, for example:</p>
+<pre>    QObject *interfaceImpl = QServiceManager::loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;, 0, 0);
+    QMetaObject::invoke(interfaceImpl, &quot;copyFile&quot;,
+                        Q_ARG(QString, &quot;path/to/file.txt&quot;),
+                        Q_ARG(QString, &quot;new/path/to/file.txt&quot;));</pre>
+<p>Of course, the <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object to <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() instead of just the interface name to ensure the correct implementation is loaded.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>
