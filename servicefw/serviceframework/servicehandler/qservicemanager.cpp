@@ -392,7 +392,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         delete loader;
     }
 
-    return d->database->unregisterService(serviceName) == 0;
+    return d->database->unregisterService(serviceName);
 }
 
 /*!

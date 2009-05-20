@@ -919,53 +919,133 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
     return true;
 }
 
-int ServiceDatabase::unregisterService(const QString &serviceName)
+bool ServiceDatabase::unregisterService(const QString &serviceName)
 {
-    if (!iDatabaseOpen) 
-        return ServiceDatabase::SFW_ERROR_DATABASE_NOT_OPEN;
+    if (!checkConnection()) {
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+        return false;
+    }
 
     QSqlDatabase database = QSqlDatabase::database();
-    if (!database.isValid())
-        return ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
-
-    //Determine the Service ID given the service name
     QSqlQuery query(database);
-    if(!query.prepare("SELECT Service.ID from Service WHERE Service.Name = ? COLLATE NOCASE"))
-        return query.lastError().number();
-    query.addBindValue(serviceName);
-    if(!query.exec())
-        return query.lastError().number();
-    if (!query.next())
-        return  ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND;
-    int serviceId = query.value(EBindIndex).toInt();
 
-    //Delete all entries in the Service table matching the Service ID
-    bool isActive = database.transaction();
-    if(!query.prepare("DELETE FROM Service WHERE Service.ID = ?"))
-        return query.lastError().number();
-    query.addBindValue(serviceId);
-    if (!query.exec()) {
-        if (isActive)
-            database.rollback();
-        return query.lastError().number();
+    //Begin Transaction
+    if(!database.transaction()) {
+        m_lastError.setSQLError(database.lastError().text());
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << "Problem: Unable to begin transaction"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+        return false;
     }
 
-    //Delete all entries in the Interface table matching the Service ID
-    if (!query.prepare("DELETE FROM Interface WHERE Interface.ServiceID = ?")) {
-        if (isActive)
-            database.rollback();
-        return query.lastError().number();
-    }
-    query.addBindValue(serviceId);
-    if (!query.exec()) {
-        if (isActive)
-            database.rollback();
-        return query.lastError().number();
+    QString statement("SELECT Service.ID from Service WHERE Service.Name = ? COLLATE NOCASE");
+    QList<QVariant> bindValues;
+    bindValues.append(serviceName);
+
+    if(!executeQuery(&query, statement, bindValues)) {
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << qPrintable(m_lastError.text());
+        return false;
     }
 
-    if (isActive)
-        database.commit();
-    return 0;
+    QList<int> serviceIDs;
+    while(query.next()) {
+        serviceIDs << query.value(EBindIndex).toInt();
+    }
+
+    if (serviceIDs.count() == 0) {
+        QString errorText("Service not found: \"%1\"");
+        m_lastError.setError(DBError::NotFound, errorText.arg(serviceName));
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << "Problem: Unable to unregister service"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+        return false;
+    }
+
+    statement = "SELECT DISTINCT Interface.Name COLLATE NOCASE "
+                "FROM Interface, Service, Defaults "
+                "WHERE Interface.ServiceID = Service.ID "
+                    "AND Interface.ID = Defaults.InterfaceID "
+                    "AND Service.Name = ? COLLATE NOCASE";
+    bindValues.clear();
+    bindValues.append(serviceName);
+    if (!executeQuery(&query, statement, bindValues)) {
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase:unregisterService():-"
+                    << qPrintable(m_lastError.text());
+        return false;
+    }
+
+    QStringList serviceDefaultInterfaces;
+    while(query.next()) {
+        serviceDefaultInterfaces << query.value(EBindIndex).toString();
+    }
+
+    statement = "DELETE FROM Service WHERE Service.Name = ? COLLATE NOCASE";
+    bindValues.clear();
+    bindValues.append(serviceName);
+    if (!executeQuery(&query, statement, bindValues)) {
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << qPrintable(m_lastError.text());
+        return false;
+    }
+
+    statement = "DELETE FROM Interface WHERE Interface.ServiceID = ?";
+    foreach(int serviceID, serviceIDs) {
+        bindValues.clear();
+        bindValues.append(serviceID);
+        if (!executeQuery(&query, statement, bindValues)) {
+            databaseRollback(&query, &database);
+            qWarning() << "ServiceDatabase::unregisterService():-"
+                        << qPrintable(m_lastError.text());
+            return false;
+        }
+    }
+
+    foreach(const QString &interfaceName, serviceDefaultInterfaces) {
+        statement = "SELECT ID FROM Interface WHERE Interface.Name = ? COLLATE NOCASE "
+                    "ORDER BY Interface.VerMaj DESC, Interface.VerMin DESC";
+        bindValues.clear();
+        bindValues.append(interfaceName);
+        if (!executeQuery(&query, statement, bindValues)) {
+            databaseRollback(&query, &database);
+            qWarning() << "ServiceDatabase::unregisterService():-"
+                        << qPrintable(m_lastError.text());
+            return false;
+        }
+
+        if(query.next()) {
+            int newDefaultID = query.value(EBindIndex).toInt();
+            statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE";
+            bindValues.clear();
+            bindValues.append(newDefaultID);
+            bindValues.append(interfaceName);
+            if (!executeQuery(&query, statement, bindValues)) {
+                databaseRollback(&query, &database);
+                qWarning() << "ServiceDatabase::unregisterService():-"
+                            << qPrintable(m_lastError.text());
+                return false;
+            }
+        } else {
+            statement = "DELETE FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE";
+            bindValues.clear();
+            bindValues.append(interfaceName);
+            if (!executeQuery(&query, statement, bindValues)) {
+                databaseRollback(&query, &database);
+                qWarning() << "ServiceDatabase::unregisterService():-"
+                            << qPrintable(m_lastError.text());
+                return false;
+            }
+        }
+    }
+
+    //databaseCommit
+    databaseCommit(&query, &database);
+    return true;
 }
 
 /*!
