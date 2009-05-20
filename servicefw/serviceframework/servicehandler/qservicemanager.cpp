@@ -306,6 +306,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If a previously unkown interface is added the newly registered service automatically
     becomes the new default service provider for the new interface.
 
+    A service plugin cannot be added if another service is already registered
+    with the same plugin file path.  A service plugin also cannot be added if
+    the service is already registered and implements any of the same interface
+    versions that the new plugin implements.
+
     \sa setDefaultServiceForInterface()
 */
 bool QServiceManager::addService(const QString& xmlFilePath)
@@ -322,6 +327,11 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     
     If a previously unkown interface is added the newly registered service automatically
     becomes the new default service provider for the new interface.
+
+    A service plugin cannot be added if another service is already registered
+    with the same plugin file path.  A service plugin also cannot be added if
+    the service is already registered and implements any of the same interface
+    versions that the new plugin implements.
 
     \sa setDefaultServiceForInterface()
 */

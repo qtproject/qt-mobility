@@ -88,15 +88,10 @@ void DBError::setError(ErrorCode error, const QString &text)
             m_text = "Invalid database connection";
             break;
         case(SqlError):
-            m_text = text;
-            break;
         case(NotFound):
-            m_text = text;
-            break;
         case(ComponentAlreadyRegistered):
-            m_text = text;
-            break;
         case(IfaceImplAlreadyRegistered):
+        case(InvalidSearchCriteria):
             m_text = text;
             break;
         default:
@@ -611,20 +606,29 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool 
     return services;
 }
 
-int ServiceDatabase::getService(const QServiceInterfaceDescriptor &interface, ServiceInfo &serviceInfo) const
+ServiceInfo ServiceDatabase::getService(const QServiceInterfaceDescriptor &interface, bool *ok)
 {
-    int result(0);
-    serviceInfo.clear();
+    ServiceInfo serviceInfo;
+    if (!interface.isValid()) {
+        QString errorText = "Interface descriptor is not valid";
+        m_lastError.setError(DBError::InvalidSearchCriteria, errorText);
 
-    if (!interface.isValid())
-        return ServiceDatabase::SFW_ERROR_INVALID_SEARCH_CRITERIA;
+        if (ok != NULL)
+            *ok = false;
+        qWarning() << "ServiceDatabase::getService():-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+        return serviceInfo;
+    }
 
-    if(!iDatabaseOpen)
-        return ServiceDatabase::SFW_ERROR_DATABASE_NOT_OPEN;
+    if (!checkConnection()) {
+        if (ok != NULL)
+            *ok = false;
+        qWarning() << "ServiceDatabase::getService:-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+        return serviceInfo;
+    }
 
     QSqlDatabase database = QSqlDatabase::database();
-    if (!database.isValid())
-        return ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
 
     //Prepare search query, bind criteria values and execute search
     QSqlQuery query(database);
@@ -640,36 +644,26 @@ int ServiceDatabase::getService(const QServiceInterfaceDescriptor &interface, Se
     bindValues.append(interface.majorVersion());
     bindValues.append(interface.minorVersion());
 
-    if(!query.prepare(selectComponent + fromComponent + whereComponent)) {
-        result=query.lastError().number();
-        query.finish();
-        query.clear();
-    } else {
-        foreach(QVariant bindValue, bindValues)
-            query.addBindValue(bindValue);
-        if (!query.exec()) {
-            result=query.lastError().number();
-            query.finish();
-            query.clear();
-        } else {
-            if (!query.exec()) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-            } else if (query.next()) {
-                serviceInfo.setName(query.value(EBindIndex).toString());
-                serviceInfo.setFilePath(query.value(EBindIndex1).toString());
-                serviceInfo.setDescription(query.value(EBindIndex2).toString());
-           } else {
-               result = ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND;
-           }
-       }
+    if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
+        if (ok != NULL)
+            *ok = false;
+        qWarning() << "ServiceDatabase::defaultServiceInterface():-"
+                    << qPrintable(m_lastError.text());
+        return serviceInfo;
     }
+
+    if (query.next()) {
+        serviceInfo.setName(query.value(EBindIndex).toString());
+        serviceInfo.setFilePath(query.value(EBindIndex1).toString());
+        serviceInfo.setDescription(query.value(EBindIndex2).toString());
+    }
+
+    if (ok != NULL)
+        *ok = true;
+
     query.finish();
     query.clear();
-
-    return result;
-    return 0;
+    return serviceInfo;
 }
 
 QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QString &interfaceName, bool *ok)
