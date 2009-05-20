@@ -44,49 +44,36 @@
 #include <qservicemanager.h>
 #include <qserviceinterfacedescriptor.h>
 
-#include "mainwindow.h"
+#include "servicebrowser.h"
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
+ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     serviceManager = new QServiceManager(this);
 
-    QStringList exampleXmlFiles;
-    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
-    foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-        serviceManager->addService(path);
-    }
+    registerExampleServices();
 
     initWidgets();
     reloadServicesList();
+
+    setWindowTitle(tr("Services Browser"));
 }
 
-MainWindow::~MainWindow()
+ServiceBrowser::~ServiceBrowser()
 {
-/*
-    qDebug() << "------------ Removing services ----------";
-    serviceManager->removeService("FileManagerService");
-    serviceManager->removeService("BluetoothTransferService");
-*/
+    unregisterExampleServices();
 }
 
-void MainWindow::currentServiceChanged(QListWidgetItem *current, QListWidgetItem *previous)
-{
-    Q_UNUSED(current);
-    Q_UNUSED(previous);
-    reloadInterfaceImplementationsList();
-}
-
-void MainWindow::currentInterfaceImplChanged(QListWidgetItem *current, QListWidgetItem *previous)
+void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
     Q_UNUSED(previous);
     if (!current)
         return;
 
     reloadAttributesList();
+    reloadAttributesRadioButtonText();
 
     QServiceInterfaceDescriptor descriptor = current->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
@@ -96,7 +83,88 @@ void MainWindow::currentInterfaceImplChanged(QListWidgetItem *current, QListWidg
     }
 }
 
-void MainWindow::clickedSetDefaultImpl()
+void ServiceBrowser::reloadServicesList()
+{
+    servicesListWidget->clear();
+
+    QStringList services = serviceManager->findServices();
+    for (int i=0; i<services.count(); i++)
+        servicesListWidget->addItem(services[i]);
+
+    servicesListWidget->addItem(showAllServicesItem);
+}
+
+void ServiceBrowser::reloadInterfaceImplementationsList()
+{
+    QString serviceName;
+    if (servicesListWidget->currentItem()
+            && servicesListWidget->currentItem() != showAllServicesItem) {
+        serviceName = servicesListWidget->currentItem()->text();
+        interfacesGroup->setTitle(tr("Interfaces implemented by %1").arg(serviceName));
+    } else {
+        interfacesGroup->setTitle(tr("All interface implementations"));
+    }
+
+    QList<QServiceInterfaceDescriptor> descriptors = serviceManager->findInterfaces(serviceName);
+
+    interfacesListWidget->clear();
+    for (int i=0; i<descriptors.count(); i++) {
+        QString text = QString("%1 %2.%3")
+                .arg(descriptors[i].interfaceName())
+                .arg(descriptors[i].majorVersion())
+                .arg(descriptors[i].minorVersion());
+
+        if (serviceName.isEmpty())
+            text += " (" + descriptors[i].serviceName() + ")";
+
+        QServiceInterfaceDescriptor defaultInterfaceImpl = 
+                serviceManager->defaultServiceInterface(descriptors[i].interfaceName());
+        if (descriptors[i] == defaultInterfaceImpl)
+            text += tr(" (default)");
+
+        QListWidgetItem *item = new QListWidgetItem(text);
+        item->setData(Qt::UserRole, qVariantFromValue(descriptors[i]));
+        interfacesListWidget->addItem(item);
+    }
+
+    defaultInterfaceButton->setEnabled(false);
+}
+
+void ServiceBrowser::reloadAttributesList()
+{
+    QListWidgetItem *item = interfacesListWidget->currentItem();
+    if (!item)
+        return;
+
+    QServiceInterfaceDescriptor selectedImpl =
+            item->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
+
+    QObject *implementationRef;
+    if (selectedImplRadioButton->isChecked())
+        implementationRef = serviceManager->loadInterface(selectedImpl, 0, 0);
+    else
+        implementationRef = serviceManager->loadInterface(selectedImpl.interfaceName(), 0, 0);
+
+    attributesListWidget->clear();
+    if (!implementationRef) {
+        attributesListWidget->addItem(tr("(Error loading service plugin)"));
+        return;
+    }
+
+    const QMetaObject *metaObject = implementationRef->metaObject();
+    attributesGroup->setTitle(tr("Invokable attributes for %1 class")
+            .arg(QString(metaObject->className())));
+    for (int i=0; i<metaObject->methodCount(); i++) {
+        QMetaMethod method = metaObject->method(i);
+        attributesListWidget->addItem("[METHOD] " + QString(method.signature()));
+    }
+    for (int i=0; i<metaObject->propertyCount(); i++) {
+        QMetaProperty property = metaObject->property(i);
+        attributesListWidget->addItem("[PROPERTY] " + QString(property.name()));
+    }
+}
+
+void ServiceBrowser::setDefaultInterfaceImplementation()
 {
     QListWidgetItem *item = interfacesListWidget->currentItem();
     if (!item)
@@ -115,61 +183,23 @@ void MainWindow::clickedSetDefaultImpl()
     }
 }
 
-void MainWindow::clickedAttributesRadioButton(QAbstractButton *button)
+void ServiceBrowser::registerExampleServices()
 {
-    Q_UNUSED(button);
-    reloadAttributesList();
-}
-
-void MainWindow::reloadServicesList()
-{
-    servicesListWidget->clear();
-
-    QStringList services = serviceManager->findServices();
-    for (int i=0; i<services.count(); i++)
-        servicesListWidget->addItem(services[i]);
-
-    servicesListWidget->addItem(showAllServicesItem);
-}
-
-void MainWindow::reloadInterfaceImplementationsList()
-{
-    QString serviceName;
-    if (servicesListWidget->currentItem()
-            && servicesListWidget->currentItem() != showAllServicesItem) {
-        serviceName = servicesListWidget->currentItem()->text();
-        interfacesGroup->setTitle(tr("Interfaces implemented by %1").arg(serviceName));
-    } else {
-        interfacesGroup->setTitle(tr("All interface implementations"));
+    QStringList exampleXmlFiles;
+    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
+    foreach (const QString &fileName, exampleXmlFiles) {
+        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        serviceManager->addService(path);
     }
-
-    interfacesListWidget->clear();
-
-    QList<QServiceInterfaceDescriptor> descriptors = serviceManager->findInterfaces(serviceName);
-
-    for (int i=0; i<descriptors.count(); i++) {
-        QString text = QString("%1 %2.%3")
-                .arg(descriptors[i].interfaceName())
-                .arg(descriptors[i].majorVersion())
-                .arg(descriptors[i].minorVersion());
-
-        if (serviceName.isEmpty())
-            text += " (" + descriptors[i].serviceName() + ")";
-
-        QServiceInterfaceDescriptor defaultInterfaceImpl = 
-                serviceManager->defaultServiceInterface(descriptors[i].interfaceName());
-        if (descriptors[i].serviceName() == defaultInterfaceImpl.serviceName())
-            text += tr(" (default)");
-
-        QListWidgetItem *item = new QListWidgetItem(text);
-        item->setData(Qt::UserRole, qVariantFromValue(descriptors[i]));
-        interfacesListWidget->addItem(item);
-    }
-
-    defaultInterfaceButton->setEnabled(false);
 }
 
-void MainWindow::reloadAttributesList()
+void ServiceBrowser::unregisterExampleServices()
+{
+    serviceManager->removeService("FileManagerService");
+    serviceManager->removeService("BluetoothTransferService");
+}
+
+void ServiceBrowser::reloadAttributesRadioButtonText()
 {
     QListWidgetItem *item = interfacesListWidget->currentItem();
     if (!item)
@@ -183,33 +213,9 @@ void MainWindow::reloadAttributesList()
     defaultImplRadioButton->setText(tr("Default implementation for %1\n(currently provided by %2)")
             .arg(defaultImpl.interfaceName())
             .arg(defaultImpl.serviceName()));
-
-    QServiceInterfaceDescriptor descriptor;
-    if (selectedImplRadioButton->isChecked())
-        descriptor = selectedImpl;
-    else
-        descriptor = defaultImpl;
-
-    QObject *interfaceImpl = serviceManager->loadInterface(descriptor, 0, 0);
-
-    attributesListWidget->clear();
-    if (interfaceImpl) {
-        attributesGroup->setTitle(tr("Invokable attributes for %1 class")
-                .arg(QString(interfaceImpl->metaObject()->className())));
-        for (int i=0; i<interfaceImpl->metaObject()->methodCount(); i++) {
-            QMetaMethod method = interfaceImpl->metaObject()->method(i);
-            attributesListWidget->addItem("[METHOD] " + QString(method.signature()));
-        }
-        for (int i=0; i<interfaceImpl->metaObject()->propertyCount(); i++) {
-            QMetaProperty property = interfaceImpl->metaObject()->property(i);
-            attributesListWidget->addItem("[PROPERTY] " + QString(property.name()));
-        }
-    } else {
-        attributesListWidget->addItem(tr("(Error loading service plugin)"));
-    }
 }
 
-void MainWindow::initWidgets()
+void ServiceBrowser::initWidgets()
 {
     showAllServicesItem = new QListWidgetItem(tr("(All registered services)"));
 
@@ -222,7 +228,7 @@ void MainWindow::initWidgets()
     interfacesListWidget->setMinimumWidth(450);
 
     connect(servicesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
-            this, SLOT(currentServiceChanged(QListWidgetItem*,QListWidgetItem*)));
+            this, SLOT(reloadInterfaceImplementationsList()));
 
     connect(interfacesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
             this, SLOT(currentInterfaceImplChanged(QListWidgetItem*,QListWidgetItem*)));
@@ -230,7 +236,7 @@ void MainWindow::initWidgets()
     defaultInterfaceButton = new QPushButton(tr("Set as default implementation"));
     defaultInterfaceButton->setEnabled(false);
     connect(defaultInterfaceButton, SIGNAL(clicked()),
-            this, SLOT(clickedSetDefaultImpl()));
+            this, SLOT(setDefaultInterfaceImplementation()));
 
     selectedImplRadioButton = new QRadioButton(tr("Selected interface implementation"));
     defaultImplRadioButton = new QRadioButton(tr("Default implementation"));
@@ -240,7 +246,7 @@ void MainWindow::initWidgets()
     radioButtons->addButton(selectedImplRadioButton);
     radioButtons->addButton(defaultImplRadioButton);
     connect(radioButtons, SIGNAL(buttonClicked(QAbstractButton*)),
-            this, SLOT(clickedAttributesRadioButton(QAbstractButton*)));
+            this, SLOT(reloadAttributesList()));
 
     QGroupBox *servicesGroup = new QGroupBox(tr("Show services for:"));
     QVBoxLayout *servicesLayout = new QVBoxLayout;

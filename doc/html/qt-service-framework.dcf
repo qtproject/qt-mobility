@@ -77,5 +77,15 @@
         <keyword ref="index.html">Qt Service Framework Developer Resources</keyword>
     </section>
 </section>
-<section ref="examples.html" title="Tutorial &amp; Examples"/>
+<section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example">
+        <keyword ref="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</keyword>
+    </section>
+    <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
+        <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
+    </section>
+    <section ref="servicebrowser.html" title="Service Browser Example">
+        <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+</section>
 </DCF>

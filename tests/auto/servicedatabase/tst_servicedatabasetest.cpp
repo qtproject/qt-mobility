@@ -994,12 +994,16 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
 
 void ServiceDatabaseUnitTest::unregister()
 {
-    QCOMPARE(database.unregisterService("acme"),(int)ServiceDatabase::SFW_ERROR_DATABASE_NOT_OPEN);
+    bool ok;
+    QVERIFY(!database.unregisterService("acme"));
+    QVERIFY(!ok);
+    QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
+
     QCOMPARE(database.open(), 0);
 
     //try unregister a non-existing service
-    QCOMPARE(database.unregisterService("StarkInd"),(int)ServiceDatabase::SFW_ERROR_NO_SERVICE_FOUND);
-
+    QVERIFY(!database.unregisterService("StarkInd"));
+    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
     QServiceFilter filter;
 
     // == check that the service to delete is already in the database ==
@@ -1032,9 +1036,18 @@ void ServiceDatabaseUnitTest::unregister()
         if(interface.serviceName() == "OMNI")
             serviceFound = true;
     }
+
+    //confirm that it is the default service for a couple of interfaces
+    QServiceInterfaceDescriptor interface;
+    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    QVERIFY(interface.serviceName() == "OMNI");//other services implement this interface
+
+    interface = database.defaultServiceInterface("com.omni.service.Video");
+    QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this inter
+
     QVERIFY(serviceFound);
 
-    QCOMPARE(database.unregisterService("omni"),0);
+    QVERIFY(database.unregisterService("oMni")); //ensure case insensitive behaviour
 
     //  == check that deleted service and associated interfaces cannot be found ==
     //try a search for descriptors by service name
@@ -1063,6 +1076,18 @@ void ServiceDatabaseUnitTest::unregister()
         if(interface.serviceName() == "OMNI")
             serviceFound = true;
     }
+
+    //ensure a new default interface has been assigned for the following interface
+    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    QVERIFY(interface.isValid());
+    QCOMPARE(interface.serviceName(), QString("WayneEnt"));
+    QCOMPARE(interface.majorVersion(), 2);
+    QCOMPARE(interface.minorVersion(), 0);
+
+    //ensure that there is no longer a default for the following interface
+    interface = database.defaultServiceInterface("com.omni.service.Video");
+    QVERIFY(!interface.isValid());
+
     QVERIFY(!serviceFound);
 }
 

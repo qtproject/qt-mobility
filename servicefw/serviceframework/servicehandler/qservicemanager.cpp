@@ -187,10 +187,12 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServiceFilter& filter) const
 {
-    QList<QServiceInterfaceDescriptor> descriptors;
     if (!d->database->isOpen())
-        return descriptors;
-    descriptors = d->database->getInterfaces(filter);
+        return QList<QServiceInterfaceDescriptor>();
+    bool ok = false;
+    QList<QServiceInterfaceDescriptor> descriptors = d->database->getInterfaces(filter, &ok);
+    if (!ok)
+        return QList<QServiceInterfaceDescriptor>();
     return descriptors;
 }
 
@@ -390,7 +392,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         delete loader;
     }
 
-    return d->database->unregisterService(serviceName) == 0;
+    return d->database->unregisterService(serviceName);
 }
 
 /*!
