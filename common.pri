@@ -25,7 +25,6 @@ SOURCE_DIR = $$PWD
     UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
 } else {
     QT *= testlib
-    CONFIG *= qttest_p4
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
     DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc

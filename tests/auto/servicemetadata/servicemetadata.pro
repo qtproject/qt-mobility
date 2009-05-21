@@ -1,3 +1,4 @@
+TARGET=tst_servicemetadata
 INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
                ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
