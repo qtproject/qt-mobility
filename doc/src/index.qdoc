@@ -124,7 +124,7 @@ The elements and attributes have the following meanings:
     \row
         \o interface
         \o
-        \o This tag contains the properties of the interface.
+        \o This tag describes the properties of the interface.
     \row
         \o "
         \o capabilities
@@ -146,6 +146,8 @@ The elements and attributes have the following meanings:
         \o filepath
         \o The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in
            name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in.
+           Note that if the plugin name is given only, platform specific parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
+           should be removed to enable cross platform resolution. QLibrary is used to determine the platform specific parts of the plugin.
     \row
         \o "
         \o name
@@ -157,15 +159,15 @@ An example for a valid XML service description could be the following \i TestSer
 
 \code
     <?xml version="1.0" encoding="utf-8" ?>
-    <service name="com.nokia.qt.TestService"  filepath="C:/TestData/testservice.dll" >
+    <service name="TestService"  filepath="testserviceplugin" >
       <description>Test service description</description> 
-      <interface name="ILocation" version="1.4" capabilities="">
+      <interface name="com.nokia.qt.ILocation" version="1.4" capabilities="">
         <description>Interface that provides location support</description> 
       </interface>
-      <interface name="ILocation" version="1.5" capabilities="">
+      <interface name="com.nokia.qt.ILocation" version="1.5" capabilities="">
         <description>Interface that provides location support</description> 
       </interface>
-      <interface name="ISysInfo" capabilities="ReadUserData" version="2.3">
+      <interface name="com.nokia.qt.ISysInfo" capabilities="ReadUserData" version="2.3">
         <description>Interface that provides system information support</description> 
       </interface>  
     </service>
