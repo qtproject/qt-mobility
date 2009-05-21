@@ -215,6 +215,7 @@
             <contents name="xml-format" title="XML format" level="2"></contents>
             <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="2"></contents>
             <contents name="identifying-services" title="Identifying services" level="1"></contents>
+            <contents name="upgrading-services" title="Upgrading services" level="1"></contents>
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
@@ -223,6 +224,7 @@
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"></contents>
             <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"></contents>
+            <contents name="invoking-attributes-an-example" title="Invoking attributes: an example" level="2"></contents>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.cpp" href="servicebrowser-servicebrowser-cpp.html" subtype="file" title="" fulltitle="servicebrowser.cpp Example File" subtitle="servicebrowser/servicebrowser.cpp" location=""></page>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.h" href="servicebrowser-servicebrowser-h.html" subtype="file" title="" fulltitle="servicebrowser.h Example File" subtitle="servicebrowser/servicebrowser.h" location=""></page>
             <page access="public" status="commendable" name="servicebrowser/main.cpp" href="servicebrowser-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="servicebrowser/main.cpp" location=""></page>

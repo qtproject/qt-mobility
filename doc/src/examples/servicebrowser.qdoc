@@ -132,4 +132,31 @@
 
     When you know the name of the method you wish to invoke, call QMetaObject::invoke() or QMetaMethod::invoke() to invoke it dynamically. Similarly, QMetaProperty::read() and QMetaProperty::write() can be used to read and modify the value of a property.
 
+
+    \section2 Invoking attributes: an example
+
+    Here is an example of invoking attributes on an implementation, using the \l{File Manager Plugin Example}{FileManagerPlugin} that is shown in the Service Browser.
+
+    The \l{File Manager Plugin Example}{FileManagerPlugin} provides a service called "FileManagerService" in its \c filemanagerplugin.xml service definition. When FileManagerPlugin::createInstance() is called, if the com.nokia.qt.examples.FileStorage interface is requested, it returns an instance of the FileManagerStorage class. The FileManagerStorage class is defined like this:
+
+    \quotefromfile filemanagerplugin/filemanagerstorage.h
+    \skipto class FileManagerStorage
+    \printuntil };
+
+    So if, in the ServiceBrowser application, we select the com.nokia.qt.examples.FileStorage implementation provided by FileManagerService, the browser would display all the dynamically invokable attributes of the FileManagerStorage class:
+
+    \image servicebrowser-attributes.png
+
+    As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the QObject parent.)
+
+    To invoke the \c copyFile() slot, for example:
+
+    \code
+    QObject *interfaceImpl = QServiceManager::loadInterface("com.nokia.qt.examples.FileStorage", 0, 0);
+    QMetaObject::invokeMethod(interfaceImpl, "copyFile",
+                              Q_ARG(QString, "path/to/file.txt"),
+                              Q_ARG(QString, "new/path/to/file.txt"));
+    \endcode
+
+    Of course, the QServiceManager::loadInterface() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a QServiceInterfaceDescriptor object to QServiceManager::loadInterface() instead of just the interface name to ensure the correct implementation is loaded.
 */

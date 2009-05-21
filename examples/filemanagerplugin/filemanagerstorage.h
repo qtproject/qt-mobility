@@ -55,6 +55,9 @@ public:
     void setWorkingDirectory(const QString &path);
     QString workingDirectory() const;
 
+signals:
+    void workingDirectoryChanged(const QString &newDir);
+
 public slots:
     void copyFile(const QString &currentPath, const QString &newPath);
 

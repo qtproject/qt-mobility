@@ -198,6 +198,17 @@ above \i com.nokia.qt.TestService interface:
     }
 \endcode
 
+\section1 Upgrading services
+There are two ways in which to upgrade a service.  The first is an incremental approach whereby QServiceManager::addService() is used to register 
+an XML descriptor whose service name already exists but defines new interface implementations.  For example an already existing service, "ovi"
+may define version 1.0 of interface,"IDownload".  QServiceManager::addService() is then called with an XML descriptor that declares itself
+as belonging the "ovi" service, but implements version 1.1 of the interface "IDownload".  Both implementation versions will be
+available for use.
+
+The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.
+As an example the already existing "ovi" service may implement interface "IDownload" version 1.0, the new "ovi" service may 
+implement "IDownload" version 1.0 and version 1.1.  In this case the old service implementation must be first be removed using
+QServiceManager::removeService() to make way for the new service implementation.
 
 \section1 Building and compiling
 

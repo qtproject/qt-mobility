@@ -52,6 +52,7 @@ FileManagerStorage::FileManagerStorage(QObject *parent)
 void FileManagerStorage::setWorkingDirectory(const QString &path)
 {
     directory = path;
+    emit workingDirectoryChanged(path);
 }
 
 QString FileManagerStorage::workingDirectory() const

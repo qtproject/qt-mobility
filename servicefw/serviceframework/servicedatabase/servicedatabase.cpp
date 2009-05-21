@@ -576,7 +576,7 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool 
     }
     QSqlDatabase database = QSqlDatabase::database();
     QSqlQuery query(database);
-    QString selectComponent("SELECT DISTINCT Service.Name ");
+    QString selectComponent("SELECT DISTINCT Service.Name COLLATE NOCASE ");
     QString fromComponent;
     QString whereComponent;
     QList<QVariant> bindValues;
@@ -633,7 +633,7 @@ ServiceInfo ServiceDatabase::getService(const QServiceInterfaceDescriptor &inter
     //Prepare search query, bind criteria values and execute search
     QSqlQuery query(database);
     QList<QVariant> bindValues;
-    QString selectComponent = "SELECT DISTINCT Service.Name, Service.FilePath, Service.Description ";
+    QString selectComponent = "SELECT DISTINCT Service.Name COLLATE NOCASE, Service.FilePath, Service.Description ";
     QString fromComponent = "FROM Interface, Service ";
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID "
                             " AND Service.Name = ? COLLATE NOCASE "

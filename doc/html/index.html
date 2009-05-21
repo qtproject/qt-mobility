@@ -26,6 +26,7 @@
 <li><a href="#installing-the-service-at-runtime">Installing the service at runtime</a></li>
 </ul>
 <li><a href="#identifying-services">Identifying services</a></li>
+<li><a href="#upgrading-services">Upgrading services</a></li>
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
@@ -127,6 +128,10 @@
             QObject* obj = mgr.loadInterface(list[i]);
             if (obj) obj.setParent(this); <span class="comment">//returned object owned by client</span>
         }</pre>
+<a name="upgrading-services"></a>
+<h2>Upgrading services</h2>
+<p>There are two ways in which to upgrade a service. The first is an incremental approach whereby <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is used to register an XML descriptor whose service name already exists but defines new interface implementations. For example an already existing service, &quot;ovi&quot; may define version 1.0 of interface,&quot;IDownload&quot;. <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is then called with an XML descriptor that declares itself as belonging the &quot;ovi&quot; service, but implements version 1.1 of the interface &quot;IDownload&quot;. Both implementation versions will be available for use.</p>
+<p>The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service. As an example the already existing &quot;ovi&quot; service may implement interface &quot;IDownload&quot; version 1.0, the new &quot;ovi&quot; service may implement &quot;IDownload&quot; version 1.0 and version 1.1&#x2e; In this case the old service implementation must be first be removed using <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>() to make way for the new service implementation.</p>
 <a name="building-and-compiling"></a>
 <h2>Building and compiling</h2>
 <p>This library requires Qt 4.5 to be installed.</p>
