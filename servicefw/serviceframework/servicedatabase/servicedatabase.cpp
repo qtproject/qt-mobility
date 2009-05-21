@@ -965,10 +965,10 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         return false;
     }
 
-    statement = "SELECT DISTINCT Interface.Name COLLATE NOCASE "
-                "FROM Interface, Service, Defaults "
-                "WHERE Interface.ServiceID = Service.ID "
-                    "AND Interface.ID = Defaults.InterfaceID "
+    statement = "SELECT Defaults.InterfaceName "
+                "FROM Defaults, Interface, Service "
+                "WHERE Defaults.InterfaceID = Interface.ID "
+                    "AND Interface.ServiceID = Service.ID "
                     "AND Service.Name = ? COLLATE NOCASE";
     bindValues.clear();
     bindValues.append(serviceName);
@@ -1020,7 +1020,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 
         if(query.next()) {
             int newDefaultID = query.value(EBindIndex).toInt();
-            statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE";
+            statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(newDefaultID);
             bindValues.append(interfaceName);
@@ -1031,7 +1031,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
                 return false;
             }
         } else {
-            statement = "DELETE FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE";
+            statement = "DELETE FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(interfaceName);
             if (!executeQuery(&query, statement, bindValues)) {
