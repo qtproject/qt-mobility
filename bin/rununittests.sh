@@ -10,7 +10,7 @@ cd $shell_path/../build/tests/Debug/bin
 LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 
 ./tst_qserviceinterfacedescriptor
-./tst_servicedatabasetest
+./tst_servicedatabase
 ./tst_servicemetadata
 ./tst_qservicefilter
 ./tst_qservicemanager
