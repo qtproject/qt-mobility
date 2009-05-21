@@ -519,7 +519,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
     services = database.getServiceNames("com.dharma.electro.discharge", &ok);
     QVERIFY(ok);
     QCOMPARE(services.count(), 1);
-    QVERIFY(services.contains("DharmaInitiative"));
+    QVERIFY(services.contains("DharmaInitiative", Qt::CaseInsensitive));
 
     //try with a non-existing interface
     services = database.getServiceNames("com.omni.device.FluxCapacitor", &ok);
@@ -637,13 +637,13 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     QString interfaceDescription)
 {
 
-    if(interface.interfaceName() != interfaceName) {
+    if(interface.interfaceName().compare(interfaceName, Qt::CaseInsensitive) !=0) {
         qWarning() << "Interface name mismatch: expected =" << interfaceName
                     << " actual =" << interface.interfaceName();
         return false;
     }
 
-    if (interface.serviceName() != serviceName) {
+    if (interface.serviceName().compare(serviceName, Qt::CaseInsensitive) != 0) {
         qWarning() << "Service name mismatch: expected =" << serviceName
                     << " actual =" << interface.serviceName();
         return false;
@@ -989,6 +989,13 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
+    //restore interface back to it's original default
+    //( not a test, only for convenience)
+    interface.d->serviceName = "Cyberdyne";
+    interface.d->interfaceName = "com.cyberdyne.terminator";
+    interface.d->major = 2;
+    interface.d->minor = 1;
+    QVERIFY(database.setDefaultService(interface));
     QCOMPARE(database.close(), 0);
 }
 
@@ -1076,6 +1083,7 @@ void ServiceDatabaseUnitTest::unregister()
         if(interface.serviceName() == "OMNI")
             serviceFound = true;
     }
+    QVERIFY(!serviceFound);
 
     //ensure a new default interface has been assigned for the following interface
     interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
@@ -1088,7 +1096,13 @@ void ServiceDatabaseUnitTest::unregister()
     interface = database.defaultServiceInterface("com.omni.service.Video");
     QVERIFY(!interface.isValid());
 
-    QVERIFY(!serviceFound);
+    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    QVERIFY(interface.isValid());
+    QVERIFY(database.unregisterService("cyberDYNE"));
+    interface = database.defaultServiceInterface("com.cyberdyne.terminatOR");
+    QVERIFY(interface.isValid());
+    QVERIFY(compareDescriptor(interface, "com.cyberdyne.terminator",
+                                "skynet", 3, 6));
 }
 
 bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,

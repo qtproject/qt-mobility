@@ -97,7 +97,7 @@
 <h3 class="fn"><a name="removeService"></a>bool QServiceManager::removeService ( const QString &amp; <i>serviceName</i> )</h3>
 <p>Unregisters the service specified by <i>serviceName</i>.</p>
 <p>Returns true if the unregistration succeeded, and false otherwise.</p>
-<p>If a default service implementation is removed and there are other implementations for the same interface the service manager makes a random choice with regards to the new default implementation. If this is not the desired behaviour the default selection should be updated via <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
+<p>If a default service implementation is removed and there are other implementations for the same interface, the service manager chooses the implementation with the highest version number as the new default. If there is more than one serivce with the same version number, the service manager makes a random choice with regards to the new default implementation. If this is not the desired behaviour the default selection should be updated via <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
 <h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emited whenever a new service with the given <i>serviceName</i> has been registered with the service manager.</p>
 <p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
