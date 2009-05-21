@@ -173,7 +173,11 @@ int ServiceDatabase::open()
             //This operation is required in order to avoid data coruption
             if (!checkTables()) {
                 if(dropTables() == 0) {
-                    result = createTables();
+                    if (createTables())
+                        result = SFW_ERROR_DB_RECREATED;
+                    else
+                        result = SFW_ERROR_CANNOT_CREATE_TABLES;
+
                 }
                 else {
                     result = ServiceDatabase::SFW_ERROR_CANNOT_DROP_TABLES;
@@ -965,10 +969,10 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         return false;
     }
 
-    statement = "SELECT DISTINCT Interface.Name COLLATE NOCASE "
-                "FROM Interface, Service, Defaults "
-                "WHERE Interface.ServiceID = Service.ID "
-                    "AND Interface.ID = Defaults.InterfaceID "
+    statement = "SELECT Defaults.InterfaceName "
+                "FROM Defaults, Interface, Service "
+                "WHERE Defaults.InterfaceID = Interface.ID "
+                    "AND Interface.ServiceID = Service.ID "
                     "AND Service.Name = ? COLLATE NOCASE";
     bindValues.clear();
     bindValues.append(serviceName);
@@ -1020,7 +1024,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 
         if(query.next()) {
             int newDefaultID = query.value(EBindIndex).toInt();
-            statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE";
+            statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(newDefaultID);
             bindValues.append(interfaceName);
@@ -1031,7 +1035,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
                 return false;
             }
         } else {
-            statement = "DELETE FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE";
+            statement = "DELETE FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(interfaceName);
             if (!executeQuery(&query, statement, bindValues)) {
@@ -1104,68 +1108,62 @@ QString ServiceDatabase::databasePath() const
 }
 
 /*!
-    Creates the database tables: Service, Module, Interface
-    @return 0 if operation is successful, error code otherwise
+    Creates the database tables: Service, Interface, Defaults, Properties
+    Sets the last error when error condition occurs.
 */
-int ServiceDatabase::createTables()
+bool ServiceDatabase::createTables()
 {
-    int result(0);
-    //Execute transaction for creating database tables
-    bool isActive(false);
     QSqlDatabase database = QSqlDatabase::database();
-    isActive = database.transaction();
-
     QSqlQuery query(database);
-    if(!executeQuery(query,"CREATE TABLE Service("
-                "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                "Name TEXT NOT NULL, "
-                "FilePath TEXT NOT NULL, "
-                "Description TEXT)")) {
-        result = query.lastError().number();
-        query.finish();
-        query.clear();
-        if (isActive) {
-            database.rollback();
-        }
-        return result;
+
+    //Begin Transaction
+    if (!database.transaction()) {
+        m_lastError.setError(DBError::SqlError, database.lastError().text());
+        qWarning() << "ServiceDatabase::createTables():-"
+                    << "Unable to begin transaction"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+        return false;
     }
 
-    if(!executeQuery(query,"CREATE TABLE Interface("
+    QString statement("CREATE TABLE Service("
+                        "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                        "Name TEXT NOT NULL, "
+                        "FilePath TEXT NOT NULL, "
+                        "Description TEXT)");
+    if (!executeQuery(&query, statement)) {
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase::createTables():-"
+                    << qPrintable(m_lastError.text());
+        return false;
+    }
+
+    statement = "CREATE TABLE Interface("
                 "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
                 "ServiceID INTEGER NOT NULL, "
                 "Name TEXT NOT NULL, "
                 "Description TEXT, "
                 "VerMaj INTEGER NOT NULL, "
                 "VerMin INTEGER NOT NULL, "
-                "Capabilities TEXT)")) {
-        result = query.lastError().number();
-        query.finish();
-        query.clear();
-        if (isActive) {
-            database.rollback();
-        }
-        return result;
+                "Capabilities TEXT)";
+    if (!executeQuery(&query, statement)) {
+        databaseRollback(&query, &database);
+        qWarning() << "ServiceDatabase::createTables():-"
+                    << qPrintable(m_lastError.text());
+        return false;
     }
 
-    if(!executeQuery(query,"CREATE TABLE Defaults("
+    statement = "CREATE TABLE Defaults("
                 "InterfaceName TEXT PRIMARY KEY UNIQUE,"
-                "InterfaceID TEXT)")) {
-        result = query.lastError().number();
-        query.finish();
-        query.clear();
-        if (isActive) {
-            database.rollback();
-        }
-        return result;
+                "InterfaceID TEXT)";
+    if (!executeQuery(&query, statement)) {
+        qWarning() << "ServiceDatabase::createTables():-"
+                    << qPrintable(m_lastError.text());
+        return false;
     }
 
-    query.finish();
-    query.clear();
-    if (isActive) {
-        database.commit();
-    }
-
-    return ServiceDatabase::SFW_ERROR_DB_RECREATED;
+    //End Transaction
+    databaseCommit(&query, &database);
+    return true;
 }
 
 /*!
@@ -1219,7 +1217,7 @@ int ServiceDatabase::dropTables()
         }
 
         if ((result == 0) && (tables.contains(DEFAULTS_TABLE)) 
-            && (!executeQuery(query,"DROP TABLE Interface"))) {
+            && (!executeQuery(query,"DROP TABLE Defaults"))) {
                 result = query.lastError().number();
                 query.finish();
                 query.clear();
