@@ -153,9 +153,9 @@
 
     \code
     QObject *interfaceImpl = QServiceManager::loadInterface("com.nokia.qt.examples.FileStorage", 0, 0);
-    QMetaObject::invoke(interfaceImpl, "copyFile",
-                        Q_ARG(QString, "path/to/file.txt"),
-                        Q_ARG(QString, "new/path/to/file.txt"));
+    QMetaObject::invokeMethod(interfaceImpl, "copyFile",
+                              Q_ARG(QString, "path/to/file.txt"),
+                              Q_ARG(QString, "new/path/to/file.txt"));
     \endcode
 
     Of course, the QServiceManager::loadInterface() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a QServiceInterfaceDescriptor object to QServiceManager::loadInterface() instead of just the interface name to ensure the correct implementation is loaded.
