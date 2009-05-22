@@ -24,6 +24,7 @@ SOURCE_DIR = $$PWD
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
 } else {
+    QT *= testlib
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
     DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc

@@ -145,7 +145,7 @@ Q_SIGNALS:
     void serviceRemoved(const QString& serviceName);
 
 private:
-    int createTables();
+    bool createTables();
     int dropTables();
     bool checkTables();
 

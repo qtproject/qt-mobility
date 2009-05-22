@@ -989,13 +989,6 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
-    //restore interface back to it's original default
-    //( not a test, only for convenience)
-    interface.d->serviceName = "Cyberdyne";
-    interface.d->interfaceName = "com.cyberdyne.terminator";
-    interface.d->major = 2;
-    interface.d->minor = 1;
-    QVERIFY(database.setDefaultService(interface));
     QCOMPARE(database.close(), 0);
 }
 
@@ -1092,9 +1085,19 @@ void ServiceDatabaseUnitTest::unregister()
     QCOMPARE(interface.majorVersion(), 2);
     QCOMPARE(interface.minorVersion(), 0);
 
-    //ensure that there is no longer a default for the following interface
+    //ensure there is no longer a default for the following interface
     interface = database.defaultServiceInterface("com.omni.service.Video");
     QVERIFY(!interface.isValid());
+
+    //  == unregister an service that implements a default interface
+    //     but whose default interface name differs in case
+    //     from the other implementations it provides ==
+    interface.d = new QServiceInterfaceDescriptorPrivate;
+    interface.d->serviceName = "Cyberdyne";
+    interface.d->interfaceName = "com.cyberdyne.terminator";
+    interface.d->major = 2;
+    interface.d->minor = 0;
+    QVERIFY(database.setDefaultService(interface));
 
     interface = database.defaultServiceInterface("com.cyberdyne.terminator");
     QVERIFY(interface.isValid());
@@ -1103,6 +1106,42 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(interface.isValid());
     QVERIFY(compareDescriptor(interface, "com.cyberdyne.terminator",
                                 "skynet", 3, 6));
+
+    // == unregister a service that is made up of multiple plugins ==
+    QVERIFY(database.unregisterService("DHARMAInitiative"));
+    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    QVERIFY(!interface.isValid());
+    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 0);
+
+    //  == check that the service can be registered again
+    //     after it has been unregistered ==
+    QDir testdir = QDir(TESTDATA_DIR "/testdata" );
+    ServiceMetaData parser(testdir.absoluteFilePath("ServiceDharma_Flame.xml"));
+    parser.extractMetadata();
+    QVERIFY(database.registerService(parser));
+    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    QVERIFY(interface.isValid());
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 3);
+
+    parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
+    QVERIFY(parser.extractMetadata());
+    QVERIFY(database.registerService(parser));
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 4);
+    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    QVERIFY(interface.isValid());
+    QStringList capabilities;
+    QVERIFY(compareDescriptor(interface, "com.dharma.electro.discharge",
+                    "DharmaInitiative", 16, 0, capabilities, "C:/island/flame.dll"));
 }
 
 bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,

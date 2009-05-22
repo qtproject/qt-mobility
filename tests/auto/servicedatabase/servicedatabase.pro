@@ -1,7 +1,5 @@
-QT -= gui
-QT+=testlib 
-TEMPLATE = app
-TARGET = tst_servicedatabasetest
+TARGET=tst_servicedatabase
+QT = core sql
 INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
                ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework/servicedatabase \
@@ -10,14 +8,12 @@ INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
 DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 CONFIG+=testcase
 
-QT += sql
-
 include(../../../common.pri)
 
 # Input 
 SOURCES += tst_servicedatabasetest.cpp
 
-LIBS += -L$$DESTDIR -lQtServiceFramework
+LIBS += -lQtServiceFramework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -91,25 +91,25 @@
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Element</th><th>Attribute</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>description</td><td></td><td>A user readable description of the purpose of the interface or service.</td></tr>
-<tr valign="top" class="even"><td>interface</td><td></td><td>This tag contains the properties of the interface.</td></tr>
+<tr valign="top" class="even"><td>interface</td><td></td><td>This tag describes the properties of the interface.</td></tr>
 <tr valign="top" class="odd"><td>&quot;</td><td>capabilities</td><td>This attribute is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</td></tr>
 <tr valign="top" class="odd"><td>&quot;</td><td>version</td><td>This attribute contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.</td></tr>
 <tr valign="top" class="even"><td>service</td><td></td><td>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>filepath</td><td>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in.</td></tr>
+<tr valign="top" class="odd"><td>&quot;</td><td>filepath</td><td>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. QLibrary is used to determine the platform specific parts of the plugin.</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the service.</td></tr>
 </table></p>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
 <pre>        &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        &lt;service name=&quot;com.nokia.qt.TestService&quot;  filepath=&quot;C:/TestData/testservice.dll&quot; &gt;
+        &lt;service name=&quot;TestService&quot;  filepath=&quot;testserviceplugin&quot; &gt;
           &lt;description&gt;Test service description&lt;/description&gt;
-          &lt;interface name=&quot;ILocation&quot; version=&quot;1.4&quot; capabilities=&quot;&quot;&gt;
+          &lt;interface name=&quot;com.nokia.qt.ILocation&quot; version=&quot;1.4&quot; capabilities=&quot;&quot;&gt;
             &lt;description&gt;Interface that provides location support&lt;/description&gt;
           &lt;/interface&gt;
-          &lt;interface name=&quot;ILocation&quot; version=&quot;1.5&quot; capabilities=&quot;&quot;&gt;
+          &lt;interface name=&quot;com.nokia.qt.ILocation&quot; version=&quot;1.5&quot; capabilities=&quot;&quot;&gt;
             &lt;description&gt;Interface that provides location support&lt;/description&gt;
           &lt;/interface&gt;
-          &lt;interface name=&quot;ISysInfo&quot; capabilities=&quot;ReadUserData&quot; version=&quot;2.3&quot;&gt;
+          &lt;interface name=&quot;com.nokia.qt.ISysInfo&quot; capabilities=&quot;ReadUserData&quot; version=&quot;2.3&quot;&gt;
             &lt;description&gt;Interface that provides system information support&lt;/description&gt;
           &lt;/interface&gt;
         &lt;/service&gt;</pre>

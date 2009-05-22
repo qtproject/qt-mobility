@@ -1,4 +1,3 @@
-TEMPLATE = app
 TARGET = tst_qservicemanager
 INCLUDEPATH += ../../../servicefw/serviceframework/servicehandler \
                ../../../servicefw/serviceframework/serviceresolution \
@@ -6,8 +5,7 @@ INCLUDEPATH += ../../../servicefw/serviceframework/servicehandler \
 
 CONFIG+=testcase
 
-QT -= gui
-QT+=testlib
+QT = core
 
 include(../../../common.pri)
 
