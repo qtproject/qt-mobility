@@ -43,9 +43,9 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
-#include <servicedatabase.h>
 #include <qservicefilter.h>
+#include "servicemetadata_p.h"
+#include <servicedatabase.h>
 
 #define RESOLVERDATABASE "services.db"
    
@@ -98,9 +98,6 @@ private:
 
 void ServiceDatabaseUnitTest::initTestCase()
 {
-    /*#ifdef __SYMBIAN32__
-    database.setDatabasePath(QString("C:\\Data\\"));
-    #endif*/
     dir = database.databasePath();
     QCOMPARE(database.open(), (int)ServiceDatabase::SFW_ERROR_DB_RECREATED);
     database.close();
