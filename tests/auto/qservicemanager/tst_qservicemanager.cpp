@@ -183,6 +183,7 @@ private slots:
     void addService();
     void addService_data();
 
+    void addService_testInvalidService();
     void addService_testInstallService();
 
     void removeService();
@@ -792,6 +793,28 @@ void tst_QServiceManager::addService_data()
 
     QTest::newRow("string") << "QString";
     QTest::newRow("iodevice") << "QIODevice";
+}
+
+void tst_QServiceManager::addService_testInvalidService()
+{
+    QBuffer buffer;
+    QServiceManager mgr;
+
+    QVERIFY(!mgr.addService(&buffer));
+
+    // a service with no interfaces
+    QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
+    xml += "<service name=\"SomeService\" filepath=\"no_path\">\n";
+    xml += "%1";
+    xml += "</service>\n";
+    buffer.close();
+    buffer.setData(xml.arg("").toLatin1());
+    QVERIFY(!mgr.addService(&buffer));
+
+    // if we add an interface it works
+    buffer.close();
+    buffer.setData(xml.arg("<interface name=\"com.qt.interface\" version=\"1.0\"></interface>").toLatin1());
+    QVERIFY(mgr.addService(&buffer));
 }
 
 void tst_QServiceManager::addService_testInstallService()
