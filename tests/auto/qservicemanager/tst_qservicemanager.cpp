@@ -48,12 +48,29 @@
 
 typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
 Q_DECLARE_METATYPE(QServiceFilter)
+Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 Q_DECLARE_METATYPE(ServiceInterfaceDescriptorList)
+
+Q_DECLARE_METATYPE(QSet<QString>)
+Q_DECLARE_METATYPE(QList<QByteArray>)
+
+typedef QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
 
 uint qHash(const QServiceInterfaceDescriptor &desc)
 {
     return qHash(desc.serviceName()) + qHash(desc.interfaceName()) + desc.majorVersion() * 7 + desc.minorVersion() * 7;
 }
+
+static DescriptorProperties defaultDescriptorProperties()
+{
+    DescriptorProperties props;
+    props[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    props[QServiceInterfaceDescriptor::FilePath] = "";
+    props[QServiceInterfaceDescriptor::ServiceDescription] = "";
+    props[QServiceInterfaceDescriptor::InterfaceDescription] = "";
+    return props;
+}
+static const DescriptorProperties DEFAULT_DESCRIPTOR_PROPERTIES = defaultDescriptorProperties();
 
 
 class MySecuritySession : public QAbstractSecuritySession
@@ -85,50 +102,58 @@ private:
         return QCoreApplication::applicationDirPath() + "/xmldata/" + xmlFileName;
     }
 
-    QServiceInterfaceDescriptor validDescriptor( const QString& pluginPath ) const
+    QByteArray createServiceXml(const QString &serviceName, const QByteArray &interfaceXml, const QString &path, const QString &description = QString()) const
     {
-        QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
-        priv->properties[QServiceInterfaceDescriptor::FilePath] = pluginPath;
-        priv->interfaceName = "com.nokia.qt.TestInterfaceA";
-        QServiceInterfaceDescriptor descriptor;
-        QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
-        return descriptor;
+        QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
+        xml += "<service name=\"" + serviceName + "\" filepath=\"" + path + "\">\n";
+        xml += "<description>" + description + "</description>\n";
+        xml += interfaceXml;
+        xml += "</service>\n";
+        return xml.toLatin1();
     }
 
-    QByteArray sampleServiceXml() const
+    QByteArray createServiceXml(const QString &serviceName, const QList<QServiceInterfaceDescriptor> &descriptors) const
     {
-        QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-        xml += "<service name=\"SampleService\" filepath=\"tst_sfw_sampleserviceplugin\" >";
-        xml += "<description>tst_QServiceManager test service</description>";
-        xml += "<interface name=\"com.nokia.qt.TestInterfaceA\" version=\"1.0\">";
-        xml += "  <description>tst_QServiceManager test interface A 1.0</description>";
-        xml += "</interface>";
-        xml += "<interface name=\"com.nokia.qt.TestInterfaceB\" version=\"1.0\">";
-        xml += "    <description>tst_QServiceManager test interface B 1.0</description>";
-        xml += "</interface>";
-        xml += "<interface name=\"com.nokia.qt.TestInterfaceB\" version=\"2.0\">";
-        xml += "    <description>tst_QServiceManager test interface B 2.0</description>";
-        xml += "</interface>";
-        xml += "<interface name=\"com.nokia.qt.TestInterfaceB\" version=\"2.3\">";
-        xml += "    <description>tst_QServiceManager test interface B 2.3</description>";
-        xml += "</interface>";
-        xml += "</service>";
-        return QByteArray(xml.toLatin1());
+        Q_ASSERT(descriptors.count() > 0);
+        return createServiceXml(serviceName, createInterfaceXml(descriptors),
+                descriptors[0].property(QServiceInterfaceDescriptor::FilePath).toString(),
+                descriptors[0].property(QServiceInterfaceDescriptor::ServiceDescription).toString());
     }
 
-    QServiceInterfaceDescriptor sampleXmlInterface(const QString &s, int major, int minor) const
+    QByteArray createInterfaceXml(const QList<QServiceInterfaceDescriptor> &descriptors) const
+    {
+        QByteArray interfacesXml;
+        foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
+            QString version = QString("%1.%2").arg(desc.majorVersion()).arg(desc.minorVersion());
+            interfacesXml += createInterfaceXml(desc.interfaceName(), version,
+                    desc.property(QServiceInterfaceDescriptor::InterfaceDescription).toString());
+        }
+        return interfacesXml;
+    }
+
+    QByteArray createInterfaceXml(const QString &name, const QString &version = "1.0", const QString &description = QString()) const
+    {
+        QString xml = "<interface name=\"" + name + "\" version=\"" + version + "\">\n";
+        xml += "    <description>" + description + "</description>\n";
+        xml += "</interface>\n";
+        return xml.toLatin1();
+    }
+
+    QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties()) const
     {
         QString version = QString("%1.%2").arg(major).arg(minor);
 
         QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
-        priv->serviceName = "SampleService";
-        priv->interfaceName = "com.nokia.qt.TestInterface" + s;
+        priv->serviceName = serviceName;
+        priv->interfaceName = interfaceName;
         priv->major = major;
         priv->minor = minor;
-        priv->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
-        priv->properties[QServiceInterfaceDescriptor::FilePath] = "tst_sfw_sampleserviceplugin";
-        priv->properties[QServiceInterfaceDescriptor::ServiceDescription] = "tst_QServiceManager test service";
-        priv->properties[QServiceInterfaceDescriptor::InterfaceDescription] = "tst_QServiceManager test interface " + s + " " + version;
+
+        priv->properties = properties;
+        foreach (QServiceInterfaceDescriptor::PropertyKey key, DEFAULT_DESCRIPTOR_PROPERTIES.keys()) {
+            if (!priv->properties.contains(key))
+                priv->properties[key] = DEFAULT_DESCRIPTOR_PROPERTIES[key];
+        }
 
         QServiceInterfaceDescriptor desc;
         QServiceInterfaceDescriptorPrivate::setPrivate(&desc, priv);
@@ -141,6 +166,7 @@ private slots:
     void init();
 
     void findServices();
+    void findServices_data();
 
     void findInterfaces_filter();
     void findInterfaces_filter_data();
@@ -154,8 +180,11 @@ private slots:
 
     void getInterface();
 
-    void addService_iodevice();
-    void addService_qstring();
+    void addService();
+    void addService_data();
+
+    void addService_testInvalidService();
+    void addService_testInstallService();
 
     void removeService();
 
@@ -196,248 +225,335 @@ void tst_QServiceManager::cleanupTestCase()
 
 void tst_QServiceManager::findServices()
 {
+    QFETCH(QList<QByteArray>, xmlBlocks);
+    QFETCH(QStringList, interfaceNames);
+    QFETCH(QSet<QString>, searchByInterfaceResult);
+    QFETCH(QSet<QString>, searchAllResult);
+
     QServiceManager mgr;
     QServiceFilter wildcardFilter;
 
     QVERIFY(mgr.findServices().isEmpty());
-    QVERIFY(mgr.findServices("com.nokia.qt.TestInterfaceA").isEmpty());
-    QVERIFY(mgr.findInterfaces(wildcardFilter).count() == 0);
+    foreach (const QString &interface, interfaceNames)
+        QVERIFY(mgr.findServices(interface).isEmpty());
+    QCOMPARE(mgr.findInterfaces(wildcardFilter).count(), 0);
 
-    QByteArray bytes = sampleServiceXml();
-    QBuffer buffer(&bytes);
-    QVERIFY(mgr.addService(&buffer));
+    foreach (const QByteArray &xml, xmlBlocks) {
+        QBuffer buffer;
+        buffer.setData(xml);
+        QVERIFY(mgr.addService(&buffer));
+    }
 
-    QCOMPARE(mgr.findServices(), QStringList("SampleService"));
-    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
+    QCOMPARE(mgr.findServices().toSet(), searchAllResult);
+    foreach (const QString &interface, interfaceNames)
+        QCOMPARE(mgr.findServices(interface).toSet(), searchByInterfaceResult);
+
     QCOMPARE(mgr.findServices("com.invalid.interface") , QStringList());
 }
 
-void tst_QServiceManager::findInterfaces_filter_data()
+void tst_QServiceManager::findServices_data()
 {
-    QTest::addColumn<QServiceFilter>("filter");
-    QTest::addColumn<ServiceInterfaceDescriptorList>("expectedInterfaces");
+    QTest::addColumn< QList<QByteArray> >("xmlBlocks");
+    QTest::addColumn<QStringList>("interfaceNames");
+    QTest::addColumn< QSet<QString> >("searchByInterfaceResult");
+    QTest::addColumn< QSet<QString> >("searchAllResult");
 
-    QServiceFilter filter;
+    QStringList interfaces;
+    interfaces << "com.nokia.qt.TestInterfaceA";
+    interfaces << "com.nokia.qt.TestInterfaceB";
+    QByteArray interfacesXml;
+    for (int i=0; i<interfaces.count(); i++)
+        interfacesXml += "\n" + createInterfaceXml(interfaces[i]);
 
-    QTest::newRow("empty/wildcard filter") << QServiceFilter() 
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
+    QTest::newRow("one service")
+            << (QList<QByteArray>() << createServiceXml("SomeTestService", interfacesXml, "file_path"))
+            << interfaces
+            << (QSet<QString>() << "SomeTestService")
+            << (QSet<QString>() << "SomeTestService");
 
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceA");
-    QTest::newRow("by interface name (A)") << filter
-            << (ServiceInterfaceDescriptorList() << sampleXmlInterface("A",1,0));
+    QTest::newRow("multiple services with same interfaces")
+            << (QList<QByteArray>() << createServiceXml("SomeTestService", interfacesXml, "pathA")
+                                    << createServiceXml("SomeSimilarTestService", interfacesXml, "pathB"))
+            << interfaces
+            << (QSet<QString>() << "SomeTestService" << "SomeSimilarTestService")
+            << (QSet<QString>() << "SomeTestService" << "SomeSimilarTestService");
 
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB");
-    QTest::newRow("by interface name (B)") << filter
-            << (ServiceInterfaceDescriptorList() << sampleXmlInterface("B",1,0)
-                                                 << sampleXmlInterface("B",2,0)
-                                                 << sampleXmlInterface("B",2,3) );
-
-    filter = QServiceFilter();
-    filter.setServiceName("SampleService");
-    QTest::newRow("by service name") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-    
-    filter = QServiceFilter();
-    filter.setInterface("com.invalid.interface");
-    QTest::newRow("by non-existing interface name") << filter << ServiceInterfaceDescriptorList();
-
-    filter = QServiceFilter();
-    filter.setServiceName("InvalidServiceName");
-    QTest::newRow("by non-existing service name") << filter << ServiceInterfaceDescriptorList();
-
-
-    //version lookup testing for existing interface
-    //valid from first version onwards
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0");
-    QTest::newRow("by version name 1.0 DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name 1.0 MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name 1.0 ExactMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0));
-
-    //valid with exact version match
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0");
-    QTest::newRow("by version name 2.0 DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name 2.0 MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-    
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name 2.0 ExactMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",2,0));
-
-    //valid but not exact version match
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9");
-    QTest::newRow("by version name 1.9 DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name 1.9 MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name 1.9 ExactMatch") << filter
-            << ServiceInterfaceDescriptorList();
-
-    //version doesn't exist yet
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9");
-    QTest::newRow("by version name 3.9 DefaultMatch") << filter
-            << ServiceInterfaceDescriptorList();
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name 3.9 MinimumMatch") << filter
-            << ServiceInterfaceDescriptorList();
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name 3.9 ExactMatch") << filter
-            << ServiceInterfaceDescriptorList();
-   
-    //invalid version tag 1 -> match anything
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9");
-    QTest::newRow("by version name x3.9 DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name x3.9 MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name x3.9 ExactMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    //envalid/empty version tag
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "");
-    QTest::newRow("by empty version string DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by empty version string MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "", QServiceFilter::ExactVersionMatch); //what's the result of this?
-    QTest::newRow("by empty version string ExactMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    //invalid version tag 2
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc");
-    QTest::newRow("by version name abc DefaultMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc", QServiceFilter::MinimumVersionMatch);
-    QTest::newRow("by version name abc MinimumMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
-
-    filter = QServiceFilter();
-    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc", QServiceFilter::ExactVersionMatch);
-    QTest::newRow("by version name abc ExactMatch") << filter
-            << (ServiceInterfaceDescriptorList()    << sampleXmlInterface("A",1,0)
-                                                    << sampleXmlInterface("B",1,0)
-                                                    << sampleXmlInterface("B",2,0)
-                                                    << sampleXmlInterface("B",2,3));
+    QStringList interfaces2;
+    interfaces2 << "com.nokia.qt.TestInterfaceY";
+    interfaces2 << "com.nokia.qt.TestInterfaceZ";
+    QByteArray interfacesXml2;
+    for (int i=0; i<interfaces2.count(); i++)
+        interfacesXml2 += "\n" + createInterfaceXml(interfaces2[i]);
+    QTest::newRow("multiple services with different interfaces")
+            << (QList<QByteArray>() << createServiceXml("SomeTestService", interfacesXml, "pathA")
+                                    << createServiceXml("TestServiceWithOtherInterfaces", interfacesXml2, "pathB"))
+            << interfaces2
+            << (QSet<QString>() << "TestServiceWithOtherInterfaces")
+            << (QSet<QString>() << "SomeTestService" << "TestServiceWithOtherInterfaces");
 }
-
 
 void tst_QServiceManager::findInterfaces_filter()
 {
+    QFETCH(QByteArray, xml);
     QFETCH(QServiceFilter, filter);
     QFETCH(QList<QServiceInterfaceDescriptor>, expectedInterfaces);
 
     QServiceManager mgr;
 
-    QByteArray bytes = sampleServiceXml();
-    QBuffer buffer(&bytes);
+    QBuffer buffer(&xml);
     QVERIFY(mgr.addService(&buffer));
 
     QList<QServiceInterfaceDescriptor> result = mgr.findInterfaces(filter);
     QCOMPARE(result.toSet(), expectedInterfaces.toSet());
 }
 
+void tst_QServiceManager::findInterfaces_filter_data()
+{
+    QTest::addColumn<QByteArray>("xml");
+    QTest::addColumn<QServiceFilter>("filter");
+    QTest::addColumn<ServiceInterfaceDescriptorList>("expectedInterfaces");
+
+    QString serviceName = "SomeTestService";
+    DescriptorProperties properties;
+    properties[QServiceInterfaceDescriptor::FilePath] = "no_library_path";
+
+    QList<QServiceInterfaceDescriptor> descriptors;
+    descriptors << createDescriptor("com.nokia.qt.TestInterfaceA", 1, 0, serviceName, properties);
+    descriptors << createDescriptor("com.nokia.qt.TestInterfaceB", 1, 0, serviceName, properties);
+    descriptors << createDescriptor("com.nokia.qt.TestInterfaceB", 2, 0, serviceName, properties);
+    descriptors << createDescriptor("com.nokia.qt.TestInterfaceB", 2, 3, serviceName, properties);
+
+    QByteArray serviceXml = createServiceXml(serviceName, descriptors);
+
+    QServiceFilter filter;
+
+    QTest::newRow("empty/wildcard filter")
+            << serviceXml
+            << QServiceFilter()
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceA");
+    QTest::newRow("by interface name (A)")
+            << serviceXml
+            << filter
+            << descriptors.mid(0, 1);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB");
+    QTest::newRow("by interface name (B)")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    filter = QServiceFilter();
+    filter.setServiceName(serviceName);
+    QTest::newRow("by service name, should find all")
+            << serviceXml
+            << filter
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.invalid.interface");
+    QTest::newRow("by non-existing interface name")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    filter = QServiceFilter();
+    filter.setServiceName("InvalidServiceName");
+    QTest::newRow("by non-existing service name")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    //version lookup testing for existing interface
+    //valid from first version onwards
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0");
+    QTest::newRow("by version name 1.0 DefaultMatch, should find all B interfaces")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name 1.0 MinimumMatch, should find all B interfaces")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.0", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name 1.0 ExactMatch, find B 1.0 only")
+            << serviceXml
+            << filter
+            << descriptors.mid(1, 1);
+
+    //valid with exact version match
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0");
+    QTest::newRow("by version name 2.0 DefaultMatch, find B 2.0+")
+            << serviceXml
+            << filter
+            << descriptors.mid(2);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name 2.0 MinimumMatch, find B 2.0+")
+            << serviceXml
+            << filter
+            << descriptors.mid(2);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "2.0", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name 2.0 ExactMatch, find B 2.0")
+            << serviceXml
+            << filter
+            << descriptors.mid(2, 1);
+
+    //valid but not exact version match
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9");
+    QTest::newRow("by version name 1.9 DefaultMatch, find B 1.9+")
+            << serviceXml
+            << filter
+            << descriptors.mid(2);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name 1.9 MinimumMatch, find B 1.9+")
+            << serviceXml
+            << filter
+            << descriptors.mid(2);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "1.9", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name 1.9 ExactMatch")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    //version doesn't exist yet
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9");
+    QTest::newRow("by version name 3.9 DefaultMatch")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name 3.9 MinimumMatch")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "3.9", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name 3.9 ExactMatch")
+            << serviceXml
+            << filter
+            << ServiceInterfaceDescriptorList();
+
+    //invalid version tag 1 -> match anything
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9");
+    QTest::newRow("by version name x3.9 DefaultMatch")
+            << serviceXml<< filter
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name x3.9 MinimumMatch")
+            << serviceXml
+            << filter
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "x3.9", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name x3.9 ExactMatch")
+            << serviceXml
+            << filter
+            << descriptors;
+
+    //envalid/empty version tag
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "");
+    QTest::newRow("by empty version string DefaultMatch")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by empty version string MinimumMatch")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "", QServiceFilter::ExactVersionMatch); //what's the result of this?
+    QTest::newRow("by empty version string ExactMatch")
+            << serviceXml
+            << filter
+            << descriptors.mid(1);
+
+    //invalid version tag 2
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc");
+    QTest::newRow("by version name abc DefaultMatch")
+            << serviceXml<< filter
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc", QServiceFilter::MinimumVersionMatch);
+    QTest::newRow("by version name abc MinimumMatch")
+            << serviceXml<< filter
+            << descriptors;
+
+    filter = QServiceFilter();
+    filter.setInterface("com.nokia.qt.TestInterfaceB", "abc", QServiceFilter::ExactVersionMatch);
+    QTest::newRow("by version name abc ExactMatch")
+            << serviceXml
+            << filter
+            << descriptors;
+}
+
 void tst_QServiceManager::loadInterface_string()
 {
+    // The sampleservice.xml and sampleservice2.xml services in
+    // tests/sampleserviceplugin and tests/sampleserviceplugin2 implement a
+    // common interface, "com.nokia.qt.TestInterfaceA". If both are
+    // registered, loadInterface(QString) should return the correct one
+    // depending on which is set as the default.
+
     QString serviceA = "SampleService";
-    QString serviceALib = "tst_sfw_sampleserviceplugin";
     QString serviceAClassName = "SampleServicePluginClass";
 
     QString serviceB = "SampleService2";
-    QString serviceBLib = "tst_sfw_sampleserviceplugin2";
     QString serviceBClassName = "SampleServicePluginClass2";
 
-    QString commonInterface = "com.nokia.qt.TestInterfaceA";
     QObject *obj = 0;
-
     QServiceManager mgr;
+    QString commonInterface = "com.nokia.qt.TestInterfaceA";
+
+    // add first service
     QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    obj = mgr.loadInterface(commonInterface, 0, 0);
+    QVERIFY(obj != 0);
+    QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
+
+    // add second service
     QVERIFY(mgr.addService(xmlTestDataPath("sampleservice2.xml")));
 
+    // if first service is set as default, it should be returned
     QVERIFY(mgr.setDefaultServiceForInterface(serviceA, commonInterface));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
 
+    // if second service is set as default, it should be returned
     QVERIFY(mgr.setDefaultServiceForInterface(serviceB, commonInterface));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
@@ -446,21 +562,17 @@ void tst_QServiceManager::loadInterface_string()
 
 void tst_QServiceManager::loadInterface_descriptor()
 {
-    QFETCH(QString, library);
-    QFETCH(QString, classname);
-
-    //ensure the plugin exists 
-    QLibrary lib(QCoreApplication::applicationDirPath() + '/' + library);
-    QCOMPARE(lib.load(), true);
+    QFETCH(QServiceInterfaceDescriptor, descriptor);
+    QFETCH(QString, className);
 
     QObject* obj;
     {
         QServiceManager mgr;
         MySecuritySession session;
         MyServiceContext context;
-        obj = mgr.loadInterface(validDescriptor(lib.fileName()), &context, &session);
+        obj = mgr.loadInterface(descriptor, &context, &session);
         QVERIFY(obj != 0);
-        QCOMPARE(classname, QString(obj->metaObject()->className()));
+        QCOMPARE(className, QString(obj->metaObject()->className()));
     }
 
     QVERIFY(obj != 0);
@@ -470,22 +582,46 @@ void tst_QServiceManager::loadInterface_descriptor()
 
 void tst_QServiceManager::loadInterface_descriptor_data()
 {
-    QTest::addColumn<QString>("library");
-    QTest::addColumn<QString>("classname");
+    QTest::addColumn<QServiceInterfaceDescriptor>("descriptor");
+    QTest::addColumn<QString>("className");
 
-    QTest::newRow("tst_sfw_sampleserviceplugin") << "tst_sfw_sampleserviceplugin" << "SampleServicePluginClass";
-    QTest::newRow("tst_sfw2_sampleserviceplugin") << "tst_sfw2_sampleserviceplugin" << "TestService";
+    QLibrary lib;
+    QServiceInterfaceDescriptor descriptor;
+    QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
+    priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
+
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_sampleserviceplugin");
+    QVERIFY(lib.load());
+    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
+    QTest::newRow("tst_sfw_sampleserviceplugin")
+            << descriptor
+            << "SampleServicePluginClass";
+
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw2_sampleserviceplugin");
+    QVERIFY(lib.load());
+    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
+    QTest::newRow("tst_sfw2_sampleserviceplugin")
+            << descriptor
+            << "TestService";
 }
 
 void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 {
     QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw2_sampleserviceplugin");
-    QCOMPARE(lib.load(), true);
+    QVERIFY(lib.load());
+
+    QServiceInterfaceDescriptor descriptor;
+    QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
+    priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
+    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     QServiceManager mgr;
     MySecuritySession session;
     MyServiceContext context;
-    QObject *obj = mgr.loadInterface(validDescriptor(lib.fileName()), &context, &session);
+    QObject *obj = mgr.loadInterface(descriptor, &context, &session);
     QVERIFY(obj != 0);
 
     bool invokeOk = false;
@@ -544,9 +680,15 @@ void tst_QServiceManager::getInterface()
     MySecuritySession session;
     MyServiceContext context;
 
+    QServiceInterfaceDescriptor descriptor;
+    QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
+    priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
+    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
+
     //use manual descriptor -> avoid database involvement
     SampleServicePluginClass *plugin = 0;
-    plugin = mgr.getInterface<SampleServicePluginClass>(validDescriptor(lib.fileName()), &context, &session);
+    plugin = mgr.getInterface<SampleServicePluginClass>(descriptor, &context, &session);
 
     QVERIFY(plugin != 0);
     QCOMPARE(plugin->context(), &context);
@@ -594,72 +736,110 @@ void tst_QServiceManager::getInterface()
     QVERIFY(!s);*/
 }
 
-void tst_QServiceManager::addService_iodevice()
-{
-    QByteArray bytes = sampleServiceXml();
-    QBuffer buffer(&bytes);
+#define TST_QSERVICEMANAGER_ADD_SERVICE(paramType, file) { \
+    if (paramType == "QString") \
+        QVERIFY(mgr.addService(file->fileName())); \
+    else if (paramType == "QIODevice") \
+        QVERIFY(mgr.addService(file)); \
+    else \
+        QFAIL("tst_QServiceManager::addService(): Bad test parameter"); \
+}
 
+void tst_QServiceManager::addService()
+{
+    QFETCH(QString, paramType);
+
+    QServiceManager mgr;
+
+    QString commonInterface = "com.qt.serviceframework.tests.CommonInterface";
+    QByteArray xmlA = createServiceXml("ServiceA", createInterfaceXml(commonInterface), "path_A");
+    QByteArray xmlB = createServiceXml("ServiceB", createInterfaceXml(commonInterface), "path_B");
+
+    QTemporaryFile *tempFileA = new QTemporaryFile(this);
+    tempFileA->open();
+    tempFileA->write(xmlA);
+    tempFileA->seek(0);
+    QTemporaryFile *tempFileB = new QTemporaryFile(this);
+    tempFileB->open();
+    tempFileB->write(xmlB);
+    tempFileB->seek(0);
+
+    TST_QSERVICEMANAGER_ADD_SERVICE(paramType, tempFileA);
+    QCOMPARE(mgr.findServices(), QStringList("ServiceA"));
+
+    // the service should be automatically set as the default for its
+    // implemented interfaces since it was the first service added for them
+    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+
+    // add second service
+    TST_QSERVICEMANAGER_ADD_SERVICE(paramType, tempFileB);
+    QStringList result = mgr.findServices();
+    QCOMPARE(result.count(), 2);
+    QVERIFY(result.contains("ServiceA"));
+    QVERIFY(result.contains("ServiceB"));
+
+    // the default does not change once ServiceB is added
+    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+
+    delete tempFileA;
+    delete tempFileB;
+}
+
+void tst_QServiceManager::addService_data()
+{
+    QTest::addColumn<QString>("paramType");
+
+    QTest::newRow("string") << "QString";
+    QTest::newRow("iodevice") << "QIODevice";
+}
+
+void tst_QServiceManager::addService_testInvalidService()
+{
+    QBuffer buffer;
+    QServiceManager mgr;
+
+    QVERIFY(!mgr.addService(&buffer));
+
+    // a service with no interfaces
+    QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
+    xml += "<service name=\"SomeService\" filepath=\"no_path\">\n";
+    xml += "%1";
+    xml += "</service>\n";
+    buffer.close();
+    buffer.setData(xml.arg("").toLatin1());
+    QVERIFY(!mgr.addService(&buffer));
+
+    // if we add an interface it works
+    buffer.close();
+    buffer.setData(xml.arg("<interface name=\"com.qt.interface\" version=\"1.0\"></interface>").toLatin1());
+    QVERIFY(mgr.addService(&buffer));
+}
+
+void tst_QServiceManager::addService_testInstallService()
+{
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     QCOMPARE(settings.value("installed").toBool(), false);
 
     QServiceManager mgr;
-    QVERIFY(mgr.addService(&buffer));
-
-    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
-    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceB"), QStringList("SampleService"));
-
-    // the service should be automatically set as the default for its
-    // implemented interfaces since it was the first service added for them
-    QCOMPARE(mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceA").serviceName(), QString("SampleService"));
-    QCOMPARE(mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceB").serviceName(), QString("SampleService"));
+    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    QCOMPARE(mgr.findServices(), QStringList("SampleService"));
 
     // test installService() was called on the plugin
     QCOMPARE(settings.value("installed").toBool(), true);
 }
 
-void tst_QServiceManager::addService_qstring()
-{
-    QServiceManager mgr;
-    QServiceFilter wildcardFilter;
-
-    QStringList allServices = mgr.findServices();
-    QVERIFY(allServices.count() == 0);
-    QList<QServiceInterfaceDescriptor> allDescriptors = mgr.findInterfaces(wildcardFilter);
-    QVERIFY(allDescriptors.count() == 0);
-
-    QFile file1(xmlTestDataPath("sampleservice.xml"));
-    QVERIFY(file1.exists());
-    QFile file2(xmlTestDataPath("testserviceplugin.xml"));
-    QVERIFY(file2.exists());
-
-    QVERIFY(mgr.addService(file1.fileName()));
-    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
-    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceB"), QStringList("SampleService"));
-
-    QVERIFY(mgr.addService(file2.fileName()));
-    QCOMPARE(mgr.findServices("com.nokia.qt.ISimpleTypeTest"), QStringList("TestService"));
-    QCOMPARE(mgr.findServices("com.nokia.qt.IComplexTypeTest"), QStringList("TestService"));
-
-    allServices = mgr.findServices();
-    QVERIFY(allServices.count() == 2);
-    QVERIFY(allServices.contains("SampleService"));
-    QVERIFY(allServices.contains("TestService"));
-
-    allDescriptors = mgr.findInterfaces(wildcardFilter);
-    QVERIFY(allDescriptors.count()==4);
-}
-
 void tst_QServiceManager::removeService()
 {
-    QByteArray bytes = sampleServiceXml();
-    QBuffer buffer(&bytes);
-
     QServiceManager mgr;
+
+    QVERIFY(!mgr.removeService("NonExistentService"));
 
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     QCOMPARE(settings.value("installed").toBool(), false);
 
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(settings.value("installed").toBool(), true);
 
@@ -668,8 +848,7 @@ void tst_QServiceManager::removeService()
     QCOMPARE(settings.value("installed").toBool(), false);
 
     // add it again, should still work
-    buffer.seek(0);
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(settings.value("installed").toBool(), true);
 }
@@ -677,45 +856,55 @@ void tst_QServiceManager::removeService()
 void tst_QServiceManager::setDefaultServiceForInterface_strings()
 {
     QServiceManager mgr;
-    QServiceInterfaceDescriptor desc;
+    QString interfaceName = "com.nokia.qt.serviceframework.tests.AnInterface";
+    DescriptorProperties properties;
+    QServiceInterfaceDescriptor descriptor;
+    QByteArray xml;
 
-    QByteArray xml = sampleServiceXml();
-    QTemporaryFile *file = new QTemporaryFile(this);
-    QVERIFY(file->open());
-    QVERIFY(file->write(xml) > 0);
-    QVERIFY(file->seek(0));
+    properties[QServiceInterfaceDescriptor::FilePath] = "file_path_A";
+    descriptor = createDescriptor(interfaceName, 1, 0, "ServiceA", properties);
+    xml = createServiceXml("ServiceA",
+            createInterfaceXml(QList<QServiceInterfaceDescriptor>() << descriptor),
+            "file_path_A");
+    QBuffer buffer(&xml);
 
     // fails if the specified interface hasn't been registered
-    QCOMPARE(mgr.setDefaultServiceForInterface("SampleService", "com.nokia.qt.TestInterfaceA"), false);
+    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), false);
 
     // now it works
-    QVERIFY(mgr.addService(file));
-    QCOMPARE(mgr.setDefaultServiceForInterface("SampleService", "com.nokia.qt.TestInterfaceA"), true);
-
-    desc = mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceA");
-    QCOMPARE(desc.serviceName(), QString("SampleService"));
-    QCOMPARE(desc.majorVersion(), 1);
-    QCOMPARE(desc.minorVersion(), 0);
+    QVERIFY(mgr.addService(&buffer));
+    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), true);
+    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
 
     // replace the default with another service
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice2.xml")));
-    QCOMPARE(mgr.setDefaultServiceForInterface("SampleService2", "com.nokia.qt.TestInterfaceA"), true);
+    properties[QServiceInterfaceDescriptor::FilePath] = "file_path_B";
+    descriptor = createDescriptor(interfaceName, 1, 0, "ServiceB", properties);
+    xml = createServiceXml("ServiceB",
+            createInterfaceXml(QList<QServiceInterfaceDescriptor>() << descriptor),
+            "file_path_B");
+    buffer.close();
+    buffer.setData(xml);
+    QVERIFY(mgr.addService(&buffer));
+    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceB", interfaceName), true);
+    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
 
     // if there are multiple interfaces, the default should be the latest version
-    QCOMPARE(mgr.setDefaultServiceForInterface("SampleService", "com.nokia.qt.TestInterfaceB"), true);
-    desc = mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceB");
-    file->close();
-    QCOMPARE(desc.serviceName(), QString("SampleService"));
-    QCOMPARE(desc.majorVersion(), 2);
-    QCOMPARE(desc.minorVersion(), 3);
+    properties[QServiceInterfaceDescriptor::FilePath] = "file_path_C";
+    QList<QServiceInterfaceDescriptor> descriptorList;
+    descriptorList << createDescriptor(interfaceName, 1, 0, "ServiceC", properties)
+                   << createDescriptor(interfaceName, 1, 8, "ServiceC", properties)
+                   << createDescriptor(interfaceName, 1, 3, "ServiceC", properties);
+    xml = createServiceXml("ServiceC", createInterfaceXml(descriptorList), "file_path_C");
+    buffer.close();
+    buffer.setData(xml);
+    QVERIFY(mgr.addService(&buffer));
+    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceC", interfaceName), true);
+    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptorList[1]);
 
     // bad arguments
     QCOMPARE(mgr.setDefaultServiceForInterface("", ""), false);
     QCOMPARE(mgr.setDefaultServiceForInterface("blah", "blah"), false);
     QCOMPARE(mgr.setDefaultServiceForInterface("SampleService", ""), false);
-
-    file->close();
-    delete file;
 }
 
 void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
@@ -723,28 +912,25 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
     QServiceManager mgr;
     QServiceInterfaceDescriptor desc;
 
+    QString interfaceName = "com.nokia.qt.serviceframework.TestInterface";
+    DescriptorProperties properties;
+    properties[QServiceInterfaceDescriptor::FilePath] = "file_path";
+
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
 
-    QByteArray xml = sampleServiceXml();
-    QTemporaryFile *file = new QTemporaryFile(this);
-    QVERIFY(file->open());
-    QVERIFY(file->write(xml) > 0);
-    QVERIFY(file->seek(0));
-
-    desc = sampleXmlInterface("B", 1, 0);
+    desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties);
 
     // fails if the specified interface hasn't been registered
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
 
     // now it works
-    QVERIFY(mgr.addService(file));
+    QByteArray xml = createServiceXml("SomeService",
+            createInterfaceXml(QList<QServiceInterfaceDescriptor>() << desc), "file_path");
+    QBuffer buffer(&xml);
+    QVERIFY(mgr.addService(&buffer));
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), true);
 
-    QServiceInterfaceDescriptor r = mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceB");
-    QCOMPARE(mgr.defaultServiceInterface("com.nokia.qt.TestInterfaceB"), desc);
-
-    file->close();
-    delete file;
+    QCOMPARE(mgr.defaultServiceInterface(interfaceName), desc);
 }
 
 void tst_QServiceManager::defaultServiceInterface()

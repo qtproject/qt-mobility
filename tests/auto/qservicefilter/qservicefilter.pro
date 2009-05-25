@@ -1,3 +1,4 @@
+TARGET=tst_qservicefilter
 SOURCES += tst_qservicefilter.cpp
 INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
