@@ -994,9 +994,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
 
 void ServiceDatabaseUnitTest::unregister()
 {
-    bool ok;
     QVERIFY(!database.unregisterService("acme"));
-    QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
     QCOMPARE(database.open(), 0);
