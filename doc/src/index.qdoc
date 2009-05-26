@@ -137,6 +137,8 @@ The elements and attributes have the following meanings:
         \o "
         \o version
         \o This attribute contains the interface and implementation version. The version tag follows the \i major.minor notation. The major version indicates the interface version the minor version the implementation version.
+
+           The version number \bold must be greater than 1.0. The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.
     \row
         \o service
         \o 
