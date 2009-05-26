@@ -73,11 +73,8 @@ void QServiceManager::versionMatching_data()
     QTest::addColumn<int>("minorV");
     QTest::addColumn<int>("rule");
 
-
-
     //invalid cases
     QTest::newRow("versionMatching_data():Invalid 1") << "" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
-    QTest::newRow("versionMatching_data():Invalid 2") << "0.3" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 3") << "01.3" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 4") << "1.03" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 5") << "x.y" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
@@ -90,7 +87,6 @@ void QServiceManager::versionMatching_data()
     QTest::newRow("versionMatching_data():Invalid 12") << "b.1" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 13") << "3." << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 14") << "-1" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
-    QTest::newRow("versionMatching_data():Invalid 15") << "0.0" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 16") << ".x" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 17") << "x." << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():Invalid 18") << "1.  0" << -1 << -1 << (int)QServiceFilter::MinimumVersionMatch;
@@ -117,6 +113,10 @@ void QServiceManager::versionMatching_data()
     QTest::newRow("versionMatching_data():ValidMin 6") << "5.10" << 5 << 10 << (int)QServiceFilter::MinimumVersionMatch;
     QTest::newRow("versionMatching_data():ValidMin 7") << "10.10" << 10 << 10 << (int)QServiceFilter::MinimumVersionMatch;
 
+    QTest::newRow("versionMatching_data():ValidMin 8") << "0.3" << 0 << 3 << (int)QServiceFilter::MinimumVersionMatch;
+    QTest::newRow("versionMatching_data():ValidMin 10") << "0.0" << 0 << 0 << (int)QServiceFilter::MinimumVersionMatch;
+    QTest::newRow("versionMatching_data():ValidMin 11") << "00.00" << 0 << 0 << (int)QServiceFilter::MinimumVersionMatch;
+
     QTest::newRow("versionMatching_data():ValidExact 1") << "1.0" << 1 << 0 << (int)QServiceFilter::ExactVersionMatch;
     QTest::newRow("versionMatching_data():ValidExact 2") << "1.00" << 1 << 0 << (int)QServiceFilter::ExactVersionMatch;
     QTest::newRow("versionMatching_data():ValidExact 3") << "99.99" << 99 << 99 << (int)QServiceFilter::ExactVersionMatch;
@@ -124,6 +124,10 @@ void QServiceManager::versionMatching_data()
     QTest::newRow("versionMatching_data():ValidExact 5") << "10.3" << 10 << 3 << (int)QServiceFilter::ExactVersionMatch;
     QTest::newRow("versionMatching_data():ValidExact 6") << "5.10" << 5 << 10 << (int)QServiceFilter::ExactVersionMatch;
     QTest::newRow("versionMatching_data():ValidExact 7") << "10.10" << 10 << 10 << (int)QServiceFilter::ExactVersionMatch;
+
+    QTest::newRow("versionMatching_data():ValidExact 8") << "0.3" << 0 << 3 << (int)QServiceFilter::ExactVersionMatch;
+    QTest::newRow("versionMatching_data():ValidExact 10") << "0.0" << 0 << 0 << (int)QServiceFilter::ExactVersionMatch;
+    QTest::newRow("versionMatching_data():ValidExact 11") << "00.00" << 0 << 0 << (int)QServiceFilter::ExactVersionMatch;
 }
 
 void QServiceManager::versionMatching()

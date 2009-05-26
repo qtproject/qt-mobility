@@ -72,6 +72,12 @@ public:
             QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
     void setServiceName(const QString& serviceName);
 
+    QString serviceName() const;
+    QString interfaceName() const;
+    int interfaceMajorVersion() const;
+    int interfaceMinorVersion() const;
+    VersionMatchRule versionMatchRule() const;
+
 private:
     QString interface;
     QString service;
@@ -80,6 +86,7 @@ private:
     VersionMatchRule matchingRule;
     friend class QServiceManager;
     friend class ServiceDatabase;
+    friend class CommandProcessor;
 #ifndef QT_NO_DATASTREAM
     friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
     friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);

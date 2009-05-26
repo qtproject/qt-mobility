@@ -137,7 +137,9 @@ void QServiceFilter::setServiceName(const QString& serviceName)
     according to the given \a rule. If \a version is not set, the filter matches any version of the
     interface implementation.
 
-    By not setting a valid version tag the filter matches any version and interface.
+    This method does nothing if \a version is not a valid version string or
+    if \a interfaceName is empty.
+
     A valid version string has the format x.y whereby x and y are positive integer
     numbers.
 */
@@ -164,8 +166,10 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
         return;
     }
 
-    //match x.y as version format
-    QRegExp rx("^([1-9][0-9]*)\\.(0+|[1-9][0-9]*)$");
+    // Match x.y as version format.
+    // This differs from regex in servicemetadata in that 0.x versions are
+    // accepted for the search filter.
+    QRegExp rx("^(0+|[1-9][0-9]*)\\.(0+|[1-9][0-9]*)$");
     int pos = rx.indexIn(version);
     QStringList list = rx.capturedTexts();
     bool success = false;
@@ -188,6 +192,56 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     } else {
         qWarning() << "Invalid version tag" << version << ". Ignoring filter details.";
     }
+}
+
+/*!
+    Returns the service name for this filter.
+
+    \sa setServiceName()
+*/
+QString QServiceFilter::serviceName() const
+{
+    return service;
+}
+
+/*!
+    Returns the interface name for this filter.
+
+    \sa setInterface()
+*/
+QString QServiceFilter::interfaceName() const
+{
+    return interface;
+}
+
+/*!
+    Returns the major interface version for this filter.
+
+    \sa setInterface()
+*/
+int QServiceFilter::interfaceMajorVersion() const
+{
+    return majorVersion;
+}
+
+/*!
+    Returns the minor interface version for this filter.
+
+    \sa setInterface()
+*/
+int QServiceFilter::interfaceMinorVersion() const
+{
+    return minorVersion;
+}
+
+/*!
+    Returns the version match rule for this filter.
+
+    \sa setInterface()
+*/
+QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
+{
+    return matchingRule;
 }
 
 #ifndef QT_NO_DATASTREAM
