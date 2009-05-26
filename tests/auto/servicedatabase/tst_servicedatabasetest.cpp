@@ -482,7 +482,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
 {
     QStringList services;
     bool ok;
-    services = database.getServiceNames("com.acme.device.sysinfo");
+    services = database.getServiceNames("com.acme.device.sysinfo", &ok);
     QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
     QCOMPARE(services.count(), 0);
@@ -994,9 +994,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
 
 void ServiceDatabaseUnitTest::unregister()
 {
-    bool ok;
     QVERIFY(!database.unregisterService("acme"));
-    QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
     QCOMPARE(database.open(), 0);
