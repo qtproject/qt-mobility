@@ -1,5 +1,11 @@
-This is the Qt service framework branch for the Qt Mobility API program.
+Qt Service Framework
 
-The Qt Service Fw requirements can be found under:
+This project provides a framework for the registration, discovery and
+invocation of arbitrary services.
 
-https://qtrequirements.apac.nokia.com/browse/MOBILITY-2
+The project is supported on Linux and Windows. Qt 4.5 is required.
+
+Pending features are found in doc/todo.txt.
+
+Questions and feedback on the Qt Service Framework are welcome.
+
