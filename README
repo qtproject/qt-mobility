@@ -3,7 +3,7 @@ Qt Service Framework
 This project provides a framework for the registration, discovery and
 invocation of arbitrary services.
 
-The project is supported on Linux and Windows. Qt 4.5 is required.
+The project is currently tested on Linux and Windows. The remaining platforms will be added during the coming weeks. Qt 4.5 is required.
 
 Pending features are found in doc/todo.txt.
 
