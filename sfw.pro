@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
 CONFIG+=ordered
-SUBDIRS += servicefw tests examples
+SUBDIRS += servicefw tools tests examples
