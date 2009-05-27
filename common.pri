@@ -6,10 +6,10 @@
 
 CONFIG += debug_and_release build_all
 
-# On win32, debug and release libraries are named differently.
+# On win32 and mac, debug and release libraries are named differently.
 # We must follow the debug and release settings Qt was compiled with:
 # build debug iff Qt built debug, build release iff Qt built release.
-win32 {
+win32|mac {
     !contains(QT_CONFIG,debug)|!contains(QT_CONFIG,release) {
         CONFIG -= debug_and_release debug release
         contains(QT_CONFIG,debug):  CONFIG+=debug
@@ -37,6 +37,7 @@ SOURCE_DIR = $$PWD
 } else {
     QT *= testlib
     CONFIG += console
+    CONFIG -= app_bundle
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
     DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
