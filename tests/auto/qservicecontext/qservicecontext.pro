@@ -1,4 +1,4 @@
-TARGET=tst_qservicecintext
+TARGET=tst_qservicecontext
 INCLUDEPATH += ../../../servicefw/serviceframework/servicehandler \
                ../../../servicefw/serviceframework/serviceresolution \
                ../../../servicefw/serviceframework
