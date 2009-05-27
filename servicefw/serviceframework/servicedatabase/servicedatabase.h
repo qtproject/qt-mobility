@@ -150,11 +150,11 @@ private:
     bool checkTables();
 
     int getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
-    bool executeQuery(QSqlQuery &aQuery, const QString &aStatement);
     bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
     bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, int serviceID);
     void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
     void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
+    bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, int interfaceID);
 
     bool checkConnection();
 

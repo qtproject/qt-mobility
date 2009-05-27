@@ -2,12 +2,12 @@
 <service name="OMNI"  filepath="C:/OmniInc/omniinc.dll" >
   <description>Omni mobile</description> 
   <interface name="com.omni.device.Accelerometer" capabilities="SurroundingsDD" version="1.1">
-    <description>Interface that provides accelerometer readings</description> 
+    <description>Interface that provides accelerometer readings(omni)</description> 
   </interface>  
   <interface name="com.omni.device.Lights" capabilities="" version="9.0">
    <description>Interface that provides access to device lights</description> 
   </interface>
-  <interface name="com.omni.service.Video" version="1.4" capabilities="MultimediaDD,NetworkServices">
+  <interface name="com.omni.service.Video" version="1.4" capabilities="MultimediaDD,NetworkServices,ReadUserData,WriteUserData">
    <description>Interface that provides support for video streaming</description> 
   </interface>
 </service>

@@ -4,7 +4,7 @@
   <interface name="com.acme.service.downloader" version="1.0">
     <description>Interface that provides download support</description> 
   </interface>
-  <interface name="come.acme.service.location" version="1.0" capabilities="">
+  <interface name="com.acme.service.location" version="1.0" capabilities="">
     <description>Interface that provides location support</description> 
   </interface>
   <interface name="com.acme.device.sysinfo" capabilities="ReadUserData" version="2.3">
