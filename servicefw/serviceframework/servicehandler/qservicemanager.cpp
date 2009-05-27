@@ -166,6 +166,7 @@ QServiceManager::~QServiceManager()
 {
     d->database->close();
     delete d->database;
+    delete d;
 }
 
 /*!
