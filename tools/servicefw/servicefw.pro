@@ -1,5 +1,6 @@
 TEMPLATE=app
 TARGET=servicefw
+CONFIG+=console
 
 INCLUDEPATH += ../../servicefw/serviceframework/servicehandler \
                ../../servicefw/serviceframework/serviceresolution \
