@@ -43,9 +43,7 @@
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 
-//the class name must match the friend class name in 
-//qserviceinterfacedescriptor.h
-class QServiceManager: public QObject
+class tst_QServiceInterfaceDescriptor: public QObject
 {
     Q_OBJECT
     
@@ -58,11 +56,11 @@ private slots:
 #endif
 };
 
-void QServiceManager::initTestCase()
+void tst_QServiceInterfaceDescriptor::initTestCase()
 {
 }
 
-void QServiceManager::comparison()
+void tst_QServiceInterfaceDescriptor::comparison()
 {
     QServiceInterfaceDescriptor desc;
     QVERIFY(desc.majorVersion() == -1);
@@ -89,11 +87,12 @@ void QServiceManager::comparison()
     QVERIFY(desc == copy);
 
     QServiceInterfaceDescriptor valid;
-    valid.d = new QServiceInterfaceDescriptorPrivate();
-    valid.d->serviceName = "name";
-    valid.d->interfaceName = "interface";
-    valid.d->major = 3;
-    valid.d->minor = 1;
+    QServiceInterfaceDescriptorPrivate *d = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&valid, d);
+    d->serviceName = "name";
+    d->interfaceName = "interface";
+    d->major = 3;
+    d->minor = 1;
 
     QCOMPARE(valid.interfaceName(), QString("interface"));
     QCOMPARE(valid.serviceName(), QString("name"));
@@ -109,7 +108,7 @@ void QServiceManager::comparison()
     QVERIFY(valid==validCopy);
     QVERIFY(validCopy==valid);
 
-    validCopy.d->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
+    QServiceInterfaceDescriptorPrivate::getPrivate(&validCopy)->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
     QVERIFY(valid!=validCopy);
     QVERIFY(validCopy!=valid);
 
@@ -125,7 +124,7 @@ void QServiceManager::comparison()
     QVERIFY(valid==validCopy2);
     QVERIFY(validCopy2==valid);
 
-    validCopy2.d->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
+    QServiceInterfaceDescriptorPrivate::getPrivate(&validCopy2)->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
     QVERIFY(valid!=validCopy2);
     QVERIFY(validCopy2!=valid);
 
@@ -139,7 +138,7 @@ void QServiceManager::comparison()
 }
 
 #ifndef QT_NO_DATASTREAM
-void QServiceManager::testStreamOperators()
+void tst_QServiceInterfaceDescriptor::testStreamOperators()
 {
     QByteArray byteArray;
     QBuffer buffer(&byteArray);
@@ -162,15 +161,16 @@ void QServiceManager::testStreamOperators()
 
     //stream invalid into valid
     QServiceInterfaceDescriptor valid;
-    valid.d = new QServiceInterfaceDescriptorPrivate();
-    valid.d->serviceName = "name";
-    valid.d->interfaceName = "interface";
-    valid.d->major = 3;
-    valid.d->minor = 1;
-    valid.d->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
-    valid.d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
-    valid.d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
-    valid.d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
+    QServiceInterfaceDescriptorPrivate *d = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&valid, d);
+    d->serviceName = "name";
+    d->interfaceName = "interface";
+    d->major = 3;
+    d->minor = 1;
+    d->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue"));
+    d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
+    d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
+    d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
     QVERIFY(valid.isValid());
     QServiceInterfaceDescriptor validref = valid;
     QVERIFY(validref == valid);
@@ -203,22 +203,23 @@ void QServiceManager::testStreamOperators()
     QVERIFY(invalid2.serviceName() == QString("name"));
     QVERIFY(invalid2.majorVersion() == 3);
     QVERIFY(invalid2.minorVersion() == 1);
-    QVERIFY(invalid2.d->properties.value(QServiceInterfaceDescriptor::FilePath).toString() == QString("myValue"));
-    QVERIFY(invalid2.d->properties.value(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
-    QVERIFY(invalid2.d->properties.value(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
-    QVERIFY(invalid2.d->properties.value(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
+    QVERIFY(invalid2.property(QServiceInterfaceDescriptor::FilePath).toString() == QString("myValue"));
+    QVERIFY(invalid2.property(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
+    QVERIFY(invalid2.property(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
+    QVERIFY(invalid2.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
 
     //stream valid into valid
     QServiceInterfaceDescriptor valid2;
-    valid2.d = new QServiceInterfaceDescriptorPrivate();
-    valid2.d->serviceName = "name2";
-    valid2.d->interfaceName = "interface2";
-    valid2.d->major = 5;
-    valid2.d->minor = 6;
-    valid2.d->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue1"));
-    valid2.d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val3" << "val4");
-    valid2.d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the second service description"));
-    valid2.d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the second interface description"));
+    QServiceInterfaceDescriptorPrivate *d2 = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&valid2, d2);
+    d2->serviceName = "name2";
+    d2->interfaceName = "interface2";
+    d2->major = 5;
+    d2->minor = 6;
+    d2->properties.insert(QServiceInterfaceDescriptor::FilePath, QString("myValue1"));
+    d2->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val3" << "val4");
+    d2->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the second service description"));
+    d2->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the second interface description"));
     QVERIFY(valid2.isValid());
     QVERIFY(valid2 != valid);
     QVERIFY(!(valid2 == valid));
@@ -234,16 +235,16 @@ void QServiceManager::testStreamOperators()
     QVERIFY(valid2.serviceName() == QString("name"));
     QVERIFY(valid2.majorVersion() == 3);
     QVERIFY(valid2.minorVersion() == 1);
-    QVERIFY(valid2.d->properties.value(QServiceInterfaceDescriptor::FilePath).toString() == QString("myValue"));
-    QVERIFY(valid2.d->properties.value(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
-    QVERIFY(valid2.d->properties.value(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
-    QVERIFY(valid2.d->properties.value(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
+    QVERIFY(valid2.property(QServiceInterfaceDescriptor::FilePath).toString() == QString("myValue"));
+    QVERIFY(valid2.property(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
+    QVERIFY(valid2.property(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
+    QVERIFY(valid2.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
 }
 #endif //QT_NO_DATASTREAM
 
-void QServiceManager::cleanupTestCase()
+void tst_QServiceInterfaceDescriptor::cleanupTestCase()
 {
 }
 
-QTEST_MAIN(QServiceManager)
+QTEST_MAIN(tst_QServiceInterfaceDescriptor)
 #include "tst_qserviceinterfacedescriptor.moc"
