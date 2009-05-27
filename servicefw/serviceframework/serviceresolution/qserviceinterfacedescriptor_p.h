@@ -89,6 +89,11 @@ public:
         return *this;
     }
 
+    static QServiceInterfaceDescriptorPrivate *getPrivate(QServiceInterfaceDescriptor *descriptor)
+    {
+        return descriptor->d;
+    }
+
     static void setPrivate(QServiceInterfaceDescriptor *descriptor, QServiceInterfaceDescriptorPrivate *p)
     {
         descriptor->d = p;
