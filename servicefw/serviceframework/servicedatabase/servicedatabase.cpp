@@ -246,7 +246,11 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     bindValues.clear();
     bindValues.append(service.name());
     bindValues.append(service.filePath());
-    bindValues.append(service.description());
+
+    if (service.description().isNull())
+        bindValues.append("");
+    else
+        bindValues.append(service.description());
 
     if (!executeQuery(&query, statement, bindValues)) {
         databaseRollback(&query, &database);
