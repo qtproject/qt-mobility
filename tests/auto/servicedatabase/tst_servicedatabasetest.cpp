@@ -45,6 +45,9 @@
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
 #include <servicedatabase.h>
+#include "../../../servicefw/serviceframework/serviceresolution/serviceinfo.cpp"
+#include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
+#include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
 #include <qservicefilter.h>
 
 #define RESOLVERDATABASE "services.db"
