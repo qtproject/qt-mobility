@@ -323,11 +323,17 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 }
 
 /*!
-    Registers the service defined by the XML data from the given \a device. Returns true if the 
-    registration succeeded, and false otherwise.
-    
-    If a previously unkown interface is added the newly registered service automatically
-    becomes the new default service provider for the new interface.
+    Registers the service defined by the XML data from the given \a device.
+    Returns true if the registration succeeded, and false otherwise. If a
+    previously unkown interface is added the newly registered service
+    automatically becomes the new default service provider for the new
+    interface.
+
+    Registering a service also causes QServicePluginInterface::installService()
+    to be called on the service. If the service plugin is not accessible
+    (e.g. if the plugin file is not found) and \c installService() cannot
+    be invoked on the service, the registration fails and this method returns
+    false.
 
     A service plugin cannot be added if another service is already registered
     with the same plugin file path.  A service plugin also cannot be added if
@@ -348,10 +354,12 @@ bool QServiceManager::addService(QIODevice *device)
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.filePath()));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
-        if (pluginIFace)
+        if (pluginIFace) {
             pluginIFace->installService();
-        else
-            qWarning() << "QServiceManager: unable to invoke installService() on added service";
+        } else {
+            result = false;
+            d->database->unregisterService(data.name());
+        }
         loader->unload();
         delete loader;
     }
@@ -377,6 +385,9 @@ bool QServiceManager::removeService(const QString& serviceName)
         return false;
     if (serviceName.isEmpty())
         return false;
+
+    // Call QServicePluginInterface::uninstallService() on all plugins that
+    // match this service
 
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
