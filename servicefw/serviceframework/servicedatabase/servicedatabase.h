@@ -150,12 +150,12 @@ private:
     bool dropTables();
     bool checkTables();
 
-    int getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
+    QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
     bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
-    bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, int serviceID);
+    bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
     void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
     void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
-    bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, int interfaceID);
+    bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
 
     bool checkConnection();
 

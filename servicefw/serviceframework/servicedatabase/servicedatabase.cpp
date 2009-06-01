@@ -43,6 +43,7 @@
 #include "servicedatabase.h"
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
+#include <QUuid>
 
 //database name
 #define RESOLVERDATABASE "services.db"
@@ -252,8 +253,11 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    statement = "INSERT INTO Service(Name,FilePath,Description) VALUES(?,?,?)";
+    statement = "INSERT INTO Service(ID,Name,FilePath,Description) VALUES(?,?,?,?)";
+    QString serviceID = QUuid::createUuid().toString();
+
     bindValues.clear();
+    bindValues.append(serviceID);
     bindValues.append(service.name());
     bindValues.append(service.filePath());
 
@@ -269,11 +273,8 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    int serviceID = query.lastInsertId().toInt();
-    Q_ASSERT(serviceID > -1);
-
     QList <QServiceInterfaceDescriptor> interfaces = service.getInterfaces();
-    int interfaceID = -1;
+    QString interfaceID;;
     bool ok = false;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
         interfaceID = getInterfaceID(&query, interface, &ok);
@@ -290,7 +291,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
             return false;
         }
 
-        if (interfaceID > -1) {
+        if (!interfaceID.isEmpty()) {
             QString errorText;
             errorText = "Cannot register service \"%1\". \"%1\" is already registered "
                         "and implements interface \"%2\", Version \"%3.%4.\"  \"%1\" must "
@@ -358,7 +359,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     return true;
 }
 
-int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok)
+QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok)
 {
     QString statement = "SELECT Interface.ID "
                         "FROM Interface, Service "
@@ -375,17 +376,16 @@ int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDes
     if (!executeQuery(query, statement, bindValues)) {
         if (ok != NULL)
             *ok = false;
-        return -1;
+        return QString();
     }
     if (!query->next()) {
         if (ok != NULL)
             *ok = true;
-        return -1;
+        return QString();
     }
     if (ok != NULL)
         *ok = true;
-    int interfaceID = query->value(EBindIndex).toInt();
-    return interfaceID;
+    return query->value(EBindIndex).toString();
 }
 
 /*!
@@ -395,11 +395,14 @@ int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDes
     @param aServiceID service identifier 
     @return 0 if operation was successfull, error code otherwise
 */
-bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfaceDescriptor &interface, int serviceID)
+bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfaceDescriptor &interface, const QString &serviceID)
 {
-    QString statement = "INSERT INTO Interface(ServiceID,Name,VerMaj, VerMin) "
-                        "VALUES(?,?,?,?)";
+    QString statement = "INSERT INTO Interface(ID, ServiceID,Name,VerMaj, VerMin) "
+                        "VALUES(?,?,?,?,?)";
+    QString interfaceID = QUuid::createUuid();
+
     QList<QVariant> bindValues;
+    bindValues.append(interfaceID);
     bindValues.append(serviceID);
     bindValues.append(interface.interfaceName());
     bindValues.append(interface.majorVersion());
@@ -411,7 +414,6 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         return false;
     }
 
-    int interfaceID = query->lastInsertId().toInt();
     statement = "INSERT INTO Property(InterfaceID, Key, Value) VALUES(?,?,?)";
     QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant>::const_iterator iter = interface.d->properties.constBegin();
     bool isValidProperty;
@@ -577,7 +579,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QServiceInterfaceDescriptor interface;
     interface.d = new QServiceInterfaceDescriptorPrivate;
     QStringList capabilities;
-    int interfaceID;
+    QString interfaceID;
     while(query.next()){
         interface.d->interfaceName =query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
@@ -589,7 +591,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         interface.d->properties[QServiceInterfaceDescriptor::ServiceDescription]
             = query.value(EBindIndex5).toString();
 
-        interfaceID = query.value(EBindIndex6).toInt();
+        interfaceID = query.value(EBindIndex6).toString();
         if (!populateInterfaceProperties(&interface, interfaceID)) {
             if (ok != NULL)
                 *ok = false;
@@ -736,7 +738,7 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
         return interface;
     }
 
-    int interfaceID = -1;
+    QString interfaceID;
     if (!query.next())
     {
         if ( ok != NULL )
@@ -744,8 +746,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
         return interface;
     }
     else
-        interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+        interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "SELECT Interface.Name, "
                         "Service.Name, Interface.VerMaj, "
@@ -852,9 +854,8 @@ bool ServiceDatabase::setDefaultService(const QString &serviceName, const QStrin
         return false;
     }
 
-    int interfaceID = -1;
-    interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+    QString interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "UPDATE Defaults "
                 "SET InterfaceID = ? "
@@ -930,9 +931,8 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         return false;
     }
 
-    int interfaceID = -1;
-    interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+    QString interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "UPDATE Defaults "
         "SET InterfaceID = ? "
@@ -984,12 +984,12 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         return false;
     }
 
-    QList<int> serviceIDs;
+    QStringList serviceIDs;
     while(query.next()) {
-        serviceIDs << query.value(EBindIndex).toInt();
+        serviceIDs << query.value(EBindIndex).toString();
     }
 
-    QList<int> interfaceIDs;
+    QStringList interfaceIDs;
     statement = "SELECT Interface.ID from Interface, Service "
                 "WHERE Interface.ServiceID = Service.ID "
                     "AND Service.Name =? COLLATE NOCASE";
@@ -1001,7 +1001,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     while (query.next()) {
-        interfaceIDs << query.value(EBindIndex).toInt();
+        interfaceIDs << query.value(EBindIndex).toString();
     }
 
     if (serviceIDs.count() == 0) {
@@ -1044,7 +1044,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     statement = "DELETE FROM Interface WHERE Interface.ServiceID = ?";
-    foreach(int serviceID, serviceIDs) {
+    foreach(const QString &serviceID, serviceIDs) {
         bindValues.clear();
         bindValues.append(serviceID);
         if (!executeQuery(&query, statement, bindValues)) {
@@ -1056,7 +1056,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     statement = "DELETE FROM Property WHERE InterfaceID = ?";
-    foreach(int interfaceID,  interfaceIDs) {
+    foreach(const QString &interfaceID,  interfaceIDs) {
         bindValues.clear();
         bindValues.append(interfaceID);
         if (!executeQuery(&query, statement, bindValues)) {
@@ -1080,7 +1080,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         }
 
         if(query.next()) {
-            int newDefaultID = query.value(EBindIndex).toInt();
+            QString newDefaultID = query.value(EBindIndex).toString();
             statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(newDefaultID);
@@ -1191,7 +1191,7 @@ bool ServiceDatabase::createTables()
     }
 
     QString statement("CREATE TABLE Service("
-                        "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                        "ID TEXT NOT NULL PRIMARY KEY UNIQUE,"
                         "Name TEXT NOT NULL, "
                         "FilePath TEXT NOT NULL, "
                         "Description TEXT NOT NULL)");
@@ -1203,8 +1203,8 @@ bool ServiceDatabase::createTables()
     }
 
     statement = "CREATE TABLE Interface("
-                "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                "ServiceID INTEGER NOT NULL, "
+                "ID TEXT NOT NULL PRIMARY KEY UNIQUE,"
+                "ServiceID TEXT NOT NULL, "
                 "Name TEXT NOT NULL, "
                 "VerMaj INTEGER NOT NULL, "
                 "VerMin INTEGER NOT NULL)";
@@ -1217,7 +1217,7 @@ bool ServiceDatabase::createTables()
 
     statement = "CREATE TABLE Defaults("
                 "InterfaceName TEXT PRIMARY KEY UNIQUE NOT NULL,"
-                "InterfaceID INTEGER NOT NULL)";
+                "InterfaceID TEXT NOT NULL)";
     if (!executeQuery(&query, statement)) {
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1225,7 +1225,7 @@ bool ServiceDatabase::createTables()
     }
 
     statement = "CREATE TABLE Property("
-                "InterfaceID INTEGER NOT NULL,"
+                "InterfaceID TEXT NOT NULL,"
                 "Key INTEGER NOT NULL,"
                 "Value TEXT NOT NULL)";
 
@@ -1341,7 +1341,7 @@ void ServiceDatabase::databaseRollback(QSqlQuery *query, QSqlDatabase *database)
     database->rollback();
 }
 
-bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, int interfaceID)
+bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, const QString &interfaceID)
 {
     QSqlQuery query(QSqlDatabase::database());
     QString statement("SELECT Key, Value FROM Property WHERE InterfaceID = ?");

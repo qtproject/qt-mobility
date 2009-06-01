@@ -94,9 +94,9 @@ private:
                             const QString &filePath,
                             const QString &description);
 
-    QList<int> getInterfaceIDs(const QString &serviceName);
-    bool existsInPropertyTable(int interfaceID);
-    bool existsInDefaultsTable(int interfaceID);
+    QStringList getInterfaceIDs(const QString &serviceName);
+    bool existsInPropertyTable(const QString &interfaceID);
+    bool existsInDefaultsTable(const QString &interfaceID);
 
 	ServiceMetaData* parser;
 	QDir dir;
@@ -1140,9 +1140,9 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this inter
 
     //confirm that properties exist for the service
-    QList<int> interfaceIDs = getInterfaceIDs("omni");
+    QStringList interfaceIDs = getInterfaceIDs("omni");
     QCOMPARE(interfaceIDs.count(), 3);
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(existsInPropertyTable(interfaceID));
 
     QVERIFY(database.unregisterService("oMni")); //ensure case insensitive behaviour
@@ -1189,9 +1189,9 @@ void ServiceDatabaseUnitTest::unregister()
 
     //ensure the associated interfaceIDs no longer exist in the Property
     //and Defaults tables
-    foreach (int interfaceID, interfaceIDs)
+    foreach (const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInPropertyTable(interfaceID));
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInDefaultsTable(interfaceID));
 
     //  == unregister an service that implements a default interface
@@ -1217,7 +1217,7 @@ void ServiceDatabaseUnitTest::unregister()
     interfaceIDs =getInterfaceIDs("DharmaInitiative");
     QVERIFY(interfaceIDs.count() > 0);
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(existsInPropertyTable(interfaceID));
 
     QVERIFY(database.unregisterService("DHARMAInitiative"));
@@ -1229,10 +1229,10 @@ void ServiceDatabaseUnitTest::unregister()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 0);
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInPropertyTable(interfaceID));
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInDefaultsTable(interfaceID));
 
     //  == check that the service can be registered again
@@ -1282,7 +1282,7 @@ bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,
     return true;
 }
 
-QList<int> ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
+QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);
     QString statement("Select Interface.ID FROM Interface, Service "
@@ -1292,14 +1292,14 @@ QList<int> ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) 
     bindValues.append(serviceName);
     database.executeQuery(&query, statement, bindValues);
 
-    QList<int> ids;
+    QStringList ids;
     while   (query.next()) {
-        ids << query.value(0).toInt();
+        ids << query.value(0).toString();
     }
     return ids;
 }
 
-bool ServiceDatabaseUnitTest::existsInPropertyTable(int interfaceID)
+bool ServiceDatabaseUnitTest::existsInPropertyTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);
@@ -1315,7 +1315,7 @@ bool ServiceDatabaseUnitTest::existsInPropertyTable(int interfaceID)
         return false;
 }
 
-bool ServiceDatabaseUnitTest::existsInDefaultsTable(int interfaceID)
+bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);
