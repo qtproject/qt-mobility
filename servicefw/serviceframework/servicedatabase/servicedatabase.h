@@ -65,6 +65,7 @@ class DBError
             NotFound,
             SqlError,
             InvalidSearchCriteria,
+            CannotCloseDatabase,
             UnknownError
         };
         DBError();
@@ -119,8 +120,8 @@ public:
 
     virtual ~ServiceDatabase();
 
-    int open();
-    int close();
+    bool open();
+    bool close();
 
     bool isOpen() const;
     void setDatabasePath(const QString &aDatabasePath);
@@ -146,7 +147,7 @@ Q_SIGNALS:
 
 private:
     bool createTables();
-    int dropTables();
+    bool dropTables();
     bool checkTables();
 
     int getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);

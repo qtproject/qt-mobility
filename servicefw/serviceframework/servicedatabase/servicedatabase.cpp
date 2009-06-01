@@ -51,6 +51,7 @@
 #define SERVICE_TABLE "Service"
 #define INTERFACE_TABLE "Interface"
 #define DEFAULTS_TABLE "Defaults"
+#define PROPERTY_TABLE "Property"
 
 //default connection
 #define RESOLVERDATABASE_DEFAULT_CONNECTION "qt_sql_default_connection"
@@ -86,6 +87,9 @@ void DBError::setError(ErrorCode error, const QString &text)
             break;
         case(InvalidDatabaseConnection):
             m_text = "Invalid database connection";
+            break;
+        case(CannotCloseDatabase):
+            m_text= "Cannot close database";
             break;
         case(SqlError):
         case(NotFound):
@@ -131,68 +135,74 @@ ServiceDatabase::~ServiceDatabase()
     The method creates or opens the resolver database and creates tables if they are not present
     @return 0 if operation was successfull(database and tables are available), error code otherwise
 */
-int ServiceDatabase::open()
+bool ServiceDatabase::open()
 {
-    int result(0);
-    if (!iDatabaseOpen){
-        QString path;
+    if (iDatabaseOpen)
+        return true;
 
-        //Create full path to database
-        if(iDatabasePath.isEmpty ())
-            iDatabasePath = databasePath();
+    QString path;
 
-        path = iDatabasePath;
+    //Create full path to database
+    if(iDatabasePath.isEmpty ())
+        iDatabasePath = databasePath();
 
-        if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
-            path.append(RESOLVERDATABASE_PATH_SEPARATOR);
-        }
-        path.append(RESOLVERDATABASE);
-        //Create and/or open database and create tables if neccessary
-        QSqlDatabase  database;
-        if(QSqlDatabase::contains(RESOLVERDATABASE_DEFAULT_CONNECTION)) {
-            database = QSqlDatabase::database(RESOLVERDATABASE_DEFAULT_CONNECTION);
-        } else {
-            database = QSqlDatabase::addDatabase("QSQLITE");
-            database.setDatabaseName(path);
-        }
+    path = iDatabasePath;
 
-        if (database.isValid()){
-            //Create or open resolver database
-            if (!database.isOpen()) {
-                iDatabaseOpen = database.open();
-            } else {
-                iDatabaseOpen = true;
-            }
-        } else {
-            result = ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
-        }
-
-        if(iDatabaseOpen) {
-            //Check database structure (tables) and recreate tables if neccessary
-            //If one of the tables is missing remove all tables and recreate them
-            //This operation is required in order to avoid data coruption
-            if (!checkTables()) {
-                if(dropTables() == 0) {
-                    if (createTables())
-                        result = SFW_ERROR_DB_RECREATED;
-                    else
-                        result = SFW_ERROR_CANNOT_CREATE_TABLES;
-
-                }
-                else {
-                    result = ServiceDatabase::SFW_ERROR_CANNOT_DROP_TABLES;
-                }
-            } 
-        } else {
-            result = ServiceDatabase::SFW_ERROR_CANNOT_OPEN_DATABASE;
-        }
-
-        if (result != ServiceDatabase::SFW_ERROR_DB_RECREATED && result != 0) {
-            close();
-        }
-        iDatabaseOpen = (result == 0 || result == ServiceDatabase::SFW_ERROR_DB_RECREATED)? true: false;
+    if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
+        path.append(RESOLVERDATABASE_PATH_SEPARATOR);
     }
-    return result;
+    path.append(RESOLVERDATABASE);
+    //Create and/or open database and create tables if neccessary
+    QSqlDatabase  database;
+    if(QSqlDatabase::contains(RESOLVERDATABASE_DEFAULT_CONNECTION)) {
+        database = QSqlDatabase::database(RESOLVERDATABASE_DEFAULT_CONNECTION);
+    } else {
+        database = QSqlDatabase::addDatabase("QSQLITE");
+        database.setDatabaseName(path);
+    }
+
+    if (!database.isValid()){
+        m_lastError.setError(DBError::InvalidDatabaseConnection);
+        close();
+        return false;
+    }
+
+    //Create or open resolver database
+    if (!database.isOpen()) {
+        if(!database.open()) {
+            m_lastError.setError(DBError::SqlError, database.lastError().text());
+            qWarning() << "ServiceDatabase::open():-"
+                        << "Problem:" << "Could not open database"
+                        << "\nReason:" << m_lastError.text();
+            close();
+            return false;
+        }
+    }
+    iDatabaseOpen = true;
+
+    //Check database structure (tables) and recreate tables if neccessary
+    //If one of tables is missing remove all tables and recreate them
+    //This operation is required in order to avoid data coruption
+    if (!checkTables()) {
+        if(dropTables()) {
+            if (createTables()) {
+                qWarning() << "ServiceDatabase::open():-"
+                    << "Database tables recreated";
+            } else {
+                //createTable() should've handled error message
+                //and warning
+                close();
+                return false;
+            }
+        }
+        else {
+            //dropTables() should've handled error message
+            //and warning
+            close();
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ServiceDatabase::registerService(ServiceMetaData &service)
@@ -211,7 +221,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         m_lastError.setSQLError(database.lastError().text());
         qWarning() << "ServiceDatabase::registerService():-"
                     << "Unable to begin transaction"
-                    << "\nReason:" << m_lastError.text();
+                    << "\nReason:" << qPrintable(m_lastError.text());
         return false;
     }
 
@@ -1106,23 +1116,31 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     SFW_ERROR_INVALID_DATABASE_CONNECTION in case database connection is invalid \n
     @return 0 if operation was successfull, error code otherwise  
 */
-int ServiceDatabase::close()
+bool ServiceDatabase::close()
 {
-    int result(0);
     if(iDatabaseOpen) {
         QSqlDatabase database = QSqlDatabase::database();
         if (database.isValid()){
             if(database.isOpen()) {
                 database.close();
                 iDatabaseOpen = database.isOpen();
-                result = !iDatabaseOpen? 0: ServiceDatabase::SFW_ERROR_CANNONT_CLOSE_DATABASE;
-               
+                if (iDatabaseOpen) {
+                    m_lastError.setError(DBError::CannotCloseDatabase);
+                    qWarning() << "ServiceDatabase::close():-"
+                                << "Problem:" << qPrintable(m_lastError.text());
+                    return false;
+                } else {
+                    return true;
+                }
             }
         } else {
-            result = ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
+            m_lastError.setError(DBError::InvalidDatabaseConnection);
+            qWarning() << "ServiceDatabase::close():-"
+                        << "Problem: " << qPrintable(m_lastError.text());
+            return false;
         }
     }
-    return result;
+    return true;
 }
 
 /*!
@@ -1231,10 +1249,11 @@ bool ServiceDatabase::checkTables()
     bool bTables(false);
     QStringList tables = QSqlDatabase::database().tables();
     if (tables.contains(SERVICE_TABLE)
-        && tables.contains(INTERFACE_TABLE)){
+        && tables.contains(INTERFACE_TABLE)
+        && tables.contains(DEFAULTS_TABLE)
+        && tables.contains(PROPERTY_TABLE)){
             bTables = true;
     }
-
     return bTables;
 }
 
@@ -1242,55 +1261,40 @@ bool ServiceDatabase::checkTables()
     Removes service related tables from database
     @return 0 if was sucessful, error code otherwise
 */
-int ServiceDatabase::dropTables()
+bool ServiceDatabase::dropTables()
 {
-    int result(0);
     //Execute transaction for deleting the database tables
-    bool isActive(false); 
     QSqlDatabase database = QSqlDatabase::database();
-    QStringList tables = database.tables();
-    if (tables.size() > 0) {
-        isActive = database.transaction();
+    QStringList expectedTables;
+    expectedTables << SERVICE_TABLE
+                << INTERFACE_TABLE
+                << DEFAULTS_TABLE
+                << PROPERTY_TABLE;
+
+    if (database.tables().count() > 0) {
+        if (!database.transaction()) {
+            m_lastError.setError(DBError::SqlError, database.lastError().text());
+            qWarning() << "ServiceDatabase::dropTables():-"
+                        << "Unable to begin transaction"
+                        << "\nReason:" << qPrintable(m_lastError.text());
+            return false;
+        }
+        QStringList actualTables = database.tables();
         QSqlQuery query(database);
 
-        if ((tables.contains(SERVICE_TABLE)) 
-            && (!executeQuery(&query, "DROP TABLE Service"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
-        if ((result == 0) && (tables.contains(INTERFACE_TABLE)) 
-            && (!executeQuery(&query,"DROP TABLE Interface"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
 
-        if ((result == 0) && (tables.contains(DEFAULTS_TABLE)) 
-            && (!executeQuery(&query,"DROP TABLE Defaults"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
-
-        if (result == 0) {
-            query.finish();
-            query.clear(); 
-            if (isActive) {
-                database.commit();
+        foreach(QString expectedTable, expectedTables) {
+            if ((actualTables.contains(expectedTable))
+                && (!executeQuery(&query, QString("DROP TABLE ") + expectedTable))) {
+                databaseRollback(&query, &database);
+                qWarning() << "ServiceDatabase::dropTables():-"
+                           << qPrintable(m_lastError.text());
+                return false;
             }
         }
+        databaseCommit(&query, &database);
     }
-    return result;
+    return true;
 }
 
 /*!
