@@ -1109,13 +1109,6 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     return true;
 }
 
-/*!
-    Closes the service resolver database
-    Custom error codes: \n
-    SFW_ERROR_CANNONT_CLOSE_DATABASE in case database can't be closed \n
-    SFW_ERROR_INVALID_DATABASE_CONNECTION in case database connection is invalid \n
-    @return 0 if operation was successfull, error code otherwise  
-*/
 bool ServiceDatabase::close()
 {
     if(iDatabaseOpen) {

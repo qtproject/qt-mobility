@@ -88,80 +88,54 @@ class DBError
 class Q_SFW_EXPORT ServiceDatabase : public QObject
 {
     Q_OBJECT
-public:
 
-    //! ServiceDatabase::ServiceDatabaseErr
-    /*!
-     This enum describes the errors that may be returned by the Service Database.
-     */
-    enum ServiceDatabaseErr {   
-        SFW_ERROR_INVALID_SEARCH_CRITERIA = -2000,                      /*!< Invalid Search Criteria */
-        SFW_ERROR_CANNOT_OPEN_DATABASE,                                 /*!< Can not open database */
-        SFW_ERROR_CANNOT_CREATE_TABLES,                                 /*!< Can not create database tables */
-        SFW_ERROR_CANNOT_DROP_TABLES,                                   /*!< Error deleting tables */
-        SFW_ERROR_DATABASE_NOT_OPEN,                                    /*!< Database is not open */
-        SFW_ERROR_INVALID_DATABASE_CONNECTION,                          /*!< Invalid database connection */
-        SFW_ERROR_RESULT_NOT_FOUND,                                    /*!< Can not find the requested service/interface */
-        SFW_ERROR_CANNONT_CLOSE_DATABASE,                               /*!< Can not close database */
-        SFW_ERROR_BINDING_PARAM_VALUE,                                  /*!< Error binding value to query parameter */
-        SFW_ERROR_SERVICE_ALREADY_REGISTERED,                           /*!< A service with the same name and version 
-                                                                    already registered */
-        SFW_ERROR_FILE_PATH_UPDATED,                                    /*!< A service with the same name and version 
-                                                                    but different file path already registered. 
-                                                                    Updated the file path in DB.*/
-        SFW_ERROR_DB_RECREATED,                                         /*!< Service DB is recreated */
-        SFW_ERROR_NO_SERVICE_FOUND,                                     /*!< No corresponding service was not found in DB */
-        SFW_ERROR_NO_INTERFACE_FOUND,                                    /*!< No corresponding interface found in DB */
-        SFW_ERROR_INTERFACE_HAS_DEFAULT                                 /*! <interface already has default installed (technically not an "error") */
-    };
+    public:
+        ServiceDatabase(void);
 
-public:
-    ServiceDatabase(void);
+        virtual ~ServiceDatabase();
 
-    virtual ~ServiceDatabase();
+        bool open();
+        bool close();
 
-    bool open();
-    bool close();
+        bool isOpen() const;
+        void setDatabasePath(const QString &aDatabasePath);
+        QString databasePath() const;
 
-    bool isOpen() const;
-    void setDatabasePath(const QString &aDatabasePath);
-    QString databasePath() const;
+        bool registerService(ServiceMetaData &service);
+        bool unregisterService(const QString &serviceName);
 
-    bool registerService(ServiceMetaData &service);
-    bool unregisterService(const QString &serviceName);
+        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
+        ServiceInfo getService(const QServiceInterfaceDescriptor &interface, bool *ok=0);
 
-    QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
-    ServiceInfo getService(const QServiceInterfaceDescriptor &interface, bool *ok=0);
+        QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
 
-    QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
+        QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, bool *ok = 0);
+        bool setDefaultService(const QString &serviceName, const QString &interfaceName);
+        bool setDefaultService(const QServiceInterfaceDescriptor &interface);
 
-    QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, bool *ok = 0);
-    bool setDefaultService(const QString &serviceName, const QString &interfaceName);
-    bool setDefaultService(const QServiceInterfaceDescriptor &interface);
-
-    DBError lastError() const { return m_lastError; }
+        DBError lastError() const { return m_lastError; }
 
 Q_SIGNALS:
-    void serviceAdded(const QString& serviceName);
-    void serviceRemoved(const QString& serviceName);
+        void serviceAdded(const QString& serviceName);
+        void serviceRemoved(const QString& serviceName);
 
-private:
-    bool createTables();
-    bool dropTables();
-    bool checkTables();
+    private:
+        bool createTables();
+        bool dropTables();
+        bool checkTables();
 
-    QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
-    bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
-    bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
-    void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
-    void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
-    bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
+        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
+        bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
+        bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
+        void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
+        void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
+        bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
 
-    bool checkConnection();
+        bool checkConnection();
 
-    QString iDatabasePath;
-    bool iDatabaseOpen;
-    DBError m_lastError;
+        QString iDatabasePath;
+        bool iDatabaseOpen;
+        DBError m_lastError;
 };
 
 QT_END_NAMESPACE
