@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../location/draft-api.cpp -->
+<head>
+  <title>QPositionProvider Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QPositionProvider Class Reference</h1>
+<p>The QPositionProvider class is an abstract base class for the distribution of positional updates. <a href="#details">More...</a></p>
+<pre>    #include &lt;QPositionProvider&gt;</pre><ul>
+<li><a href="qpositionprovider-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qpositionprovider.html#IntervalType-enum">IntervalType</a></b> { TimeInterval, DistanceInterval }</li>
+<li><div class="fn"></div>enum <b><a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceType</a></b> { SatellitePositionSources, NonSatellitePositionSources, AllPositionSources }</li>
+<li><div class="fn"></div>flags <b><a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</a></b></li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qpositionprovider.html#QPositionProvider">QPositionProvider</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>virtual QPositionUpdate <b><a href="qpositionprovider.html#lastUpdate">lastUpdate</a></b> ( PositionSourceTypes <i>sources</i> = AllPositionSources ) const = 0</li>
+<li><div class="fn"></div>virtual int <b><a href="qpositionprovider.html#minimumIntervalForType">minimumIntervalForType</a></b> ( IntervalType <i>type</i> ) const = 0</li>
+<li><div class="fn"></div>PositionSourceTypes <b><a href="qpositionprovider.html#preferredSourceTypes">preferredSourceTypes</a></b> () const</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionprovider.html#setPreferredSourceTypes">setPreferredSourceTypes</a></b> ( PositionSourceTypes <i>sources</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a></b> ( IntervalType <i>type</i>, int <i>interval</i> )</li>
+<li><div class="fn"></div>virtual PositionSourceTypes <b><a href="qpositionprovider.html#supportedSourceTypes">supportedSourceTypes</a></b> () const = 0</li>
+<li><div class="fn"></div>IntervalType <b><a href="qpositionprovider.html#updateIntervalType">updateIntervalType</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qpositionprovider.html#updateIntervalValue">updateIntervalValue</a></b> () const</li>
+</ul>
+<a name="public-slots"></a>
+<h3>Public Slots</h3>
+<ul>
+<li><div class="fn"></div>virtual void <b><a href="qpositionprovider.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 5000 ) = 0</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionprovider.html#startUpdates">startUpdates</a></b> () = 0</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionprovider.html#stopUpdates">stopUpdates</a></b> () = 0</li>
+</ul>
+<a name="signals"></a>
+<h3>Signals</h3>
+<ul>
+<li><div class="fn"></div>void <b><a href="qpositionprovider.html#positionUpdated">positionUpdated</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"></div>QPositionProvider * <b><a href="qpositionprovider.html#createProvider">createProvider</a></b> ()</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QPositionProvider class is an abstract base class for the distribution of positional updates.</p>
+<p>The static function <a href="qpositionprovider.html#createProvider">QPositionProvider::createProvider</a>() creates a default position provider that is appropriate for the platform, if one is available. Otherwise, QPositionProvider can be subclassed to create an appropriate custom provider of position data.</p>
+<p>Users of a QPositionProvider subclass can request the current position using <a href="qpositionprovider.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qpositionprovider.html#startUpdates">startUpdates</a>() and <a href="qpositionprovider.html#stopUpdates">stopUpdates</a>(). When an update is available, positionUpdate() is emitted. The last known position can be accessed with <a href="qpositionprovider.html#lastUpdate">lastUpdate</a>().</p>
+<p>If regular position updates are required, <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. (If no interval is specified, updates are simply provided whenever they are available.) The interval can either be specified by time and/or distance. For example:</p>
+<pre><span class="comment">    // Emit updates every 10 seconds if available</span>
+    QPositionProvider *provider = QPositionProvider::createProvider();
+    provider-&gt;setUpdateInterval(QPositionProvider::TimeInterval, 10000);</pre>
+<pre><span class="comment">    // Emit updates each time there is a distance change greater than 100 meters</span>
+    MyPositionProvider *provider = QPositionProvider::createProvider();
+    provider-&gt;setUpdateInterval(QPositionProvider::DistanceInterval, 100);</pre>
+<p>To remove an update interval that was previously set, call <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>() with a value of 0.</p>
+<p>Note that the position provider may have a minimum value requirement for update intervals, as returned by <a href="qpositionprovider.html#minimumIntervalForType">minimumIntervalForType</a>().</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="IntervalType-enum"></a>enum QPositionProvider::IntervalType</h3>
+<p>Defines the types that can be specified when calling <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>().</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QPositionProvider::TimeInterval</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Update intervals are specified in milliseconds.</td></tr>
+<tr><td valign="top"><tt>QPositionProvider::DistanceInterval</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Update intervals are specified in metres.</td></tr>
+</table></p>
+<h3 class="flags"><a name="PositionSourceType-enum"></a>enum QPositionProvider::PositionSourceType<br />flags QPositionProvider::PositionSourceTypes</h3>
+<p>Defines the types of position sources.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QPositionProvider::SatellitePositionSources</tt></td><td align="center" valign="top"><tt>0x000000ff</tt></td><td valign="top">Satellite-based position sources such as GPS.</td></tr>
+<tr><td valign="top"><tt>QPositionProvider::NonSatellitePositionSources</tt></td><td align="center" valign="top"><tt>0xffffff00</tt></td><td valign="top">Other position sources.</td></tr>
+<tr><td valign="top"><tt>QPositionProvider::AllPositionSources</tt></td><td align="center" valign="top"><tt>0xffffffff</tt></td><td valign="top">A flag that matches all available sources.</td></tr>
+</table></p>
+<p>The PositionSourceTypes type is a typedef for <a href="qflags.html">QFlags</a>&lt;PositionSourceType&gt;. It stores an OR combination of PositionSourceType values.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QPositionProvider"></a>QPositionProvider::QPositionProvider ( QObject * <i>parent</i> = 0 )</h3>
+<p>Creates a position provider with the specified <i>parent</i>.</p>
+<h3 class="fn"><a name="createProvider"></a>QPositionProvider * QPositionProvider::createProvider ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Creates and returns a position provider that reads from the system's default sources of location data.</p>
+<p>Returns 0 if the system has no default position provider.</p>
+<h3 class="fn"><a name="lastUpdate"></a><a href="qpositionupdate.html">QPositionUpdate</a> QPositionProvider::lastUpdate ( <a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</a> <i>sources</i> = AllPositionSources ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the most recent update that was emitted through <a href="qpositionprovider.html#positionUpdated">positionUpdated</a>() that matches the specified <i>sources</i>.</p>
+<p>Returns a null update if <a href="qpositionprovider.html#positionUpdated">positionUpdated</a>() has not been emitted or if there is no update that has been provided that matches the specified <i>sources</i>.</p>
+<h3 class="fn"><a name="minimumIntervalForType"></a>int QPositionProvider::minimumIntervalForType ( <a href="qpositionprovider.html#IntervalType-enum">IntervalType</a> <i>type</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the minimum interval for the given <i>type</i> that can be passed to <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>().</p>
+<h3 class="fn"><a name="positionUpdated"></a>void QPositionProvider::positionUpdated ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>If <a href="qpositionprovider.html#startUpdates">startUpdates</a>() or <a href="qpositionprovider.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update becomes available.</p>
+<p>The <i>update</i> value holds the value of the new update.</p>
+<h3 class="fn"><a name="preferredSourceTypes"></a><a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</a> QPositionProvider::preferredSourceTypes () const</h3>
+<p>Returns the sources set by <a href="qpositionprovider.html#setPreferredSourceTypes">setPreferredSourceTypes</a>().</p>
+<p>See also <a href="qpositionprovider.html#setPreferredSourceTypes">setPreferredSourceTypes</a>().</p>
+<h3 class="fn"><a name="requestUpdate"></a>void QPositionProvider::requestUpdate ( int <i>timeout</i> = 5000 )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
+<p>Attempts to get the current position and emit <a href="qpositionprovider.html#positionUpdated">positionUpdated</a>() with this information. This is useful if you do not need the regular updates provided by <a href="qpositionprovider.html#startUpdates">startUpdates</a>(). The timeout for the update is specified by <i>timeout</i> in milliseconds.</p>
+<p>This can be called even if <a href="qpositionprovider.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
+<p>This does nothing if another update request is in progress.</p>
+<h3 class="fn"><a name="setPreferredSourceTypes"></a>void QPositionProvider::setPreferredSourceTypes ( <a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</a> <i>sources</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the preferred position sources for this provider to <i>sources</i>. The provider may still receive positions from other sources depending on the underlying system.</p>
+<p><b>Note:</b> When reimplementing this method, subclasses must call the base method implementation to ensure preferredSources() returns the correct value.</p>
+<p>See also <a href="qpositionprovider.html#preferredSourceTypes">preferredSourceTypes</a>() and <a href="qpositionprovider.html#supportedSourceTypes">supportedSourceTypes</a>().</p>
+<h3 class="fn"><a name="setUpdateInterval"></a>void QPositionProvider::setUpdateInterval ( <a href="qpositionprovider.html#IntervalType-enum">IntervalType</a> <i>type</i>, int <i>interval</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the update interval type to <i>type</i> and the interval value to <i>interval</i>. To remove interval-based updates, set <i>interval</i> to 0.</p>
+<p>If <i>interval</i> is not 0 and is less than the value returned by <a href="qpositionprovider.html#minimumIntervalForType">minimumIntervalForType</a>() for the specified type, the interval will be set to the minimum interval.</p>
+<p>Note that implementations may not provide updates at the exact interval specified. For example, a given millisecond interval value may be rounded to the nearest second if the implementation does not support intervals specified to millisecond precision.</p>
+<p><b>Note:</b> When reimplementing this method, subclasses must call the base method implementation to ensure <a href="qpositionprovider.html#updateIntervalType">updateIntervalType</a>() and <a href="qpositionprovider.html#updateIntervalValue">updateIntervalValue</a>() returns the correct value.</p>
+<h3 class="fn"><a name="startUpdates"></a>void QPositionProvider::startUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
+<p>Starts emitting updates at regular intervals as specified by <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>().</p>
+<p>If <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>() has not been called, the provider will emit updates as soon as they become available.</p>
+<h3 class="fn"><a name="stopUpdates"></a>void QPositionProvider::stopUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
+<p>Stops emitting updates at regular intervals.</p>
+<h3 class="fn"><a name="supportedSourceTypes"></a><a href="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</a> QPositionProvider::supportedSourceTypes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the types of sources available to this provider.</p>
+<p>See also <a href="qpositionprovider.html#setPreferredSourceTypes">setPreferredSourceTypes</a>().</p>
+<h3 class="fn"><a name="updateIntervalType"></a><a href="qpositionprovider.html#IntervalType-enum">IntervalType</a> QPositionProvider::updateIntervalType () const</h3>
+<p>Returns the interval type set by <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>().</p>
+<p>The return value is undefined if no interval has been set.</p>
+<h3 class="fn"><a name="updateIntervalValue"></a>int QPositionProvider::updateIntervalValue () const</h3>
+<p>Returns the interval value set by <a href="qpositionprovider.html#setUpdateInterval">setUpdateInterval</a>().</p>
+<p>Returns 0 if no interval has been set.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="right"><div align="right">Location API</div></td>
+</tr></table></div></address></body>
+</html>
