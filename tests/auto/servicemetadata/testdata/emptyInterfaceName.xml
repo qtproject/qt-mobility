@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<service name="ServiceA"  filepath="C:/TestData/testservice.dll" >
+<service>
+  <name>ServiceA</name>
+  <filepath>C:/TestData/testservice.dll</filepath>
   <description>Test service description</description> 
-  <interface name="" version="1.0.456">
+  <interface>
+    <name></name>
+    <version>1.456</version>
     <description>Interface that provides download support</description> 
   </interface>
 </service>

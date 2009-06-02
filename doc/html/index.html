@@ -77,42 +77,51 @@
 <a name="xml-format"></a>
 <h3>XML format</h3>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
-<pre>        &lt;!ELEMENT description ( #PCDATA ) &gt;
-
-        &lt;!ELEMENT interface ( description ) &gt;
-        &lt;!ATTLIST interface capabilities CDATA #IMPLIED &gt;
-        &lt;!ATTLIST interface name NMTOKEN #REQUIRED &gt;
-        &lt;!ATTLIST interface version NMTOKEN #REQUIRED &gt;
-
-        &lt;!ELEMENT service ( description, interface+ ) &gt;
-        &lt;!ATTLIST service filepath CDATA #REQUIRED &gt;
-        &lt;!ATTLIST service name NMTOKEN #REQUIRED &gt;</pre>
+<pre>        &lt;!ELEMENT service ( name, filepath, description, interface+ ) &gt;
+        &lt;!ELEMENT description ( #PCDATA ) &gt;
+        &lt;!ELEMENT filepath ( #PCDATA ) &gt;
+        &lt;!ELEMENT interface ( capabilities | description | name | version )* &gt;
+        &lt;!ELEMENT capabilities ( #PCDATA ) &gt;
+        &lt;!ELEMENT name ( #PCDATA ) &gt;
+        &lt;!ELEMENT version ( #PCDATA ) &gt;</pre>
 <p>The elements and attributes have the following meanings:</p>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Element</th><th>Attribute</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>description</td><td></td><td>A user readable description of the purpose of the interface or service.</td></tr>
-<tr valign="top" class="even"><td>interface</td><td></td><td>This tag describes the properties of the interface.</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>capabilities</td><td>This attribute is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>version</td><td>This attribute contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
-</td></tr>
-<tr valign="top" class="even"><td>service</td><td></td><td>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</td></tr>
+<thead><tr valign="top" class="qt-style"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>service</td><td></td><td>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</td></tr>
+<tr valign="top" class="even"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the service.</td></tr>
 <tr valign="top" class="odd"><td>&quot;</td><td>filepath</td><td>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. QLibrary is used to determine the platform specific parts of the plugin.</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the service.</td></tr>
+<tr valign="top" class="odd"><td>interface</td><td></td><td>The <i>interface</i> describes the properties of the interface.</td></tr>
+<tr valign="top" class="even"><td>&quot;</td><td>capabilities</td><td>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</td></tr>
+<tr valign="top" class="odd"><td>&quot;</td><td>name</td><td>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</td></tr>
+<tr valign="top" class="even"><td>&quot;</td><td>version</td><td>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
+</td></tr>
+<tr valign="top" class="odd"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the interface.</td></tr>
 </table></p>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
 <pre>        &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        &lt;service name=&quot;TestService&quot;  filepath=&quot;testserviceplugin&quot; &gt;
-          &lt;description&gt;Test service description&lt;/description&gt;
-          &lt;interface name=&quot;com.nokia.qt.ILocation&quot; version=&quot;1.4&quot; capabilities=&quot;&quot;&gt;
-            &lt;description&gt;Interface that provides location support&lt;/description&gt;
-          &lt;/interface&gt;
-          &lt;interface name=&quot;com.nokia.qt.ILocation&quot; version=&quot;1.5&quot; capabilities=&quot;&quot;&gt;
-            &lt;description&gt;Interface that provides location support&lt;/description&gt;
-          &lt;/interface&gt;
-          &lt;interface name=&quot;com.nokia.qt.ISysInfo&quot; capabilities=&quot;ReadUserData&quot; version=&quot;2.3&quot;&gt;
-            &lt;description&gt;Interface that provides system information support&lt;/description&gt;
-          &lt;/interface&gt;
+        &lt;service&gt;
+            &lt;name&gt;TestService&lt;/name&gt;
+            &lt;filepath&gt;testserviceplugin&lt;/filepath&gt;
+            &lt;description&gt;Test service description&lt;/description&gt;
+            &lt;interface&gt;
+                &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
+                &lt;version&gt;1.4&lt;/version&gt;
+                &lt;capabilities&gt;&lt;/capabilities&gt;
+                &lt;description&gt;Interface that provides location support&lt;/description&gt;
+            &lt;/interface&gt;
+            &lt;interface&gt;
+                &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
+                &lt;version&gt;1.5&lt;/version&gt;
+                &lt;capabilities&gt;&lt;/capabilities&gt;
+                &lt;description&gt;Interface that provides location support&lt;/description&gt;
+            &lt;/interface&gt;
+            &lt;interface&gt;
+                &lt;name&gt;com.nokia.qt.ISysInfo&lt;/name&gt;
+                &lt;capabilities&gt;ReadUserData&lt;/capabilities&gt;
+                &lt;version&gt;2.3&lt;/version&gt;
+                &lt;description&gt;Interface that provides system information support&lt;/description&gt;
+            &lt;/interface&gt;
         &lt;/service&gt;</pre>
 <a name="installing-the-service-at-runtime"></a>
 <h3>Installing the service at runtime</h3>

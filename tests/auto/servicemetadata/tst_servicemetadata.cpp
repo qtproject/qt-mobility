@@ -89,8 +89,6 @@ void ServiceMetadataTest::parseValidServiceXML()
     ServiceMetaData parser(dir.absoluteFilePath("ServiceTest.xml"));
     QCOMPARE(parser.extractMetadata(),true);
     QCOMPARE(parser.name(), QString("com.nokia.TestService"));
-    //QCOMPARE(parser.version(), QString("1.0.456"));
-    //QCOMPARE(parser.capabilities(), QString("ReadUserData,WriteUserData"));
     QCOMPARE(parser.description(), QString("Test service description"));
     
     QCOMPARE(parser.filePath(), QString("C:/TestData/testservice.dll"));
@@ -141,6 +139,15 @@ void ServiceMetadataTest::parseValidServiceXML()
     QVERIFY(capabilities.contains("WriteUserData"));
     QVERIFY(capabilities.contains("ExecUserData"));
     QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message receiving support"));
+    
+    ServiceMetaData parser1(dir.absoluteFilePath("WrongOrder.xml"));
+    QCOMPARE(parser1.extractMetadata(),true);
+    QList<QServiceInterfaceDescriptor> allInterfacesWrongOrder = parser1.getInterfaces();
+    foreach(const QServiceInterfaceDescriptor d, allInterfacesWrongOrder) {
+        QCOMPARE(d.serviceName(), QString("ovi"));
+        QCOMPARE(d.property(QServiceInterfaceDescriptor::FilePath).toString(), QString("C:/Nokia/ovi.dll"));
+        QCOMPARE(d.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("Ovi Services"));
+    }
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML_data()
@@ -152,15 +159,16 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
 
     QTest::newRow("Test1.xml") << "Test1.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
     QTest::newRow("Test2.xml") << "Test2.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE;
-    QTest::newRow("Test3.xml") << "Test3.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
+    QTest::newRow("Test3.xml") << "Test3.xml" << (int)ServiceMetaData::SFW_ERROR_PARSE_SERVICE;
     QTest::newRow("Test4.xml") << "Test4.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
     QTest::newRow("Test5.xml") << "Test5.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
-    QTest::newRow("Test7.xml") << "Test7.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
-    QTest::newRow("Test8.xml") << "Test8.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
+    QTest::newRow("Test7.xml") << "Test7.xml" << (int)ServiceMetaData::SFW_ERROR_PARSE_SERVICE;
+    QTest::newRow("Test8.xml") << "Test8.xml" << (int)ServiceMetaData::SFW_ERROR_PARSE_INTERFACE;
     QTest::newRow("Test9.xml") << "Test9.xml" << (int)ServiceMetaData::SFW_ERROR_PARSE_SERVICE; ///check error code
     QTest::newRow("Test10.xml") << "Test10.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
     QTest::newRow("Test11.xml") << "Test11.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
     QTest::newRow("Test12.xml") << "Test12.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
+    //QTest::newRow("Test8.xml") << "Test8.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
 
     QStringList badVersionXml;
     badVersionXml << "Test14.xml" << "Test15.xml" << "Test17.xml" << "Test18.xml";
@@ -172,6 +180,25 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("empty version") << "emptyVersion.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
     QTest::newRow("duplicated interface A") << "Test13.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE;
     QTest::newRow("duplicated interface B") << "Test19.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE;
+    
+    QTest::newRow("Test20.xml") << "Test20.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
+    QTest::newRow("Test21.xml") << "Test21.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
+    QTest::newRow("Test22.xml") << "Test22.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
+    //duplicated service name tag
+    QTest::newRow("Test23.xml") << "Test23.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated service description tag
+    QTest::newRow("Test24.xml") << "Test24.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated service filepath tag
+    QTest::newRow("Test25.xml") << "Test25.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated interface name tag
+    QTest::newRow("Test26.xml") << "Test26.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated interface version tag
+    QTest::newRow("Test27.xml") << "Test27.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated interface description tag
+    QTest::newRow("Test28.xml") << "Test28.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //duplicated interface capabilities tag
+    QTest::newRow("Test29.xml") << "Test29.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+
 }
 
 void ServiceMetadataTest::parseInvalidServiceXML()

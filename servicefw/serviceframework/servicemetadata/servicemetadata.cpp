@@ -269,43 +269,38 @@ bool ServiceMetaData::getAttributeValue(const QXmlStreamReader &aXMLReader, cons
   
 /*!
     Parses and extracts the service metadata from the current xml <service> node \n
-    Custom error codes: \n
-    SFW_ERROR_NO_SERVICE_NAME in case no service name in XML file \n
-    SFW_ERROR_NO_INTERFACE_VERSION in case no interface version in XML file \n
-    SFW_ERROR_PARSE_SERVICE in case can not parse service section in XML file \n
-    SFW_ERROR_NO_SERVICE_FILEPATH in case no service file path in XML file \n
-    SFW_ERROR_INVALID_XML_FILE in case XML file is not valid \n
-    SFW_ERROR_NO_SERVICE_INTERFACE in case no interface defined for service in XML file \n
-    @param aXMLReader xml stream reader 
-    @return true if the metadata was read properly, false if there is an error
  */
 bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
 {
     Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_TAG);
     bool parseError = false;
 
-    if (!getAttributeValue(aXMLReader, NAME_TAG, serviceName)) {
-        latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
-        parseError = true;
-    }
-
-    if (!parseError) {
-        if (!getAttributeValue(aXMLReader, SERVICE_FILEPATH, serviceFilePath)) {
-            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
-            parseError = true;
-        }
-    }
-
-    while (!parseError && !aXMLReader.atEnd()) {
-        aXMLReader.readNext();  
-        if (aXMLReader.name() == DESCRIPTION_TAG) {
+    int dupSTags[3] = {0 //->tag name
+        ,0 //-> service description
+        ,0 //-> filepath
+    };
+    while(!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();
+        if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
+            //Found <description> tag
             serviceDescription = aXMLReader.readElementText();
-        //Found a <interface> node, read module related metadata  
+            dupSTags[1]++;
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
+            serviceName = aXMLReader.readElementText();
+            dupSTags[0]++;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
+            //Found a <interface> node, read module related metadata  
             if (!processInterfaceElement(aXMLReader)) 
                 parseError = true;
-        //Found </service>, leave the loop
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_FILEPATH ) {
+            //Found <filepath> tag
+            dupSTags[2]++;
+            serviceFilePath = aXMLReader.readElementText();
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == "version") {
+            //FOUND <version> tag on service level. We ignore this for now
+            aXMLReader.readElementText();
         } else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICE_TAG) {
+            //Found </service>, leave the loop
             break;
         } else if (aXMLReader.isEndElement() || aXMLReader.isStartElement()) {
             latestError = ServiceMetaData::SFW_ERROR_PARSE_SERVICE;
@@ -315,11 +310,36 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             parseError = true;
         }
     }
+    if ( !parseError ) {
+        if (serviceName.isEmpty()) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
+            parseError = true;
+        } else if (serviceFilePath.isEmpty()) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
+            parseError = true;
+        }
+    }
 
-    if (serviceInterfaces.count() == 0 && latestError == 0) {
+    for(int i=0;!parseError && i<3;i++) {
+        if (dupSTags[i] > 1) {
+            parseError = true;
+            latestError = SFW_ERROR_DUPLICATED_TAG;
+            break;
+        }
+    }
+        
+    //update all interfaces with service data
+    const int icount = serviceInterfaces.count();
+    if (icount == 0 && latestError == 0) {
         latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
         parseError = true;
     }
+    for (int i = 0; i<icount; i++) {
+        serviceInterfaces.at(i).d->serviceName = serviceName;
+        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::FilePath] = serviceFilePath;
+        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
+    }
+
     if (parseError) {
         clearMetadata();
     }
@@ -328,13 +348,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
 
 /*!
     Parses and extracts the interface metadata from the current xml <interface> node \n
-    Custome error codes: \n
-    SFW_ERROR_NO_INTERFACE_NAME in case no interface name in XML file \n
-    SFW_ERROR_PARSE_INTERFACE in case error parsing interface section \n
-    SFW_ERROR_INVALID_XML_FILE in case XML file is not valid \n
-    @param aXMLReader xml stream reader 
-    @return true if the metadata was read properly, false if there is an error
- */
+*/
 bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
 {
     Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG);
@@ -343,12 +357,30 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
     //Read interface parameter
     QString tmp;
     QServiceInterfaceDescriptor aInterface;
-    if (getAttributeValue(aXMLReader, NAME_TAG, tmp)) {
-        aInterface.d = new QServiceInterfaceDescriptorPrivate;
-        aInterface.d->interfaceName = tmp;
-        aInterface.d->serviceName = serviceName;
-        tmp.clear();
-        if (getAttributeValue(aXMLReader, INTERFACE_VERSION, tmp)) {
+    int dupITags[4] = {
+        0,  //->iface name tag
+        0,  //->version
+        0,  //->capabilities
+        0   //->description
+    };
+    aInterface.d = new QServiceInterfaceDescriptorPrivate;
+    while (!parseError && !aXMLReader.atEnd()) {
+        aXMLReader.readNext();
+        //Read interface description
+        if (aXMLReader.isStartElement() && aXMLReader.name() == NAME_TAG) {
+            aInterface.d->interfaceName = aXMLReader.readElementText();
+            dupITags[0]++;
+            //Found <name> tag for interface
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
+            //Found <description> tag
+            aInterface.d->properties[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
+            dupITags[3]++;
+        //Found </interface>, leave the loop
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_VERSION) {
+            tmp.clear();
+            tmp = aXMLReader.readElementText();
+            if (tmp.isEmpty())
+                continue;  //creates NO_INTERFACE_VERSION error further below
             bool success = checkVersion(tmp);
             if ( success ) {
                 int majorVer = -1;
@@ -356,30 +388,16 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
                 transformVersion(tmp, &majorVer, &minorVer);
                 aInterface.d->major = majorVer;
                 aInterface.d->minor = minorVer;
-                tmp.clear();
-                if (getAttributeValue(aXMLReader, INTERFACE_CAPABILITY, tmp)) {
-                    aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
-                }
+                dupITags[1]++;
             } else {
                 latestError = ServiceMetaData::SFW_ERROR_INVALID_VERSION;
                 parseError = true;
             }
-        }
-        else{
-            latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
-            parseError = true;
-        }
-    } else {
-        latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
-        parseError = true;
-    }
-
-    while (!parseError && !aXMLReader.atEnd()) {
-        aXMLReader.readNext();
-        //Read interface description
-        if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
-            aInterface.d->properties[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
-        //Found </interface>, leave the loop
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CAPABILITY) {
+            tmp.clear();
+            tmp= aXMLReader.readElementText();
+            aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
+            dupITags[2]++;
         } else if (aXMLReader.isEndElement() && aXMLReader.name() == INTERFACE_TAG) {
             break;
         } else if (aXMLReader.isStartElement() || aXMLReader.isEndElement()) {
@@ -388,6 +406,24 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
             latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
             parseError = true;
+        }
+    }
+
+    if (!parseError) {
+        if (dupITags[1] == 0) { //no version tag found
+            latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
+            parseError = true;
+        } else if (aInterface.d->interfaceName.isEmpty()) {
+            latestError = ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME;
+            parseError = true;
+        }
+    }
+    
+    for(int i=0;!parseError && i<4;i++) {
+        if (dupITags[i] > 1) {
+            parseError = true;
+            latestError = SFW_ERROR_DUPLICATED_TAG;
+            break;
         }
     }
 

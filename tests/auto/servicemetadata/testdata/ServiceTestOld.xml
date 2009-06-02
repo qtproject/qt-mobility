@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<service name="com.nokia.TestService" version="1.0.456" capabilities="ReadUserData,WriteUserData" filepath="C:/TestData/testservice.dll" >
-  <description>Test service description</description> 
-  <interface name="IDownloader">
-    <description>Interface that provides download support</description> 
-  </interface>
-  <interface name="ILocation">
-    <description>Interface that provides location support</description> 
-  </interface>
-  <interface name="ISysInfo">
-    <description>Interface that provides system information support</description> 
-  </interface>  
-  <interface name="ISendMessage">
-   <description>Interface that provides message sending support</description> 
-  </interface>
-  <interface name="IReceiveMessage">
-   <description>Interface that provides message receiving support</description> 
-  </interface>
+<service>
+    <name>com.nokia.TestService</name>
+    <version>1.0.456</version>
+    <capabilities>ReadUserData,WriteUserData</capabilities>
+    <filepath>C:/TestData/testservice.dll</filepath>
+    <interface>
+        <name>IDownloader</name>
+        <description>Interface that provides download support</description> 
+    </interface>
+    <interface>
+        <name>ILocation</name>
+        <description>Interface that provides location support</description> 
+    </interface>
+    <interface>
+        <name>ISysInfo</name>
+        <description>Interface that provides system information support</description> 
+    </interface>  
+    <interface>
+        <name>ISendMessage</name>
+        <description>Interface that provides message sending support</description> 
+    </interface>
+    <interface>
+        <name>IReceiveMessage</name>
+        <description>Interface that provides message receiving support</description> 
+    </interface>
 </service>
-

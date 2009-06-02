@@ -106,9 +106,6 @@ private:
 
 void ServiceDatabaseUnitTest::initTestCase()
 {
-    /*#ifdef __SYMBIAN32__
-    database.setDatabasePath(QString("C:\\Data\\"));
-    #endif*/
     dir = database.databasePath();
     QCOMPARE(database.open(), (int)ServiceDatabase::SFW_ERROR_DB_RECREATED);
     database.close();

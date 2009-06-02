@@ -25,8 +25,13 @@
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
+        <keyword ref="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</keyword>
+        <keyword ref="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</keyword>
+        <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
+        <keyword ref="qservicefilter.html#serviceName">serviceName</keyword>
         <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
+        <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
         <keyword ref="qservicefilter.html#operator-eq">operator=</keyword>
         <keyword ref="qservicefilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
         <keyword ref="qservicefilter.html#operator-gt-gt">operator&gt;&gt;</keyword>

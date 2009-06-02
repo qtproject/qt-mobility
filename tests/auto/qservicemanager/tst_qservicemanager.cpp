@@ -64,7 +64,7 @@ uint qHash(const QServiceInterfaceDescriptor &desc)
 static DescriptorProperties defaultDescriptorProperties()
 {
     DescriptorProperties props;
-    props[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    //props[QServiceInterfaceDescriptor::Capabilities] = QStringList();
     props[QServiceInterfaceDescriptor::FilePath] = "";
     props[QServiceInterfaceDescriptor::ServiceDescription] = "";
     props[QServiceInterfaceDescriptor::InterfaceDescription] = "";
@@ -115,7 +115,9 @@ private:
     QByteArray createServiceXml(const QString &serviceName, const QByteArray &interfaceXml, const QString &path, const QString &description = QString()) const
     {
         QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-        xml += "<service name=\"" + serviceName + "\" filepath=\"" + path + "\">\n";
+        xml += "<service>\n";
+        xml += "<name>" + serviceName + "</name>\n";
+        xml += "<filepath>" + path + "</filepath>\n";
         xml += "<description>" + description + "</description>\n";
         xml += interfaceXml;
         xml += "</service>\n";
@@ -143,10 +145,13 @@ private:
 
     QByteArray createInterfaceXml(const QString &name, const QString &version = "1.0", const QString &description = QString()) const
     {
-        QString xml = "<interface name=\"" + name + "\" version=\"" + version + "\">\n";
-        xml += "    <description>" + description + "</description>\n";
+       QString xml = "<interface>\n";
+        xml += "<name>" + name + "</name>\n";
+        xml += "<version>" + version + "</version>\n";
+        xml += " <description>" + description + "</description>\n";
         xml += "</interface>\n";
         return xml.toLatin1();
+
     }
 
     QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties()) const
@@ -333,7 +338,6 @@ void tst_QServiceManager::findInterfaces_filter_data()
     descriptors << createDescriptor("com.nokia.qt.TestInterfaceB", 2, 3, serviceName, properties);
 
     QByteArray serviceXml = createServiceXml(serviceName, descriptors);
-
     QServiceFilter filter;
 
     QTest::newRow("empty/wildcard filter")

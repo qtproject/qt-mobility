@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<service name="com.nokia.Services.TestService" filepath="testdata/testservice.dll">
-    <interface name="IDownloader">
+<service>
+    <name>com.nokia.Services.TestService</name>
+    <filepath>testdata/testservice.dll</filepath>
+    <interface>
+        <name>IDownloader</name>
         <description>Interface that provides download support</description>
     </interface>
 </service>

@@ -86,7 +86,8 @@ public:
         SFW_ERROR_PARSE_SERVICE,                            /* Error parsing service node */
         SFW_ERROR_PARSE_INTERFACE,                          /* Error parsing interface node */
         SFW_ERROR_DUPLICATED_INTERFACE,                     /* The same interface is defined twice */
-        SFW_ERROR_INVALID_VERSION
+        SFW_ERROR_INVALID_VERSION,
+        SFW_ERROR_DUPLICATED_TAG                            /* The tag appears twice */
     };
 
 public:
