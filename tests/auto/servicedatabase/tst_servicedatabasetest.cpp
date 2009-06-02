@@ -94,9 +94,9 @@ private:
                             const QString &filePath,
                             const QString &description);
 
-    QList<int> getInterfaceIDs(const QString &serviceName);
-    bool existsInPropertyTable(int interfaceID);
-    bool existsInDefaultsTable(int interfaceID);
+    QStringList getInterfaceIDs(const QString &serviceName);
+    bool existsInPropertyTable(const QString &interfaceID);
+    bool existsInDefaultsTable(const QString &interfaceID);
 
 	ServiceMetaData* parser;
 	QDir dir;
@@ -107,8 +107,8 @@ private:
 void ServiceDatabaseUnitTest::initTestCase()
 {
     dir = database.databasePath();
-    QCOMPARE(database.open(), (int)ServiceDatabase::SFW_ERROR_DB_RECREATED);
-    database.close();
+    QVERIFY(database.open());
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::testRegistration()
@@ -120,7 +120,7 @@ void ServiceDatabaseUnitTest::testRegistration()
     QVERIFY(!database.registerService(parser));
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
     QVERIFY(database.registerService(parser));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceOmni.xml")));
@@ -184,7 +184,9 @@ void ServiceDatabaseUnitTest::testRegistration()
         QVERIFY(database.registerService(parser));
     }
 
-    QCOMPARE(database.close(),0);
+    QVERIFY(database.close());
+    QVERIFY(database.close());  //verify we can close multiple times
+                                //without side effects
 }
 
 void ServiceDatabaseUnitTest::getInterfaces()
@@ -197,8 +199,10 @@ void ServiceDatabaseUnitTest::getInterfaces()
     interfaces = database.getInterfaces(filter, &ok);
     QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
+    QVERIFY(database.close());  //check we can close the database even if it
+                                //has not been opened
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
     interfaces = database.getInterfaces(filter, &ok);
     QVERIFY(ok);
     QCOMPARE(interfaces.count(), 5);
@@ -238,7 +242,7 @@ void ServiceDatabaseUnitTest::getInterfaces()
     capabilities << "MultimediaDD" << "NetworkServices" << "ReadUserData" << "WriteUserData";
     QVERIFY(compareDescriptor(interfaces[2], "com.omni.service.Video", "OMNI", 1, 4, capabilities, "C:/OmniInc/omniinc.dll"));
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::searchByInterfaceName()
@@ -246,7 +250,7 @@ void ServiceDatabaseUnitTest::searchByInterfaceName()
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
 
     QString iface = "com.omni.device.Accelerometer";
     // == search via interface name only ==
@@ -344,7 +348,7 @@ void ServiceDatabaseUnitTest::searchByInterfaceName()
     QCOMPARE(interfaces.count(), 1);
     QVERIFY(compareDescriptor(interfaces[0], iface, "DharmaInitiative", 8, 0, capabilities, "C:/island/pearl.dll"));
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::searchByInterfaceAndService()
@@ -352,7 +356,7 @@ void ServiceDatabaseUnitTest::searchByInterfaceAndService()
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
 
     // == search using only interface and service name ==
     filter.setServiceName("Omni");
@@ -480,12 +484,12 @@ void ServiceDatabaseUnitTest::searchByInterfaceAndService()
     QCOMPARE(interfaces.count(), 1);
     QVERIFY(compareDescriptor(interfaces[0], "com.dharma.electro.discharge", "DharmaInitiative", 15, 0, capabilities, "C:/island/flame.dll"));
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::properties()
 {
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
 
     // == Capability property ==
     //get empty list of capabilities from an interface registered with capabilities=""
@@ -566,7 +570,7 @@ void ServiceDatabaseUnitTest::properties()
     QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Interface that provides accelerometer readings(omni)"));
 
-    QCOMPARE(database.close(),0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::getServiceNames()
@@ -577,7 +581,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
     QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
     QCOMPARE(services.count(), 0);
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
 
     //try wildcard match to get all services
     services = database.getServiceNames("", &ok);
@@ -617,7 +621,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
     QVERIFY(ok);
     QCOMPARE(services.count(), 0);
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::getService()
@@ -626,19 +630,19 @@ void ServiceDatabaseUnitTest::getService()
     ServiceInfo service;
     QList<QServiceInterfaceDescriptor> interfaces;
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
     filter.setServiceName("acme");
     filter.setInterface("com.acme.device.sysinfo","2.3");
 
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),1);
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
     bool ok;
     service = database.getService(interfaces[0], &ok);
     QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
     service = database.getService(interfaces[0]);
     QVERIFY(service.isValid());
     QVERIFY(compareService(service,  "acme", "C:/TestData/testservice.dll", "Acme services"));
@@ -710,7 +714,7 @@ void ServiceDatabaseUnitTest::getService()
     QCOMPARE(service.isValid(), false);
     QCOMPARE(database.lastError().errorCode(), DBError::InvalidSearchCriteria);
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -810,7 +814,7 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
     QVERIFY(!interface.isValid());
 
     //try getting a valid default, in this case only one implementation exists
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
     interface = database.defaultServiceInterface("com.omni.device.Lights", &ok);
     QCOMPARE(ok, true);
     QVERIFY(interface.isValid());
@@ -865,7 +869,7 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
     interface = database.defaultServiceInterface("", &ok);
     QVERIFY(ok);
     QVERIFY(!interface.isValid());
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::setDefaultService_strings()
@@ -874,7 +878,7 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
     QCOMPARE(database.setDefaultService("Skynet", "com.cyberdyne.terminator"), false);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
-    QCOMPARE(database.open(),0);
+    QVERIFY(database.open());
 
     bool ok = false;
     QServiceInterfaceDescriptor interface;
@@ -972,7 +976,7 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
     QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
     QCOMPARE(database.lastError().text(), errorText.arg("").arg("skynet"));
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::setDefaultService_descriptor()
@@ -987,7 +991,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     QVERIFY(!database.setDefaultService(interface));
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
-    QCOMPARE(database.open(),0);
+    QVERIFY(database.open());
 
     //try setting the default to a older version provided by the same
     //service
@@ -1080,7 +1084,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
-    QCOMPARE(database.close(), 0);
+    QVERIFY(database.close());
 }
 
 void ServiceDatabaseUnitTest::unregister()
@@ -1088,7 +1092,7 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(!database.unregisterService("acme"));
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
 
-    QCOMPARE(database.open(), 0);
+    QVERIFY(database.open());
 
     //try unregister a non-existing service
     QVERIFY(!database.unregisterService("StarkInd"));
@@ -1136,9 +1140,9 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this inter
 
     //confirm that properties exist for the service
-    QList<int> interfaceIDs = getInterfaceIDs("omni");
+    QStringList interfaceIDs = getInterfaceIDs("omni");
     QCOMPARE(interfaceIDs.count(), 3);
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(existsInPropertyTable(interfaceID));
 
     QVERIFY(database.unregisterService("oMni")); //ensure case insensitive behaviour
@@ -1185,9 +1189,9 @@ void ServiceDatabaseUnitTest::unregister()
 
     //ensure the associated interfaceIDs no longer exist in the Property
     //and Defaults tables
-    foreach (int interfaceID, interfaceIDs)
+    foreach (const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInPropertyTable(interfaceID));
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInDefaultsTable(interfaceID));
 
     //  == unregister an service that implements a default interface
@@ -1213,7 +1217,7 @@ void ServiceDatabaseUnitTest::unregister()
     interfaceIDs =getInterfaceIDs("DharmaInitiative");
     QVERIFY(interfaceIDs.count() > 0);
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(existsInPropertyTable(interfaceID));
 
     QVERIFY(database.unregisterService("DHARMAInitiative"));
@@ -1225,10 +1229,10 @@ void ServiceDatabaseUnitTest::unregister()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 0);
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInPropertyTable(interfaceID));
 
-    foreach(int interfaceID, interfaceIDs)
+    foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(!existsInDefaultsTable(interfaceID));
 
     //  == check that the service can be registered again
@@ -1278,7 +1282,7 @@ bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,
     return true;
 }
 
-QList<int> ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
+QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);
     QString statement("Select Interface.ID FROM Interface, Service "
@@ -1288,14 +1292,14 @@ QList<int> ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) 
     bindValues.append(serviceName);
     database.executeQuery(&query, statement, bindValues);
 
-    QList<int> ids;
+    QStringList ids;
     while   (query.next()) {
-        ids << query.value(0).toInt();
+        ids << query.value(0).toString();
     }
     return ids;
 }
 
-bool ServiceDatabaseUnitTest::existsInPropertyTable(int interfaceID)
+bool ServiceDatabaseUnitTest::existsInPropertyTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);
@@ -1311,7 +1315,7 @@ bool ServiceDatabaseUnitTest::existsInPropertyTable(int interfaceID)
         return false;
 }
 
-bool ServiceDatabaseUnitTest::existsInDefaultsTable(int interfaceID)
+bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase = QSqlDatabase::database();
     QSqlQuery query(sqlDatabase);

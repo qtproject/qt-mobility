@@ -43,6 +43,7 @@
 #include "servicedatabase.h"
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
+#include <QUuid>
 
 //database name
 #define RESOLVERDATABASE "services.db"
@@ -51,6 +52,7 @@
 #define SERVICE_TABLE "Service"
 #define INTERFACE_TABLE "Interface"
 #define DEFAULTS_TABLE "Defaults"
+#define PROPERTY_TABLE "Property"
 
 //default connection
 #define RESOLVERDATABASE_DEFAULT_CONNECTION "qt_sql_default_connection"
@@ -86,6 +88,9 @@ void DBError::setError(ErrorCode error, const QString &text)
             break;
         case(InvalidDatabaseConnection):
             m_text = "Invalid database connection";
+            break;
+        case(CannotCloseDatabase):
+            m_text= "Cannot close database";
             break;
         case(SqlError):
         case(NotFound):
@@ -131,68 +136,74 @@ ServiceDatabase::~ServiceDatabase()
     The method creates or opens the resolver database and creates tables if they are not present
     @return 0 if operation was successfull(database and tables are available), error code otherwise
 */
-int ServiceDatabase::open()
+bool ServiceDatabase::open()
 {
-    int result(0);
-    if (!iDatabaseOpen){
-        QString path;
+    if (iDatabaseOpen)
+        return true;
 
-        //Create full path to database
-        if(iDatabasePath.isEmpty ())
-            iDatabasePath = databasePath();
+    QString path;
 
-        path = iDatabasePath;
+    //Create full path to database
+    if(iDatabasePath.isEmpty ())
+        iDatabasePath = databasePath();
 
-        if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
-            path.append(RESOLVERDATABASE_PATH_SEPARATOR);
-        }
-        path.append(RESOLVERDATABASE);
-        //Create and/or open database and create tables if neccessary
-        QSqlDatabase  database;
-        if(QSqlDatabase::contains(RESOLVERDATABASE_DEFAULT_CONNECTION)) {
-            database = QSqlDatabase::database(RESOLVERDATABASE_DEFAULT_CONNECTION);
-        } else {
-            database = QSqlDatabase::addDatabase("QSQLITE");
-            database.setDatabaseName(path);
-        }
+    path = iDatabasePath;
 
-        if (database.isValid()){
-            //Create or open resolver database
-            if (!database.isOpen()) {
-                iDatabaseOpen = database.open();
-            } else {
-                iDatabaseOpen = true;
-            }
-        } else {
-            result = ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
-        }
-
-        if(iDatabaseOpen) {
-            //Check database structure (tables) and recreate tables if neccessary
-            //If one of the tables is missing remove all tables and recreate them
-            //This operation is required in order to avoid data coruption
-            if (!checkTables()) {
-                if(dropTables() == 0) {
-                    if (createTables())
-                        result = SFW_ERROR_DB_RECREATED;
-                    else
-                        result = SFW_ERROR_CANNOT_CREATE_TABLES;
-
-                }
-                else {
-                    result = ServiceDatabase::SFW_ERROR_CANNOT_DROP_TABLES;
-                }
-            } 
-        } else {
-            result = ServiceDatabase::SFW_ERROR_CANNOT_OPEN_DATABASE;
-        }
-
-        if (result != ServiceDatabase::SFW_ERROR_DB_RECREATED && result != 0) {
-            close();
-        }
-        iDatabaseOpen = (result == 0 || result == ServiceDatabase::SFW_ERROR_DB_RECREATED)? true: false;
+    if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
+        path.append(RESOLVERDATABASE_PATH_SEPARATOR);
     }
-    return result;
+    path.append(RESOLVERDATABASE);
+    //Create and/or open database and create tables if neccessary
+    QSqlDatabase  database;
+    if(QSqlDatabase::contains(RESOLVERDATABASE_DEFAULT_CONNECTION)) {
+        database = QSqlDatabase::database(RESOLVERDATABASE_DEFAULT_CONNECTION);
+    } else {
+        database = QSqlDatabase::addDatabase("QSQLITE");
+        database.setDatabaseName(path);
+    }
+
+    if (!database.isValid()){
+        m_lastError.setError(DBError::InvalidDatabaseConnection);
+        close();
+        return false;
+    }
+
+    //Create or open resolver database
+    if (!database.isOpen()) {
+        if(!database.open()) {
+            m_lastError.setError(DBError::SqlError, database.lastError().text());
+            qWarning() << "ServiceDatabase::open():-"
+                        << "Problem:" << "Could not open database"
+                        << "\nReason:" << m_lastError.text();
+            close();
+            return false;
+        }
+    }
+    iDatabaseOpen = true;
+
+    //Check database structure (tables) and recreate tables if neccessary
+    //If one of tables is missing remove all tables and recreate them
+    //This operation is required in order to avoid data coruption
+    if (!checkTables()) {
+        if(dropTables()) {
+            if (createTables()) {
+                qWarning() << "ServiceDatabase::open():-"
+                    << "Database tables recreated";
+            } else {
+                //createTable() should've handled error message
+                //and warning
+                close();
+                return false;
+            }
+        }
+        else {
+            //dropTables() should've handled error message
+            //and warning
+            close();
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ServiceDatabase::registerService(ServiceMetaData &service)
@@ -211,7 +222,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         m_lastError.setSQLError(database.lastError().text());
         qWarning() << "ServiceDatabase::registerService():-"
                     << "Unable to begin transaction"
-                    << "\nReason:" << m_lastError.text();
+                    << "\nReason:" << qPrintable(m_lastError.text());
         return false;
     }
 
@@ -242,8 +253,11 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    statement = "INSERT INTO Service(Name,FilePath,Description) VALUES(?,?,?)";
+    statement = "INSERT INTO Service(ID,Name,FilePath,Description) VALUES(?,?,?,?)";
+    QString serviceID = QUuid::createUuid().toString();
+
     bindValues.clear();
+    bindValues.append(serviceID);
     bindValues.append(service.name());
     bindValues.append(service.filePath());
 
@@ -259,11 +273,8 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    int serviceID = query.lastInsertId().toInt();
-    Q_ASSERT(serviceID > -1);
-
     QList <QServiceInterfaceDescriptor> interfaces = service.getInterfaces();
-    int interfaceID = -1;
+    QString interfaceID;;
     bool ok = false;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
         interfaceID = getInterfaceID(&query, interface, &ok);
@@ -280,7 +291,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
             return false;
         }
 
-        if (interfaceID > -1) {
+        if (!interfaceID.isEmpty()) {
             QString errorText;
             errorText = "Cannot register service \"%1\". \"%1\" is already registered "
                         "and implements interface \"%2\", Version \"%3.%4.\"  \"%1\" must "
@@ -348,7 +359,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     return true;
 }
 
-int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok)
+QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok)
 {
     QString statement = "SELECT Interface.ID "
                         "FROM Interface, Service "
@@ -365,17 +376,16 @@ int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDes
     if (!executeQuery(query, statement, bindValues)) {
         if (ok != NULL)
             *ok = false;
-        return -1;
+        return QString();
     }
     if (!query->next()) {
         if (ok != NULL)
             *ok = true;
-        return -1;
+        return QString();
     }
     if (ok != NULL)
         *ok = true;
-    int interfaceID = query->value(EBindIndex).toInt();
-    return interfaceID;
+    return query->value(EBindIndex).toString();
 }
 
 /*!
@@ -385,11 +395,14 @@ int ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDes
     @param aServiceID service identifier 
     @return 0 if operation was successfull, error code otherwise
 */
-bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfaceDescriptor &interface, int serviceID)
+bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfaceDescriptor &interface, const QString &serviceID)
 {
-    QString statement = "INSERT INTO Interface(ServiceID,Name,VerMaj, VerMin) "
-                        "VALUES(?,?,?,?)";
+    QString statement = "INSERT INTO Interface(ID, ServiceID,Name,VerMaj, VerMin) "
+                        "VALUES(?,?,?,?,?)";
+    QString interfaceID = QUuid::createUuid();
+
     QList<QVariant> bindValues;
+    bindValues.append(interfaceID);
     bindValues.append(serviceID);
     bindValues.append(interface.interfaceName());
     bindValues.append(interface.majorVersion());
@@ -401,7 +414,6 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         return false;
     }
 
-    int interfaceID = query->lastInsertId().toInt();
     statement = "INSERT INTO Property(InterfaceID, Key, Value) VALUES(?,?,?)";
     QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant>::const_iterator iter = interface.d->properties.constBegin();
     bool isValidProperty;
@@ -567,7 +579,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QServiceInterfaceDescriptor interface;
     interface.d = new QServiceInterfaceDescriptorPrivate;
     QStringList capabilities;
-    int interfaceID;
+    QString interfaceID;
     while(query.next()){
         interface.d->interfaceName =query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
@@ -579,7 +591,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         interface.d->properties[QServiceInterfaceDescriptor::ServiceDescription]
             = query.value(EBindIndex5).toString();
 
-        interfaceID = query.value(EBindIndex6).toInt();
+        interfaceID = query.value(EBindIndex6).toString();
         if (!populateInterfaceProperties(&interface, interfaceID)) {
             if (ok != NULL)
                 *ok = false;
@@ -726,7 +738,7 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
         return interface;
     }
 
-    int interfaceID = -1;
+    QString interfaceID;
     if (!query.next())
     {
         if ( ok != NULL )
@@ -734,8 +746,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
         return interface;
     }
     else
-        interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+        interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "SELECT Interface.Name, "
                         "Service.Name, Interface.VerMaj, "
@@ -842,9 +854,8 @@ bool ServiceDatabase::setDefaultService(const QString &serviceName, const QStrin
         return false;
     }
 
-    int interfaceID = -1;
-    interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+    QString interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "UPDATE Defaults "
                 "SET InterfaceID = ? "
@@ -920,9 +931,8 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         return false;
     }
 
-    int interfaceID = -1;
-    interfaceID = query.value(EBindIndex).toInt();
-    Q_ASSERT(interfaceID > -1);
+    QString interfaceID = query.value(EBindIndex).toString();
+    Q_ASSERT(!interfaceID.isEmpty());
 
     statement = "UPDATE Defaults "
         "SET InterfaceID = ? "
@@ -974,12 +984,12 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         return false;
     }
 
-    QList<int> serviceIDs;
+    QStringList serviceIDs;
     while(query.next()) {
-        serviceIDs << query.value(EBindIndex).toInt();
+        serviceIDs << query.value(EBindIndex).toString();
     }
 
-    QList<int> interfaceIDs;
+    QStringList interfaceIDs;
     statement = "SELECT Interface.ID from Interface, Service "
                 "WHERE Interface.ServiceID = Service.ID "
                     "AND Service.Name =? COLLATE NOCASE";
@@ -991,7 +1001,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     while (query.next()) {
-        interfaceIDs << query.value(EBindIndex).toInt();
+        interfaceIDs << query.value(EBindIndex).toString();
     }
 
     if (serviceIDs.count() == 0) {
@@ -1034,7 +1044,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     statement = "DELETE FROM Interface WHERE Interface.ServiceID = ?";
-    foreach(int serviceID, serviceIDs) {
+    foreach(const QString &serviceID, serviceIDs) {
         bindValues.clear();
         bindValues.append(serviceID);
         if (!executeQuery(&query, statement, bindValues)) {
@@ -1046,7 +1056,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     statement = "DELETE FROM Property WHERE InterfaceID = ?";
-    foreach(int interfaceID,  interfaceIDs) {
+    foreach(const QString &interfaceID,  interfaceIDs) {
         bindValues.clear();
         bindValues.append(interfaceID);
         if (!executeQuery(&query, statement, bindValues)) {
@@ -1070,7 +1080,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         }
 
         if(query.next()) {
-            int newDefaultID = query.value(EBindIndex).toInt();
+            QString newDefaultID = query.value(EBindIndex).toString();
             statement = "UPDATE Defaults SET InterfaceID = ? WHERE InterfaceName = ? COLLATE NOCASE ";
             bindValues.clear();
             bindValues.append(newDefaultID);
@@ -1099,30 +1109,31 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     return true;
 }
 
-/*!
-    Closes the service resolver database
-    Custom error codes: \n
-    SFW_ERROR_CANNONT_CLOSE_DATABASE in case database can't be closed \n
-    SFW_ERROR_INVALID_DATABASE_CONNECTION in case database connection is invalid \n
-    @return 0 if operation was successfull, error code otherwise  
-*/
-int ServiceDatabase::close()
+bool ServiceDatabase::close()
 {
-    int result(0);
     if(iDatabaseOpen) {
         QSqlDatabase database = QSqlDatabase::database();
         if (database.isValid()){
             if(database.isOpen()) {
                 database.close();
                 iDatabaseOpen = database.isOpen();
-                result = !iDatabaseOpen? 0: ServiceDatabase::SFW_ERROR_CANNONT_CLOSE_DATABASE;
-               
+                if (iDatabaseOpen) {
+                    m_lastError.setError(DBError::CannotCloseDatabase);
+                    qWarning() << "ServiceDatabase::close():-"
+                                << "Problem:" << qPrintable(m_lastError.text());
+                    return false;
+                } else {
+                    return true;
+                }
             }
         } else {
-            result = ServiceDatabase::SFW_ERROR_INVALID_DATABASE_CONNECTION;
+            m_lastError.setError(DBError::InvalidDatabaseConnection);
+            qWarning() << "ServiceDatabase::close():-"
+                        << "Problem: " << qPrintable(m_lastError.text());
+            return false;
         }
     }
-    return result;
+    return true;
 }
 
 /*!
@@ -1173,7 +1184,7 @@ bool ServiceDatabase::createTables()
     }
 
     QString statement("CREATE TABLE Service("
-                        "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                        "ID TEXT NOT NULL PRIMARY KEY UNIQUE,"
                         "Name TEXT NOT NULL, "
                         "FilePath TEXT NOT NULL, "
                         "Description TEXT NOT NULL)");
@@ -1185,8 +1196,8 @@ bool ServiceDatabase::createTables()
     }
 
     statement = "CREATE TABLE Interface("
-                "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                "ServiceID INTEGER NOT NULL, "
+                "ID TEXT NOT NULL PRIMARY KEY UNIQUE,"
+                "ServiceID TEXT NOT NULL, "
                 "Name TEXT NOT NULL, "
                 "VerMaj INTEGER NOT NULL, "
                 "VerMin INTEGER NOT NULL)";
@@ -1199,7 +1210,7 @@ bool ServiceDatabase::createTables()
 
     statement = "CREATE TABLE Defaults("
                 "InterfaceName TEXT PRIMARY KEY UNIQUE NOT NULL,"
-                "InterfaceID INTEGER NOT NULL)";
+                "InterfaceID TEXT NOT NULL)";
     if (!executeQuery(&query, statement)) {
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1207,7 +1218,7 @@ bool ServiceDatabase::createTables()
     }
 
     statement = "CREATE TABLE Property("
-                "InterfaceID INTEGER NOT NULL,"
+                "InterfaceID TEXT NOT NULL,"
                 "Key INTEGER NOT NULL,"
                 "Value TEXT NOT NULL)";
 
@@ -1231,10 +1242,11 @@ bool ServiceDatabase::checkTables()
     bool bTables(false);
     QStringList tables = QSqlDatabase::database().tables();
     if (tables.contains(SERVICE_TABLE)
-        && tables.contains(INTERFACE_TABLE)){
+        && tables.contains(INTERFACE_TABLE)
+        && tables.contains(DEFAULTS_TABLE)
+        && tables.contains(PROPERTY_TABLE)){
             bTables = true;
     }
-
     return bTables;
 }
 
@@ -1242,55 +1254,40 @@ bool ServiceDatabase::checkTables()
     Removes service related tables from database
     @return 0 if was sucessful, error code otherwise
 */
-int ServiceDatabase::dropTables()
+bool ServiceDatabase::dropTables()
 {
-    int result(0);
     //Execute transaction for deleting the database tables
-    bool isActive(false); 
     QSqlDatabase database = QSqlDatabase::database();
-    QStringList tables = database.tables();
-    if (tables.size() > 0) {
-        isActive = database.transaction();
+    QStringList expectedTables;
+    expectedTables << SERVICE_TABLE
+                << INTERFACE_TABLE
+                << DEFAULTS_TABLE
+                << PROPERTY_TABLE;
+
+    if (database.tables().count() > 0) {
+        if (!database.transaction()) {
+            m_lastError.setError(DBError::SqlError, database.lastError().text());
+            qWarning() << "ServiceDatabase::dropTables():-"
+                        << "Unable to begin transaction"
+                        << "\nReason:" << qPrintable(m_lastError.text());
+            return false;
+        }
+        QStringList actualTables = database.tables();
         QSqlQuery query(database);
 
-        if ((tables.contains(SERVICE_TABLE)) 
-            && (!executeQuery(&query, "DROP TABLE Service"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
-        if ((result == 0) && (tables.contains(INTERFACE_TABLE)) 
-            && (!executeQuery(&query,"DROP TABLE Interface"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
 
-        if ((result == 0) && (tables.contains(DEFAULTS_TABLE)) 
-            && (!executeQuery(&query,"DROP TABLE Defaults"))) {
-                result = query.lastError().number();
-                query.finish();
-                query.clear();
-                if (isActive) {
-                    database.rollback();
-                }
-        }
-
-        if (result == 0) {
-            query.finish();
-            query.clear(); 
-            if (isActive) {
-                database.commit();
+        foreach(QString expectedTable, expectedTables) {
+            if ((actualTables.contains(expectedTable))
+                && (!executeQuery(&query, QString("DROP TABLE ") + expectedTable))) {
+                databaseRollback(&query, &database);
+                qWarning() << "ServiceDatabase::dropTables():-"
+                           << qPrintable(m_lastError.text());
+                return false;
             }
         }
+        databaseCommit(&query, &database);
     }
-    return result;
+    return true;
 }
 
 /*!
@@ -1337,7 +1334,7 @@ void ServiceDatabase::databaseRollback(QSqlQuery *query, QSqlDatabase *database)
     database->rollback();
 }
 
-bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, int interfaceID)
+bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, const QString &interfaceID)
 {
     QSqlQuery query(QSqlDatabase::database());
     QString statement("SELECT Key, Value FROM Property WHERE InterfaceID = ?");

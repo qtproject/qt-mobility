@@ -154,8 +154,7 @@ QServiceManager::QServiceManager(QObject* parent)
     connect(d->database, SIGNAL(serviceAdded(QString)), SIGNAL(serviceAdded(QString)));
     connect(d->database, SIGNAL(serviceRemoved(QString)), SIGNAL(serviceRemoved(QString)));
 
-    int result = d->database->open();
-    if (result != 0 && result != ServiceDatabase::SFW_ERROR_DB_RECREATED)
+    if (!d->database->open())
         qWarning("QServiceManager: unable to open services database");
 }
 
