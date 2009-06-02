@@ -180,6 +180,7 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("empty version") << "emptyVersion.xml" << (int)ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION;
     QTest::newRow("duplicated interface A") << "Test13.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE;
     QTest::newRow("duplicated interface B") << "Test19.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE;
+    QTest::newRow("duplicated service tag") << "DuplicatedServiceTag.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
     
     QTest::newRow("Test20.xml") << "Test20.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
     QTest::newRow("Test21.xml") << "Test21.xml" << (int)ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE;
