@@ -230,7 +230,7 @@ void CommandProcessor::showServiceInfo(const QString &service)
     if (!description.isEmpty())
         *stdoutStream << '\t' << description << '\n';
     *stdoutStream << "\tLibrary: " << descriptors[0].property(
-                    QServiceInterfaceDescriptor::FilePath).toString() << '\n'
+                    QServiceInterfaceDescriptor::Location).toString() << '\n'
             << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
             << "\tImplements:\n";
 

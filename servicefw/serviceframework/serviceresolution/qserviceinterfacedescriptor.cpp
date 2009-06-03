@@ -93,8 +93,10 @@ QT_BEGIN_NAMESPACE
                                         describes the capabilities that a service client
                                         would require to use the service if capability 
                                         checks are enforced.
-    \value      FilePath                The file path property points to the location
+    \value      Location                This property points to the location
                                         where the plug-in providing this service is stored.
+                                        If the service is plug-in based the location is the
+                                        name and/or path of the plugin.
     \value      ServiceDescription      This property provides a general description for
                                         the service.
     \value      InterfaceDescription    This property provides a description for the interface 

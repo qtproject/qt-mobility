@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-    <name>com.nokia.TestService</name>
+    <name>TestService</name>
     <filepath>C:/TestData/testservice.dll</filepath>
     <description>Test service description</description>
     <interface>
-        <name>IDownloader</name>
+        <name>com.nokia.qt.tests.IDownloader</name>
         <version>1.4</version>
         <description>Interface that provides download support</description>
     </interface>
     <interface>
-        <name>ILocation</name>
+        <name>com.nokia.qt.tests.ILocation</name>
         <version>1.4</version>
         <capabilities></capabilities>
         <description>Interface that provides location support</description>
     </interface>
     <interface>
-        <name>ISysInfo</name>
+        <name>com.nokia.qt.tests.ISysInfo</name>
         <capabilities>ReadUserData</capabilities>
         <version>2.3</version>
         <description>Interface that provides system information support</description> 
     </interface>  
     <interface>
-        <name>ISendMessage</name> 
+        <name>com.nokia.qt.tests.ISendMessage</name> 
         <capabilities>ReadUserData,WriteUserData</capabilities>
         <version>3.0</version>
         <description>Interface that provides message sending support</description> 
     </interface>
     <interface>
-        <name>IReceiveMessage</name>
+        <name>com.nokia.qt.tests.IReceiveMessage</name>
         <version>1.1</version>
         <capabilities>ReadUserData,WriteUserData,ExecUserData</capabilities>
-        <description>Interface that provides message receiving support</description> 
+        <description>Interface that provides message receiving support</description>
     </interface>
 </service>

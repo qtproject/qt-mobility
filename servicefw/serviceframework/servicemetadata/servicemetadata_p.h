@@ -102,7 +102,7 @@ public:
 
     QIODevice *device() const;
 
-    void setServiceFilePath(const QString &aFilePath);
+    void setServiceLocation(const QString &aFilePath);
 
     bool extractMetadata();
 
@@ -110,7 +110,7 @@ public:
 
     QString name();
 
-    QString filePath();
+    QString location();
 
     QString description();
 
@@ -140,7 +140,7 @@ private:
     QIODevice *xmlDevice;
     bool ownsXmlDevice;
     QString serviceName;
-    QString serviceFilePath;
+    QString serviceLocation;
     QString serviceDescription;
     QList<QServiceInterfaceDescriptor> serviceInterfaces;
     QSet<QString> duplicates;

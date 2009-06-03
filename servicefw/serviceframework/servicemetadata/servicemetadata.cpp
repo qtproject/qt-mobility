@@ -139,9 +139,9 @@ QString ServiceMetaData::name()
  *
  * @param aFilePath path of service implementation file
  */
-void ServiceMetaData::setServiceFilePath(const QString &aFilePath)
+void ServiceMetaData::setServiceLocation(const QString &aFilePath)
 {
-    serviceFilePath = aFilePath;
+    serviceLocation = aFilePath;
 }
  
 /*!
@@ -149,9 +149,9 @@ void ServiceMetaData::setServiceFilePath(const QString &aFilePath)
  *
  * @return service implementation filepath
  */
-QString ServiceMetaData::filePath()
+QString ServiceMetaData::location()
 {
-    return serviceFilePath;
+    return serviceLocation;
 }
  
 /*!
@@ -295,7 +295,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == SERVICE_FILEPATH ) {
             //Found <filepath> tag
             dupSTags[2]++;
-            serviceFilePath = aXMLReader.readElementText();
+            serviceLocation = aXMLReader.readElementText();
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == "version") {
             //FOUND <version> tag on service level. We ignore this for now
             aXMLReader.readElementText();
@@ -314,7 +314,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
         if (serviceName.isEmpty()) {
             latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME;
             parseError = true;
-        } else if (serviceFilePath.isEmpty()) {
+        } else if (serviceLocation.isEmpty()) {
             latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH;
             parseError = true;
         }
@@ -336,7 +336,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     }
     for (int i = 0; i<icount; i++) {
         serviceInterfaces.at(i).d->serviceName = serviceName;
-        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::FilePath] = serviceFilePath;
+        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::Location] = serviceLocation;
         serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
     }
 
@@ -521,7 +521,7 @@ void ServiceMetaData::transformVersion(const QString &version, int *major, int *
 void ServiceMetaData::clearMetadata()
 {
     serviceName.clear();
-    serviceFilePath.clear();
+    serviceLocation.clear();
     serviceDescription.clear();
     serviceInterfaces.clear();
     duplicates.clear();

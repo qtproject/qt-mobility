@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-    <name>com.nokia.TestService</name>
+    <name>TestService</name>
     <filepath>C:/TestData/testservice.dll</filepath>
     <description>Test service description</description>
     <interface>
-        <name>IDownloader</name>
+        <name>com.nokia.qt.tests.IDownloader</name>
         <version>1.4</version>
         <description>Interface that provides download support</description> 
     </interface>
     <interface>
-        <name>IDownloader</name>
+        <name>com.nokia.qt.tests.IDownloader</name>
         <version>1.4</version>
         <description>Interface that provides another download support</description> 
     </interface>

@@ -6,7 +6,7 @@ INCLUDEPATH  += ../../servicefw/serviceframework/serviceresolution \
 HEADERS       = testserviceplugin.h testservice.h testserviceinterface.h
 SOURCES       = testserviceplugin.cpp
 
-TARGET        = tst_sfw2_sampleserviceplugin
+TARGET        = tst_sfw_testservice2plugin
 DESTDIR = .
 CONFIG += testcase
 

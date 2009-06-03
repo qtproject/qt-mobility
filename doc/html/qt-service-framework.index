@@ -156,7 +156,7 @@
             <contents name="namespaces" title="Namespaces" level="1"></contents>
             <enum access="public" threadsafety="unspecified" status="commendable" name="PropertyKey" fullname="QServiceInterfaceDescriptor::PropertyKey" href="qserviceinterfacedescriptor.html#PropertyKey-enum" location="qserviceinterfacedescriptor.h">
                 <value name="Capabilities" value="0"></value>
-                <value name="FilePath" value="1"></value>
+                <value name="Location" value="1"></value>
                 <value name="ServiceDescription" value="2"></value>
                 <value name="InterfaceDescription" value="3"></value>
             </enum>

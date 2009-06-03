@@ -228,7 +228,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
     QString statement("SELECT Name from Service WHERE FilePath=? COLLATE NOCASE");
     QList<QVariant> bindValues;
-    bindValues.append(service.filePath());
+    bindValues.append(service.location());
     if (!executeQuery(&query, statement, bindValues)) {
         databaseRollback(&query, &database);
         qWarning() << "ServiceDatabase::registerService():-"
@@ -245,7 +245,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
         m_lastError.setError(DBError::ComponentAlreadyRegistered,
                 errorText.arg(service.name())
-                        .arg(service.filePath())
+                        .arg(service.location())
                         .arg(alreadyRegisteredService));
         databaseRollback(&query, &database);
         qWarning() << "ServiceDatabase::registerService():-"
@@ -259,7 +259,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     bindValues.clear();
     bindValues.append(serviceID);
     bindValues.append(service.name());
-    bindValues.append(service.filePath());
+    bindValues.append(service.location());
 
     if (service.description().isNull())
         bindValues.append("");
@@ -432,7 +432,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
                     capabilities = "";
                 bindValues.append(capabilities);
                 break;
-            case(QServiceInterfaceDescriptor::FilePath):
+            case(QServiceInterfaceDescriptor::Location):
                 isValidProperty = false;
                 break;
             case(QServiceInterfaceDescriptor::ServiceDescription):
@@ -586,7 +586,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         interface.d->major = query.value(EBindIndex2).toInt();
         interface.d->minor = query.value(EBindIndex3).toInt();
 
-        interface.d->properties[QServiceInterfaceDescriptor::FilePath]
+        interface.d->properties[QServiceInterfaceDescriptor::Location]
             = query.value(EBindIndex4).toString();
         interface.d->properties[QServiceInterfaceDescriptor::ServiceDescription]
             = query.value(EBindIndex5).toString();
@@ -701,7 +701,7 @@ ServiceInfo ServiceDatabase::getService(const QServiceInterfaceDescriptor &inter
 
     if (query.next()) {
         serviceInfo.setName(query.value(EBindIndex).toString());
-        serviceInfo.setFilePath(query.value(EBindIndex1).toString());
+        serviceInfo.setLocation(query.value(EBindIndex1).toString());
         serviceInfo.setDescription(query.value(EBindIndex2).toString());
     }
 
@@ -787,7 +787,7 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     interface.d->major = query.value(EBindIndex2).toInt();
     interface.d->minor = query.value(EBindIndex3).toInt();
 
-    interface.d->properties[QServiceInterfaceDescriptor::FilePath]
+    interface.d->properties[QServiceInterfaceDescriptor::Location]
         = query.value(EBindIndex4).toString();
     interface.d->properties[QServiceInterfaceDescriptor::ServiceDescription]
         = query.value(EBindIndex5).toString();
@@ -1364,7 +1364,7 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
                     }
                     break;
             }
-            case(QServiceInterfaceDescriptor::FilePath):
+            case(QServiceInterfaceDescriptor::Location):
                 break; //should not be possible for this to be in the Property table
             case(QServiceInterfaceDescriptor::ServiceDescription):
                     break;//should not be possible for this to be in the Property table

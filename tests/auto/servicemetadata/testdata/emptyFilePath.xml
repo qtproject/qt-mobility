@@ -4,7 +4,7 @@
   <filepath></filepath>
   <description>Test service description</description> 
   <interface>
-    <name>IDownloader</name>
+    <name>com.nokia.qt.tests.IDownloader</name>
     <version>1.0.456</version>
     <description>Interface that provides download support</description> 
   </interface>

@@ -778,9 +778,9 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     }
 
     if (!filePath.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::FilePath).toString() != filePath) {
+        if (interface.property(QServiceInterfaceDescriptor::Location).toString() != filePath) {
             qWarning() << "File path mismatch: expected =" << filePath
-                << " actual =" << interface.property(QServiceInterfaceDescriptor::FilePath).toString();
+                << " actual =" << interface.property(QServiceInterfaceDescriptor::Location).toString();
             return false;
         }
     }
@@ -1111,7 +1111,7 @@ void ServiceDatabaseUnitTest::unregister()
     QServiceInterfaceDescriptor oldDescriptor = interfaces[0];
     service = database.getService(oldDescriptor);
     QCOMPARE(service.isValid(), true);
-    QCOMPARE(service.filePath(), QString("C:/OmniInc/omniinc.dll"));
+    QCOMPARE(service.location(), QString("C:/OmniInc/omniinc.dll"));
 
     //search for service via interface name
     QStringList services;
@@ -1157,7 +1157,7 @@ void ServiceDatabaseUnitTest::unregister()
     //try a search by descriptor
     service = database.getService(oldDescriptor);
     QCOMPARE(service.isValid(), false);
-    QCOMPARE(service.filePath(), QString(""));
+    QCOMPARE(service.location(), QString(""));
 
     //search for service via interface name
     services = database.getServiceNames("com.omni.device.Accelerometer");
@@ -1271,8 +1271,8 @@ bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,
         qWarning() <<"Service name mismatch: expected =" << name << " actual = " << service.name();
         return false;
     }
-    if (service.filePath() != filePath) {
-        qWarning() <<"File  path mismatch expected: expected =" << filePath << " actual = " << service.filePath();
+    if (service.location() != filePath) {
+        qWarning() <<"File  path mismatch expected: expected =" << filePath << " actual = " << service.location();
         return false;
     }
     if (service.description() != description) {

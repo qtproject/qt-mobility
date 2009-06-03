@@ -88,30 +88,30 @@ void ServiceMetadataTest::parseValidServiceXML()
 {
     ServiceMetaData parser(dir.absoluteFilePath("ServiceTest.xml"));
     QCOMPARE(parser.extractMetadata(),true);
-    QCOMPARE(parser.name(), QString("com.nokia.TestService"));
+    QCOMPARE(parser.name(), QString("TestService"));
     QCOMPARE(parser.description(), QString("Test service description"));
     
-    QCOMPARE(parser.filePath(), QString("C:/TestData/testservice.dll"));
+    QCOMPARE(parser.location(), QString("C:/TestData/testservice.dll"));
 
     QCOMPARE(parser.interfaceCount(), 5);
     
     QList<QServiceInterfaceDescriptor> allInterfaces = parser.getInterfaces();
     QServiceInterfaceDescriptor aInterface = allInterfaces.at(0);
-    QCOMPARE(aInterface.interfaceName(),QString("IDownloader"));
+    QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.IDownloader"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides download support"));
         
     aInterface = allInterfaces.at(1);
-    QCOMPARE(aInterface.interfaceName(),QString("ILocation"));
+    QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ILocation"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 4);
     QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
     QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides location support"));
     
     aInterface = allInterfaces.at(2);
-    QCOMPARE(aInterface.interfaceName(),QString("ISysInfo"));
+    QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISysInfo"));
     QCOMPARE(aInterface.majorVersion(), 2);
     QCOMPARE(aInterface.minorVersion(), 3);
     QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 1);
@@ -120,7 +120,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     
 
     aInterface = allInterfaces.at(3);
-    QCOMPARE(aInterface.interfaceName(),QString("ISendMessage"));
+    QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISendMessage"));
     QCOMPARE(aInterface.majorVersion(), 3);
     QCOMPARE(aInterface.minorVersion(), 0);
     QStringList capabilities = aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
@@ -130,7 +130,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message sending support"));
 
     aInterface = allInterfaces.at(4);
-    QCOMPARE(aInterface.interfaceName(), QString("IReceiveMessage"));
+    QCOMPARE(aInterface.interfaceName(), QString("com.nokia.qt.tests.IReceiveMessage"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 1);
     capabilities = aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
@@ -145,7 +145,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     QList<QServiceInterfaceDescriptor> allInterfacesWrongOrder = parser1.getInterfaces();
     foreach(const QServiceInterfaceDescriptor d, allInterfacesWrongOrder) {
         QCOMPARE(d.serviceName(), QString("ovi"));
-        QCOMPARE(d.property(QServiceInterfaceDescriptor::FilePath).toString(), QString("C:/Nokia/ovi.dll"));
+        QCOMPARE(d.property(QServiceInterfaceDescriptor::Location).toString(), QString("C:/Nokia/ovi.dll"));
         QCOMPARE(d.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("Ovi Services"));
     }
 }
