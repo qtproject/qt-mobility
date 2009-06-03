@@ -208,7 +208,7 @@
     a timestamp. It may also have heading and speed measurements as well as
     estimates of the accuracy of the provided data.
 
-    \sa QPositionProvider
+    \sa QPositionSource
 */
 
 /*!
@@ -403,13 +403,13 @@
 
 
 /*!
-    \class QSatelliteInfoProvider
-    \brief The QSatelliteInfoProvider class is an abstract base class for the distribution of satellite information updates.
+    \class QSatelliteInfoSource
+    \brief The QSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
-    The static function QSatelliteInfoProvider::createProvider() creates a default
-    position provider that is appropriate for the platform, if one is available.
-    Otherwise, QSatelliteInfoProvider can be subclassed to create an appropriate
-    custom provider of satellite data.
+    The static function QSatelliteInfoSource::createSource() creates a default
+    satellite data source that is appropriate for the platform, if one is 
+    available. Otherwise, QSatelliteInfoSource can be subclassed to create an 
+    appropriate custom source of satellite data.
 
     Call startUpdates() and stopUpdates() to start and stop regular updates,
     or requestUpdate() to request a single update.
@@ -418,22 +418,22 @@
 */
 
 /*!
-    \fn QSatelliteInfoProvider::QSatelliteInfoProvider(QObject *parent = 0);
+    \fn QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent = 0);
 
-    Creates a provider with the specified \a parent.
+    Creates a source with the specified \a parent.
 */
 
 /*!
-    \fn static QSatelliteInfoProvider *QSatelliteInfoProvider::createProvider();
+    \fn static QSatelliteInfoSource *QSatelliteInfoSource::createSource();
 
-    Creates and returns a provider that reads from the system's default
+    Creates and returns a source that reads from the system's default
     source of satellite update information.
 
-    Returns 0 if the system has no default provider.
+    Returns 0 if the system has no default source.
 */
 
 /*!
-    \fn virtual void QSatelliteInfoProvider::startUpdates() = 0;
+    \fn virtual void QSatelliteInfoSource::startUpdates() = 0;
 
     Starts emitting updates at regular intervals. The updates will be 
     provided whenever new satellite information becomes available.
@@ -442,13 +442,13 @@
 */
 
 /*!
-    \fn virtual void QSatelliteInfoProvider::stopUpdates() = 0;
+    \fn virtual void QSatelliteInfoSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
 */
 
 /*!
-    \fn virtual void QSatelliteInfoProvider::requestUpdate(int timeout = 5000);
+    \fn virtual void QSatelliteInfoSource::requestUpdate(int timeout = 5000);
 
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with
@@ -465,7 +465,7 @@
 */
 
 /*!
-    \fn void QSatelliteInfoProvider::satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
+    \fn void QSatelliteInfoSource::satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update is available on the satellites that are
@@ -475,7 +475,7 @@
 */
 
 /*!
-    \fn void QSatelliteInfoProvider::satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
+    \fn void QSatelliteInfoSource::satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update is available on the number of satellites that are
@@ -490,15 +490,15 @@
 
 
 /*!
-    \class QPositionProvider
-    \brief The QPositionProvider class is an abstract base class for the distribution of positional updates.
+    \class QPositionSource
+    \brief The QPositionSource class is an abstract base class for the distribution of positional updates.
 
-    The static function QPositionProvider::createProvider() creates a default
-    position provider that is appropriate for the platform, if one is available.
-    Otherwise, QPositionProvider can be subclassed to create an appropriate
-    custom provider of position data.
+    The static function QPositionSource::createSource() creates a default
+    position source that is appropriate for the platform, if one is available.
+    Otherwise, QPositionSource can be subclassed to create an appropriate
+    custom source of position data.
 
-    Users of a QPositionProvider subclass can request the current position using
+    Users of a QPositionSource subclass can request the current position using
     requestUpdate(), or start and stop regular position updates using
     startUpdates() and stopUpdates(). When an update is available,
     positionUpdate() is emitted. The last known position can be accessed with
@@ -511,25 +511,25 @@
 
     \code
         // Emit updates every 10 seconds if available
-        QPositionProvider *provider = QPositionProvider::createProvider();
-        provider->setUpdateInterval(QPositionProvider::TimeInterval, 10000);
+        QPositionSource *source = QPositionSource::createSource();
+        source->setUpdateInterval(QPositionSource::TimeInterval, 10000);
     \endcode
 
     \code
         // Emit updates each time there is a distance change greater than 100 meters
-        MyPositionProvider *provider = QPositionProvider::createProvider();
-        provider->setUpdateInterval(QPositionProvider::DistanceInterval, 100);
+        MyPositionSource *source = QPositionSource::createSource();
+        source->setUpdateInterval(QPositionSource::DistanceInterval, 100);
     \endcode
 
     To remove an update interval that was previously set, call
     setUpdateInterval() with a value of 0.
 
-    Note that the position provider may have a minimum value requirement for
+    Note that the position source may have a minimum value requirement for
     update intervals, as returned by minimumIntervalForType().
 */
 
 /*!
-    \enum QPositionProvider::IntervalType
+    \enum QPositionSource::IntervalType
     Defines the types that can be specified when calling setUpdateInterval().
 
     \value TimeInterval Update intervals are specified in milliseconds.
@@ -537,22 +537,22 @@
 */
 
 /*!
-    \enum QPositionProvider::PositionSourceType
-    Defines the types of position sources.
+    \enum QPositionSource::PositioningMethod
+    Defines the types of positioning methods.
 
-    \value SatellitePositionSources Satellite-based position sources such as GPS.
-    \value NonSatellitePositionSources Other position sources.
-    \value AllPositionSources A flag that matches all available sources.
+    \value SatellitePositioningMethods Satellite-based positioning methods such as GPS.
+    \value NonSatellitePositioningMethods Other positioning methods.
+    \value AllPositioningMethods A flag that matches all positioning methods.
 */
 
 /*!
-    \fn QPositionProvider::QPositionProvider(QObject *parent = 0);
+    \fn QPositionSource::QPositionSource(QObject *parent = 0);
 
-    Creates a position provider with the specified \a parent.
+    Creates a position source with the specified \a parent.
 */
 
 /*!
-    \fn virtual void QPositionProvider::setUpdateInterval(IntervalType type, int interval);
+    \fn virtual void QPositionSource::setUpdateInterval(IntervalType type, int interval);
 
     Sets the update interval type to \a type and the interval value to \a interval.
     To remove interval-based updates, set \a interval to 0.
@@ -573,7 +573,7 @@
 */
 
 /*!
-    \fn IntervalType QPositionProvider::updateIntervalType() const;
+    \fn IntervalType QPositionSource::updateIntervalType() const;
 
     Returns the interval type set by setUpdateInterval().
 
@@ -581,7 +581,7 @@
 */
 
 /*!
-    \fn int QPositionProvider::updateIntervalValue() const;
+    \fn int QPositionSource::updateIntervalValue() const;
 
     Returns the interval value set by setUpdateInterval().
 
@@ -589,76 +589,74 @@
 */
 
 /*!
-    \fn virtual void QPositionProvider::setPreferredSourceTypes(PositionSourceTypes sources);
+    \fn virtual void QPositionSource::setPreferredPositioningMethods(PositioningMethods methods);
 
-    Sets the preferred position sources for this provider to \a sources. The
-    provider may still receive positions from other sources depending on the
-    underlying system.
+    Sets the preferred positioning methods for this source to \a methods.
 
     \bold {Note:} When reimplementing this method, subclasses must call the
-    base method implementation to ensure preferredSources() returns the correct value.
+    base method implementation to ensure preferredPositioningMethods() returns the correct value.
 
-    \sa supportedSourceTypes()
+    \sa supportedPositioningMethods()
 */
 
 /*!
-    \fn PositionSourceTypes QPositionProvider::preferredSourceTypes() const;
+    \fn PositioningMethods QPositionSource::preferredPositioningMethods() const;
 
-    Returns the sources set by setPreferredSourceTypes().
+    Returns the positioning methods set by setPreferredPositioningMethods().
 */
 
 /*!
-    \fn virtual QPositionUpdate QPositionProvider::lastUpdate(PositionSourceTypes sources = AllPositionSourceTypes) const = 0;
+    \fn virtual QPositionUpdate QPositionSource::lastUpdate(PositioningMethods methods = AllPositioningMethods) const = 0;
 
     Returns the most recent update that was emitted through positionUpdated()
-    that matches the specified \a sources.
+    that matches the specified \a methods.
 
     Returns a null update if positionUpdated() has not been emitted or if
     there is no update that has been provided that matches the specified
-    \a sources.
+    \a methods.
 */
 
 /*!
-    \fn virtual PositionSourceTypes QPositionProvider::supportedSourceTypes() const = 0;
+    \fn virtual PositioningMethods QPositionSource::supportedPositioningMethods() const = 0;
 
-    Returns the types of sources available to this provider.
+    Returns the positioning methods available to this source.
 
-    \sa setPreferredSourceTypes()
+    \sa setPreferredPositioningMethods()
 */
 
 /*!
-    \fn virtual int QPositionProvider::minimumIntervalForType(IntervalType type) const = 0;
+    \fn virtual int QPositionSource::minimumIntervalForType(IntervalType type) const = 0;
 
     Returns the minimum interval for the given \a type that can be passed
     to setUpdateInterval().
 */
 
 /*!
-    \fn static QPositionProvider *QPositionProvider::createProvider();
+    \fn static QPositionSource *QPositionSource::createSource();
 
-    Creates and returns a position provider that reads from the system's 
+    Creates and returns a position source that reads from the system's
     default sources of location data.
 
-    Returns 0 if the system has no default position provider.
+    Returns 0 if the system has no default position source.
 */
 
 /*!
-    \fn virtual void QPositionProvider::startUpdates() = 0;
+    \fn virtual void QPositionSource::startUpdates() = 0;
 
     Starts emitting updates at regular intervals as specified by setUpdateInterval().
 
-    If setUpdateInterval() has not been called, the provider will emit updates
+    If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 */
 
 /*!
-    \fn virtual void QPositionProvider::stopUpdates() = 0;
+    \fn virtual void QPositionSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
 */
 
 /*!
-    \fn virtual void QPositionProvider::requestUpdate(int timeout = 5000);
+    \fn virtual void QPositionSource::requestUpdate(int timeout = 5000);
 
     Attempts to get the current position and emit positionUpdated() with
     this information. This is useful if you do not need the regular updates
@@ -672,7 +670,7 @@
 */
 
 /*!
-    \fn void QPositionProvider::positionUpdated(const QPositionUpdate &update);
+    \fn void QPositionSource::positionUpdated(const QPositionUpdate &update);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update becomes available.
@@ -686,8 +684,8 @@
     \class QPositionAreaMonitor
     \brief The QPositionAreaMonitor class allows the detection of proximity changes for a specified set of coordinates.
 
-    A QPositionAreaMonitor listens on a specified QPositionProvider and emits
-    signals when the position provider indicates that the current position
+    A QPositionAreaMonitor listens on a specified QPositionSource and emits
+    signals when the position source indicates that the current position
     is in range, or has moved out of range, of a specified area.
 
     For example:
@@ -696,10 +694,10 @@
         public:
             MyClass::MyClass()
             {
-                QPositionProvider *provider = QPositionProvider::createProvider();
+                QPositionSource *source = QPositionSource::createSource();
                 QCoordinate bigBenLocation(51.50104, -0.124632);
 
-                QPositionAreaMonitor *monitor = new QPositionAreaMonitor(provider);
+                QPositionAreaMonitor *monitor = new QPositionAreaMonitor(source);
                 connect(monitor, SIGNAL(areaEntered(QPositionUpdate)),
                         this, SLOT(areaEntered(QPositionUpdate)));
                 connect(monitor, SIGNAL(areaExited(QPositionUpdate)),
@@ -721,22 +719,22 @@
 */
 
 /*!
-    \fn explicit QPositionAreaMonitor::QPositionAreaMonitor(QPositionProvider *provider, QObject *parent = 0)
+    \fn explicit QPositionAreaMonitor::QPositionAreaMonitor(QPositionSource *source, QObject *parent = 0)
 
-    Creates a monitor that receives updates from the specified \a provider.
+    Creates a monitor that receives updates from the specified \a source.
 
     The QObject parent is specified by \a parent.
 */
 
 /*!
     \property QPositionAreaMonitor::inMonitoredArea
-    This property is true if the current position, according to position updates from provider(), is within the monitored area.
+    This property is true if the current position, according to position updates from source(), is within the monitored area.
 */
 
 /*!
-    \fn QPositionProvider *QPositionAreaMonitor::provider() const;
+    \fn QPositionSource *QPositionAreaMonitor::source() const;
 
-    Returns the provider specified in the constructor.
+    Returns the source specified in the constructor.
 */
 
 /*!
@@ -765,7 +763,7 @@
     Emitted when the current position has moved from a position outside the
     monitored area to a position within the monitored area.
 
-    The \a update holds the new position as provided by provider().
+    The \a update holds the new position as provided by source().
 */
 
 /*!
@@ -774,5 +772,5 @@
     Emitted when the current position has moved from a position within the
     monitored area to a position outside the monitored area.
 
-    The \a update holds the new position as provided by provider().
+    The \a update holds the new position as provided by source().
 */

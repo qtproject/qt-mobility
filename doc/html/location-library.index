@@ -4,217 +4,217 @@
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" href="qcoordinate.html" location="draft-api.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="CoordinateType" fullname="QCoordinate::CoordinateType" href="qcoordinate.html#CoordinateType-enum" location="draft-api.h">
-                <value name="InvalidCoordinate" value="0"/>
-                <value name="Coordinate2D" value="1"/>
-                <value name="Coordinate3D" value="2"/>
+                <value name="InvalidCoordinate" value="0"></value>
+                <value name="Coordinate2D" value="1"></value>
+                <value name="Coordinate3D" value="2"></value>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="CoordinateFormat" fullname="QCoordinate::CoordinateFormat" href="qcoordinate.html#CoordinateFormat-enum" location="draft-api.h">
-                <value name="DecimalDegrees" value="0"/>
-                <value name="DecimalDegreesWithHemisphere" value="1"/>
-                <value name="DegreesMinutes" value="2"/>
-                <value name="DegreesMinutesWithHemisphere" value="3"/>
-                <value name="DegreesMinutesSeconds" value="4"/>
-                <value name="DegreesMinutesSecondsWithHemisphere" value="5"/>
+                <value name="DecimalDegrees" value="0"></value>
+                <value name="DecimalDegreesWithHemisphere" value="1"></value>
+                <value name="DegreesMinutes" value="2"></value>
+                <value name="DegreesMinutesWithHemisphere" value="3"></value>
+                <value name="DegreesMinutesSeconds" value="4"></value>
+                <value name="DegreesMinutesSecondsWithHemisphere" value="5"></value>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" fullname="QCoordinate::QCoordinate" href="qcoordinate.html#QCoordinate" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCoordinate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" fullname="QCoordinate::QCoordinate" href="qcoordinate.html#QCoordinate" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCoordinate()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" fullname="QCoordinate::QCoordinate" href="qcoordinate.html#QCoordinate-2" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QCoordinate(double latitude, double longitude)">
-                <parameter left="double" right="" name="latitude" default=""/>
-                <parameter left="double" right="" name="longitude" default=""/>
+                <parameter left="double" right="" name="latitude" default=""></parameter>
+                <parameter left="double" right="" name="longitude" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" fullname="QCoordinate::QCoordinate" href="qcoordinate.html#QCoordinate-3" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QCoordinate(double latitude, double longitude, double altitude)">
-                <parameter left="double" right="" name="latitude" default=""/>
-                <parameter left="double" right="" name="longitude" default=""/>
-                <parameter left="double" right="" name="altitude" default=""/>
+                <parameter left="double" right="" name="latitude" default=""></parameter>
+                <parameter left="double" right="" name="longitude" default=""></parameter>
+                <parameter left="double" right="" name="altitude" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QCoordinate" fullname="QCoordinate::QCoordinate" href="qcoordinate.html#QCoordinate-4" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QCoordinate(const QCoordinate &amp; other)">
-                <parameter left="const QCoordinate &amp;" right="" name="other" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QCoordinate" fullname="QCoordinate::~QCoordinate" href="qcoordinate.html#dtor.QCoordinate" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCoordinate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QCoordinate" fullname="QCoordinate::~QCoordinate" href="qcoordinate.html#dtor.QCoordinate" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCoordinate()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QCoordinate::operator=" href="qcoordinate.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QCoordinate &amp;" signature="operator=(const QCoordinate &amp; other)">
-                <parameter left="const QCoordinate &amp;" right="" name="other" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QCoordinate::isValid" href="qcoordinate.html#isValid" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCoordinate::type" href="qcoordinate.html#type" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CoordinateType" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QCoordinate::isValid" href="qcoordinate.html#isValid" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCoordinate::type" href="qcoordinate.html#type" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CoordinateType" signature="type() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLatitude" fullname="QCoordinate::setLatitude" href="qcoordinate.html#setLatitude" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLatitude(double latitude)">
-                <parameter left="double" right="" name="latitude" default=""/>
+                <parameter left="double" right="" name="latitude" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="latitude" fullname="QCoordinate::latitude" href="qcoordinate.html#latitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="latitude() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="latitude" fullname="QCoordinate::latitude" href="qcoordinate.html#latitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="latitude() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLongitude" fullname="QCoordinate::setLongitude" href="qcoordinate.html#setLongitude" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLongitude(double longitude)">
-                <parameter left="double" right="" name="longitude" default=""/>
+                <parameter left="double" right="" name="longitude" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="longitude" fullname="QCoordinate::longitude" href="qcoordinate.html#longitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="longitude() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="longitude" fullname="QCoordinate::longitude" href="qcoordinate.html#longitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="longitude() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAltitude" fullname="QCoordinate::setAltitude" href="qcoordinate.html#setAltitude" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAltitude(double altitude)">
-                <parameter left="double" right="" name="altitude" default=""/>
+                <parameter left="double" right="" name="altitude" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="altitude" fullname="QCoordinate::altitude" href="qcoordinate.html#altitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="altitude() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="altitude" fullname="QCoordinate::altitude" href="qcoordinate.html#altitude" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="altitude() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="distanceTo" fullname="QCoordinate::distanceTo" href="qcoordinate.html#distanceTo" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="distanceTo(const QCoordinate &amp; other) const">
-                <parameter left="const QCoordinate &amp;" right="" name="other" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="azimuthTo" fullname="QCoordinate::azimuthTo" href="qcoordinate.html#azimuthTo" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="azimuthTo(const QCoordinate &amp; other) const">
-                <parameter left="const QCoordinate &amp;" right="" name="other" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="toString" fullname="QCoordinate::toString" href="qcoordinate.html#toString" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="toString(CoordinateFormat format) const">
-                <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"/>
+                <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"></parameter>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" href="qpositionupdate.html" location="draft-api.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Property" fullname="QPositionUpdate::Property" href="qpositionupdate.html#Property-enum" location="draft-api.h">
-                <value name="Heading" value="0"/>
-                <value name="GroundSpeed" value="1"/>
-                <value name="VerticalSpeed" value="2"/>
-                <value name="MagneticVariation" value="3"/>
-                <value name="HorizontalAccuracy" value="4"/>
-                <value name="VerticalAccuracy" value="5"/>
+                <value name="Heading" value="0"></value>
+                <value name="GroundSpeed" value="1"></value>
+                <value name="VerticalSpeed" value="2"></value>
+                <value name="MagneticVariation" value="3"></value>
+                <value name="HorizontalAccuracy" value="4"></value>
+                <value name="VerticalAccuracy" value="5"></value>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" fullname="QPositionUpdate::QPositionUpdate" href="qpositionupdate.html#QPositionUpdate" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionUpdate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" fullname="QPositionUpdate::QPositionUpdate" href="qpositionupdate.html#QPositionUpdate" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionUpdate()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" fullname="QPositionUpdate::QPositionUpdate" href="qpositionupdate.html#QPositionUpdate-2" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QPositionUpdate(const QCoordinate &amp; coordinate, const QDateTime &amp; updateTime)">
-                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="const QDateTime &amp;" right="" name="updateTime" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""></parameter>
+                <parameter left="const QDateTime &amp;" right="" name="updateTime" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" fullname="QPositionUpdate::QPositionUpdate" href="qpositionupdate.html#QPositionUpdate-3" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QPositionUpdate(const QPositionUpdate &amp; other)">
-                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""/>
+                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QPositionUpdate" fullname="QPositionUpdate::~QPositionUpdate" href="qpositionupdate.html#dtor.QPositionUpdate" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPositionUpdate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QPositionUpdate" fullname="QPositionUpdate::~QPositionUpdate" href="qpositionupdate.html#dtor.QPositionUpdate" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPositionUpdate()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QPositionUpdate::operator=" href="qpositionupdate.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPositionUpdate &amp;" signature="operator=(const QPositionUpdate &amp; other)">
-                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""/>
+                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QPositionUpdate::isNull" href="qpositionupdate.html#isNull" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QPositionUpdate::isNull" href="qpositionupdate.html#isNull" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateTime" fullname="QPositionUpdate::setUpdateTime" href="qpositionupdate.html#setUpdateTime" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateTime(const QDateTime &amp; updateTime)">
-                <parameter left="const QDateTime &amp;" right="" name="updateTime" default=""/>
+                <parameter left="const QDateTime &amp;" right="" name="updateTime" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateTime" fullname="QPositionUpdate::updateTime" href="qpositionupdate.html#updateTime" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="updateTime() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateTime" fullname="QPositionUpdate::updateTime" href="qpositionupdate.html#updateTime" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="updateTime() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QPositionUpdate::setCoordinate" href="qpositionupdate.html#setCoordinate" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QCoordinate &amp; coordinate)">
-                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QPositionUpdate::coordinate" href="qpositionupdate.html#coordinate" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QCoordinate" signature="coordinate() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QPositionUpdate::coordinate" href="qpositionupdate.html#coordinate" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QCoordinate" signature="coordinate() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDoubleProperty" fullname="QPositionUpdate::setDoubleProperty" href="qpositionupdate.html#setDoubleProperty" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDoubleProperty(Property property, qreal value)">
-                <parameter left="Property" right="" name="property" default=""/>
-                <parameter left="qreal" right="" name="value" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
+                <parameter left="qreal" right="" name="value" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="doubleProperty" fullname="QPositionUpdate::doubleProperty" href="qpositionupdate.html#doubleProperty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="doubleProperty(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeProperty" fullname="QPositionUpdate::removeProperty" href="qpositionupdate.html#removeProperty" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeProperty(Property property)">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasProperty" fullname="QPositionUpdate::hasProperty" href="qpositionupdate.html#hasProperty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasProperty(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" href="qsatelliteinfo.html" location="draft-api.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Property" fullname="QSatelliteInfo::Property" href="qsatelliteinfo.html#Property-enum" location="draft-api.h">
-                <value name="Elevation" value="0"/>
-                <value name="Azimuth" value="1"/>
+                <value name="Elevation" value="0"></value>
+                <value name="Azimuth" value="1"></value>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" fullname="QSatelliteInfo::QSatelliteInfo" href="qsatelliteinfo.html#QSatelliteInfo" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfo()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSatelliteInfo" fullname="QSatelliteInfo::~QSatelliteInfo" href="qsatelliteinfo.html#dtor.QSatelliteInfo" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSatelliteInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" fullname="QSatelliteInfo::QSatelliteInfo" href="qsatelliteinfo.html#QSatelliteInfo" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfo()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QSatelliteInfo" fullname="QSatelliteInfo::~QSatelliteInfo" href="qsatelliteinfo.html#dtor.QSatelliteInfo" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSatelliteInfo()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPrnNumber" fullname="QSatelliteInfo::setPrnNumber" href="qsatelliteinfo.html#setPrnNumber" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPrnNumber(int prn)">
-                <parameter left="int" right="" name="prn" default=""/>
+                <parameter left="int" right="" name="prn" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="prnNumber" fullname="QSatelliteInfo::prnNumber" href="qsatelliteinfo.html#prnNumber" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="prnNumber() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="prnNumber" fullname="QSatelliteInfo::prnNumber" href="qsatelliteinfo.html#prnNumber" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="prnNumber() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSignalStrength" fullname="QSatelliteInfo::setSignalStrength" href="qsatelliteinfo.html#setSignalStrength" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSignalStrength(int signalStrength)">
-                <parameter left="int" right="" name="signalStrength" default=""/>
+                <parameter left="int" right="" name="signalStrength" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="signalStrength" fullname="QSatelliteInfo::signalStrength" href="qsatelliteinfo.html#signalStrength" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="signalStrength() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="signalStrength" fullname="QSatelliteInfo::signalStrength" href="qsatelliteinfo.html#signalStrength" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="signalStrength() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDoubleProperty" fullname="QSatelliteInfo::setDoubleProperty" href="qsatelliteinfo.html#setDoubleProperty" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDoubleProperty(Property property, qreal value)">
-                <parameter left="Property" right="" name="property" default=""/>
-                <parameter left="qreal" right="" name="value" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
+                <parameter left="qreal" right="" name="value" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="doubleProperty" fullname="QSatelliteInfo::doubleProperty" href="qsatelliteinfo.html#doubleProperty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="doubleProperty(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeProperty" fullname="QSatelliteInfo::removeProperty" href="qsatelliteinfo.html#removeProperty" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeProperty(Property property)">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasProperty" fullname="QSatelliteInfo::hasProperty" href="qsatelliteinfo.html#hasProperty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasProperty(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="Property" right="" name="property" default=""></parameter>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoProvider" href="qsatelliteinfoprovider.html" location="draft-api.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoProvider" fullname="QSatelliteInfoProvider::QSatelliteInfoProvider" href="qsatelliteinfoprovider.html#QSatelliteInfoProvider" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfoProvider(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" href="qsatelliteinfosource.html" location="draft-api.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" fullname="QSatelliteInfoSource::QSatelliteInfoSource" href="qsatelliteinfosource.html#QSatelliteInfoSource" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfoSource(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createProvider" fullname="QSatelliteInfoProvider::createProvider" href="qsatelliteinfoprovider.html#createProvider" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSatelliteInfoProvider *" signature="createProvider()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QSatelliteInfoProvider::startUpdates" href="qsatelliteinfoprovider.html#startUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QSatelliteInfoProvider::stopUpdates" href="qsatelliteinfoprovider.html#stopUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QSatelliteInfoProvider::requestUpdate" href="qsatelliteinfoprovider.html#requestUpdate" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
-                <parameter left="int" right="" name="timeout" default="5000"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createSource" fullname="QSatelliteInfoSource::createSource" href="qsatelliteinfosource.html#createSource" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSatelliteInfoSource *" signature="createSource()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QSatelliteInfoSource::startUpdates" href="qsatelliteinfosource.html#startUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QSatelliteInfoSource::stopUpdates" href="qsatelliteinfosource.html#stopUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QSatelliteInfoSource::requestUpdate" href="qsatelliteinfosource.html#requestUpdate" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
+                <parameter left="int" right="" name="timeout" default="5000"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInViewUpdated" fullname="QSatelliteInfoProvider::satellitesInViewUpdated" href="qsatelliteinfoprovider.html#satellitesInViewUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInViewUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
-                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInViewUpdated" fullname="QSatelliteInfoSource::satellitesInViewUpdated" href="qsatelliteinfosource.html#satellitesInViewUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInViewUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
+                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInUseUpdated" fullname="QSatelliteInfoProvider::satellitesInUseUpdated" href="qsatelliteinfoprovider.html#satellitesInUseUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInUseUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
-                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInUseUpdated" fullname="QSatelliteInfoSource::satellitesInUseUpdated" href="qsatelliteinfosource.html#satellitesInUseUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInUseUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
+                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""></parameter>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QPositionProvider" href="qpositionprovider.html" location="draft-api.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="IntervalType" fullname="QPositionProvider::IntervalType" href="qpositionprovider.html#IntervalType-enum" location="draft-api.h">
-                <value name="TimeInterval" value="0"/>
-                <value name="DistanceInterval" value="1"/>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QPositionSource" href="qpositionsource.html" location="draft-api.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="IntervalType" fullname="QPositionSource::IntervalType" href="qpositionsource.html#IntervalType-enum" location="draft-api.h">
+                <value name="TimeInterval" value="0"></value>
+                <value name="DistanceInterval" value="1"></value>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="PositionSourceType" fullname="QPositionProvider::PositionSourceType" href="qpositionprovider.html#PositionSourceType-enum" location="draft-api.h" typedef="QPositionProvider::PositionSourceTypes">
-                <value name="SatellitePositionSources" value="0x000000ff"/>
-                <value name="NonSatellitePositionSources" value="0xffffff00"/>
-                <value name="AllPositionSources" value="0xffffffff"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="PositioningMethod" fullname="QPositionSource::PositioningMethod" href="qpositionsource.html#PositioningMethod-enum" location="draft-api.h" typedef="QPositionSource::PositioningMethods">
+                <value name="SatellitePositioningMethods" value="0x000000ff"></value>
+                <value name="NonSatellitePositioningMethods" value="0xffffff00"></value>
+                <value name="AllPositioningMethods" value="0xffffffff"></value>
             </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="PositionSourceTypes" fullname="QPositionProvider::PositionSourceTypes" href="qpositionprovider.html#PositionSourceTypes-typedef" location="draft-api.h" enum="QPositionProvider::PositionSourceType"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionProvider" fullname="QPositionProvider::QPositionProvider" href="qpositionprovider.html#QPositionProvider" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionProvider(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="PositioningMethods" fullname="QPositionSource::PositioningMethods" href="qpositionsource.html#PositioningMethods-typedef" location="draft-api.h" enum="QPositionSource::PositioningMethod"></typedef>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionSource" fullname="QPositionSource::QPositionSource" href="qpositionsource.html#QPositionSource" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionSource(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QPositionProvider::setUpdateInterval" href="qpositionprovider.html#setUpdateInterval" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateInterval(IntervalType type, int interval)">
-                <parameter left="IntervalType" right="" name="type" default=""/>
-                <parameter left="int" right="" name="interval" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QPositionSource::setUpdateInterval" href="qpositionsource.html#setUpdateInterval" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateInterval(IntervalType type, int interval)">
+                <parameter left="IntervalType" right="" name="type" default=""></parameter>
+                <parameter left="int" right="" name="interval" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalType" fullname="QPositionProvider::updateIntervalType" href="qpositionprovider.html#updateIntervalType" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="IntervalType" signature="updateIntervalType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalValue" fullname="QPositionProvider::updateIntervalValue" href="qpositionprovider.html#updateIntervalValue" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="updateIntervalValue() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPreferredSourceTypes" fullname="QPositionProvider::setPreferredSourceTypes" href="qpositionprovider.html#setPreferredSourceTypes" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPreferredSourceTypes(QFlags&lt;QPositionProvider::PositionSourceType&gt; sources)">
-                <parameter left="QFlags&lt;QPositionProvider::PositionSourceType&gt;" right="" name="sources" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalType" fullname="QPositionSource::updateIntervalType" href="qpositionsource.html#updateIntervalType" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="IntervalType" signature="updateIntervalType() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalValue" fullname="QPositionSource::updateIntervalValue" href="qpositionsource.html#updateIntervalValue" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="updateIntervalValue() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPreferredPositioningMethods" fullname="QPositionSource::setPreferredPositioningMethods" href="qpositionsource.html#setPreferredPositioningMethods" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPreferredPositioningMethods(QFlags&lt;QPositionSource::PositioningMethod&gt; methods)">
+                <parameter left="QFlags&lt;QPositionSource::PositioningMethod&gt;" right="" name="methods" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="preferredSourceTypes" fullname="QPositionProvider::preferredSourceTypes" href="qpositionprovider.html#preferredSourceTypes" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="PositionSourceTypes" signature="preferredSourceTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="lastUpdate" fullname="QPositionProvider::lastUpdate" href="qpositionprovider.html#lastUpdate" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPositionUpdate" signature="lastUpdate(QFlags&lt;QPositionProvider::PositionSourceType&gt; sources) const">
-                <parameter left="QFlags&lt;QPositionProvider::PositionSourceType&gt;" right="" name="sources" default="AllPositionSources"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="preferredPositioningMethods" fullname="QPositionSource::preferredPositioningMethods" href="qpositionsource.html#preferredPositioningMethods" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="PositioningMethods" signature="preferredPositioningMethods() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="lastUpdate" fullname="QPositionSource::lastUpdate" href="qpositionsource.html#lastUpdate" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPositionUpdate" signature="lastUpdate(QFlags&lt;QPositionSource::PositioningMethod&gt; methods) const">
+                <parameter left="QFlags&lt;QPositionSource::PositioningMethod&gt;" right="" name="methods" default="AllPositioningMethods"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportedSourceTypes" fullname="QPositionProvider::supportedSourceTypes" href="qpositionprovider.html#supportedSourceTypes" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="PositionSourceTypes" signature="supportedSourceTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="minimumIntervalForType" fullname="QPositionProvider::minimumIntervalForType" href="qpositionprovider.html#minimumIntervalForType" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumIntervalForType(IntervalType type) const">
-                <parameter left="IntervalType" right="" name="type" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedPositioningMethods" fullname="QPositionSource::supportedPositioningMethods" href="qpositionsource.html#supportedPositioningMethods" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="PositioningMethods" signature="supportedPositioningMethods() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minimumIntervalForType" fullname="QPositionSource::minimumIntervalForType" href="qpositionsource.html#minimumIntervalForType" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumIntervalForType(IntervalType type) const">
+                <parameter left="IntervalType" right="" name="type" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createProvider" fullname="QPositionProvider::createProvider" href="qpositionprovider.html#createProvider" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QPositionProvider *" signature="createProvider()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QPositionProvider::startUpdates" href="qpositionprovider.html#startUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QPositionProvider::stopUpdates" href="qpositionprovider.html#stopUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QPositionProvider::requestUpdate" href="qpositionprovider.html#requestUpdate" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
-                <parameter left="int" right="" name="timeout" default="5000"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createSource" fullname="QPositionSource::createSource" href="qpositionsource.html#createSource" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QPositionSource *" signature="createSource()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QPositionSource::startUpdates" href="qpositionsource.html#startUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QPositionSource::stopUpdates" href="qpositionsource.html#stopUpdates" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QPositionSource::requestUpdate" href="qpositionsource.html#requestUpdate" location="draft-api.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
+                <parameter left="int" right="" name="timeout" default="5000"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="positionUpdated" fullname="QPositionProvider::positionUpdated" href="qpositionprovider.html#positionUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="positionUpdated(const QPositionUpdate &amp; update)">
-                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="positionUpdated" fullname="QPositionSource::positionUpdated" href="qpositionsource.html#positionUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="positionUpdated(const QPositionUpdate &amp; update)">
+                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""></parameter>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QPositionAreaMonitor" href="qpositionareamonitor.html" location="draft-api.h" bases="" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="inMonitoredArea" fullname="QPositionAreaMonitor::inMonitoredArea" href="qpositionareamonitor.html#inMonitoredArea-prop" location="draft-api.h" type="bool">
-                <getter name="inMonitoredArea"/>
+                <getter name="inMonitoredArea"></getter>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionAreaMonitor" fullname="QPositionAreaMonitor::QPositionAreaMonitor" href="qpositionareamonitor.html#QPositionAreaMonitor" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionAreaMonitor(QPositionProvider * provider, QObject * parent)">
-                <parameter left="QPositionProvider *" right="" name="provider" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QPositionAreaMonitor" fullname="QPositionAreaMonitor::QPositionAreaMonitor" href="qpositionareamonitor.html#QPositionAreaMonitor" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionAreaMonitor(QPositionSource * source, QObject * parent)">
+                <parameter left="QPositionSource *" right="" name="source" default=""></parameter>
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="provider" fullname="QPositionAreaMonitor::provider" href="qpositionareamonitor.html#provider" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPositionProvider *" signature="provider() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="source" fullname="QPositionAreaMonitor::source" href="qpositionareamonitor.html#source" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPositionSource *" signature="source() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMonitoredArea" fullname="QPositionAreaMonitor::setMonitoredArea" href="qpositionareamonitor.html#setMonitoredArea" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMonitoredArea(const QCoordinate &amp; coordinate, int radius)">
-                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="int" right="" name="radius" default=""/>
+                <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""></parameter>
+                <parameter left="int" right="" name="radius" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QPositionAreaMonitor::coordinate" href="qpositionareamonitor.html#coordinate" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QCoordinate" signature="coordinate() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QPositionAreaMonitor::radius" href="qpositionareamonitor.html#radius" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="inMonitoredArea" fullname="QPositionAreaMonitor::inMonitoredArea" href="qpositionareamonitor.html#inMonitoredArea-prop" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="inMonitoredArea" type="bool" signature="inMonitoredArea() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QPositionAreaMonitor::coordinate" href="qpositionareamonitor.html#coordinate" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QCoordinate" signature="coordinate() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QPositionAreaMonitor::radius" href="qpositionareamonitor.html#radius" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="radius() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="inMonitoredArea" fullname="QPositionAreaMonitor::inMonitoredArea" href="qpositionareamonitor.html#inMonitoredArea-prop" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="inMonitoredArea" type="bool" signature="inMonitoredArea() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QPositionAreaMonitor::areaEntered" href="qpositionareamonitor.html#areaEntered" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QPositionUpdate &amp; update)">
-                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""/>
+                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QPositionAreaMonitor::areaExited" href="qpositionareamonitor.html#areaExited" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QPositionUpdate &amp; update)">
-                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""/>
+                <parameter left="const QPositionUpdate &amp;" right="" name="update" default=""></parameter>
             </function>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Location Library Developer Resources" fulltitle="Location Library Developer Resources" subtitle="" location="index.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="main-classes" title="Main classes" level="2"/>
+            <contents name="introduction" title="Introduction" level="1"></contents>
+            <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
+            <contents name="main-classes" title="Main classes" level="2"></contents>
         </page>
     </namespace>
 </INDEX>

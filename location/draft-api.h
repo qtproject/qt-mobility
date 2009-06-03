@@ -116,13 +116,13 @@ public:
 
 
 
-class QSatelliteInfoProvider : public QObject
+class QSatelliteInfoSource : public QObject
 {
     Q_OBJECT
 public:
-    explicit QSatelliteInfoProvider(QObject *parent = 0);
+    explicit QSatelliteInfoSource(QObject *parent = 0);
 
-    static QSatelliteInfoProvider *createProvider();
+    static QSatelliteInfoSource *createSource();
 
 public slots:
     virtual void startUpdates() = 0;
@@ -135,13 +135,13 @@ signals:
     void satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
 
 private:
-    Q_DISABLE_COPY(QSatelliteInfoProvider)
-    QSatelliteInfoProviderPrivate *d;
+    Q_DISABLE_COPY(QSatelliteInfoSource)
+    QSatelliteInfoSourcePrivate *d;
 };
 
 
 
-class QPositionProvider : public QObject
+class QPositionSource : public QObject
 {
     Q_OBJECT
 public:
@@ -150,29 +150,29 @@ public:
         DistanceInterval
     };
 
-    enum PositionSourceType {
-        SatellitePositionSources = 0x000000ff,
-        NonSatellitePositionSources = 0xffffff00,
-        AllPositionSources = 0xffffffff
+    enum PositioningMethod {
+        SatellitePositioningMethods = 0x000000ff,
+        NonSatellitePositioningMethods = 0xffffff00,
+        AllPositioningMethods = 0xffffffff
     };
-    Q_DECLARE_FLAGS(PositionSourceTypes, PositionSourceType)
+    Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
 
 
-    explicit QPositionProvider(QObject *parent = 0);
+    explicit QPositionSource(QObject *parent = 0);
 
     virtual void setUpdateInterval(IntervalType type, int interval);
     IntervalType updateIntervalType() const;
     int updateIntervalValue() const;
 
-    virtual void setPreferredSourceTypes(PositionSourceTypes types);
-    PositionSourceTypes preferredSourceTypes() const;
+    virtual void setPreferredPositioningMethods(PositioningMethods methods);
+    PositioningMethods preferredPositioningMethods() const;
 
-    virtual QPositionUpdate lastUpdate(PositionSourceTypes types = AllPositionSources) const = 0;
+    virtual QPositionUpdate lastUpdate(PositioningMethods methods = AllPositioningMethods) const = 0;
 
-    virtual PositionSourceTypes supportedSourceTypes() const = 0;
+    virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumIntervalForType(IntervalType type) const = 0;
 
-    static QPositionProvider *createProvider();
+    static QPositionSource *createSource();
 
 public slots:
     virtual void startUpdates() = 0;
@@ -184,8 +184,8 @@ signals:
     void positionUpdated(const QPositionUpdate &update);
 
 private:
-    Q_DISABLE_COPY(QPositionProvider)
-    QPositionProviderPrivate *d;
+    Q_DISABLE_COPY(QPositionSource)
+    QPositionSourcePrivate *d;
 };
 
 
@@ -195,9 +195,9 @@ class QPositionAreaMonitor : public QObject
     Q_OBJECT
     Q_PROPERTY(bool inMonitoredArea READ inMonitoredArea)
 public:
-    explicit QPositionAreaMonitor(QPositionProvider *provider, QObject *parent = 0);
+    explicit QPositionAreaMonitor(QPositionSource *source, QObject *parent = 0);
 
-    QPositionProvider *provider() const;
+    QPositionSource *source() const;
 
     void setMonitoredArea(const QCoordinate &coordinate, int radius);
     QCoordinate coordinate() const;

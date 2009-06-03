@@ -23,9 +23,9 @@ To build the library, run \tt qmake and \tt make.
 \list
     \o \l{QCoordinate}
     \o \l{QPositionAreaMonitor}
-    \o \l{QPositionProvider}
+    \o \l{QPositionSource}
     \o \l{QPositionUpdate}
-    \o \l{QSatelliteInfoProvider}
+    \o \l{QSatelliteInfoSource}
     \o \l{QSatelliteInfo}
 \endlist
 

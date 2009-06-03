@@ -20,32 +20,32 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qpositionupdate.html#Property-enum">Property</a></b> { Heading, GroundSpeed, VerticalSpeed, MagneticVariation, HorizontalAccuracy, VerticalAccuracy }</li>
+<li><div class="fn"/>enum <b><a href="qpositionupdate.html#Property-enum">Property</a></b> { Heading, GroundSpeed, VerticalSpeed, MagneticVariation, HorizontalAccuracy, VerticalAccuracy }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qpositionupdate.html#QPositionUpdate">QPositionUpdate</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qpositionupdate.html#QPositionUpdate-2">QPositionUpdate</a></b> ( const QCoordinate &amp; <i>coordinate</i>, const QDateTime &amp; <i>updateTime</i> )</li>
-<li><div class="fn"></div><b><a href="qpositionupdate.html#QPositionUpdate-3">QPositionUpdate</a></b> ( const QPositionUpdate &amp; <i>other</i> )</li>
-<li><div class="fn"></div><b><a href="qpositionupdate.html#dtor.QPositionUpdate">~QPositionUpdate</a></b> ()</li>
-<li><div class="fn"></div>QCoordinate <b><a href="qpositionupdate.html#coordinate">coordinate</a></b> () const</li>
-<li><div class="fn"></div>qreal <b><a href="qpositionupdate.html#doubleProperty">doubleProperty</a></b> ( Property <i>property</i> ) const</li>
-<li><div class="fn"></div>bool <b><a href="qpositionupdate.html#hasProperty">hasProperty</a></b> ( Property <i>property</i> ) const</li>
-<li><div class="fn"></div>bool <b><a href="qpositionupdate.html#isNull">isNull</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qpositionupdate.html#removeProperty">removeProperty</a></b> ( Property <i>property</i> )</li>
-<li><div class="fn"></div>void <b><a href="qpositionupdate.html#setCoordinate">setCoordinate</a></b> ( const QCoordinate &amp; <i>coordinate</i> )</li>
-<li><div class="fn"></div>void <b><a href="qpositionupdate.html#setDoubleProperty">setDoubleProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</li>
-<li><div class="fn"></div>void <b><a href="qpositionupdate.html#setUpdateTime">setUpdateTime</a></b> ( const QDateTime &amp; <i>updateTime</i> )</li>
-<li><div class="fn"></div>QDateTime <b><a href="qpositionupdate.html#updateTime">updateTime</a></b> () const</li>
-<li><div class="fn"></div>QPositionUpdate &amp; <b><a href="qpositionupdate.html#operator-eq">operator=</a></b> ( const QPositionUpdate &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qpositionupdate.html#QPositionUpdate">QPositionUpdate</a></b> ()</li>
+<li><div class="fn"/><b><a href="qpositionupdate.html#QPositionUpdate-2">QPositionUpdate</a></b> ( const QCoordinate &amp; <i>coordinate</i>, const QDateTime &amp; <i>updateTime</i> )</li>
+<li><div class="fn"/><b><a href="qpositionupdate.html#QPositionUpdate-3">QPositionUpdate</a></b> ( const QPositionUpdate &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qpositionupdate.html#dtor.QPositionUpdate">~QPositionUpdate</a></b> ()</li>
+<li><div class="fn"/>QCoordinate <b><a href="qpositionupdate.html#coordinate">coordinate</a></b> () const</li>
+<li><div class="fn"/>qreal <b><a href="qpositionupdate.html#doubleProperty">doubleProperty</a></b> ( Property <i>property</i> ) const</li>
+<li><div class="fn"/>bool <b><a href="qpositionupdate.html#hasProperty">hasProperty</a></b> ( Property <i>property</i> ) const</li>
+<li><div class="fn"/>bool <b><a href="qpositionupdate.html#isNull">isNull</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qpositionupdate.html#removeProperty">removeProperty</a></b> ( Property <i>property</i> )</li>
+<li><div class="fn"/>void <b><a href="qpositionupdate.html#setCoordinate">setCoordinate</a></b> ( const QCoordinate &amp; <i>coordinate</i> )</li>
+<li><div class="fn"/>void <b><a href="qpositionupdate.html#setDoubleProperty">setDoubleProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</li>
+<li><div class="fn"/>void <b><a href="qpositionupdate.html#setUpdateTime">setUpdateTime</a></b> ( const QDateTime &amp; <i>updateTime</i> )</li>
+<li><div class="fn"/>QDateTime <b><a href="qpositionupdate.html#updateTime">updateTime</a></b> () const</li>
+<li><div class="fn"/>QPositionUpdate &amp; <b><a href="qpositionupdate.html#operator-eq">operator=</a></b> ( const QPositionUpdate &amp; <i>other</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QPositionUpdate class contains information gathered on one's global position, direction and velocity at a particular point in time.</p>
 <p>A QPositionUpdate contains, at a minimum, a geographical coordinate and a timestamp. It may also have heading and speed measurements as well as estimates of the accuracy of the provided data.</p>
-<p>See also <a href="qpositionprovider.html">QPositionProvider</a>.</p>
+<p>See also <a href="qpositionsource.html">QPositionSource</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Property-enum"></a>enum QPositionUpdate::Property</h3>

@@ -34,35 +34,35 @@
         <keyword ref="qpositionareamonitor.html#areaEntered">areaEntered</keyword>
         <keyword ref="qpositionareamonitor.html#areaExited">areaExited</keyword>
         <keyword ref="qpositionareamonitor.html#coordinate">coordinate</keyword>
-        <keyword ref="qpositionareamonitor.html#provider">provider</keyword>
         <keyword ref="qpositionareamonitor.html#radius">radius</keyword>
         <keyword ref="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</keyword>
+        <keyword ref="qpositionareamonitor.html#source">source</keyword>
         <section ref="qpositionareamonitor-members.html" title="List of all members"/>
     </section>
-    <section ref="qpositionprovider.html" title="QPositionProvider Class Reference">
-        <keyword ref="qpositionprovider.html">QPositionProvider</keyword>
-        <keyword ref="qpositionprovider.html#IntervalType-enum">IntervalType</keyword>
-        <keyword ref="qpositionprovider.html#IntervalType-enum">QPositionProvider::DistanceInterval</keyword>
-        <keyword ref="qpositionprovider.html#IntervalType-enum">QPositionProvider::TimeInterval</keyword>
-        <keyword ref="qpositionprovider.html#PositionSourceType-enum">PositionSourceType</keyword>
-        <keyword ref="qpositionprovider.html#PositionSourceType-enum">PositionSourceTypes</keyword>
-        <keyword ref="qpositionprovider.html#PositionSourceType-enum">QPositionProvider::AllPositionSources</keyword>
-        <keyword ref="qpositionprovider.html#PositionSourceType-enum">QPositionProvider::SatellitePositionSources</keyword>
-        <keyword ref="qpositionprovider.html#PositionSourceType-enum">QPositionProvider::NonSatellitePositionSources</keyword>
-        <keyword ref="qpositionprovider.html#createProvider">createProvider</keyword>
-        <keyword ref="qpositionprovider.html#lastUpdate">lastUpdate</keyword>
-        <keyword ref="qpositionprovider.html#minimumIntervalForType">minimumIntervalForType</keyword>
-        <keyword ref="qpositionprovider.html#positionUpdated">positionUpdated</keyword>
-        <keyword ref="qpositionprovider.html#preferredSourceTypes">preferredSourceTypes</keyword>
-        <keyword ref="qpositionprovider.html#requestUpdate">requestUpdate</keyword>
-        <keyword ref="qpositionprovider.html#setPreferredSourceTypes">setPreferredSourceTypes</keyword>
-        <keyword ref="qpositionprovider.html#setUpdateInterval">setUpdateInterval</keyword>
-        <keyword ref="qpositionprovider.html#startUpdates">startUpdates</keyword>
-        <keyword ref="qpositionprovider.html#stopUpdates">stopUpdates</keyword>
-        <keyword ref="qpositionprovider.html#supportedSourceTypes">supportedSourceTypes</keyword>
-        <keyword ref="qpositionprovider.html#updateIntervalType">updateIntervalType</keyword>
-        <keyword ref="qpositionprovider.html#updateIntervalValue">updateIntervalValue</keyword>
-        <section ref="qpositionprovider-members.html" title="List of all members"/>
+    <section ref="qpositionsource.html" title="QPositionSource Class Reference">
+        <keyword ref="qpositionsource.html">QPositionSource</keyword>
+        <keyword ref="qpositionsource.html#IntervalType-enum">IntervalType</keyword>
+        <keyword ref="qpositionsource.html#IntervalType-enum">QPositionSource::DistanceInterval</keyword>
+        <keyword ref="qpositionsource.html#IntervalType-enum">QPositionSource::TimeInterval</keyword>
+        <keyword ref="qpositionsource.html#PositioningMethod-enum">PositioningMethod</keyword>
+        <keyword ref="qpositionsource.html#PositioningMethod-enum">PositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::SatellitePositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::AllPositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::NonSatellitePositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#createSource">createSource</keyword>
+        <keyword ref="qpositionsource.html#lastUpdate">lastUpdate</keyword>
+        <keyword ref="qpositionsource.html#minimumIntervalForType">minimumIntervalForType</keyword>
+        <keyword ref="qpositionsource.html#positionUpdated">positionUpdated</keyword>
+        <keyword ref="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#requestUpdate">requestUpdate</keyword>
+        <keyword ref="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#setUpdateInterval">setUpdateInterval</keyword>
+        <keyword ref="qpositionsource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qpositionsource.html#stopUpdates">stopUpdates</keyword>
+        <keyword ref="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#updateIntervalType">updateIntervalType</keyword>
+        <keyword ref="qpositionsource.html#updateIntervalValue">updateIntervalValue</keyword>
+        <section ref="qpositionsource-members.html" title="List of all members"/>
     </section>
     <section ref="qpositionupdate.html" title="QPositionUpdate Class Reference">
         <keyword ref="qpositionupdate.html">QPositionUpdate</keyword>
@@ -100,15 +100,15 @@
         <keyword ref="qsatelliteinfo.html#signalStrength">signalStrength</keyword>
         <section ref="qsatelliteinfo-members.html" title="List of all members"/>
     </section>
-    <section ref="qsatelliteinfoprovider.html" title="QSatelliteInfoProvider Class Reference">
-        <keyword ref="qsatelliteinfoprovider.html">QSatelliteInfoProvider</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#createProvider">createProvider</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#requestUpdate">requestUpdate</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#satellitesInViewUpdated">satellitesInViewUpdated</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#startUpdates">startUpdates</keyword>
-        <keyword ref="qsatelliteinfoprovider.html#stopUpdates">stopUpdates</keyword>
-        <section ref="qsatelliteinfoprovider-members.html" title="List of all members"/>
+    <section ref="qsatelliteinfosource.html" title="QSatelliteInfoSource Class Reference">
+        <keyword ref="qsatelliteinfosource.html">QSatelliteInfoSource</keyword>
+        <keyword ref="qsatelliteinfosource.html#createSource">createSource</keyword>
+        <keyword ref="qsatelliteinfosource.html#requestUpdate">requestUpdate</keyword>
+        <keyword ref="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>
+        <keyword ref="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</keyword>
+        <keyword ref="qsatelliteinfosource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qsatelliteinfosource.html#stopUpdates">stopUpdates</keyword>
+        <section ref="qsatelliteinfosource-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">

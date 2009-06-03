@@ -20,37 +20,37 @@
 <a name="properties"></a>
 <h3>Properties</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qpositionareamonitor.html#inMonitoredArea-prop">inMonitoredArea</a></b> : const bool</li>
+<li><div class="fn"/><b><a href="qpositionareamonitor.html#inMonitoredArea-prop">inMonitoredArea</a></b> : const bool</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qpositionareamonitor.html#QPositionAreaMonitor">QPositionAreaMonitor</a></b> ( QPositionProvider * <i>provider</i>, QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div>QCoordinate <b><a href="qpositionareamonitor.html#coordinate">coordinate</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qpositionareamonitor.html#inMonitoredArea-prop">inMonitoredArea</a></b> () const</li>
-<li><div class="fn"></div>QPositionProvider * <b><a href="qpositionareamonitor.html#provider">provider</a></b> () const</li>
-<li><div class="fn"></div>int <b><a href="qpositionareamonitor.html#radius">radius</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a></b> ( const QCoordinate &amp; <i>coordinate</i>, int <i>radius</i> )</li>
+<li><div class="fn"/><b><a href="qpositionareamonitor.html#QPositionAreaMonitor">QPositionAreaMonitor</a></b> ( QPositionSource * <i>source</i>, QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>QCoordinate <b><a href="qpositionareamonitor.html#coordinate">coordinate</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qpositionareamonitor.html#inMonitoredArea-prop">inMonitoredArea</a></b> () const</li>
+<li><div class="fn"/>int <b><a href="qpositionareamonitor.html#radius">radius</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a></b> ( const QCoordinate &amp; <i>coordinate</i>, int <i>radius</i> )</li>
+<li><div class="fn"/>QPositionSource * <b><a href="qpositionareamonitor.html#source">source</a></b> () const</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qpositionareamonitor.html#areaEntered">areaEntered</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
-<li><div class="fn"></div>void <b><a href="qpositionareamonitor.html#areaExited">areaExited</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+<li><div class="fn"/>void <b><a href="qpositionareamonitor.html#areaEntered">areaEntered</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+<li><div class="fn"/>void <b><a href="qpositionareamonitor.html#areaExited">areaExited</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QPositionAreaMonitor class allows the detection of proximity changes for a specified set of coordinates.</p>
-<p>A QPositionAreaMonitor listens on a specified <a href="qpositionprovider.html">QPositionProvider</a> and emits signals when the position provider indicates that the current position is in range, or has moved out of range, of a specified area.</p>
+<p>A QPositionAreaMonitor listens on a specified <a href="qpositionsource.html">QPositionSource</a> and emits signals when the position source indicates that the current position is in range, or has moved out of range, of a specified area.</p>
 <p>For example:</p>
 <pre>    public:
         MyClass::MyClass()
         {
-            QPositionProvider *provider = QPositionProvider::createProvider();
+            QPositionSource *source = QPositionSource::createSource();
             QCoordinate bigBenLocation(51.50104, -0.124632);
 
-            QPositionAreaMonitor *monitor = new QPositionAreaMonitor(provider);
+            QPositionAreaMonitor *monitor = new QPositionAreaMonitor(source);
             connect(monitor, SIGNAL(areaEntered(QPositionUpdate)),
                     this, SLOT(areaEntered(QPositionUpdate)));
             connect(monitor, SIGNAL(areaExited(QPositionUpdate)),
@@ -71,30 +71,30 @@
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="inMonitoredArea-prop"></a>inMonitoredArea : const bool</h3>
-<p>This property is true if the current position, according to position updates from <a href="qpositionareamonitor.html#provider">provider</a>(), is within the monitored area.</p>
+<p>This property is true if the current position, according to position updates from <a href="qpositionareamonitor.html#source">source</a>(), is within the monitored area.</p>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"></div><b>bool inMonitoredArea () const</b></li>
+<li><div class="fn"/><b>bool inMonitoredArea () const</b></li>
 </ul>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QPositionAreaMonitor"></a>QPositionAreaMonitor::QPositionAreaMonitor ( <a href="qpositionprovider.html">QPositionProvider</a> * <i>provider</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Creates a monitor that receives updates from the specified <i>provider</i>.</p>
+<h3 class="fn"><a name="QPositionAreaMonitor"></a>QPositionAreaMonitor::QPositionAreaMonitor ( <a href="qpositionsource.html">QPositionSource</a> * <i>source</i>, QObject * <i>parent</i> = 0 )</h3>
+<p>Creates a monitor that receives updates from the specified <i>source</i>.</p>
 <p>The QObject parent is specified by <i>parent</i>.</p>
 <h3 class="fn"><a name="areaEntered"></a>void QPositionAreaMonitor::areaEntered ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position outside the monitored area to a position within the monitored area.</p>
-<p>The <i>update</i> holds the new position as provided by <a href="qpositionareamonitor.html#provider">provider</a>().</p>
+<p>The <i>update</i> holds the new position as provided by <a href="qpositionareamonitor.html#source">source</a>().</p>
 <h3 class="fn"><a name="areaExited"></a>void QPositionAreaMonitor::areaExited ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position within the monitored area to a position outside the monitored area.</p>
-<p>The <i>update</i> holds the new position as provided by <a href="qpositionareamonitor.html#provider">provider</a>().</p>
+<p>The <i>update</i> holds the new position as provided by <a href="qpositionareamonitor.html#source">source</a>().</p>
 <h3 class="fn"><a name="coordinate"></a><a href="qcoordinate.html">QCoordinate</a> QPositionAreaMonitor::coordinate () const</h3>
 <p>Returns the coordinate set with <a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a>(), or an invalid coordinate if no area has been set.</p>
-<h3 class="fn"><a name="provider"></a><a href="qpositionprovider.html">QPositionProvider</a> * QPositionAreaMonitor::provider () const</h3>
-<p>Returns the provider specified in the constructor.</p>
 <h3 class="fn"><a name="radius"></a>int QPositionAreaMonitor::radius () const</h3>
 <p>Returns the radius set with <a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a>(), or 0 if no area has been set.</p>
 <h3 class="fn"><a name="setMonitoredArea"></a>void QPositionAreaMonitor::setMonitoredArea ( const <a href="qcoordinate.html">QCoordinate</a> &amp; <i>coordinate</i>, int <i>radius</i> )</h3>
 <p>Sets the area to be monitored to the area specified by <i>coordinate</i> with a radius of <i>radius</i>.</p>
+<h3 class="fn"><a name="source"></a><a href="qpositionsource.html">QPositionSource</a> * QPositionAreaMonitor::source () const</h3>
+<p>Returns the source specified in the constructor.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>
