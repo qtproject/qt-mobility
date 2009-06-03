@@ -54,7 +54,7 @@ public:
     ~CommandProcessor();
 
     void runCommand(const QString &cmd, const QStringList &args);
-    void showUsage();
+    static void showUsage();
 
 public slots:
     void browse(const QStringList &args);
@@ -98,13 +98,13 @@ void CommandProcessor::runCommand(const QString &cmd, const QStringList &args)
 
 void CommandProcessor::showUsage()
 {
-    *stdoutStream << "Usage: servicefw <command> [command parameters]\n\n"
+    printf("Usage: servicefw <command> [command parameters]\n\n"
             "Commands:\n"
             "\tbrowse     List all registered services\n"
             "\tsearch     Search for a service or interface\n"
             "\tadd        Register a service\n"
             "\tremove     Unregister a service\n"
-            "\n";
+            "\n");
 }
 
 void CommandProcessor::browse(const QStringList &args)
@@ -184,7 +184,7 @@ void CommandProcessor::showAllEntries()
 {
     QStringList services = serviceManager->findServices();
     if (services.isEmpty())
-        *stdoutStream << "(No services found)\n";
+        *stdoutStream << "No services found.\n";
     else if (services.count() == 1)
         *stdoutStream << "Found 1 service.\n\n";
     else
@@ -245,11 +245,12 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
 
-    CommandProcessor p;
-    if (args.count() == 1 || args.value(1) == "--help")
-        p.showUsage();
-    else
+    if (args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h" ) {
+        CommandProcessor::showUsage();
+    } else {
+        CommandProcessor p;
         p.runCommand(args[1], args.mid(2));
+    }
 
     return 0;
 }
