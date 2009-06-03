@@ -246,6 +246,7 @@ void QNetworkSessionPrivate::close()
 
         opened = false;
         isActive = false;
+        emit q->sessionClosed();
     }
 }
 
@@ -264,6 +265,7 @@ void QNetworkSessionPrivate::stop()
 
         opened = false;
         isActive = false;
+        emit q->sessionClosed();
     }
 }
 
@@ -430,6 +432,8 @@ void QNetworkSessionPrivate::updateStateFromPublicConfig()
 
     if (!oldActive && isActive)
         emit quitPendingWaitsForOpened();
+    if (oldActive && !isActive)
+        emit q->sessionClosed();
 
     if (oldState != state)
         emit q->stateChanged(state);
@@ -458,6 +462,8 @@ void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &con
     if (publicConfig == config) {
         opened = false;
         isActive = false;
+
+        emit q->sessionClosed();
 
         lastError = QNetworkSession::SessionAbortedError;
         emit q->error(lastError);
