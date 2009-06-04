@@ -14,12 +14,18 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">filemanagerservice.xml Example File<br /><span class="small-subtitle">filemanagerplugin/filemanagerservice.xml</span>
 </h1>
 <pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-    &lt;service name=&quot;FileManagerService&quot; filepath=&quot;serviceframework_filemanagerplugin&quot; &gt;
+    &lt;service&gt;
+        &lt;name&gt;FileManagerService&lt;/name&gt;
+        &lt;filepath&gt;serviceframework_filemanagerplugin&lt;/filepath&gt;
         &lt;description&gt;Example file manager service&lt;/description&gt;
-        &lt;interface name=&quot;com.nokia.qt.examples.FileStorage&quot; version=&quot;1.0&quot;&gt;
+        &lt;interface&gt;
+            &lt;name&gt;com.nokia.qt.examples.FileStorage&lt;/name&gt;
+            &lt;version&gt;1.0&lt;/version&gt;
             &lt;description&gt;Implementation of FileStorageInterface&lt;/description&gt;
         &lt;/interface&gt;
-        &lt;interface name=&quot;com.nokia.qt.examples.FileTransfer&quot; version=&quot;1.0&quot;&gt;
+        &lt;interface&gt;
+            &lt;name&gt;com.nokia.qt.examples.FileTransfer&lt;/name&gt;
+            &lt;version&gt;1.0&lt;/version&gt;
             &lt;description&gt;Implementation of FileTransferInterface&lt;/description&gt;
         &lt;/interface&gt;
     &lt;/service&gt;</pre>

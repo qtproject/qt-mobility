@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
     <name>TestService</name>
+    <version>1.0.456</version>
     <filepath>.\testserviceplugin.dll</filepath>
-    <interface>
-        <name>Test Interface 1</name>
-        <version>1.4</version>
-    </interface>
+    <description>Test service description</description> 
 </service>
 
 

@@ -100,49 +100,28 @@ Services are installed via an XML file which describes the meta data and locatio
 DTD:
 
 \code
+    <!ELEMENT service ( name, filepath, description, interface+ ) >
     <!ELEMENT description ( #PCDATA ) >
-
-    <!ELEMENT interface ( description ) >
-    <!ATTLIST interface capabilities CDATA #IMPLIED >
-    <!ATTLIST interface name NMTOKEN #REQUIRED >
-    <!ATTLIST interface version NMTOKEN #REQUIRED >
-
-    <!ELEMENT service ( description, interface+ ) >
-    <!ATTLIST service filepath CDATA #REQUIRED >
-    <!ATTLIST service name NMTOKEN #REQUIRED >
+    <!ELEMENT filepath ( #PCDATA ) >
+    <!ELEMENT interface ( capabilities | description | name | version )* >
+    <!ELEMENT capabilities ( #PCDATA ) >
+    <!ELEMENT name ( #PCDATA ) >
+    <!ELEMENT version ( #PCDATA ) >
 \endcode
 
 The elements and attributes have the following meanings:
 
 \table
     \header
-        \o Element \o Attribute \o Description
-    \row
-        \o description
-        \o 
-        \o A user readable description of the purpose of the interface or service.
-    \row
-        \o interface
-        \o
-        \o This tag describes the properties of the interface.
-    \row
-        \o "
-        \o capabilities
-        \o This attribute is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.
-    \row
-        \o "
-        \o name
-        \o The name of the interface using the Java class name notation. (e.g. com.nokia.qt.TestService)
-    \row
-        \o "
-        \o version
-        \o This attribute contains the interface and implementation version. The version tag follows the \i major.minor notation. The major version indicates the interface version the minor version the implementation version.
-
-           The version number \bold must be greater than 1.0. The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.
-    \row
+        \o Element \o SubElement \o Description
+   \row
         \o service
         \o 
         \o The \i service tag can contain an arbitrary number of \i interface tags and one description tag.
+    \row
+        \o "
+        \o description
+        \o A user readable description of the purpose of the service.
     \row
         \o "
         \o filepath
@@ -154,6 +133,29 @@ The elements and attributes have the following meanings:
         \o "
         \o name
         \o The name of the service.
+    \row
+        \o interface
+        \o
+        \o The \i interface describes the properties of the interface.
+    \row
+        \o "
+        \o capabilities
+        \o This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.
+    \row
+        \o "
+        \o name
+        \o The name of the interface using the Java class name notation. (e.g. com.nokia.qt.TestService)
+    \row
+        \o "
+        \o version
+        \o This property contains the interface and implementation version. The version tag follows the \i major.minor notation. The major version indicates the interface version the minor version the implementation version.
+
+           The version number \bold must be greater than 1.0. The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.
+    \row
+        \o "
+        \o description
+        \o A user readable description of the purpose of the interface.
+ 
 \endtable
 
 
@@ -161,17 +163,28 @@ An example for a valid XML service description could be the following \i TestSer
 
 \code
     <?xml version="1.0" encoding="utf-8" ?>
-    <service name="TestService"  filepath="testserviceplugin" >
-      <description>Test service description</description> 
-      <interface name="com.nokia.qt.ILocation" version="1.4" capabilities="">
-        <description>Interface that provides location support</description> 
-      </interface>
-      <interface name="com.nokia.qt.ILocation" version="1.5" capabilities="">
-        <description>Interface that provides location support</description> 
-      </interface>
-      <interface name="com.nokia.qt.ISysInfo" capabilities="ReadUserData" version="2.3">
-        <description>Interface that provides system information support</description> 
-      </interface>  
+    <service>
+        <name>TestService</name>
+        <filepath>testserviceplugin</filepath>
+        <description>Test service description</description> 
+        <interface>
+            <name>com.nokia.qt.ILocation</name>
+            <version>1.4</version>
+            <capabilities></capabilities>
+            <description>Interface that provides location support</description> 
+        </interface>
+        <interface>
+            <name>com.nokia.qt.ILocation</name>
+            <version>1.5</version>
+            <capabilities></capabilities>
+            <description>Interface that provides location support</description> 
+        </interface>
+        <interface>
+            <name>com.nokia.qt.ISysInfo</name>
+            <capabilities>ReadUserData</capabilities>
+            <version>2.3</version>
+            <description>Interface that provides system information support</description> 
+        </interface>  
     </service>
 \endcode
 

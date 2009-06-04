@@ -63,8 +63,8 @@
 <p>See also <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
 <h3 class="fn"><a name="addService-2"></a>bool QServiceManager::addService ( QIODevice * <i>device</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
-<p>Registers the service defined by the XML data from the given <i>device</i>. Returns true if the registration succeeded, and false otherwise.</p>
-<p>If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
+<p>Registers the service defined by the XML data from the given <i>device</i>. Returns true if the registration succeeded, and false otherwise. If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
+<p>Registering a service also causes <a href="qserviceplugininterface.html#installService">QServicePluginInterface::installService</a>() to be called on the service. If the service plugin is not accessible (e.g&#x2e; if the plugin file is not found) and <tt>installService()</tt> cannot be invoked on the service, the registration fails and this method returns false.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
 <p>See also <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
 <h3 class="fn"><a name="defaultServiceInterface"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::defaultServiceInterface ( const QString &amp; <i>interfaceName</i> ) const</h3>

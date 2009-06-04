@@ -20,7 +20,7 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qserviceinterfacedescriptor.html#PropertyKey-enum">PropertyKey</a></b> { Capabilities, FilePath, ServiceDescription, InterfaceDescription }</li>
+<li><div class="fn"/>enum <b><a href="qserviceinterfacedescriptor.html#PropertyKey-enum">PropertyKey</a></b> { Capabilities, Location, ServiceDescription, InterfaceDescription }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
@@ -63,7 +63,7 @@
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QServiceInterfaceDescriptor::Capabilities</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The capabilities property is a QStringList and describes the capabilities that a service client would require to use the service if capability checks are enforced.</td></tr>
-<tr><td valign="top"><tt>QServiceInterfaceDescriptor::FilePath</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The file path property points to the location where the plug-in providing this service is stored.</td></tr>
+<tr><td valign="top"><tt>QServiceInterfaceDescriptor::Location</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">This property points to the location where the plug-in providing this service is stored. If the service is plug-in based the location is the name and/or path of the plugin.</td></tr>
 <tr><td valign="top"><tt>QServiceInterfaceDescriptor::ServiceDescription</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">This property provides a general description for the service.</td></tr>
 <tr><td valign="top"><tt>QServiceInterfaceDescriptor::InterfaceDescription</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">This property provides a description for the interface implementation.</td></tr>
 </table></p>

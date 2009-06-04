@@ -60,7 +60,7 @@ class Q_SFW_EXPORT QServiceInterfaceDescriptor
 public:
     enum PropertyKey {
         Capabilities = 0,
-        FilePath, 
+        Location, 
         ServiceDescription,
         InterfaceDescription
     };

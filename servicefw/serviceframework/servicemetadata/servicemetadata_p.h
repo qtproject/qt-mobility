@@ -86,7 +86,8 @@ public:
         SFW_ERROR_PARSE_SERVICE,                            /* Error parsing service node */
         SFW_ERROR_PARSE_INTERFACE,                          /* Error parsing interface node */
         SFW_ERROR_DUPLICATED_INTERFACE,                     /* The same interface is defined twice */
-        SFW_ERROR_INVALID_VERSION
+        SFW_ERROR_INVALID_VERSION,
+        SFW_ERROR_DUPLICATED_TAG                            /* The tag appears twice */
     };
 
 public:
@@ -101,7 +102,7 @@ public:
 
     QIODevice *device() const;
 
-    void setServiceFilePath(const QString &aFilePath);
+    void setServiceLocation(const QString &aFilePath);
 
     bool extractMetadata();
 
@@ -109,7 +110,7 @@ public:
 
     QString name();
 
-    QString filePath();
+    QString location();
 
     QString description();
 
@@ -139,7 +140,7 @@ private:
     QIODevice *xmlDevice;
     bool ownsXmlDevice;
     QString serviceName;
-    QString serviceFilePath;
+    QString serviceLocation;
     QString serviceDescription;
     QList<QServiceInterfaceDescriptor> serviceInterfaces;
     QSet<QString> duplicates;

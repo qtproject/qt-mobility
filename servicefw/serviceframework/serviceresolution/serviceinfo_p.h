@@ -64,25 +64,25 @@ public:
 
     ServiceInfo();
 
-    ServiceInfo(const QString& name,const QString &filePath, const QString &description);
+    ServiceInfo(const QString& name,const QString &location, const QString &description);
 
     ~ServiceInfo(void);
 
     QString name() const;
-    QString filePath() const;
+    QString location() const;
     QString description() const;
 
     bool isValid() const;
 
 private:
     void setName(const QString &name);
-    void setFilePath(const QString &filePath);
+    void setLocation(const QString &location);
     void setDescription(const QString &description);
 
     void clear();
 
     QString m_name;
-    QString m_filePath;
+    QString m_location;
     QString m_description;
     friend class ServiceDatabase;
 };

@@ -2,9 +2,10 @@
 <service>
     <name>TestService</name>
     <filepath>.\testserviceplugin.dll</filepath>
+    <description>Test service description</description> 
     <interface>
-        <name>Test Interface 1</name>
-        <version>1.4</version>
+        <description>Test Module</description>
+        <version>1.456</version>
     </interface>
 </service>
 

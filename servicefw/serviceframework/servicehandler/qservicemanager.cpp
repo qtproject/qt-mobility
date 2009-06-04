@@ -113,8 +113,7 @@ public:
         QObject::connect(database, SIGNAL(serviceRemoved(QString)),
                 mgr, SIGNAL(serviceRemoved(QString)));
 
-        int result = database->open();
-        if (result != 0 && result != ServiceDatabase::SFW_ERROR_DB_RECREATED)
+        if (!database->open())
             qWarning("QServiceManager: unable to open services database");
     }
 };
@@ -290,10 +289,10 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;  //TODO set error state on context object, if it exists
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(
-            descriptor.property(QServiceInterfaceDescriptor::FilePath).toString());
+            descriptor.property(QServiceInterfaceDescriptor::Location).toString());
     if (serviceFilePath.isEmpty()) {
         qWarning() << "QServiceManager::loadInterface() cannot locate library file for plugin:"
-                << descriptor.property(QServiceInterfaceDescriptor::FilePath).toString();
+                << descriptor.property(QServiceInterfaceDescriptor::Location).toString();
         return 0;
     }
 
@@ -397,7 +396,7 @@ bool QServiceManager::addService(QIODevice *device)
 
     bool result = d->database->registerService(data);
     if (result) {
-        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.filePath()));
+        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location()));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
         if (pluginIFace) {
             pluginIFace->installService();
@@ -437,7 +436,7 @@ bool QServiceManager::removeService(const QString& serviceName)
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
     for (int i=0; i<descriptors.count(); i++)
-        pluginPathsSet << descriptors[i].property(QServiceInterfaceDescriptor::FilePath).toString();
+        pluginPathsSet << descriptors[i].property(QServiceInterfaceDescriptor::Location).toString();
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {

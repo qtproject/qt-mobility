@@ -97,6 +97,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setServiceName" fullname="QServiceFilter::setServiceName" href="qservicefilter.html#setServiceName" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceName(const QString &amp; serviceName)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceName" fullname="QServiceFilter::serviceName" href="qservicefilter.html#serviceName" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceName() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceName" fullname="QServiceFilter::interfaceName" href="qservicefilter.html#interfaceName" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="interfaceName() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMajorVersion" fullname="QServiceFilter::interfaceMajorVersion" href="qservicefilter.html#interfaceMajorVersion" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMajorVersion() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMinorVersion" fullname="QServiceFilter::interfaceMinorVersion" href="qservicefilter.html#interfaceMinorVersion" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMinorVersion() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="versionMatchRule" fullname="QServiceFilter::versionMatchRule" href="qservicefilter.html#versionMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="VersionMatchRule" signature="versionMatchRule() const"></function>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""></parameter>
@@ -151,7 +156,7 @@
             <contents name="namespaces" title="Namespaces" level="1"></contents>
             <enum access="public" threadsafety="unspecified" status="commendable" name="PropertyKey" fullname="QServiceInterfaceDescriptor::PropertyKey" href="qserviceinterfacedescriptor.html#PropertyKey-enum" location="qserviceinterfacedescriptor.h">
                 <value name="Capabilities" value="0"></value>
-                <value name="FilePath" value="1"></value>
+                <value name="Location" value="1"></value>
                 <value name="ServiceDescription" value="2"></value>
                 <value name="InterfaceDescription" value="3"></value>
             </enum>

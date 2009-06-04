@@ -225,7 +225,7 @@ void CommandProcessor::showAllEntries()
 {
     QStringList services = serviceManager->findServices();
     if (services.isEmpty())
-        *stdoutStream << "(No services found)\n";
+        *stdoutStream << "No services found.\n";
     else if (services.count() == 1)
         *stdoutStream << "Found 1 service.\n\n";
     else
@@ -271,7 +271,7 @@ void CommandProcessor::showServiceInfo(const QString &service)
     if (!description.isEmpty())
         *stdoutStream << '\t' << description << '\n';
     *stdoutStream << "\tLibrary: " << descriptors[0].property(
-                    QServiceInterfaceDescriptor::FilePath).toString() << '\n'
+                    QServiceInterfaceDescriptor::Location).toString() << '\n'
             << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
             << "\tImplements:\n";
 
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 
     CommandProcessor processor;
 
-    if (args.count() == 1 || args.value(1) == "--help") {
+    if (args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h") {
         processor.showUsage();
         return 0;
     }

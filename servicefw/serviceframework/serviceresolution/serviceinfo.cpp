@@ -78,10 +78,10 @@ ServiceInfo::ServiceInfo()
     @param aVersion service version
     @param aXmlFileName xml file name
 */
-ServiceInfo::ServiceInfo(const QString& name,const QString& filePath, const QString& description)
+ServiceInfo::ServiceInfo(const QString& name,const QString& location, const QString& description)
 {
     m_name = name;
-    m_filePath = filePath;
+    m_location = location;
     m_description = description;
 }
 
@@ -116,19 +116,19 @@ void ServiceInfo::setName(const QString& name)
     Gets the service file path (includes file name)
     @return service file path
 */
-QString ServiceInfo::filePath() const
+QString ServiceInfo::location() const
 {
-    return m_filePath;
+    return m_location;
 }
 
 /*!
     Sets the service file name
-    @param filePath service file path(include the file name in the path)
+    @param location service file path(include the file name in the path)
     @return void
 */
-void ServiceInfo::setFilePath(const QString& filePath)
+void ServiceInfo::setLocation(const QString& location)
 {
-    m_filePath = filePath;
+    m_location = location;
 }
 
 /*!
@@ -157,7 +157,7 @@ void ServiceInfo::setDescription(const QString &description)
 */
 bool ServiceInfo::isValid() const
 {
-    return !m_name.isEmpty() && !m_filePath.isEmpty()
+    return !m_name.isEmpty() && !m_location.isEmpty()
         && !m_description.isEmpty();
 }
 
@@ -169,7 +169,7 @@ bool ServiceInfo::isValid() const
 void ServiceInfo::clear()
 {
     m_name ="";
-    m_filePath="";
+    m_location="";
     m_description="";
 }
 

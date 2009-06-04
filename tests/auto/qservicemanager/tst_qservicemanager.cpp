@@ -65,8 +65,8 @@ uint qHash(const QServiceInterfaceDescriptor &desc)
 static DescriptorProperties defaultDescriptorProperties()
 {
     DescriptorProperties props;
-    props[QServiceInterfaceDescriptor::Capabilities] = QStringList();
-    props[QServiceInterfaceDescriptor::FilePath] = "";
+    //props[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    props[QServiceInterfaceDescriptor::Location] = "";
     props[QServiceInterfaceDescriptor::ServiceDescription] = "";
     props[QServiceInterfaceDescriptor::InterfaceDescription] = "";
     return props;
@@ -116,7 +116,9 @@ private:
     QByteArray createServiceXml(const QString &serviceName, const QByteArray &interfaceXml, const QString &path, const QString &description = QString()) const
     {
         QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-        xml += "<service name=\"" + serviceName + "\" filepath=\"" + path + "\">\n";
+        xml += "<service>\n";
+        xml += "<name>" + serviceName + "</name>\n";
+        xml += "<filepath>" + path + "</filepath>\n";
         xml += "<description>" + description + "</description>\n";
         xml += interfaceXml;
         xml += "</service>\n";
@@ -127,7 +129,7 @@ private:
     {
         Q_ASSERT(descriptors.count() > 0);
         return createServiceXml(serviceName, createInterfaceXml(descriptors),
-                descriptors[0].property(QServiceInterfaceDescriptor::FilePath).toString(),
+                descriptors[0].property(QServiceInterfaceDescriptor::Location).toString(),
                 descriptors[0].property(QServiceInterfaceDescriptor::ServiceDescription).toString());
     }
 
@@ -144,10 +146,13 @@ private:
 
     QByteArray createInterfaceXml(const QString &name, const QString &version = "1.0", const QString &description = QString()) const
     {
-        QString xml = "<interface name=\"" + name + "\" version=\"" + version + "\">\n";
-        xml += "    <description>" + description + "</description>\n";
+       QString xml = "<interface>\n";
+        xml += "<name>" + name + "</name>\n";
+        xml += "<version>" + version + "</version>\n";
+        xml += " <description>" + description + "</description>\n";
         xml += "</interface>\n";
         return xml.toLatin1();
+
     }
 
     QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties()) const
@@ -355,7 +360,7 @@ void tst_QServiceManager::findInterfaces_filter_data()
 
     QString serviceName = "SomeTestService";
     DescriptorProperties properties;
-    properties[QServiceInterfaceDescriptor::FilePath] = VALID_PLUGIN_FILES.first();
+    properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES.first();
 
     QList<QServiceInterfaceDescriptor> descriptors;
     descriptors << createDescriptor("com.nokia.qt.TestInterfaceA", 1, 0, serviceName, properties);
@@ -364,7 +369,6 @@ void tst_QServiceManager::findInterfaces_filter_data()
     descriptors << createDescriptor("com.nokia.qt.TestInterfaceB", 2, 3, serviceName, properties);
 
     QByteArray serviceXml = createServiceXml(serviceName, descriptors);
-
     QServiceFilter filter;
 
     QTest::newRow("empty/wildcard filter")
@@ -632,15 +636,15 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
     lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
-    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
             << descriptor
             << "SampleServicePluginClass";
 
-    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw2_sampleserviceplugin");
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
-    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw2_sampleserviceplugin")
             << descriptor
@@ -649,13 +653,13 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
 void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 {
-    QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw2_sampleserviceplugin");
+    QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
 
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     QServiceManager mgr;
@@ -723,7 +727,7 @@ void tst_QServiceManager::getInterface()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->properties[QServiceInterfaceDescriptor::FilePath] = lib.fileName();
+    priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     //use manual descriptor -> avoid database involvement
@@ -844,7 +848,7 @@ void tst_QServiceManager::addService_testInvalidServiceXml()
 
     // a service with no interfaces
     QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-    xml += "<service name=\"SomeService\" filepath=\"" + VALID_PLUGIN_FILES.first() + "\">\n";
+    xml += "<service><name>SomeService</name><filepath>" + VALID_PLUGIN_FILES.first() + "</filepath>\n";
     xml += "</service>\n";
     buffer.close();
     buffer.setData(xml.toLatin1());
@@ -923,11 +927,11 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
     QServiceInterfaceDescriptor descriptor;
     QByteArray xml;
 
-    properties[QServiceInterfaceDescriptor::FilePath] = VALID_PLUGIN_FILES[0];
+    properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES[0];
     descriptor = createDescriptor(interfaceName, 1, 0, "ServiceA", properties);
     xml = createServiceXml("ServiceA",
             createInterfaceXml(QList<QServiceInterfaceDescriptor>() << descriptor),
-            properties[QServiceInterfaceDescriptor::FilePath].toString());
+            properties[QServiceInterfaceDescriptor::Location].toString());
     QBuffer buffer(&xml);
 
     // fails if the specified interface hasn't been registered
@@ -939,11 +943,11 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
 
     // replace the default with another service
-    properties[QServiceInterfaceDescriptor::FilePath] = VALID_PLUGIN_FILES[1];
+    properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES[1];
     descriptor = createDescriptor(interfaceName, 1, 0, "ServiceB", properties);
     xml = createServiceXml("ServiceB",
             createInterfaceXml(QList<QServiceInterfaceDescriptor>() << descriptor),
-            properties[QServiceInterfaceDescriptor::FilePath].toString());
+            properties[QServiceInterfaceDescriptor::Location].toString());
     buffer.close();
     buffer.setData(xml);
     QVERIFY(mgr.addService(&buffer));
@@ -965,13 +969,13 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfac
     QByteArray xml;
 
     // if there are multiple interfaces, the default should be the latest version
-    properties[QServiceInterfaceDescriptor::FilePath] = VALID_PLUGIN_FILES[0];
+    properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES[0];
     QList<QServiceInterfaceDescriptor> descriptorList;
     descriptorList << createDescriptor(interfaceName, 1, 0, "ServiceC", properties)
                    << createDescriptor(interfaceName, 1, 8, "ServiceC", properties)
                    << createDescriptor(interfaceName, 1, 3, "ServiceC", properties);
     xml = createServiceXml("ServiceC", createInterfaceXml(descriptorList),
-            properties[QServiceInterfaceDescriptor::FilePath].toString());
+            properties[QServiceInterfaceDescriptor::Location].toString());
     QBuffer buffer(&xml);
     QVERIFY(mgr.addService(&buffer));
     QCOMPARE(mgr.setDefaultServiceForInterface("ServiceC", interfaceName), true);
@@ -985,7 +989,7 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
 
     QString interfaceName = "com.nokia.qt.serviceframework.TestInterface";
     DescriptorProperties properties;
-    properties[QServiceInterfaceDescriptor::FilePath] = VALID_PLUGIN_FILES.first();
+    properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES.first();
 
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
 
