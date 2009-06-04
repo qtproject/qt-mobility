@@ -2,7 +2,6 @@
 <service>
     <name>WayneEnt</name>
     <filepath>C:/Gotham/knight.dll</filepath>
-    <description>Wayne Enterprises Mobile Services</description>
     <interface>
         <name>com.omni.device.Accelerometer</name>
         <version>2.0</version>
