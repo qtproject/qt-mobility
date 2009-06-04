@@ -1,4 +1,5 @@
 SOURCES  += tst_qnetworkconfiguration.cpp
+HEADERS  += ../qbearertestcommon.h
 TARGET = tst_qnetworkconfiguration
 CONFIG+=testcase
 
