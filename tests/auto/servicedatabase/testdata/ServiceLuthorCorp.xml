@@ -2,7 +2,7 @@
 <service>
     <name>LuthorCorp</name>
     <filepath>C:/Metropolis/kryptonite.dll</filepath>
-    <description>LuthorCorp Mobile Services</description>
+    <description></description>
     <interface>
         <name>com.omni.device.Accelerometer</name>
         <version>1.2</version>

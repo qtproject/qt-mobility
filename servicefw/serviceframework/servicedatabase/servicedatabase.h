@@ -85,7 +85,7 @@ class DBError
         ErrorCode m_error;
 };
 
-class Q_SFW_EXPORT ServiceDatabase : public QObject
+class ServiceDatabase : public QObject
 {
     Q_OBJECT
 
@@ -105,8 +105,6 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         bool unregisterService(const QString &serviceName);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
-        ServiceInfo getService(const QServiceInterfaceDescriptor &interface, bool *ok=0);
-
         QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
 
         QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, bool *ok = 0);
@@ -130,6 +128,7 @@ Q_SIGNALS:
         void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
         void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
         bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
+        bool populateServiceProperties(QServiceInterfaceDescriptor *descriptor, const QString &serviceID);
 
         bool checkConnection();
 
