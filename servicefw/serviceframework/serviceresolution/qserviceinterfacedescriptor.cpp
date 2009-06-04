@@ -112,14 +112,6 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor()
 }
 
 /*!
-    \internal
-*/
-QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(QServiceInterfaceDescriptorPrivate *priv)
-    :  d(priv)
-{
-}
-
-/*!
     Destroys the QServiceInterfaceDescriptor object.
 */
 QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor()
