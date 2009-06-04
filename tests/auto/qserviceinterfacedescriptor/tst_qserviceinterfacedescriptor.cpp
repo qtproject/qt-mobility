@@ -60,6 +60,7 @@ private slots:
 #ifndef QT_NO_DEBUG_STREAM
     void testDebugStream();
 #endif
+    void destructor();
 };
 
 void tst_QServiceInterfaceDescriptor::initTestCase()
@@ -283,6 +284,28 @@ void tst_QServiceInterfaceDescriptor::testDebugStream()
     qInstallMsgHandler(0);
 }
 #endif
+
+void tst_QServiceInterfaceDescriptor::destructor()
+{
+    //test destructor if descriptor is invalid
+    QServiceInterfaceDescriptor* invalid = new QServiceInterfaceDescriptor();
+    delete invalid;
+
+    //test destructor if descriptor is valid
+    QServiceInterfaceDescriptor* valid = new QServiceInterfaceDescriptor();
+    QServiceInterfaceDescriptorPrivate *d = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(valid, d);
+    d->serviceName = "name";
+    d->interfaceName = "interface";
+    d->major = 3;
+    d->minor = 1;
+    d->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue"));
+    d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
+    d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
+    d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
+    QVERIFY(valid->isValid());
+    delete valid;
+}
 
 void tst_QServiceInterfaceDescriptor::cleanupTestCase()
 {
