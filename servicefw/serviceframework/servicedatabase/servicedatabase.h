@@ -85,7 +85,7 @@ class DBError
         ErrorCode m_error;
 };
 
-class ServiceDatabase : public QObject
+class Q_SFW_EXPORT ServiceDatabase : public QObject
 {
     Q_OBJECT
 
