@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include <QtTest/QtTest>
 #include <QtCore>
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 
@@ -53,6 +56,9 @@ private slots:
     void comparison();
 #ifndef QT_NO_DATASTREAM
     void testStreamOperators();
+#endif
+#ifndef QT_NO_DEBUG_STREAM
+    void testDebugStream();
 #endif
 };
 
@@ -241,6 +247,42 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     QVERIFY(valid2.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
 }
 #endif //QT_NO_DATASTREAM
+
+#ifndef QT_NO_DEBUG_STREAM
+static QByteArray msg;
+static QtMsgType type;
+
+static void customMsgHandler(QtMsgType t, const char* m)
+{
+    msg = m;
+    type = t;
+
+}
+
+void tst_QServiceInterfaceDescriptor::testDebugStream()
+{
+    QServiceInterfaceDescriptor valid2;
+    QServiceInterfaceDescriptorPrivate *d2 = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&valid2, d2);
+    d2->serviceName = "name2";
+    d2->interfaceName = "interface2";
+    d2->major = 5;
+    d2->minor = 6;
+    d2->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue1"));
+    d2->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val3" << "val4");
+    d2->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the second service description"));
+    d2->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the second interface description"));
+    QVERIFY(valid2.isValid());
+
+    QServiceInterfaceDescriptor invalid;
+
+    qInstallMsgHandler(customMsgHandler);
+    qDebug() << valid2 << invalid;
+    QCOMPARE(type, QtDebugMsg);
+    QCOMPARE(QString::fromLatin1(msg.data()),QString::fromLatin1("QServiceInterfaceDescriptor(service=\"name2\", interface=\"interface2 5.6\") QServiceInterfaceDescriptor(invalid) "));
+    qInstallMsgHandler(0);
+}
+#endif
 
 void tst_QServiceInterfaceDescriptor::cleanupTestCase()
 {
