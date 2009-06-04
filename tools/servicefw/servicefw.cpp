@@ -55,6 +55,7 @@ public:
 
     void execute(const QStringList &options, const QString &cmd, const QStringList &args);
     void showUsage();
+    static void showUsage(QTextStream *stream);
 
 public slots:
     void browse(const QStringList &args);
@@ -108,7 +109,12 @@ void CommandProcessor::execute(const QStringList &options, const QString &cmd, c
 
 void CommandProcessor::showUsage()
 {
-    *stdoutStream << "Usage: servicefw [options] <command> [command parameters]\n\n"
+    showUsage(stdoutStream);
+}
+
+void CommandProcessor::showUsage(QTextStream *stream)
+{
+    *stream << "Usage: servicefw [options] <command> [command parameters]\n\n"
             "Commands:\n"
             "\tbrowse     List all registered services\n"
             "\tsearch     Search for a service or interface\n"
@@ -286,10 +292,9 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
 
-    CommandProcessor processor;
-
     if (args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h") {
-        processor.showUsage();
+        QTextStream stream(stdout);
+        CommandProcessor::showUsage(&stream);
         return 0;
     }
 
@@ -299,6 +304,7 @@ int main(int argc, char *argv[])
             options += args[i];
     }
 
+    CommandProcessor processor;
     processor.execute(options, args.value(options.count() + 1), args.mid(options.count() + 2));
     return 0;
 }
