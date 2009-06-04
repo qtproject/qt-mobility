@@ -143,16 +143,16 @@ public:
 /*!
     \enum QServiceManager::Scope
 
-    \value UserScope When adding and removing services, use a database
+    \value UserScope When adding and removing services, use a storage location
     specific to the current user (e.g. in the user's home directory). When
     searching for services and interface implementations, first search in the
-    user-specific database; if the service or interface implementation
-    is not found, search in the system-wide services database.
+    user-specific location; if the service or interface implementation
+    is not found, search in the system-wide storage location.
 
-    \value SystemScope When adding and removing services, use a database
-    in a global location accessible by all users. When searching
+    \value SystemScope When adding and removing services, use a system-wide
+    storage location accessible to all users. When searching
     for services and interface implementations, search only in the system-wide
-    services database.
+    storage location.
 */
 
 /*!
