@@ -102,29 +102,22 @@ public:
 
     QIODevice *device() const;
 
-    void setServiceLocation(const QString &aFilePath);
-
     bool extractMetadata();
 
-    int getLatestError();
+    int getLatestError() const;
 
-    QString name();
+    QString name() const;
 
-    QString location();
+    QString location() const;
 
-    QString description();
-
-    int interfaceCount();
+    QString description() const;
     
-    QList<QServiceInterfaceDescriptor> getInterfaces();
+    QList<QServiceInterfaceDescriptor> getInterfaces() const;
 
     QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
     QList<QServiceInterfaceDescriptor> latestInterfaces() const;
 
 private:
-    bool getAttributeValue(const QXmlStreamReader &aDomElement,
-            const QString &aAttributeName, QString &aValue);
-
     bool processServiceElement(QXmlStreamReader &aXMLReader);
     
     bool processInterfaceElement(QXmlStreamReader &aXMLReader);
