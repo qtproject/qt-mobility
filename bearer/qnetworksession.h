@@ -77,7 +77,8 @@ public:
         UnknownSessionError = 0,
         SessionAbortedError,
         RoamingError,
-        OperationNotSupportedError
+        OperationNotSupportedError,
+        InvalidConfigurationError
     };
 
     QNetworkSession(const QNetworkConfiguration& connConfig, QObject* parent =0);

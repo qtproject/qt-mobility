@@ -201,10 +201,14 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     state = QNetworkSession::Invalid;
     lastError = QNetworkSession::UnknownSessionError;
 
+    qRegisterMetaType<QNetworkSessionEngine::ConnectionError>
+        ("QNetworkSessionEngine::ConnectionError");
+
     if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         engine = getEngineFromId(publicConfig.identifier());
         connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)));
+                this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                Qt::QueuedConnection);
     } else {
         engine = 0;
     }
@@ -222,6 +226,12 @@ void QNetworkSessionPrivate::open()
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else if (!isActive) {
+        if ((publicConfig.state() & QNetworkConfiguration::Discovered) !=
+            QNetworkConfiguration::Discovered) {
+            lastError =QNetworkSession::InvalidConfigurationError;
+            emit q->error(lastError);
+            return;
+        }
         // increment session count
         opened = true;
         sessionManager()->increment(publicConfig);
@@ -349,6 +359,8 @@ QString QNetworkSessionPrivate::errorString() const
         return tr("The session was aborted by the user or system.");
     case QNetworkSession::OperationNotSupportedError:
         return tr("The requested operation is not supported by the system.");
+    case QNetworkSession::InvalidConfigurationError:
+        return tr("The specified configuration cannot be used.");
     }
 
     return QString();
@@ -391,7 +403,8 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
             actualConfig = config;
             engine = getEngineFromId(actualConfig.identifier());
             connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                    this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)));
+                    this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                    Qt::QueuedConnection);
             emit q->newConfigurationActivated();
         }
 
@@ -478,6 +491,11 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
         switch (error) {
         case QNetworkSessionEngine::OperationNotSupported:
             lastError = QNetworkSession::OperationNotSupportedError;
+            opened = false;
+            if (publicConfig.identifier() == id)
+                sessionManager()->decrement(publicConfig);
+            else
+                sessionManager()->decrement(actualConfig);
             break;
         case QNetworkSessionEngine::InterfaceLookupError:
         case QNetworkSessionEngine::ConnectError:
