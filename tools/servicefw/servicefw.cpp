@@ -53,7 +53,7 @@ public:
     CommandProcessor(QObject *parent = 0);
     ~CommandProcessor();
 
-    void runCommand(const QString &cmd, const QStringList &args);
+    void execute(const QStringList &options, const QString &cmd, const QStringList &args);
     void showUsage();
 
 public slots:
@@ -63,6 +63,7 @@ public slots:
     void remove(const QStringList &args);
 
 private:
+    bool setOptions(const QStringList &options);
     void showAllEntries();
     void showInterfaceInfo(const QServiceFilter &filter);
     void showServiceInfo(const QString &service);
@@ -73,7 +74,7 @@ private:
 
 CommandProcessor::CommandProcessor(QObject *parent)
     : QObject(parent),
-      serviceManager(new QServiceManager(this)),
+      serviceManager(0),
       stdoutStream(new QTextStream(stdout))
 {
 }
@@ -83,8 +84,17 @@ CommandProcessor::~CommandProcessor()
     delete stdoutStream;
 }
 
-void CommandProcessor::runCommand(const QString &cmd, const QStringList &args)
+void CommandProcessor::execute(const QStringList &options, const QString &cmd, const QStringList &args)
 {
+    if (cmd.isEmpty()) {
+        *stdoutStream << "Error: no command given\n\n";
+        showUsage();
+        return;
+    }
+
+    if (!setOptions(options))
+        return;
+
     int methodIndex = metaObject()->indexOfMethod(cmd.toAscii() + "(QStringList)");
     if (methodIndex < 0) {
         *stdoutStream << "Bad command: " << cmd << "\n\n";
@@ -98,12 +108,16 @@ void CommandProcessor::runCommand(const QString &cmd, const QStringList &args)
 
 void CommandProcessor::showUsage()
 {
-    *stdoutStream << "Usage: servicefw <command> [command parameters]\n\n"
+    *stdoutStream << "Usage: servicefw [options] <command> [command parameters]\n\n"
             "Commands:\n"
             "\tbrowse     List all registered services\n"
             "\tsearch     Search for a service or interface\n"
             "\tadd        Register a service\n"
             "\tremove     Unregister a service\n"
+            "\n"
+            "Options:\n"
+            "\t--system   Use the system-wide services database instead of the\n"
+            "\t           user-specific database\n"
             "\n";
 }
 
@@ -180,6 +194,33 @@ void CommandProcessor::remove(const QStringList &args)
         *stdoutStream << "Error: cannot unregister service " << service << '\n';
 }
 
+bool CommandProcessor::setOptions(const QStringList &options)
+{
+    if (serviceManager)
+        delete serviceManager;
+
+    QStringList opts = options;
+    QMutableListIterator<QString> i(opts);
+    while (i.hasNext()) {
+        if (i.next() == "--system") {
+            serviceManager = new QServiceManager(QServiceManager::SystemScope, this);
+            i.remove();
+        }
+    }
+
+    if (!opts.isEmpty()) {
+        *stdoutStream << "Bad options: " << opts.join(" ") << "\n\n";
+        showUsage();
+        return false;
+    }
+
+    // other initialization, if not triggered by an option
+    if (!serviceManager)
+        serviceManager = new QServiceManager(this);
+
+    return true;
+}
+
 void CommandProcessor::showAllEntries()
 {
     QStringList services = serviceManager->findServices();
@@ -245,12 +286,20 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
 
-    CommandProcessor p;
-    if (args.count() == 1 || args.value(1) == "--help")
-        p.showUsage();
-    else
-        p.runCommand(args[1], args.mid(2));
+    CommandProcessor processor;
 
+    if (args.count() == 1 || args.value(1) == "--help") {
+        processor.showUsage();
+        return 0;
+    }
+
+    QStringList options;
+    for (int i=1; i<args.count(); i++) {
+        if (args[i].startsWith("--"))
+            options += args[i];
+    }
+
+    processor.execute(options, args.value(options.count() + 1), args.mid(options.count() + 2));
     return 0;
 }
 

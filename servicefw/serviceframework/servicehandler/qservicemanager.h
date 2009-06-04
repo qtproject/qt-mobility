@@ -65,8 +65,16 @@ class Q_SFW_EXPORT QServiceManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit QServiceManager(QObject* parent = 0);
+    enum Scope {
+        UserScope,
+        SystemScope
+    };
+
+    explicit QServiceManager(QObject *parent = 0);
+    explicit QServiceManager(Scope scope, QObject *parent = 0);
     ~QServiceManager();
+
+    Scope scope() const;
 
     QStringList findServices(const QString& interfaceName = QString()) const;
     QList<QServiceInterfaceDescriptor> findInterfaces(const QServiceFilter& filter = QServiceFilter()) const;
@@ -121,6 +129,7 @@ Q_SIGNALS:
     void serviceRemoved(const QString& serviceName);
 
 private:
+    friend class QServiceManagerPrivate;
     QServiceManagerPrivate* d;
 };
 

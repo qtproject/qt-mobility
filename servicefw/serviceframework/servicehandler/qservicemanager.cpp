@@ -101,6 +101,22 @@ class QServiceManagerPrivate
 {
 public:
     ServiceDatabase *database;
+    QServiceManager::Scope scope;
+
+    void init(QServiceManager *mgr, QServiceManager::Scope databaseScope)
+    {
+        database = new ServiceDatabase;
+        scope = databaseScope;
+
+        QObject::connect(database, SIGNAL(serviceAdded(QString)),
+                mgr, SIGNAL(serviceAdded(QString)));
+        QObject::connect(database, SIGNAL(serviceRemoved(QString)),
+                mgr, SIGNAL(serviceRemoved(QString)));
+
+        int result = database->open();
+        if (result != 0 && result != ServiceDatabase::SFW_ERROR_DB_RECREATED)
+            qWarning("QServiceManager: unable to open services database");
+    }
 };
 
 /*!
@@ -126,6 +142,21 @@ public:
 */
 
 /*!
+    \enum QServiceManager::Scope
+
+    \value UserScope When adding and removing services, use a database
+    specific to the current user (e.g. in the user's home directory). When
+    searching for services and interface implementations, first search in the
+    user-specific database; if the service or interface implementation
+    is not found, search in the system-wide services database.
+
+    \value SystemScope When adding and removing services, use a database
+    in a global location accessible by all users. When searching
+    for services and interface implementations, search only in the system-wide
+    services database.
+*/
+
+/*!
     \fn void QServiceManager::serviceAdded(const QString& serviceName)
 
     This signal is emited whenever a new service with the given 
@@ -145,18 +176,24 @@ public:
 
 /*!
     Creates a service manager with the given \a parent.
+
+    The scope will default to QServiceManager::UserScope.
 */
-QServiceManager::QServiceManager(QObject* parent)
+QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate)
 {
-    d->database = new ServiceDatabase;
-    connect(d->database, SIGNAL(serviceAdded(QString)), SIGNAL(serviceAdded(QString)));
-    connect(d->database, SIGNAL(serviceRemoved(QString)), SIGNAL(serviceRemoved(QString)));
+    d->init(this, UserScope);
+}
 
-    int result = d->database->open();
-    if (result != 0 && result != ServiceDatabase::SFW_ERROR_DB_RECREATED)
-        qWarning("QServiceManager: unable to open services database");
+/*!
+    Creates a service manager with the given \a scope and \a parent.
+*/
+QServiceManager::QServiceManager(Scope scope, QObject *parent)
+    : QObject(parent),
+      d(new QServiceManagerPrivate)
+{
+    d->init(this, scope);
 }
 
 /*!
@@ -167,6 +204,14 @@ QServiceManager::~QServiceManager()
     d->database->close();
     delete d->database;
     delete d;
+}
+
+/*!
+    Returns the scope used for registering and searching of services.
+*/
+QServiceManager::Scope QServiceManager::scope() const
+{
+    return d->scope;
 }
 
 /*!

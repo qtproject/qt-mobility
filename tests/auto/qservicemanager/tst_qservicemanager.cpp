@@ -53,6 +53,7 @@ Q_DECLARE_METATYPE(ServiceInterfaceDescriptorList)
 
 Q_DECLARE_METATYPE(QSet<QString>)
 Q_DECLARE_METATYPE(QList<QByteArray>)
+Q_DECLARE_METATYPE(QServiceManager::Scope)
 
 typedef QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
 
@@ -175,6 +176,10 @@ private slots:
     void cleanupTestCase();
     void init();
 
+    void constructor();
+    void constructor_scope();
+    void constructor_scope_data();
+
     void findServices();
     void findServices_data();
 
@@ -230,6 +235,32 @@ void tst_QServiceManager::cleanupTestCase()
 {
     QFile f(QCoreApplication::applicationDirPath() + "/services.db");
     f.remove();
+}
+
+void tst_QServiceManager::constructor()
+{
+    QObject o;
+    QServiceManager mgr(&o);
+    QCOMPARE(mgr.scope(), QServiceManager::UserScope);
+    QCOMPARE(mgr.parent(), &o);
+}
+
+void tst_QServiceManager::constructor_scope()
+{
+    QFETCH(QServiceManager::Scope, scope);
+
+    QObject o;
+    QServiceManager mgr(scope, &o);
+    QCOMPARE(mgr.scope(), scope);
+    QCOMPARE(mgr.parent(), &o);
+}
+
+void tst_QServiceManager::constructor_scope_data()
+{
+    QTest::addColumn<QServiceManager::Scope>("scope");
+
+    QTest::newRow("user") << QServiceManager::UserScope;
+    QTest::newRow("system") << QServiceManager::SystemScope;
 }
 
 void tst_QServiceManager::findServices()

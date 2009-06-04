@@ -81,6 +81,8 @@ public:
 
     bool isValid() const;
 
+    bool inSystemScope() const;
+
     QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
 
 private:

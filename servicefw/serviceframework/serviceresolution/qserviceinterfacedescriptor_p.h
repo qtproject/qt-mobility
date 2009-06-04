@@ -65,6 +65,7 @@ public:
     {
         major = -1;
         minor = -1;
+        systemScope = false;
     }
 
     bool operator==(const QServiceInterfaceDescriptorPrivate& other) const
@@ -73,7 +74,8 @@ public:
                 && minor == other.minor
                 && interfaceName == other.interfaceName
                 && serviceName == other.serviceName
-                && properties == other.properties)
+                && properties == other.properties
+                && systemScope == other.systemScope)
             return true;
         return false;
     }
@@ -85,6 +87,7 @@ public:
         minor = other.minor;
         major = other.major;
         properties = other.properties;
+        systemScope = other.systemScope;
 
         return *this;
     }
@@ -104,6 +107,7 @@ public:
     QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> properties;
     int major;
     int minor;
+    bool systemScope;
 };
 QT_END_NAMESPACE
 
