@@ -81,7 +81,8 @@ public:
 
     enum MessageStatus
     {
-        Read = 0x1
+        Read = 0x1,
+        HasAttachments = 0x2
     };
 
     QMessage();
@@ -160,12 +161,6 @@ enum RelationComparator
     GreaterThanEqual
 };
 
-enum PresenceComparator
-{
-    Present,
-    Absent
-};
-
 }
 
 class QMessageFilterKey
@@ -180,10 +175,14 @@ public:
     const QMessageFilterKey& operator&=(const QMessageFilterKey& other);
     const QMessageFilterKey& operator|=(const QMessageFilterKey& other);
 
+    bool operator==(const QMessageFilterKey& other) const;
+    const QMessageFilterKey& operator=(const QMessageFilterKey& other);
+
     static QMessageFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFilterKey id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFilterKey messageType(QMessage::MessageType type, QMailDataComparator::EqualityComparator cmp);
     static QMessageFilterKey messageType(QMessage::MessageType type, QMessageDataComparator::InclusionComparator cmp);
 
     static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
@@ -221,6 +220,9 @@ public:
     QMessageSortKey operator&(const QMessageSortKey& other) const;
     QMessageSortKey& operator&=(const QMessageSortKey& other);
 
+    bool operator==(const QMessageSortKey& other) const;
+    const QMessageSortKey& operator=(const QMessageSortKey& other);
+
     static QMessageSortKey id(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey messageType(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey sender(Qt::SortOrder order = Qt::AscendingOrder);
@@ -246,6 +248,17 @@ public:
         CreateRemovalRecord
     };
 
+    enum ErrorCode
+    {
+        NoError = 0,
+        InvalidId, 
+        ConstraintFailure,
+        ContentInaccessible,
+        NotYetImplemented,
+        FrameworkFault
+    };
+
+    QMessageStore::ErrorCode lastError() const;
     QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey) const;
     int countMessages(const QMessageFilterKey& key) const;
     bool removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord);
@@ -258,6 +271,8 @@ public:
     
 signals:
     void messagesAdded(const QMessageIdList &ids);
+    void messagesRemoved(const QMessageIdList &ids);
+    void messagesUpdated(const QMessageIdList &ids);
 
 slots:
     startNotifications(const QMessageFilterKey &key);
@@ -283,7 +298,9 @@ public:
     void compose(const QMessage &message);
     void send(const QMessage &message);
     void retrieve(const QMessageId& id);
+    void retrieve(const QMessageContentId& id);
     void showNew(const QMessageId& id);
+    Activity activity() const;
 
 public slots:
     void cancelOperation();
