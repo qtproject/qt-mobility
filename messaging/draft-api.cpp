@@ -13,6 +13,11 @@
     A QMessageId instance can be tested for validity with isValid(), and compared to other instances
     for equality.
     
+    If the message a QMessageId identifies is removed from the message store then the identifier will not be 
+    reused.
+    
+    The QMessageId implementation should be small, ideally less than or equal to 16 bytes.
+    
     \sa QMessageStore, QMessage, QMessageContent
 */
 
@@ -104,6 +109,11 @@ bool QMessageId::isValid() const
 
     A QMessageContentId instance can be tested for validity with isValid(), and compared to other instances
     for equality.
+    
+    If the object a QMessageContentId identifies is removed from the message store then the identifier will not be 
+    reused.
+    
+    The QMessageContentId implementation should be small, ideally less than or equal to 16 bytes.
     
     \sa QMessageStore, QMessage, QMessageContent
 */
@@ -367,23 +377,25 @@ void QMessageContent::serialize(QDataStream& out) const
     \sa QMessageContent, QMessageStore, QMessageId
 */
 
-/* 
-   TODO MessageType, MessageStatus enum doc
-class QMessage {
-public:
-    enum MessageType
-    {
-        Mms     = 0x1,
-        Sms     = 0x2,
-        Email   = 0x4,
-        None    = 0,
-        AnyType = Mms | Sms | Email
-    };
+/*!
+    \enum QMessage::MessageType
 
-    enum MessageStatus
-    {
-        Read = 0x1
-    };
+    Defines the type of a message.
+    
+    \value Mms      The message is an MMS, Multimedia Messaging Service object.
+    \value Sms      The message is an SMS, Short Message Service object.
+    \value Email    The message is an Email, Internet Message Format object.
+    \value None     The message type is not defined.
+    \value AnyType  Bitflag value that matches Mms, Sms or Email. Subject to future redefinition in the case of new types being appended.
+*/
+    
+/*!
+    \enum QMessage::MessageStatus
+
+    Defines properties of a message.
+
+    \value Read            This flag indicates that the content of this message has been displayed to the user.
+    \value HasAttachments  This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.
 */
 
 /*!
@@ -489,6 +501,8 @@ MessageType QMessage::messageType() const
     
 /*!
     Sets the MessageType of the message to \a t.
+    
+    The type of a message may be set for non-empty messages.
     
     \sa messageType()
 */
@@ -735,160 +749,867 @@ bool QMessage::dataModified() const
 {
 }
 
-namespace QMessageDataComparator {
+/*!
+    \namespace QMessageDataComparator
+    \ingroup messaging
 
-enum EqualityComparator
+    \brief The QMessageDataComparator namespace contains types used in specifying the comparison
+    of MessageStore objects with user-defined values.
+*/
+
+/*!
+    \enum QMessageDataComparator::EqualityComparator
+
+    Defines the comparison operations that can be used to compare data elements 
+    of QMessageStore objects for equality and inequality.
+
+    \value Equal Represents the '==' operator.
+    \value NotEqual Represents the '!=' operator.
+*/
+
+/*!
+    \enum QMessageDataComparator::InclusionComparator
+
+    Defines the comparison operations that can be used to compare data elements 
+    of QMessageStore objects for inclusion or exclusion.
+
+    \value Includes Represents an operation in which an associated property is tested to 
+                    determine whether it is equal to any of a supplied set of values.
+                    Alternatively, it may be used to determine whether a single supplied
+                    value is included within the associated QMessageStore property.
+    \value Excludes Represents an operation in which an associated property is tested to 
+                    determine whether it is equal to none of a supplied set of values.
+                    Alternatively, it may be used to determine whether a single supplied
+                    value is not included within the associated QMessageStore property.
+*/
+
+/*!
+    \enum QMessageDataComparator::RelationComparator
+
+    Defines the comparison operations that can be used to compare data elements 
+    of QMessageStore objects, according to a specific relation.
+
+    \value LessThan Represents the '<' operator.
+    \value LessThanEqual Represents the '<=' operator.
+    \value GreaterThan Represents the '>' operator.
+    \value GreaterThanEqual Represents the '>= operator'.
+*/
+
+/*!
+    \class QMessageKey
+
+    \preliminary
+    \brief The QMessageKey class defines the parameters used for querying a subset of
+    all available messages from the message store.
+    \ingroup messaging
+
+    A QMessageKey is composed of a message property, an optional comparison operator
+    and a comparison value. The QMessageKey class is used in conjunction with the 
+    QMessageStore::queryMessages() and QMessageStore::countMessages() functions to filter results 
+    which meet the criteria defined by the key.
+
+    QMessageKeys can be combined using the logical operators (&), (|) and (~) to
+    create more refined queries.
+
+    For example:
+
+    To create a query for all messages sent from "joe@user.com" with subject "meeting":
+    \code
+    QMessageKey subjectKey(QMessageKey::subject("meeting"));
+    QMessageKey senderKey(QMessageKey::sender("joe@user.com"));
+    QMessageIdList results = QMessageStore::instance()->queryMessages(subjectKey & senderKey);
+    \endcode
+
+    \sa QMessageStore, QMessage
+*/
+
+/*!
+    Creates a QMessageKey without specifying matching parameters.
+
+    A default-constructed key (one for which isEmpty() returns true) matches all messages. 
+
+    \sa isEmpty()
+*/
+QMessageFilterKey::QMessageFilterKey()
 {
-    Equal,
-    NotEqual
-};
-
-enum InclusionComparator 
-{
-    Includes,
-    Excludes
-};
-
-enum RelationComparator
-{
-    LessThan,
-    LessThanEqual,
-    GreaterThan,
-    GreaterThanEqual
-};
-
-enum PresenceComparator
-{
-    Present,
-    Absent
-};
-
 }
 
-class QMessageFilterKey
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false. 
+
+    An empty key matches all messages.
+
+    The result of combining an empty key with a non-empty key is the original non-empty key. 
+    This is true regardless of whether the combination is formed by an AND or an OR operation.
+
+    The result of combining two empty keys is an empty key.
+
+    \sa isNonMatching()
+*/
+bool QMessageFilterKey::isEmpty() const
 {
-public:
-    QMessageFilterKey();
-    bool isEmpty() const;
+    return false; // stub
+}
 
-    QMessageFilterKey operator~() const;
-    QMessageFilterKey operator&(const QMessageFilterKey& other) const;
-    QMessageFilterKey operator|(const QMessageFilterKey& other) const;
-    const QMessageFilterKey& operator&=(const QMessageFilterKey& other);
-    const QMessageFilterKey& operator|=(const QMessageFilterKey& other);
+/*!
+    Returns a key that is the logical NOT of the value of this key.
 
-    static QMessageFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFilterKey id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    If this key is empty, the result will be a non-matching key; if this key is 
+    non-matching, the result will be an empty key.
 
-    static QMessageFilterKey messageType(QMessage::MessageType type, QMessageDataComparator::InclusionComparator cmp);
-
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp);
-    static QMessageFilterKey sender(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp);
-
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::InclusionComparator cmp);
-    static QMessageFilterKey subject(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-
-    static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
-
-    static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
-
-    static QMessageFilterKey status(quint64 mask, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-
-    static QMessageFilterKey size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey size(int value, QMessageDataComparator::RelationComparator cmp);
-
-private:
-    // ...
-};
-
-class QMessageSortKey {
-public:
-    QMessageSortKey();
-    bool isEmpty() const;
-
-    QMessageSortKey operator&(const QMessageSortKey& other) const;
-    QMessageSortKey& operator&=(const QMessageSortKey& other);
-
-    static QMessageSortKey id(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey messageType(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey sender(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey recipients(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey subject(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey timeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey status(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);
-
-private:
-    // ...
-};
-
-class QMessageStore : public QObject
+    \sa isEmpty(), isNonMatching()
+*/
+QMessageFilterKey QMessageFilterKey::operator~() const
 {
-    Q_OBJECT
+    return QMessageFilterKey(); // stub
+}
 
-public:
-    enum MessageRemovalOption
-    {
-        NoRemovalRecord = 1,
-        CreateRemovalRecord
-    };
+/*!
+    Returns a key that is the logical AND of this key and the value of key \a other.
+*/
+QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) const
+{
+    return QMessageFilterKey(); // stub
+}
 
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey) const;
-    int countMessages(const QMessageFilterKey& key) const;
-    bool removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord);
-    bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option = NoRemovalRecord);
-    bool updateMessage(QMessage *m);
-    QMessage message(const QMessageId& id) const;
-    QMessageContent messageContent(const QMessageContentId& id) const;
+/*!
+    Returns a key that is the logical OR of this key and the value of key \a other.
+*/
+QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) const
+{
+    return QMessageFilterKey(); // stub
+}
 
-    static QMessageStore* instance();
+/*!
+    Performs a logical AND with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& other)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Performs a logical OR with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& other)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
+{
+    return false; // stub
+}
+
+/*!
+    Assign the value of the QMessageKey \a other to this.
+*/
+const QMessageKey& QMessageFilterKey::operator=(const QMessageKey& other)
+{
+    return false; // stub
+}
+
+/*!
+    Returns a key matching messages whose identifier matches \a id, according to \a cmp.
+
+    \sa QMessage::id()
+*/
+QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose identifier is a member of \a ids, according to \a cmp.
+
+    \sa QMessage::id()
+*/
+QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose identifier is a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessage::id()
+*/
+QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose messageType matches \a type, according to \a cmp.
+
+    \sa QMessage::messageType()
+*/
+QMessageFilterKey QMessageFilterKey::messageType(QMessage::MessageType type, QMessageDataComparator::EqualityComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose messageType is a bitwise match to \a type, according to \a cmp.
+
+    \sa QMessage::messageType()
+*/
+QMessageFilterKey QMessageFilterKey::messageType(int type, QMessageDataComparator::InclusionComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose sender matches \a value, according to \a cmp.
+
+    \sa QMessage::from()
+*/
+QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose sender matches the substring \a value, according to \a cmp.
+
+    \sa QMessage::from()
+*/
+QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose sender is a member of \a values, according to \a cmp.
+
+    \sa QMessage::from()
+*/
+QMessageFilterKey QMessageFilterKey::sender(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose recipients include \a value, according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose recipients include the substring \a value, according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose subject matches \a value, according to \a cmp.
+
+    \sa QMessage::subject()
+*/
+QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose subject matches the substring \a value, according to \a cmp.
+
+    \sa QMessage::subject()
+*/
+QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose subject is a member of \a values, according to \a cmp.
+
+    \sa QMessage::subject()
+*/
+QMessageFilterKey QMessageFilterKey::subject(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose timestamp matches \a value, according to \a cmp.
+
+    \sa QMessage::date()
+*/
+QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose timestamp has the relation to \a value that is specified by \a cmp.
+
+    \sa QMessage::date()
+*/
+QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose reception timestamp matches \a value, according to \a cmp.
+
+    \sa QMessage::receivedDate()
+*/
+QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose reception timestamp has the relation to \a value that is specified by \a cmp.
+
+    \sa QMessage::receivedDate()
+*/
+QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose status matches \a value, according to \a cmp.
+
+    \sa QMessage::status()
+*/
+QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::EqualityComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose status is a bitwise match to \a mask, according to \a cmp.
+
+    \sa QMessage::status()
+*/
+QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose serverUid matches \a uid, according to \a cmp.
+
+    \sa QMessage::serverUid()
+*/
+QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose serverUid matches the substring \a uid, according to \a cmp.
+
+    \sa QMessage::serverUid()
+*/
+QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    \class QMessageSortKey
+
+    \preliminary
+    \brief The QMessageSortKey class defines the parameters used for sorting a subset of 
+    queried messages from the message store.
+    \ingroup messaging
+
+    A QMessageSortKey is composed of a message property to sort and a sort order. 
+    The QMessageSortKey class is used in conjunction with the QMessageStore::queryMessages() 
+    function to sort message results according to the criteria defined by the sort key.
+
+    For example:
+    To create a query for all messages sorted by their timestamp in decending order:
+    \code
+    QMessageSortKey sortKey(QMessageSortKey::timeStamp(Qt::DescendingOrder));
+    QMessageIdList results = QMessageStore::instance()->queryMessages(QMessageKey(), sortKey);
+    \endcode
     
-signals:
-    void messagesAdded(const QMessageIdList &ids);
+    \sa QMessageStore, QMessageFilterKey
+*/
 
-slots:
-    startNotifications(const QMessageFilterKey &key);
-    stopNotifications(const QMessageFilterKey &key);
+/*!
+    Create a QMessageSortKey with specifying matching parameters.
 
-private:
-    QMessageStore();
-    // ...
-};
+    A default-constructed key (one for which isEmpty() returns true) sorts no messages. 
 
-class QMessageServiceAction : public QObject
+    The result of combining an empty key with a non-empty key is the same as the original 
+    non-empty key.
+
+    The result of combining two empty keys is an empty key.
+*/
+QMessageSortKey::QMessageSortKey()
 {
-    Q_OBJECT
+}
 
-    enum Activity {
-        Pending = 0,
-        InProgress,
-        Successful,
-        Failed
-    };
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false.
+*/
+bool QMessageSortKey::isEmpty() const
+{
+}
 
-public:
-    void compose(const QMessage &message);
-    void send(const QMessage &message);
-    void retrieve(const QMessageId& id);
-    void showNew(const QMessageId& id);
+/*!
+    Returns a key that is the logical AND of this key and the value of key \a other.
+*/
+QMessageSortKey operator&(const QMessageSortKey& other) const
+{
+    return QMessageSortKey() // stub
+}
 
-public slots:
-    void cancelOperation();
+/*!
+    Performs a logical AND with this key and the key \a other and assigns the result
+    to this key.
+*/
+QMessageSortKey& operator&=(const QMessageSortKey& other)
+{
+    return *this; // stub
+}
 
-signals:
-    void activityChanged(QMessageServiceAction::Activity a);
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageSortKey::operator==(const QMessageSortKey& other) const
+{
+    return QMessageSortKey() // stub
+}
 
-private:
-    // ...
-};
-#endif
+/*!
+    Assign the value of the QMessageSortKey \a other to this.
+*/
+const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
+{
+    return QMessageSortKey() // stub
+}
+    
+/*!
+    Returns a key that sorts messages by their identifiers, according to \a order.
+
+    \sa QMessage::id()
+*/
+QMessageSortKey QMessageSortKey::id(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their message type, according to \a order.
+
+    \sa QMessage::messageType()
+*/
+QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by the address from which they were sent, according to \a order.
+
+    \sa QMessage::from()
+*/
+QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by the addresses to which they were sent, according to \a order.
+
+    \sa QMessage::to()
+*/
+QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their subject, according to \a order.
+
+    \sa QMessage::subject()
+*/
+QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their origination timestamp, according to \a order.
+
+    \sa QMessage::date()
+*/
+QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their reception timestamp, according to \a order.
+
+    \sa QMessage::receivedDate()
+*/
+QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their status values, according to \a order.
+
+    \sa QMessage::status()
+*/
+QMessageSortKey QMessageSortKey::status(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their size, according to \a order.
+
+    \sa QMessage::size()
+*/
+QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
+{
+    return QMessageSortKey() // stub
+}
+
+/*!
+    \class QMessageStore
+
+    \preliminary
+    \brief The QMessageStore class represents the main interface for storage and retrieval
+    of messages in the message store.
+
+    \ingroup messaging
+
+    The QMessageStore class is accessed through a singleton interface and provides functions 
+    for adding, updating and deleting of QMessages on the message store.
+
+    QMessageStore also provides functions for querying and counting of QMessages
+    when used in conjunction with QMessageFilerKey class.
+
+    If a QMessageStore operation fails, the lastError() function will return an error code
+    value indicating the failure mode encountered.  A successful operation will set the 
+    lastError() result to QMessageStore::NoError.
+
+    Messages in the mail store are identified by QMessageId objects. The data associated
+    with a message is retrieved in the form of a QMessage object.
+
+    Message objects are accessed via the message() and queryMessages() functions. Messages 
+    can be inserted into the store using the addMessage() function, and messages in the 
+    store can be manipulated via the updateMessage() function and removed by the 
+    removeMessage() functions.
+    
+    Message store manipulations involving messages are reported via the messagesAdded(), 
+    messagesUpdated() and messagesRemoved() signals.
+
+    \sa QMessage, QMessageId, QMessageFilterKey, QMessageSortKey
+*/
+
+/*!
+    \enum QMessageStore::MessageRemovalOption
+
+    Defines whether or not a message will be removed from the originating server.
+
+    \value NoRemovalRecord     Do not remove the message from the originating server.
+    \value CreateRemovalRecord Remove the message from teh originating server.
+*/
+
+/*
+    TODO capabilities PLATFORM:yourPlatformHere VERSION:100 PROFILE:BASIC SLICES SIGNALUPDATES CONSTRAINTS
+
+    Activate/deactive on adds, deletes or updates? Requires enu,
+    enum NotificationType 
+    {
+        Add = 1,
+        Removed,
+        Changed
+    }
+    constraints, lastError()
+*/
+
+/*!
+    \enum QMessageStore::ErrorCode
+
+    Defines the result of attempting to perform a mail store operation.
+
+    \value NoError              The operation was successfully performed.
+    \value InvalidId            The operation failed due to the specification of an invalid identifier.
+    \value ConstraintFailure    The operation failed due to a constraint violation.
+    \value ContentInaccessible  The operation failed because the content data cannot be accessed by the message store.
+    \value NotYetImplemented    The operation failed because the message store does not yet implement the operation.
+    \value FrameworkFault       The operation failed because the message store encountered an error in performing the operation.
+*/
+
+/*!
+    Returns the code of the last error condition reported by the message store.
+*/
+QMessageStore::ErrorCode QMessageStore::lastError() const
+{
+    return NotYetImplemented;
+}
+
+/*!
+    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    only messages matching the parameters set by \a key will be returned, otherwise 
+    all message identifiers will be returned.
+    If \a sortKey is not empty, the identifiers will be sorted by the parameters set 
+    by \a sortKey.
+*/
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey) const
+{
+    return QMessageIdList(); // stub
+}
+
+/*!
+    Returns the count of the number of messages which pass the 
+    filtering criteria defined in QMessageKey \a key. If 
+    key is empty a count of all messages is returned.
+*/
+int QMessageStore::countMessages(const QMessageFilterKey& key) const
+{
+    return 0; // stub
+}
+
+/*!
+    Removes the message with QMessageId \a id from the message store. If \a option is 
+    QMessageStore::CreateRemovalRecord then a removal record will be created for the
+    removed message.
+    Returns \c true if the operation completed successfully, \c false otherwise. 
+*/
+bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord)
+{
+    return false; // stub
+}
+
+/*!
+    Removes all messages identified by the key \a key from the message store.
+    If \a option is QMessageStore::CreateRemovalRecord then removal records will be 
+    created for each removed message.
+    Returns \c true if the operation completed successfully, \c false otherwise. 
+*/
+bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option = NoRemovalRecord)
+{
+    return true; // stub
+}
+
+/*!
+    Updates the existing QMessage \a msg on the message store.
+    Returns \c true if the operation completed successfully, or \c false otherwise. 
+*/
+bool updateMessage(QMessage *m)
+{
+    return true; // stub
+}
+
+/*!
+   Returns the QMessage defined by the QMessageContentId \a id from the store.
+*/
+QMessage message(const QMessageId& id) const
+{
+    return QMessage(); // stub
+}
+
+/*!
+   Returns the QMessageContent defined by the QMessageContentId \a id from the store.
+*/
+QMessageContent messageContent(const QMessageContentId& id) const
+{
+    return QMessageContent(); // stub
+}
+
+/*!
+    Returns the single instance of the QMessageStore class.
+
+    If necessary, the store will be instantiated and initialized.
+*/
+static QMessageStore* instance()
+{
+    return 0;
+}
+    
+/*!
+    \fn void QMessageStore::messagesAdded(const QMessageIdList& ids)
+
+    Signal that is emitted when the messages identified by the list \a ids are
+    added to the message store.
+
+    \sa messagesRemoved(), messagesUpdated(), startNotifications()
+*/
+
+/*!
+    \fn void QMessageStore::messagesRemoved(const QMessageIdList& ids)
+
+    Signal that is emitted when the messages in the list \a ids are
+    removed from the mail store.
+
+    \sa messagesAdded(), messagesUpdated(), startNotifications()
+*/
+
+/*!
+    \fn void QMessageStore::messagesUpdated(const QMessageIdList& ids)
+
+    Signal that is emitted when the messages in the list \a ids are
+    updated within the mail store.
+
+    \sa messagesAdded(), messagesRemoved(), startNotifications()
+*/
+
+/*!
+    starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
+    
+    \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
+*/
+QMessageStore::startNotifications(const QMessageFilterKey &key)
+{
+    
+}
+
+/*!
+    stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
+    
+    \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
+*/
+QMessageStore::stopNotifications(const QMessageFilterKey &key)
+{
+    
+}
+
+/*!
+    \class QMessageServiceAction
+
+    \preliminary
+    \ingroup messaging
+
+    \brief The QMessageServiceAction class provides the interface for requesting 
+    external message services.
+
+    QMessageServiceAction provides the mechanisms for messaging clients to request actions from 
+    external services, and to receive information in response.  All actions present the same 
+    interface for communicating status, connectivity and progress information.
+
+    All actions communicate changes in their operational state by emitting the activityChanged()
+    signal.
+    
+    A user may attempt to cancel an operation after it has been initiated.  The cancelOperation()
+    slot is provided for this purpose.
+
+    A QMessageServiceAction instance supports only a single request at any time.  A client
+    may, however, use multiple QMessageServiceAction instances to send independent requests concurrently.
+    Each QMessageServiceAction instance will report only the changes pertaining to the request
+    that instance delivered.
+*/
+
+/*!
+    \enum QMailServiceAction::Activity
+
+    This enum type is used to describe the activity state of the requested action.
+
+    \value Pending          The action has not yet begun execution.
+    \value InProgress       The action is currently executing.
+    \value Successful       The action has completed successfully.
+    \value Failed           The action could not be completed successfully, and has finished execution.
+*/
+
+/*!
+  Open a composer window using \a message as a prototype.
+  
+  \sa Message::type()
+*/
+void QMessageServiceAction::compose(const QMessage &message)
+{
+}
+
+/*!
+  Transmit \a message using the default account for the type of \a message.
+  
+  \sa Message::type()
+*/
+void QMessageServiceAction::send(const QMessage &message)
+{
+}
+
+/* TODO MessageType::Removed required? */
+    
+/*!
+    Requests that the message server retrieve data regarding the message identified by \a id.  
+
+    The meta data (including flags, from, to, subject, and date fields where applicable) of 
+    the message identified by \a id should be retrieved.
+*/
+void QMessageServiceAction::retrieve(const QMessageId& id)
+{
+}
+
+/*!
+    Requests that the message server retrieve data regarding the message identified by \a id.  
+
+    The entirety of the message content identified by \a id should be retrieved.
+*/
+void QMessageServiceAction::retrieve(const QMessageContentId& id)
+{
+}
+
+/*!
+    Show the message identified by \a id in the native application for handling type type of
+    message that \a id identifies.
+
+    \sa Message::type()
+*/
+void QMessageServiceAction::showNew(const QMessageId& id)
+{
+}
+    
+/*!
+    Returns the current activity state of the action.
+
+    \sa activityChanged()
+*/
+Activity QMessageServiceAction::activity() const
+{
+    return Pending; // stub
+}
+
+/*!
+    Attempts to cancel the last requested operation.
+*/
+void QMessageServiceAction::cancelOperation()
+{
+}
+
+/*!
+    \fn QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
+
+    This signal is emitted when the activity status of the action changes,
+    with the new state described by \a a.
+
+    \sa activity()
+*/
+void QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
+{
+}
+
+/* 
+   TODO which methods are essentially private
+   QMessage::setId ?, others??
+   use friends for these.
+*/
