@@ -1502,8 +1502,10 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     QList<QVariant> bindValues;
     bindValues.append(serviceID);
     if (!executeQuery(&query, statement, bindValues)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::populateServiceProperties():-"
                     << qPrintable(m_lastError.text());
+#endif
         return false;
     }
 
@@ -1525,8 +1527,10 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     if (!isFound) {
         QString errorText("Database integrity corrupted, Service Properties for ServiceID: \"%1\" does not exist in the ServiceProperty table for service \"%2\"");
         m_lastError.setError(DBError::SqlError, errorText.arg(serviceID).arg(interface->serviceName()));
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::populateServiceProperties():-"
                     << "Problem:" << qPrintable(m_lastError.text());
+#endif
         return false;
     }
     return true;

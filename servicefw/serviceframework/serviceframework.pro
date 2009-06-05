@@ -41,7 +41,6 @@ HEADERS +=  qserviceglobal.h \
             servicehandler/qserviceplugininterface.h \
             servicehandler/qservicecontext.h \
             servicehandler/qabstractsecuritysession.h \
-            serviceresolution/serviceinfo_p.h \
             serviceresolution/qserviceinterfacedescriptor.h \
             serviceresolution/qserviceinterfacedescriptor_p.h \
             serviceresolution/qservicefilter.h
@@ -54,7 +53,6 @@ SOURCES +=  servicemetadata/servicemetadata.cpp \
             servicehandler/qserviceplugininterface.cpp \
             servicehandler/qservicecontext.cpp \
             servicehandler/qabstractsecuritysession.cpp \
-            serviceresolution/serviceinfo.cpp \
             serviceresolution/qserviceinterfacedescriptor.cpp \
             serviceresolution/qservicefilter.cpp
 

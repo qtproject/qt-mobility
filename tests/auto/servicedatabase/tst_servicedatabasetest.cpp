@@ -45,7 +45,6 @@
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
 #include <servicedatabase.h>
-#include "../../../servicefw/serviceframework/serviceresolution/serviceinfo.cpp"
 #include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
 #include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
 #include <qservicefilter.h>
@@ -87,11 +86,6 @@ private:
                             QString filePath="",
                             QString serviceDescription="",
                             QString interfaceDescription="");
-
-    bool compareService(const ServiceInfo &service,
-                            const QString &name,
-                            const QString &filePath,
-                            const QString &description);
 
     QStringList getInterfaceIDs(const QString &serviceName);
     QStringList getServiceIDs(const QString &serviceName);
@@ -1184,26 +1178,6 @@ void ServiceDatabaseUnitTest::unregister()
     QStringList capabilities;
     QVERIFY(compareDescriptor(interface, "com.dharma.electro.discharge",
                     "DharmaInitiative", 16, 0, capabilities, "C:/island/flame.dll"));
-}
-
-bool ServiceDatabaseUnitTest::compareService(const ServiceInfo &service,
-                            const QString &name, const QString &filePath,
-                            const QString &description)
-{
-    if (service.name() != name)
-    {
-        qWarning() <<"Service name mismatch: expected =" << name << " actual = " << service.name();
-        return false;
-    }
-    if (service.location() != filePath) {
-        qWarning() <<"File  path mismatch expected: expected =" << filePath << " actual = " << service.location();
-        return false;
-    }
-    if (service.description() != description) {
-        qWarning() <<"Service name mismatch: expected =" << description << " actual = " << service.description();
-        return false;
-    }
-    return true;
 }
 
 QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {

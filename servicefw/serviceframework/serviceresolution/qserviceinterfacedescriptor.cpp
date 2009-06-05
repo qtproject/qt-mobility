@@ -112,14 +112,6 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor()
 }
 
 /*!
-    \internal
-*/
-QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(QServiceInterfaceDescriptorPrivate *priv)
-    :  d(priv)
-{
-}
-
-/*!
     Destroys the QServiceInterfaceDescriptor object.
 */
 QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor()
@@ -249,13 +241,17 @@ QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::Prop
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QServiceInterfaceDescriptor &desc)
 {
-    QString interface = QString("%1 %2.%3").arg(desc.interfaceName())
-            .arg(desc.majorVersion() < 0 ? '?' : desc.majorVersion())
-            .arg(desc.minorVersion() < 0 ? '?' : desc.minorVersion());
-    dbg.nospace() << "QServiceInterfaceDescriptor(";
-    dbg.nospace() << "service=" << desc.serviceName() << ", ";
-    dbg.nospace() << "interface=" << interface;
-    dbg.nospace() << ")";
+    if (desc.isValid()) {
+        QString interface = QString("%1 %2.%3").arg(desc.interfaceName())
+                .arg(desc.majorVersion() < 0 ? '?' : desc.majorVersion())
+                .arg(desc.minorVersion() < 0 ? '?' : desc.minorVersion());
+        dbg.nospace() << "QServiceInterfaceDescriptor(";
+        dbg.nospace() << "service=" << desc.serviceName() << ", ";
+        dbg.nospace() << "interface=" << interface;
+        dbg.nospace() << ")";
+    } else {
+        dbg.nospace() << "QServiceInterfaceDescriptor(invalid)";
+    }
     return dbg.space();
 }
 #endif

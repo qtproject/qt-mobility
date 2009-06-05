@@ -129,19 +129,9 @@ QIODevice *ServiceMetaData::device() const
  *
  * @return service name or default value (empty string) if it is not available
  */
-QString ServiceMetaData::name()
+QString ServiceMetaData::name() const
 {
     return serviceName;
-}
- 
-/*!
- *  Sets the path of service implementation file
- *
- * @param aFilePath path of service implementation file
- */
-void ServiceMetaData::setServiceLocation(const QString &aFilePath)
-{
-    serviceLocation = aFilePath;
 }
  
 /*!
@@ -149,7 +139,7 @@ void ServiceMetaData::setServiceLocation(const QString &aFilePath)
  *
  * @return service implementation filepath
  */
-QString ServiceMetaData::location()
+QString ServiceMetaData::location() const
 {
     return serviceLocation;
 }
@@ -159,24 +149,16 @@ QString ServiceMetaData::location()
  *
  * @return service description or default value (empty string) if it is not available
  */
-QString ServiceMetaData::description()
+QString ServiceMetaData::description() const
 {
     return serviceDescription;
-}
- 
-/*!
-   Returns the number of interfaces provided by the service description
- */
-int ServiceMetaData::interfaceCount()
-{
-    return serviceInterfaces.count();
 }
  
 /*!
    Returns the metadata of the interace at \a index; otherwise
    returns 0.
  */
-QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces()
+QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces() const
 {
     return serviceInterfaces;
 } 
@@ -233,40 +215,11 @@ bool ServiceMetaData::extractMetadata()
     Gets the latest parsing error \n
     @return parsing error(negative value) or 0 in case there is none
  */
-int ServiceMetaData::getLatestError()
+int ServiceMetaData::getLatestError() const
 {
     return latestError;
 }
  
-/*!
-    Gets the value of the attribute from the XML node \n
-    @param aDomElement xml node
-    @param aAttributeName attribute name
-    @param aValue [out] attribute value
-    @return true if the value was read, false otherwise
- */
-bool ServiceMetaData::getAttributeValue(const QXmlStreamReader &aXMLReader, const QString &aAttributeName, QString &aValue)
-{
-    bool result = false;
-    for (int i = 0; i < aXMLReader.attributes().count(); i++){
-        QXmlStreamAttribute att = aXMLReader.attributes()[i];
-        if (att.name() == aAttributeName) {
-            if (att.value().isNull() || att.value().isEmpty()) {
-                result = false;
-            } else {
-                result = true;
-                aValue = att.value().toString();
-            }
-        }
-    }
-    // Capability attribute is allowed to be empty
-    if (aAttributeName == INTERFACE_CAPABILITY) {
-        result = true;
-    }
-
-    return result;
-}
-  
 /*!
     Parses and extracts the service metadata from the current xml <service> node \n
  */

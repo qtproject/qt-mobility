@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include <QtTest/QtTest>
 #include <QtCore>
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 
@@ -54,6 +57,10 @@ private slots:
 #ifndef QT_NO_DATASTREAM
     void testStreamOperators();
 #endif
+#ifndef QT_NO_DEBUG_STREAM
+    void testDebugStream();
+#endif
+    void destructor();
 };
 
 void tst_QServiceInterfaceDescriptor::initTestCase()
@@ -251,6 +258,64 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     QCOMPARE(valid2.inSystemScope(), true);
 }
 #endif //QT_NO_DATASTREAM
+
+#ifndef QT_NO_DEBUG_STREAM
+static QByteArray msg;
+static QtMsgType type;
+
+static void customMsgHandler(QtMsgType t, const char* m)
+{
+    msg = m;
+    type = t;
+
+}
+
+void tst_QServiceInterfaceDescriptor::testDebugStream()
+{
+    QServiceInterfaceDescriptor valid2;
+    QServiceInterfaceDescriptorPrivate *d2 = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(&valid2, d2);
+    d2->serviceName = "name2";
+    d2->interfaceName = "interface2";
+    d2->major = 5;
+    d2->minor = 6;
+    d2->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue1"));
+    d2->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val3" << "val4");
+    d2->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the second service description"));
+    d2->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the second interface description"));
+    QVERIFY(valid2.isValid());
+
+    QServiceInterfaceDescriptor invalid;
+
+    qInstallMsgHandler(customMsgHandler);
+    qDebug() << valid2 << invalid;
+    QCOMPARE(type, QtDebugMsg);
+    QCOMPARE(QString::fromLatin1(msg.data()),QString::fromLatin1("QServiceInterfaceDescriptor(service=\"name2\", interface=\"interface2 5.6\") QServiceInterfaceDescriptor(invalid) "));
+    qInstallMsgHandler(0);
+}
+#endif
+
+void tst_QServiceInterfaceDescriptor::destructor()
+{
+    //test destructor if descriptor is invalid
+    QServiceInterfaceDescriptor* invalid = new QServiceInterfaceDescriptor();
+    delete invalid;
+
+    //test destructor if descriptor is valid
+    QServiceInterfaceDescriptor* valid = new QServiceInterfaceDescriptor();
+    QServiceInterfaceDescriptorPrivate *d = new QServiceInterfaceDescriptorPrivate();
+    QServiceInterfaceDescriptorPrivate::setPrivate(valid, d);
+    d->serviceName = "name";
+    d->interfaceName = "interface";
+    d->major = 3;
+    d->minor = 1;
+    d->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue"));
+    d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
+    d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
+    d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
+    QVERIFY(valid->isValid());
+    delete valid;
+}
 
 void tst_QServiceInterfaceDescriptor::cleanupTestCase()
 {

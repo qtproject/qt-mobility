@@ -93,8 +93,6 @@ void ServiceMetadataTest::parseValidServiceXML()
     
     QCOMPARE(parser.location(), QString("C:/TestData/testservice.dll"));
 
-    QCOMPARE(parser.interfaceCount(), 5);
-    
     QList<QServiceInterfaceDescriptor> allInterfaces = parser.getInterfaces();
     QServiceInterfaceDescriptor aInterface = allInterfaces.at(0);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.IDownloader"));

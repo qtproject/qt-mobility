@@ -86,7 +86,6 @@ public:
     QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
 
 private:
-    QServiceInterfaceDescriptor(QServiceInterfaceDescriptorPrivate *);
     QServiceInterfaceDescriptorPrivate* d;
 
     friend class QServiceInterfaceDescriptorPrivate;

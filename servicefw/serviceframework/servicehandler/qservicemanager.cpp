@@ -282,7 +282,6 @@ QServiceManager::Scope QServiceManager::scope() const
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
     QStringList services;
-    QList<ServiceInfo> serviceInfoList;
     if (!d->database->isOpen())
         return services;
     services = d->database->getServiceNames(interfaceName);
