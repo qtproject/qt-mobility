@@ -42,7 +42,6 @@
 #ifndef QSERVICEDATABASE_H_
 #define QSERVICEDATABASE_H_
 
-#include "serviceinfo_p.h"
 #include <servicemetadata_p.h>
 #include <qservicefilter.h>
 #include <QtSql>
