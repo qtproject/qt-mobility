@@ -67,7 +67,9 @@
 #include <QDebug>
 #endif
 
-#define SERVICE_DESCRIPTION_KEY 0
+#define SERVICE_DESCRIPTION_KEY "DESCRIPTION"
+#define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
+#define INTERFACE_CAPABILITY_KEY "CAPABILITIES"
 
 QT_BEGIN_NAMESPACE
 
@@ -470,7 +472,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         bindValues.append(interfaceID);
         switch (iter.key()) {
             case (QServiceInterfaceDescriptor::Capabilities):
-                bindValues.append(QServiceInterfaceDescriptor::Capabilities);
+                bindValues.append(INTERFACE_CAPABILITY_KEY);
                 capabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().join(",");
                 if (capabilities.isNull())
                     capabilities = "";
@@ -483,7 +485,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
                 isValidProperty = false;
                 break;
             case(QServiceInterfaceDescriptor::InterfaceDescription):
-                bindValues.append(QServiceInterfaceDescriptor::InterfaceDescription);
+                bindValues.append(INTERFACE_DESCRIPTION_KEY);
                 interfaceDescription = interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
                 if (interfaceDescription.isNull())
                     interfaceDescription = "";
@@ -1303,7 +1305,7 @@ bool ServiceDatabase::createTables()
 
     statement = "CREATE TABLE ServiceProperty("
                 "ServiceID TEXT NOT NULL,"
-                "Key INTEGER NOT NULL,"
+                "Key TEXT NOT NULL,"
                 "Value TEXT NOT NULL)";
     if (!executeQuery(&query, statement)) {
         qWarning() << "ServiceDatabase::createTables():-"
@@ -1313,7 +1315,7 @@ bool ServiceDatabase::createTables()
 
     statement = "CREATE TABLE InterfaceProperty("
                 "InterfaceID TEXT NOT NULL,"
-                "Key INTEGER NOT NULL,"
+                "Key TEXT NOT NULL,"
                 "Value TEXT NOT NULL)";
 
     if (!executeQuery(&query, statement)) {
@@ -1451,30 +1453,22 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
     }
 
     bool isFound = false;
-    int propertyKey;
+    QString propertyKey;
     while (query.next()) {
         isFound = true;
-        propertyKey = query.value(EBindIndex).toInt();
-        switch (propertyKey) {
-            case(QServiceInterfaceDescriptor::Capabilities): {
-                    QStringList capabilities = query.value(EBindIndex1).toString().split(",");
-
-                    if (capabilities.count() == 1 && capabilities[0].isEmpty()) {
-                        interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
-                            = QStringList();
-                    } else {
-                        interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
-                        = capabilities;
-                    }
-                    break;
+        propertyKey = query.value(EBindIndex).toString();
+        if (propertyKey == INTERFACE_CAPABILITY_KEY) {
+            const QStringList capabilities = query.value(EBindIndex1).toString().split(",");
+            if (capabilities.count() == 1 && capabilities[0].isEmpty()) {
+                interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
+                    = QStringList();
+            } else {
+                interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
+                = capabilities;
             }
-            case(QServiceInterfaceDescriptor::Location):
-                break; //should not be possible for this to be in the Property table
-            case(QServiceInterfaceDescriptor::ServiceDescription):
-                    break;//should not be possible for this to be in the InterfaceProperty table
-            case(QServiceInterfaceDescriptor::InterfaceDescription):
-                   interface->d->properties[QServiceInterfaceDescriptor::InterfaceDescription]
-                       = query.value(EBindIndex1).toString();
+        } else if (propertyKey == INTERFACE_DESCRIPTION_KEY) {
+            interface->d->properties[QServiceInterfaceDescriptor::InterfaceDescription]
+               = query.value(EBindIndex1).toString();
         }
     }
 
@@ -1506,17 +1500,13 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     }
 
     bool isFound = false;
-    int propertyKey;
+    QString propertyKey;
     while (query.next()) {
         isFound = true;
-        propertyKey = query.value(EBindIndex).toInt();
-        switch(propertyKey) {
-            case(SERVICE_DESCRIPTION_KEY):
+        propertyKey = query.value(EBindIndex).toString();
+        if (propertyKey == SERVICE_DESCRIPTION_KEY) {
                 interface->d->properties[QServiceInterfaceDescriptor::ServiceDescription]
                     = query.value(EBindIndex1).toString();
-                break;
-            default:
-                break;
         }
     }
 
