@@ -1,1 +1,15 @@
-This is mainline branch for the Qt Mobility API's
+This repository implements the Qt BearerManagement API. The
+main code is in the "bearer" subdirectory. This project is part of the 
+Qt Mobility program (see http://wikis.in.nokia.com/QtSoftware/QtProgramMobilityAPI).
+
+The concept for this project can be found under:
+http://rm.nokia.troll.no/manage/browse/MOBILITY-2
+
+The requirements for this porject can be found under:
+http://rm.nokia.troll.no/manage/browse/MOBILITY-19
+
+See the file "doc/building.txt" for information on building the library. 
+See "doc/known-issues.txt." for known issues with this version of the 
+bearer API.
+
+Contact Alex.Blasche@nokia.com for further details.
