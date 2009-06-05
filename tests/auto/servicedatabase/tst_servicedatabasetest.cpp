@@ -862,7 +862,7 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
 
     //try setting the a service which does not implement the interface
     QVERIFY(!database.setDefaultService("acme", "com.cyberdyne.terminator"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(), errorText.arg("com.cyberdyne.terminator").arg("acme"));
     interface = database.defaultServiceInterface("com.cyberdyne.terminator");
     QVERIFY(interface.isValid());
@@ -870,29 +870,29 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
 
     //try setting the default for a non-existent interface.
     QVERIFY(!database.setDefaultService("omni", "com.omni.device.FluxCapacitor"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(), errorText.arg("com.omni.device.FluxCapacitor").arg("omni"));
 
     //trying setting the default with a non-existent service
     QVERIFY(!database.setDefaultService("StarkInd", "com.omni.device.Accelerometer"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(),
             errorText.arg("com.omni.device.Accelerometer").arg("StarkInd"));
 
     //trying setting the default with a non-existent service and non-existent interface
     QVERIFY(!database.setDefaultService("StarkInd", "com.omni.device.FluxCapacitor"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(),
             errorText.arg("com.omni.device.FluxCapacitor").arg("StarkInd"));
 
     //Use an empty service string when setting a default
     QVERIFY(!database.setDefaultService("", "com.cyberdyne.terminator"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(), errorText.arg("com.cyberdyne.terminator").arg(""));
 
     //Use an empty interface string when setting a default
     QVERIFY(!database.setDefaultService("skynet", ""));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     QCOMPARE(database.lastError().text(), errorText.arg("").arg("skynet"));
 
     QVERIFY(database.close());
@@ -955,7 +955,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     interface.d->minor = 9;
 
     QVERIFY(!database.setDefaultService(interface));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
@@ -967,7 +967,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     interface.d->minor = 5;
 
     QVERIFY(!database.setDefaultService(interface));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
@@ -978,7 +978,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     interface.d->major = 1;
     interface.d->minor = 4;
     QVERIFY(!database.setDefaultService(interface));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
@@ -989,7 +989,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     interface.d->major = 1;
     interface.d->minor = 5;
     QVERIFY(!database.setDefaultService(interface));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
@@ -998,7 +998,7 @@ void ServiceDatabaseUnitTest::setDefaultService_descriptor()
     QServiceInterfaceDescriptor invalidInterface;
     QVERIFY(!invalidInterface.isValid());
     QVERIFY(!database.setDefaultService(invalidInterface));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ImplNotFound);
     defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
@@ -1015,7 +1015,7 @@ void ServiceDatabaseUnitTest::unregister()
 
     //try unregister a non-existing service
     QVERIFY(!database.unregisterService("StarkInd"));
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ServiceNotFound);
     QServiceFilter filter;
 
     // == check that the service to delete is already in the database ==
@@ -1140,7 +1140,7 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(database.unregisterService("DHARMAInitiative"));
     interface = database.defaultServiceInterface("com.dharma.electro.discharge");
     QVERIFY(!interface.isValid());
-    QCOMPARE(database.lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(database.lastError().errorCode(), DBError::ServiceNotFound);
     filter.setServiceName("DharmaInitiative");
     filter.setInterface("");
     interfaces = database.getInterfaces(filter);
