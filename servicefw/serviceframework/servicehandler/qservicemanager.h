@@ -80,8 +80,7 @@ public:
         ServiceAlreadyExists,
         ImplementationAlreadyExists,
         PluginLoadingFailed,
-        ServiceNotFound,
-        ImplementationNotFound,
+        NotFound,
         ServiceCapabilityDenied,
         UnknownError = 100
     };

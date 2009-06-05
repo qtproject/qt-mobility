@@ -145,11 +145,8 @@ public:
             case DBError::IfaceImplAlreadyRegistered:
                 error = QServiceManager::ImplementationAlreadyExists;
                 break;
-            case DBError::ServiceNotFound:
-                error = QServiceManager::ServiceNotFound;
-                break;
-            case DBError::ImplNotFound:
-                error = QServiceManager::ImplementationNotFound;
+            case DBError::NotFound:
+                error = QServiceManager::NotFound;
                 break;
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
@@ -211,8 +208,7 @@ public:
     \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
-    \value ServiceNotFound The service has not been registered.
-    \value ImplementationNotFound The interface implementation has not been registered with any service or is not registered with the specified service.
+    \value NotFound The service or interface implementation has not been registerd.
     \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
@@ -501,7 +497,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         return false;
     }
     if (serviceName.isEmpty()) {
-        d->setError(ServiceNotFound);
+        d->setError(NotFound);
         return false;
     }
 
@@ -549,11 +545,11 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
         return false;
     }
     if (service.isEmpty()) {
-        d->setError(ServiceNotFound);
+        d->setError(NotFound);
         return false;
     }
     if (interfaceName.isEmpty()) {
-        d->setError(ImplementationNotFound);
+        d->setError(NotFound);
         return false;
     }
 

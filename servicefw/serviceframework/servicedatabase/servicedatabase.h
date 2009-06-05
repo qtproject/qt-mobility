@@ -62,8 +62,7 @@ class DBError
             InvalidDatabaseConnection,
             ComponentAlreadyRegistered,
             IfaceImplAlreadyRegistered,
-            ServiceNotFound,
-            ImplNotFound,
+            NotFound,
             SqlError,
             InvalidSearchCriteria,
             CannotCloseDatabase,
@@ -75,8 +74,8 @@ class DBError
             m_error = SqlError;
             m_text = errorText;
         }
-        void setImplNotFoundError(const QString &errorText) {
-            m_error = ImplNotFound;
+        void setNotFoundError(const QString &errorText) {
+            m_error = NotFound;
             m_text = errorText;
         }
         QString text() const { return m_text; }
