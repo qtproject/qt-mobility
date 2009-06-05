@@ -70,6 +70,22 @@ public:
         SystemScope
     };
 
+    enum Error {
+        NoError,
+        StoragePermissionsError,
+        StorageReadError,
+        InvalidServiceLocation,
+        InvalidServiceXml,
+        InvalidServiceInterfaceDescriptor,
+        ServiceAlreadyExists,
+        ImplementationAlreadyExists,
+        PluginLoadingFailed,
+        ServiceNotFound,
+        ImplementationNotFound,
+        ServiceCapabilityDenied,
+        UnknownError = 100
+    };
+
     explicit QServiceManager(QObject *parent = 0);
     explicit QServiceManager(Scope scope, QObject *parent = 0);
     ~QServiceManager();
@@ -123,6 +139,8 @@ public:
     bool setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor);
 
     QServiceInterfaceDescriptor defaultServiceInterface(const QString& interfaceName) const;
+
+    Error error() const;
 
 Q_SIGNALS:
     void serviceAdded(const QString& serviceName);

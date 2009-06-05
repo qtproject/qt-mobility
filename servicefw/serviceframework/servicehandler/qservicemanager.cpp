@@ -102,10 +102,15 @@ class QServiceManagerPrivate
 public:
     ServiceDatabase *database;
     QServiceManager::Scope scope;
+    QServiceManager::Error error;
+
+    QServiceManagerPrivate()
+        : database(new ServiceDatabase)
+    {
+    }
 
     void init(QServiceManager *mgr, QServiceManager::Scope databaseScope)
     {
-        database = new ServiceDatabase;
         scope = databaseScope;
 
         QObject::connect(database, SIGNAL(serviceAdded(QString)),
@@ -113,8 +118,46 @@ public:
         QObject::connect(database, SIGNAL(serviceRemoved(QString)),
                 mgr, SIGNAL(serviceRemoved(QString)));
 
-        if (!database->open())
+        if (!database->open()) {
+            setError();
             qWarning("QServiceManager: unable to open services database");
+        }
+    }
+
+    void setError(QServiceManager::Error err)
+    {
+        error = err;
+    }
+
+    void setError()
+    {
+        switch (database->lastError().errorCode()) {
+            case DBError::NoError:
+                error = QServiceManager::NoError;
+                break;
+            case DBError::DatabaseNotOpen:
+            case DBError::InvalidDatabaseConnection:
+                error = QServiceManager::StorageReadError;
+                break;
+            case DBError::ComponentAlreadyRegistered:
+                error = QServiceManager::ServiceAlreadyExists;
+                break;
+            case DBError::IfaceImplAlreadyRegistered:
+                error = QServiceManager::ImplementationAlreadyExists;
+                break;
+            case DBError::ServiceNotFound:
+                error = QServiceManager::ServiceNotFound;
+                break;
+            case DBError::ImplNotFound:
+                error = QServiceManager::ImplementationNotFound;
+                break;
+            case DBError::SqlError:
+            case DBError::InvalidSearchCriteria:
+            case DBError::CannotCloseDatabase:
+            case DBError::UnknownError:
+                error = QServiceManager::UnknownError;
+                break;
+        }
     }
 };
 
@@ -153,6 +196,25 @@ public:
     storage location accessible to all users. When searching
     for services and interface implementations, search only in the system-wide
     storage location.
+*/
+
+/*!
+    \enum QServiceManager::Error
+    Defines the possible errors for the service manager.
+
+    \value NoError No error occurred.
+    \value StoragePermissionsError The service data storage cannot be accessed.
+    \value StorageReadError The service data storage is not available.
+    \value InvalidServiceLocation The service was not found at its specified \l{QServiceInterfaceDescriptor::Location}{location}.
+    \value InvalidServiceXml The XML defining the service metadata is invalid.
+    \value InvalidServiceInterfaceDescriptor The service interface descriptor is invalid.
+    \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
+    \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
+    \value PluginLoadingFailed The service plugin cannot be loaded.
+    \value ServiceNotFound The service has not been registered.
+    \value ImplementationNotFound The interface implementation has not been registered with any service or is not registered with the specified service.
+    \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
+    \value UnknownError An unknown error occurred.
 */
 
 /*!
@@ -224,6 +286,7 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
     if (!d->database->isOpen())
         return services;
     services = d->database->getServiceNames(interfaceName);
+    d->setError();
     return services;
 }
 
@@ -236,8 +299,10 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
         return QList<QServiceInterfaceDescriptor>();
     bool ok = false;
     QList<QServiceInterfaceDescriptor> descriptors = d->database->getInterfaces(filter, &ok);
-    if (!ok)
+    if (!ok) {
+        d->setError();
         return QList<QServiceInterfaceDescriptor>();
+    }
     return descriptors;
 }
 
@@ -280,19 +345,20 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
     if (!descriptor.isValid()) {
-        qWarning() << "QServiceManager::loadInterface() given invalid descriptor";
+        d->setError(InvalidServiceInterfaceDescriptor);
         return 0;
     }
 
     const QStringList serviceCaps = descriptor.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
-    if ( session && !session->isAllowed(serviceCaps) )
+    if ( session && !session->isAllowed(serviceCaps) ) {
+        d->setError(ServiceCapabilityDenied);
         return 0;  //TODO set error state on context object, if it exists
+    }
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(
             descriptor.property(QServiceInterfaceDescriptor::Location).toString());
     if (serviceFilePath.isEmpty()) {
-        qWarning() << "QServiceManager::loadInterface() cannot locate library file for plugin:"
-                << descriptor.property(QServiceInterfaceDescriptor::Location).toString();
+        d->setError(InvalidServiceLocation);
         return 0;
     }
 
@@ -309,10 +375,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         delete pluginIFace;
     }
 
-    qWarning() << "QServiceManager::loadInterface() cannot load plugin at"
-            << serviceFilePath << ":" << loader->errorString();
     loader->unload();
     delete loader;
+    d->setError(PluginLoadingFailed);
 
     return 0;
 }
@@ -388,11 +453,15 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 */
 bool QServiceManager::addService(QIODevice *device)
 {
-    if (!d->database->isOpen())
+    if (!d->database->isOpen()) {
+        d->setError(StorageReadError);
         return false;
+    }
     ServiceMetaData data(device);
-    if (!data.extractMetadata())
+    if (!data.extractMetadata()) {
+        d->setError(InvalidServiceXml);
         return false;
+    }
 
     bool result = d->database->registerService(data);
     if (result) {
@@ -401,11 +470,14 @@ bool QServiceManager::addService(QIODevice *device)
         if (pluginIFace) {
             pluginIFace->installService();
         } else {
+            d->setError(PluginLoadingFailed);
             result = false;
             d->database->unregisterService(data.name());
         }
         loader->unload();
         delete loader;
+    } else {
+        d->setError();
     }
     return result;
 }
@@ -425,10 +497,14 @@ bool QServiceManager::addService(QIODevice *device)
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
-    if (!d->database->isOpen())
+    if (!d->database->isOpen()) {
+        d->setError(StorageReadError);
         return false;
-    if (serviceName.isEmpty())
+    }
+    if (serviceName.isEmpty()) {
+        d->setError(ServiceNotFound);
         return false;
+    }
 
     // Call QServicePluginInterface::uninstallService() on all plugins that
     // match this service
@@ -450,7 +526,11 @@ bool QServiceManager::removeService(const QString& serviceName)
         delete loader;
     }
 
-    return d->database->unregisterService(serviceName);
+    if (!d->database->unregisterService(serviceName)) {
+        d->setError();
+        return false;
+    }
+    return true;
 }
 
 /*!
@@ -465,11 +545,24 @@ bool QServiceManager::removeService(const QString& serviceName)
 */
 bool QServiceManager::setDefaultServiceForInterface(const QString &service, const QString &interfaceName)
 {
-    if (!d->database->isOpen())
+    if (!d->database->isOpen()) {
+        d->setError(StorageReadError);
         return false;
-    if (interfaceName.isEmpty() || service.isEmpty())
+    }
+    if (service.isEmpty()) {
+        d->setError(ServiceNotFound);
         return false;
-    return d->database->setDefaultService(service, interfaceName);
+    }
+    if (interfaceName.isEmpty()) {
+        d->setError(ImplementationNotFound);
+        return false;
+    }
+
+    if (!d->database->setDefaultService(service, interfaceName)) {
+        d->setError();
+        return false;
+    }
+    return true;
 }
 
 /*!
@@ -483,11 +576,19 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
 */
 bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor)
 {
-    if (!d->database->isOpen())
+    if (!d->database->isOpen()) {
+        d->setError(StorageReadError);
         return false;
-    if (!descriptor.isValid())
+    }
+    if (!descriptor.isValid()) {
+        d->setError(InvalidServiceInterfaceDescriptor);
         return false;
-    return d->database->setDefaultService(descriptor);
+    }
+    if (!d->database->setDefaultService(descriptor)) {
+        d->setError();
+        return false;
+    }
+    return true;
 }
 
 /*!
@@ -495,15 +596,24 @@ bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescr
 */
 QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QString& interfaceName) const
 {
-    if (!d->database->isOpen())
+    if (!d->database->isOpen()) {
+        d->setError(StorageReadError);
         return QServiceInterfaceDescriptor();
+    }
     bool ok = false;
     QServiceInterfaceDescriptor info;
     info = d->database->defaultServiceInterface(interfaceName, &ok);
-    if (!ok)
+    if (!ok) {
+        d->setError();
         return QServiceInterfaceDescriptor();
+    }
 
     return info;
+}
+
+QServiceManager::Error QServiceManager::error() const
+{
+    return d->error;
 }
 
 QT_END_NAMESPACE

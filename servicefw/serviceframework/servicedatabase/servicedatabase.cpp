@@ -85,13 +85,16 @@ enum TBindIndexes
 
 DBError::DBError()
 {
-    setError(UnknownError);
+    setError(NoError);
 }
 
 void DBError::setError(ErrorCode error, const QString &text)
 {
     m_error = error;
     switch (error) {
+        case (NoError):
+            m_text = "No error";
+            break;
         case(DatabaseNotOpen):
             m_text = "Database not open";
             break;
@@ -102,7 +105,8 @@ void DBError::setError(ErrorCode error, const QString &text)
             m_text= "Cannot close database";
             break;
         case(SqlError):
-        case(NotFound):
+        case(ServiceNotFound):
+        case(ImplNotFound):
         case(ComponentAlreadyRegistered):
         case(IfaceImplAlreadyRegistered):
         case(InvalidSearchCriteria):
@@ -869,7 +873,7 @@ bool ServiceDatabase::setDefaultService(const QString &serviceName, const QStrin
     if (!query.next()) {
         QString errorText;
         errorText = "No implementation for interface \"%1\" found for service \"%2\"";
-        m_lastError.setNotFoundError(errorText.arg(interfaceName).arg(serviceName));
+        m_lastError.setImplNotFoundError(errorText.arg(interfaceName).arg(serviceName));
 
         databaseRollback(&query, &database);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -953,7 +957,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         QString errorText;
         errorText = "No implementation for interface: %1, Version: %2.%3 found "
             "for service: %4";
-        m_lastError.setNotFoundError(errorText.arg(interface.interfaceName())
+        m_lastError.setImplNotFoundError(errorText.arg(interface.interfaceName())
                 .arg(interface.majorVersion())
                 .arg(interface.minorVersion())
                 .arg(interface.serviceName()));
@@ -1051,7 +1055,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 
     if (serviceIDs.count() == 0) {
         QString errorText("Service not found: \"%1\"");
-        m_lastError.setError(DBError::NotFound, errorText.arg(serviceName));
+        m_lastError.setError(DBError::ServiceNotFound, errorText.arg(serviceName));
         databaseRollback(&query, &database);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"

@@ -58,11 +58,13 @@ class DBError
 {
     public:
         enum ErrorCode {
+            NoError,
             DatabaseNotOpen = -2000,
             InvalidDatabaseConnection,
             ComponentAlreadyRegistered,
             IfaceImplAlreadyRegistered,
-            NotFound,
+            ServiceNotFound,
+            ImplNotFound,
             SqlError,
             InvalidSearchCriteria,
             CannotCloseDatabase,
@@ -74,8 +76,8 @@ class DBError
             m_error = SqlError;
             m_text = errorText;
         }
-        void setNotFoundError(const QString &errorText) {
-            m_error = NotFound;
+        void setImplNotFoundError(const QString &errorText) {
+            m_error = ImplNotFound;
             m_text = errorText;
         }
         QString text() const { return m_text; }
