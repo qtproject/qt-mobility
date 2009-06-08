@@ -1,0 +1,343 @@
+#include "qsystemsinfo.h"
+#include "qsystemsinfo_p.h"
+
+#include <QStringList>
+#include <QSize>
+#include <QFile>
+#include <QTextStream>
+#include <QLocale>
+#include <QLibraryInfo>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QDebug>
+
+#include <locale.h>
+
+QT_BEGIN_NAMESPACE
+
+QSystemsInfoPrivate::QSystemsInfoPrivate(QObject *parent)
+{
+    Q_UNUSED(parent);
+}
+
+// 2 letter ISO 639-1
+QString QSystemsInfoPrivate::currentLanguage() const
+{
+    return QString(setlocale(LC_ALL,"")).left(2);
+}
+
+// 2 letter ISO 639-1
+QStringList QSystemsInfoPrivate::availableLanguages() const
+{
+    return QStringList();
+}
+
+// "major.minor.build" format.
+QString QSystemsInfoPrivate::getVersion(QSystemsInfo::Version type,  const QString &parameter) const
+{
+    Q_UNUSED(parameter);
+    QString errorStr = "Not Installed";
+    switch(type) {
+    case QSystemsInfo::Os :
+       break;
+    case QSystemsInfo::QtCore :
+       return  qVersion();
+       break;
+    case QSystemsInfo::WrtCore :
+       break;
+    case QSystemsInfo::Webkit :
+       break;
+    case QSystemsInfo::ServiceFramework :
+       break;
+    case QSystemsInfo::WrtExtensions :
+       break;
+    case QSystemsInfo::ServiceProvider :
+       break;
+    case QSystemsInfo::NetscapePlugin :
+       break;
+    case QSystemsInfo::WebApp :
+       break;
+    case QSystemsInfo::Firmware :
+       break;
+    };
+  return errorStr;
+}
+
+
+//2 letter ISO 3166-1
+QString QSystemsInfoPrivate::countryCode() const
+{
+    return QString(setlocale(LC_ALL,"")).mid(3,2);
+}
+
+qint32 QSystemsInfoPrivate::getCellNetworkStatus()
+{
+    return QSystemsInfo::NoNetworkAvailable;
+}
+
+qint32 QSystemsInfoPrivate::networkSignalStrength()
+{
+    return -1;
+}
+
+qint32 QSystemsInfoPrivate::cellId()
+{
+    return -1;
+}
+
+qint32 QSystemsInfoPrivate::lac()
+{
+    return -1;
+}
+
+// Mobile Country Code
+qint32 QSystemsInfoPrivate::currentMCC()
+{
+    return -1;
+}
+
+// Mobile Network Code
+qint32 QSystemsInfoPrivate::currentMNC()
+{
+    return -1;
+}
+
+qint32 QSystemsInfoPrivate::homeMCC()
+{
+    return -1;
+}
+
+qint32 QSystemsInfoPrivate::homeMNC()
+{
+    return -1;
+}
+
+bool QSystemsInfoPrivate::isLocationEnabled() const
+{
+    return false;
+}
+
+bool QSystemsInfoPrivate::isWLANAccessible() const
+{
+    return false;
+}
+
+bool QSystemsInfoPrivate::hasFeatureSupported(QSystemsInfo::Feature feature)
+{
+    bool featureSupported = false;
+    switch (feature) {
+    case QSystemsInfo::BluetoothFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::CameraFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::FmradioFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::IrFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::LedFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::MemcardFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::UsbFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::VibFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::WlanFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::SimFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::LocationFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::VideoOutFeature :
+        featureSupported = true;
+        break;
+    case QSystemsInfo::UnknownFeature :
+    default:
+        featureSupported = true;
+    break;
+    };
+    return featureSupported;
+}
+
+QString QSystemsInfoPrivate::getDetailOfFeature(QSystemsInfo::Feature feature)
+{
+    Q_UNUSED(feature);
+    return QString();
+}
+
+
+// display
+qint32 QSystemsInfoPrivate::displayBrightness()
+{
+    return -1;
+}
+
+void QSystemsInfoPrivate::setScreenSaverEnabled(bool)
+{
+}
+
+void QSystemsInfoPrivate::setScreenBlankingEnabled(bool)
+{
+}
+
+qint32 QSystemsInfoPrivate::colorDepth(qint32 screen)
+{
+    return QPixmap::defaultDepth();
+}
+
+bool  QSystemsInfoPrivate::hasRamMemoryLevel()
+{
+    return true;
+}
+
+qint64 QSystemsInfoPrivate::freeMemoryLevel() const
+{
+    QFile file("/proc/meminfo");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/meminfo";
+        return -1;
+    }
+    QTextStream meminfo(&file);
+    QString line;
+    line = meminfo.readLine();
+    if(line.contains("MemTotal")) {
+        QString ls = line.section(' ',-2, -2);
+        return ls.toInt();
+    }
+    return -1;
+}
+
+qint64 QSystemsInfoPrivate::availableDiskSpace(const QString &driveVolume)
+{
+    Q_UNUSED(driveVolume);
+    return -1;
+}
+
+qint64 QSystemsInfoPrivate::totalDiskSpace(const QString &driveVolume)
+{
+    Q_UNUSED(driveVolume);
+    return -1;
+}
+
+int QSystemsInfoPrivate::getVolumeType(const QString &driveVolume)
+{
+    return -1;
+}
+
+QStringList QSystemsInfoPrivate::listOfVolumes()
+{
+    return QStringList();
+}
+
+// device
+QString QSystemsInfoPrivate::imei() const
+{
+    return QString();
+}
+
+QString QSystemsInfoPrivate::imsi() const
+{
+    return QString();
+}
+
+QString QSystemsInfoPrivate::manufacturer() const
+{
+    return QString();
+}
+
+QString QSystemsInfoPrivate::model() const
+{
+    return QString();
+}
+
+qint32 QSystemsInfoPrivate::batteryLevel() const
+{
+    return -1;
+}
+
+qint32 QSystemsInfoPrivate::getSimStatus()
+{
+    return QSystemsInfo::SimNotAvailable;
+}
+
+bool QSystemsInfoPrivate::isDeviceLocked()
+{
+    return false;
+}
+
+
+bool QSystemsInfoPrivate::isCriticalMemory() const
+{
+    QFile file("/proc/meminfo");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/meminfo";
+        return false;
+    }
+
+    QTextStream meminfo(&file);
+    QString line;
+    quint64 total = 0;
+    quint64 memfree = 0;
+    quint64 buffers = 0;
+    quint64 cached = 0;
+
+    bool ok = false;
+    static QRegExp kernel24HeaderLine("\\s+total:\\s+used:\\s+free:\\s+shared:\\s+buffers:\\s+cached:");
+
+    line = meminfo.readLine();
+    if(kernel24HeaderLine.indexIn(line) > -1) {
+        static QRegExp kernel24DataLine("Mem:\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
+        line = meminfo.readLine();
+        if(kernel24DataLine.indexIn(line) > -1) {
+            total = kernel24DataLine.cap(1).toULongLong(&ok);
+            memfree = kernel24DataLine.cap(3).toULongLong();
+            buffers = kernel24DataLine.cap(5).toULongLong();
+            cached = kernel24DataLine.cap(6).toULongLong();
+        }
+    }  else {
+        static QRegExp kernel26MemTotalLine("MemTotal:\\s+(\\d+)\\s+kB");
+        static QRegExp kernel26MemFreeLine("MemFree:\\s+(\\d+)\\s+kB");
+        static QRegExp kernel26BuffersLine("Buffers:\\s+(\\d+)\\s+kB");
+        static QRegExp kernel26CachedLine("Cached:\\s+(\\d+)\\s+kB");
+        while (!meminfo.atEnd()) {
+            if (kernel26MemTotalLine.indexIn(line) > -1)
+                total = kernel26MemTotalLine.cap(1).toULongLong(&ok);
+            else if (kernel26MemFreeLine.indexIn(line) > -1)
+                memfree = kernel26MemFreeLine.cap(1).toULongLong();
+            else if (kernel26BuffersLine.indexIn(line) > -1)
+                buffers = kernel26BuffersLine.cap(1).toULongLong();
+            else if (kernel26CachedLine.indexIn(line) > -1) {
+                cached = kernel26CachedLine.cap(1).toULongLong();
+                break; //last entry to read
+            }
+            line = meminfo.readLine();
+        }
+    }
+
+    if (!ok)
+        qWarning() << "Meminfo cannot monitor available memory";
+    quint64 percentAvailable = total ? (100 * ( buffers + cached + memfree) / total) : 0;
+if(percentAvailable < 4) //3% is critical
+    return true;
+else
+    return false;
+}
+
+
+bool QSystemsInfoPrivate::isBatteryCharging()
+{
+    return false;
+}
+
+QT_END_NAMESPACE

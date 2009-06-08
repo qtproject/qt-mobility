@@ -1,0 +1,199 @@
+#ifndef QSYSTEMSINFO_H
+#define QSYSTEMSINFO_H
+
+#include <QObject>
+#include <QSize>
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+class QStringList;
+
+class QSystemsInfoPrivate;
+
+class QSystemsInfo : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemsInfo(QObject *parent = 0);
+
+//    QSystemsInfo::Error error() const;
+
+// general
+    QString currentLanguage() const; // 2 letter ISO 639-1
+    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+
+    enum Version {
+        Os = 1,
+        QtCore,
+        WrtCore,
+        Webkit,
+        ServiceFramework,
+        WrtExtensions,
+        ServiceProvider,
+        NetscapePlugin,
+        WebApp,
+        Firmware
+    };
+
+    QString getVersion(QSystemsInfo::Version type, const QString &parameter = QString());
+
+    QString countryCode() const; //2 letter ISO 3166-1
+
+	// network
+    enum CellNetworkStatus {
+        UndefinedStatus = -1,
+        NoNetworkAvailable = 1,
+        EmergencyOnly,
+        Searching,
+        Busy,
+        HomeNetwork,
+        Denied,
+        Roaming
+    };
+
+    qint32 getCellNetworkStatus();
+
+    enum NetworkMode {
+        UnknownMode = 0x00000000,
+        GsmMode = 0x00000001,
+        CdmaMode = 0x00000002,
+        WcdmaMode = 0x00000004,
+        WlanMode = 0x00000008,
+        EthMode = 0x00000010
+    };
+
+    qint32 networkSignalStrength();
+    qint32 cellId();
+    qint32 lac();
+
+    qint32 currentMCC(); // Mobile Country Code
+    qint32 currentMNC(); // Mobile Network Code
+
+    qint32 homeMCC();
+    qint32 homeMNC();
+
+    bool isLocationEnabled() const;
+    bool isWLANAccessible() const;
+
+    QString operatorName();
+
+// features
+    enum Feature {
+        UnknownFeature = -1,
+        BluetoothFeature,
+        CameraFeature,
+        FmradioFeature,
+        IrFeature,
+        LedFeature,
+        MemcardFeature,
+        UsbFeature,
+        VibFeature,
+        WlanFeature,
+        SimFeature,
+        LocationFeature,
+        VideoOutFeature,
+        HapticsFeature
+	};
+	
+    bool hasFeatureSupported(QSystemsInfo::Feature feature);
+    QString getDetailOfFeature(QSystemsInfo::Feature feature);
+
+// display
+    qint32 displayBrightness();
+    qint32 colorDepth(qint32 screen);
+    void setScreenSaverEnabled(bool);
+    void setScreenBlankingEnabled(bool);
+    bool isScreenLockOn();
+
+
+// memory
+    enum VolumeType {
+		Internal = 0,
+        Removable
+	};
+
+    bool hasRamMemoryLevel();
+    quint64 freeMemoryLevel() const;
+    qlonglong totalDiskSpace(const QString &driveVolume);
+    qlonglong availableDiskSpace(const QString &driveVolume);
+    QStringList listOfVolumes();
+    int getVolumeType(const QString &driveVolume); //returns enum
+
+
+// device
+    enum BatteryLevel {
+        BatteryCritical = 1,
+        BatteryVeryLow,
+        BatteryLow,
+        BatteryNormal
+    };
+
+    enum PowerState {
+        UnknownPower = -1,
+        BatteryPower = 1,
+        WallPower
+    };
+
+
+    enum InputMethods {
+        KeysOnly,
+        TouchOnly,
+        KeysAndTouch
+    };
+
+    qint32 getInputMethodType();
+
+    QString imei() const;
+    QString imsi() const;
+    QString manufacturer() const;
+    QString model() const;
+
+    qint32 batteryLevel() const;
+
+    enum Profile {
+        UnknownProfile = -1,
+        SilentProfile = 0,
+        NormalProfile,
+        LoudProfile,
+        VibProfile,
+        OfflineProfile,
+        PowersaveProfile,
+        CustomProfile
+    };
+    enum SimStatus {
+        SimNotAvailable = 0,
+		SingleAvailable,
+		DualAvailable,
+		Locked
+	};
+
+    qint32 getSimStatus();
+    bool isDeviceLocked();
+
+Q_SIGNALS:
+    void memoryCritical(qint32);
+    void diskSpaceCritical(QString &driveVolume, qint32);
+
+    void profileChanged(QSystemsInfo::Profile);
+
+    void networkStatusChanged(QSystemsInfo::NetworkMode, QSystemsInfo::CellNetworkStatus);
+ 
+    void batteryLevelChanged(QSystemsInfo::BatteryLevel);
+    void batteryLevelCritical(qint32);
+    void powerStateChanged(QSystemsInfo::PowerState);
+
+private:
+    QSystemsInfoPrivate *d;
+};
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif /*QSYSTEMSINFO_H*/
+
+// End of file
+

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE QDOCINDEX>
+<INDEX url="" title="System Information Library Reference Documentation" version="">
+    <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemsInfo" href="qsystemsinfo.html" location="qsystemsinfo.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemsInfo" fullname="QSystemsInfo::QSystemsInfo" href="qsystemsinfo.html#QSystemsInfo" location="qsystemsinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemsInfo(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentLanguage" fullname="QSystemsInfo::currentLanguage" href="qsystemsinfo.html#currentLanguage" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="currentLanguage() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableLanguages" fullname="QSystemsInfo::availableLanguages" href="qsystemsinfo.html#availableLanguages" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="availableLanguages() const"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Version" fullname="QSystemsInfo::Version" href="qsystemsinfo.html#Version-enum" location="qsystemsinfo.h">
+                <value name="Os" value="1"></value>
+                <value name="QtCore" value="2"></value>
+                <value name="WrtCore" value="3"></value>
+                <value name="Webkit" value="4"></value>
+                <value name="ServiceFramework" value="5"></value>
+                <value name="WrtExtensions" value="6"></value>
+                <value name="ServiceProvider" value="7"></value>
+                <value name="NetscapePlugin" value="8"></value>
+                <value name="WebApp" value="9"></value>
+                <value name="Firmware" value="10"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getVersion" fullname="QSystemsInfo::getVersion" href="qsystemsinfo.html#getVersion" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="getVersion(QSystemsInfo::Version type, const QString &amp; parameter)">
+                <parameter left="QSystemsInfo::Version" right="" name="type" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="parameter" default="QString()"></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="countryCode" fullname="QSystemsInfo::countryCode" href="qsystemsinfo.html#countryCode" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="countryCode() const"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CellNetworkStatus" fullname="QSystemsInfo::CellNetworkStatus" href="qsystemsinfo.html#CellNetworkStatus-enum" location="qsystemsinfo.h">
+                <value name="UndefinedStatus" value="-1"></value>
+                <value name="NoNetworkAvailable" value="1"></value>
+                <value name="EmergencyOnly" value="2"></value>
+                <value name="Searching" value="3"></value>
+                <value name="Busy" value="4"></value>
+                <value name="HomeNetwork" value="5"></value>
+                <value name="Denied" value="6"></value>
+                <value name="Roaming" value="7"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getCellNetworkStatus" fullname="QSystemsInfo::getCellNetworkStatus" href="qsystemsinfo.html#getCellNetworkStatus" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="getCellNetworkStatus()"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="NetworkMode" fullname="QSystemsInfo::NetworkMode" href="qsystemsinfo.html#NetworkMode-enum" location="qsystemsinfo.h">
+                <value name="UnknownMode" value="0x00000000"></value>
+                <value name="GsmMode" value="0x00000001"></value>
+                <value name="CdmaMode" value="0x00000002"></value>
+                <value name="WcdmaMode" value="0x00000004"></value>
+                <value name="WlanMode" value="0x00000008"></value>
+                <value name="EthMode" value="0x00000010"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkSignalStrength" fullname="QSystemsInfo::networkSignalStrength" href="qsystemsinfo.html#networkSignalStrength" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="networkSignalStrength()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cellId" fullname="QSystemsInfo::cellId" href="qsystemsinfo.html#cellId" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="cellId()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="lac" fullname="QSystemsInfo::lac" href="qsystemsinfo.html#lac" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="lac()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMCC" fullname="QSystemsInfo::currentMCC" href="qsystemsinfo.html#currentMCC" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="currentMCC()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMNC" fullname="QSystemsInfo::currentMNC" href="qsystemsinfo.html#currentMNC" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="currentMNC()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="homeMCC" fullname="QSystemsInfo::homeMCC" href="qsystemsinfo.html#homeMCC" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="homeMCC()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="homeMNC" fullname="QSystemsInfo::homeMNC" href="qsystemsinfo.html#homeMNC" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="homeMNC()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isLocationEnabled" fullname="QSystemsInfo::isLocationEnabled" href="qsystemsinfo.html#isLocationEnabled" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isLocationEnabled() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isWLANAccessible" fullname="QSystemsInfo::isWLANAccessible" href="qsystemsinfo.html#isWLANAccessible" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isWLANAccessible() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operatorName" fullname="QSystemsInfo::operatorName" href="qsystemsinfo.html#operatorName" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="operatorName()"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Feature" fullname="QSystemsInfo::Feature" href="qsystemsinfo.html#Feature-enum" location="qsystemsinfo.h">
+                <value name="UnknownFeature" value="-1"></value>
+                <value name="BluetoothFeature" value="0"></value>
+                <value name="CameraFeature" value="1"></value>
+                <value name="FmradioFeature" value="2"></value>
+                <value name="IrFeature" value="3"></value>
+                <value name="LedFeature" value="4"></value>
+                <value name="MemcardFeature" value="5"></value>
+                <value name="UsbFeature" value="6"></value>
+                <value name="VibFeature" value="7"></value>
+                <value name="WlanFeature" value="8"></value>
+                <value name="SimFeature" value="9"></value>
+                <value name="LocationFeature" value="10"></value>
+                <value name="VideoOutFeature" value="11"></value>
+                <value name="HapticsFeature" value="12"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasFeatureSupported" fullname="QSystemsInfo::hasFeatureSupported" href="qsystemsinfo.html#hasFeatureSupported" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="hasFeatureSupported(QSystemsInfo::Feature feature)">
+                <parameter left="QSystemsInfo::Feature" right="" name="feature" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getDetailOfFeature" fullname="QSystemsInfo::getDetailOfFeature" href="qsystemsinfo.html#getDetailOfFeature" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="getDetailOfFeature(QSystemsInfo::Feature feature)">
+                <parameter left="QSystemsInfo::Feature" right="" name="feature" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="displayBrightness" fullname="QSystemsInfo::displayBrightness" href="qsystemsinfo.html#displayBrightness" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="displayBrightness()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="colorDepth" fullname="QSystemsInfo::colorDepth" href="qsystemsinfo.html#colorDepth" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="colorDepth(qint32 screenNumber)">
+                <parameter left="qint32" right="" name="screenNumber" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenSaverEnabled" fullname="QSystemsInfo::setScreenSaverEnabled" href="qsystemsinfo.html#setScreenSaverEnabled" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setScreenSaverEnabled(bool b)">
+                <parameter left="bool" right="" name="b" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenBlankingEnabled" fullname="QSystemsInfo::setScreenBlankingEnabled" href="qsystemsinfo.html#setScreenBlankingEnabled" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setScreenBlankingEnabled(bool b)">
+                <parameter left="bool" right="" name="b" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isScreenLockOn" fullname="QSystemsInfo::isScreenLockOn" href="qsystemsinfo.html#isScreenLockOn" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isScreenLockOn()"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="VolumeType" fullname="QSystemsInfo::VolumeType" href="qsystemsinfo.html#VolumeType-enum" location="qsystemsinfo.h">
+                <value name="Internal" value="0"></value>
+                <value name="Removable" value="1"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasRamMemoryLevel" fullname="QSystemsInfo::hasRamMemoryLevel" href="qsystemsinfo.html#hasRamMemoryLevel" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="hasRamMemoryLevel()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="freeMemoryLevel" fullname="QSystemsInfo::freeMemoryLevel" href="qsystemsinfo.html#freeMemoryLevel" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="freeMemoryLevel() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="totalDiskSpace" fullname="QSystemsInfo::totalDiskSpace" href="qsystemsinfo.html#totalDiskSpace" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="totalDiskSpace(const QString &amp; volumeDrive)">
+                <parameter left="const QString &amp;" right="" name="volumeDrive" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableDiskSpace" fullname="QSystemsInfo::availableDiskSpace" href="qsystemsinfo.html#availableDiskSpace" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="availableDiskSpace(const QString &amp; volumeDrive)">
+                <parameter left="const QString &amp;" right="" name="volumeDrive" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="listOfVolumes" fullname="QSystemsInfo::listOfVolumes" href="qsystemsinfo.html#listOfVolumes" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QStringList" signature="listOfVolumes()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getVolumeType" fullname="QSystemsInfo::getVolumeType" href="qsystemsinfo.html#getVolumeType" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="int" signature="getVolumeType(const QString &amp; driveVolume)">
+                <parameter left="const QString &amp;" right="" name="driveVolume" default=""></parameter>
+            </function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="BatteryLevel" fullname="QSystemsInfo::BatteryLevel" href="qsystemsinfo.html#BatteryLevel-enum" location="qsystemsinfo.h">
+                <value name="BatteryCritical" value="1"></value>
+                <value name="BatteryVeryLow" value="2"></value>
+                <value name="BatteryLow" value="3"></value>
+                <value name="BatteryNormal" value="4"></value>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="PowerState" fullname="QSystemsInfo::PowerState" href="qsystemsinfo.html#PowerState-enum" location="qsystemsinfo.h">
+                <value name="UnknownPower" value="-1"></value>
+                <value name="BatteryPower" value="1"></value>
+                <value name="WallPower" value="2"></value>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="InputMethods" fullname="QSystemsInfo::InputMethods" href="qsystemsinfo.html#InputMethods-enum" location="qsystemsinfo.h">
+                <value name="KeysOnly" value="0"></value>
+                <value name="TouchOnly" value="1"></value>
+                <value name="KeysAndTouch" value="2"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getInputMethodType" fullname="QSystemsInfo::getInputMethodType" href="qsystemsinfo.html#getInputMethodType" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="getInputMethodType()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="imei" fullname="QSystemsInfo::imei" href="qsystemsinfo.html#imei" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="imei() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="imsi" fullname="QSystemsInfo::imsi" href="qsystemsinfo.html#imsi" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="imsi() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="manufacturer" fullname="QSystemsInfo::manufacturer" href="qsystemsinfo.html#manufacturer" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="manufacturer() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="model" fullname="QSystemsInfo::model" href="qsystemsinfo.html#model" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="model() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemsInfo::batteryLevel" href="qsystemsinfo.html#batteryLevel" location="qsystemsinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint32" signature="batteryLevel() const"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Profile" fullname="QSystemsInfo::Profile" href="qsystemsinfo.html#Profile-enum" location="qsystemsinfo.h">
+                <value name="UnknownProfile" value="-1"></value>
+                <value name="SilentProfile" value="0"></value>
+                <value name="NormalProfile" value="1"></value>
+                <value name="LoudProfile" value="2"></value>
+                <value name="VibProfile" value="3"></value>
+                <value name="OfflineProfile" value="4"></value>
+                <value name="PowersaveProfile" value="5"></value>
+                <value name="CustomProfile" value="6"></value>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SimStatus" fullname="QSystemsInfo::SimStatus" href="qsystemsinfo.html#SimStatus-enum" location="qsystemsinfo.h">
+                <value name="SimNotAvailable" value="0"></value>
+                <value name="SingleAvailable" value="1"></value>
+                <value name="DualAvailable" value="2"></value>
+                <value name="Locked" value="3"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getSimStatus" fullname="QSystemsInfo::getSimStatus" href="qsystemsinfo.html#getSimStatus" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="getSimStatus()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isDeviceLocked" fullname="QSystemsInfo::isDeviceLocked" href="qsystemsinfo.html#isDeviceLocked" location="qsystemsinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isDeviceLocked()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="memoryCritical" fullname="QSystemsInfo::memoryCritical" href="qsystemsinfo.html#memoryCritical" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="memoryCritical(qint32 percent)">
+                <parameter left="qint32" right="" name="percent" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="diskSpaceCritical" fullname="QSystemsInfo::diskSpaceCritical" href="qsystemsinfo.html#diskSpaceCritical" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="diskSpaceCritical(QString &amp; driveVolume, qint32 spaceRemaining)">
+                <parameter left="QString &amp;" right="" name="driveVolume" default=""></parameter>
+                <parameter left="qint32" right="" name="spaceRemaining" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="profileChanged" fullname="QSystemsInfo::profileChanged" href="qsystemsinfo.html#profileChanged" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="profileChanged(QSystemsInfo::Profile profile)">
+                <parameter left="QSystemsInfo::Profile" right="" name="profile" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkStatusChanged" fullname="QSystemsInfo::networkStatusChanged" href="qsystemsinfo.html#networkStatusChanged" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="networkStatusChanged(QSystemsInfo::NetworkMode netMode, QSystemsInfo::CellNetworkStatus netStatus)">
+                <parameter left="QSystemsInfo::NetworkMode" right="" name="netMode" default=""></parameter>
+                <parameter left="QSystemsInfo::CellNetworkStatus" right="" name="netStatus" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevelChanged" fullname="QSystemsInfo::batteryLevelChanged" href="qsystemsinfo.html#batteryLevelChanged" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="batteryLevelChanged(QSystemsInfo::BatteryLevel level)">
+                <parameter left="QSystemsInfo::BatteryLevel" right="" name="level" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevelCritical" fullname="QSystemsInfo::batteryLevelCritical" href="qsystemsinfo.html#batteryLevelCritical" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="batteryLevelCritical(qint32 level)">
+                <parameter left="qint32" right="" name="level" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="powerStateChanged" fullname="QSystemsInfo::powerStateChanged" href="qsystemsinfo.html#powerStateChanged" location="qsystemsinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="powerStateChanged(QSystemsInfo::PowerState state)">
+                <parameter left="QSystemsInfo::PowerState" right="" name="state" default=""></parameter>
+            </function>
+        </class>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="System Information Library Developer Resources" fulltitle="System Information Library Developer Resources" subtitle="" location="index.qdoc">
+            <contents name="introduction" title="Introduction" level="1"></contents>
+            <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
+            <contents name="main-classes" title="Main classes" level="2"></contents>
+        </page>
+    </namespace>
+</INDEX>
