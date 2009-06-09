@@ -65,9 +65,9 @@
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ServiceAlreadyExists</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::StorageReadError</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::StoragePermissionsError</keyword>
+        <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ComponentNotFound</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ImplementationAlreadyExists</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::PluginLoadingFailed</keyword>
-        <keyword ref="qservicemanager.html#Error-enum">QServiceManager::NotFound</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceLocation</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceXml</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceInterfaceDescriptor</keyword>

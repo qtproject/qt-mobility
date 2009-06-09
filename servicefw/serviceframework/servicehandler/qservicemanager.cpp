@@ -151,7 +151,7 @@ public:
                 error = QServiceManager::ImplementationAlreadyExists;
                 break;
             case DBError::NotFound:
-                error = QServiceManager::NotFound;
+                error = QServiceManager::ComponentNotFound;
                 break;
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
@@ -271,7 +271,7 @@ private:
     \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
-    \value NotFound The service or interface implementation has not been registered.
+    \value ComponentNotFound The service or interface implementation has not been registered.
     \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
@@ -558,7 +558,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         return false;
     }
     if (serviceName.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
 
@@ -606,11 +606,11 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
         return false;
     }
     if (service.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
     if (interfaceName.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
 
@@ -676,7 +676,7 @@ QServiceManager::Error QServiceManager::error() const
 }
 
 /*!
-    \reimp
+    \internal
 */
 void QServiceManager::connectNotify(const char *signal)
 {
@@ -687,7 +687,7 @@ void QServiceManager::connectNotify(const char *signal)
 }
 
 /*!
-    \reimp
+    \internal
 */
 void QServiceManager::disconnectNotify(const char *signal)
 {
