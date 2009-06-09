@@ -141,6 +141,10 @@ public:
 
     Error error() const;
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 Q_SIGNALS:
     void serviceAdded(const QString& serviceName);
     void serviceRemoved(const QString& serviceName);

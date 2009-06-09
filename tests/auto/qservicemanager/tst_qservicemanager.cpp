@@ -103,6 +103,15 @@ public:
 };
 
 
+class ServicesListener : public QObject
+{
+    Q_OBJECT
+public slots:
+    void serviceAdded(const QString &) {}
+    void serviceRemoved(const QString &) {}
+};
+
+
 class tst_QServiceManager: public QObject
 {
     Q_OBJECT
@@ -1023,12 +1032,18 @@ void tst_QServiceManager::serviceAdded()
     buffer.setData(xml);
     QServiceManager mgr;
 
+    // ensure mgr.connectNotify() is called
+    ServicesListener *listener = new ServicesListener;
+    connect(&mgr, SIGNAL(serviceAdded(QString)), listener, SLOT(serviceAdded(QString)));
+
     QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString)));
     QVERIFY(mgr.addService(&buffer));
 
-    QEXPECT_FAIL("", "Not yet implemented", Abort);
+    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+
+    delete listener;
 }
 
 void tst_QServiceManager::serviceAdded_data()
@@ -1054,14 +1069,21 @@ void tst_QServiceManager::serviceRemoved()
     buffer.setData(xml);
     QServiceManager mgr;
 
+    // ensure mgr.connectNotify() is called
+    ServicesListener *listener = new ServicesListener;
+    connect(&mgr, SIGNAL(serviceRemoved(QString)), listener, SLOT(serviceRemoved(QString)));
+
     QVERIFY(mgr.addService(&buffer));
+    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
 
     QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
     QVERIFY(mgr.removeService(serviceName));
 
-    QEXPECT_FAIL("", "Not yet implemented", Abort);
+    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+
+    delete listener;
 }
 
 void tst_QServiceManager::serviceRemoved_data()
