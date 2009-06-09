@@ -208,7 +208,7 @@ public:
     \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
-    \value NotFound The service or interface implementation has not been registerd.
+    \value NotFound The service or interface implementation has not been registered.
     \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
@@ -606,6 +606,9 @@ QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QStri
     return info;
 }
 
+/*!
+    Returns the type of error that last occurred.
+*/
 QServiceManager::Error QServiceManager::error() const
 {
     return d->error;
