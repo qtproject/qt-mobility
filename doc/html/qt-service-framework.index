@@ -3,10 +3,33 @@
 <INDEX url="" title="Qt Service Framework Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" href="qservicemanager.html" location="qservicemanager.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Scope" fullname="QServiceManager::Scope" href="qservicemanager.html#Scope-enum" location="qservicemanager.h">
+                <value name="UserScope" value="0"></value>
+                <value name="SystemScope" value="1"></value>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QServiceManager::Error" href="qservicemanager.html#Error-enum" location="qservicemanager.h">
+                <value name="NoError" value="0"></value>
+                <value name="StoragePermissionsError" value="1"></value>
+                <value name="StorageReadError" value="2"></value>
+                <value name="InvalidServiceLocation" value="3"></value>
+                <value name="InvalidServiceXml" value="4"></value>
+                <value name="InvalidServiceInterfaceDescriptor" value="5"></value>
+                <value name="ServiceAlreadyExists" value="6"></value>
+                <value name="ImplementationAlreadyExists" value="7"></value>
+                <value name="PluginLoadingFailed" value="8"></value>
+                <value name="NotFound" value="9"></value>
+                <value name="ServiceCapabilityDenied" value="10"></value>
+                <value name="UnknownError" value="100"></value>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceManager(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager-2" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceManager(Scope scope, QObject * parent)">
+                <parameter left="Scope" right="" name="scope" default=""></parameter>
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QServiceManager" fullname="QServiceManager::~QServiceManager" href="qservicemanager.html#dtor.QServiceManager" location="qservicemanager.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QServiceManager()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QServiceManager::scope" href="qservicemanager.html#scope" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Scope" signature="scope() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="findServices" fullname="QServiceManager::findServices" href="qservicemanager.html#findServices" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="findServices(const QString &amp; interfaceName) const">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default="QString()"></parameter>
             </function>
@@ -55,6 +78,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="defaultServiceInterface" fullname="QServiceManager::defaultServiceInterface" href="qservicemanager.html#defaultServiceInterface" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QServiceInterfaceDescriptor" signature="defaultServiceInterface(const QString &amp; interfaceName) const">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QServiceManager::error" href="qservicemanager.html#error" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="serviceAdded" fullname="QServiceManager::serviceAdded" href="qservicemanager.html#serviceAdded" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceAdded(const QString &amp; serviceName)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""></parameter>
             </function>
@@ -179,6 +203,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="majorVersion" fullname="QServiceInterfaceDescriptor::majorVersion" href="qserviceinterfacedescriptor.html#majorVersion" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="majorVersion() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="minorVersion" fullname="QServiceInterfaceDescriptor::minorVersion" href="qserviceinterfacedescriptor.html#minorVersion" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="minorVersion() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QServiceInterfaceDescriptor::isValid" href="qserviceinterfacedescriptor.html#isValid" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="inSystemScope" fullname="QServiceInterfaceDescriptor::inSystemScope" href="qserviceinterfacedescriptor.html#inSystemScope" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="inSystemScope() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QServiceInterfaceDescriptor::property" href="qserviceinterfacedescriptor.html#property" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(QServiceInterfaceDescriptor::PropertyKey key) const">
                 <parameter left="QServiceInterfaceDescriptor::PropertyKey" right="" name="key" default=""></parameter>
             </function>
