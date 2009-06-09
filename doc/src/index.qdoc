@@ -100,13 +100,16 @@ Services are installed via an XML file which describes the meta data and locatio
 DTD:
 
 \code
-    <!ELEMENT service ( name, filepath, description, interface+ ) >
-    <!ELEMENT description ( #PCDATA ) >
+    <!ELEMENT service ( name, filepath, description?, interface+ ) >
+    <!ELEMENT description ( #CDATA ) >
     <!ELEMENT filepath ( #PCDATA ) >
-    <!ELEMENT interface ( capabilities | description | name | version )* >
+    <!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) >
     <!ELEMENT capabilities ( #PCDATA ) >
     <!ELEMENT name ( #PCDATA ) >
     <!ELEMENT version ( #PCDATA ) >
+    <!ELEMENT customproperty ( #CDATA ) >
+    <!ATTLIST customproperty key NMTOKEN #REQUIRED >
+
 \endcode
 
 The elements and attributes have the following meanings:
@@ -166,24 +169,26 @@ An example for a valid XML service description could be the following \i TestSer
     <service>
         <name>TestService</name>
         <filepath>testserviceplugin</filepath>
-        <description>Test service description</description> 
+        <description>Test service description</description>
         <interface>
             <name>com.nokia.qt.ILocation</name>
             <version>1.4</version>
             <capabilities></capabilities>
-            <description>Interface that provides location support</description> 
+            <description>Interface that provides location support</description>
         </interface>
         <interface>
             <name>com.nokia.qt.ILocation</name>
             <version>1.5</version>
             <capabilities></capabilities>
-            <description>Interface that provides location support</description> 
+            <description>Interface that provides location support</description>
         </interface>
         <interface>
             <name>com.nokia.qt.ISysInfo</name>
             <capabilities>ReadUserData</capabilities>
             <version>2.3</version>
-            <description>Interface that provides system information support</description> 
+            <description>Interface that provides system information support</description>
+            <customproperty key="key1">value1</customproperty>
+            <customproperty key="key2">value2</customproperty>
         </interface>  
     </service>
 \endcode

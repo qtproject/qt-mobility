@@ -77,13 +77,15 @@
 <a name="xml-format"></a>
 <h3>XML format</h3>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
-<pre>        &lt;!ELEMENT service ( name, filepath, description, interface+ ) &gt;
-        &lt;!ELEMENT description ( #PCDATA ) &gt;
+<pre>        &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
+        &lt;!ELEMENT description ( #CDATA ) &gt;
         &lt;!ELEMENT filepath ( #PCDATA ) &gt;
-        &lt;!ELEMENT interface ( capabilities | description | name | version )* &gt;
+        &lt;!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) &gt;
         &lt;!ELEMENT capabilities ( #PCDATA ) &gt;
         &lt;!ELEMENT name ( #PCDATA ) &gt;
-        &lt;!ELEMENT version ( #PCDATA ) &gt;</pre>
+        &lt;!ELEMENT version ( #PCDATA ) &gt;
+        &lt;!ELEMENT customproperty ( #CDATA ) &gt;
+        &lt;!ATTLIST customproperty key NMTOKEN #REQUIRED &gt;</pre>
 <p>The elements and attributes have the following meanings:</p>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
@@ -121,6 +123,8 @@
                 &lt;capabilities&gt;ReadUserData&lt;/capabilities&gt;
                 &lt;version&gt;2.3&lt;/version&gt;
                 &lt;description&gt;Interface that provides system information support&lt;/description&gt;
+                &lt;customproperty key=&quot;key1&quot;&gt;value1&lt;/customproperty&gt;
+                &lt;customproperty key=&quot;key2&quot;&gt;value2&lt;/customproperty&gt;
             &lt;/interface&gt;
         &lt;/service&gt;</pre>
 <a name="installing-the-service-at-runtime"></a>

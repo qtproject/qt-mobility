@@ -44,6 +44,7 @@
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Location</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customProperty">customProperty</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#majorVersion">majorVersion</keyword>

@@ -182,6 +182,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QServiceInterfaceDescriptor::property" href="qserviceinterfacedescriptor.html#property" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(QServiceInterfaceDescriptor::PropertyKey key) const">
                 <parameter left="QServiceInterfaceDescriptor::PropertyKey" right="" name="key" default=""></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customProperty" fullname="QServiceInterfaceDescriptor::customProperty" href="qserviceinterfacedescriptor.html#customProperty" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customProperty(const QString &amp; key) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""></parameter>
+            </function>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-2" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""></parameter>
