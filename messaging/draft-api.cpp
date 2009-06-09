@@ -35,8 +35,9 @@ QMessageId::QMessageId()
 
     Constructs a copy of \a other.
 */
-QMessageId::QMessageId()
+QMessageId::QMessageId(const QMessageId& other)
 {
+    Q_UNUSED(other)
 }
 
 /*!
@@ -48,6 +49,7 @@ QMessageId::QMessageId()
 */
 QMessageId::QMessageId(const QString& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -58,6 +60,7 @@ QMessageId::QMessageId(const QString& id)
 */
 bool QMessageId::operator==(const QMessageId& other) const
 {
+    Q_UNUSED(other)
     return false; // stub
 }
 
@@ -66,8 +69,9 @@ bool QMessageId::operator==(const QMessageId& other) const
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
-QMessageId& operator=(const QMessageId& other)
+QMessageId& QMessageId::operator=(const QMessageId& other)
 {
+    Q_UNUSED(other)
     return *this; // stub
 }
 
@@ -132,8 +136,9 @@ QMessageContentId::QMessageContentId()
 
     Constructs a copy of \a other.
 */
-QMessageContentId::QMessageContentId()
+QMessageContentId::QMessageContentId(const QMessageContentId& other)
 {
+    Q_UNUSED(other)
 }
 
 /*!
@@ -145,6 +150,7 @@ QMessageContentId::QMessageContentId()
 */
 QMessageContentId::QMessageContentId(const QString& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -155,6 +161,7 @@ QMessageContentId::QMessageContentId(const QString& id)
 */
 bool QMessageContentId::operator==(const QMessageContentId& other) const
 {
+    Q_UNUSED(other)
     return false; // stub
 }
 
@@ -163,8 +170,9 @@ bool QMessageContentId::operator==(const QMessageContentId& other) const
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
-QMessageContentId& operator=(const QMessageContentId& other)
+QMessageContentId& QMessageContentId::operator=(const QMessageContentId& other)
 {
+    Q_UNUSED(other)
     return *this; // stub
 }
 
@@ -241,17 +249,20 @@ QMessageContent::QMessageContent()
 */
 QMessageContent::QMessageContent(const QMessageContentId& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
     Destroys the message content object.
 */
-QMessageContent::~QMessageContent();
+QMessageContent::~QMessageContent()
+{
+}
 
 /*!
       Returns the identifier of the message content object.
 */
-QMessageContentId QMessageContent::QMessageContentId id() const
+QMessageContentId QMessageContent::id() const
 {
     return QMessageContentId();
 }
@@ -261,6 +272,7 @@ QMessageContentId QMessageContent::QMessageContentId id() const
 */
 void QMessageContent::setId(const QMessageContentId &id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -268,6 +280,7 @@ void QMessageContent::setId(const QMessageContentId &id)
 */
 bool QMessageContent::contentAvailable() const
 {
+    return false;
 }
 
 /*!
@@ -275,6 +288,7 @@ bool QMessageContent::contentAvailable() const
 */
 uint QMessageContent::indicativeSize() const
 {
+    return 0;
 }
 
 /*!
@@ -283,6 +297,7 @@ uint QMessageContent::indicativeSize() const
 */
 QString QMessageContent::contentType() const
 {
+    return QString(); // stub
 }
 
 /*!
@@ -291,6 +306,7 @@ QString QMessageContent::contentType() const
 */
 QString QMessageContent::contentSubType() const
 {
+    return QString(); // stub
 }
 
 /*!
@@ -299,6 +315,7 @@ QString QMessageContent::contentSubType() const
 */
 QString QMessageContent::fileName() const
 {
+    return QString(); // stub
 }
 
 /*!
@@ -307,6 +324,7 @@ QString QMessageContent::fileName() const
 */
 QString QMessageContent::decodedTextContent() const
 {
+    return QString();
 }
 
 /*!
@@ -318,6 +336,7 @@ QString QMessageContent::decodedTextContent() const
 */
 QByteArray QMessageContent::decodedContent() const
 {
+    return QByteArray(); // stub
 }
 
 /*!
@@ -325,6 +344,7 @@ QByteArray QMessageContent::decodedContent() const
 */
 QString QMessageContent::decodedContentFileName() const
 {
+    return QString(); // stub
 }
 
 /*!
@@ -332,6 +352,7 @@ QString QMessageContent::decodedContentFileName() const
 */
 void QMessageContent::serialize(QDataStream& out) const
 {
+    Q_UNUSED(out)
 }
 
 /*!
@@ -424,6 +445,7 @@ QMessage::QMessage()
 */
 QMessage::QMessage(const QMessageId& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -442,6 +464,8 @@ QMessage::~QMessage()
 */
 QMessage QMessage::fromTransmissionFormat(MessageType t, const QByteArray &ba)
 {
+    Q_UNUSED(t)
+    Q_UNUSED(ba)
     return QMessage(); // stub
 }
     
@@ -454,6 +478,8 @@ QMessage QMessage::fromTransmissionFormat(MessageType t, const QByteArray &ba)
 */
 QMessage QMessage::fromTransmissionFormatFile(MessageType t, const QString& fileName)
 {
+    Q_UNUSED(t)
+    Q_UNUSED(fileName)
     return QMessage(); // stub
 }
 
@@ -480,6 +506,7 @@ QByteArray QMessage::toTransmissionFormat() const
 */
 void QMessage::toTransmissionFormat(QDataStream& out) const
 {
+    Q_UNUSED(out)
 }
 
 /*!
@@ -499,6 +526,7 @@ QMessageId QMessage::id() const
 */
 void QMessage::setId(const QMessageId &id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -506,7 +534,7 @@ void QMessage::setId(const QMessageId &id)
     
     \sa setMessageType(), QMessageFilter::messageType()
 */
-MessageType QMessage::messageType() const
+QMessage::MessageType QMessage::messageType() const
 {
     return None; // stub
 }
@@ -520,6 +548,7 @@ MessageType QMessage::messageType() const
 */
 void QMessage::setMessageType(MessageType t)
 {
+    Q_UNUSED(t)
 }
 
 /*!
@@ -539,6 +568,7 @@ QString QMessage::from() const
 */
 void QMessage::setFrom(const QString &s)
 {
+    Q_UNUSED(s)
 }
 
 /*!
@@ -558,6 +588,7 @@ QString QMessage::subject() const
 */
 void QMessage::setSubject(const QString &s)
 {
+    Q_UNUSED(s)
 }
 
 /*!
@@ -578,6 +609,7 @@ QDateTime QMessage::date() const
 */
 void QMessage::setDate(const QDateTime &s)
 {
+    Q_UNUSED(s)
 }
 
 /*!
@@ -598,6 +630,7 @@ QDateTime QMessage::receivedDate() const
 */
 void QMessage::setReceivedDate(const QDateTime &d)
 {
+    Q_UNUSED(d)
 }
 
 /*! 
@@ -617,6 +650,7 @@ QList<QString> QMessage::to() const
 */
 void QMessage::setTo(const QList<QString>& toList)
 {
+    Q_UNUSED(toList)
 }
 
 /*! 
@@ -626,6 +660,7 @@ void QMessage::setTo(const QList<QString>& toList)
 */
 void QMessage::setTo(const QString& s)
 {
+    Q_UNUSED(s)
 }
 
 /*!
@@ -645,6 +680,7 @@ QList<QString> QMessage::cc() const
 */  
 void QMessage::setCc(const QList<QString>& ccList)
 {
+    Q_UNUSED(ccList)
 }
 
 /*!
@@ -664,6 +700,7 @@ QList<QString> QMessage::bcc() const
 */  
 void QMessage::setBcc(const QList<QString>& s)
 {
+    Q_UNUSED(s)
 }
 
 /*!
@@ -671,9 +708,9 @@ void QMessage::setBcc(const QList<QString>& s)
 
     \sa setStatus(), QMessageFilter::status()
 */
-MessageStatus QMessage::status() const
+quint64 QMessage::status() const
 {
-    return 0; // stub
+    return None; // stub
 }
 
 /*!
@@ -681,8 +718,9 @@ MessageStatus QMessage::status() const
 
     \sa status()
 */
-void QMessage::setStatus(MessageStatus newStatus)
+void QMessage::setStatus(quint64 newStatus)
 {
+    Q_UNUSED(newStatus)
 }
 
 /*!
@@ -692,9 +730,9 @@ void QMessage::setStatus(MessageStatus newStatus)
 
     \sa setPriority(), QMessageFilter::priority()
 */
-MessagePriority QMessage::priority() const
+QMessage::MessagePriority QMessage::priority() const
 {
-    return Message::Normal; // stub
+    return QMessage::Normal; // stub
 }
 
 /*!
@@ -704,6 +742,7 @@ MessagePriority QMessage::priority() const
 */
 void QMessage::setPriority(MessagePriority newPriority)
 {
+    Q_UNUSED(newPriority)
 }
 
 /*!
@@ -723,6 +762,7 @@ uint QMessage::size() const
 */
 void QMessage::setSize(uint size)
 {
+    Q_UNUSED(size)
 }
 
 /*!
@@ -748,6 +788,8 @@ QMessageContentId QMessage::body() const
 */
 void QMessage::setBody(const QString &body, bool html)
 {
+    Q_UNUSED(body)
+    Q_UNUSED(html)
 }
 
 /*!
@@ -760,6 +802,8 @@ void QMessage::setBody(const QString &body, bool html)
 */
 void QMessage::setBodyFromFile(const QString &fileName, bool html)
 {
+    Q_UNUSED(fileName)
+    Q_UNUSED(html)
 }
 
 /*!
@@ -773,6 +817,7 @@ void QMessage::setBodyFromFile(const QString &fileName, bool html)
 */
 QMessageContentIdList QMessage::attachments() const
 {
+    return QMessageContentIdList(); // stub
 }
 
 /*!
@@ -782,8 +827,9 @@ QMessageContentIdList QMessage::attachments() const
     
     \sa attachments()
 */  
-virtual QMessage::setAttachments(QStringList fileNames)
+void QMessage::setAttachments(const QStringList &fileNames)
 {
+    Q_UNUSED(fileNames)
 }
 
 /*!
@@ -793,8 +839,9 @@ virtual QMessage::setAttachments(QStringList fileNames)
     
     \sa originatorPort(), setDestinationPort()
 */
-virtual void QMessage::setOriginatorPort(uint port)
+void QMessage::setOriginatorPort(uint port)
 {
+    Q_UNUSED(port)
 }
 
 /*!
@@ -806,9 +853,9 @@ virtual void QMessage::setOriginatorPort(uint port)
     
     \sa setOriginatorPort(), setDestinationPort()
 */
-virtual uint QMessage::originatorPort()
+uint QMessage::originatorPort()
 {
-    return 0;
+    return 0; // stub
 }
 
 /*!
@@ -818,8 +865,9 @@ virtual uint QMessage::originatorPort()
     
     \sa SetOriginatorPort(), destinationPort()
 */
-virtual void QMessage::setDestinationPort(uint port)
+void QMessage::setDestinationPort(uint port)
 {
+    Q_UNUSED(port)
 }
 
 /*!
@@ -831,9 +879,9 @@ virtual void QMessage::setDestinationPort(uint port)
     
     \sa setDestinationPort(), setOriginatorPort()
 */
-virtual uint QMessage::destinationPort()
+uint QMessage::destinationPort()
 {
-    return 0;
+    return 0; // stub
 }
 
 /*!
@@ -842,6 +890,7 @@ virtual uint QMessage::destinationPort()
 */
 bool QMessage::dataModified() const
 {
+    return false; // stub
 }
 
 /*!
@@ -960,6 +1009,7 @@ QMessageFilterKey QMessageFilterKey::operator~() const
 */
 QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) const
 {
+    Q_UNUSED(other)
     return QMessageFilterKey(); // stub
 }
 
@@ -968,6 +1018,7 @@ QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) c
 */
 QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) const
 {
+    Q_UNUSED(other)
     return QMessageFilterKey(); // stub
 }
 
@@ -977,7 +1028,8 @@ QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) c
 */
 const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& other)
 {
-    return QMessageFilterKey(); // stub
+    Q_UNUSED(other)
+    return *this;
 }
 
 /*!
@@ -986,7 +1038,8 @@ const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& 
 */
 const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& other)
 {
-    return QMessageFilterKey(); // stub
+    Q_UNUSED(other)
+    return *this;
 }
 
 /*!
@@ -995,6 +1048,7 @@ const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& 
 */
 bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
 {
+    Q_UNUSED(other)
     return false; // stub
 }
 
@@ -1003,7 +1057,8 @@ bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
 */
 const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& other)
 {
-    return false; // stub
+    Q_UNUSED(other)
+    return *this; // stub
 }
 
 /*!
@@ -1013,6 +1068,8 @@ const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& o
 */
 QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1023,6 +1080,8 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataCompar
 */
 QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(ids)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1033,6 +1092,8 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataC
 */
 QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1043,6 +1104,8 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDa
 */
 QMessageFilterKey QMessageFilterKey::messageType(QMessage::MessageType type, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(type)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1051,8 +1114,10 @@ QMessageFilterKey QMessageFilterKey::messageType(QMessage::MessageType type, QMe
 
     \sa QMessage::messageType()
 */
-QMessageFilterKey QMessageFilterKey::messageType(int type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::messageType(quint64 type, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(type)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1063,6 +1128,8 @@ QMessageFilterKey QMessageFilterKey::messageType(int type, QMessageDataComparato
 */
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1073,6 +1140,8 @@ QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataCo
 */
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1083,6 +1152,8 @@ QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataCo
 */
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1094,6 +1165,8 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
 */
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1105,6 +1178,8 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
 */
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1116,6 +1191,8 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
 */
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1127,6 +1204,8 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
 */
 QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1138,6 +1217,8 @@ QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComp
 */
 QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1148,6 +1229,8 @@ QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComp
 */
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1158,6 +1241,8 @@ QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageD
 */
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1168,6 +1253,8 @@ QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageD
 */
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1178,6 +1265,8 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 */
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1188,6 +1277,8 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 */
 QMessageFilterKey QMessageFilterKey::status(quint64 value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1198,6 +1289,8 @@ QMessageFilterKey QMessageFilterKey::status(quint64 value, QMessageDataComparato
 */
 QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(mask)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1206,8 +1299,10 @@ QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator
 
     \sa QMessage::priority()
 */
-QMessageFilterKey QMessageFilterKey::priority(Message::MessagePriority value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::priority(QMessage::MessagePriority value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1218,6 +1313,8 @@ QMessageFilterKey QMessageFilterKey::priority(Message::MessagePriority value, QM
 */
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1229,6 +1326,8 @@ QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::Equ
 */
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
 
@@ -1273,23 +1372,26 @@ QMessageSortKey::QMessageSortKey()
 */
 bool QMessageSortKey::isEmpty() const
 {
+    return false; // stub
 }
 
 /*!
     Returns a key that which is the result of concatenating the vaue of this key and the value 
     of key \a other.
 */
-QMessageSortKey operator+(const QMessageSortKey& other) const
+QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(other)
+    return QMessageSortKey(); // stub
 }
 
 /*!
     Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
 */
-QMessageSortKey& operator+=(const QMessageSortKey& other)
+QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 {
+    Q_UNUSED(other)
     return *this; // stub
 }
 
@@ -1299,7 +1401,8 @@ QMessageSortKey& operator+=(const QMessageSortKey& other)
 */
 bool QMessageSortKey::operator==(const QMessageSortKey& other) const
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(other)
+    return false; // stub
 }
 
 /*!
@@ -1307,7 +1410,8 @@ bool QMessageSortKey::operator==(const QMessageSortKey& other) const
 */
 const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(other)
+    return *this; // stub
 }
     
 /*!
@@ -1317,7 +1421,8 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 */
 QMessageSortKey QMessageSortKey::id(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1327,7 +1432,8 @@ QMessageSortKey QMessageSortKey::id(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1337,7 +1443,8 @@ QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1347,7 +1454,8 @@ QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1357,7 +1465,8 @@ QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1367,7 +1476,8 @@ QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1377,7 +1487,8 @@ QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1387,7 +1498,8 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1397,6 +1509,7 @@ QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 {
+    Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
@@ -1407,7 +1520,8 @@ QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 */
 QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 {
-    return QMessageSortKey() // stub
+    Q_UNUSED(order)
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1499,8 +1613,12 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
 */
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, unit offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
     return QMessageIdList(); // stub
 }
 
@@ -1511,6 +1629,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 */
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
 {
+    Q_UNUSED(key)
     return 0; // stub
 }
 
@@ -1522,6 +1641,8 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
 */
 bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption option)
 {
+    Q_UNUSED(id)
+    Q_UNUSED(option)
     return false; // stub
 }
 
@@ -1543,8 +1664,10 @@ bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption opt
     }
     \endcode
 */
-bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::MessageRemovalOption option)
 {
+    Q_UNUSED(key)
+    Q_UNUSED(option)
     return true; // stub
 }
 
@@ -1552,24 +1675,27 @@ bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option)
     Updates the existing QMessage \a msg on the message store.
     Returns \c true if the operation completed successfully, or \c false otherwise. 
 */
-bool updateMessage(QMessage *m)
+bool QMessageStore::updateMessage(QMessage *m)
 {
+    Q_UNUSED(m)
     return true; // stub
 }
 
 /*!
    Returns the QMessage defined by the QMessageContentId \a id from the store.
 */
-QMessage message(const QMessageId& id) const
+QMessage QMessageStore::message(const QMessageId& id) const
 {
+    Q_UNUSED(id)
     return QMessage(); // stub
 }
 
 /*!
    Returns the QMessageContent defined by the QMessageContentId \a id from the store.
 */
-QMessageContent messageContent(const QMessageContentId& id) const
+QMessageContent QMessageStore::messageContent(const QMessageContentId& id) const
 {
+    Q_UNUSED(id)
     return QMessageContent(); // stub
 }
 
@@ -1578,7 +1704,7 @@ QMessageContent messageContent(const QMessageContentId& id) const
 
     If necessary, the store will be instantiated and initialized.
 */
-static QMessageStore* instance()
+QMessageStore* QMessageStore::instance()
 {
     return 0;
 }
@@ -1615,9 +1741,9 @@ static QMessageStore* instance()
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
 */
-QMessageStore::startNotifications(const QMessageFilterKey &key)
+void QMessageStore::startNotifications(const QMessageFilterKey &key)
 {
-    
+    Q_UNUSED(key)    
 }
 
 /*!
@@ -1625,9 +1751,9 @@ QMessageStore::startNotifications(const QMessageFilterKey &key)
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
 */
-QMessageStore::stopNotifications(const QMessageFilterKey &key)
+void QMessageStore::stopNotifications(const QMessageFilterKey &key)
 {
-    
+    Q_UNUSED(key)    
 }
 
 /*!
@@ -1673,6 +1799,7 @@ QMessageStore::stopNotifications(const QMessageFilterKey &key)
 */
 void QMessageServiceAction::send(const QMessage &message)
 {
+    Q_UNUSED(message)
 }
 
 /*!
@@ -1684,6 +1811,7 @@ void QMessageServiceAction::send(const QMessage &message)
 */
 void QMessageServiceAction::compose(const QMessage &message)
 {
+    Q_UNUSED(message)
 }
 
 /*!
@@ -1695,6 +1823,7 @@ void QMessageServiceAction::compose(const QMessage &message)
 */
 void QMessageServiceAction::reply(const QMessageId &id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -1706,6 +1835,7 @@ void QMessageServiceAction::reply(const QMessageId &id)
 */
 void QMessageServiceAction::forward(const QMessageId &id)
 {
+    Q_UNUSED(id)
 }
 
 /* TODO MessageType::Removed required? */
@@ -1720,6 +1850,7 @@ void QMessageServiceAction::forward(const QMessageId &id)
 */
 void QMessageServiceAction::retrieve(const QMessageId& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -1731,6 +1862,7 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
 */
 void QMessageServiceAction::retrieve(const QMessageContentId& id)
 {
+    Q_UNUSED(id)
 }
 
 /*!
@@ -1742,6 +1874,7 @@ void QMessageServiceAction::retrieve(const QMessageContentId& id)
 */
 void QMessageServiceAction::show(const QMessageId& id)
 {
+    Q_UNUSED(id)
 }
     
 /*!
@@ -1749,7 +1882,7 @@ void QMessageServiceAction::show(const QMessageId& id)
 
     \sa activityChanged()
 */
-Activity QMessageServiceAction::activity() const
+QMessageServiceAction::Activity QMessageServiceAction::activity() const
 {
     return Pending; // stub
 }
@@ -1771,10 +1904,12 @@ void QMessageServiceAction::cancelOperation()
 */
 void QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
 {
+    Q_UNUSED(a)
 }
-
 /* 
    TODO which methods are essentially private
    QMessage::setId QMessage:setSize, ?, others??
    use friends for these.
 */
+
+//#include "draft-api.moc"

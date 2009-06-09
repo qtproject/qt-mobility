@@ -39,7 +39,7 @@ public:
 
 private:
     // ...
-}
+};
 
 typedef QList<QMessageId> QMessageIdList;
 typedef QList<QMessageContentId> QMessageContentIdList;
@@ -130,8 +130,8 @@ public:
     virtual QList<QString> bcc() const;
     virtual void setBcc(const QList<QString>& bccList);
 
-    virtual MessageStatus status() const;
-    virtual void setStatus(MessageStatus newStatus);
+    virtual quint64 status() const;
+    virtual void setStatus(quint64 newStatus);
 
     virtual MessagePriority priority() const;
     virtual void setPriority(MessagePriority newPriority);
@@ -144,7 +144,7 @@ public:
     virtual void setBodyFromFile(const QString &fileName, bool html = false);
 
     virtual QMessageContentIdList attachments() const;
-    virtual void setAttachments(QStringList fileNames);
+    virtual void setAttachments(const QStringList &fileNames);
 
     virtual void setOriginatorPort(uint port);
     virtual uint originatorPort();
@@ -200,8 +200,8 @@ public:
     static QMessageFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFilterKey id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey messageType(QMessage::MessageType type, QMailDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey messageType(QMessage::MessageType type, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilterKey messageType(QMessage::MessageType type, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey messageType(quint64 type, QMessageDataComparator::InclusionComparator cmp);
 
     static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
@@ -224,7 +224,7 @@ public:
     static QMessageFilterKey status(quint64 value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey priority(QMessage::MessagePriority priority, QMailDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey priority(QMessage::MessagePriority priority, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
 
     static QMessageFilterKey size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey size(int value, QMessageDataComparator::RelationComparator cmp);
@@ -282,7 +282,7 @@ public:
     };
 
     QMessageStore::ErrorCode lastError() const;
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, unit offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
     int countMessages(const QMessageFilterKey& key) const;
     bool removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord);
     bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option = NoRemovalRecord);
@@ -297,9 +297,9 @@ signals:
     void messagesRemoved(const QMessageIdList &ids);
     void messagesUpdated(const QMessageIdList &ids);
 
-slots:
-    startNotifications(const QMessageFilterKey &key);
-    stopNotifications(const QMessageFilterKey &key);
+public slots:
+    void startNotifications(const QMessageFilterKey &key);
+    void stopNotifications(const QMessageFilterKey &key);
 
 private:
     QMessageStore();
