@@ -343,7 +343,7 @@ void QMessageContent::serialize(QDataStream& out) const
     \ingroup messaging
    
     QMessage supports a number of types. These include telephony types 
-    such as SMS and MMS, and internet email messages.
+    such as SMS and MMS, internet email messages, and XMPP messages.
     
     A QMessage can be constructed piece by piece using functions such as 
     setMessageType(), setFrom(), setTo(), setSubject(), setBody() and setAttachments().
@@ -368,11 +368,12 @@ void QMessageContent::serialize(QDataStream& out) const
     \l{http://www.ietf.org/rfc/rfc2822.txt} {RFC 2822} (Internet Message Format), and 
     \l{http://www.ietf.org/rfc/rfc2045.txt} {RFC 2045} (Format of Internet Message Bodies) through 
     \l{http://www.ietf.org/rfc/rfc2049.txt} {RFC 2049} (Conformance Criteria and Examples).
+    QMessage::XMPP 
+    \l{http://www.ietf.org/rfc/rfc3921.txt} {RFC 3921} (Extensible Messaging and Presence Protocol)
     
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
-    or email addresses. Addresses containing an '@' character are considered email addresses, other
-    addresses are considered phone numbers or invalid.
+    or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
     
     \sa QMessageContent, QMessageStore, QMessageId
 */
@@ -385,8 +386,9 @@ void QMessageContent::serialize(QDataStream& out) const
     \value Mms      The message is an MMS, Multimedia Messaging Service object.
     \value Sms      The message is an SMS, Short Message Service object.
     \value Email    The message is an Email, Internet Message Format object.
+    \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
     \value None     The message type is not defined.
-    \value AnyType  Bitflag value that matches Mms, Sms or Email. Subject to future redefinition in the case of new types being appended.
+    \value AnyType  Bitflag value that matches Mms, Sms, Email or XMPP. Subject to future redefinition as new types are declared.
 */
     
 /*!
@@ -396,6 +398,16 @@ void QMessageContent::serialize(QDataStream& out) const
 
     \value Read            This flag indicates that the content of this message has been displayed to the user.
     \value HasAttachments  This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.
+*/
+
+/*!
+    \enum QMessage::MessagePriority
+
+    Defines the priority of a message.
+
+    \value High    The message is high priority.
+    \value Normal  The message is normal priority.
+    \value Low     The message is low priority.
 */
 
 /*!
@@ -473,7 +485,7 @@ void QMessage::toTransmissionFormat(QDataStream& out) const
 /*!
     Returns the identifier of the message.
 
-    \sa setId()
+    \sa setId(), QMessageFilter::id()
 */
 QMessageId QMessage::id() const
 {
@@ -492,7 +504,7 @@ void QMessage::setId(const QMessageId &id)
 /*!
     Returns the MessageType of the message.
     
-    \sa setMessageType()
+    \sa setMessageType(), QMessageFilter::messageType()
 */
 MessageType QMessage::messageType() const
 {
@@ -513,7 +525,7 @@ void QMessage::setMessageType(MessageType t)
 /*!
     Returns the originating address of the message.
 
-    \sa setFrom()
+    \sa setFrom(), QMessageFilter::from()
 */
 QString QMessage::from() const
 {
@@ -532,7 +544,7 @@ void QMessage::setFrom(const QString &s)
 /*!
     Returns the subject of the message, if present; otherwise returns an empty string.
 
-    \sa setSubject()
+    \sa setSubject(), QMessageFilter::subject()
 */
 QString QMessage::subject() const
 {
@@ -552,7 +564,7 @@ void QMessage::setSubject(const QString &s)
     Returns the timestamp contained in the origination date header field of the message, if present; 
     otherwise returns an empty timestamp.
     
-    \sa setDate()
+    \sa setDate(), QMessageFilter::timeStamp()
 */
 QDateTime QMessage::date() const
 {
@@ -572,7 +584,7 @@ void QMessage::setDate(const QDateTime &s)
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns an empty timestamp.
     
-    \sa setRecievedDate()
+    \sa setRecievedDate(), QMessageFilter::receptionTimeStamp()
 */
 QDateTime QMessage::receivedDate() const
 {
@@ -591,7 +603,7 @@ void QMessage::setReceivedDate(const QDateTime &d)
 /*! 
     Returns the list of primary recipients for the message.
 
-    \sa setTo()
+    \sa setTo(), QMessageFilter::recipients()
 */
 QList<QString> QMessage::to() const
 {
@@ -619,7 +631,7 @@ void QMessage::setTo(const QString& s)
 /*!
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
-    \sa to(), bcc(), setCc()
+    \sa to(), bcc(), setCc(), QMessageFilter::cc()
 */  
 QList<QString> QMessage::cc() const
 {
@@ -638,7 +650,7 @@ void QMessage::setCc(const QList<QString>& ccList)
 /*!
     Returns the list of all the bcc (blind carbon copy) recipients specified for the message.
 
-    \sa to(), cc(), setBcc()
+    \sa to(), cc(), setBcc(), QMessageFilter::bcc()
 */  
 QList<QString> QMessage::bcc() const
 {
@@ -657,8 +669,8 @@ void QMessage::setBcc(const QList<QString>& s)
 /*!
     Returns the status value for the message.
 
-    \sa setStatus()
-*/  
+    \sa setStatus(), QMessageFilter::status()
+*/
 MessageStatus QMessage::status() const
 {
     return 0; // stub
@@ -674,9 +686,30 @@ void QMessage::setStatus(MessageStatus newStatus)
 }
 
 /*!
+    Returns the priority of the message.
+
+    The default is Normal.
+
+    \sa setPriority(), QMessageFilter::priority()
+*/
+MessagePriority QMessage::priority() const
+{
+    return Message::Normal; // stub
+}
+
+/*!
+    Sets the priority of the message to \a newPriority.
+
+    \sa priority()
+*/
+void QMessage::setPriority(MessagePriority newPriority)
+{
+}
+
+/*!
     Returns the complete size of the message as indicated on the originating server.
     
-    \sa setSize()
+    \sa setSize(), QMessageFilter::priority()
 */
 uint QMessage::size() const
 {
@@ -711,9 +744,21 @@ QMessageContentId QMessage::body() const
     If \a html is true then the internet media type of the body wil be "plain\html";
     otherwise it will be "plain\text".
     
-    \sa body()
+    \sa body(), setBodyFromFile()
 */
 void QMessage::setBody(const QString &body, bool html)
+{
+}
+
+/*!
+    Sets the body text of the message to be the contents of the file \a fileName.
+    
+    If \a html is true then the internet media type of the body wil be "plain\html";
+    otherwise it will be "plain\text".
+    
+    \sa body(), setBody()
+*/
+void QMessage::setBodyFromFile(const QString &fileName, bool html)
 {
 }
 
@@ -739,6 +784,56 @@ QMessageContentIdList QMessage::attachments() const
 */  
 virtual QMessage::setAttachments(QStringList fileNames)
 {
+}
+
+/*!
+    Sets the originating port of the message.
+
+    Only relevant for SMS messages.
+    
+    \sa originatorPort(), setDestinationPort()
+*/
+virtual void QMessage::setOriginatorPort(uint port)
+{
+}
+
+/*!
+    Returns the originating port of the message.
+
+    Only relevant for SMS messages.
+
+    Default is 0.
+    
+    \sa setOriginatorPort(), setDestinationPort()
+*/
+virtual uint QMessage::originatorPort()
+{
+    return 0;
+}
+
+/*!
+    Sets the destination port of the message.
+
+    Only relevant for SMS messages.
+    
+    \sa SetOriginatorPort(), destinationPort()
+*/
+virtual void QMessage::setDestinationPort(uint port)
+{
+}
+
+/*!
+    Returns the destination port of the message.
+
+    Only relevant for SMS messages.
+
+    Default is 0.
+    
+    \sa setDestinationPort(), setOriginatorPort()
+*/
+virtual uint QMessage::destinationPort()
+{
+    return 0;
 }
 
 /*!
@@ -774,13 +869,9 @@ bool QMessage::dataModified() const
     of QMessageStore objects for inclusion or exclusion.
 
     \value Includes Represents an operation in which an associated property is tested to 
-                    determine whether it is equal to any of a supplied set of values.
-                    Alternatively, it may be used to determine whether a single supplied
-                    value is included within the associated QMessageStore property.
+                    determine whether it includes a value.
     \value Excludes Represents an operation in which an associated property is tested to 
-                    determine whether it is equal to none of a supplied set of values.
-                    Alternatively, it may be used to determine whether a single supplied
-                    value is not included within the associated QMessageStore property.
+                    determine whether it is equal to the supplied value.
 */
 
 /*!
@@ -796,27 +887,27 @@ bool QMessage::dataModified() const
 */
 
 /*!
-    \class QMessageKey
+    \class QMessageFilterKey
 
     \preliminary
-    \brief The QMessageKey class defines the parameters used for querying a subset of
+    \brief The QMessageFilterKey class defines the parameters used for querying a subset of
     all available messages from the message store.
     \ingroup messaging
 
-    A QMessageKey is composed of a message property, an optional comparison operator
-    and a comparison value. The QMessageKey class is used in conjunction with the 
+    A QMessageFilterKey is composed of a message property, an optional comparison operator
+    and a comparison value. The QMessageFilterKey class is used in conjunction with the 
     QMessageStore::queryMessages() and QMessageStore::countMessages() functions to filter results 
     which meet the criteria defined by the key.
 
-    QMessageKeys can be combined using the logical operators (&), (|) and (~) to
+    QMessageFilterKeys can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
     For example:
 
     To create a query for all messages sent from "joe@user.com" with subject "meeting":
     \code
-    QMessageKey subjectKey(QMessageKey::subject("meeting"));
-    QMessageKey senderKey(QMessageKey::sender("joe@user.com"));
+    QMessageFilterKey subjectKey(QMessageFilterKey::subject("meeting"));
+    QMessageFilterKey senderKey(QMessageFilterKey::sender("joe@user.com"));
     QMessageIdList results = QMessageStore::instance()->queryMessages(subjectKey & senderKey);
     \endcode
 
@@ -824,7 +915,7 @@ bool QMessage::dataModified() const
 */
 
 /*!
-    Creates a QMessageKey without specifying matching parameters.
+    Creates a QMessageFilterKey without specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) matches all messages. 
 
@@ -908,9 +999,9 @@ bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
 }
 
 /*!
-    Assign the value of the QMessageKey \a other to this.
+    Assign the value of the QMessageFilterKey \a other to this.
 */
-const QMessageKey& QMessageFilterKey::operator=(const QMessageKey& other)
+const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& other)
 {
     return false; // stub
 }
@@ -920,7 +1011,7 @@ const QMessageKey& QMessageFilterKey::operator=(const QMessageKey& other)
 
     \sa QMessage::id()
 */
-QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -930,7 +1021,7 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataCompar
 
     \sa QMessage::id()
 */
-QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -940,7 +1031,7 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataC
 
     \sa QMessage::id()
 */
-QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -970,7 +1061,7 @@ QMessageFilterKey QMessageFilterKey::messageType(int type, QMessageDataComparato
 
     \sa QMessage::from()
 */
-QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -986,27 +1077,18 @@ QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataCo
 }
 
 /*!
-    Returns a key matching messages whose sender is a member of \a values, according to \a cmp.
-
-    \sa QMessage::from()
-*/
-QMessageFilterKey QMessageFilterKey::sender(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
-{
-    return QMessageFilterKey(); // stub
-}
-
-/*!
     Returns a key matching messages whose recipients include \a value, according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
-QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
 
 /*!
-    Returns a key matching messages whose recipients include the substring \a value, according to \a cmp.
+    Returns a key matching messages whose recipients include the substring \a value, 
+    according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
@@ -1016,19 +1098,21 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
 }
 
 /*!
-    Returns a key matching messages whose subject matches \a value, according to \a cmp.
+    Returns a key matching messages whose subject matches \a value, according 
+    to \a cmp.
 
-    \sa QMessage::subject()
+    \sa QMessage::body()
 */
-QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
 
 /*!
-    Returns a key matching messages whose subject matches the substring \a value, according to \a cmp.
+    Returns a key matching messages whose subject matches the 
+    substring \a value, according to \a cmp.
 
-    \sa QMessage::subject()
+    \sa QMessage::body()
 */
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
@@ -1036,11 +1120,23 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
 }
 
 /*!
-    Returns a key matching messages whose subject is a member of \a values, according to \a cmp.
+    Returns a key matching messages whose body is textual and matches \a value, according 
+    to \a cmp.
 
-    \sa QMessage::subject()
+    \sa QMessage::body()
 */
-QMessageFilterKey QMessageFilterKey::subject(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose body is textual and matches the 
+    substring \a value, according to \a cmp.
+
+    \sa QMessage::body()
+*/
+QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -1050,7 +1146,7 @@ QMessageFilterKey QMessageFilterKey::subject(const QStringList &values, QMessage
 
     \sa QMessage::date()
 */
-QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -1070,7 +1166,7 @@ QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageD
 
     \sa QMessage::receivedDate()
 */
-QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -1090,7 +1186,7 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 
     \sa QMessage::status()
 */
-QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::status(quint64 value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -1100,7 +1196,17 @@ QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator
 
     \sa QMessage::status()
 */
-QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes)
+QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::InclusionComparator cmp)
+{
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose priority matches \a value, according to \a cmp.
+
+    \sa QMessage::priority()
+*/
+QMessageFilterKey QMessageFilterKey::priority(Message::MessagePriority value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
@@ -1110,13 +1216,14 @@ QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator
 
     \sa QMessage::serverUid()
 */
-QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal)
+QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKey(); // stub
 }
 
 /*!
-    Returns a key matching messages whose serverUid matches the substring \a uid, according to \a cmp.
+    Returns a key matching messages whose serverUid matches the substring \a uid, according 
+    to \a cmp.
 
     \sa QMessage::serverUid()
 */
@@ -1141,7 +1248,7 @@ QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::Rel
     To create a query for all messages sorted by their timestamp in decending order:
     \code
     QMessageSortKey sortKey(QMessageSortKey::timeStamp(Qt::DescendingOrder));
-    QMessageIdList results = QMessageStore::instance()->queryMessages(QMessageKey(), sortKey);
+    QMessageIdList results = QMessageStore::instance()->queryMessages(QMessageFilterKey(), sortKey);
     \endcode
     
     \sa QMessageStore, QMessageFilterKey
@@ -1169,18 +1276,19 @@ bool QMessageSortKey::isEmpty() const
 }
 
 /*!
-    Returns a key that is the logical AND of this key and the value of key \a other.
+    Returns a key that which is the result of concatenating the vaue of this key and the value 
+    of key \a other.
 */
-QMessageSortKey operator&(const QMessageSortKey& other) const
+QMessageSortKey operator+(const QMessageSortKey& other) const
 {
     return QMessageSortKey() // stub
 }
 
 /*!
-    Performs a logical AND with this key and the key \a other and assigns the result
+    Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
 */
-QMessageSortKey& operator&=(const QMessageSortKey& other)
+QMessageSortKey& operator+=(const QMessageSortKey& other)
 {
     return *this; // stub
 }
@@ -1207,7 +1315,7 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 
     \sa QMessage::id()
 */
-QMessageSortKey QMessageSortKey::id(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::id(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1217,7 +1325,7 @@ QMessageSortKey QMessageSortKey::id(Qt::SortOrder order = Qt::AscendingOrder)
 
     \sa QMessage::messageType()
 */
-QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1227,7 +1335,7 @@ QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order = Qt::Ascending
 
     \sa QMessage::from()
 */
-QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1237,7 +1345,7 @@ QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order = Qt::AscendingOrder
 
     \sa QMessage::to()
 */
-QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1247,7 +1355,7 @@ QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order = Qt::AscendingO
 
     \sa QMessage::subject()
 */
-QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1257,7 +1365,7 @@ QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order = Qt::AscendingOrde
 
     \sa QMessage::date()
 */
-QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1267,7 +1375,7 @@ QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order = Qt::AscendingOr
 
     \sa QMessage::receivedDate()
 */
-QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1277,9 +1385,19 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order = Qt::As
 
     \sa QMessage::status()
 */
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
+}
+
+/*!
+    Returns a key that sorts messages by their priority, according to \a order.
+
+    \sa QMessage::priority()
+*/
+QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
+{
+    return QMessageSortKey(); // stub
 }
 
 /*!
@@ -1287,7 +1405,7 @@ QMessageSortKey QMessageSortKey::status(Qt::SortOrder order = Qt::AscendingOrder
 
     \sa QMessage::size()
 */
-QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
+QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 {
     return QMessageSortKey() // stub
 }
@@ -1302,7 +1420,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
     \ingroup messaging
 
     The QMessageStore class is accessed through a singleton interface and provides functions 
-    for adding, updating and deleting of QMessages on the message store.
+    for adding messages to the message store, and updating and deleting messages in the message store.
 
     QMessageStore also provides functions for querying and counting of QMessages
     when used in conjunction with QMessageFilerKey class.
@@ -1312,7 +1430,10 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
     lastError() result to QMessageStore::NoError.
 
     Messages in the mail store are identified by QMessageId objects. The data associated
-    with a message is retrieved in the form of a QMessage object.
+    with a message is retrieved in the form of a QMessage object. Message content
+    such as the message body and message parts are identified by QMessageContentId objects.
+    The data associated with message content is retrieved in the form of a QMessageContent
+    object.
 
     Message objects are accessed via the message() and queryMessages() functions. Messages 
     can be inserted into the store using the addMessage() function, and messages in the 
@@ -1322,7 +1443,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
     Message store manipulations involving messages are reported via the messagesAdded(), 
     messagesUpdated() and messagesRemoved() signals.
 
-    \sa QMessage, QMessageId, QMessageFilterKey, QMessageSortKey
+    \sa QMessage, QMessageId, QMessageContentId, QMessageFilterKey, QMessageSortKey
 */
 
 /*!
@@ -1335,16 +1456,16 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order = Qt::AscendingOrder)
 */
 
 /*
-    TODO capabilities PLATFORM:yourPlatformHere VERSION:100 PROFILE:BASIC SLICES SIGNALUPDATES CONSTRAINTS
+    TODO capabilities FASTBOOLEANSEARCH FASTSLICES SMS MMS EMAIL XMPP PRESENCE FASTEXTENDEDSEARCHING FASTBODYSEARCHING
 
-    Activate/deactive on adds, deletes or updates? Requires enu,
+    Activate/deactive on only adds, deletes or updates? Requires enum,
     enum NotificationType 
     {
         Add = 1,
         Removed,
         Changed
     }
-    constraints, lastError()
+    constraint(), setConstraint()
 */
 
 /*!
@@ -1372,17 +1493,20 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
-    If \a sortKey is not empty, the identifiers will be sorted by the parameters set 
-    by \a sortKey.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
 */
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, unit offset) const
 {
     return QMessageIdList(); // stub
 }
 
 /*!
     Returns the count of the number of messages which pass the 
-    filtering criteria defined in QMessageKey \a key. If 
+    filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
 */
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
@@ -1396,7 +1520,7 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
 */
-bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord)
+bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption option)
 {
     return false; // stub
 }
@@ -1406,8 +1530,20 @@ bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption opt
     If \a option is QMessageStore::CreateRemovalRecord then removal records will be 
     created for each removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
+
+    For example:
+
+    To implement a function to remove a list messages identified by QMessageIds
+    from the message store.
+    \code
+    bool removeMessages(const QMessageIdList& ids)
+    {
+        QMessageFilterKey idsFilter(ids);
+        return QMessageStore::instance()->removeMessages(idsFilter);
+    }
+    \endcode
 */
-bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option = NoRemovalRecord)
+bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option)
 {
     return true; // stub
 }
@@ -1531,30 +1667,56 @@ QMessageStore::stopNotifications(const QMessageFilterKey &key)
 */
 
 /*!
-  Open a composer window using \a message as a prototype.
+  Transmit \a message using the default account for the type of \a message.
   
-  \sa Message::type()
+  \sa QMessage::messageType()
+*/
+void QMessageServiceAction::send(const QMessage &message)
+{
+}
+
+/*!
+  Open a composer window using \a message as a prototype.
+
+  The default application for handling the type \a message should be used.
+  
+  \sa QMessage::messageType()
 */
 void QMessageServiceAction::compose(const QMessage &message)
 {
 }
 
 /*!
-  Transmit \a message using the default account for the type of \a message.
+  Open a composer window replying to the message identified by \a id.
+
+  The default application for handling the type of message that \a id identifies should be used.
   
-  \sa Message::type()
+  \sa QMessageId, QMessage::messageType()
 */
-void QMessageServiceAction::send(const QMessage &message)
+void QMessageServiceAction::reply(const QMessageId &id)
+{
+}
+
+/*!
+  Open a composer window forwarding the message identified by \a id.
+  
+  The default application for handling the type of message that \a id identifies should be used.
+
+  \sa QMessageId, QMessage::messageType()
+*/
+void QMessageServiceAction::forward(const QMessageId &id)
 {
 }
 
 /* TODO MessageType::Removed required? */
-    
 /*!
     Requests that the message server retrieve data regarding the message identified by \a id.  
 
     The meta data (including flags, from, to, subject, and date fields where applicable) of 
     the message identified by \a id should be retrieved.
+
+    \sa QMessageId
+
 */
 void QMessageServiceAction::retrieve(const QMessageId& id)
 {
@@ -1564,18 +1726,21 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
     Requests that the message server retrieve data regarding the message identified by \a id.  
 
     The entirety of the message content identified by \a id should be retrieved.
+
+    \sa QMessageContentId
 */
 void QMessageServiceAction::retrieve(const QMessageContentId& id)
 {
 }
 
 /*!
-    Show the message identified by \a id in the native application for handling type type of
-    message that \a id identifies.
+    Show the message identified by \a id.
 
-    \sa Message::type()
+    The default application for handling the type of message that \a id identifies should be used.
+
+    \sa QMessageId, QMessage::messageType()
 */
-void QMessageServiceAction::showNew(const QMessageId& id)
+void QMessageServiceAction::show(const QMessageId& id)
 {
 }
     
@@ -1610,6 +1775,6 @@ void QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
 
 /* 
    TODO which methods are essentially private
-   QMessage::setId ?, others??
+   QMessage::setId QMessage:setSize, ?, others??
    use friends for these.
 */

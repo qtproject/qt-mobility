@@ -75,14 +75,23 @@ public:
         Mms     = 0x1,
         Sms     = 0x2,
         Email   = 0x4,
+        Xmpp    = 0x8,
+        // Extensible
         None    = 0,
-        AnyType = Mms | Sms | Email
+        AnyType = Mms | Sms | Email | Xmpp
     };
 
     enum MessageStatus
     {
         Read = 0x1,
         HasAttachments = 0x2
+    };
+
+    enum MessagePriority
+    {
+        High = 1,
+        Normal,
+        Low
     };
 
     QMessage();
@@ -124,14 +133,23 @@ public:
     virtual MessageStatus status() const;
     virtual void setStatus(MessageStatus newStatus);
 
+    virtual MessagePriority priority() const;
+    virtual void setPriority(MessagePriority newPriority);
+
     virtual uint size() const;
     virtual void setSize(uint size);
 
     virtual QMessageContentId body() const;
     virtual void setBody(const QString &body, bool html = false);
+    virtual void setBodyFromFile(const QString &fileName, bool html = false);
 
     virtual QMessageContentIdList attachments() const;
     virtual void setAttachments(QStringList fileNames);
+
+    virtual void setOriginatorPort(uint port);
+    virtual uint originatorPort();
+    virtual void setDestinationPort(uint port);
+    virtual uint destinationPort();
 
     virtual bool dataModified() const;
 
@@ -185,16 +203,17 @@ public:
     static QMessageFilterKey messageType(QMessage::MessageType type, QMailDataComparator::EqualityComparator cmp);
     static QMessageFilterKey messageType(QMessage::MessageType type, QMessageDataComparator::InclusionComparator cmp);
 
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp);
-    static QMessageFilterKey sender(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::InclusionComparator cmp);
-    static QMessageFilterKey subject(const QStringList &values, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilterKey body(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey body(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
@@ -202,8 +221,10 @@ public:
     static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
 
-    static QMessageFilterKey status(quint64 mask, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey status(quint64 value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilterKey priority(QMessage::MessagePriority priority, QMailDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
 
     static QMessageFilterKey size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey size(int value, QMessageDataComparator::RelationComparator cmp);
@@ -217,8 +238,8 @@ public:
     QMessageSortKey();
     bool isEmpty() const;
 
-    QMessageSortKey operator&(const QMessageSortKey& other) const;
-    QMessageSortKey& operator&=(const QMessageSortKey& other);
+    QMessageSortKey operator+(const QMessageSortKey& other) const;
+    QMessageSortKey& operator+=(const QMessageSortKey& other);
 
     bool operator==(const QMessageSortKey& other) const;
     const QMessageSortKey& operator=(const QMessageSortKey& other);
@@ -231,6 +252,8 @@ public:
     static QMessageSortKey timeStamp(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey status(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey priority(Qt::SortOrder order = Qt::AscendingOrder);
+
     static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
@@ -259,7 +282,7 @@ public:
     };
 
     QMessageStore::ErrorCode lastError() const;
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey) const;
+    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, unit offset = 0) const;
     int countMessages(const QMessageFilterKey& key) const;
     bool removeMessage(const QMessageId& id, MessageRemovalOption option = NoRemovalRecord);
     bool removeMessages(const QMessageFilterKey& key, MessageRemovalOption option = NoRemovalRecord);
@@ -295,11 +318,13 @@ class QMessageServiceAction : public QObject
     };
 
 public:
-    void compose(const QMessage &message);
     void send(const QMessage &message);
+    void compose(const QMessage &message);
+    void reply(const QMessageId &id);
+    void forward(const QMessageId &id);
     void retrieve(const QMessageId& id);
     void retrieve(const QMessageContentId& id);
-    void showNew(const QMessageId& id);
+    void show(const QMessageId& id);
     Activity activity() const;
 
 public slots:
