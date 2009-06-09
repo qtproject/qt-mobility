@@ -57,6 +57,7 @@ class DBError
 {
     public:
         enum ErrorCode {
+            NoError,
             DatabaseNotOpen = -2000,
             InvalidDatabaseConnection,
             ComponentAlreadyRegistered,

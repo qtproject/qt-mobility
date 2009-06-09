@@ -180,7 +180,17 @@ bool QServiceInterfaceDescriptor::isValid() const
 {
     return d ? true : false;
 }
- 
+
+/*!
+    Returns true if this implementation is provided for all users on the system.
+
+    \sa QServiceManager::Scope
+*/
+bool QServiceInterfaceDescriptor::inSystemScope() const
+{
+    return d ? d->systemScope : false;
+}
+
 /*!
     Returns the name of service that provides this implementation.
 */
@@ -291,6 +301,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
        out << dc.d->minor;
        out << dc.d->properties;
        out << dc.d->customProperties;
+       out << dc.d->systemScope;
     }
     return out;
 }
@@ -315,6 +326,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
         in >> dc.d->minor;
         in >> dc.d->properties;
         in >> dc.d->customProperties;
+        in >> dc.d->systemScope;
     } else { //input stream contains invalid descriptor
         //use assignment operator
         dc = QServiceInterfaceDescriptor();

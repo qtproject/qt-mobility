@@ -87,13 +87,16 @@ enum TBindIndexes
 
 DBError::DBError()
 {
-    setError(UnknownError);
+    setError(NoError);
 }
 
 void DBError::setError(ErrorCode error, const QString &text)
 {
     m_error = error;
     switch (error) {
+        case (NoError):
+            m_text = "No error";
+            break;
         case(DatabaseNotOpen):
             m_text = "Database not open";
             break;

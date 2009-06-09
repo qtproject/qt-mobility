@@ -65,8 +65,31 @@ class Q_SFW_EXPORT QServiceManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit QServiceManager(QObject* parent = 0);
+    enum Scope {
+        UserScope,
+        SystemScope
+    };
+
+    enum Error {
+        NoError,
+        StoragePermissionsError,
+        StorageReadError,
+        InvalidServiceLocation,
+        InvalidServiceXml,
+        InvalidServiceInterfaceDescriptor,
+        ServiceAlreadyExists,
+        ImplementationAlreadyExists,
+        PluginLoadingFailed,
+        NotFound,
+        ServiceCapabilityDenied,
+        UnknownError = 100
+    };
+
+    explicit QServiceManager(QObject *parent = 0);
+    explicit QServiceManager(Scope scope, QObject *parent = 0);
     ~QServiceManager();
+
+    Scope scope() const;
 
     QStringList findServices(const QString& interfaceName = QString()) const;
     QList<QServiceInterfaceDescriptor> findInterfaces(const QServiceFilter& filter = QServiceFilter()) const;
@@ -116,11 +139,14 @@ public:
 
     QServiceInterfaceDescriptor defaultServiceInterface(const QString& interfaceName) const;
 
+    Error error() const;
+
 Q_SIGNALS:
     void serviceAdded(const QString& serviceName);
     void serviceRemoved(const QString& serviceName);
 
 private:
+    friend class QServiceManagerPrivate;
     QServiceManagerPrivate* d;
 };
 

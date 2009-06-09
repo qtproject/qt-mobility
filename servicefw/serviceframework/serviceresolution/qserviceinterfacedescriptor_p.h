@@ -65,6 +65,7 @@ public:
     {
         major = -1;
         minor = -1;
+        systemScope = false;
     }
 
     bool operator==(const QServiceInterfaceDescriptorPrivate& other) const
@@ -74,7 +75,8 @@ public:
                 && interfaceName == other.interfaceName
                 && serviceName == other.serviceName
                 && properties == other.properties 
-                && customProperties == other.customProperties)
+                && customProperties == other.customProperties
+                && systemScope == other.systemScope)
             return true;
         return false;
     }
@@ -87,6 +89,7 @@ public:
         major = other.major;
         properties = other.properties;
         customProperties = other.customProperties;
+        systemScope = other.systemScope;
 
         return *this;
     }
@@ -107,6 +110,7 @@ public:
     QHash<QString, QString> customProperties;
     int major;
     int minor;
+    bool systemScope;
 };
 QT_END_NAMESPACE
 
