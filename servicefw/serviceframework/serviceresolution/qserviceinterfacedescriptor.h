@@ -82,6 +82,7 @@ public:
     bool isValid() const;
 
     QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
+    QString customProperty(const QString& key) const;
 
 private:
     QServiceInterfaceDescriptorPrivate* d;

@@ -73,7 +73,8 @@ public:
                 && minor == other.minor
                 && interfaceName == other.interfaceName
                 && serviceName == other.serviceName
-                && properties == other.properties)
+                && properties == other.properties 
+                && customProperties == other.customProperties)
             return true;
         return false;
     }
@@ -85,6 +86,7 @@ public:
         minor = other.minor;
         major = other.major;
         properties = other.properties;
+        customProperties = other.customProperties;
 
         return *this;
     }
@@ -102,6 +104,7 @@ public:
     QString serviceName;
     QString interfaceName;
     QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> properties;
+    QHash<QString, QString> customProperties;
     int major;
     int minor;
 };

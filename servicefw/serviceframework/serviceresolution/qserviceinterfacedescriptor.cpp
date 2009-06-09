@@ -228,6 +228,17 @@ QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::Prop
     return QVariant();
 }
 
+/*!
+    Returns the value for the custom property \a key; otherwise 
+    returns a null string.
+*/
+QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
+{
+    if (d)
+        return d->customProperties[key];
+    return QString();
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QServiceInterfaceDescriptor &desc)
 {
@@ -279,6 +290,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
        out << dc.d->major;
        out << dc.d->minor;
        out << dc.d->properties;
+       out << dc.d->customProperties;
     }
     return out;
 }
@@ -302,6 +314,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
         in >> dc.d->major;
         in >> dc.d->minor;
         in >> dc.d->properties;
+        in >> dc.d->customProperties;
     } else { //input stream contains invalid descriptor
         //use assignment operator
         dc = QServiceInterfaceDescriptor();

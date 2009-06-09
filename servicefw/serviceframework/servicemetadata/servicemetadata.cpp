@@ -55,6 +55,7 @@
 #define INTERFACE_TAG "interface"
 #define INTERFACE_VERSION "version" 
 #define INTERFACE_CAPABILITY "capabilities"
+#define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
 QT_BEGIN_NAMESPACE
 
@@ -351,6 +352,17 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
             tmp= aXMLReader.readElementText();
             aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
             dupITags[2]++;
+        } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CUSTOM_PROPERTY) {
+            parseError = true;
+            if (aXMLReader.attributes().hasAttribute("key")) {
+                const QStringRef ref = aXMLReader.attributes().value("key");
+                if (!ref.isEmpty()) {
+                    aInterface.d->customProperties[ref.toString()] = aXMLReader.readElementText();
+                    parseError = false;
+                }
+            }
+            if (parseError)
+                latestError = SFW_ERROR_INVALID_CUSTOM_TAG;
         } else if (aXMLReader.isEndElement() && aXMLReader.name() == INTERFACE_TAG) {
             break;
         } else if (aXMLReader.isStartElement() || aXMLReader.isEndElement()) {
