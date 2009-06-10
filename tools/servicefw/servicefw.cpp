@@ -183,7 +183,8 @@ void CommandProcessor::add(const QStringList &args)
     if (serviceManager->addService(xmlPath))
         *stdoutStream << "Registered service at " << xmlPath << '\n';
     else
-        *stdoutStream << "Error: cannot register service at " << xmlPath << '\n';
+        *stdoutStream << "Error: cannot register service at " << xmlPath
+                << " (error=" << serviceManager->error() << ")" << '\n';
 }
 
 void CommandProcessor::remove(const QStringList &args)

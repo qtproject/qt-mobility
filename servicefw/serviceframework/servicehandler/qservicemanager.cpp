@@ -49,6 +49,7 @@
 #include <QBuffer>
 #include <QFile>
 #include <QDebug>
+#include <QFileSystemWatcher>
 
 QT_BEGIN_NAMESPACE
 
@@ -91,32 +92,36 @@ public:
         }
     }
 
-
-
     QServicePluginInterface *m_pluginInterface;
     QPluginLoader *m_loader;
 };
 
-class QServiceManagerPrivate
+class QServiceManagerPrivate : public QObject
 {
+    Q_OBJECT
 public:
+    QServiceManager *manager;
     ServiceDatabase *database;
     QServiceManager::Scope scope;
     QServiceManager::Error error;
 
-    QServiceManagerPrivate()
-        : database(new ServiceDatabase)
+    QServiceManagerPrivate(QServiceManager *parent = 0)
+        : QObject(parent),
+          manager(parent),
+          database(new ServiceDatabase),
+          watcher(0)
     {
     }
 
-    void init(QServiceManager *mgr, QServiceManager::Scope databaseScope)
+    ~QServiceManagerPrivate()
+    {
+        delete database;
+        delete watcher;
+    }
+
+    void init(QServiceManager::Scope databaseScope)
     {
         scope = databaseScope;
-
-        QObject::connect(database, SIGNAL(serviceAdded(QString)),
-                mgr, SIGNAL(serviceAdded(QString)));
-        QObject::connect(database, SIGNAL(serviceRemoved(QString)),
-                mgr, SIGNAL(serviceRemoved(QString)));
 
         if (!database->open()) {
             setError();
@@ -146,7 +151,7 @@ public:
                 error = QServiceManager::ImplementationAlreadyExists;
                 break;
             case DBError::NotFound:
-                error = QServiceManager::NotFound;
+                error = QServiceManager::ComponentNotFound;
                 break;
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
@@ -156,6 +161,64 @@ public:
                 break;
         }
     }
+
+    void setDatabaseMonitorEnabled(bool enable)
+    {
+        QString databasePath = database->databasePath() + QDir::separator() + "services.db";
+        if (!watcher) {
+            watcher = new QFileSystemWatcher;
+            connect(watcher, SIGNAL(fileChanged(QString)),
+                SLOT(databaseChanged()));
+        }
+        if (enable) {
+            bool ok = false;
+            knownServices = database->getServiceNames(QString(), &ok);
+            if (!ok) {
+                qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
+                return;
+            }
+            watcher->addPath(databasePath);
+        } else {
+            watcher->removePath(databasePath);
+        }
+    }
+
+public slots:
+    void databaseChanged()
+    {
+        bool ok = false;
+        QStringList currentServices = database->getServiceNames(QString(), &ok);
+        if (!ok) {
+                qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
+            return;
+        }
+        QSet<QString> currentServicesSet = currentServices.toSet();
+        QSet<QString> knownServicesSet = knownServices.toSet();
+        if (currentServicesSet == knownServicesSet)
+            return;
+
+        QStringList newServices;
+        for (int i=0; i<currentServices.count(); i++) {
+            if (!knownServicesSet.contains(currentServices[i]))
+                newServices << currentServices[i];
+        }
+
+        QStringList removedServices;
+        for (int i=0; i<knownServices.count(); i++) {
+            if (!currentServicesSet.contains(knownServices[i]))
+                removedServices << knownServices[i];
+        }
+
+        knownServices = currentServices;
+        for (int i=0; i<newServices.count(); i++)
+            emit manager->serviceAdded(newServices[i]);
+        for (int i=0; i<removedServices.count(); i++)
+            emit manager->serviceRemoved(removedServices[i]);
+    }
+
+private:
+    QFileSystemWatcher *watcher;
+    QStringList knownServices;
 };
 
 /*!
@@ -208,7 +271,7 @@ public:
     \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
-    \value NotFound The service or interface implementation has not been registered.
+    \value ComponentNotFound The service or interface implementation has not been registered.
     \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
@@ -238,9 +301,9 @@ public:
 */
 QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
-      d(new QServiceManagerPrivate)
+      d(new QServiceManagerPrivate(this))
 {
-    d->init(this, UserScope);
+    d->init(UserScope);
 }
 
 /*!
@@ -248,9 +311,9 @@ QServiceManager::QServiceManager(QObject *parent)
 */
 QServiceManager::QServiceManager(Scope scope, QObject *parent)
     : QObject(parent),
-      d(new QServiceManagerPrivate)
+      d(new QServiceManagerPrivate(this))
 {
-    d->init(this, scope);
+    d->init(scope);
 }
 
 /*!
@@ -258,8 +321,6 @@ QServiceManager::QServiceManager(Scope scope, QObject *parent)
 */
 QServiceManager::~QServiceManager()
 {
-    d->database->close();
-    delete d->database;
     delete d;
 }
 
@@ -497,7 +558,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         return false;
     }
     if (serviceName.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
 
@@ -545,11 +606,11 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
         return false;
     }
     if (service.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
     if (interfaceName.isEmpty()) {
-        d->setError(NotFound);
+        d->setError(ComponentNotFound);
         return false;
     }
 
@@ -612,6 +673,31 @@ QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QStri
 QServiceManager::Error QServiceManager::error() const
 {
     return d->error;
+}
+
+/*!
+    \internal
+*/
+void QServiceManager::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString))) {
+        d->setDatabaseMonitorEnabled(true);
+    }
+}
+
+/*!
+    \internal
+*/
+void QServiceManager::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString))) {
+        if (receivers(SIGNAL(serviceAdded(QString))) == 0
+                && receivers(SIGNAL(serviceRemoved(QString))) == 0) {
+            d->setDatabaseMonitorEnabled(false);
+        }
+    }
 }
 
 QT_END_NAMESPACE

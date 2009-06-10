@@ -80,7 +80,7 @@ public:
         ServiceAlreadyExists,
         ImplementationAlreadyExists,
         PluginLoadingFailed,
-        NotFound,
+        ComponentNotFound,
         ServiceCapabilityDenied,
         UnknownError = 100
     };
@@ -140,6 +140,10 @@ public:
     QServiceInterfaceDescriptor defaultServiceInterface(const QString& interfaceName) const;
 
     Error error() const;
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 Q_SIGNALS:
     void serviceAdded(const QString& serviceName);

@@ -17,7 +17,7 @@
                 <value name="ServiceAlreadyExists" value="6"></value>
                 <value name="ImplementationAlreadyExists" value="7"></value>
                 <value name="PluginLoadingFailed" value="8"></value>
-                <value name="NotFound" value="9"></value>
+                <value name="ComponentNotFound" value="9"></value>
                 <value name="ServiceCapabilityDenied" value="10"></value>
                 <value name="UnknownError" value="100"></value>
             </enum>
