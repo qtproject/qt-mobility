@@ -50,6 +50,18 @@
 
 QT_BEGIN_NAMESPACE
 
+class QServiceFilterPrivate
+{
+public:
+    QString interface;
+    QString service;
+    int majorVersion;
+    int minorVersion;
+    QServiceFilter::VersionMatchRule matchingRule;
+    friend class QServiceFilter;
+};
+
+
 /*!
     \class QServiceFilter
     \brief The QServiceFilter class defines criteria for defining a sub-set of 
@@ -75,8 +87,11 @@ QT_BEGIN_NAMESPACE
     Creates a new filter object that matches all service implementations.
 */
 QServiceFilter::QServiceFilter()
-    : majorVersion(-1), minorVersion(-1), matchingRule(MinimumVersionMatch)
 {
+    d = new QServiceFilterPrivate();
+    d->majorVersion = -1;
+    d->minorVersion = -1;
+    d->matchingRule = QServiceFilter::MinimumVersionMatch;
 }
 
 /*!
@@ -84,6 +99,10 @@ QServiceFilter::QServiceFilter()
 */
 QServiceFilter::QServiceFilter(const QServiceFilter& other)
 {
+    d = new QServiceFilterPrivate();
+    d->majorVersion = -1;
+    d->minorVersion = -1;
+    d->matchingRule = QServiceFilter::MinimumVersionMatch;
     (*this) = other;
 }
 
@@ -93,8 +112,11 @@ QServiceFilter::QServiceFilter(const QServiceFilter& other)
     \a version using the given \a rule.
 */
 QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
-    : majorVersion(-1), minorVersion(-1), matchingRule(MinimumVersionMatch)
 {
+    d = new QServiceFilterPrivate();
+    d->majorVersion = -1;
+    d->minorVersion = -1;
+    d->matchingRule = QServiceFilter::MinimumVersionMatch;
     setInterface(interfaceName, version, rule);
 }
 
@@ -103,6 +125,7 @@ QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& vers
 */
 QServiceFilter::~QServiceFilter()
 {
+    delete d;
 }
 
 /*!
@@ -111,11 +134,11 @@ QServiceFilter::~QServiceFilter()
 */
 QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
 {
-    interface = other.interface;
-    service = other.service;
-    majorVersion = other.majorVersion;
-    minorVersion = other.minorVersion;
-    matchingRule = other.matchingRule;
+    d->interface = other.d->interface;
+    d->service = other.d->service;
+    d->majorVersion = other.d->majorVersion;
+    d->minorVersion = other.d->minorVersion;
+    d->matchingRule = other.d->matchingRule;
 
     return *this;
 }
@@ -128,7 +151,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
 */
 void QServiceFilter::setServiceName(const QString& serviceName)
 {
-    service = serviceName;
+    d->service = serviceName;
 }
 
 /*!
@@ -148,9 +171,9 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     //unset interface name
     if (interfaceName.isEmpty() && version.isEmpty()) 
     {
-        interface = interfaceName;
-        majorVersion = minorVersion = -1;
-        matchingRule = rule;
+        d->interface = interfaceName;
+        d->majorVersion = d->minorVersion = -1;
+        d->matchingRule = rule;
         return;
     }
 
@@ -160,9 +183,9 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     }
 
     if (version.isEmpty()) {
-        majorVersion = minorVersion = -1;
-        matchingRule = rule;
-        interface = interfaceName;
+        d->majorVersion = d->minorVersion = -1;
+        d->matchingRule = rule;
+        d->interface = interfaceName;
         return;
     }
 
@@ -185,10 +208,10 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     }
 
     if (success) {
-        majorVersion = temp_major;
-        minorVersion = temp_minor;
-        interface = interfaceName;
-        matchingRule = rule;
+        d->majorVersion = temp_major;
+        d->minorVersion = temp_minor;
+        d->interface = interfaceName;
+        d->matchingRule = rule;
     } else {
         qWarning() << "Invalid version tag" << version << ". Ignoring filter details.";
     }
@@ -201,7 +224,7 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
 */
 QString QServiceFilter::serviceName() const
 {
-    return service;
+    return d->service;
 }
 
 /*!
@@ -211,7 +234,7 @@ QString QServiceFilter::serviceName() const
 */
 QString QServiceFilter::interfaceName() const
 {
-    return interface;
+    return d->interface;
 }
 
 /*!
@@ -221,7 +244,7 @@ QString QServiceFilter::interfaceName() const
 */
 int QServiceFilter::interfaceMajorVersion() const
 {
-    return majorVersion;
+    return d->majorVersion;
 }
 
 /*!
@@ -231,7 +254,7 @@ int QServiceFilter::interfaceMajorVersion() const
 */
 int QServiceFilter::interfaceMinorVersion() const
 {
-    return minorVersion;
+    return d->minorVersion;
 }
 
 /*!
@@ -241,7 +264,7 @@ int QServiceFilter::interfaceMinorVersion() const
 */
 QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 {
-    return matchingRule;
+    return d->matchingRule;
 }
 
 #ifndef QT_NO_DATASTREAM
@@ -256,11 +279,11 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 {
 
-    const qint32 mj = sf.majorVersion;
-    const qint32 mn = sf.minorVersion;
-    const qint32 rule = (qint32) sf.matchingRule;
-    out << sf.interface;
-    out << sf.service;
+    const qint32 mj = sf.d->majorVersion;
+    const qint32 mn = sf.d->minorVersion;
+    const qint32 rule = (qint32) sf.d->matchingRule;
+    out << sf.d->interface;
+    out << sf.d->service;
     out << mj;
     out << mn;
     out << rule;
@@ -278,15 +301,15 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
 {
     qint32 mj, mn, rule;
 
-    in >> sf.interface;
-    in >> sf.service;
+    in >> sf.d->interface;
+    in >> sf.d->service;
     in >> mj;
     in >> mn;
     in >> rule;
 
-    sf.majorVersion = mj;
-    sf.minorVersion = mn;
-    sf.matchingRule = (QServiceFilter::VersionMatchRule) rule;
+    sf.d->majorVersion = mj;
+    sf.d->minorVersion = mn;
+    sf.d->matchingRule = (QServiceFilter::VersionMatchRule) rule;
 
     return in;
 }

@@ -51,6 +51,7 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QDataStream;
+class QServiceFilterPrivate;
 class Q_SFW_EXPORT QServiceFilter
 {
 public:
@@ -79,14 +80,8 @@ public:
     VersionMatchRule versionMatchRule() const;
 
 private:
-    QString interface;
-    QString service;
-    int majorVersion;
-    int minorVersion;
-    VersionMatchRule matchingRule;
+    QServiceFilterPrivate *d;
     friend class QServiceManager;
-    friend class ServiceDatabase;
-    friend class CommandProcessor;
 #ifndef QT_NO_DATASTREAM
     friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
     friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
