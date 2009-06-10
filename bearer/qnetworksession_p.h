@@ -132,6 +132,8 @@ private Q_SLOTS:
     void slotActivationFinished(QDBusPendingCallWatcher*);
 
     void updateDeviceInterfaceState(const QString &, quint32);
+    void propertiesChanged( const QString & path, QMap<QString,QVariant> map);
+    void configChanged(const QNetworkConfiguration &config);
 #endif
 
 
@@ -163,14 +165,21 @@ private:
     friend class QNetworkSession;
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    qint32 triedServiceConnection;
     QNmDBusHelper *nmDBusObj;
     QDateTime startTime;
     QString currentBearerName;
     QString currentConnectionPath;
     QString activeConnectionPath;
-    QString getConnectionPath();
+    QString getConnectionPath(const QString &name = QString());
     QString getActiveConnectionPath();
     QString getBearerName(quint32 type);
+    void setActiveTimeStamp();
+    void updateNetworkConfigurations();
+    void activateNmSession();
+    void deactivateNmSession();
+    QString getCurrentInterfaceName(const QString &name = QString()) const ;
+    void activateConnection(QDBusInterface &iface, const QString & connPath, const QString &devicePath);
 #endif
 };
 

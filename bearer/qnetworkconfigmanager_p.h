@@ -152,8 +152,9 @@ private:
     void updateEthConfigurations(QDBusInterface &devIface);
     void updateWifiConfigurations(QDBusInterface &devIface);
     void updateServiceNetworks(QDBusInterface &devIface);
+    void updateServiceNetworkState(bool isWifi);
     void updateState(const QString &ident, quint32 state);
-    QString getInterfaceName(QDBusInterface &devIface);
+    QString getNameForConfiguration(QDBusInterface &devIface);
 
     QStringList getActiveConnectionsPaths(QDBusInterface &iface);
     QNetworkConfiguration::StateFlags getAPState(qint32 vState, bool isKnown);
@@ -179,7 +180,7 @@ private:
 #endif
 private slots:
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    void propertiesChanged(const QString &, QMap<QString,QVariant> map);
+    void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
     void accessPointAdded(const QString &, QDBusObjectPath );
     void accessPointRemoved( const QString &, QDBusObjectPath );
     void updateDeviceInterfaceState(const QString &, quint32);
