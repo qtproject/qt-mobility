@@ -190,7 +190,7 @@ void ServiceDatabaseUnitTest::getInterfaces()
     QList<QServiceInterfaceDescriptor> interfaces;
     bool ok;
 
-    filter.service = "acme";
+    filter.setServiceName("acme");
     interfaces = database.getInterfaces(filter, &ok);
     QVERIFY(!ok);
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
@@ -222,7 +222,7 @@ void ServiceDatabaseUnitTest::getInterfaces()
     QVERIFY(compareDescriptor(interfaces[4], "com.acme.device.receiveMessage", "acme", 1, 1, capabilities, "C:/TestData/testservice.dll"));
 
     //check that searching is case insensitive
-    filter.service = "OmNi";
+    filter.setServiceName("OmNi");
     interfaces = database.getInterfaces(filter, &ok);
     QVERIFY(ok);
     QCOMPARE(interfaces.count(), 3);

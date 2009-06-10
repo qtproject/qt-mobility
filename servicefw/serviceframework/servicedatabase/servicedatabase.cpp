@@ -591,29 +591,29 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
     QList<QVariant> bindValues;
 
-    if (filter.service.isEmpty() && filter.interface.isEmpty()) {
+    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()) {
         //do nothing, (don't add any extra constraints to the query
     } else {
 
-        if (!filter.service.isEmpty()) {
+        if (!filter.serviceName().isEmpty()) {
             whereComponent.append("AND Service.Name = ?").append(" COLLATE NOCASE ");
-            bindValues.append(filter.service);
+            bindValues.append(filter.serviceName());
         }
-        if (!filter.interface.isEmpty()) {
+        if (!filter.interfaceName().isEmpty()) {
             whereComponent.append("AND Interface.Name = ?").append(" COLLATE NOCASE ");
-            bindValues.append(filter.interface);
-            if (filter.majorVersion >=0 && filter.minorVersion >=0) {
-                if (filter.matchingRule == QServiceFilter::ExactVersionMatch) {
+            bindValues.append(filter.interfaceName());
+            if (filter.interfaceMajorVersion() >=0 && filter.interfaceMinorVersion() >=0) {
+                if (filter.versionMatchRule() == QServiceFilter::ExactVersionMatch) {
                     whereComponent.append("AND Interface.VerMaj = ?").append(" AND Interface.VerMin = ? ");
-                    bindValues.append(QString::number(filter.majorVersion));
-                    bindValues.append(QString::number(filter.minorVersion));
+                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
+                    bindValues.append(QString::number(filter.interfaceMinorVersion()));
                 }
-                else if (filter.matchingRule == QServiceFilter::MinimumVersionMatch) {
+                else if (filter.versionMatchRule() == QServiceFilter::MinimumVersionMatch) {
                     whereComponent.append("AND ((Interface.VerMaj > ?")
                         .append(") OR Interface.VerMaj = ?").append(" AND Interface.VerMin >= ?").append(")");
-                    bindValues.append(QString::number(filter.majorVersion));
-                    bindValues.append(QString::number(filter.majorVersion));
-                    bindValues.append(QString::number(filter.minorVersion));
+                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
+                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
+                    bindValues.append(QString::number(filter.interfaceMinorVersion()));
                 }
             }
         }
