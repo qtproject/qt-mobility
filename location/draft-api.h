@@ -167,7 +167,7 @@ public:
     virtual void setPreferredPositioningMethods(PositioningMethods methods);
     PositioningMethods preferredPositioningMethods() const;
 
-    virtual QPositionUpdate lastUpdate(PositioningMethods methods = AllPositioningMethods) const = 0;
+    QPositionUpdate lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 
     virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumIntervalForType(IntervalType type) const = 0;
@@ -182,6 +182,7 @@ public slots:
 
 signals:
     void positionUpdated(const QPositionUpdate &update);
+    void requestTimeout();
 
 private:
     Q_DISABLE_COPY(QPositionSource)

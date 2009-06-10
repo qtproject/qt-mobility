@@ -606,14 +606,14 @@
 */
 
 /*!
-    \fn virtual QPositionUpdate QPositionSource::lastUpdate(PositioningMethods methods = AllPositioningMethods) const = 0;
+    \fn QPositionUpdate QPositionSource::lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 
-    Returns the most recent update that was emitted through positionUpdated()
-    that matches the specified \a methods.
+    Returns an update containing the last known position, or a null update
+    if none is available.
 
-    Returns a null update if positionUpdated() has not been emitted or if
-    there is no update that has been provided that matches the specified
-    \a methods.
+    If \a fromSatellitePositioningMethodsOnly is true, this returns the last
+    known position received from a satellite positioning method, and if none
+    is available, a null update is returned.
 */
 
 /*!
@@ -660,13 +660,17 @@
 
     Attempts to get the current position and emit positionUpdated() with
     this information. This is useful if you do not need the regular updates
-    provided by startUpdates(). The timeout for the update is specified by
-    \a timeout in milliseconds.
+    provided by startUpdates(). If the current position cannot be found
+    within the given \a timeout (in milliseconds), requestTimeout() is
+    emitted.
 
-    This can be called even if startUpdates() has already been called and
+    This does nothing if another update request is in progress. However
+    it can be called even if startUpdates() has already been called and
     regular updates are in progress.
 
-    This does nothing if another update request is in progress.
+    If the source uses multiple positioning methods, it tries to gets the
+    current position from the most accurate positioning method within the
+    given timeout.
 */
 
 /*!
@@ -678,7 +682,12 @@
     The \a update value holds the value of the new update.
 */
 
+/*!
+    \fn void QPositionSource::requestTimeout();
 
+    Emitted if requestUpdate() was called and the current position could
+    not be retrieved within the specified timeout.
+*/
 
 /*!
     \class QPositionAreaMonitor

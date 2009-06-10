@@ -50,10 +50,11 @@
         <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::AllPositioningMethods</keyword>
         <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::NonSatellitePositioningMethods</keyword>
         <keyword ref="qpositionsource.html#createSource">createSource</keyword>
-        <keyword ref="qpositionsource.html#lastUpdate">lastUpdate</keyword>
+        <keyword ref="qpositionsource.html#lastKnownPosition">lastKnownPosition</keyword>
         <keyword ref="qpositionsource.html#minimumIntervalForType">minimumIntervalForType</keyword>
         <keyword ref="qpositionsource.html#positionUpdated">positionUpdated</keyword>
         <keyword ref="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
+        <keyword ref="qpositionsource.html#requestTimeout">requestTimeout</keyword>
         <keyword ref="qpositionsource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
         <keyword ref="qpositionsource.html#setUpdateInterval">setUpdateInterval</keyword>
