@@ -609,7 +609,7 @@ QDateTime QMessage::date() const
 */
 void QMessage::setDate(const QDateTime &d)
 {
-    Q_UNUSED(s)
+    Q_UNUSED(d)
 }
 
 /*!
