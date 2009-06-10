@@ -192,7 +192,7 @@ void QNetworkConfigurationManagerPrivate::updateWlanIoctlConfigurations(QList<QS
 void QNetworkConfigurationManagerPrivate::updateWlanConfigurations(QList<QString> &knownConfigs)
 {
     // try to use Native WiFi, otherwise fallback to ioctl method
-    if (nativeWifi && !updateWlanNativeConfigurations(knownConfigs) && ioctlWifi)
+    if (!(nativeWifi && updateWlanNativeConfigurations(knownConfigs)) && ioctlWifi)
         updateWlanIoctlConfigurations(knownConfigs);
 }
 #endif
