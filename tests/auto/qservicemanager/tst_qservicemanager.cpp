@@ -1039,7 +1039,7 @@ void tst_QServiceManager::serviceAdded()
     QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString)));
     QVERIFY(mgr.addService(&buffer));
 
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
@@ -1074,12 +1074,12 @@ void tst_QServiceManager::serviceRemoved()
     connect(&mgr, SIGNAL(serviceRemoved(QString)), listener, SLOT(serviceRemoved(QString)));
 
     QVERIFY(mgr.addService(&buffer));
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
 
     QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
     QVERIFY(mgr.removeService(serviceName));
 
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
