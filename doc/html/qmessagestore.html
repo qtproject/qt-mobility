@@ -21,38 +21,38 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, NotYetImplemented, FrameworkFault }</li>
-<li><div class="fn"></div>enum <b><a href="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</a></b> { NoRemovalRecord, CreateRemovalRecord }</li>
+<li><div class="fn"/>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, NotYetImplemented, FrameworkFault }</li>
+<li><div class="fn"/>enum <b><a href="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</a></b> { NoRemovalRecord, CreateRemovalRecord }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> ) const</li>
-<li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
-<li><div class="fn"></div>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
-<li><div class="fn"></div>QMessageContent <b><a href="qmessagestore.html#messageContent">messageContent</a></b> ( const QMessageContentId &amp; <i>id</i> ) const</li>
-<li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, MessageRemovalOption <i>option</i> = NoRemovalRecord )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, MessageRemovalOption <i>option</i> = NoRemovalRecord )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</li>
+<li><div class="fn"/>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> ) const</li>
+<li><div class="fn"/>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
+<li><div class="fn"/>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
+<li><div class="fn"/>QMessageContent <b><a href="qmessagestore.html#messageContent">messageContent</a></b> ( const QMessageContentId &amp; <i>id</i> ) const</li>
+<li><div class="fn"/>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"/>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, MessageRemovalOption <i>option</i> = NoRemovalRecord )</li>
+<li><div class="fn"/>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, MessageRemovalOption <i>option</i> = NoRemovalRecord )</li>
+<li><div class="fn"/>bool <b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#startNotifications">startNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessagestore.html#startNotifications">startNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesAdded">messagesAdded</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessagestore.html#messagesAdded">messagesAdded</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"></div>QMessageStore * <b><a href="qmessagestore.html#instance">instance</a></b> ()</li>
+<li><div class="fn"/>QMessageStore * <b><a href="qmessagestore.html#instance">instance</a></b> ()</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -131,6 +131,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>
-<td align="right"><div align="right">Location API</div></td>
+<td align="right"><div align="right">Messaging API</div></td>
 </tr></table></div></address></body>
 </html>
