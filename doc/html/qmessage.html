@@ -21,59 +21,59 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#MessagePriority-enum">MessagePriority</a></b> { High, Normal, Low }</li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#MessageStatus-enum">MessageStatus</a></b> { Read, HasAttachments }</li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#MessageType-enum">MessageType</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
+<li><div class="fn"/>enum <b><a href="qmessage.html#MessagePriority-enum">MessagePriority</a></b> { High, Normal, Low }</li>
+<li><div class="fn"/>enum <b><a href="qmessage.html#MessageStatus-enum">MessageStatus</a></b> { Read, HasAttachments }</li>
+<li><div class="fn"/>enum <b><a href="qmessage.html#MessageType-enum">MessageType</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>virtual <b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</li>
-<li><div class="fn"></div>virtual QMessageContentIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
-<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#bcc">bcc</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageContentId <b><a href="qmessage.html#body">body</a></b> () const</li>
-<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#cc">cc</a></b> () const</li>
-<li><div class="fn"></div>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
-<li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessage.html#from">from</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
-<li><div class="fn"></div>virtual MessageType <b><a href="qmessage.html#messageType">messageType</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
-<li><div class="fn"></div>virtual MessagePriority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
-<li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setAttachments">setAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QList&lt;QString&gt; &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i>, bool <i>html</i> = false )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i>, bool <i>html</i> = false )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCc">setCc</a></b> ( const QList&lt;QString&gt; &amp; <i>ccList</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QString &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setId">setId</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setMessageType">setMessageType</a></b> ( MessageType <i>t</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( MessagePriority <i>newPriority</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSize">setSize</a></b> ( uint <i>size</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( quint64 <i>newStatus</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QList&lt;QString&gt; &amp; <i>toList</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QString &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
-<li><div class="fn"></div>virtual quint64 <b><a href="qmessage.html#status">status</a></b> () const</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
-<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#to">to</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
+<li><div class="fn"/><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</li>
+<li><div class="fn"/><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>virtual <b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</li>
+<li><div class="fn"/>virtual QMessageContentIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
+<li><div class="fn"/>virtual QList&lt;QString&gt; <b><a href="qmessage.html#bcc">bcc</a></b> () const</li>
+<li><div class="fn"/>virtual QMessageContentId <b><a href="qmessage.html#body">body</a></b> () const</li>
+<li><div class="fn"/>virtual QList&lt;QString&gt; <b><a href="qmessage.html#cc">cc</a></b> () const</li>
+<li><div class="fn"/>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
+<li><div class="fn"/>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
+<li><div class="fn"/>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
+<li><div class="fn"/>virtual QString <b><a href="qmessage.html#from">from</a></b> () const</li>
+<li><div class="fn"/>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
+<li><div class="fn"/>virtual MessageType <b><a href="qmessage.html#messageType">messageType</a></b> () const</li>
+<li><div class="fn"/>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
+<li><div class="fn"/>virtual MessagePriority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
+<li><div class="fn"/>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setAttachments">setAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QList&lt;QString&gt; &amp; <i>s</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i>, bool <i>html</i> = false )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i>, bool <i>html</i> = false )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setCc">setCc</a></b> ( const QList&lt;QString&gt; &amp; <i>ccList</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>s</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QString &amp; <i>s</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setId">setId</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setMessageType">setMessageType</a></b> ( MessageType <i>t</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( MessagePriority <i>newPriority</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setSize">setSize</a></b> ( uint <i>size</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( quint64 <i>newStatus</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QList&lt;QString&gt; &amp; <i>toList</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QString &amp; <i>s</i> )</li>
+<li><div class="fn"/>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
+<li><div class="fn"/>virtual quint64 <b><a href="qmessage.html#status">status</a></b> () const</li>
+<li><div class="fn"/>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
+<li><div class="fn"/>virtual QList&lt;QString&gt; <b><a href="qmessage.html#to">to</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</li>
+<li><div class="fn"/>virtual void <b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( MessageType <i>t</i>, const QByteArray &amp; <i>ba</i> )</li>
-<li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( MessageType <i>t</i>, const QString &amp; <i>fileName</i> )</li>
+<li><div class="fn"/>QMessage <b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( MessageType <i>t</i>, const QByteArray &amp; <i>ba</i> )</li>
+<li><div class="fn"/>QMessage <b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( MessageType <i>t</i>, const QString &amp; <i>fileName</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -236,6 +236,7 @@
 <p>Sets the list of primary recipients for the message to <i>s</i>.</p>
 <p>See also <a href="qmessage.html#to">to</a>().</p>
 <h3 class="fn"><a name="setTo-2"></a>void QMessage::setTo ( const QString &amp; <i>s</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Sets the primary recipient for the message to <i>s</i>.</p>
 <p>See also <a href="qmessage.html#to">to</a>().</p>
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -255,12 +256,13 @@
 <p>See the class description for the encapsulations used for each message type.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="toTransmissionFormat-2"></a>void QMessage::toTransmissionFormat ( QDataStream &amp; <i>out</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Writes the message to the output stream <i>out</i>.</p>
 <p>See the class description for the encapsulations used for each message type.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>
-<td align="right"><div align="right">Location API</div></td>
+<td align="right"><div align="right">Messaging API</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,5 +1,5 @@
-project = Location Library
-description = Location Library Reference Documentation
+project = Messaging Library
+description = Messaging Library Reference Documentation
 
 imagedirs = images
 
@@ -15,7 +15,7 @@ outputdir               = ../html
 extraimages.HTML        = qtlogo \
                           codeless
 
-versionsym              = "Location API 1.0"
+versionsym              = "Messaging API 1.0"
 
 base                    = file:./doc/html
 
@@ -99,6 +99,6 @@ HTML.postheader         = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
                           "<td align=\"left\">Copyright &copy; $THISYEAR QtSoftware</td>\n" \
-                          "<td align=\"right\"><div align=\"right\">Location API</div></td>\n" \
+                          "<td align=\"right\"><div align=\"right\">Messaging API</div></td>\n" \
                           "</tr></table></div></address>"
 
