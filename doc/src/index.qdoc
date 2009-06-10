@@ -30,7 +30,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMessageFilterKey}
     \o \l{QMessageId}
     \o \l{QMessageServiceAction}
-    \o \l{QMessageSortyKey}
+    \o \l{QMessageSortKey}
     \o \l{QMessageStore}
 \endlist
 
