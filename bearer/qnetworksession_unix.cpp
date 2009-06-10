@@ -563,7 +563,7 @@ void QNetworkSessionPrivate::activateNmSession()
             if ((config.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
                 connPath = getConnectionPath(config.name());
                 qint32 numCon = connPath.section('/', 4, 4, QString::SectionSkipEmpty).toInt();
-                if(numCon > triedServiceConnection) { //if rolled around stop this crazy thing!
+                if(numCon < triedServiceConnection) { //if rolled around stop this crazy thing!
                     emit q->error(QNetworkSession::SessionAbortedError);
                     return;
                 }
