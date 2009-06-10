@@ -742,6 +742,7 @@ void QNetworkSessionPrivate::deactivateNmSession()
     } else {
         qWarning() <<"Could not stop. No active path";
     }
+    triedServiceConnection = -1;
 }
 
 void QNetworkSessionPrivate::setActiveTimeStamp()
