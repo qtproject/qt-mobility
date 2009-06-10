@@ -67,6 +67,7 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
     currentScale = 0;
     finalScale = 1;
     setTransform(QTransform::fromScale(currentScale, currentScale), false);
+    setOpacity(0);
 
     newConfigurationActivated();
 }
@@ -113,10 +114,15 @@ void Cloud::advance(int phase)
     }
 
     if (opacity() != finalOpacity) {
-        if (length > 1)
+        if (length > 1) {
+            // use translation as reference
             setOpacity(opacity() + (finalOpacity - opacity()) / length);
-        else
+        } else if (qAbs(finalScale - currentScale) > 0.0) {
+            // use scale as reference
+            setOpacity(opacity() + (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
+        } else {
             setOpacity(finalOpacity);
+        }
     }
 }
 
