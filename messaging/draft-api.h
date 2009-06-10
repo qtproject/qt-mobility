@@ -117,7 +117,7 @@ public:
     virtual void setSubject(const QString &s);
 
     virtual QDateTime date() const;
-    virtual void setDate(const QDateTime &s);
+    virtual void setDate(const QDateTime &d);
 
     virtual QDateTime receivedDate() const;
     virtual void setReceivedDate(const QDateTime &d);

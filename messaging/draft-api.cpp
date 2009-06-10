@@ -65,7 +65,7 @@ bool QMessageId::operator==(const QMessageId& other) const
 }
 
 /*!
-    \fn bool QMessageId::operator=(const QMessageId &other) const
+    \fn QMessageId& QMessageId::operator=(const QMessageId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
@@ -166,7 +166,7 @@ bool QMessageContentId::operator==(const QMessageContentId& other) const
 }
 
 /*!
-    \fn bool QMessageContentId::operator=(const QMessageContentId &other) const
+    \fn QMessageContentId& QMessageContentId::operator=(const QMessageContentId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
@@ -512,7 +512,7 @@ void QMessage::toTransmissionFormat(QDataStream& out) const
 /*!
     Returns the identifier of the message.
 
-    \sa setId(), QMessageFilter::id()
+    \sa setId(), QMessageFilterKey::id()
 */
 QMessageId QMessage::id() const
 {
@@ -532,7 +532,7 @@ void QMessage::setId(const QMessageId &id)
 /*!
     Returns the MessageType of the message.
     
-    \sa setMessageType(), QMessageFilter::messageType()
+    \sa setMessageType(), QMessageFilterKey::messageType()
 */
 QMessage::MessageType QMessage::messageType() const
 {
@@ -554,7 +554,7 @@ void QMessage::setMessageType(MessageType t)
 /*!
     Returns the originating address of the message.
 
-    \sa setFrom(), QMessageFilter::from()
+    \sa setFrom(), QMessageFilterKey::sender()
 */
 QString QMessage::from() const
 {
@@ -562,7 +562,7 @@ QString QMessage::from() const
 }
 
 /*!
-    Sets the from address, that is the originating address of the message to \a from.
+    Sets the from address, that is the originating address of the message to \a s.
 
     \sa from()
 */
@@ -574,7 +574,7 @@ void QMessage::setFrom(const QString &s)
 /*!
     Returns the subject of the message, if present; otherwise returns an empty string.
 
-    \sa setSubject(), QMessageFilter::subject()
+    \sa setSubject(), QMessageFilterKey::subject()
 */
 QString QMessage::subject() const
 {
@@ -595,7 +595,7 @@ void QMessage::setSubject(const QString &s)
     Returns the timestamp contained in the origination date header field of the message, if present; 
     otherwise returns an empty timestamp.
     
-    \sa setDate(), QMessageFilter::timeStamp()
+    \sa setDate(), QMessageFilterKey::timeStamp()
 */
 QDateTime QMessage::date() const
 {
@@ -603,11 +603,11 @@ QDateTime QMessage::date() const
 }
 
 /*!
-    Sets the origination date header field specifying the timestamp of the message to \a timeStamp.
+    Sets the origination date header field specifying the timestamp of the message to \a d.
     
     \sa date()
 */
-void QMessage::setDate(const QDateTime &s)
+void QMessage::setDate(const QDateTime &d)
 {
     Q_UNUSED(s)
 }
@@ -616,7 +616,7 @@ void QMessage::setDate(const QDateTime &s)
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns an empty timestamp.
     
-    \sa setRecievedDate(), QMessageFilter::receptionTimeStamp()
+    \sa setReceivedDate(), QMessageFilterKey::receptionTimeStamp()
 */
 QDateTime QMessage::receivedDate() const
 {
@@ -624,7 +624,7 @@ QDateTime QMessage::receivedDate() const
 }
 
 /*!
-    Sets the timestamp indicating the time of message reception by the device to \a s.
+    Sets the timestamp indicating the time of message reception by the device to \a d.
     
     \sa receivedDate()
 */
@@ -636,7 +636,7 @@ void QMessage::setReceivedDate(const QDateTime &d)
 /*! 
     Returns the list of primary recipients for the message.
 
-    \sa setTo(), QMessageFilter::recipients()
+    \sa setTo(), QMessageFilterKey::recipients()
 */
 QList<QString> QMessage::to() const
 {
@@ -644,7 +644,7 @@ QList<QString> QMessage::to() const
 }
 
 /*! 
-    Sets the list of primary recipients for the message to \a s.
+    Sets the list of primary recipients for the message to \a toList.
     
     \sa to()
 */
@@ -666,7 +666,7 @@ void QMessage::setTo(const QString& s)
 /*!
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
-    \sa to(), bcc(), setCc(), QMessageFilter::cc()
+    \sa to(), bcc(), setCc(), QMessageFilterKey::recipients()
 */  
 QList<QString> QMessage::cc() const
 {
@@ -686,7 +686,7 @@ void QMessage::setCc(const QList<QString>& ccList)
 /*!
     Returns the list of all the bcc (blind carbon copy) recipients specified for the message.
 
-    \sa to(), cc(), setBcc(), QMessageFilter::bcc()
+    \sa to(), cc(), setBcc()
 */  
 QList<QString> QMessage::bcc() const
 {
@@ -694,7 +694,7 @@ QList<QString> QMessage::bcc() const
 }
 
 /*!
-    Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
+    Set the list of bcc (blind carbon copy) recipients for the message to \a s.
 
     \sa bcc(), setTo(), setCc()
 */  
@@ -706,7 +706,7 @@ void QMessage::setBcc(const QList<QString>& s)
 /*!
     Returns the status value for the message.
 
-    \sa setStatus(), QMessageFilter::status()
+    \sa setStatus(), QMessageFilterKey::status()
 */
 quint64 QMessage::status() const
 {
@@ -728,7 +728,7 @@ void QMessage::setStatus(quint64 newStatus)
 
     The default is Normal.
 
-    \sa setPriority(), QMessageFilter::priority()
+    \sa setPriority(), QMessageFilterKey::priority()
 */
 QMessage::MessagePriority QMessage::priority() const
 {
@@ -748,7 +748,7 @@ void QMessage::setPriority(MessagePriority newPriority)
 /*!
     Returns the complete size of the message as indicated on the originating server.
     
-    \sa setSize(), QMessageFilter::priority()
+    \sa setSize(), QMessageFilterKey::priority()
 */
 uint QMessage::size() const
 {
@@ -781,8 +781,8 @@ QMessageContentId QMessage::body() const
 /*!
     Sets the body text of the message to be the string \a body.
     
-    If \a html is true then the internet media type of the body wil be "plain\html";
-    otherwise it will be "plain\text".
+    If \a html is true then the internet media type of the body wil be "plain\\html";
+    otherwise it will be "plain\\text".
     
     \sa body(), setBodyFromFile()
 */
@@ -795,8 +795,8 @@ void QMessage::setBody(const QString &body, bool html)
 /*!
     Sets the body text of the message to be the contents of the file \a fileName.
     
-    If \a html is true then the internet media type of the body wil be "plain\html";
-    otherwise it will be "plain\text".
+    If \a html is true then the internet media type of the body wil be "plain\\html";
+    otherwise it will be "plain\\text".
     
     \sa body(), setBody()
 */
@@ -833,7 +833,7 @@ void QMessage::setAttachments(const QStringList &fileNames)
 }
 
 /*!
-    Sets the originating port of the message.
+    Sets the originating port of the message to \a port.
 
     Only relevant for SMS messages.
     
@@ -859,11 +859,11 @@ uint QMessage::originatorPort()
 }
 
 /*!
-    Sets the destination port of the message.
+    Sets the destination port of the message to \a port.
 
     Only relevant for SMS messages.
     
-    \sa SetOriginatorPort(), destinationPort()
+    \sa setOriginatorPort(), destinationPort()
 */
 void QMessage::setDestinationPort(uint port)
 {
@@ -983,8 +983,6 @@ QMessageFilterKey::QMessageFilterKey()
     This is true regardless of whether the combination is formed by an AND or an OR operation.
 
     The result of combining two empty keys is an empty key.
-
-    \sa isNonMatching()
 */
 bool QMessageFilterKey::isEmpty() const
 {
@@ -997,7 +995,7 @@ bool QMessageFilterKey::isEmpty() const
     If this key is empty, the result will be a non-matching key; if this key is 
     non-matching, the result will be an empty key.
 
-    \sa isEmpty(), isNonMatching()
+    \sa isEmpty()
 */
 QMessageFilterKey QMessageFilterKey::operator~() const
 {
@@ -1307,9 +1305,9 @@ QMessageFilterKey QMessageFilterKey::priority(QMessage::MessagePriority value, Q
 }
 
 /*!
-    Returns a key matching messages whose serverUid matches \a uid, according to \a cmp.
+    Returns a key matching messages whose size matches \a value, according to \a cmp.
 
-    \sa QMessage::serverUid()
+    \sa QMessage::size()
 */
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
 {
@@ -1319,10 +1317,9 @@ QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::Equ
 }
 
 /*!
-    Returns a key matching messages whose serverUid matches the substring \a uid, according 
-    to \a cmp.
+    Returns a key matching messages whose size matches \a value, according to \a cmp.
 
-    \sa QMessage::serverUid()
+    \sa QMessage::size()
 */
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
 {
@@ -1672,7 +1669,7 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 }
 
 /*!
-    Updates the existing QMessage \a msg on the message store.
+    Updates the existing QMessage \a m on the message store.
     Returns \c true if the operation completed successfully, or \c false otherwise. 
 */
 bool QMessageStore::updateMessage(QMessage *m)
@@ -1737,7 +1734,8 @@ QMessageStore* QMessageStore::instance()
 */
 
 /*!
-    starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
+    Starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
+    for messages that match \a key.
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
 */
@@ -1747,7 +1745,8 @@ void QMessageStore::startNotifications(const QMessageFilterKey &key)
 }
 
 /*!
-    stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
+    Stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
+    for messages that match \a key.
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
 */
@@ -1782,7 +1781,7 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
 */
 
 /*!
-    \enum QMailServiceAction::Activity
+    \enum QMessageServiceAction::Activity
 
     This enum type is used to describe the activity state of the requested action.
 
