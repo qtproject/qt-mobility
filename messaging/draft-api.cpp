@@ -361,7 +361,7 @@ void QMessageContent::serialize(QDataStream& out) const
     the telephony types SMS and MMS, and also XMPP messages.
      
     A QMessage can be constructed piece by piece using functions such as 
-    setMessageType(), setFrom(), setTo(), setSubject(), setBody() and setAttachments().
+    setType(), setFrom(), setTo(), setSubject(), setBody() and setAttachments().
 
     Alternatively a message can be initialized from raw data using fromTransmissionFormat().
     
@@ -402,7 +402,7 @@ void QMessageContent::serialize(QDataStream& out) const
 */
 
 /*!
-    \enum QMessage::MessageType
+    \enum QMessage::Type
 
     Defines the type of a message.
     
@@ -415,7 +415,7 @@ void QMessageContent::serialize(QDataStream& out) const
 */
     
 /*!
-    \enum QMessage::MessageStatus
+    \enum QMessage::Status
 
     Defines properties of a message.
 
@@ -426,7 +426,7 @@ void QMessageContent::serialize(QDataStream& out) const
 */
 
 /*!
-    \enum QMessage::MessagePriority
+    \enum QMessage::Priority
 
     Defines the priority of a message.
 
@@ -466,7 +466,7 @@ QMessage::~QMessage()
     
     \sa QMessage, toTransmissionFormat()
 */
-QMessage QMessage::fromTransmissionFormat(MessageType t, const QByteArray &ba)
+QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
 {
     Q_UNUSED(t)
     Q_UNUSED(ba)
@@ -480,7 +480,7 @@ QMessage QMessage::fromTransmissionFormat(MessageType t, const QByteArray &ba)
     
     \sa QMessage, toTransmissionFormat()
 */
-QMessage QMessage::fromTransmissionFormatFile(MessageType t, const QString& fileName)
+QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 {
     Q_UNUSED(t)
     Q_UNUSED(fileName)
@@ -534,23 +534,23 @@ void QMessage::setId(const QMessageId &id)
 }
 
 /*!
-    Returns the MessageType of the message.
+    Returns the Type of the message.
     
-    \sa setMessageType(), QMessageFilterKey::messageType()
+    \sa setType(), QMessageFilterKey::type()
 */
-QMessage::MessageType QMessage::messageType() const
+QMessage::Type QMessage::type() const
 {
     return None; // stub
 }
     
 /*!
-    Sets the MessageType of the message to \a t.
+    Sets the Type of the message to \a t.
     
     The type of a message may be set for non-empty messages.
     
-    \sa messageType()
+    \sa type()
 */
-void QMessage::setMessageType(MessageType t)
+void QMessage::setType(Type t)
 {
     Q_UNUSED(t)
 }
@@ -734,7 +734,7 @@ void QMessage::setStatus(quint64 newStatus)
 
     \sa setPriority(), QMessageFilterKey::priority()
 */
-QMessage::MessagePriority QMessage::priority() const
+QMessage::Priority QMessage::priority() const
 {
     return QMessage::Normal; // stub
 }
@@ -744,7 +744,7 @@ QMessage::MessagePriority QMessage::priority() const
 
     \sa priority()
 */
-void QMessage::setPriority(MessagePriority newPriority)
+void QMessage::setPriority(Priority newPriority)
 {
     Q_UNUSED(newPriority)
 }
@@ -1100,11 +1100,11 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDa
 }
 
 /*!
-    Returns a key matching messages whose messageType matches \a type, according to \a cmp.
+    Returns a key matching messages whose type matches \a type, according to \a cmp.
 
-    \sa QMessage::messageType()
+    \sa QMessage::type()
 */
-QMessageFilterKey QMessageFilterKey::messageType(QMessage::MessageType type, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(type)
     Q_UNUSED(cmp)
@@ -1112,11 +1112,11 @@ QMessageFilterKey QMessageFilterKey::messageType(QMessage::MessageType type, QMe
 }
 
 /*!
-    Returns a key matching accounts whose messageType is a bitwise match to \a type, according to \a cmp.
+    Returns a key matching accounts whose type is a bitwise match to \a type, according to \a cmp.
 
-    \sa QMessage::messageType()
+    \sa QMessage::type()
 */
-QMessageFilterKey QMessageFilterKey::messageType(quint64 type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::type(quint64 type, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(type)
     Q_UNUSED(cmp)
@@ -1301,7 +1301,7 @@ QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator
 
     \sa QMessage::priority()
 */
-QMessageFilterKey QMessageFilterKey::priority(QMessage::MessagePriority value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
@@ -1429,9 +1429,9 @@ QMessageSortKey QMessageSortKey::id(Qt::SortOrder order)
 /*!
     Returns a key that sorts messages by their message type, according to \a order.
 
-    \sa QMessage::messageType()
+    \sa QMessage::type()
 */
-QMessageSortKey QMessageSortKey::messageType(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
@@ -1562,7 +1562,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 */
 
 /*!
-    \enum QMessageStore::MessageRemovalOption
+    \enum QMessageStore::RemovalOption
 
     Defines whether or not a message will be removed from the originating server.
 
@@ -1646,7 +1646,7 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
 */
-bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption option)
+bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 {
     Q_UNUSED(id)
     Q_UNUSED(option)
@@ -1671,7 +1671,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, MessageRemovalOption opt
     }
     \endcode
 */
-bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::MessageRemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
 {
     Q_UNUSED(key)
     Q_UNUSED(option)
@@ -1838,7 +1838,7 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
 /*!
   Transmit \a message using the default account for the type of \a message.
   
-  \sa QMessage::messageType()
+  \sa QMessage::type()
 */
 void QMessageServiceAction::send(const QMessage &message)
 {
@@ -1850,7 +1850,7 @@ void QMessageServiceAction::send(const QMessage &message)
 
   The default application for handling the type \a message should be used.
   
-  \sa QMessage::messageType()
+  \sa QMessage::type()
 */
 void QMessageServiceAction::compose(const QMessage &message)
 {
@@ -1862,7 +1862,7 @@ void QMessageServiceAction::compose(const QMessage &message)
 
   The default application for handling the type of message that \a id identifies should be used.
   
-  \sa QMessageId, QMessage::messageType()
+  \sa QMessageId, QMessage::type()
 */
 void QMessageServiceAction::reply(const QMessageId &id)
 {
@@ -1874,21 +1874,22 @@ void QMessageServiceAction::reply(const QMessageId &id)
   
   The default application for handling the type of message that \a id identifies should be used.
 
-  \sa QMessageId, QMessage::messageType()
+  \sa QMessageId, QMessage::type()
 */
 void QMessageServiceAction::forward(const QMessageId &id)
 {
     Q_UNUSED(id)
 }
 
-/* TODO MessageType::Removed required? */
 /*!
     Requests that the message server retrieve data regarding the message identified by \a id.  
 
     The meta data (including flags, from, to, subject, and date fields where applicable) of 
     the message identified by \a id should be retrieved.
+    
+    If the message can not be found on the originating server it will be marked as removed.
 
-    \sa QMessageId
+    \sa QMessageId, QMessage::Removed
 
 */
 void QMessageServiceAction::retrieve(const QMessageId& id)
@@ -1913,7 +1914,7 @@ void QMessageServiceAction::retrieve(const QMessageContentId& id)
 
     The default application for handling the type of message that \a id identifies should be used.
 
-    \sa QMessageId, QMessage::messageType()
+    \sa QMessageId, QMessage::type()
 */
 void QMessageServiceAction::show(const QMessageId& id)
 {
