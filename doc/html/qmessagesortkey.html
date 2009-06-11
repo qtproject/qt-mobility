@@ -32,7 +32,6 @@
 <h3>Static Public Members</h3>
 <ul>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#id">id</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
-<li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#messageType">messageType</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#priority">priority</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#recipients">recipients</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
@@ -41,6 +40,7 @@
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#status">status</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#subject">subject</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#timeStamp">timeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
+<li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#type">type</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -63,9 +63,6 @@
 <p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
-<h3 class="fn"><a name="messageType"></a>QMessageSortKey QMessageSortKey::messageType ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns a key that sorts messages by their message type, according to <i>order</i>.</p>
-<p>See also <a href="qmessage.html#messageType">QMessage::messageType</a>().</p>
 <h3 class="fn"><a name="priority"></a>QMessageSortKey QMessageSortKey::priority ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by their priority, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
@@ -90,6 +87,9 @@
 <h3 class="fn"><a name="timeStamp"></a>QMessageSortKey QMessageSortKey::timeStamp ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by their origination timestamp, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
+<h3 class="fn"><a name="type"></a>QMessageSortKey QMessageSortKey::type ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a key that sorts messages by their message type, according to <i>order</i>.</p>
+<p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="operator-2b"></a>QMessageSortKey QMessageSortKey::operator+ ( const QMessageSortKey &amp; <i>other</i> ) const</h3>
 <p>Returns a key that which is the result of concatenating the vaue of this key and the value of key <i>other</i>.</p>
 <h3 class="fn"><a name="operator-2b-eq"></a>QMessageSortKey &amp; QMessageSortKey::operator+= ( const QMessageSortKey &amp; <i>other</i> )</h3>

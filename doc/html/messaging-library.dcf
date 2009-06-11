@@ -3,22 +3,22 @@
 <section ref="classes.html" title="Classes">
     <section ref="qmessage.html" title="QMessage Class Reference">
         <keyword ref="qmessage.html">QMessage</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">MessagePriority</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::High</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::Normal</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::Low</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">MessageStatus</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::HasAttachments</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Read</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Incoming</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Removed</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">MessageType</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Sms</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Xmpp</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::None</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Email</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::AnyType</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Mms</keyword>
+        <keyword ref="qmessage.html#Priority-enum">Priority</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::High</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::Normal</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::Low</keyword>
+        <keyword ref="qmessage.html#Status-enum">Status</keyword>
+        <keyword ref="qmessage.html#Status-enum">QMessage::HasAttachments</keyword>
+        <keyword ref="qmessage.html#Status-enum">QMessage::Read</keyword>
+        <keyword ref="qmessage.html#Status-enum">QMessage::Incoming</keyword>
+        <keyword ref="qmessage.html#Status-enum">QMessage::Removed</keyword>
+        <keyword ref="qmessage.html#Type-enum">Type</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::Sms</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::Xmpp</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::None</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::Email</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::AnyType</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::Mms</keyword>
         <keyword ref="qmessage.html#attachments">attachments</keyword>
         <keyword ref="qmessage.html#bcc">bcc</keyword>
         <keyword ref="qmessage.html#body">body</keyword>
@@ -30,7 +30,6 @@
         <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
         <keyword ref="qmessage.html#id">id</keyword>
-        <keyword ref="qmessage.html#messageType">messageType</keyword>
         <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
@@ -43,7 +42,6 @@
         <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
         <keyword ref="qmessage.html#setId">setId</keyword>
-        <keyword ref="qmessage.html#setMessageType">setMessageType</keyword>
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
@@ -51,11 +49,13 @@
         <keyword ref="qmessage.html#setStatus">setStatus</keyword>
         <keyword ref="qmessage.html#setSubject">setSubject</keyword>
         <keyword ref="qmessage.html#setTo">setTo</keyword>
+        <keyword ref="qmessage.html#setType">setType</keyword>
         <keyword ref="qmessage.html#size">size</keyword>
         <keyword ref="qmessage.html#status">status</keyword>
         <keyword ref="qmessage.html#subject">subject</keyword>
         <keyword ref="qmessage.html#to">to</keyword>
         <keyword ref="qmessage.html#toTransmissionFormat">toTransmissionFormat</keyword>
+        <keyword ref="qmessage.html#type">type</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagecontent.html" title="QMessageContent Class Reference">
@@ -100,7 +100,6 @@
         <keyword ref="qmessagefilterkey.html#body">body</keyword>
         <keyword ref="qmessagefilterkey.html#id">id</keyword>
         <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefilterkey.html#messageType">messageType</keyword>
         <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
         <keyword ref="qmessagefilterkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagefilterkey.html#recipients">recipients</keyword>
@@ -109,6 +108,7 @@
         <keyword ref="qmessagefilterkey.html#status">status</keyword>
         <keyword ref="qmessagefilterkey.html#subject">subject</keyword>
         <keyword ref="qmessagefilterkey.html#timeStamp">timeStamp</keyword>
+        <keyword ref="qmessagefilterkey.html#type">type</keyword>
         <keyword ref="qmessagefilterkey.html#operator-and">operator&amp;</keyword>
         <keyword ref="qmessagefilterkey.html#operator-and-eq">operator&amp;=</keyword>
         <keyword ref="qmessagefilterkey.html#operator-eq">operator=</keyword>
@@ -143,7 +143,6 @@
         <keyword ref="qmessagesortkey.html">QMessageSortKey</keyword>
         <keyword ref="qmessagesortkey.html#id">id</keyword>
         <keyword ref="qmessagesortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagesortkey.html#messageType">messageType</keyword>
         <keyword ref="qmessagesortkey.html#priority">priority</keyword>
         <keyword ref="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagesortkey.html#recipients">recipients</keyword>
@@ -152,6 +151,7 @@
         <keyword ref="qmessagesortkey.html#status">status</keyword>
         <keyword ref="qmessagesortkey.html#subject">subject</keyword>
         <keyword ref="qmessagesortkey.html#timeStamp">timeStamp</keyword>
+        <keyword ref="qmessagesortkey.html#type">type</keyword>
         <keyword ref="qmessagesortkey.html#operator-2b">operator+</keyword>
         <keyword ref="qmessagesortkey.html#operator-2b-eq">operator+=</keyword>
         <keyword ref="qmessagesortkey.html#operator-eq">operator=</keyword>
@@ -168,9 +168,9 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingIdsOverflow</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">QMessageStore::CreateRemovalRecord</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">QMessageStore::NoRemovalRecord</keyword>
+        <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
+        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</keyword>
+        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::NoRemovalRecord</keyword>
         <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>

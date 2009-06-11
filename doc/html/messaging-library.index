@@ -61,7 +61,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessage" href="qmessage.html" location="draft-api.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="MessageType" fullname="QMessage::MessageType" href="qmessage.html#MessageType-enum" location="draft-api.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMessage::Type" href="qmessage.html#Type-enum" location="draft-api.h">
                 <value name="Mms" value="0x1"/>
                 <value name="Sms" value="0x2"/>
                 <value name="Email" value="0x4"/>
@@ -69,13 +69,13 @@
                 <value name="None" value="0"/>
                 <value name="AnyType" value="Mms | Sms | Email | Xmpp"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="MessageStatus" fullname="QMessage::MessageStatus" href="qmessage.html#MessageStatus-enum" location="draft-api.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Status" fullname="QMessage::Status" href="qmessage.html#Status-enum" location="draft-api.h">
                 <value name="Read" value="0x1"/>
                 <value name="HasAttachments" value="0x2"/>
                 <value name="Incoming" value="0x4"/>
                 <value name="Removed" value="0x8"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="MessagePriority" fullname="QMessage::MessagePriority" href="qmessage.html#MessagePriority-enum" location="draft-api.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Priority" fullname="QMessage::Priority" href="qmessage.html#Priority-enum" location="draft-api.h">
                 <value name="High" value="1"/>
                 <value name="Normal" value="2"/>
                 <value name="Low" value="3"/>
@@ -85,12 +85,12 @@
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessage" fullname="QMessage::~QMessage" href="qmessage.html#dtor.QMessage" location="draft-api.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessage()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="fromTransmissionFormat" fullname="QMessage::fromTransmissionFormat" href="qmessage.html#fromTransmissionFormat" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessage" signature="fromTransmissionFormat(MessageType t, const QByteArray &amp; ba)">
-                <parameter left="MessageType" right="" name="t" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fromTransmissionFormat" fullname="QMessage::fromTransmissionFormat" href="qmessage.html#fromTransmissionFormat" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessage" signature="fromTransmissionFormat(Type t, const QByteArray &amp; ba)">
+                <parameter left="Type" right="" name="t" default=""/>
                 <parameter left="const QByteArray &amp;" right="" name="ba" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="fromTransmissionFormatFile" fullname="QMessage::fromTransmissionFormatFile" href="qmessage.html#fromTransmissionFormatFile" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessage" signature="fromTransmissionFormatFile(MessageType t, const QString &amp; fileName)">
-                <parameter left="MessageType" right="" name="t" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fromTransmissionFormatFile" fullname="QMessage::fromTransmissionFormatFile" href="qmessage.html#fromTransmissionFormatFile" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessage" signature="fromTransmissionFormatFile(Type t, const QString &amp; fileName)">
+                <parameter left="Type" right="" name="t" default=""/>
                 <parameter left="const QString &amp;" right="" name="fileName" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="toTransmissionFormat" fullname="QMessage::toTransmissionFormat" href="qmessage.html#toTransmissionFormat" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="toTransmissionFormat() const"/>
@@ -101,9 +101,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QMessage::setId" href="qmessage.html#setId" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setId(const QMessageId &amp; id)">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="messageType" fullname="QMessage::messageType" href="qmessage.html#messageType" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="MessageType" signature="messageType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMessageType" fullname="QMessage::setMessageType" href="qmessage.html#setMessageType" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMessageType(MessageType t)">
-                <parameter left="MessageType" right="" name="t" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessage::type" href="qmessage.html#type" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Type" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessage::setType" href="qmessage.html#setType" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type t)">
+                <parameter left="Type" right="" name="t" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="from" fullname="QMessage::from" href="qmessage.html#from" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="from() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFrom" fullname="QMessage::setFrom" href="qmessage.html#setFrom" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFrom(const QString &amp; s)">
@@ -140,9 +140,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setStatus" fullname="QMessage::setStatus" href="qmessage.html#setStatus" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setStatus(quint64 newStatus)">
                 <parameter left="quint64" right="" name="newStatus" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="priority" fullname="QMessage::priority" href="qmessage.html#priority" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="MessagePriority" signature="priority() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPriority" fullname="QMessage::setPriority" href="qmessage.html#setPriority" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPriority(MessagePriority newPriority)">
-                <parameter left="MessagePriority" right="" name="newPriority" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="priority" fullname="QMessage::priority" href="qmessage.html#priority" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Priority" signature="priority() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPriority" fullname="QMessage::setPriority" href="qmessage.html#setPriority" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPriority(Priority newPriority)">
+                <parameter left="Priority" right="" name="newPriority" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="size" fullname="QMessage::size" href="qmessage.html#size" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="uint" signature="size() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSize" fullname="QMessage::setSize" href="qmessage.html#setSize" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSize(uint size)">
@@ -221,11 +221,11 @@
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="messageType" fullname="QMessageFilterKey::messageType" href="qmessagefilterkey.html#messageType" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFilterKey" signature="messageType(QMessage::MessageType type, QMessageDataComparator::EqualityComparator cmp)">
-                <parameter left="QMessage::MessageType" right="" name="type" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessageFilterKey::type" href="qmessagefilterkey.html#type" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFilterKey" signature="type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)">
+                <parameter left="QMessage::Type" right="" name="type" default=""/>
                 <parameter left="QMessageDataComparator::EqualityComparator" right="" name="cmp" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="messageType" fullname="QMessageFilterKey::messageType" href="qmessagefilterkey.html#messageType-2" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="true" overload-number="2" type="QMessageFilterKey" signature="messageType(quint64 type, QMessageDataComparator::InclusionComparator cmp)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessageFilterKey::type" href="qmessagefilterkey.html#type-2" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="true" overload-number="2" type="QMessageFilterKey" signature="type(quint64 type, QMessageDataComparator::InclusionComparator cmp)">
                 <parameter left="quint64" right="" name="type" default=""/>
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default=""/>
             </function>
@@ -285,8 +285,8 @@
                 <parameter left="quint64" right="" name="mask" default=""/>
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="priority" fullname="QMessageFilterKey::priority" href="qmessagefilterkey.html#priority" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFilterKey" signature="priority(QMessage::MessagePriority value, QMessageDataComparator::EqualityComparator cmp)">
-                <parameter left="QMessage::MessagePriority" right="" name="value" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="priority" fullname="QMessageFilterKey::priority" href="qmessagefilterkey.html#priority" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFilterKey" signature="priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)">
+                <parameter left="QMessage::Priority" right="" name="value" default=""/>
                 <parameter left="QMessageDataComparator::EqualityComparator" right="" name="cmp" default="QMessageDataComparator::Equal"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="size" fullname="QMessageFilterKey::size" href="qmessagefilterkey.html#size" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFilterKey" signature="size(int value, QMessageDataComparator::EqualityComparator cmp)">
@@ -316,7 +316,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QMessageSortKey::id" href="qmessagesortkey.html#id" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageSortKey" signature="id(Qt::SortOrder order)">
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="messageType" fullname="QMessageSortKey::messageType" href="qmessagesortkey.html#messageType" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageSortKey" signature="messageType(Qt::SortOrder order)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessageSortKey::type" href="qmessagesortkey.html#type" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageSortKey" signature="type(Qt::SortOrder order)">
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="sender" fullname="QMessageSortKey::sender" href="qmessagesortkey.html#sender" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageSortKey" signature="sender(Qt::SortOrder order)">
@@ -345,7 +345,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageStore" href="qmessagestore.html" location="draft-api.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="MessageRemovalOption" fullname="QMessageStore::MessageRemovalOption" href="qmessagestore.html#MessageRemovalOption-enum" location="draft-api.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="RemovalOption" fullname="QMessageStore::RemovalOption" href="qmessagestore.html#RemovalOption-enum" location="draft-api.h">
                 <value name="NoRemovalRecord" value="1"/>
                 <value name="CreateRemovalRecord" value="2"/>
             </enum>
@@ -368,13 +368,13 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="countMessages" fullname="QMessageStore::countMessages" href="qmessagestore.html#countMessages" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="countMessages(const QMessageFilterKey &amp; key) const">
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeMessage" fullname="QMessageStore::removeMessage" href="qmessagestore.html#removeMessage" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessage(const QMessageId &amp; id, MessageRemovalOption option)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeMessage" fullname="QMessageStore::removeMessage" href="qmessagestore.html#removeMessage" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessage(const QMessageId &amp; id, RemovalOption option)">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
-                <parameter left="MessageRemovalOption" right="" name="option" default="NoRemovalRecord"/>
+                <parameter left="RemovalOption" right="" name="option" default="NoRemovalRecord"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeMessages" fullname="QMessageStore::removeMessages" href="qmessagestore.html#removeMessages" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessages(const QMessageFilterKey &amp; key, MessageRemovalOption option)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeMessages" fullname="QMessageStore::removeMessages" href="qmessagestore.html#removeMessages" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessages(const QMessageFilterKey &amp; key, RemovalOption option)">
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
-                <parameter left="MessageRemovalOption" right="" name="option" default="NoRemovalRecord"/>
+                <parameter left="RemovalOption" right="" name="option" default="NoRemovalRecord"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="updateMessage" fullname="QMessageStore::updateMessage" href="qmessagestore.html#updateMessage" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="updateMessage(QMessage * m)">
                 <parameter left="QMessage *" right="" name="m" default=""/>
