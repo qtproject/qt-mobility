@@ -79,13 +79,19 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
-<p>QMessage supports a number of types. These include telephony types such as SMS and MMS, internet email messages, and XMPP messages.</p>
+<p>QMessage supports a number of types. Including internet email messages, the telephony types SMS and MMS, and also XMPP messages.</p>
 <p>A QMessage can be constructed piece by piece using functions such as <a href="qmessage.html#setMessageType">setMessageType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#setAttachments">setAttachments</a>().</p>
 <p>Alternatively a message can be initialized from raw data using <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <p>Messages can be added to the <a href="qmessagestore.html">QMessageStore</a>, or retrieved from the store via their <a href="qmessageid.html">QMessageId</a> identifier.</p>
 <p>A message may be serialized to a QDataStream, or returned as a QByteArray using <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
-<p>A list of attachments identifiers will be return by <a href="qmessage.html#attachments">attachments</a>() and a body identifier will be returned by <a href="qmessage.html#body">body</a>().</p>
-<p>The following transmission formats are used both when contructing and encapsulating messages: QMessage::SMS <a href="http://www.3gpp.org/ftp/Specs/html-info/23040.htm">3GPP TS 23.040</a> (Technical realization of the Short Message Service), QMessage::MMS <a href="http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf">OMA TS MMS ENC</a> (Multimedia Messaging Service Encapsulation Protocol), <a href="qmessage.html#MessageType-enum">QMessage::Email</a> <a href="http://www.ietf.org/rfc/rfc2822.txt">RFC 2822</a> (Internet Message Format), and <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a> (Format of Internet Message Bodies) through <a href="http://www.ietf.org/rfc/rfc2049.txt">RFC 2049</a> (Conformance Criteria and Examples). QMessage::XMPP <a href="http://www.ietf.org/rfc/rfc3921.txt">RFC 3921</a> (Extensible Messaging and Presence Protocol)</p>
+<p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachments">attachments</a>() and a body identifier will be returned by <a href="qmessage.html#body">body</a>().</p>
+<p>The following transmission formats are used both when constructing and encapsulating messages:</p>
+<ul>
+<li><a href="qmessage.html#MessageType-enum">QMessage::Sms</a> <a href="http://www.3gpp.org/ftp/Specs/html-info/23040.htm">3GPP TS 23.040</a> (Technical realization of the Short Message Service).</li>
+<li><a href="qmessage.html#MessageType-enum">QMessage::Mms</a> <a href="http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf">OMA TS MMS ENC</a> (Multimedia Messaging Service Encapsulation Protocol).</li>
+<li><a href="qmessage.html#MessageType-enum">QMessage::Email</a> <a href="http://www.ietf.org/rfc/rfc2822.txt">RFC 2822</a> (Internet Message Format), and <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a> (Format of Internet Message Bodies) through <a href="http://www.ietf.org/rfc/rfc2049.txt">RFC 2049</a> (Conformance Criteria and Examples).</li>
+<li><a href="qmessage.html#MessageType-enum">QMessage::Xmpp</a> <a href="http://www.ietf.org/rfc/rfc3921.txt">RFC 3921</a> (Extensible Messaging and Presence Protocol).</li>
+</ul>
 <p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.</p>
 <p>See also <a href="qmessagecontent.html">QMessageContent</a>, <a href="qmessagestore.html">QMessageStore</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
 <hr />
@@ -240,7 +246,7 @@
 <p>See also <a href="qmessage.html#to">to</a>().</p>
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
-<p>See also <a href="qmessage.html#setSize">setSize</a>() and <a href="qmessagefilterkey.html#priority">QMessageFilterKey::priority</a>().</p>
+<p>See also <a href="qmessage.html#setSize">setSize</a>() and <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
 <h3 class="fn"><a name="status"></a>quint64 QMessage::status () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the status value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilterkey.html#status">QMessageFilterKey::status</a>().</p>

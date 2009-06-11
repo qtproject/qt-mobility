@@ -24,7 +24,7 @@
 /*!
     \fn QMessageId::QMessageId()
 
-    Creates an invalid identifier, toString() will return an empty string;
+    Creates an invalid identifier, toString() will return an empty string.
 */
 QMessageId::QMessageId()
 {
@@ -363,9 +363,9 @@ void QMessageContent::serialize(QDataStream& out) const
     
     \ingroup messaging
    
-    QMessage supports a number of types. These include telephony types 
-    such as SMS and MMS, internet email messages, and XMPP messages.
-    
+    QMessage supports a number of types. Including internet email messages, 
+    the telephony types SMS and MMS, and also XMPP messages.
+     
     A QMessage can be constructed piece by piece using functions such as 
     setMessageType(), setFrom(), setTo(), setSubject(), setBody() and setAttachments().
 
@@ -377,20 +377,28 @@ void QMessageContent::serialize(QDataStream& out) const
     A message may be serialized to a QDataStream, or returned as a QByteArray using 
     toTransmissionFormat().
 
-    A list of attachments identifiers will be return by attachments() and a body identifier will
+    A list of attachments identifiers will be returned by attachments() and a body identifier will
     be returned by body().
     
-    The following transmission formats are used both when contructing and encapsulating messages:
-    QMessage::SMS \l{http://www.3gpp.org/ftp/Specs/html-info/23040.htm} 
-    {3GPP TS 23.040} (Technical realization of the Short Message Service), 
-    QMessage::MMS \l{http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf} 
-    {OMA TS MMS ENC} (Multimedia Messaging Service Encapsulation Protocol),
-    QMessage::Email 
+    The following transmission formats are used both when constructing and encapsulating messages:
+    \list
+    
+    \o QMessage::Sms
+    \l{http://www.3gpp.org/ftp/Specs/html-info/23040.htm} 
+    {3GPP TS 23.040} (Technical realization of the Short Message Service).
+    
+    \o QMessage::Mms \l{http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf} 
+    {OMA TS MMS ENC} (Multimedia Messaging Service Encapsulation Protocol).
+    
+    \o QMessage::Email 
     \l{http://www.ietf.org/rfc/rfc2822.txt} {RFC 2822} (Internet Message Format), and 
     \l{http://www.ietf.org/rfc/rfc2045.txt} {RFC 2045} (Format of Internet Message Bodies) through 
     \l{http://www.ietf.org/rfc/rfc2049.txt} {RFC 2049} (Conformance Criteria and Examples).
-    QMessage::XMPP 
-    \l{http://www.ietf.org/rfc/rfc3921.txt} {RFC 3921} (Extensible Messaging and Presence Protocol)
+
+    \o QMessage::Xmpp 
+    \l{http://www.ietf.org/rfc/rfc3921.txt} {RFC 3921} (Extensible Messaging and Presence Protocol).
+
+    \endlist
     
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
@@ -748,7 +756,7 @@ void QMessage::setPriority(MessagePriority newPriority)
 /*!
     Returns the complete size of the message as indicated on the originating server.
     
-    \sa setSize(), QMessageFilterKey::priority()
+    \sa setSize(), QMessageFilterKey::size()
 */
 uint QMessage::size() const
 {
