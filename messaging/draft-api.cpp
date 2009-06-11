@@ -114,10 +114,7 @@ bool QMessageId::isValid() const
     A QMessageContentId instance can be tested for validity with isValid(), and compared to other instances
     for equality.
     
-    If the object a QMessageContentId identifies is removed from the message store then the identifier will not be 
-    reused.
-    
-    The QMessageContentId implementation should be small, ideally less than or equal to 16 bytes.
+    If the object a QMessageContentId identifies is removed then the identifier will not be reused.
     
     \sa QMessageStore, QMessage, QMessageContent
 */
@@ -208,13 +205,10 @@ bool QMessageContentId::isValid() const
     \preliminary
 
     \brief The QMessageContent class provides an interface for accessing
-    message content.
+    message content, including content that has only been partially retrieved.
 
     \ingroup messaging
     
-    QMessageContent provides an interface for accessing message content, including
-    content that has only been partially retrieved.
-
     QMessageContent objects can be retrieved from the QMessageStore via their QMessageContentId 
     identifier.
     
@@ -230,7 +224,7 @@ bool QMessageContentId::isValid() const
     the type, and contentSubType() the subtype.
     
     An indication of the size of the message on the originating server is given by indicativeSize(). If the
-    content is available on the device contentAvailable() will return true.
+    content is completely available on the device contentAvailable() will return true.
 
     decodedContentFileName() will return the name of a local file containing the content, when available.
 
@@ -348,7 +342,7 @@ QString QMessageContent::decodedContentFileName() const
 }
 
 /*!
-  Writes the content as would be returned by decodedContent() into the stream \a out
+  Writes the content as would be returned by decodedContent() into the stream \a out.
 */
 void QMessageContent::serialize(QDataStream& out) const
 {
@@ -1180,7 +1174,7 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
     Returns a key matching messages whose subject matches \a value, according 
     to \a cmp.
 
-    \sa QMessage::body()
+    \sa QMessage::subject()
 */
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
@@ -1193,7 +1187,7 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
     Returns a key matching messages whose subject matches the 
     substring \a value, according to \a cmp.
 
-    \sa QMessage::body()
+    \sa QMessage::subject()
 */
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
@@ -1548,7 +1542,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     value indicating the failure mode encountered.  A successful operation will set the 
     lastError() result to QMessageStore::NoError.
 
-    Messages in the mail store are identified by QMessageId objects. The data associated
+    Messages in the message store are identified by QMessageId objects. The data associated
     with a message is retrieved in the form of a QMessage object. Message content
     such as the message body and message parts are identified by QMessageContentId objects.
     The data associated with message content is retrieved in the form of a QMessageContent
@@ -1571,11 +1565,12 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     Defines whether or not a message will be removed from the originating server.
 
     \value NoRemovalRecord     Do not remove the message from the originating server.
-    \value CreateRemovalRecord Remove the message from teh originating server.
+    \value CreateRemovalRecord Remove the message from the originating server.
 */
 
 /*
-    TODO capabilities FASTBOOLEANSEARCH FASTSLICES SMS MMS EMAIL XMPP PRESENCE FASTEXTENDEDSEARCHING FASTBODYSEARCHING
+    TODO capabilities NativeBooleanSarch NativeSlices Sms Mms Email Xmpp Presence NativeExentendedSearching NativeBodySearching
+      ExtendedNativeServices
 
     Activate/deactive on only adds, deletes or updates? Requires enum,
     enum NotificationType 
@@ -1590,7 +1585,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 /*!
     \enum QMessageStore::ErrorCode
 
-    Defines the result of attempting to perform a mail store operation.
+    Defines the result of attempting to perform a message store operation.
 
     \value NoError              The operation was successfully performed.
     \value InvalidId            The operation failed due to the specification of an invalid identifier.
@@ -1628,7 +1623,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 }
 
 /*!
-    Returns the count of the number of messages which pass the 
+    Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
 */
@@ -1727,7 +1722,7 @@ QMessageStore* QMessageStore::instance()
     \fn void QMessageStore::messagesRemoved(const QMessageIdList& ids)
 
     Signal that is emitted when the messages in the list \a ids are
-    removed from the mail store.
+    removed from the message store.
 
     \sa messagesAdded(), messagesUpdated(), startNotifications()
 */
@@ -1736,7 +1731,7 @@ QMessageStore* QMessageStore::instance()
     \fn void QMessageStore::messagesUpdated(const QMessageIdList& ids)
 
     Signal that is emitted when the messages in the list \a ids are
-    updated within the mail store.
+    updated within the message store.
 
     \sa messagesAdded(), messagesRemoved(), startNotifications()
 */
