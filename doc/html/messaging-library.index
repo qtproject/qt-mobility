@@ -354,6 +354,7 @@
                 <value name="ContentInaccessible" value="3"/>
                 <value name="NotYetImplemented" value="4"/>
                 <value name="FrameworkFault" value="5"/>
+                <value name="WorkingIdsOverflow" value="6"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="lastError" fullname="QMessageStore::lastError" href="qmessagestore.html#lastError" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageStore::ErrorCode" signature="lastError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="queryMessages" fullname="QMessageStore::queryMessages" href="qmessagestore.html#queryMessages" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageIdList" signature="queryMessages(const QMessageFilterKey &amp; key, const QMessageSortKey &amp; sortKey, uint limit, uint offset) const">
@@ -382,6 +383,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="messageContent" fullname="QMessageStore::messageContent" href="qmessagestore.html#messageContent" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageContent" signature="messageContent(const QMessageContentId &amp; id) const">
                 <parameter left="const QMessageContentId &amp;" right="" name="id" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMaximumWorkingIds" fullname="QMessageStore::setMaximumWorkingIds" href="qmessagestore.html#setMaximumWorkingIds" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMaximumWorkingIds(uint maximumIds)">
+                <parameter left="uint" right="" name="maximumIds" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maximumWorkingIds" fullname="QMessageStore::maximumWorkingIds" href="qmessagestore.html#maximumWorkingIds" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="uint" signature="maximumWorkingIds()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QMessageStore::instance" href="qmessagestore.html#instance" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageStore *" signature="instance()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="messagesAdded" fullname="QMessageStore::messagesAdded" href="qmessagestore.html#messagesAdded" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="messagesAdded(const QMessageIdList &amp; ids)">
                 <parameter left="const QMessageIdList &amp;" right="" name="ids" default=""/>

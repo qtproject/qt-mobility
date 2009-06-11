@@ -1570,7 +1570,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
 /*
     TODO capabilities NativeBooleanSarch NativeSlices Sms Mms Email Xmpp Presence NativeExentendedSearching NativeBodySearching
-      ExtendedNativeServices
+      ExtendedServices
 
     Activate/deactive on only adds, deletes or updates? Requires enum,
     enum NotificationType 
@@ -1593,6 +1593,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     \value ContentInaccessible  The operation failed because the content data cannot be accessed by the message store.
     \value NotYetImplemented    The operation failed because the message store does not yet implement the operation.
     \value FrameworkFault       The operation failed because the message store encountered an error in performing the operation.
+    \value WorkingIdsOverflow   The operation failed because the message store could not perform the operation within the constraint specified by setMaximumWorkingIds().
 */
 
 /*!
@@ -1612,6 +1613,8 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countMessages(), setMaximumWorkingIds()
 */
 QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
@@ -1626,6 +1629,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
+    
+    \sa lastError(), queryMessages(), setMaximumWorkingIds()
 */
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
 {
@@ -1694,6 +1699,42 @@ QMessage QMessageStore::message(const QMessageId& id) const
    Returns the QMessageContent defined by the QMessageContentId \a id from the store.
 */
 QMessageContent QMessageStore::messageContent(const QMessageContentId& id) const
+{
+    Q_UNUSED(id)
+    return QMessageContent(); // stub
+}
+
+/*!
+   If \a maximumIds is 0, removes any constraint on the maximum number of ids
+   that can be kept in the working list when evaluating countMessages() 
+   and queryMessages().
+   
+   Otherwise sets the maximum number of ids than can be kept in the working
+   list when evaluating countMessages() and queryMessages(). A failure to 
+   satisfy the working list size constraint is reported by lastError()
+   returning WorkingIdsOverflow.
+   
+   The working list is used only when an atomic evaluation of a QMessageFilterKey
+   based query is not supported.
+   
+   \sa maximumWorkingIds(), ErrorCode, countMessages(), queryMessages(), lastError()
+*/
+void QMessageStore::setMaximumWorkingIds(uint maximumIds)
+{
+    Q_UNUSED(id)
+    return QMessageContent(); // stub
+}
+
+/*!
+   Returns 0 if no constraint has been set by setMaximumWorkingIds().
+   
+   Otherwise returns the maximum working list size as set by setMaximumWorkingIds().
+   
+   The default working list size is platform specific.
+   
+   \sa setMaximumWorkingIds(), ErrorCode, countMessages(), queryMessages()
+*/
+uint QMessageStore::maximumWorkingIds()
 {
     Q_UNUSED(id)
     return QMessageContent(); // stub

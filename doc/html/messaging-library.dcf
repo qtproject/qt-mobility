@@ -163,6 +163,7 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NotYetImplemented</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::FrameworkFault</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::InvalidId</keyword>
+        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingIdsOverflow</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
         <keyword ref="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</keyword>
@@ -171,6 +172,7 @@
         <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
+        <keyword ref="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
         <keyword ref="qmessagestore.html#messageContent">messageContent</keyword>
         <keyword ref="qmessagestore.html#messagesAdded">messagesAdded</keyword>
@@ -179,6 +181,7 @@
         <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
+        <keyword ref="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</keyword>
         <keyword ref="qmessagestore.html#startNotifications">startNotifications</keyword>
         <keyword ref="qmessagestore.html#stopNotifications">stopNotifications</keyword>
         <keyword ref="qmessagestore.html#updateMessage">updateMessage</keyword>

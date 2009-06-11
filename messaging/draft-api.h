@@ -278,7 +278,8 @@ public:
         ConstraintFailure,
         ContentInaccessible,
         NotYetImplemented,
-        FrameworkFault
+        FrameworkFault,
+        WorkingIdsOverflow
     };
 
     QMessageStore::ErrorCode lastError() const;
@@ -289,7 +290,9 @@ public:
     bool updateMessage(QMessage *m);
     QMessage message(const QMessageId& id) const;
     QMessageContent messageContent(const QMessageContentId& id) const;
-
+    void setMaximumWorkingIds(uint maximumIds);
+    uint maximumWorkingIds();
+    
     static QMessageStore* instance();
     
 signals:
