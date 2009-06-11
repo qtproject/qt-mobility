@@ -421,6 +421,8 @@ void QMessageContent::serialize(QDataStream& out) const
 
     \value Read            This flag indicates that the content of this message has been displayed to the user.
     \value HasAttachments  This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.
+    \value Incoming        This flag indicates that the message has been sent from an external source.
+    \value Removed         This flag indicates that the message has been deleted from or moved on the originating server.
 */
 
 /*!
@@ -1721,8 +1723,7 @@ QMessageContent QMessageStore::messageContent(const QMessageContentId& id) const
 */
 void QMessageStore::setMaximumWorkingIds(uint maximumIds)
 {
-    Q_UNUSED(id)
-    return QMessageContent(); // stub
+    Q_UNUSED(maximumIds)
 }
 
 /*!
@@ -1736,8 +1737,7 @@ void QMessageStore::setMaximumWorkingIds(uint maximumIds)
 */
 uint QMessageStore::maximumWorkingIds()
 {
-    Q_UNUSED(id)
-    return QMessageContent(); // stub
+    return 0; // stub
 }
 
 /*!

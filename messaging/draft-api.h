@@ -84,7 +84,9 @@ public:
     enum MessageStatus
     {
         Read = 0x1,
-        HasAttachments = 0x2
+        HasAttachments = 0x2,
+        Incoming = 0x4,
+        Removed = 0x8
     };
 
     enum MessagePriority
