@@ -72,6 +72,8 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="MessageStatus" fullname="QMessage::MessageStatus" href="qmessage.html#MessageStatus-enum" location="draft-api.h">
                 <value name="Read" value="0x1"/>
                 <value name="HasAttachments" value="0x2"/>
+                <value name="Incoming" value="0x4"/>
+                <value name="Removed" value="0x8"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="MessagePriority" fullname="QMessage::MessagePriority" href="qmessage.html#MessagePriority-enum" location="draft-api.h">
                 <value name="High" value="1"/>

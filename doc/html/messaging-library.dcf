@@ -10,6 +10,8 @@
         <keyword ref="qmessage.html#MessageStatus-enum">MessageStatus</keyword>
         <keyword ref="qmessage.html#MessageStatus-enum">QMessage::HasAttachments</keyword>
         <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Read</keyword>
+        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Incoming</keyword>
+        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Removed</keyword>
         <keyword ref="qmessage.html#MessageType-enum">MessageType</keyword>
         <keyword ref="qmessage.html#MessageType-enum">QMessage::Sms</keyword>
         <keyword ref="qmessage.html#MessageType-enum">QMessage::Xmpp</keyword>

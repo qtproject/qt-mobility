@@ -22,7 +22,7 @@
 <h3>Public Types</h3>
 <ul>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#MessagePriority-enum">MessagePriority</a></b> { High, Normal, Low }</li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#MessageStatus-enum">MessageStatus</a></b> { Read, HasAttachments }</li>
+<li><div class="fn"></div>enum <b><a href="qmessage.html#MessageStatus-enum">MessageStatus</a></b> { Read, HasAttachments, Incoming, Removed }</li>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#MessageType-enum">MessageType</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
 </ul>
 <a name="public-functions"></a>
@@ -110,6 +110,8 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::Read</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">This flag indicates that the content of this message has been displayed to the user.</td></tr>
 <tr><td valign="top"><tt>QMessage::HasAttachments</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.</td></tr>
+<tr><td valign="top"><tt>QMessage::Incoming</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">This flag indicates that the message has been sent from an external source.</td></tr>
+<tr><td valign="top"><tt>QMessage::Removed</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">This flag indicates that the message has been deleted from or moved on the originating server.</td></tr>
 </table></p>
 <h3 class="fn"><a name="MessageType-enum"></a>enum QMessage::MessageType</h3>
 <p>Defines the type of a message.</p>
