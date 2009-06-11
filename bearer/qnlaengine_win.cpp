@@ -502,7 +502,7 @@ void QNlaThread::fetchConfigurations()
     }
 
     WSAQUERYSET qsRestrictions;
-    HANDLE hLookup;
+    HANDLE hLookup = 0;
 
     memset(&qsRestrictions, 0, sizeof(qsRestrictions));
     qsRestrictions.dwSize = sizeof(qsRestrictions);
@@ -543,9 +543,11 @@ void QNlaThread::fetchConfigurations()
         foundConfigurations.append(cpPriv);
     }
 
-    result = WSALookupServiceEnd(hLookup);
-    if (result == SOCKET_ERROR) {
-        qWarning("WSALookupServiceEnd error %d", WSAGetLastError());
+    if (hLookup) {
+        result = WSALookupServiceEnd(hLookup);
+        if (result == SOCKET_ERROR) {
+            qWarning("WSALookupServiceEnd error %d", WSAGetLastError());
+        }
     }
 
     updateConfigurations(foundConfigurations);
