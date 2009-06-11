@@ -54,6 +54,7 @@ class tst_QNetworkSession : public QObject
 
 public slots:
     void initTestCase();
+    void cleanupTestCase();
 
 private slots:
     void invalidSession();
@@ -63,6 +64,8 @@ private slots:
 
 private:
     QNetworkConfigurationManager manager;
+
+    uint inProcessSessionManagementCount;
 };
 
 void tst_QNetworkSession::initTestCase()
@@ -70,17 +73,21 @@ void tst_QNetworkSession::initTestCase()
     qRegisterMetaType<QNetworkSession::State>("QNetworkSession::State");
     qRegisterMetaType<QNetworkSession::SessionError>("QNetworkSession::SessionError");
 
+    inProcessSessionManagementCount = 0;
+
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations();
     QTRY_VERIFY(spy.count() == 1);
 }
 
-void tst_QNetworkSession::inProcessSessionManagement_data()
+void tst_QNetworkSession::cleanupTestCase()
 {
-    QTest::addColumn<QNetworkConfiguration>("configuration");
-
-    foreach (const QNetworkConfiguration &config, manager.allConfigurations())
-        QTest::newRow(config.name().toLocal8Bit().constData()) << config;
+    if (!(manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) &&
+        (manager.capabilities() & QNetworkConfigurationManager::BearerManagement) &&
+        inProcessSessionManagementCount == 0) {
+        QFAIL("No usable configurations found to complete all possible "
+              "tests in inProcessSessionManagement()");
+    }
 }
 
 void tst_QNetworkSession::invalidSession()
@@ -88,6 +95,20 @@ void tst_QNetworkSession::invalidSession()
     QNetworkSession session(QNetworkConfiguration(), 0);
     QVERIFY(!session.isActive());
     QVERIFY(session.state() == QNetworkSession::Invalid);
+}
+
+void tst_QNetworkSession::inProcessSessionManagement_data()
+{
+    QTest::addColumn<QNetworkConfiguration>("configuration");
+    QTest::addColumn<bool>("forceSessionStop");
+
+    foreach (const QNetworkConfiguration &config, manager.allConfigurations()) {
+        const QString name = config.name().isEmpty() ? QString("<Hidden>") : config.name();
+        QTest::newRow((name + QLatin1String(" close")).toLocal8Bit().constData())
+            << config << false;
+        QTest::newRow((name + QLatin1String(" stop")).toLocal8Bit().constData())
+            << config << true;
+    }
 }
 
 void tst_QNetworkSession::inProcessSessionManagement()
@@ -98,6 +119,7 @@ void tst_QNetworkSession::inProcessSessionManagement()
     }
 
     QFETCH(QNetworkConfiguration, configuration);
+    QFETCH(bool, forceSessionStop);
 
     QNetworkSession session(configuration);
 
@@ -113,8 +135,6 @@ void tst_QNetworkSession::inProcessSessionManagement()
     // The remaining tests require the session to be not NotAvailable.
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
-
-    bool sessionInitiallyConnected = session.state() == QNetworkSession::Connected;
 
     QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
     QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
@@ -172,6 +192,8 @@ void tst_QNetworkSession::inProcessSessionManagement()
 
     QSignalSpy sessionOpenedSpy2(&session2, SIGNAL(sessionOpened()));
     QSignalSpy sessionClosedSpy2(&session2, SIGNAL(sessionClosed()));
+    QSignalSpy stateChangedSpy2(&session2, SIGNAL(stateChanged(QNetworkSession::State)));
+    QSignalSpy errorSpy2(&session2, SIGNAL(error(QNetworkSession::SessionError)));
 
     // Test opening a second session.
     {
@@ -195,40 +217,42 @@ void tst_QNetworkSession::inProcessSessionManagement()
 
     sessionOpenedSpy2.clear();
 
-    // Test closing the second session.
-    {
-        session2.close();
-
-        QTRY_VERIFY(!sessionClosedSpy2.isEmpty());
-
-        QVERIFY(sessionClosedSpy.isEmpty());
-
-        QVERIFY(session.isActive());
-        QVERIFY(!session2.isActive());
-        QVERIFY(session.state() == QNetworkSession::Connected);
-        QVERIFY(session2.state() == QNetworkSession::Connected);
-        QCOMPARE(session.property(QLatin1String("SessionReferenceCount")).toUInt(), 1U);
-        QCOMPARE(session2.property(QLatin1String("SessionReferenceCount")).toUInt(), 1U);
-    }
-
-    sessionClosedSpy2.clear();
-
-    // Test closing the first session.
-    {
+    if (forceSessionStop) {
+        // Test forcing the second session to stop the interface.
         bool expectStateChange = session.state() != QNetworkSession::Disconnected;
 
-        session.close();
+        session2.stop();
 
-        QTRY_VERIFY(!sessionClosedSpy.isEmpty() || !errorSpy.isEmpty());
+        QTRY_VERIFY(!sessionClosedSpy2.isEmpty() || !errorSpy2.isEmpty());
 
-        QVERIFY(!session.isActive());
+        QVERIFY(!session2.isActive());
 
-        if (expectStateChange)
-            QTRY_VERIFY(!stateChangedSpy.isEmpty() || !errorSpy.isEmpty());
-
-        if (!errorSpy.isEmpty()) {
+        if (!errorSpy2.isEmpty()) {
+            // check for SessionAbortedError
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
+            QNetworkSession::SessionError error2 =
+                qvariant_cast<QNetworkSession::SessionError>(errorSpy2.first().at(0));
+
+            QVERIFY(error == QNetworkSession::SessionAbortedError);
+            QVERIFY(error2 == QNetworkSession::SessionAbortedError);
+
+            QCOMPARE(errorSpy.count(), 1);
+            QCOMPARE(errorSpy2.count(), 1);
+
+            errorSpy.clear();
+            errorSpy2.clear();
+        }
+
+        QVERIFY(errorSpy.isEmpty());
+        QVERIFY(errorSpy2.isEmpty());
+
+        if (expectStateChange)
+            QTRY_VERIFY(!stateChangedSpy2.isEmpty() || !errorSpy2.isEmpty());
+
+        if (!errorSpy2.isEmpty()) {
+            QNetworkSession::SessionError error =
+                qvariant_cast<QNetworkSession::SessionError>(errorSpy2.first().at(0));
             if (error == QNetworkSession::OperationNotSupportedError) {
                 // The session needed to bring down the interface,
                 // but the operation is not supported.
@@ -245,16 +269,92 @@ void tst_QNetworkSession::inProcessSessionManagement()
             } else {
                 QFAIL("Error opening session.");
             }
-        } else if (!sessionClosedSpy.isEmpty()) {
-            QVERIFY(sessionOpenedSpy.isEmpty());
-            QCOMPARE(sessionClosedSpy.count(), 1);
-            QVERIFY(errorSpy.isEmpty());
-
+        } else if (!sessionClosedSpy2.isEmpty()) {
             QVERIFY(session.state() == QNetworkSession::Disconnected);
+            QVERIFY(session2.state() == QNetworkSession::Disconnected);
 
-            QCOMPARE(session.property(QLatin1String("SessionReferenceCount")).toUInt(), 0U);
+            QVERIFY(errorSpy.isEmpty());
+            QVERIFY(errorSpy2.isEmpty());
+
+            ++inProcessSessionManagementCount;
         } else {
-            QFAIL("Timeout waiting for session to open.");
+            QFAIL("Timeout waiting for session to stop.");
+        }
+
+        QVERIFY(!sessionClosedSpy.isEmpty());
+        QVERIFY(!sessionClosedSpy2.isEmpty());
+
+        QVERIFY(!session.isActive());
+        QVERIFY(!session2.isActive());
+
+        QCOMPARE(session.property(QLatin1String("sessionreferenceCount")).toUInt(), 0U);
+        QCOMPARE(session2.property(QLatin1String("sessionreferenceCount")).toUInt(), 0U);
+    } else {
+        // Test closing the second session.
+        {
+            session2.close();
+
+            QTRY_VERIFY(!sessionClosedSpy2.isEmpty());
+
+            QVERIFY(sessionClosedSpy.isEmpty());
+
+            QVERIFY(session.isActive());
+            QVERIFY(!session2.isActive());
+            QVERIFY(session.state() == QNetworkSession::Connected);
+            QVERIFY(session2.state() == QNetworkSession::Connected);
+            QCOMPARE(session.property(QLatin1String("SessionReferenceCount")).toUInt(), 1U);
+            QCOMPARE(session2.property(QLatin1String("SessionReferenceCount")).toUInt(), 1U);
+        }
+
+        sessionClosedSpy2.clear();
+
+        // Test closing the first session.
+        {
+            bool expectStateChange = session.state() != QNetworkSession::Disconnected;
+
+            session.close();
+
+            QTRY_VERIFY(!sessionClosedSpy.isEmpty() || !errorSpy.isEmpty());
+
+            QVERIFY(!session.isActive());
+
+            if (expectStateChange)
+                QTRY_VERIFY(!stateChangedSpy.isEmpty() || !errorSpy.isEmpty());
+
+            if (!errorSpy.isEmpty()) {
+                QNetworkSession::SessionError error =
+                    qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
+                if (error == QNetworkSession::OperationNotSupportedError) {
+                    // The session needed to bring down the interface,
+                    // but the operation is not supported.
+                    QSKIP("Configuration does not support close().", SkipSingle);
+                } else if (error == QNetworkSession::InvalidConfigurationError) {
+                    // The session needed to bring down the interface, but it is not possible for the
+                    // specified configuration.
+                    if ((session.configuration().state() & QNetworkConfiguration::Discovered) ==
+                        QNetworkConfiguration::Discovered) {
+                        QFAIL("Failed to open session for Discovered configuration.");
+                    } else {
+                        QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
+                    }
+                } else {
+                    QFAIL("Error opening session.");
+                }
+            } else if (!sessionClosedSpy.isEmpty()) {
+                QVERIFY(sessionOpenedSpy.isEmpty());
+                QCOMPARE(sessionClosedSpy.count(), 1);
+                if (expectStateChange)
+                    QVERIFY(!stateChangedSpy.isEmpty());
+                QVERIFY(errorSpy.isEmpty());
+
+                QVERIFY(session.state() == QNetworkSession::Disconnected);
+
+                QCOMPARE(session.property(QLatin1String("SessionReferenceCount")).toUInt(), 0U);
+
+                ++inProcessSessionManagementCount;
+            } else {
+                QFAIL("Timeout waiting for session to close.");
+            }
         }
     }
 }

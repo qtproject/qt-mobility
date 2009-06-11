@@ -144,7 +144,7 @@ void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Cloud::stateChanged(QNetworkSession::State state)
 {
     if (configuration.name().isEmpty())
-        finalOpacity = 0.1;
+        finalOpacity = qreal(0.1);
     else if (session->state() == QNetworkSession::NotAvailable)
         finalOpacity = 0.5;
     else
