@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
     BearerCloud bearerCloud;
 
     QGraphicsView view(&bearerCloud);
+    view.setRenderHints(QPainter::TextAntialiasing
+                        | QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     view.show();
 
     return app.exec();
