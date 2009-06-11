@@ -8,7 +8,7 @@ SOURCES = main.cpp \
 FORMS = bearerdialog.ui \
         sessionwidget.ui
 
-TARGET = bearer-monitor
+TARGET = bearermonitor
 
 QT = core gui network
 
