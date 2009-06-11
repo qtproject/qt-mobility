@@ -451,17 +451,22 @@
     \fn virtual void QSatelliteInfoSource::requestUpdate(int timeout = 5000);
 
     Attempts to get the current satellite information and emit
-    satellitesInViewUpdated() and satellitesInUseUpdated() with
-    this information.
+    satellitesInViewUpdated() and satellitesInUseUpdated() with this
+    information. This is useful if you do not need the regular updates
+    provided by startUpdates(). If the current position cannot be found
+    within the given \a timeout (in milliseconds), requestTimeout() is
+    emitted.
 
-    This is useful if you do not need the regular updates
-    provided by startUpdates(). The timeout for the update is specified by
-    \a timeout in milliseconds.
-
-    This can be called even if startUpdates() has already been called and
+    This does nothing if another update request is in progress. However
+    it can be called even if startUpdates() has already been called and
     regular updates are in progress.
+*/
 
-    This does nothing if another update request is in progress.
+/*!
+    \fn void QSatelliteInfoSource::requestTimeout();
+
+    Emitted if requestUpdate() was called and the current satellite
+    information could not be retrieved within the specified timeout.
 */
 
 /*!

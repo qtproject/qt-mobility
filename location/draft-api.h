@@ -133,6 +133,7 @@ public slots:
 signals:
     void satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
+    void requestTimeout();
 
 private:
     Q_DISABLE_COPY(QSatelliteInfoSource)

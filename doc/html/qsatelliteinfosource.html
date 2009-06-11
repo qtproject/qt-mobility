@@ -32,6 +32,7 @@
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
+<li><div class="fn"/>void <b><a href="qsatelliteinfosource.html#requestTimeout">requestTimeout</a></b> ()</li>
 <li><div class="fn"/>void <b><a href="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a></b> ( const QList&lt;QSatelliteInfo&gt; &amp; <i>satellites</i> )</li>
 <li><div class="fn"/>void <b><a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a></b> ( const QList&lt;QSatelliteInfo&gt; &amp; <i>satellites</i> )</li>
 </ul>
@@ -53,11 +54,11 @@
 <h3 class="fn"><a name="createSource"></a>QSatelliteInfoSource * QSatelliteInfoSource::createSource ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a source that reads from the system's default source of satellite update information.</p>
 <p>Returns 0 if the system has no default source.</p>
+<h3 class="fn"><a name="requestTimeout"></a>void QSatelliteInfoSource::requestTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Emitted if <a href="qsatelliteinfosource.html#requestUpdate">requestUpdate</a>() was called and the current satellite information could not be retrieved within the specified timeout.</p>
 <h3 class="fn"><a name="requestUpdate"></a>void QSatelliteInfoSource::requestUpdate ( int <i>timeout</i> = 5000 )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
-<p>Attempts to get the current satellite information and emit <a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information.</p>
-<p>This is useful if you do not need the regular updates provided by <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>(). The timeout for the update is specified by <i>timeout</i> in milliseconds.</p>
-<p>This can be called even if <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
-<p>This does nothing if another update request is in progress.</p>
+<p>Attempts to get the current satellite information and emit <a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information. This is useful if you do not need the regular updates provided by <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>(). If the current position cannot be found within the given <i>timeout</i> (in milliseconds), <a href="qsatelliteinfosource.html#requestTimeout">requestTimeout</a>() is emitted.</p>
+<p>This does nothing if another update request is in progress. However it can be called even if <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
 <h3 class="fn"><a name="satellitesInUseUpdated"></a>void QSatelliteInfoSource::satellitesInUseUpdated ( const QList&lt;<a href="qsatelliteinfo.html">QSatelliteInfo</a>&gt; &amp; <i>satellites</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>If <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() or <a href="qsatelliteinfosource.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update is available on the number of satellites that are currently in use.</p>
 <p>These are the satellites that are used to get a &quot;fix&quot; - that is, those used to determine the current position.</p>

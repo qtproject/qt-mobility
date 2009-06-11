@@ -104,6 +104,7 @@
     <section ref="qsatelliteinfosource.html" title="QSatelliteInfoSource Class Reference">
         <keyword ref="qsatelliteinfosource.html">QSatelliteInfoSource</keyword>
         <keyword ref="qsatelliteinfosource.html#createSource">createSource</keyword>
+        <keyword ref="qsatelliteinfosource.html#requestTimeout">requestTimeout</keyword>
         <keyword ref="qsatelliteinfosource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>
         <keyword ref="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</keyword>

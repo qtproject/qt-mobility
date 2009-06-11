@@ -146,6 +146,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInUseUpdated" fullname="QSatelliteInfoSource::satellitesInUseUpdated" href="qsatelliteinfosource.html#satellitesInUseUpdated" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInUseUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
                 <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QSatelliteInfoSource::requestTimeout" href="qsatelliteinfosource.html#requestTimeout" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"></function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QPositionSource" href="qpositionsource.html" location="draft-api.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="IntervalType" fullname="QPositionSource::IntervalType" href="qpositionsource.html#IntervalType-enum" location="draft-api.h">
