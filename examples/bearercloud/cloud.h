@@ -57,6 +57,7 @@ public:
 
     void setFinalScale(qreal factor);
     void setOrbit(qreal radius, qreal angle);
+    void setDeleteAfterAnimation(bool deleteAfter);
 
     void advance(int phase);
     QRectF boundingRect() const;
@@ -80,5 +81,7 @@ private:
     qreal finalOpacity;
     qreal finalScale;
     qreal currentScale;
+
+    bool deleteAfterAnimation;
 };
 

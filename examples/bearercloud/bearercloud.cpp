@@ -152,6 +152,7 @@ void BearerCloud::updateConfigurations()
         // delete configuration
         Cloud *item = configurations.take(previousIds.takeFirst());
         item->setFinalScale(0.0);
+        item->setDeleteAfterAnimation(true);
     }
 
     foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys()) {

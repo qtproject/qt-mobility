@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += bearer-monitor bearercloud
+SUBDIRS += bearermonitor bearercloud

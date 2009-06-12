@@ -44,15 +44,41 @@
 #include <QApplication>
 #include <QGraphicsView>
 
+class CloudView : public QGraphicsView
+{
+    Q_OBJECT
+
+public:
+    CloudView(QGraphicsScene *scene);
+    ~CloudView() { }
+
+protected:
+    void resizeEvent(QResizeEvent *) {
+        fitInView(sceneRect(), Qt::KeepAspectRatio);
+    }
+#ifdef Q_OS_WINCE
+    void hideEvent(QHideEvent *) {
+        qApp->quit();
+    }
+#endif
+};
+
+CloudView::CloudView(QGraphicsScene *scene)
+:   QGraphicsView(scene)
+{
+    setRenderHints(QPainter::TextAntialiasing | QPainter::Antialiasing |
+                   QPainter::SmoothPixmapTransform);
+}
+
+#include "main.moc"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     BearerCloud bearerCloud;
 
-    QGraphicsView view(&bearerCloud);
-    view.setRenderHints(QPainter::TextAntialiasing
-                        | QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    CloudView view(&bearerCloud);
     view.show();
 
     return app.exec();

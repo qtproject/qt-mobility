@@ -53,7 +53,7 @@
 #include <math.h>
 
 Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
-:   QGraphicsItem(parent), configuration(config)
+:   QGraphicsItem(parent), configuration(config), deleteAfterAnimation(false)
 {
     session = new QNetworkSession(configuration);
     connect(session, SIGNAL(newConfigurationActivated()),
@@ -67,6 +67,7 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
     currentScale = 0;
     finalScale = 1;
     setTransform(QTransform::fromScale(currentScale, currentScale), false);
+    setOpacity(0);
 
     newConfigurationActivated();
 }
@@ -86,24 +87,32 @@ void Cloud::setOrbit(qreal radius, qreal angle)
     finalPos = QPointF(radius * cos(angle), radius * sin(angle));
 }
 
+void Cloud::setDeleteAfterAnimation(bool deleteAfter)
+{
+    deleteAfterAnimation = deleteAfter;
+}
+
 void Cloud::advance(int phase)
 {
     if (phase == 0)
         return;
 
+    bool animated = false;
+
     if (currentScale < finalScale) {
+        animated = true;
         currentScale = qMin<qreal>(currentScale + 0.01, finalScale);
         setTransform(QTransform::fromScale(currentScale, currentScale), false);
     } else if (currentScale > finalScale) {
+        animated = true;
         currentScale = qMax<qreal>(currentScale - 0.01, finalScale);
         setTransform(QTransform::fromScale(currentScale, currentScale), false);
-    } else if (qFuzzyCompare(currentScale + 1.0, 1.0)) {
-        deleteLater();
     }
 
     QPointF direction = finalPos - pos();
     qreal length = sqrt(direction.rx() * direction.rx() + direction.ry() * direction.ry());
     if (pos() != finalPos) {
+        animated = true;
         if (length < 1) {
             setPos(finalPos);
         } else {
@@ -113,11 +122,20 @@ void Cloud::advance(int phase)
     }
 
     if (opacity() != finalOpacity) {
-        if (length > 1)
+        animated = true;
+        if (length > 1) {
+            // use translation as reference
             setOpacity(opacity() + (finalOpacity - opacity()) / length);
-        else
+        } else if (qAbs(finalScale - currentScale) > 0.0) {
+            // use scale as reference
+            setOpacity(opacity() + (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
+        } else {
             setOpacity(finalOpacity);
+        }
     }
+
+    if (!animated && deleteAfterAnimation)
+        deleteLater();
 }
 
 QRectF Cloud::boundingRect() const
