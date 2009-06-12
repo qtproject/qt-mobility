@@ -1,0 +1,117 @@
+<!DOCTYPE DCF>
+<DCF ref="index.html" icon="multimedia-library.png" imagedir="../../gif" title="Multimedia Library Reference Documentation">
+<section ref="classes.html" title="Classes">
+    <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
+        <keyword ref="qmediaimageviewer.html">QMediaImageViewer</keyword>
+        <keyword ref="qmediaimageviewer.html#State-enum">State</keyword>
+        <keyword ref="qmediaimageviewer.html#interval-prop">interval</keyword>
+        <keyword ref="qmediaimageviewer.html#mediaSource-prop">mediaSource</keyword>
+        <keyword ref="qmediaimageviewer.html#mediaSource-prop">setMediaSource</keyword>
+        <keyword ref="qmediaimageviewer.html#state-prop">state</keyword>
+        <keyword ref="qmediaimageviewer.html#intervalChanged">intervalChanged</keyword>
+        <keyword ref="qmediaimageviewer.html#pause">pause</keyword>
+        <keyword ref="qmediaimageviewer.html#play">play</keyword>
+        <keyword ref="qmediaimageviewer.html#skipBackward">skipBackward</keyword>
+        <keyword ref="qmediaimageviewer.html#skipForward">skipForward</keyword>
+        <keyword ref="qmediaimageviewer.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qmediaimageviewer.html#stop">stop</keyword>
+        <section ref="qmediaimageviewer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediametadata.html" title="QMediaMetaData Class Reference">
+        <keyword ref="qmediametadata.html">QMediaMetaData</keyword>
+        <keyword ref="qmediametadata.html#metaDataAvailable-prop">metaDataAvailable</keyword>
+        <keyword ref="qmediametadata.html#availableMetaData">availableMetaData</keyword>
+        <keyword ref="qmediametadata.html#metaDataAvailabilityChanged">metaDataAvailabilityChanged</keyword>
+        <keyword ref="qmediametadata.html#valueFor">valueFor</keyword>
+        <section ref="qmediametadata-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplayer.html" title="QMediaPlayer Class Reference">
+        <keyword ref="qmediaplayer.html">QMediaPlayer</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">State</keyword>
+        <keyword ref="qmediaplayer.html#duration-prop">duration</keyword>
+        <keyword ref="qmediaplayer.html#mediaSource-prop">mediaSource</keyword>
+        <keyword ref="qmediaplayer.html#mediaSource-prop">setMediaSource</keyword>
+        <keyword ref="qmediaplayer.html#position-prop">position</keyword>
+        <keyword ref="qmediaplayer.html#position-prop">setPosition</keyword>
+        <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
+        <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
+        <keyword ref="qmediaplayer.html#bufferingChanged">bufferingChanged</keyword>
+        <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
+        <keyword ref="qmediaplayer.html#isBuffering">isBuffering</keyword>
+        <keyword ref="qmediaplayer.html#isMuted">isMuted</keyword>
+        <keyword ref="qmediaplayer.html#isVideoAvailable">isVideoAvailable</keyword>
+        <keyword ref="qmediaplayer.html#mediaSourceChanged">mediaSourceChanged</keyword>
+        <keyword ref="qmediaplayer.html#mutingChanged">mutingChanged</keyword>
+        <keyword ref="qmediaplayer.html#pause">pause</keyword>
+        <keyword ref="qmediaplayer.html#play">play</keyword>
+        <keyword ref="qmediaplayer.html#positionChanged">positionChanged</keyword>
+        <keyword ref="qmediaplayer.html#session">session</keyword>
+        <keyword ref="qmediaplayer.html#setMuted">setMuted</keyword>
+        <keyword ref="qmediaplayer.html#source">source</keyword>
+        <keyword ref="qmediaplayer.html#state">state</keyword>
+        <keyword ref="qmediaplayer.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qmediaplayer.html#stop">stop</keyword>
+        <keyword ref="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</keyword>
+        <keyword ref="qmediaplayer.html#volumeChanged">volumeChanged</keyword>
+        <section ref="qmediaplayer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplaylist.html" title="QMediaPlaylist Class Reference">
+        <keyword ref="qmediaplaylist.html">QMediaPlaylist</keyword>
+        <keyword ref="qmediaplaylist.html#QMediaPlayList">QMediaPlayList</keyword>
+        <keyword ref="qmediaplaylist.html#clear">clear</keyword>
+        <keyword ref="qmediaplaylist.html#current">current</keyword>
+        <keyword ref="qmediaplaylist.html#enqueue">enqueue</keyword>
+        <keyword ref="qmediaplaylist.html#jump">jump</keyword>
+        <keyword ref="qmediaplaylist.html#next">next</keyword>
+        <keyword ref="qmediaplaylist.html#pause">pause</keyword>
+        <keyword ref="qmediaplaylist.html#prev">prev</keyword>
+        <keyword ref="qmediaplaylist.html#remove">remove</keyword>
+        <keyword ref="qmediaplaylist.html#start">start</keyword>
+        <keyword ref="qmediaplaylist.html#stop">stop</keyword>
+        <section ref="qmediaplaylist-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediarecorder.html" title="QMediaRecorder Class Reference">
+        <keyword ref="qmediarecorder.html">QMediaRecorder</keyword>
+        <keyword ref="qmediarecorder.html#State-enum">State</keyword>
+        <keyword ref="qmediarecorder.html#pause">pause</keyword>
+        <keyword ref="qmediarecorder.html#record">record</keyword>
+        <keyword ref="qmediarecorder.html#session">session</keyword>
+        <keyword ref="qmediarecorder.html#setMediaSink">setMediaSink</keyword>
+        <keyword ref="qmediarecorder.html#setMuted">setMuted</keyword>
+        <keyword ref="qmediarecorder.html#setVolume">setVolume</keyword>
+        <keyword ref="qmediarecorder.html#sink">sink</keyword>
+        <keyword ref="qmediarecorder.html#state">state</keyword>
+        <keyword ref="qmediarecorder.html#stateChangeed">stateChangeed</keyword>
+        <keyword ref="qmediarecorder.html#stop">stop</keyword>
+        <section ref="qmediarecorder-members.html" title="List of all members"/>
+    </section>
+    <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">
+        <keyword ref="qradioplayer.html">QRadioPlayer</keyword>
+        <keyword ref="qradioplayer.html#Band-enum">Band</keyword>
+        <keyword ref="qradioplayer.html#band-prop">band</keyword>
+        <keyword ref="qradioplayer.html#band-prop">setBand</keyword>
+        <keyword ref="qradioplayer.html#frequency-prop">frequency</keyword>
+        <keyword ref="qradioplayer.html#signalStrength-prop">signalStrength</keyword>
+        <keyword ref="qradioplayer.html#stereo-prop">stereo</keyword>
+        <keyword ref="qradioplayer.html#stereo-prop">isStereo</keyword>
+        <keyword ref="qradioplayer.html#stereo-prop">setStereo</keyword>
+        <keyword ref="qradioplayer.html#bandChanged">bandChanged</keyword>
+        <keyword ref="qradioplayer.html#frequency">frequency</keyword>
+        <keyword ref="qradioplayer.html#frequencyChanged">frequencyChanged</keyword>
+        <keyword ref="qradioplayer.html#radioService">radioService</keyword>
+        <keyword ref="qradioplayer.html#searchBackward">searchBackward</keyword>
+        <keyword ref="qradioplayer.html#searchForward">searchForward</keyword>
+        <keyword ref="qradioplayer.html#setFrequency">setFrequency</keyword>
+        <keyword ref="qradioplayer.html#setSignalStrength">setSignalStrength</keyword>
+        <keyword ref="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</keyword>
+        <keyword ref="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</keyword>
+        <section ref="qradioplayer-members.html" title="List of all members"/>
+    </section>
+</section>
+<section ref="overviews.html" title="Overviews">
+    <section ref="index.html" title="Multimedia Library Developer Resources">
+        <keyword ref="index.html">Multimedia Library Developer Resources</keyword>
+    </section>
+</section>
+<section ref="examples.html" title="Tutorial &amp; Examples"/>
+</DCF>

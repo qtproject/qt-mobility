@@ -4,7 +4,7 @@
 class QMediaPlaylist
 {
 public:
-    QMediaPlayList(QString name, QPlayListSource = defaultPlayListSource());
+    QMediaPlaylist(QString name, QPlayListSource = defaultPlayListSource());
 
     void enqueue(QMediaSource);
     void remove(QMediaSource);
