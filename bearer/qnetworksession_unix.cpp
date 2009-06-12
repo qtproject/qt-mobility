@@ -450,14 +450,14 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
                                         dbusConnection);
         if (accessPointIface.isValid()) {
             currentBearerName = "WLAN";
-//            connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-//                    this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-//            if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                      APPAth,
-//                                      NM_DBUS_INTERFACE_ACCESS_POINT,
-//                                      "PropertiesChanged",
-//                                      nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-//            }
+            connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
+                    this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+            if(dbusConnection.connect(NM_DBUS_SERVICE,
+                                      APPAth,
+                                      NM_DBUS_INTERFACE_ACCESS_POINT,
+                                      "PropertiesChanged",
+                                      nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
+            }
         } else
             qWarning() << "NOT VALID";
     } else if(publicConfig.type() != QNetworkConfiguration::ServiceNetwork) {
