@@ -27,7 +27,7 @@ public:
 QMediaPlayer::QMediaPlayer(QMediaPlayerSession* session, QObject* parent):
     QObject(*new QMediaPlayerPrivate, parent)
 {
-    d_funct()->session = session;
+    d_func()->session = session;
 }
 
 /*!
