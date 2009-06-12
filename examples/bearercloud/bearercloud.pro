@@ -9,7 +9,7 @@ RESOURCES = icons.qrc
 
 TARGET = bearercloud
 
-QT = core gui network
+QT = core gui network svg
 
 INCLUDEPATH += ../../bearer
 

@@ -44,13 +44,15 @@
 #include <qnetworksession.h>
 
 #include <QGraphicsTextItem>
-#include <QGraphicsPixmapItem>
+#include <QGraphicsSvgItem>
 #include <QGraphicsSceneMouseEvent>
-#include <QPixmapCache>
+#include <QSvgRenderer>
 
 #include <QDebug>
 
 #include <math.h>
+
+static QMap<QString, QSvgRenderer *> svgCache;
 
 Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 :   QGraphicsItem(parent), configuration(config), deleteAfterAnimation(false)
@@ -61,7 +63,7 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(stateChanged(QNetworkSession::State)));
 
-    icon = new QGraphicsPixmapItem(this);
+    icon = new QGraphicsSvgItem(this);
     text = new QGraphicsTextItem(this);
 
     currentScale = 0;
@@ -247,18 +249,17 @@ void Cloud::stateChanged(QNetworkSession::State state)
 
 void Cloud::newConfigurationActivated()
 {
-    QPixmap pixmap;
     const QString bearerName = session->bearerName();
-    if (!bearerName.isEmpty() && !QPixmapCache::find(bearerName, pixmap)) {
+    if (!svgCache.contains(bearerName)) {
         if (bearerName == QLatin1String("WLAN"))
-            pixmap.load(":/wlan.png");
+            svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(":wlan.svg")));
         else if (bearerName == QLatin1String("Ethernet"))
-            pixmap.load(":/lan.png");
-
-        QPixmapCache::insert(bearerName, pixmap);
+            svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(":lan.svg")));
+        else
+            svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(":unknown.svg")));
     }
 
-    icon->setPixmap(pixmap);
+    icon->setSharedRenderer(svgCache[bearerName]);
 
     if (configuration.name().isEmpty()) {
         text->setPlainText(tr("HIDDEN NETWORK"));

@@ -45,7 +45,7 @@
 #include <QGraphicsItem>
 
 class QGraphicsTextItem;
-class QGraphicsPixmapItem;
+class QGraphicsSvgItem;
 
 class Cloud : public QObject, public QGraphicsItem
 {
@@ -77,7 +77,7 @@ private:
     QNetworkSession *session;
 
     QGraphicsTextItem *text;
-    QGraphicsPixmapItem *icon;
+    QGraphicsSvgItem *icon;
 
     QPointF finalPos;
     qreal finalOpacity;
