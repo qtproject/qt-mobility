@@ -609,17 +609,17 @@ void QNetworkSessionPrivate::activateNmSession()
                                                 dbusConnection);
                 if (devWirelessIface.isValid()) {
 
-//                    connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-//                            this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-//
-//                    if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                              devIface.path(),
-//                                              NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-//                                              "PropertiesChanged",
-//                                              nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-//                    } else {
-//                        qWarning() << "NOT connect";
-//                    }
+                    connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
+                            this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+
+                    if(dbusConnection.connect(NM_DBUS_SERVICE,
+                                              devIface.path(),
+                                              NM_DBUS_INTERFACE_DEVICE_WIRELESS,
+                                              "PropertiesChanged",
+                                              nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
+                    } else {
+                        qWarning() << "NOT connect";
+                    }
                     ok = true;
                 } else {
                     qWarning() << "devWirelessIface is not valid" << devIface.path();
