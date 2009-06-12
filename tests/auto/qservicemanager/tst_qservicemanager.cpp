@@ -46,6 +46,13 @@
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../sampleserviceplugin/sampleserviceplugin.h"
 
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
+
 typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
 Q_DECLARE_METATYPE(QServiceFilter)
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
@@ -1039,8 +1046,7 @@ void tst_QServiceManager::serviceAdded()
     QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString)));
     QVERIFY(mgr.addService(&buffer));
 
-    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
-    QCOMPARE(spy.count(), 1);
+    QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
     delete listener;
@@ -1079,8 +1085,7 @@ void tst_QServiceManager::serviceRemoved()
     QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
     QVERIFY(mgr.removeService(serviceName));
 
-    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
-    QCOMPARE(spy.count(), 1);
+    QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
     delete listener;
