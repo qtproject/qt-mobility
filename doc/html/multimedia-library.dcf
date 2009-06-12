@@ -28,6 +28,11 @@
     <section ref="qmediaplayer.html" title="QMediaPlayer Class Reference">
         <keyword ref="qmediaplayer.html">QMediaPlayer</keyword>
         <keyword ref="qmediaplayer.html#State-enum">State</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PausedState</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::EndOfStreamState</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PlayingState</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::LoadingState</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::StoppedState</keyword>
         <keyword ref="qmediaplayer.html#duration-prop">duration</keyword>
         <keyword ref="qmediaplayer.html#mediaSource-prop">mediaSource</keyword>
         <keyword ref="qmediaplayer.html#mediaSource-prop">setMediaSource</keyword>
@@ -35,6 +40,8 @@
         <keyword ref="qmediaplayer.html#position-prop">setPosition</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
+        <keyword ref="qmediaplayer.html#bufferStatus">bufferStatus</keyword>
+        <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
         <keyword ref="qmediaplayer.html#bufferingChanged">bufferingChanged</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#isBuffering">isBuffering</keyword>
@@ -47,7 +54,6 @@
         <keyword ref="qmediaplayer.html#positionChanged">positionChanged</keyword>
         <keyword ref="qmediaplayer.html#session">session</keyword>
         <keyword ref="qmediaplayer.html#setMuted">setMuted</keyword>
-        <keyword ref="qmediaplayer.html#source">source</keyword>
         <keyword ref="qmediaplayer.html#state">state</keyword>
         <keyword ref="qmediaplayer.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediaplayer.html#stop">stop</keyword>

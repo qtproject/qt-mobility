@@ -20,7 +20,7 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qmediaplayer.html#State-enum">State</a></b> { LoadingState, PlayingState, PausedState, StoppedState }</li>
+<li><div class="fn"></div>enum <b><a href="qmediaplayer.html#State-enum">State</a></b> { LoadingState, PlayingState, PausedState, StoppedState, EndOfStreamState }</li>
 </ul>
 <a name="properties"></a>
 <h3>Properties</h3>
@@ -35,13 +35,14 @@
 <ul>
 <li><div class="fn"></div><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QMediaPlayerSession * <i>session</i> = createMediaPlayerSession(), QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"></div><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</li>
+<li><div class="fn"></div>int <b><a href="qmediaplayer.html#bufferStatus">bufferStatus</a></b> () const</li>
 <li><div class="fn"></div>qint64 <b><a href="qmediaplayer.html#duration-prop">duration</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qmediaplayer.html#isBuffering">isBuffering</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qmediaplayer.html#isMuted">isMuted</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qmediaplayer.html#isVideoAvailable">isVideoAvailable</a></b> () const</li>
+<li><div class="fn"></div>QMediaSource <b><a href="qmediaplayer.html#mediaSource-prop">mediaSource</a></b> () const</li>
 <li><div class="fn"></div>qint64 <b><a href="qmediaplayer.html#position-prop">position</a></b> () const</li>
 <li><div class="fn"></div>QMediaPlayerSession * <b><a href="qmediaplayer.html#session">session</a></b> () const</li>
-<li><div class="fn"></div>QMediaSource <b><a href="qmediaplayer.html#source">source</a></b> () const</li>
 <li><div class="fn"></div>State <b><a href="qmediaplayer.html#state">state</a></b> () const</li>
 <li><div class="fn"></div>int <b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</li>
 </ul>
@@ -59,6 +60,7 @@
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
+<li><div class="fn"></div>void <b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmediaplayer.html#bufferingChanged">bufferingChanged</a></b> ( bool <i>buffering</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmediaplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmediaplayer.html#mediaSourceChanged">mediaSourceChanged</a></b> ( QMediaSource <i>mediaSource</i> )</li>
@@ -74,6 +76,15 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaPlayer::State</h3>
+<p>Defines the current state of the player object.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMediaPlayer::LoadingState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The player object is loading necessary data or libraries to play the content.</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::PlayingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The player object is currently playing the content.</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::PausedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The player object has paused playing the content, position information is, as necessary, retained.</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::StoppedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The player object has stopped playing the content, with stop being requested by the <a href="qmediaplayer.html#stop">stop</a>() function, position information is retained but will be reset on next call to <a href="qmediaplayer.html#play">play</a>()</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::EndOfStreamState</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The player object has stopped playing the content as the content has reached a natural end.</td></tr>
+</table></p>
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="duration-prop"></a>duration : const qint64</h3>
@@ -84,6 +95,7 @@
 <h3 class="fn"><a name="mediaSource-prop"></a>mediaSource : QMediaSource</h3>
 <p>Access functions:</p>
 <ul>
+<li><div class="fn"></div><b>QMediaSource mediaSource () const</b></li>
 <li><div class="fn"></div><b>void setMediaSource ( QMediaSource <i>mediaSource</i> )</b></li>
 </ul>
 <h3 class="fn"><a name="position-prop"></a>position : qint64</h3>
@@ -101,26 +113,48 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( QMediaPlayerSession * <i>session</i> = createMediaPlayerSession(), QObject * <i>parent</i> = 0 )</h3>
+<p>Construct a <a href="qmediaplayer.html">QMediaPlayer</a> to operate on the QMediaPlayerSession <i>session</i>, parented to <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaPlayer"></a>QMediaPlayer::~QMediaPlayer ()</h3>
+<p>Destroys the player object.</p>
+<h3 class="fn"><a name="bufferStatus"></a>int QMediaPlayer::bufferStatus () const</h3>
+<p>When buffering; returns the percent of the local buffer filled.</p>
+<h3 class="fn"><a name="bufferStatusChanged"></a>void QMediaPlayer::bufferStatusChanged ( int <i>percentFilled</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the amount of the local buffer filled as a percentage by <i>percentFilled</i>.</p>
 <h3 class="fn"><a name="bufferingChanged"></a>void QMediaPlayer::bufferingChanged ( bool <i>buffering</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the state of buffering has changed to <i>buffering</i>. When true some amount of the content is being buffered locally; when false local buffering has stopped.</p>
 <h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( qint64 <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the duration of the content has changed to <i>duration</i>, expressed in milliseconds.</p>
 <h3 class="fn"><a name="isBuffering"></a>bool QMediaPlayer::isBuffering () const</h3>
+<p>Returns true if the source is being buffered; otherwise false.</p>
 <h3 class="fn"><a name="isMuted"></a>bool QMediaPlayer::isMuted () const</h3>
+<p>Returns true if the playback volume is muted; otherwise false.</p>
 <h3 class="fn"><a name="isVideoAvailable"></a>bool QMediaPlayer::isVideoAvailable () const</h3>
+<p>Returns true if there is visual content available; otherwise false.</p>
 <h3 class="fn"><a name="mediaSourceChanged"></a>void QMediaPlayer::mediaSourceChanged ( QMediaSource <i>mediaSource</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal that the player object has change its content to <i>mediaSource</i>.</p>
 <h3 class="fn"><a name="mutingChanged"></a>void QMediaPlayer::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the mute state has changed to <i>muted</i>.</p>
 <h3 class="fn"><a name="pause"></a>void QMediaPlayer::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Pause playing the current source.</p>
 <h3 class="fn"><a name="play"></a>void QMediaPlayer::play ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Start or resume playing the current source.</p>
 <h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( qint64 <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the position of the content has changed to <i>position</i>, expressed in milliseconds approximately every 1000milliseconds.</p>
 <h3 class="fn"><a name="session"></a>QMediaPlayerSession * QMediaPlayer::session () const</h3>
+<p>Returns the session object being controlled by this Player.</p>
 <h3 class="fn"><a name="setMuted"></a>void QMediaPlayer::setMuted ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Set the mute state of the playback folume to <i>muted</i>. True to mute the playback volume, false to unmute. This method is not guaranteed to be synchronous.</p>
 <p>See also <a href="qmediaplayer.html#isMuted">isMuted</a>().</p>
-<h3 class="fn"><a name="source"></a>QMediaSource QMediaPlayer::source () const</h3>
 <h3 class="fn"><a name="state"></a><a href="qmediaplayer.html#State-enum">State</a> QMediaPlayer::state () const</h3>
+<p>Returns the State of the Player object.</p>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaPlayer::stateChanged ( <a href="qmediaplayer.html#State-enum">State</a> <i>newState</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the state of the Player object has changed to <i>newState</i>.</p>
 <h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Stop playing, and reset the play position to the beginning.</p>
 <h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayer::videoAvailabilityChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the availability of visual cntent has changed to <i>videoAvailable</i>.</p>
 <h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the playback volume has changed to <i>volume</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>

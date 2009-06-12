@@ -25,13 +25,13 @@ class QMediaPlayer : public QObject
     Q_ENUMS(State)
 
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState };
+    enum State { LoadingState, PlayingState, PausedState, StoppedState, EndOfStreamState };
 
     QMediaPlayer(QMediaPlayerSession* session = createMediaPlayerSession(), QObject* parent = 0);
     ~QMediaPlayer();
 
     State state() const;
-    QMediaSource source() const;
+    QMediaSource mediaSource() const;
 
     qint64 duration() const;
     qint64 position() const;
