@@ -460,7 +460,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
             }
         } else
             qWarning() << "NOT VALID";
-    } else if(publicConfig.type() != QNetworkConfiguration::ServiceNetwork) {
+    }
+    if(publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         // this is device interface
         QDBusReply<QList<QDBusObjectPath> > reply = iface.call("GetDevices");
         if ( reply.isValid() ) {
