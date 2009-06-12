@@ -136,6 +136,7 @@ void QNetworkSessionPrivate::open()
         //TODO
     } else {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        keepActive = true;
         activateNmSession();
 #endif
     } //end NetworkManager
@@ -152,6 +153,7 @@ void QNetworkSessionPrivate::stop()
         //TODO
     } else {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        keepActive = false;
         deactivateNmSession();
 #endif
     }
@@ -266,7 +268,6 @@ QString QNetworkSessionPrivate::getActiveConnectionPath()
             QList<QDBusObjectPath> devices = conDetails.property("Devices").value<QList<QDBusObjectPath> >();
             foreach(QDBusObjectPath devpath, devices) {
                 QString str = devpath.path();
-                qWarning() << "find" << str << interface;
                 if( str.contains(interface)) {
                     return path.path();
                 }
@@ -374,7 +375,7 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
         isActive = false;
         break;
     case NM_DEVICE_STATE_ACTIVATED: // 8
-        startTime = QDateTime::currentDateTime();
+        setActiveTimeStamp();
         newState = QNetworkSession::Connected; // 3
         isActive = true;
         emit quitPendingWaitsForOpened();
@@ -395,9 +396,12 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
         }
         break;
     };
-
+if(!isActive && keepActive)
+    activateNmSession();
     if( newState != state) {
         state = newState;
+        emit q->newConfigurationActivated();
+        qWarning() << __FUNCTION__ <<  "emit q->stateChanged(state)";
         emit q->stateChanged(state);
     }
 }
@@ -426,6 +430,8 @@ QString QNetworkSessionPrivate::getBearerName(quint32 type)
 
 void QNetworkSessionPrivate::updateNetworkConfigurations()
 {
+    qWarning() << __PRETTY_FUNCTION__;
+    keepActive = false;
     triedServiceConnection = -1;
     nmDBusObj = new QNmDBusHelper;
     state = QNetworkSession::Invalid;
@@ -538,6 +544,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
         } else if ((publicConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
             state = QNetworkSession::NotAvailable;
         }
+        emit q->stateChanged(state);
+
     }
     if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
         deviceStateChanged(8);
@@ -549,6 +557,7 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
 
 void QNetworkSessionPrivate::activateNmSession()
 {
+    qWarning() << __FUNCTION__;
     bool ok = false;
     currentBearerName == "";
 
@@ -817,6 +826,8 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
             }
         }
     }
+    if(startTime.isNull())
+        startTime = QDateTime::currentDateTime();
 }
 
 

@@ -156,15 +156,15 @@ private:
 #ifdef Q_OS_WIN
     bool opened;
 
-    QNetworkSession::SessionError lastError;
-
     QNetworkSessionEngine *engine;
 #endif
+    QNetworkSession::SessionError lastError;
 
     QNetworkSession* q;
     friend class QNetworkSession;
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    bool keepActive;
     qint32 triedServiceConnection;
     QNmDBusHelper *nmDBusObj;
     QDateTime startTime;
