@@ -811,6 +811,8 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
             }
         }
     }
+    if(startTime.isNull())
+        startTime = QDateTime::currentDateTime();
 }
 
 
