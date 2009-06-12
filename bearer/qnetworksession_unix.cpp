@@ -382,16 +382,9 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
         break;
     case NM_DEVICE_STATE_FAILED: // 9
         {
-            if(triedServiceConnection == -1) {
-                emit q->error(QNetworkSession::SessionAbortedError);
-                newState = QNetworkSession::NotAvailable; // 1
-                isActive = false;
-            } else {
-                if(publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                    activateNmSession();
-                }
-            }
-            //        newState = QNetworkSession::Closing; // 4
+            emit q->error(QNetworkSession::SessionAbortedError);
+            newState = QNetworkSession::NotAvailable; // 1
+            isActive = false;
         }
         break;
     };
