@@ -1,6 +1,8 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
+#include <QWidget>
+
 
 class QMediaimageViewerPrivate;
 

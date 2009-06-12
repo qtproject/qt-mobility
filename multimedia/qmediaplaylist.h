@@ -1,15 +1,23 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-class QMediaPlaylist
+#include <QObject>
+
+
+class QMediaPlaylistPrivate;
+
+class QMediaPlaylist : public QObject
 {
+    Q_OBJECT
+
 public:
-    QMediaPlaylist(QString name, QPlayListSource = defaultPlayListSource());
+    QMediaPlaylist(QString name, QPlayListSource = defaultPlayListSource(), QObject* parent = 0);
+    ~QMediaPlaylist();
 
     void enqueue(QMediaSource);
     void remove(QMediaSource);
 
-    clear();
+    void clear();
 
 public Q_SLOTS:
     void start();
@@ -23,6 +31,9 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void current(MediaSource);
+
+private:
+    Q_DECLARE_PRIVATE(QMediaPlaylist)
 };
 
 #endif  // QMEDIAPLAYLIST_H

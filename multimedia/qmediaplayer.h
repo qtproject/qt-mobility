@@ -1,6 +1,8 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
+#include <QObject>
+
 class QMedidPlayerSession;
 class QMediaPlayerPrivate;
 
@@ -14,6 +16,7 @@ class QMediaPlayer : public QObject
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERYY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
+    Q_PROPERYY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
     Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -37,6 +40,8 @@ public:
     bool isMuted() const;
 
     bool isBuffering() const;
+    int bufferStatus() const;
+
     bool isVideoAvailable() const;
 
     QMediaPlayerSession* session() const;
@@ -61,6 +66,7 @@ Q_SIGNALS:
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
+    void bufferStatusChanged(int percentFilled);
 
 private:
     Q_DECLARE_PRIVATE(QMediaPlayer)

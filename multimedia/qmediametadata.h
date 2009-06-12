@@ -1,6 +1,8 @@
 #ifndef QMEDIAMETADATA_H
 #define QMEDIAMETADATA_H
 
+#include <QObject>
+
 // Needs to change to be attached to any media object
 // Potentially needs to set data as well
 

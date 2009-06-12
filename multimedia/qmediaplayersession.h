@@ -2,6 +2,8 @@
 #define QMEDIAPLAYERSESSION_H
 
 
+#include <QObject>
+
 class QMediaPlayerSession : public QObject
 {
     Q_OBJECT
