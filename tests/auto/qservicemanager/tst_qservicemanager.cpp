@@ -1080,7 +1080,7 @@ void tst_QServiceManager::serviceRemoved()
     connect(&mgr, SIGNAL(serviceRemoved(QString)), listener, SLOT(serviceRemoved(QString)));
 
     QVERIFY(mgr.addService(&buffer));
-    qApp->processEvents();  // QFileSystemWatcher doesn't emit fileChanged() till next loop?
+    QTest::qWait(1000);     // QFileSystemWatcher doesn't emit fileChanged() immediately
 
     QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
     QVERIFY(mgr.removeService(serviceName));
