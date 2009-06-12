@@ -83,6 +83,8 @@ private:
         QString m_userSettingsDir;
         QString m_systemSettingsDir;
         QDir m_testdir;
+
+        void removeDirectory(const QString &path);
 };
 
 static QString settingsPath(const char *path = "")
@@ -351,21 +353,24 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
 void DatabaseManagerUnitTest::cleanupTestCase()
 {
     m_dbm->close();
-
-#if defined(Q_OS_WIN)
-    if (qWinVersion() & Qt::WV_NT_based)
-        system(QString("rmdir /Q /S %1").arg(settingsPath()).toLatin1());
-    else
-        system(QString("deltree /Y %1").arg(settingsPath()).toLatin1());
-#endif
-
-#ifndef Q_OS_WIN
-        system(QString("chmod -R u+rw %1 2> /dev/null").arg(settingsPath()).toLatin1());
-        system(QString("rm -fr %1 2> /dev/null").arg(settingsPath()).toLatin1());
-#endif
-
+    removeDirectory(settingsPath());
     delete m_dbm;
 }
+
+void DatabaseManagerUnitTest::removeDirectory(const QString &path)
+{
+    QDir dir(path);
+    QFileInfoList fileList = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+    foreach(QFileInfo file, fileList) {
+        if(file.isFile()) {
+            QFile::remove (file.canonicalFilePath());
+        }
+        if(file.isDir())
+            removeDirectory(file.canonicalFilePath());
+    }
+    QFile::remove(path);
+}
+
 
 QTEST_MAIN(DatabaseManagerUnitTest)
 #include "tst_databasemanagertest.moc"
