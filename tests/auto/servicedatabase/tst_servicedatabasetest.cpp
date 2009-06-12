@@ -56,7 +56,6 @@ class ServiceDatabaseUnitTest: public QObject
     Q_OBJECT
 
 private slots:
-    void initTestCase();
     void testRegistration();
     void getInterfaces();
     void searchByInterfaceName();
@@ -93,18 +92,9 @@ private:
     bool existsInServicePropertyTable(const QString &serviceID);
     bool existsInDefaultsTable(const QString &interfaceID);
 
-	ServiceMetaData* parser;
-	QDir dir;
-        ServiceDatabase database;
-
+    ServiceMetaData* parser;
+    ServiceDatabase database;
 };
-
-void ServiceDatabaseUnitTest::initTestCase()
-{
-    dir = database.databasePath();
-    QVERIFY(database.open());
-    QVERIFY(database.close());
-}
 
 void ServiceDatabaseUnitTest::testRegistration()
 {
@@ -1181,7 +1171,7 @@ void ServiceDatabaseUnitTest::unregister()
 }
 
 QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
-    QSqlDatabase sqlDatabase  = QSqlDatabase::database();
+    QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
     QString statement("Select Interface.ID FROM Interface, Service "
                         "WHERE Service.ID = Interface.ServiceID "
@@ -1198,7 +1188,7 @@ QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName)
 }
 
 QStringList ServiceDatabaseUnitTest::getServiceIDs(const QString &serviceName) {
-    QSqlDatabase sqlDatabase = QSqlDatabase::database();
+    QSqlDatabase sqlDatabase = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
     QString statement("SELECT Service.ID from Service "
                         "WHERE Service.Name = ? COLLATE NOCASE");
@@ -1215,7 +1205,7 @@ QStringList ServiceDatabaseUnitTest::getServiceIDs(const QString &serviceName) {
 
 bool ServiceDatabaseUnitTest::existsInInterfacePropertyTable(const QString &interfaceID)
 {
-    QSqlDatabase sqlDatabase  = QSqlDatabase::database();
+    QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
 
     QString statement("SELECT InterfaceID FROM InterfaceProperty "
@@ -1231,7 +1221,7 @@ bool ServiceDatabaseUnitTest::existsInInterfacePropertyTable(const QString &inte
 
 bool ServiceDatabaseUnitTest::existsInServicePropertyTable(const QString &serviceID)
 {
-    QSqlDatabase sqlDatabase  = QSqlDatabase::database();
+    QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
 
     QString statement("SELECT ServiceID from ServiceProperty "
@@ -1247,7 +1237,7 @@ bool ServiceDatabaseUnitTest::existsInServicePropertyTable(const QString &servic
 
 bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 {
-    QSqlDatabase sqlDatabase = QSqlDatabase::database();
+    QSqlDatabase sqlDatabase = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
     QString statement("SELECT InterfaceID From Defaults "
                     "WHERE InterfaceID = ?");
@@ -1263,9 +1253,8 @@ bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 
 void ServiceDatabaseUnitTest::cleanupTestCase()
 {
-    if(dir.exists(RESOLVERDATABASE)){
-        dir.remove(RESOLVERDATABASE);
-    }
+    QFile file(database.databasePath());
+    file.remove();
 }
 QTEST_MAIN(ServiceDatabaseUnitTest)
 #include "tst_servicedatabasetest.moc"

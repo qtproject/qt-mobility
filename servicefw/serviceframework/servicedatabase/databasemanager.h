@@ -39,77 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICEINTERFACEDESCRIPTOR_H
-#define QSERVICEINTERFACEDESCRIPTOR_H
+#ifndef DATABASEMANAGER_H_
+#define DATABASEMANAGER_H_
 
-#include <QString>
-#include <QVariant>
+#include "servicedatabase.h"
+#include <QObject>
 #include "qserviceglobal.h"
 
 QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
-
-class QDebug;
-
-class QDataStream;
-class QServiceInterfaceDescriptorPrivate;
-class Q_SFW_EXPORT QServiceInterfaceDescriptor
+class Q_SFW_EXPORT DatabaseManager : public QObject
 {
-public:
-    enum PropertyKey {
-        Capabilities = 0,
-        Location, 
-        ServiceDescription,
-        InterfaceDescription
-    };
+    Q_OBJECT
 
-    QServiceInterfaceDescriptor();
-    QServiceInterfaceDescriptor(const QServiceInterfaceDescriptor& other);
-    ~QServiceInterfaceDescriptor();
+    public:
+        enum DbScope{UserScope, SystemScope, UserOnlyScope};
+        DatabaseManager(void);
+        virtual ~DatabaseManager();
 
-    QServiceInterfaceDescriptor& operator=(const QServiceInterfaceDescriptor& other);
-    bool operator==(const QServiceInterfaceDescriptor& other) const;
-    inline bool operator!=(const QServiceInterfaceDescriptor& other) const
-    { return !operator==(other); }
+        bool registerService(ServiceMetaData &service, DbScope scope);
+        bool unregisterService(const QString &serviceName, DbScope scope);
 
-    QString serviceName() const;
-    QString interfaceName() const;
-    int majorVersion() const;
-    int minorVersion() const;
+        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);
+        QStringList getServiceNames(const QString &interfaceName, DbScope scope);
 
-    bool isValid() const;
+//      QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName);
+//      bool setDefaultService(const QString &serviceName, const QString &interfaceName);
+//      bool setDefaultService(const QServiceInterfaceDescriptor &interface);
 
-    bool inSystemScope() const;
+        DBError lastError(){ return m_lastError;}
 
-    QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
+    private:
+        void initDbPaths();
+        bool openDb(DbScope scope);
+        void close();
 
-private:
-    QServiceInterfaceDescriptorPrivate* d;
-
-    friend class QServiceInterfaceDescriptorPrivate;
-    friend class QServiceManager;
-    friend class ServiceDatabase;
-    friend class ServiceMetaData;
-    friend class DatabaseManager;
-#ifndef QT_NO_DATASTREAM
-    friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-    friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
-#endif
+        ServiceDatabase m_userDb;
+        ServiceDatabase m_systemDb;
+        DBError m_lastError;
 };
 
-#ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
-#endif
-#ifndef QT_NO_DEBUG_STREAM
-Q_SFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
-#endif
-
-
 QT_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif

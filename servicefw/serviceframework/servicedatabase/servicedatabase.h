@@ -66,6 +66,9 @@ class DBError
             SqlError,
             InvalidSearchCriteria,
             CannotCloseDatabase,
+            CannotCreateDbDir,
+            CannotOpenSystemDb,
+            CannotOpenUserDb,
             UnknownError
         };
         DBError();
@@ -133,6 +136,7 @@ Q_SIGNALS:
         bool checkConnection();
 
         QString iDatabasePath;
+        QString m_connectionName;
         bool iDatabaseOpen;
         DBError m_lastError;
 };

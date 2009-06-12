@@ -37,6 +37,7 @@ DEPENDPATH += servicemetadata \
 HEADERS +=  qserviceglobal.h \
             servicemetadata/servicemetadata_p.h \
             servicedatabase/servicedatabase.h \
+            servicedatabase/databasemanager.h \
             servicehandler/qservicemanager.h \
             servicehandler/qserviceplugininterface.h \
             servicehandler/qservicecontext.h \
@@ -49,6 +50,7 @@ HEADERS +=  qserviceglobal.h \
 
 SOURCES +=  servicemetadata/servicemetadata.cpp \
             servicedatabase/servicedatabase.cpp \
+            servicedatabase/databasemanager.cpp \
             servicehandler/qservicemanager.cpp \
             servicehandler/qserviceplugininterface.cpp \
             servicehandler/qservicecontext.cpp \
