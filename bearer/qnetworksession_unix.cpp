@@ -516,12 +516,12 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
 
                                 v = devIface.property("State");
                                 deviceStateChanged(v.toUInt());
-//                                if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                                          devicePath.path(),
-//                                                          NM_DBUS_INTERFACE_DEVICE,
-//                                                          "StateChanged",
-//                                                          nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-//                                }
+                                if(dbusConnection.connect(NM_DBUS_SERVICE,
+                                                          devicePath.path(),
+                                                          NM_DBUS_INTERFACE_DEVICE,
+                                                          "StateChanged",
+                                                          nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
+                                }
                                 break;
                             }
                         }
