@@ -195,8 +195,8 @@ void BearerDialog::updateSnapConfiguration(QTreeWidgetItem *parent, const QNetwo
 
 void BearerDialog::updateConfigurations()
 {
-    scanButton->show();
     progressBar->hide();
+    scanButton->show();
 
     QList<QTreeWidgetItem *> items = treeWidget->findItems(QLatin1String("*"), Qt::MatchWildcard);
     QMap<QString, QTreeWidgetItem *> itemMap;
@@ -379,7 +379,7 @@ void BearerDialog::deleteSession()
 void BearerDialog::performScan()
 {
     scanButton->hide();
-    manager.updateConfigurations();
     progressBar->show();
+    manager.updateConfigurations();
 }
 
