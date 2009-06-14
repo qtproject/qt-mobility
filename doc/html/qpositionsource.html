@@ -53,7 +53,7 @@
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QPositionSource * <b><a href="qpositionsource.html#createSource">createSource</a></b> ()</li>
+<li><div class="fn"/>QPositionSource * <b><a href="qpositionsource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -92,8 +92,8 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QPositionSource"></a>QPositionSource::QPositionSource ( QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a position source with the specified <i>parent</i>.</p>
-<h3 class="fn"><a name="createSource"></a>QPositionSource * QPositionSource::createSource ()&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Creates and returns a position source that reads from the system's default sources of location data.</p>
+<h3 class="fn"><a name="createSource"></a>QPositionSource * QPositionSource::createSource ( QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Creates and returns a position source with the given <i>parent</i> that reads from the system's default sources of location data.</p>
 <p>Returns 0 if the system has no default position source.</p>
 <h3 class="fn"><a name="lastKnownPosition"></a><a href="qpositionupdate.html">QPositionUpdate</a> QPositionSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns an update containing the last known position, or a null update if none is available.</p>

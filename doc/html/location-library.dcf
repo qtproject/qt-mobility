@@ -30,13 +30,12 @@
     </section>
     <section ref="qpositionareamonitor.html" title="QPositionAreaMonitor Class Reference">
         <keyword ref="qpositionareamonitor.html">QPositionAreaMonitor</keyword>
-        <keyword ref="qpositionareamonitor.html#inMonitoredArea-prop">inMonitoredArea</keyword>
         <keyword ref="qpositionareamonitor.html#areaEntered">areaEntered</keyword>
         <keyword ref="qpositionareamonitor.html#areaExited">areaExited</keyword>
         <keyword ref="qpositionareamonitor.html#coordinate">coordinate</keyword>
+        <keyword ref="qpositionareamonitor.html#createMonitor">createMonitor</keyword>
         <keyword ref="qpositionareamonitor.html#radius">radius</keyword>
         <keyword ref="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</keyword>
-        <keyword ref="qpositionareamonitor.html#source">source</keyword>
         <section ref="qpositionareamonitor-members.html" title="List of all members"/>
     </section>
     <section ref="qpositionsource.html" title="QPositionSource Class Reference">

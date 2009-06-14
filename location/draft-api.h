@@ -112,6 +112,9 @@ public:
     void removeProperty(Property property);
 
     bool hasProperty(Property property) const;
+
+private:
+    QSatelliteInfoPrivate *d;
 };
 
 
@@ -173,7 +176,7 @@ public:
     virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumIntervalForType(IntervalType type) const = 0;
 
-    static QPositionSource *createSource();
+    static QPositionSource *createSource(QObject *parent = 0);
 
 public slots:
     virtual void startUpdates() = 0;
@@ -195,17 +198,15 @@ private:
 class QPositionAreaMonitor : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool inMonitoredArea READ inMonitoredArea)
 public:
-    explicit QPositionAreaMonitor(QPositionSource *source, QObject *parent = 0);
+    explicit QPositionAreaMonitor(QObject *parent = 0);
+    virtual ~QPositionAreaMonitor() = 0;
 
-    QPositionSource *source() const;
-
-    void setMonitoredArea(const QCoordinate &coordinate, int radius);
+    virtual void setMonitoredArea(const QCoordinate &coordinate, int radius);
     QCoordinate coordinate() const;
     int radius() const;
 
-    bool inMonitoredArea() const;
+    static QPositionAreaMonitor *createMonitor(QObject *parent = 0);
 
 signals:
     void areaEntered(const QPositionUpdate &update);

@@ -637,10 +637,10 @@
 */
 
 /*!
-    \fn static QPositionSource *QPositionSource::createSource();
+    \fn static QPositionSource *QPositionSource::createSource(QObject *parent = 0);
 
-    Creates and returns a position source that reads from the system's
-    default sources of location data.
+    Creates and returns a position source with the given \a parent that
+    reads from the system's default sources of location data.
 
     Returns 0 if the system has no default position source.
 */
@@ -696,11 +696,10 @@
 
 /*!
     \class QPositionAreaMonitor
-    \brief The QPositionAreaMonitor class allows the detection of proximity changes for a specified set of coordinates.
+    \brief The QPositionAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
 
-    A QPositionAreaMonitor listens on a specified QPositionSource and emits
-    signals when the position source indicates that the current position
-    is in range, or has moved out of range, of a specified area.
+    A QPositionAreaMonitor emits signals when the current position is in
+    range, or has moved out of range, of a specified area.
 
     For example:
 
@@ -708,14 +707,13 @@
         public:
             MyClass::MyClass()
             {
-                QPositionSource *source = QPositionSource::createSource();
-                QCoordinate bigBenLocation(51.50104, -0.124632);
-
-                QPositionAreaMonitor *monitor = new QPositionAreaMonitor(source);
+                QPositionAreaMonitor *monitor = QPositionAreaMonitor::createMonitor();
                 connect(monitor, SIGNAL(areaEntered(QPositionUpdate)),
                         this, SLOT(areaEntered(QPositionUpdate)));
                 connect(monitor, SIGNAL(areaExited(QPositionUpdate)),
                         this, SLOT(areaExited(QPositionUpdate)));
+
+                QCoordinate bigBenLocation(51.50104, -0.124632);
                 monitor->setMonitoredArea(bigBenLocation, 100);
             }
 
@@ -733,28 +731,25 @@
 */
 
 /*!
-    \fn explicit QPositionAreaMonitor::QPositionAreaMonitor(QPositionSource *source, QObject *parent = 0)
+    \fn explicit QPositionAreaMonitor::QPositionAreaMonitor(QObject *parent = 0)
 
-    Creates a monitor that receives updates from the specified \a source.
-
-    The QObject parent is specified by \a parent.
+    Creates a monitor with the given \a parent.
 */
 
 /*!
-    \property QPositionAreaMonitor::inMonitoredArea
-    This property is true if the current position, according to position updates from source(), is within the monitored area.
-*/
+    \fn QPositionAreaMonitor::~QPositionAreaMonitor()
 
-/*!
-    \fn QPositionSource *QPositionAreaMonitor::source() const;
-
-    Returns the source specified in the constructor.
+    Destroys the monitor.
 */
 
 /*!
     \fn void QPositionAreaMonitor::setMonitoredArea(const QCoordinate &coordinate, int radius);
 
-    Sets the area to be monitored to the area specified by \a coordinate with a radius of \a radius.
+    Sets the area to be monitored to the area specified by \a coordinate
+    with a radius of \a radius.
+
+    If the current position is within the specified area, areaEntered()
+    is emitted immediately.
 */
 
 /*!
@@ -769,6 +764,15 @@
 
     Returns the radius set with setMonitoredArea(), or 0 if no area
     has been set.
+*/
+
+/*!
+    \fn static QPositionAreaMonitor *QPositionAreaMonitor::createMonitor(QObject *parent = 0);
+
+    Creates and returns a position source with the given \a parent that
+    monitors areas using resources on the underlying system.
+
+    Returns 0 if the system has no support for position monitoring.
 */
 
 /*!
