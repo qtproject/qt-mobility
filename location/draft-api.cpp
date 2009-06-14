@@ -769,7 +769,7 @@
 /*!
     \fn static QPositionAreaMonitor *QPositionAreaMonitor::createMonitor(QObject *parent = 0);
 
-    Creates and returns a position source with the given \a parent that
+    Creates and returns a monitor with the given \a parent that
     monitors areas using resources on the underlying system.
 
     Returns 0 if the system has no support for position monitoring.
@@ -781,7 +781,7 @@
     Emitted when the current position has moved from a position outside the
     monitored area to a position within the monitored area.
 
-    The \a update holds the new position as provided by source().
+    The \a update holds the new position.
 */
 
 /*!
@@ -790,5 +790,5 @@
     Emitted when the current position has moved from a position within the
     monitored area to a position outside the monitored area.
 
-    The \a update holds the new position as provided by source().
+    The \a update holds the new position.
 */

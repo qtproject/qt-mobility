@@ -74,14 +74,14 @@
 <p>Destroys the monitor.</p>
 <h3 class="fn"><a name="areaEntered"></a>void QPositionAreaMonitor::areaEntered ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position outside the monitored area to a position within the monitored area.</p>
-<p>The <i>update</i> holds the new position as provided by source().</p>
+<p>The <i>update</i> holds the new position.</p>
 <h3 class="fn"><a name="areaExited"></a>void QPositionAreaMonitor::areaExited ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position within the monitored area to a position outside the monitored area.</p>
-<p>The <i>update</i> holds the new position as provided by source().</p>
+<p>The <i>update</i> holds the new position.</p>
 <h3 class="fn"><a name="coordinate"></a><a href="qcoordinate.html">QCoordinate</a> QPositionAreaMonitor::coordinate () const</h3>
 <p>Returns the coordinate set with <a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a>(), or an invalid coordinate if no area has been set.</p>
 <h3 class="fn"><a name="createMonitor"></a>QPositionAreaMonitor * QPositionAreaMonitor::createMonitor ( QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Creates and returns a position source with the given <i>parent</i> that monitors areas using resources on the underlying system.</p>
+<p>Creates and returns a monitor with the given <i>parent</i> that monitors areas using resources on the underlying system.</p>
 <p>Returns 0 if the system has no support for position monitoring.</p>
 <h3 class="fn"><a name="radius"></a>int QPositionAreaMonitor::radius () const</h3>
 <p>Returns the radius set with <a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a>(), or 0 if no area has been set.</p>
