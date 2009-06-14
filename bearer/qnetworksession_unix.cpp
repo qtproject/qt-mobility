@@ -383,16 +383,9 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
         break;
     case NM_DEVICE_STATE_FAILED: // 9
         {
-            if(triedServiceConnection == -1) {
-                emit q->error(QNetworkSession::SessionAbortedError);
-                newState = QNetworkSession::NotAvailable; // 1
-                isActive = false;
-            } else {
-                if(publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                    activateNmSession();
-                }
-            }
-            //        newState = QNetworkSession::Closing; // 4
+            emit q->error(QNetworkSession::SessionAbortedError);
+            newState = QNetworkSession::NotAvailable; // 1
+            isActive = false;
         }
         break;
     };
@@ -466,7 +459,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
             }
         } else
             qWarning() << "NOT VALID";
-    } else if(publicConfig.type() != QNetworkConfiguration::ServiceNetwork) {
+    }
+    if(publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         // this is device interface
         QDBusReply<QList<QDBusObjectPath> > reply = iface.call("GetDevices");
         if ( reply.isValid() ) {
@@ -624,17 +618,17 @@ void QNetworkSessionPrivate::activateNmSession()
                                                 dbusConnection);
                 if (devWirelessIface.isValid()) {
 
-//                    connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-//                            this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-//
-//                    if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                              devIface.path(),
-//                                              NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-//                                              "PropertiesChanged",
-//                                              nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-//                    } else {
-//                        qWarning() << "NOT connect";
-//                    }
+                    connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
+                            this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+
+                    if(dbusConnection.connect(NM_DBUS_SERVICE,
+                                              devIface.path(),
+                                              NM_DBUS_INTERFACE_DEVICE_WIRELESS,
+                                              "PropertiesChanged",
+                                              nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
+                    } else {
+                        qWarning() << "NOT connect";
+                    }
                     ok = true;
                 } else {
                     qWarning() << "devWirelessIface is not valid" << devIface.path();
