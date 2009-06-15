@@ -49,7 +49,6 @@ typedef QList<QMessageContentContainerId> QMessageContentContainerIdList;
 class QMessageContentContainer {
 public:
     QMessageContentContainer();
-    QMessageContentContainer(const QMessageContentContainerId &id);
     virtual ~QMessageContentContainer();
 
     virtual QMessageContentContainerId containerId() const;
@@ -93,8 +92,8 @@ public:
     virtual void appendHeaderField(const QByteArray &name, const QByteArray &value);
     virtual void setHeaderField(const QByteArray &name, const QByteArray &value);
 
-    static void setCharsetList(const QList<QByteArray> &charsetNames);
-    static QList<QByteArray> charsetList();
+    static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
+    static QList<QByteArray> preferredCharsets();
 
 protected:
     virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);

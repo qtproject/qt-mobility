@@ -113,8 +113,7 @@ bool QMessageId::isValid() const
     A QMessageContentContainerId can be constructed from a string, or converted to a string 
     with toString().
 
-    The identifier of the message containing the container identified by this identifier is 
-    return by messageId()
+    The identifier of the containing (parent) message is return by messageId()
 
     A QMessageContentContainerId instance can be tested for validity with isValid(), and compared 
     to other instances for equality.
@@ -204,7 +203,8 @@ bool QMessageContentContainerId::isValid() const
 /*!
     \fn QMessageId QMessageContentContainerId::messageId() const
 
-    Returns the identifier of the message containing the container identified by this identifier.
+    Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
+    message identifier.
 */
 QMessageId QMessageContentContainerId::messageId() const
 {
@@ -230,7 +230,8 @@ QMessageId QMessageContentContainerId::messageId() const
     but can not contain both media and multiple parts directly.
     
     Container objects can be constructed via their QMessageContentContainerId 
-    identifier using container(). containerId() returns the identifier of a container.
+    identifier using the container() function of the parent QMessage, or constructed piece by 
+    piece using setContentType(), setContent(), setHeaderField() and related functions.
     
     For textual content using a recognized charset encoding decodedTextContent() will 
     return the content as a unicode string.
@@ -256,9 +257,9 @@ QMessageId QMessageContentContainerId::messageId() const
     available. Non multipart content can be serialized to a QDataStream using 
     writeContentTo(), and set using setContent() or setContentFromFile().
   
-    A part can be appended to the contents of a container using appendContent(). An existing part 
-    may be replaced using replaceContent(). A list of identifiers for directly contained parts 
-    is returned by contentIds().
+    A part of content can be appended to the existing content of a container using 
+    appendContent(). Existing content may be replaced using replaceContent(). A list of 
+    identifiers for directly contained parts of content is returned by contentIds().
 
     The default container contains an empty string, with type "text", subtype "plain", 
     and charset "US-ASCII".
@@ -266,20 +267,20 @@ QMessageId QMessageContentContainerId::messageId() const
     clearContents() will remove any existing parts, and set the content of the container 
     to be the default content.
 
-    A container stores a list of name value pairs known as header fields. Names are 
+    A container stores name value pairs known as header fields. Names are 
     ASCII strings, while values are charset encoded unicode strings. A header field may be 
     appended using appendHeaderField(), an existing header field may be 
     replaced using setHeaderField(). A list of header fields is returned by headerFields(). The 
     unicode string value of a header field is returned by headerField().
 
-    A list of charset names is returned by charsetList(). When encoding unicode QString text 
+    A list of charset names is returned by preferredCharsets(). When encoding unicode QString text 
     using setContent(), appendHeaderField() or setHeaderField() the first charset in the list 
-    returned by charsetList() that is capable of encoding  all characters in the given unicode 
-    QString text will be used, or if none is capable UTF-8 will be used.
+    returned by preferredCharsets() that is capable of encoding  all characters in the given 
+    unicode QString text will be used, or if none is capable UTF-8 will be used.
 
     The ordered by preference list of names of charsets to use when encoding unicode QString 
     text with setContent(), appendHeaderField() or setHeaderField() can be set using 
-    setCharsetList().
+    setPreferredCharsets().
 
     \sa QMessage, QMessageContentContainerId
 */
@@ -289,15 +290,6 @@ QMessageId QMessageContentContainerId::messageId() const
 */
 QMessageContentContainer::QMessageContentContainer()
 {
-}
-
-/*!
-    Constructs a container object from data stored in the message store with 
-    QMessageContentContainerId \a id.
-*/
-QMessageContentContainer::QMessageContentContainer(const QMessageContentContainerId& id)
-{
-    Q_UNUSED(id)
 }
 
 /*!
@@ -467,7 +459,7 @@ uint QMessageContentContainer::indicativeSize() const
     For textual content encoded with a recognized charset decodedTextContent() will return 
     the content as a unicode string; otherwise an empty string is returned.
     
-    \sa charsetList()
+    \sa preferredCharsets()
 */
 QString QMessageContentContainer::decodedTextContent() const
 {
@@ -521,12 +513,12 @@ void QMessageContentContainer::clearContents()
 
 /*!
     Sets the content to \a text, content type to "text", and charset to the first charset 
-    returned by charsetList() that can encode \a text if any; otherwise sets the charset 
+    returned by preferredCharsets() that can encode \a text if any; otherwise sets the charset 
     to "UTF-8".
 
     Does not modify the content subtype, the subtype should be set separately.
 
-    \sa charsetList(), setContentSubType()
+    \sa preferredCharsets(), setContentSubType()
 */
 void QMessageContentContainer::setContent(const QString &text)
 {
@@ -631,7 +623,7 @@ const QMessageContentContainer QMessageContentContainer::container(const QMessag
     modified.
 
     If \a value is not ASCII text then it will be encoded by the first charset returned by 
-    charsetList() that can encode \a value if any; otherwise \a value will be encoded using 
+    preferredCharsets() that can encode \a value if any; otherwise \a value will be encoded using 
     "UTF-8".
 
     \sa setHeaderField(), headerField(), headerFields()
@@ -647,7 +639,7 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
     already exists; otherwise appends a header with the supplied name and value.
 
     If \a value is not ASCII text then it will be encoded by the first charset returned by 
-    charsetList() that can encode \a value if any; otherwise \a value will be encoded using 
+    preferredCharsets() that can encode \a value if any; otherwise \a value will be encoded using 
     "UTF-8".
 
     The type, subtype and charset of the container are stored in the 'Content-Type' header
@@ -656,7 +648,7 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
     the 'Content-Disposition' header fields. These header fields should not be modified using
     the setHeaderField() function and doing so may result in undefined behavior.
 
-    \sa appendHeaderField(), headerField(), headerFields(), charsetList()
+    \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
 {
@@ -668,7 +660,7 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
 
-    \sa headerFieldValues(), appendHeaderField(), setHeaderField(), headerFields(), charsetList()
+    \sa headerFieldValues(), appendHeaderField(), setHeaderField(), headerFields(), preferredCharsets()
 */
 QString QMessageContentContainer::headerField(const QByteArray &name) const
 {
@@ -680,7 +672,7 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
-    \sa appendHeaderField(), setHeaderField(), headerField(), headerFields(), charsetList()
+    \sa appendHeaderField(), setHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
 QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
@@ -691,7 +683,7 @@ QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &nam
 /*!
     Returns a list of names of header fields of the container.
 
-    \sa appendHeaderField(), setHeaderField(), headerField(), charsetList()
+    \sa appendHeaderField(), setHeaderField(), headerField(), preferredCharsets()
 */
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
@@ -703,7 +695,7 @@ QList<QByteArray> QMessageContentContainer::headerFields() const
     header fields for the container. Any existing header field with the same name is not 
     modified.
 
-    \sa setHeaderField(), headerField(), headerFields(), charsetList()
+    \sa setHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
 {
@@ -715,7 +707,7 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
     Sets the value of the first header field of the container with name \a name to \a value if it 
     already exists; otherwise appends a header with the supplied name and value.
 
-    \sa appendHeaderField(), headerField(), headerFields(), charsetList()
+    \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
 {
@@ -727,9 +719,9 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByt
     Sets the ordered by preference list of names of charsets to use when encoding unicode QString 
     text with setContent(), appendHeaderField() or setHeaderField() to \a charsetNames.
 
-    \sa charsetList()
+    \sa preferredCharsets()
 */
-void QMessageContentContainer::setCharsetList(const QList<QByteArray> &charsetNames)
+void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 {
     Q_UNUSED(charsetNames);
 }
@@ -738,9 +730,9 @@ void QMessageContentContainer::setCharsetList(const QList<QByteArray> &charsetNa
     Returns an ordered by preference list of charset names to use when encoding unicode QString 
     text with setContent(), appendHeaderField() or setHeaderField().
 
-    \sa setCharsetList()
+    \sa setPreferredCharsets()
 */
-QList<QByteArray> QMessageContentContainer::charsetList()
+QList<QByteArray> QMessageContentContainer::preferredCharsets()
 {
     return QList<QByteArray>(); // stub;
 }
@@ -783,8 +775,10 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     A message may be serialized to a QDataStream, or returned as a QByteArray using 
     toTransmissionFormat().
 
-    A list of attachments identifiers will be returned by attachments() and a body identifier will
-    be returned by body().
+    A list of attachments identifiers will be returned by attachments() and an identifier for the 
+    message body will be returned by body(). Attachments can be appended to the content of the 
+    message using appendAttachments(), the body of the message can be set with setBody() or
+    setBodyFromFile().
     
     The following transmission formats are used both when constructing and encapsulating messages:
     \list
@@ -809,6 +803,12 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
+    
+    In addition to and separate from the message content information related to a message may be
+    stored in name value pairs known as custom fields, both names and values are unicode strings. 
+    A custom field may be set or updated with setCustomField(), the value of existing custom field 
+    can be retrieved with customField(), and a list of existing custom fields is returned by
+    customFields().
     
     \sa QMessageContentContainer, QMessageStore, QMessageId
 */
@@ -1198,12 +1198,12 @@ QMessageContentContainerId QMessage::body() const
     Sets the body text of the message to be the string \a body.
     
     The internet media (MIME) content type of the body will be "text", the subtype will be 
-    "plain", the charset will be determined by charsetList(),
+    "plain", the charset will be determined by preferredCharsets(),
     
     If the internet media (MIME) content type of the message is not multipart then the content of 
     the message will be set to \a body; otherwise the body will be the first part of the message.
     
-    \sa body(), setBodyFromFile(), charsetList()
+    \sa body(), setBodyFromFile(), preferredCharsets()
 */
 void QMessage::setBody(const QString &body)
 {
@@ -1216,13 +1216,13 @@ void QMessage::setBody(const QString &body)
     Sets the body text of the message to be the contents of the file \a fileName.
     
     The internet media (MIME) content type of the body will be "text", the subtype will be 
-    "plain", the charset will be determined by charsetList(),
+    "plain", the charset will be determined by preferredCharsets(),
     
     If the internet media (MIME) content type of the message is not multipart then the content of 
     the message will be set to the contents of the file \a fileName; otherwise the body will be the 
     first part of the message.
         
-    \sa body(), setBody(), charsetList()
+    \sa body(), setBody(), preferredCharsets()
 */
 void QMessage::setBodyFromFile(const QString &fileName)
 {

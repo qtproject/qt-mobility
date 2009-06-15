@@ -36,6 +36,8 @@
 <ul>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#body">body</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#body-2">body</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
+<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#customField">customField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
+<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#customField-2">customField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#id">id</a></b> ( const QMessageId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#id-2">id</a></b> ( const QMessageIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#id-3">id</a></b> ( const QMessageFilterKey &amp; <i>key</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
@@ -81,6 +83,12 @@
 <h3 class="fn"><a name="body-2"></a>QMessageFilterKey QMessageFilterKey::body ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose body is textual and matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#body">QMessage::body</a>().</p>
+<h3 class="fn"><a name="customField"></a>QMessageFilterKey QMessageFilterKey::customField ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a key matching messages having a custom field with the name <i>name</i>, whose value matches <i>value</i>, according to <i>cmp</i>.</p>
+<p>See also <a href="qmessage.html#customField">QMessage::customField</a>().</p>
+<h3 class="fn"><a name="customField-2"></a>QMessageFilterKey QMessageFilterKey::customField ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a key matching messages having a custom field with the name <i>name</i>, whose value matches the substring <i>value</i>, according to <i>cmp</i>.</p>
+<p>See also <a href="qmessage.html#customField">QMessage::customField</a>().</p>
 <h3 class="fn"><a name="id"></a>QMessageFilterKey QMessageFilterKey::id ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>

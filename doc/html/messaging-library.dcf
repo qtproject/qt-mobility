@@ -19,10 +19,14 @@
         <keyword ref="qmessage.html#Type-enum">QMessage::Email</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::AnyType</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Mms</keyword>
+        <keyword ref="qmessage.html#appendAttachments">appendAttachments</keyword>
         <keyword ref="qmessage.html#attachments">attachments</keyword>
         <keyword ref="qmessage.html#bcc">bcc</keyword>
         <keyword ref="qmessage.html#body">body</keyword>
         <keyword ref="qmessage.html#cc">cc</keyword>
+        <keyword ref="qmessage.html#clearAttachments">clearAttachments</keyword>
+        <keyword ref="qmessage.html#customField">customField</keyword>
+        <keyword ref="qmessage.html#customFields">customFields</keyword>
         <keyword ref="qmessage.html#dataModified">dataModified</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
         <keyword ref="qmessage.html#destinationPort">destinationPort</keyword>
@@ -33,11 +37,11 @@
         <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
-        <keyword ref="qmessage.html#setAttachments">setAttachments</keyword>
         <keyword ref="qmessage.html#setBcc">setBcc</keyword>
         <keyword ref="qmessage.html#setBody">setBody</keyword>
         <keyword ref="qmessage.html#setBodyFromFile">setBodyFromFile</keyword>
         <keyword ref="qmessage.html#setCc">setCc</keyword>
+        <keyword ref="qmessage.html#setCustomField">setCustomField</keyword>
         <keyword ref="qmessage.html#setDate">setDate</keyword>
         <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
@@ -58,28 +62,52 @@
         <keyword ref="qmessage.html#type">type</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessagecontent.html" title="QMessageContent Class Reference">
-        <keyword ref="qmessagecontent.html">QMessageContent</keyword>
-        <keyword ref="qmessagecontent.html#contentAvailable">contentAvailable</keyword>
-        <keyword ref="qmessagecontent.html#contentSubType">contentSubType</keyword>
-        <keyword ref="qmessagecontent.html#contentType">contentType</keyword>
-        <keyword ref="qmessagecontent.html#decodedContent">decodedContent</keyword>
-        <keyword ref="qmessagecontent.html#decodedContentFileName">decodedContentFileName</keyword>
-        <keyword ref="qmessagecontent.html#decodedTextContent">decodedTextContent</keyword>
-        <keyword ref="qmessagecontent.html#fileName">fileName</keyword>
-        <keyword ref="qmessagecontent.html#id">id</keyword>
-        <keyword ref="qmessagecontent.html#indicativeSize">indicativeSize</keyword>
-        <keyword ref="qmessagecontent.html#serialize">serialize</keyword>
-        <keyword ref="qmessagecontent.html#setId">setId</keyword>
-        <section ref="qmessagecontent-members.html" title="List of all members"/>
+    <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
+        <keyword ref="qmessagecontentcontainer.html">QMessageContentContainer</keyword>
+        <keyword ref="qmessagecontentcontainer.html#appendContent">appendContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</keyword>
+        <keyword ref="qmessagecontentcontainer.html#clearContents">clearContents</keyword>
+        <keyword ref="qmessagecontentcontainer.html#container">container</keyword>
+        <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentFileName">contentFileName</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentIds">contentIds</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentSubType">contentSubType</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contentType">contentType</keyword>
+        <keyword ref="qmessagecontentcontainer.html#decodedContent">decodedContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</keyword>
+        <keyword ref="qmessagecontentcontainer.html#decodedTextContent">decodedTextContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#headerField">headerField</keyword>
+        <keyword ref="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</keyword>
+        <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
+        <keyword ref="qmessagecontentcontainer.html#indicativeSize">indicativeSize</keyword>
+        <keyword ref="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</keyword>
+        <keyword ref="qmessagecontentcontainer.html#prependContent">prependContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#readContentFrom">readContentFrom</keyword>
+        <keyword ref="qmessagecontentcontainer.html#replaceContent">replaceContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContainerId">setContainerId</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContent">setContent</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentAvailable">setContentAvailable</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentCharset">setContentCharset</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentFileName">setContentFileName</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentSubType">setContentSubType</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setContentType">setContentType</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setIndicativeSize">setIndicativeSize</keyword>
+        <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
+        <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
+        <section ref="qmessagecontentcontainer-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessagecontentid.html" title="QMessageContentId Class Reference">
-        <keyword ref="qmessagecontentid.html">QMessageContentId</keyword>
-        <keyword ref="qmessagecontentid.html#isValid">isValid</keyword>
-        <keyword ref="qmessagecontentid.html#toString">toString</keyword>
-        <keyword ref="qmessagecontentid.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagecontentid.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagecontentid-members.html" title="List of all members"/>
+    <section ref="qmessagecontentcontainerid.html" title="QMessageContentContainerId Class Reference">
+        <keyword ref="qmessagecontentcontainerid.html">QMessageContentContainerId</keyword>
+        <keyword ref="qmessagecontentcontainerid.html#isValid">isValid</keyword>
+        <keyword ref="qmessagecontentcontainerid.html#messageId">messageId</keyword>
+        <keyword ref="qmessagecontentcontainerid.html#toString">toString</keyword>
+        <keyword ref="qmessagecontentcontainerid.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessagecontentcontainerid.html#operator-eq-eq">operator==</keyword>
+        <section ref="qmessagecontentcontainerid-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagedatacomparator.html" title="QMessageDataComparator Namespace Reference">
         <keyword ref="qmessagedatacomparator.html">QMessageDataComparator</keyword>
@@ -98,6 +126,7 @@
     <section ref="qmessagefilterkey.html" title="QMessageFilterKey Class Reference">
         <keyword ref="qmessagefilterkey.html">QMessageFilterKey</keyword>
         <keyword ref="qmessagefilterkey.html#body">body</keyword>
+        <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
         <keyword ref="qmessagefilterkey.html#id">id</keyword>
         <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
@@ -176,7 +205,6 @@
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
         <keyword ref="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
-        <keyword ref="qmessagestore.html#messageContent">messageContent</keyword>
         <keyword ref="qmessagestore.html#messagesAdded">messagesAdded</keyword>
         <keyword ref="qmessagestore.html#messagesRemoved">messagesRemoved</keyword>
         <keyword ref="qmessagestore.html#messagesUpdated">messagesUpdated</keyword>

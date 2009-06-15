@@ -26,7 +26,7 @@
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#forward">forward</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#reply">reply</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 </ul>
@@ -75,10 +75,10 @@
 <p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved.</p>
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
-<h3 class="fn"><a name="retrieve-2"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentid.html">QMessageContentId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="retrieve-2"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
 <p>Requests that the message server retrieve data regarding the message identified by <i>id</i>.</p>
 <p>The entirety of the message content identified by <i>id</i> should be retrieved.</p>
-<p>See also <a href="qmessagecontentid.html">QMessageContentId</a>.</p>
+<p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
 <p>Transmit <i>message</i> using the default account for the type of <i>message</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>

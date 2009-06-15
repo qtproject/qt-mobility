@@ -31,7 +31,6 @@
 <li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
 <li><div class="fn"></div>uint <b><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a></b> ()</li>
 <li><div class="fn"></div>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
-<li><div class="fn"></div>QMessageContent <b><a href="qmessagestore.html#messageContent">messageContent</a></b> ( const QMessageContentId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
@@ -63,10 +62,10 @@
 <p>The QMessageStore class is accessed through a singleton interface and provides functions for adding messages to the message store, and updating and deleting messages in the message store.</p>
 <p>QMessageStore also provides functions for querying and counting of QMessages when used in conjunction with QMessageFilerKey class.</p>
 <p>If a QMessageStore operation fails, the <a href="qmessagestore.html#lastError">lastError</a>() function will return an error code value indicating the failure mode encountered. A successful operation will set the <a href="qmessagestore.html#lastError">lastError</a>() result to <a href="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</a>.</p>
-<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object. Message content such as the message body and message parts are identified by <a href="qmessagecontentid.html">QMessageContentId</a> objects. The data associated with message content is retrieved in the form of a <a href="qmessagecontent.html">QMessageContent</a> object.</p>
+<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object. Message content such as the message body and message parts are identified by <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> objects. The data associated with message content is retrieved in the form of a <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> object.</p>
 <p>Message objects are accessed via the <a href="qmessagestore.html#message">message</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>() functions. Messages can be inserted into the store using the addMessage() function, and messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
 <p>Message store manipulations involving messages are reported via the <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() and <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() signals.</p>
-<p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessageid.html">QMessageId</a>, <a href="qmessagecontentid.html">QMessageContentId</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, and <a href="qmessagesortkey.html">QMessageSortKey</a>.</p>
+<p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessageid.html">QMessageId</a>, <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, and <a href="qmessagesortkey.html">QMessageSortKey</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="ErrorCode-enum"></a>enum QMessageStore::ErrorCode</h3>
@@ -104,9 +103,7 @@
 <p>The default working list size is platform specific.</p>
 <p>See also <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="message"></a><a href="qmessage.html">QMessage</a> QMessageStore::message ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> ) const</h3>
-<p>Returns the <a href="qmessage.html">QMessage</a> defined by the <a href="qmessagecontentid.html">QMessageContentId</a> <i>id</i> from the store.</p>
-<h3 class="fn"><a name="messageContent"></a><a href="qmessagecontent.html">QMessageContent</a> QMessageStore::messageContent ( const <a href="qmessagecontentid.html">QMessageContentId</a> &amp; <i>id</i> ) const</h3>
-<p>Returns the <a href="qmessagecontent.html">QMessageContent</a> defined by the <a href="qmessagecontentid.html">QMessageContentId</a> <i>id</i> from the store.</p>
+<p>Returns the <a href="qmessage.html">QMessage</a> defined by the <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> <i>id</i> from the store.</p>
 <h3 class="fn"><a name="messagesAdded"></a>void QMessageStore::messagesAdded ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when the messages identified by the list <i>ids</i> are added to the message store.</p>
 <p>See also <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>

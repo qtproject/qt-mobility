@@ -15,6 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessage Class Reference</h1>
 <p>The QMessage class provides a convenient interface for working with messages. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessage&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
 <ul>
 <li><a href="qmessage-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -31,10 +32,14 @@
 <li><div class="fn"></div><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</li>
-<li><div class="fn"></div>virtual QMessageContentIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#appendAttachments">appendAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
+<li><div class="fn"></div>virtual QMessageContentContainerIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
 <li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#bcc">bcc</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageContentId <b><a href="qmessage.html#body">body</a></b> () const</li>
+<li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessage.html#body">body</a></b> () const</li>
 <li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#cc">cc</a></b> () const</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#clearAttachments">clearAttachments</a></b> ()</li>
+<li><div class="fn"></div>QString <b><a href="qmessage.html#customField">customField</a></b> ( const QString &amp; <i>name</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QString&gt; <b><a href="qmessage.html#customFields">customFields</a></b> () const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
@@ -43,11 +48,11 @@
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
 <li><div class="fn"></div>virtual Priority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setAttachments">setAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QList&lt;QString&gt; &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i>, bool <i>html</i> = false )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i>, bool <i>html</i> = false )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCc">setCc</a></b> ( const QList&lt;QString&gt; &amp; <i>ccList</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessage.html#setCustomField">setCustomField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QString &amp; <i>s</i> )</li>
@@ -69,22 +74,32 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 <li><div class="fn"></div>virtual Type <b><a href="qmessage.html#type">type</a></b> () const</li>
 </ul>
+<ul>
+<li><div class="fn"></div>34 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
+</ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
 <li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( Type <i>t</i>, const QByteArray &amp; <i>ba</i> )</li>
 <li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( Type <i>t</i>, const QString &amp; <i>fileName</i> )</li>
 </ul>
+<ul>
+<li><div class="fn"></div>2 static public members inherited from <a href="qmessagecontentcontainer.html#static-public-members">QMessageContentContainer</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 protected function inherited from <a href="qmessagecontentcontainer.html#protected-functions">QMessageContentContainer</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
 <p>QMessage supports a number of types. Including internet email messages, the telephony types SMS and MMS, and also XMPP messages.</p>
-<p>A QMessage can be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#setAttachments">setAttachments</a>().</p>
+<p>A QMessage can be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
 <p>Alternatively a message can be initialized from raw data using <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <p>Messages can be added to the <a href="qmessagestore.html">QMessageStore</a>, or retrieved from the store via their <a href="qmessageid.html">QMessageId</a> identifier.</p>
 <p>A message may be serialized to a QDataStream, or returned as a QByteArray using <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
-<p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachments">attachments</a>() and a body identifier will be returned by <a href="qmessage.html#body">body</a>().</p>
+<p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachments">attachments</a>() and an identifier for the message body will be returned by <a href="qmessage.html#body">body</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>() or <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>().</p>
 <p>The following transmission formats are used both when constructing and encapsulating messages:</p>
 <ul>
 <li><a href="qmessage.html#Type-enum">QMessage::Sms</a> <a href="http://www.3gpp.org/ftp/Specs/html-info/23040.htm">3GPP TS 23.040</a> (Technical realization of the Short Message Service).</li>
@@ -93,7 +108,8 @@
 <li><a href="qmessage.html#Type-enum">QMessage::Xmpp</a> <a href="http://www.ietf.org/rfc/rfc3921.txt">RFC 3921</a> (Extensible Messaging and Presence Protocol).</li>
 </ul>
 <p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.</p>
-<p>See also <a href="qmessagecontent.html">QMessageContent</a>, <a href="qmessagestore.html">QMessageStore</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
+<p>In addition to and separate from the message content information related to a message may be stored in name value pairs known as custom fields, both names and values are unicode strings. A custom field may be set or updated with <a href="qmessage.html#setCustomField">setCustomField</a>(), the value of existing custom field can be retrieved with <a href="qmessage.html#customField">customField</a>(), and a list of existing custom fields is returned by <a href="qmessage.html#customFields">customFields</a>().</p>
+<p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagestore.html">QMessageStore</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Priority-enum"></a>enum QMessage::Priority</h3>
@@ -133,21 +149,33 @@
 <p>See also <a href="qmessagestore.html">QMessageStore</a>.</p>
 <h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message.</p>
-<h3 class="fn"><a name="attachments"></a>QMessageContentIdList QMessage::attachments () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const QStringList &amp; <i>fileNames</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Append the contents of the files specified by <i>fileNames</i> to the end of the list of attachments for the message. The internet media (MIME) type of the attachments will be determined by examining the contents the files.</p>
+<p>See also <a href="qmessage.html#attachments">attachments</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
+<h3 class="fn"><a name="attachments"></a>QMessageContentContainerIdList QMessage::attachments () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of attachments for the message.</p>
 <p>The body of the message will not be included in the list.</p>
-<p>TODO: Example attachment list generation algorithm.</p>
-<p>See also <a href="qmessage.html#setAttachments">setAttachments</a>().</p>
+<p>TODO: Example attachment list generation algorithm, message parts are the main issue, have to recurse into them.</p>
+<p>See also <a href="qmessage.html#appendAttachments">appendAttachments</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
 <h3 class="fn"><a name="bcc"></a>QList&lt;QString&gt; QMessage::bcc () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of all the bcc (blind carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmessage.html#to">to</a>(), <a href="qmessage.html#cc">cc</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
-<h3 class="fn"><a name="body"></a><a href="qmessagecontentid.html">QMessageContentId</a> QMessage::body () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="body"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessage::body () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier for the body content contained by the Message if a body exists; otherwise returns an invalid identifier.</p>
 <p>TODO: Example body finding algorithm.</p>
-<p>See also <a href="qmessagecontent.html">QMessageContent</a> and <a href="qmessage.html#setBody">setBody</a>().</p>
+<p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> and <a href="qmessage.html#setBody">setBody</a>().</p>
 <h3 class="fn"><a name="cc"></a>QList&lt;QString&gt; QMessage::cc () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of all the cc (carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmessage.html#to">to</a>(), <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setCc">setCc</a>(), and <a href="qmessagefilterkey.html#recipients">QMessageFilterKey::recipients</a>().</p>
+<h3 class="fn"><a name="clearAttachments"></a>void QMessage::clearAttachments ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Clears the list of attachments for the message, leaving only the message body, if any.</p>
+<p>See also <a href="qmessage.html#attachments">attachments</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
+<h3 class="fn"><a name="customField"></a>QString QMessage::customField ( const QString &amp; <i>name</i> ) const</h3>
+<p>Returns the value of the custom field with name <i>name</i>.</p>
+<p>See also <a href="qmessage.html#setCustomField">setCustomField</a>() and <a href="qmessage.html#customFields">customFields</a>().</p>
+<h3 class="fn"><a name="customFields"></a>QList&lt;QString&gt; QMessage::customFields () const</h3>
+<p>Returns a list of names of custom fields.</p>
+<p>See also <a href="qmessage.html#customField">customField</a>() and <a href="qmessage.html#setCustomField">setCustomField</a>().</p>
 <h3 class="fn"><a name="dataModified"></a>bool QMessage::dataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the message has been modified since it was constructed; otherwise returns false.</p>
 <h3 class="fn"><a name="date"></a>QDateTime QMessage::date () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -184,23 +212,25 @@
 <h3 class="fn"><a name="receivedDate"></a>QDateTime QMessage::receivedDate () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns an empty timestamp.</p>
 <p>See also <a href="qmessage.html#setReceivedDate">setReceivedDate</a>() and <a href="qmessagefilterkey.html#receptionTimeStamp">QMessageFilterKey::receptionTimeStamp</a>().</p>
-<h3 class="fn"><a name="setAttachments"></a>void QMessage::setAttachments ( const QStringList &amp; <i>fileNames</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Set the list of attachments for the message to be the contents of the files specified by <i>fileNames</i>. The internet media types of each attachment will be determined by examining the contents of the file.</p>
-<p>See also <a href="qmessage.html#attachments">attachments</a>().</p>
 <h3 class="fn"><a name="setBcc"></a>void QMessage::setBcc ( const QList&lt;QString&gt; &amp; <i>s</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>s</i>.</p>
 <p>See also <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setCc">setCc</a>().</p>
-<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const QString &amp; <i>body</i>, bool <i>html</i> = false )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const QString &amp; <i>body</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the body text of the message to be the string <i>body</i>.</p>
-<p>If <i>html</i> is true then the internet media type of the body wil be &quot;plain\html&quot;; otherwise it will be &quot;plain\text&quot;.</p>
-<p>See also <a href="qmessage.html#body">body</a>() and <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>().</p>
-<h3 class="fn"><a name="setBodyFromFile"></a>void QMessage::setBodyFromFile ( const QString &amp; <i>fileName</i>, bool <i>html</i> = false )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>The internet media (MIME) content type of the body will be &quot;text&quot;, the subtype will be &quot;plain&quot;, the charset will be determined by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>(),</p>
+<p>If the internet media (MIME) content type of the message is not multipart then the content of the message will be set to <i>body</i>; otherwise the body will be the first part of the message.</p>
+<p>See also <a href="qmessage.html#body">body</a>(), <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
+<h3 class="fn"><a name="setBodyFromFile"></a>void QMessage::setBodyFromFile ( const QString &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the body text of the message to be the contents of the file <i>fileName</i>.</p>
-<p>If <i>html</i> is true then the internet media type of the body wil be &quot;plain\html&quot;; otherwise it will be &quot;plain\text&quot;.</p>
-<p>See also <a href="qmessage.html#body">body</a>() and <a href="qmessage.html#setBody">setBody</a>().</p>
+<p>The internet media (MIME) content type of the body will be &quot;text&quot;, the subtype will be &quot;plain&quot;, the charset will be determined by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>(),</p>
+<p>If the internet media (MIME) content type of the message is not multipart then the content of the message will be set to the contents of the file <i>fileName</i>; otherwise the body will be the first part of the message.</p>
+<p>See also <a href="qmessage.html#body">body</a>(), <a href="qmessage.html#setBody">setBody</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="setCc"></a>void QMessage::setCc ( const QList&lt;QString&gt; &amp; <i>ccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of cc (carbon copy) recipients for the message to <i>ccList</i>.</p>
 <p>See also <a href="qmessage.html#cc">cc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
+<h3 class="fn"><a name="setCustomField"></a>void QMessage::setCustomField ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3>
+<p>Sets the value of the custom field with name <i>name</i> to <i>value</i>.</p>
+<p>See also <a href="qmessage.html#customField">customField</a>() and <a href="qmessage.html#customFields">customFields</a>().</p>
 <h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const QDateTime &amp; <i>d</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the origination date header field specifying the timestamp of the message to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#date">date</a>().</p>
