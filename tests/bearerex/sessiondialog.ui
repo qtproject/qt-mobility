@@ -116,20 +116,6 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0" >
-      <widget class="QPushButton" name="alrButton" >
-       <property name="text" >
-        <string>Enable ALR</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1" >
-      <widget class="QPushButton" name="deleteSessionButton" >
-       <property name="text" >
-        <string>Delete Session</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0" >
       <widget class="QPushButton" name="createQHttpButton" >
        <property name="text" >
@@ -141,6 +127,20 @@
       <widget class="QPushButton" name="sendRequestButton" >
        <property name="text" >
         <string>Send Test Req.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" >
+      <widget class="QPushButton" name="alrButton" >
+       <property name="text" >
+        <string>Enable ALR</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="QPushButton" name="deleteSessionButton" >
+       <property name="text" >
+        <string>Delete Session</string>
        </property>
       </widget>
      </item>
