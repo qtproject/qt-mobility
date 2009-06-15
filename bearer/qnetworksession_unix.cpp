@@ -203,7 +203,7 @@ void QNetworkSessionPrivate::reject()
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    return QNetworkInterface::interfaceFromName(getCurrentInterfaceName());
+    return QNetworkInterface::interfaceFromName( publicConfig.d->serviceInterface.name());
 #else
     return QNetworkInterface();
 #endif
@@ -269,7 +269,7 @@ QString QNetworkSessionPrivate::getActiveConnectionPath()
     if(publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
         foreach (const QNetworkConfiguration &config, publicConfig.children()) {
             if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active)
-                interface = QNetworkInterface::interfaceFromName(getCurrentInterfaceName(config.name())).hardwareAddress().toLower().replace(":","_");
+                interface = QNetworkInterface::interfaceFromName( publicConfig.d->serviceInterface.name()).hardwareAddress().toLower().replace(":","_");
         }
     } else {
         interface = currentInterface().hardwareAddress().toLower().replace(":","_");
@@ -593,7 +593,7 @@ void QNetworkSessionPrivate::activateNmSession()
                 }
                 if(triedServiceConnection != numCon) {
                     connectionIdent = config.identifier();
-                    interface = QNetworkInterface::interfaceFromName(getCurrentInterfaceName(config.name())).hardwareAddress().toLower();
+                    interface = QNetworkInterface::interfaceFromName( publicConfig.d->serviceInterface.name()).hardwareAddress().toLower();
                     break;
                 }
             }
@@ -865,84 +865,6 @@ void QNetworkSessionPrivate::propertiesChanged( const QString & path, QMap<QStri
         else if( i.key() == "ActiveAccessPoint") {
         }
     }
-}
-
-QString QNetworkSessionPrivate::getCurrentInterfaceName(const QString &idName) const
-{
-    QString id;
-    if(publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
-        id = idName;
-    else
-        id = q->configuration().identifier();
-
-    if (iface.isValid()) {
-        QDBusReply<QList<QDBusObjectPath> > reply = iface.call("GetDevices");
-        if ( reply.isValid() ) {
-            QList<QDBusObjectPath> list = reply.value();
-            foreach(QDBusObjectPath path, list) {
-                QDBusInterface devIface(NM_DBUS_SERVICE,
-                                        path.path(),
-                                        NM_DBUS_INTERFACE_DEVICE,
-                                        dbusConnection); //device interface
-                QString ident;
-                if (devIface.isValid()) {
-                    if(devIface.property("DeviceType").toInt() == DEVICE_TYPE_802_11_WIRELESS) { //wifi interface
-                        QDBusInterface devWirelessIface(NM_DBUS_SERVICE,
-                                                        devIface.path(),
-                                                        NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-                                                        dbusConnection);
-                        if (devWirelessIface.isValid()) {
-                            if( q->configuration().name() == devIface.property("Interface").toString()) {
-                                return  devIface.property("Interface").toString();
-                            } else {
-                                if( q->configuration().identifier().contains("AccessPoint")) {
-                                    QDBusInterface accessPointIface(NM_DBUS_SERVICE,
-                                                                    q->configuration().identifier(),
-                                                                    NM_DBUS_INTERFACE_ACCESS_POINT,
-                                                                    dbusConnection);
-                                    if (accessPointIface.isValid()) {
-                                        return devIface.property("Interface").toString();
-                                    }
-
-                                } else {
-                                    QDBusReply<QList<QDBusObjectPath> > reply = devWirelessIface.call("GetAccessPoints");
-                                    if ( reply.isValid() ) {
-                                        QList<QDBusObjectPath> list = reply.value();
-                                        int i =0;
-                                        foreach(QDBusObjectPath path, list) {
-                                            QDBusInterface accessPointIface(NM_DBUS_SERVICE,
-                                                                            path.path(),
-                                                                            NM_DBUS_INTERFACE_ACCESS_POINT,
-                                                                            dbusConnection);
-                                            if (accessPointIface.isValid()) {
-                                                if( accessPointIface.path() == id ||
-                                                    accessPointIface.property("Ssid").toString() == id ) {
-                                                    return devIface.property("Interface").toString();
-                                                }
-                                                i++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else if(devIface.property("DeviceType").toInt() == DEVICE_TYPE_802_3_ETHERNET) { //ethernet interface
-
-                        QDBusInterface devWiredIface(NM_DBUS_SERVICE,
-                                                     devIface.path(),
-                                                     NM_DBUS_INTERFACE_DEVICE_WIRED,
-                                                     dbusConnection);
-                        if (devWiredIface.isValid()) {
-                            if( q->configuration().identifier() == devWiredIface.property("HwAddress").toString()) {
-                                return devIface.property("Interface").toString();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return QString();
 }
 
 void QNetworkSessionPrivate::configChanged(const QNetworkConfiguration& /*config*/)

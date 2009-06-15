@@ -178,7 +178,6 @@ private:
     void updateNetworkConfigurations();
     void activateNmSession();
     void deactivateNmSession();
-    QString getCurrentInterfaceName(const QString &name = QString()) const ;
     void activateConnection(QDBusInterface &iface, const QString & connPath, const QString &devicePath);
 #endif
 };
