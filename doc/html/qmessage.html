@@ -24,7 +24,9 @@
 <ul>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Priority-enum">Priority</a></b> { High, Normal, Low }</li>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</li>
+<li><div class="fn"></div>flags <b><a href="qmessage.html#Status-enum">StatusFlags</a></b></li>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Type-enum">Type</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
+<li><div class="fn"></div>flags <b><a href="qmessage.html#Type-enum">TypeFlags</a></b></li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
@@ -60,13 +62,13 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSize">setSize</a></b> ( uint <i>size</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( quint64 <i>newStatus</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QList&lt;QString&gt; &amp; <i>toList</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QString &amp; <i>s</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
-<li><div class="fn"></div>virtual quint64 <b><a href="qmessage.html#status">status</a></b> () const</li>
+<li><div class="fn"></div>virtual StatusFlags <b><a href="qmessage.html#status">status</a></b> () const</li>
 <li><div class="fn"></div>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
 <li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#to">to</a></b> () const</li>
 <li><div class="fn"></div>virtual QByteArray <b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</li>
@@ -118,8 +120,8 @@
 <tr><td valign="top"><tt>QMessage::Normal</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The message is normal priority.</td></tr>
 <tr><td valign="top"><tt>QMessage::Low</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The message is low priority.</td></tr>
 </table></p>
-<h3 class="fn"><a name="Status-enum"></a>enum QMessage::Status</h3>
-<p>Defines properties of a message.</p>
+<h3 class="flags"><a name="Status-enum"></a>enum QMessage::Status<br />flags QMessage::StatusFlags</h3>
+<p>This enum type is used to describe the status of a message.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::Read</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">This flag indicates that the content of this message has been displayed to the user.</td></tr>
@@ -127,8 +129,10 @@
 <tr><td valign="top"><tt>QMessage::Incoming</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">This flag indicates that the message has been sent from an external source.</td></tr>
 <tr><td valign="top"><tt>QMessage::Removed</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">This flag indicates that the message has been deleted from or moved on the originating server.</td></tr>
 </table></p>
-<h3 class="fn"><a name="Type-enum"></a>enum QMessage::Type</h3>
-<p>Defines the type of a message.</p>
+<p>The StatusFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Status&gt;. It stores an OR combination of Status values.</p>
+<p>See also <a href="qmessage.html#status">status</a>() and <a href="qmessage.html#setStatus">setStatus</a>().</p>
+<h3 class="flags"><a name="Type-enum"></a>enum QMessage::Type<br />flags QMessage::TypeFlags</h3>
+<p>This enum type is used to describe the type of a message.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::Mms</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The message is an MMS, Multimedia Messaging Service object.</td></tr>
@@ -136,8 +140,10 @@
 <tr><td valign="top"><tt>QMessage::Email</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">The message is an Email, Internet Message Format object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Xmpp</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an XMPP, Extensible Messaging and Presence Protocol object.</td></tr>
 <tr><td valign="top"><tt>QMessage::None</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The message type is not defined.</td></tr>
-<tr><td valign="top"><tt>QMessage::AnyType</tt></td><td align="center" valign="top"><tt>Mms | Sms | Email | Xmpp</tt></td><td valign="top">Bitflag value that matches Mms, Sms, Email or XMPP. Subject to future redefinition as new types are declared.</td></tr>
+<tr><td valign="top"><tt>QMessage::AnyType</tt></td><td align="center" valign="top"><tt>0xFFFFFFFF</tt></td><td valign="top">Bitflag value that matches any message type defined.</td></tr>
 </table></p>
+<p>The TypeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Type&gt;. It stores an OR combination of Type values.</p>
+<p>See also <a href="qmessage.html#type">type</a>() and <a href="qmessage.html#setType">setType</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessage"></a>QMessage::QMessage ()</h3>
@@ -190,11 +196,11 @@
 <h3 class="fn"><a name="fromTransmissionFormat"></a>QMessage QMessage::fromTransmissionFormat ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i>, const QByteArray &amp; <i>ba</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Constructs a message of type <i>t</i> from the data contained in <i>ba</i>.</p>
 <p>See the class description for a list of supported message encapsulations.</p>
-<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
+<p>See also <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="fromTransmissionFormatFile"></a>QMessage QMessage::fromTransmissionFormatFile ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i>, const QString &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Constructs a message of type <i>t</i> from the data contained in <i>fileName</i>.</p>
 <p>See the class description for a list of supported message encapsulations.</p>
-<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
+<p>See also <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="id"></a><a href="qmessageid.html">QMessageId</a> QMessage::id () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the message.</p>
 <p>See also <a href="qmessagefilterkey.html#id">QMessageFilterKey::id</a>().</p>
@@ -252,8 +258,8 @@
 <h3 class="fn"><a name="setSize"></a>void QMessage::setSize ( uint <i>size</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the complete size of the message as found on the originating server to <i>size</i>.</p>
 <p>See also <a href="qmessage.html#size">size</a>().</p>
-<h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( quint64 <i>newStatus</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Sets the status value for the message to <i>newStatus</i>.</p>
+<h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the status flags value for the message to <i>newStatus</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
 <h3 class="fn"><a name="setSubject"></a>void QMessage::setSubject ( const QString &amp; <i>s</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the subject of the message to <i>s</i>.</p>
@@ -271,8 +277,8 @@
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
 <p>See also <a href="qmessage.html#setSize">setSize</a>() and <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
-<h3 class="fn"><a name="status"></a>quint64 QMessage::status () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the status value for the message.</p>
+<h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilterkey.html#status">QMessageFilterKey::status</a>().</p>
 <h3 class="fn"><a name="subject"></a>QString QMessage::subject () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the subject of the message, if present; otherwise returns an empty string.</p>
@@ -283,11 +289,11 @@
 <h3 class="fn"><a name="toTransmissionFormat"></a>QByteArray QMessage::toTransmissionFormat () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the message in a format suitable for transmission.</p>
 <p>See the class description for the encapsulations used for each message type.</p>
-<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
+<p>See also <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="toTransmissionFormat-2"></a>void QMessage::toTransmissionFormat ( QDataStream &amp; <i>out</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Writes the message to the output stream <i>out</i>.</p>
 <p>See the class description for the encapsulations used for each message type.</p>
-<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
+<p>See also <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the Type of the message.</p>
 <p>See also <a href="qmessage.html#setType">setType</a>() and <a href="qmessagefilterkey.html#type">QMessageFilterKey::type</a>().</p>

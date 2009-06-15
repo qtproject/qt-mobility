@@ -18,7 +18,9 @@
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"></div>enum <a href="qmessage.html#Priority-enum">Priority</a></li>
 <li><div class="fn"></div>enum <a href="qmessage.html#Status-enum">Status</a></li>
+<li><div class="fn"></div>flags <a href="qmessage.html#Status-enum">StatusFlags</a></li>
 <li><div class="fn"></div>enum <a href="qmessage.html#Type-enum">Type</a></li>
+<li><div class="fn"></div>flags <a href="qmessage.html#Type-enum">TypeFlags</a></li>
 <li><div class="fn"></div><a href="qmessage.html#QMessage">QMessage</a> ()</li>
 <li><div class="fn"></div><a href="qmessage.html#QMessage-2">QMessage</a> ( const QMessageId &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#dtor.QMessage">~QMessage</a> ()</li>
@@ -57,8 +59,8 @@
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a> ( const QByteArray &amp; ) const : QList&lt;QString&gt;</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#headerFields">headerFields</a> () const : QList&lt;QByteArray&gt;</li>
 <li><div class="fn"></div><a href="qmessage.html#id">id</a> () const : QMessageId</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a> () const : uint</li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"></div><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a> () const : uint</li>
 <li><div class="fn"></div><a href="qmessage.html#originatorPort">originatorPort</a> () : uint</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a> () : QList&lt;QByteArray&gt;</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#prependContent">prependContent</a> ( const QMessageContentContainer &amp; ) : QMessageContentContainerId</li>
@@ -88,13 +90,13 @@
 <li><div class="fn"></div><a href="qmessage.html#setPriority">setPriority</a> ( Priority )</li>
 <li><div class="fn"></div><a href="qmessage.html#setReceivedDate">setReceivedDate</a> ( const QDateTime &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setSize">setSize</a> ( uint )</li>
-<li><div class="fn"></div><a href="qmessage.html#setStatus">setStatus</a> ( quint64 )</li>
+<li><div class="fn"></div><a href="qmessage.html#setStatus">setStatus</a> ( StatusFlags )</li>
 <li><div class="fn"></div><a href="qmessage.html#setSubject">setSubject</a> ( const QString &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setTo">setTo</a> ( const QList&lt;QString&gt; &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setTo-2">setTo</a> ( const QString &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setType">setType</a> ( Type )</li>
 <li><div class="fn"></div><a href="qmessage.html#size">size</a> () const : uint</li>
-<li><div class="fn"></div><a href="qmessage.html#status">status</a> () const : quint64</li>
+<li><div class="fn"></div><a href="qmessage.html#status">status</a> () const : StatusFlags</li>
 <li><div class="fn"></div><a href="qmessage.html#subject">subject</a> () const : QString</li>
 <li><div class="fn"></div><a href="qmessage.html#to">to</a> () const : QList&lt;QString&gt;</li>
 <li><div class="fn"></div><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a> () const : QByteArray</li>

@@ -8,11 +8,13 @@
         <keyword ref="qmessage.html#Priority-enum">QMessage::Normal</keyword>
         <keyword ref="qmessage.html#Priority-enum">QMessage::Low</keyword>
         <keyword ref="qmessage.html#Status-enum">Status</keyword>
+        <keyword ref="qmessage.html#Status-enum">StatusFlags</keyword>
         <keyword ref="qmessage.html#Status-enum">QMessage::HasAttachments</keyword>
         <keyword ref="qmessage.html#Status-enum">QMessage::Read</keyword>
         <keyword ref="qmessage.html#Status-enum">QMessage::Incoming</keyword>
         <keyword ref="qmessage.html#Status-enum">QMessage::Removed</keyword>
         <keyword ref="qmessage.html#Type-enum">Type</keyword>
+        <keyword ref="qmessage.html#Type-enum">TypeFlags</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Sms</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Xmpp</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::None</keyword>
@@ -122,14 +124,20 @@
     </section>
     <section ref="qmessagefilterkey.html" title="QMessageFilterKey Class Reference">
         <keyword ref="qmessagefilterkey.html">QMessageFilterKey</keyword>
+        <keyword ref="qmessagefilterkey.html#Option-enum">Option</keyword>
+        <keyword ref="qmessagefilterkey.html#Option-enum">Options</keyword>
+        <keyword ref="qmessagefilterkey.html#Option-enum">QMessageFilterKey::CaseInsensitive</keyword>
+        <keyword ref="qmessagefilterkey.html#Option-enum">QMessageFilterKey::FullWord</keyword>
         <keyword ref="qmessagefilterkey.html#body">body</keyword>
         <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
         <keyword ref="qmessagefilterkey.html#id">id</keyword>
         <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefilterkey.html#options">options</keyword>
         <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
         <keyword ref="qmessagefilterkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagefilterkey.html#recipients">recipients</keyword>
         <keyword ref="qmessagefilterkey.html#sender">sender</keyword>
+        <keyword ref="qmessagefilterkey.html#setOptions">setOptions</keyword>
         <keyword ref="qmessagefilterkey.html#size">size</keyword>
         <keyword ref="qmessagefilterkey.html#status">status</keyword>
         <keyword ref="qmessagefilterkey.html#subject">subject</keyword>

@@ -18,11 +18,19 @@
 <ul>
 <li><a href="qmessagefilterkey-members.html">List of all members, including inherited members</a></li>
 </ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qmessagefilterkey.html#Option-enum">Option</a></b> { FullWord, CaseInsensitive }</li>
+<li><div class="fn"></div>flags <b><a href="qmessagefilterkey.html#Option-enum">Options</a></b></li>
+</ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"></div><b><a href="qmessagefilterkey.html#QMessageFilterKey">QMessageFilterKey</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessagefilterkey.html#isEmpty">isEmpty</a></b> () const</li>
+<li><div class="fn"></div>Options <b><a href="qmessagefilterkey.html#options">options</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qmessagefilterkey.html#setOptions">setOptions</a></b> ( Options <i>options</i> )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#operator-and">operator&amp;</a></b> ( const QMessageFilterKey &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>const QMessageFilterKey &amp; <b><a href="qmessagefilterkey.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageFilterKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>const QMessageFilterKey &amp; <b><a href="qmessagefilterkey.html#operator-eq">operator=</a></b> ( const QMessageFilterKey &amp; <i>other</i> )</li>
@@ -50,14 +58,14 @@
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#sender-2">sender</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#size">size</a></b> ( int <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#size-2">size</a></b> ( int <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )</li>
-<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#status">status</a></b> ( quint64 <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
-<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#status-2">status</a></b> ( quint64 <i>mask</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
+<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#status">status</a></b> ( QMessage::Status <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
+<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#status-2">status</a></b> ( QMessage::StatusFlags <i>mask</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#subject">subject</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#subject-2">subject</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#timeStamp">timeStamp</a></b> ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#timeStamp-2">timeStamp</a></b> ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#type">type</a></b> ( QMessage::Type <i>type</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
-<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#type-2">type</a></b> ( quint64 <i>type</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )</li>
+<li><div class="fn"></div>QMessageFilterKey <b><a href="qmessagefilterkey.html#type-2">type</a></b> ( QMessage::TypeFlags <i>type</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -71,6 +79,17 @@
     QMessageFilterKey senderKey(QMessageFilterKey::sender(&quot;joe@user.com&quot;));
     QMessageIdList results = QMessageStore::instance()-&gt;queryMessages(subjectKey &amp; senderKey);</pre>
 <p>See also <a href="qmessagestore.html">QMessageStore</a> and <a href="qmessage.html">QMessage</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="flags"><a name="Option-enum"></a>enum QMessageFilterKey::Option<br />flags QMessageFilterKey::Options</h3>
+<p>This enum describes additional matching criteria when performing a search.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMessageFilterKey::FullWord</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The key should only match a complete word</td></tr>
+<tr><td valign="top"><tt>QMessageFilterKey::CaseInsensitive</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The key should not be case sensitive.</td></tr>
+</table></p>
+<p>The Options type is a typedef for <a href="qflags.html">QFlags</a>&lt;Option&gt;. It stores an OR combination of Option values.</p>
+<p>See also <a href="qmessagefilterkey.html#options">options</a>() and <a href="qmessagefilterkey.html#setOptions">setOptions</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageFilterKey"></a>QMessageFilterKey::QMessageFilterKey ()</h3>
@@ -103,6 +122,10 @@
 <p>An empty key matches all messages.</p>
 <p>The result of combining an empty key with a non-empty key is the original non-empty key. This is true regardless of whether the combination is formed by an AND or an OR operation.</p>
 <p>The result of combining two empty keys is an empty key.</p>
+<h3 class="fn"><a name="options"></a><a href="qmessagefilterkey.html#Option-enum">Options</a> QMessageFilterKey::options ()</h3>
+<p>Return the options for the search key.</p>
+<p>Default is no options set.</p>
+<p>See also <a href="qmessagefilterkey.html#setOptions">setOptions</a>().</p>
 <h3 class="fn"><a name="priority"></a>QMessageFilterKey QMessageFilterKey::priority ( <a href="qmessage.html#Priority-enum">QMessage::Priority</a> <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose priority matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
@@ -124,16 +147,19 @@
 <h3 class="fn"><a name="sender-2"></a>QMessageFilterKey QMessageFilterKey::sender ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose sender matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
+<h3 class="fn"><a name="setOptions"></a>void QMessageFilterKey::setOptions ( <a href="qmessagefilterkey.html#Option-enum">Options</a> <i>options</i> )</h3>
+<p>Set the options for the search key to <i>options</i>.</p>
+<p>See also <a href="qmessagefilterkey.html#options">options</a>().</p>
 <h3 class="fn"><a name="size"></a>QMessageFilterKey QMessageFilterKey::size ( int <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose size matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
 <h3 class="fn"><a name="size-2"></a>QMessageFilterKey QMessageFilterKey::size ( int <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose size matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<h3 class="fn"><a name="status"></a>QMessageFilterKey QMessageFilterKey::status ( quint64 <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="status"></a>QMessageFilterKey QMessageFilterKey::status ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose status matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
-<h3 class="fn"><a name="status-2"></a>QMessageFilterKey QMessageFilterKey::status ( quint64 <i>mask</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="status-2"></a>QMessageFilterKey QMessageFilterKey::status ( <a href="qmessage.html#Status-enum">QMessage::StatusFlags</a> <i>mask</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose status is a bitwise match to <i>mask</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
 <h3 class="fn"><a name="subject"></a>QMessageFilterKey QMessageFilterKey::subject ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -151,7 +177,7 @@
 <h3 class="fn"><a name="type"></a>QMessageFilterKey QMessageFilterKey::type ( <a href="qmessage.html#Type-enum">QMessage::Type</a> <i>type</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose type matches <i>type</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="type-2"></a>QMessageFilterKey QMessageFilterKey::type ( quint64 <i>type</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="type-2"></a>QMessageFilterKey QMessageFilterKey::type ( <a href="qmessage.html#Type-enum">QMessage::TypeFlags</a> <i>type</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching accounts whose type is a bitwise match to <i>type</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="operator-and"></a>QMessageFilterKey QMessageFilterKey::operator&amp; ( const QMessageFilterKey &amp; <i>other</i> ) const</h3>
