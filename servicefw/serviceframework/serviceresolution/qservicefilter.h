@@ -72,12 +72,15 @@ public:
     void setInterface(const QString& interfaceName, const QString& version = QString(), 
             QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
     void setServiceName(const QString& serviceName);
+    void setCustomConstraint(const QString& key, const QString& value);
+
 
     QString serviceName() const;
     QString interfaceName() const;
     int interfaceMajorVersion() const;
     int interfaceMinorVersion() const;
     VersionMatchRule versionMatchRule() const;
+    QString customConstraint(const QString& key) const;
 
 private:
     QServiceFilterPrivate *d;

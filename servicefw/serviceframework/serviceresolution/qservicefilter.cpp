@@ -58,6 +58,7 @@ public:
     int majorVersion;
     int minorVersion;
     QServiceFilter::VersionMatchRule matchingRule;
+    QHash<QString,QString> customProperties;
     friend class QServiceFilter;
 };
 
@@ -100,9 +101,6 @@ QServiceFilter::QServiceFilter()
 QServiceFilter::QServiceFilter(const QServiceFilter& other)
 {
     d = new QServiceFilterPrivate();
-    d->majorVersion = -1;
-    d->minorVersion = -1;
-    d->matchingRule = QServiceFilter::MinimumVersionMatch;
     (*this) = other;
 }
 
@@ -139,6 +137,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     d->majorVersion = other.d->majorVersion;
     d->minorVersion = other.d->minorVersion;
     d->matchingRule = other.d->matchingRule;
+    d->customProperties = other.d->customProperties;
 
     return *this;
 }
@@ -258,6 +257,29 @@ int QServiceFilter::interfaceMinorVersion() const
 }
 
 /*!
+    The filter only matches implementations which have the custom constraint
+    \a key with the given \a value. Such constraints are specified via the 
+    \i{<customproperty>} tag within the service xml.
+
+    \sa customConstraint()
+*/
+void QServiceFilter::setCustomConstraint(const QString& key, const QString& value)
+{
+    d->customProperties.insert(key, value);
+}
+
+/*!
+    Returns the value for the custom property \a key; otherwise
+    returns a null string.
+
+    \sa setCustomConstraint()
+*/
+QString QServiceFilter::customConstraint(const QString& key) const
+{
+    return d->customProperties[key];
+}
+
+/*!
     Returns the version match rule for this filter.
 
     \sa setInterface()
@@ -287,6 +309,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
     out << mj;
     out << mn;
     out << rule;
+    out << sf.d->customProperties;
     return out;
 }
 
@@ -306,6 +329,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
     in >> mj;
     in >> mn;
     in >> rule;
+    in >> sf.d->customProperties;
 
     sf.d->majorVersion = mj;
     sf.d->minorVersion = mn;
