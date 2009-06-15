@@ -52,7 +52,6 @@ public:
     virtual ~QMessageContentContainer();
 
     virtual QMessageContentContainerId containerId() const;
-    virtual void setContainerId(const QMessageContentContainerId &id);
 
     virtual void setContentType(const QByteArray &data);
     virtual QByteArray contentType() const;
@@ -63,9 +62,7 @@ public:
     virtual void setContentFileName(const QByteArray &data);
     virtual QByteArray contentFileName() const;
 
-    virtual void setContentAvailable(bool available);
     virtual bool contentAvailable() const;
-    virtual void setIndicativeSize(uint size);
     virtual uint indicativeSize() const;
 
     virtual QString decodedTextContent() const;
@@ -102,9 +99,13 @@ protected:
     virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);
 
 private:
-    virtual void setContainerDataModified(bool modified);
+    friend class QMessageStore;
 
-private:
+    virtual void setContainerId(const QMessageContentContainerId &id);
+    virtual void setContainerDataModified(bool modified);
+    virtual void setContentAvailable(bool available);
+    virtual void setIndicativeSize(uint size);
+
     // ...
 };
 
@@ -147,7 +148,6 @@ public:
     virtual void toTransmissionFormat(QDataStream &out) const;
 
     virtual QMessageId id() const;
-    virtual void setId(const QMessageId &id);
 
     virtual Type type() const;
     virtual void setType(Type t);
@@ -201,6 +201,11 @@ public:
     virtual bool dataModified() const;
 
 private:
+    friend class QMessageStore;
+
+    virtual void setId(const QMessageId &id);
+    virtual void setDataModified(bool modified);
+
     // ...
 };
 

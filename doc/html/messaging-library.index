@@ -43,9 +43,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" fullname="QMessageContentContainer::QMessageContentContainer" href="qmessagecontentcontainer.html#QMessageContentContainer" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageContentContainer" fullname="QMessageContentContainer::~QMessageContentContainer" href="qmessagecontentcontainer.html#dtor.QMessageContentContainer" location="draft-api.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageContentContainer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QMessageContentContainer::containerId" href="qmessagecontentcontainer.html#containerId" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageContentContainerId" signature="containerId() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContainerId" fullname="QMessageContentContainer::setContainerId" href="qmessagecontentcontainer.html#setContainerId" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setContainerId(const QMessageContentContainerId &amp; id)">
-                <parameter left="const QMessageContentContainerId &amp;" right="" name="id" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setContentType" fullname="QMessageContentContainer::setContentType" href="qmessagecontentcontainer.html#setContentType" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setContentType(const QByteArray &amp; data)">
                 <parameter left="const QByteArray &amp;" right="" name="data" default=""/>
             </function>
@@ -62,13 +59,7 @@
                 <parameter left="const QByteArray &amp;" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contentFileName" fullname="QMessageContentContainer::contentFileName" href="qmessagecontentcontainer.html#contentFileName" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="contentFileName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContentAvailable" fullname="QMessageContentContainer::setContentAvailable" href="qmessagecontentcontainer.html#setContentAvailable" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setContentAvailable(bool available)">
-                <parameter left="bool" right="" name="available" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contentAvailable" fullname="QMessageContentContainer::contentAvailable" href="qmessagecontentcontainer.html#contentAvailable" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="contentAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setIndicativeSize" fullname="QMessageContentContainer::setIndicativeSize" href="qmessagecontentcontainer.html#setIndicativeSize" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setIndicativeSize(uint size)">
-                <parameter left="uint" right="" name="size" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="indicativeSize" fullname="QMessageContentContainer::indicativeSize" href="qmessagecontentcontainer.html#indicativeSize" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="uint" signature="indicativeSize() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="decodedTextContent" fullname="QMessageContentContainer::decodedTextContent" href="qmessagecontentcontainer.html#decodedTextContent" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="decodedTextContent() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="decodedContent" fullname="QMessageContentContainer::decodedContent" href="qmessagecontentcontainer.html#decodedContent" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="decodedContent() const"/>
@@ -173,9 +164,6 @@
                 <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QMessage::id" href="qmessage.html#id" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageId" signature="id() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QMessage::setId" href="qmessage.html#setId" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setId(const QMessageId &amp; id)">
-                <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessage::type" href="qmessage.html#type" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Type" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessage::setType" href="qmessage.html#setType" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type t)">
                 <parameter left="Type" right="" name="t" default=""/>

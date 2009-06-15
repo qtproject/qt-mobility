@@ -47,10 +47,8 @@
 <li><div class="fn"></div>virtual uint <b><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a></b> ( QDataStream &amp; <i>in</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a></b> ( const QMessageContentContainerId &amp; <i>id</i>, const QMessageContentContainer &amp; <i>content</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContainerId">setContainerId</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContent">setContent</a></b> ( const QString &amp; <i>text</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContent-2">setContent</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentAvailable">setContentAvailable</a></b> ( bool <i>available</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a></b> ( const QByteArray &amp; <i>data</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentFileName">setContentFileName</a></b> ( const QByteArray &amp; <i>data</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
@@ -58,7 +56,6 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentType">setContentType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setIndicativeSize">setIndicativeSize</a></b> ( uint <i>size</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 </ul>
 <a name="static-public-members"></a>
@@ -89,7 +86,7 @@
 <p><a href="qmessagecontentcontainer.html#clearContents">clearContents</a>() will remove any existing parts, and set the content of the container to be the default content.</p>
 <p>A container stores name value pairs known as header fields. Names are ASCII strings, while values are charset encoded unicode strings. A header field may be appended using <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), an existing header field may be replaced using <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>(). A list of header fields is returned by <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(). The unicode string value of a header field is returned by <a href="qmessagecontentcontainer.html#headerField">headerField</a>().</p>
 <p>A list of charset names is returned by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>(). When encoding unicode QString text using <a href="qmessagecontentcontainer.html#setContent">setContent</a>(), <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>() or <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>() the first charset in the list returned by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>() that is capable of encoding all characters in the given unicode QString text will be used, or if none is capable UTF-8 will be used.</p>
-<p>If the container has been modified since it was last constructed contentModified returns true.</p>
+<p>If the container has been modified since it was last constructed <a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a>() returns true.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -123,10 +120,8 @@
 <p>Returns true if the container has been modified since it was constructed; otherwise returns false.</p>
 <h3 class="fn"><a name="containerId"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessageContentContainer::containerId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the container object.</p>
-<p>See also <a href="qmessagecontentcontainer.html#setContainerId">setContainerId</a>().</p>
 <h3 class="fn"><a name="contentAvailable"></a>bool QMessageContentContainer::contentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the entirety of the content contained is available on the device; otherwise returns false.</p>
-<p>See also <a href="qmessagecontentcontainer.html#setContentAvailable">setContentAvailable</a>().</p>
 <h3 class="fn"><a name="contentCharset"></a>QByteArray QMessageContentContainer::contentCharset () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the internet media (MIME) content charset, when defined; otherwise an empty array is returned.</p>
 <p>The default is &quot;US-ASCII&quot; for &quot;text&quot; type content; and an empty array for other types.</p>
@@ -167,7 +162,6 @@
 <p>See also <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="indicativeSize"></a>uint QMessageContentContainer::indicativeSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns an indication of the size of the container including contents.</p>
-<p>See also <a href="qmessagecontentcontainer.html#setIndicativeSize">setIndicativeSize</a>().</p>
 <h3 class="fn"><a name="preferredCharsets"></a>QList&lt;QByteArray&gt; QMessageContentContainer::preferredCharsets ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordered by preference list of charset names to use when encoding unicode QString text with <a href="qmessagecontentcontainer.html#setContent">setContent</a>(), <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>() or <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>().</p>
 <p>See also <a href="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</a>().</p>
@@ -183,9 +177,6 @@
 <h3 class="fn"><a name="replaceContent"></a>void QMessageContentContainer::replaceContent ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i>, const QMessageContentContainer &amp; <i>content</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>If the container contains content with the identifier <i>id</i>, either directly or recursively then replaces that content with <i>content</i>; otherwise does nothing.</p>
 <p>See also <a href="qmessagecontentcontainer.html#container">container</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
-<h3 class="fn"><a name="setContainerId"></a>void QMessageContentContainer::setContainerId ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Sets the identifier of the container object to <i>id</i>.</p>
-<p>See also <a href="qmessagecontentcontainer.html#containerId">containerId</a>().</p>
 <h3 class="fn"><a name="setContent"></a>void QMessageContentContainer::setContent ( const QString &amp; <i>text</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the content to <i>text</i>, content type to &quot;text&quot;, and charset to the first charset returned by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>() that can encode <i>text</i> if any; otherwise sets the charset to &quot;UTF-8&quot;.</p>
 <p>Does not modify the content subtype, the subtype should be set separately.</p>
@@ -194,9 +185,6 @@
 <p>Sets the content to <i>data</i>.</p>
 <p>Does not modify the content type, subtype or charset, they should be set separately.</p>
 <p>See also <a href="qmessagecontentcontainer.html#setContentType">setContentType</a>(), <a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a>(), and <a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a>().</p>
-<h3 class="fn"><a name="setContentAvailable"></a>void QMessageContentContainer::setContentAvailable ( bool <i>available</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Sets the content availability of the content contained to <i>available</i>.</p>
-<p>See also <a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a>().</p>
 <h3 class="fn"><a name="setContentCharset"></a>void QMessageContentContainer::setContentCharset ( const QByteArray &amp; <i>data</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the internet media (MIME) content charset to <i>data</i>.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
@@ -222,9 +210,6 @@
 <h3 class="fn"><a name="setHeaderField-2"></a>void QMessageContentContainer::setHeaderField ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the value of the first header field of the container with name <i>name</i> to <i>value</i> if it already exists; otherwise appends a header with the supplied name and value.</p>
 <p>See also <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
-<h3 class="fn"><a name="setIndicativeSize"></a>void QMessageContentContainer::setIndicativeSize ( uint <i>size</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Set the size indication of the container including contents to <i>size</i>.</p>
-<p>See also <a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a>().</p>
 <h3 class="fn"><a name="setPreferredCharsets"></a>void QMessageContentContainer::setPreferredCharsets ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the ordered by preference list of names of charsets to use when encoding unicode QString text with <a href="qmessagecontentcontainer.html#setContent">setContent</a>(), <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>() or <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>() to <i>charsetNames</i>.</p>
 <p>See also <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>

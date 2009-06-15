@@ -45,7 +45,6 @@
         <keyword ref="qmessage.html#setDate">setDate</keyword>
         <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
-        <keyword ref="qmessage.html#setId">setId</keyword>
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
@@ -87,16 +86,13 @@
         <keyword ref="qmessagecontentcontainer.html#prependContent">prependContent</keyword>
         <keyword ref="qmessagecontentcontainer.html#readContentFrom">readContentFrom</keyword>
         <keyword ref="qmessagecontentcontainer.html#replaceContent">replaceContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContainerId">setContainerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContent">setContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentAvailable">setContentAvailable</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentCharset">setContentCharset</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentFileName">setContentFileName</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentSubType">setContentSubType</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentType">setContentType</keyword>
         <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setIndicativeSize">setIndicativeSize</keyword>
         <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
         <section ref="qmessagecontentcontainer-members.html" title="List of all members"/>

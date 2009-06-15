@@ -56,7 +56,6 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QString &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setId">setId</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
@@ -75,7 +74,7 @@
 <li><div class="fn"></div>virtual Type <b><a href="qmessage.html#type">type</a></b> () const</li>
 </ul>
 <ul>
-<li><div class="fn"></div>36 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
+<li><div class="fn"></div>33 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -198,7 +197,7 @@
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="id"></a><a href="qmessageid.html">QMessageId</a> QMessage::id () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the message.</p>
-<p>See also <a href="qmessage.html#setId">setId</a>() and <a href="qmessagefilterkey.html#id">QMessageFilterKey::id</a>().</p>
+<p>See also <a href="qmessagefilterkey.html#id">QMessageFilterKey::id</a>().</p>
 <h3 class="fn"><a name="originatorPort"></a>uint QMessage::originatorPort ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the originating port of the message.</p>
 <p>Only relevant for SMS messages.</p>
@@ -240,9 +239,6 @@
 <h3 class="fn"><a name="setFrom"></a>void QMessage::setFrom ( const QString &amp; <i>s</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the from address, that is the originating address of the message to <i>s</i>.</p>
 <p>See also <a href="qmessage.html#from">from</a>().</p>
-<h3 class="fn"><a name="setId"></a>void QMessage::setId ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Sets the identifier of the message to <i>id</i>.</p>
-<p>See also <a href="qmessage.html#id">id</a>().</p>
 <h3 class="fn"><a name="setOriginatorPort"></a>void QMessage::setOriginatorPort ( uint <i>port</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the originating port of the message to <i>port</i>.</p>
 <p>Only relevant for SMS messages.</p>

@@ -426,8 +426,6 @@ void QMessageContentContainer::setContentAvailable(bool available)
 /*!
     Returns true if the entirety of the content contained is available on the device; 
     otherwise returns false.
-
-    \sa setContentAvailable()
 */
 bool QMessageContentContainer::contentAvailable() const
 {
@@ -446,8 +444,6 @@ void QMessageContentContainer::setIndicativeSize(uint size)
 
 /*!
     Returns an indication of the size of the container including contents.
-
-    \sa setIndicativeSize()
 */
 uint QMessageContentContainer::indicativeSize() const
 {
@@ -956,7 +952,7 @@ void QMessage::toTransmissionFormat(QDataStream& out) const
 /*!
     Returns the identifier of the message.
 
-    \sa setId(), QMessageFilterKey::id()
+    \sa QMessageFilterKey::id()
 */
 QMessageId QMessage::id() const
 {
@@ -1390,6 +1386,14 @@ QList<QString> QMessage::customFields() const
 bool QMessage::dataModified() const
 {
     return false; // stub
+}
+
+/*!
+    Sets the modified data state of the message to \a modified.
+*/
+void QMessage::setDataModified(bool modified)
+{
+    Q_UNUSED(modified);
 }
 
 /*!
@@ -2479,10 +2483,5 @@ void QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
 {
     Q_UNUSED(a)
 }
-/* 
-   TODO which methods are essentially private
-   QMessage::setId QMessage:setSize, ?, others??
-   use friends for these.
-*/
 
 //#include "draft-api.moc"
