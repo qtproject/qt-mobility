@@ -840,25 +840,29 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
 /*!
     \enum QMessage::Type
 
-    Defines the type of a message.
+    This enum type is used to describe the type of a message.
     
     \value Mms      The message is an MMS, Multimedia Messaging Service object.
     \value Sms      The message is an SMS, Short Message Service object.
     \value Email    The message is an Email, Internet Message Format object.
     \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
     \value None     The message type is not defined.
-    \value AnyType  Bitflag value that matches Mms, Sms, Email or XMPP. Subject to future redefinition as new types are declared.
+    \value AnyType  Bitflag value that matches any message type defined.
+    
+    \sa type(), setType()
 */
     
 /*!
     \enum QMessage::Status
 
-    Defines properties of a message.
+    This enum type is used to describe the status of a message.
 
     \value Read            This flag indicates that the content of this message has been displayed to the user.
     \value HasAttachments  This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.
     \value Incoming        This flag indicates that the message has been sent from an external source.
     \value Removed         This flag indicates that the message has been deleted from or moved on the originating server.
+    
+    \sa status(), setStatus()
 */
 
 /*!
@@ -900,7 +904,7 @@ QMessage::~QMessage()
     
     See the class description for a list of supported message encapsulations.
     
-    \sa QMessage, toTransmissionFormat()
+    \sa toTransmissionFormat()
 */
 QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
 {
@@ -914,7 +918,7 @@ QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
 
     See the class description for a list of supported message encapsulations.
     
-    \sa QMessage, toTransmissionFormat()
+    \sa toTransmissionFormat()
 */
 QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 {
@@ -929,7 +933,7 @@ QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
     See the class description for the encapsulations used for each
     message type.
     
-    \sa QMessage, fromTransmissionFormat()
+    \sa fromTransmissionFormat()
 */
 QByteArray QMessage::toTransmissionFormat() const
 {
@@ -942,7 +946,7 @@ QByteArray QMessage::toTransmissionFormat() const
     See the class description for the encapsulations used for each
     message type.
 
-    \sa QMessage, fromTransmissionFormat()
+    \sa fromTransmissionFormat()
 */
 void QMessage::toTransmissionFormat(QDataStream& out) const
 {
@@ -1144,21 +1148,21 @@ void QMessage::setBcc(const QList<QString>& s)
 }
 
 /*!
-    Returns the status value for the message.
+    Returns the status flags value for the message.
 
     \sa setStatus(), QMessageFilterKey::status()
 */
-quint64 QMessage::status() const
+QMessage::StatusFlags QMessage::status() const
 {
-    return None; // stub
+    return StatusFlags(None); // stub
 }
 
 /*!
-    Sets the status value for the message to \a newStatus.
+    Sets the status flags value for the message to \a newStatus.
 
     \sa status()
 */
-void QMessage::setStatus(quint64 newStatus)
+void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
     Q_UNUSED(newStatus)
 }
@@ -1467,6 +1471,39 @@ void QMessage::setDataModified(bool modified)
 */
 
 /*!
+    \enum QMessageFilterKey::Option
+
+    This enum describes additional matching criteria when performing a search.
+    
+    \value FullWord        The key should only match a complete word
+    \value CaseInsensitive The key should not be case sensitive.
+    
+    \sa options(), setOptions()
+*/
+
+/*!
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+void QMessageFilterKey::setOptions(Options options)
+{
+    Q_UNUSED(options)
+}
+
+/*!
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
+*/
+QMessageFilterKey::Options QMessageFilterKey::options()
+{
+    return 0;
+}
+
+/*!
     Creates a QMessageFilterKey without specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) matches all messages. 
@@ -1615,7 +1652,7 @@ QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataCompa
 
     \sa QMessage::type()
 */
-QMessageFilterKey QMessageFilterKey::type(quint64 type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(type)
     Q_UNUSED(cmp)
@@ -1776,7 +1813,7 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 
     \sa QMessage::status()
 */
-QMessageFilterKey QMessageFilterKey::status(quint64 value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
@@ -1788,7 +1825,7 @@ QMessageFilterKey QMessageFilterKey::status(quint64 value, QMessageDataComparato
 
     \sa QMessage::status()
 */
-QMessageFilterKey QMessageFilterKey::status(quint64 mask, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(mask)
     Q_UNUSED(cmp)

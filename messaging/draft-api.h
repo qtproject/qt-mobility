@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QObject>
+#include <QFlags>
 
 class QMessageId 
 {
@@ -24,6 +25,9 @@ public:
 private:
     // ...
 };
+
+typedef QList<QMessageId> QMessageIdList;
+
 
 class QMessageContentContainerId
 {
@@ -43,8 +47,8 @@ private:
     // ...
 };
 
-typedef QList<QMessageId> QMessageIdList;
 typedef QList<QMessageContentContainerId> QMessageContentContainerIdList;
+
 
 class QMessageContentContainer {
 public:
@@ -109,6 +113,7 @@ private:
     // ...
 };
 
+
 class QMessage : public QMessageContentContainer {
 public:
     enum Type
@@ -119,8 +124,9 @@ public:
         Xmpp    = 0x8,
         // Extensible
         None    = 0,
-        AnyType = Mms | Sms | Email | Xmpp
+        AnyType = 0xFFFFFFFF
     };
+    Q_DECLARE_FLAGS(TypeFlags, Type)
 
     enum Status
     {
@@ -129,6 +135,7 @@ public:
         Incoming = 0x4,
         Removed = 0x8
     };
+    Q_DECLARE_FLAGS(StatusFlags, Status)
 
     enum Priority
     {
@@ -172,8 +179,8 @@ public:
     virtual QList<QString> bcc() const;
     virtual void setBcc(const QList<QString> &bccList);
 
-    virtual quint64 status() const;
-    virtual void setStatus(quint64 newStatus);
+    virtual StatusFlags status() const;
+    virtual void setStatus(StatusFlags newStatus);
 
     virtual Priority priority() const;
     virtual void setPriority(Priority newPriority);
@@ -208,6 +215,9 @@ private:
 
     // ...
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
+
 
 namespace QMessageDataComparator {
 
@@ -233,9 +243,20 @@ enum RelationComparator
 
 }
 
+
 class QMessageFilterKey
 {
 public:
+    enum Option
+    {
+        FullWord        = 0x1,
+        CaseInsensitive = 0x2
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
+    void setOptions(Options options);
+    Options options();
+
     QMessageFilterKey();
     bool isEmpty() const;
 
@@ -253,7 +274,7 @@ public:
     static QMessageFilterKey id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilterKey type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey type(quint64 type, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilterKey type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp);
 
     static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
@@ -273,8 +294,8 @@ public:
     static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
 
-    static QMessageFilterKey status(quint64 value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey status(quint64 mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilterKey priority(QMessage::Priority priority, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
 
@@ -287,6 +308,8 @@ public:
 private:
     // ...
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMessageFilterKey::Options)
+
 
 class QMessageSortKey {
 public:
@@ -314,6 +337,7 @@ public:
 private:
     // ...
 };
+
 
 class QMessageStore : public QObject
 {
@@ -363,6 +387,7 @@ private:
     QMessageStore();
     // ...
 };
+
 
 class QMessageServiceAction : public QObject
 {
