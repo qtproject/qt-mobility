@@ -87,7 +87,8 @@ public:
 
     QNetworkConfigurationPrivate::Bearer bearer;
     TUint32 numericId;
-        
+    TUint connectionId;
+
 private:
     // disallow detaching
     QNetworkConfigurationPrivate &operator=(const QNetworkConfigurationPrivate &other);

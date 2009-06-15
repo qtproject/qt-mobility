@@ -95,7 +95,7 @@ void BearerEx::on_showDetailsButton_clicked()
     }
 
 	QNetworkConfiguration networkConfiguration = qVariantValue<QNetworkConfiguration>(item->data(Qt::UserRole));
-	DetailedInfoDialog infoDialog(&networkConfiguration);
+	DetailedInfoDialog infoDialog(&networkConfiguration,this);
 	infoDialog.exec();
 }
 
@@ -106,7 +106,7 @@ void BearerEx::on_createSessionButton_clicked()
         return;
     }    
     QNetworkConfiguration networkConfiguration = qVariantValue<QNetworkConfiguration>(item->data(Qt::UserRole));
-    SessionDialog sessionDialog(&networkConfiguration);
+    SessionDialog sessionDialog(&networkConfiguration,&m_NetworkConfigurationManager,this);
     sessionDialog.exec();
 }
 
@@ -218,10 +218,14 @@ DetailedInfoDialog::DetailedInfoDialog(QNetworkConfiguration* apNetworkConfigura
 #endif
 }
 
-SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration, QWidget * parent)
+SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration,
+                             QNetworkConfigurationManager* configManager, 
+                             QWidget * parent)
     : QDialog(parent), m_http(0), m_httpRequestOngoing(false)
 {
     setupUi(this);
+    
+    m_ConfigManager = configManager;
 
     m_alrEnabled = false;
     m_NetworkSession = new QNetworkSession(*apNetworkConfiguration);
@@ -230,6 +234,9 @@ SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration, QWid
     connect(m_NetworkSession, SIGNAL(newConfigurationActivated()), this, SLOT(newConfigurationActivated()));
     connect(m_NetworkSession, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(stateChanged(QNetworkSession::State)));
+    connect(m_NetworkSession, SIGNAL(sessionOpened()), this, SLOT(sessionOpened()));
+    connect(m_NetworkSession, SIGNAL(sessionClosed()), this, SLOT(sessionClosed()));
+    connect(m_NetworkSession, SIGNAL(error(QNetworkSession::SessionError)), this, SLOT(error(QNetworkSession::SessionError)));
     
     if (apNetworkConfiguration->type() == QNetworkConfiguration::InternetAccessPoint) {
         snapLabel->hide();
@@ -254,6 +261,12 @@ SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration, QWid
 #endif
 }
 
+SessionDialog::~SessionDialog()
+{
+    delete m_NetworkSession;
+    delete m_http;
+}
+
 void SessionDialog::on_createQHttpButton_clicked()
 {
     if (m_httpRequestOngoing) {
@@ -265,6 +278,7 @@ void SessionDialog::on_createQHttpButton_clicked()
         delete m_http;
     }
     m_http = new QHttp(this);
+    createQHttpButton->setText("Recreate QHttp");
     connect(m_http, SIGNAL(done(bool)), this, SLOT(done(bool)));    
 }
 
@@ -320,8 +334,6 @@ void SessionDialog::on_alrButton_clicked()
 
 void SessionDialog::on_deleteSessionButton_clicked()
 {
-    delete m_NetworkSession;
-    m_NetworkSession = 0;
     setWindowTitle("Bearer Example");
     accept();
 }
@@ -356,6 +368,29 @@ void SessionDialog::preferredConfigurationChanged(const QNetworkConfiguration& c
     }
 }
 
+void SessionDialog::sessionOpened()
+{
+    QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
+    if (!identifier.isNull()) {
+        QString configId = identifier.toString();
+        QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
+        if (config.isValid()) {
+            iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
+        }
+    }
+
+    QMessageBox msgBox;
+    msgBox.setText("Session opened.");
+    msgBox.exec();
+}
+
+void SessionDialog::sessionClosed()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Session closed.");
+    msgBox.exec();
+}
+
 void SessionDialog::stateChanged(QNetworkSession::State state)    
 {
     QString active;
@@ -375,9 +410,18 @@ void SessionDialog::stateChanged(QNetworkSession::State state)
             stateLineEdit->setText(QString("Connecting")+active);
             break;
         case QNetworkSession::Connected:
+        {
             stateLineEdit->setText(QString("Connected")+active);
-            bearerLineEdit->setText(m_NetworkSession->bearerName());
+            QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
+            if (!identifier.isNull()) {
+                QString configId = identifier.toString();
+                QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
+                if (config.isValid()) {
+                    iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
+                }
+            }
             break;
+        }                
         case QNetworkSession::Closing:
             stateLineEdit->setText(QString("Closing")+active);
             break;
@@ -388,6 +432,29 @@ void SessionDialog::stateChanged(QNetworkSession::State state)
             stateLineEdit->setText(QString("Roaming")+active);
             break;
     }
+
+    bearerLineEdit->setText(m_NetworkSession->bearerName());
+}
+
+void SessionDialog::error(QNetworkSession::SessionError error)
+{
+    QMessageBox msgBox;
+    switch (error)
+    {
+        case QNetworkSession::UnknownSessionError:
+            msgBox.setText("UnknownSessionError");
+            break;
+        case QNetworkSession::SessionAbortedError:
+            msgBox.setText("SessionAbortedError");
+            break;
+        case QNetworkSession::RoamingError:
+            msgBox.setText("RoamingError");
+            break;
+        case QNetworkSession::OperationNotSupportedError:
+            msgBox.setText("OperationNotSupportedError");
+            break;
+    }
+    msgBox.exec();
 }
 
 void SessionDialog::done(bool error)

@@ -55,7 +55,8 @@ class SessionDialog : public QDialog, public Ui::SessionDialog
     Q_OBJECT
 
 public:
-    SessionDialog(QNetworkConfiguration* apNetworkConfiguration = 0, QWidget* parent = 0);
+    SessionDialog(QNetworkConfiguration* apNetworkConfiguration = 0, QNetworkConfigurationManager* configManager = 0, QWidget* parent = 0);
+    ~SessionDialog();
 
 private Q_SLOTS:
     void on_createQHttpButton_clicked();
@@ -69,11 +70,15 @@ private Q_SLOTS:
     
     void newConfigurationActivated();
     void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
-    void stateChanged(QNetworkSession::State state);    
+    void stateChanged(QNetworkSession::State state);
+    void sessionOpened();
+    void sessionClosed();
+    void error(QNetworkSession::SessionError error);
 
 private: //data
     QHttp* m_http;
     QNetworkSession* m_NetworkSession;
+    QNetworkConfigurationManager* m_ConfigManager;
     QNetworkConfiguration m_config;
     bool m_httpRequestOngoing;
     bool m_alrEnabled;

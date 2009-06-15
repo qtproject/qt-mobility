@@ -71,11 +71,13 @@ QT_BEGIN_NAMESPACE
 class ConnectionProgressNotifier;
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-class QNetworkSessionPrivate : public CActive, public MMobilityProtocolResp, public MConnectionMonitorObserver
+class QNetworkSessionPrivate : public QObject, public CActive, public MMobilityProtocolResp, 
+                               public MConnectionMonitorObserver
 #else
-class QNetworkSessionPrivate : public CActive, public MConnectionMonitorObserver
+class QNetworkSessionPrivate : public QObject, public CActive, public MConnectionMonitorObserver
 #endif
 {
+    Q_OBJECT
 public:
     QNetworkSessionPrivate(); 
     ~QNetworkSessionPrivate();
@@ -93,7 +95,7 @@ public:
     void setALREnabled(bool enabled);
 
     void open();
-    void close();
+    void close(bool signalWhenCloseIsReady = true);
     void stop();
     void migrate();
     void accept();
@@ -105,11 +107,6 @@ public:
     quint64 sentData() const;
     quint64 receivedData() const;
     quint64 activeTime() const;
-    
-    /**
-     * Creates a connection to SNAP using ALR
-     */
-    void ConnectALRL();
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
 public: // From MMobilityProtocolResp
@@ -134,10 +131,12 @@ protected: // From CActive
 private: // MConnectionMonitorObserver
     void EventL(const CConnMonEventBase& aEvent);
     
-private:    
-    void newState(QNetworkSession::State newState);
-    void handleSymbianConnectionStatusChange(TInt aConnectionStatus, TInt aError);
-    QNetworkConfiguration activeConfiguration() const;
+private:
+    quint64 transferredData(TUint dataType) const;
+    bool newState(QNetworkSession::State newState, TUint accessPointId = 0);
+    void handleSymbianConnectionStatusChange(TInt aConnectionStatus, TInt aError, TUint accessPointId = 0);
+    QNetworkConfiguration bestConfigFromSNAP(const QNetworkConfiguration& snapConfig) const;
+    QNetworkConfiguration activeConfiguration(TUint32 iapId = 0) const;
 
 private: // data
     //the config set on QNetworkSession
@@ -163,11 +162,12 @@ private: // data
     CActiveCommsMobilityApiExt* iMobility;
 #endif    
     
-    quint64 m_activeTime;
-    
-    TInt iS60Error;
+    QNetworkSession::SessionError iError;
     TInt iALREnabled;
     TBool iALRUpgradingConnection;
+    
+    TUint32 iOldRoamingIap;
+    TUint32 iNewRoamingIap;
 
     friend class QNetworkSession;
     friend class ConnectionProgressNotifier;
@@ -179,14 +179,18 @@ public:
     ConnectionProgressNotifier(QNetworkSessionPrivate& owner, RConnection& connection); 
     ~ConnectionProgressNotifier();
     
+    void StartNotifications();
+    void StopNotifications();
+    
 protected: // From CActive
     void RunL();
     void DoCancel();
 
 private: // Data
-    QNetworkSessionPrivate& owner;
+    QNetworkSessionPrivate& iOwner;
     RConnection& iConnection;
     TNifProgressBuf iProgress;
+    
 };
 
 QT_END_NAMESPACE

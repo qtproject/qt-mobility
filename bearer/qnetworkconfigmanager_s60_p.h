@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
 class CCommsDatabase;
 class QTimer;
 class QNetworkSessionPrivate;
-
+class AccessPointsAvailabilityScanner;
 
 class QNetworkConfigurationManagerPrivate : public QObject, public CActive, public MConnectionMonitorObserver
 {
@@ -92,27 +92,31 @@ public Q_SLOTS:
 private:
     void registerPlatformCapabilities();
     void updateStatesToSnaps();
-    bool changeConfigurationState(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
-                                  QNetworkConfiguration::StateFlags newState);
-    bool ensureMaxConfigurationState(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
-                                     QNetworkConfiguration::StateFlags newState);
+    bool changeConfigurationStateTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
+                                    QNetworkConfiguration::StateFlags newState);
+    bool changeConfigurationStateAtMinTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
+                                         QNetworkConfiguration::StateFlags newState);
+    bool changeConfigurationStateAtMaxTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
+                                          QNetworkConfiguration::StateFlags newState);
     bool readNetworkConfigurationValuesFromCommsDb(
             TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration);
     void readNetworkConfigurationValuesFromCommsDbL(
             TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration);
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    QNetworkConfigurationPrivate* configFromConnectioMethodL(RCmConnectionMethod& connectionMethod);
+    QNetworkConfigurationPrivate* configFromConnectioMethodL(RCmConnectionMethod& connectionMethod);    //insp: minor, Typo in function name: "Connectio"
 #endif    
     
     void updateConfigurationsL();
     void updateActiveAccessPoints();
     void updateAvailableAccessPoints();
+    void accessPointScanningReady(TBool scanSuccessful, TConnMonIapInfo iapInfo);
+    void startCommsDatabaseNotifications();
+    void stopCommsDatabaseNotifications();
 
     QNetworkConfiguration defaultConfigurationL();
-    
     TBool GetS60PlatformVersion(TUint& aMajor, TUint& aMinor) const;
-    
     void startMonitoringIAPData(TUint32 aIapId);
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> dataByConnectionId(TUint aConnectionId);
 
 protected: // From CActive
     void RunL();
@@ -125,6 +129,7 @@ public: // Data
     //this table contains an up to date list of all configs at any time.
     //it must be updated if configurations change, are added/removed or
     //the members of ServiceNetworks change
+    //insp: major, Why the keys are QString? Originally they seem to be IAP ids that are always converted into QStrings. Why not use e.g. unsigned long as a key type?
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QNetworkConfigurationManager::CapabilityFlags capFlags;
@@ -133,17 +138,39 @@ private: // Data
     bool               iFirstUpdate; 
     CCommsDatabase*    ipCommsDB;
     RConnectionMonitor iConnectionMonitor;
-    TInt               iS60Error;
 
-    TBool              iUpdatingConfigurations;
+    TBool              iWaitingCommsDatabaseNotifications;
     TBool              iOnline;
+    TBool              iInitOk;
+
+    
+    AccessPointsAvailabilityScanner* ipAccessPointsAvailabilityScanner;
     
     friend class QNetworkSessionPrivate;
+    friend class AccessPointsAvailabilityScanner;
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     RCmManager iCmManager;
-    TBool      iCmManagerOpen;
 #endif
+};
+
+class AccessPointsAvailabilityScanner : public CActive
+{
+public:
+    AccessPointsAvailabilityScanner(QNetworkConfigurationManagerPrivate& owner,
+                                   RConnectionMonitor& connectionMonitor); 
+    ~AccessPointsAvailabilityScanner();
+
+    void StartScanning();
+    
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+
+private: // Data
+    QNetworkConfigurationManagerPrivate& iOwner;
+    RConnectionMonitor& iConnectionMonitor;
+    TConnMonIapInfoBuf iIapBuf;
 };
 
 QT_END_NAMESPACE
