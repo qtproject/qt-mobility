@@ -79,8 +79,19 @@ static bool NetworkManagerAvailable()
 quint64 QNetworkSessionPrivate::sentData() const
 {
     quint64 result = 0;
+    QString devFile;
     if( state == QNetworkSession::Connected ) {
-        QFile tx("/sys/class/net/"+q->interface().name()+"/statistics/tx_bytes");
+        if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+            foreach (const QNetworkConfiguration &config, publicConfig.children()) {
+                if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+                    devFile = config.d->serviceInterface.name();
+                    qWarning() << devFile;
+                }
+            }
+        } else {
+            devFile = q->interface().name();
+        }
+        QFile tx("/sys/class/net/"+devFile+"/statistics/tx_bytes");
         if(tx.exists() && tx.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&tx);
             in >> result;
@@ -93,9 +104,19 @@ quint64 QNetworkSessionPrivate::sentData() const
 quint64 QNetworkSessionPrivate::receivedData() const
 {
     quint64 result = 0;
+    QString devFile;
     if( state == QNetworkSession::Connected ) {
+        if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+            foreach (const QNetworkConfiguration &config, publicConfig.children()) {
+                if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+                    devFile = config.d->serviceInterface.name();
+                }
+            }
+        } else {
+            devFile = q->interface().name();
+        }
 
-        QFile rx("/sys/class/net/"+q->interface().name()+"/statistics/rx_bytes");
+        QFile rx("/sys/class/net/"+devFile+"/statistics/rx_bytes");
         if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&rx);
             in >> result;
