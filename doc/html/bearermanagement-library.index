@@ -98,6 +98,7 @@
                 <value name="SessionAbortedError" value="1"></value>
                 <value name="RoamingError" value="2"></value>
                 <value name="OperationNotSupportedError" value="3"></value>
+                <value name="InvalidConfigurationError" value="4"></value>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" fullname="QNetworkSession::QNetworkSession" href="qnetworksession.html#QNetworkSession" location="qnetworksession.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkSession(const QNetworkConfiguration &amp; connectionConfig, QObject * parent)">
                 <parameter left="const QNetworkConfiguration &amp;" right="" name="connectionConfig" default=""></parameter>
