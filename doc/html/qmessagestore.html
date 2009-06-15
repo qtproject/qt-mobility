@@ -27,6 +27,7 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * <i>m</i> )</li>
 <li><div class="fn"></div>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> ) const</li>
 <li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
 <li><div class="fn"></div>uint <b><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a></b> ()</li>
@@ -59,11 +60,11 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessageStore class represents the main interface for storage and retrieval of messages in the message store.</p>
-<p>The QMessageStore class is accessed through a singleton interface and provides functions for adding messages to the message store, and updating and deleting messages in the message store.</p>
-<p>QMessageStore also provides functions for querying and counting of QMessages when used in conjunction with QMessageFilerKey class.</p>
+<p>The QMessageStore class is accessed through a singleton interface and provides a functions for adding, and updating, deleting and querying in the message store.</p>
+<p>QMessageStore also provides functions for querying and counting of QMessages when used in conjunction with <a href="qmessagefilterkey.html">QMessageFilterKey</a> class, namely <a href="qmessagestore.html#queryMessages">queryMessages</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
 <p>If a QMessageStore operation fails, the <a href="qmessagestore.html#lastError">lastError</a>() function will return an error code value indicating the failure mode encountered. A successful operation will set the <a href="qmessagestore.html#lastError">lastError</a>() result to <a href="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</a>.</p>
-<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object. Message content such as the message body and message parts are identified by <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> objects. The data associated with message content is retrieved in the form of a <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> object.</p>
-<p>Message objects are accessed via the <a href="qmessagestore.html#message">message</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>() functions. Messages can be inserted into the store using the addMessage() function, and messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
+<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>().</p>
+<p>Messages can be inserted into the store using the <a href="qmessagestore.html#addMessage">addMessage</a>() function, messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function ,and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
 <p>Message store manipulations involving messages are reported via the <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() and <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() signals.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessageid.html">QMessageId</a>, <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, and <a href="qmessagesortkey.html">QMessageSortKey</a>.</p>
 <hr />
@@ -89,6 +90,9 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="addMessage"></a>bool QMessageStore::addMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
+<p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the message store. Returns <tt>true</tt> if the operation completed successfully, or <tt>false</tt> otherwise.</p>
+<p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessagestore.html#removeMessage">removeMessage</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>int QMessageStore::countMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessagefilterkey.html">QMessageFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
@@ -118,6 +122,7 @@
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
 <h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
 <p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the message store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then a removal record will be created for the removed message. Returns <tt>true</tt> if the operation completed successfully, <tt>false</tt> otherwise.</p>
+<p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), and <a href="qmessagestore.html#updateMessage">updateMessage</a>().</p>
 <h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
 <p>Removes all messages identified by the key <i>key</i> from the message store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then removal records will be created for each removed message. Returns <tt>true</tt> if the operation completed successfully, <tt>false</tt> otherwise.</p>
 <p>For example:</p>
@@ -127,6 +132,7 @@
         QMessageFilterKey idsFilter(ids);
         return QMessageStore::instance()-&gt;removeMessages(idsFilter);
     }</pre>
+<p>See also <a href="qmessagestore.html#removeMessage">removeMessage</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), and <a href="qmessagestore.html#updateMessage">updateMessage</a>().</p>
 <h3 class="fn"><a name="setMaximumWorkingIds"></a>void QMessageStore::setMaximumWorkingIds ( uint <i>maximumIds</i> )</h3>
 <p>If <i>maximumIds</i> is 0, removes any constraint on the maximum number of ids that can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <p>Otherwise sets the maximum number of ids than can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>(). A failure to satisfy the working list size constraint is reported by <a href="qmessagestore.html#lastError">lastError</a>() returning <a href="qmessagestore.html#ErrorCode-enum">WorkingIdsOverflow</a>.</p>
@@ -140,6 +146,7 @@
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
 <h3 class="fn"><a name="updateMessage"></a>bool QMessageStore::updateMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
 <p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the message store. Returns <tt>true</tt> if the operation completed successfully, or <tt>false</tt> otherwise.</p>
+<p>See also <a href="qmessagestore.html#addMessage">addMessage</a>() and <a href="qmessagestore.html#removeMessage">removeMessage</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>

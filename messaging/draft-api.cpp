@@ -6,7 +6,7 @@
     \ingroup messaging
 
     \preliminary
-    \brief The QMessageId class provides a unique identifier for message entities stored by a QMessageStore.
+    \brief The QMessageId class provides a unique identifier for a QMessage message.
 
     A QMessageId can be constructed from a string, or converted to a string with toString().
 
@@ -107,8 +107,8 @@ bool QMessageId::isValid() const
     \ingroup messaging
 
     \preliminary
-    \brief The QMessageContentContainerId class provides a unique identifier for internet media 
-    (MIME) type entities.
+    \brief The QMessageContentContainerId class provides a unique identifier for 
+    QMessageContentContainer internet media (MIME) type entities.
 
     A QMessageContentContainerId can be constructed from a string, or converted to a string 
     with toString().
@@ -277,10 +277,9 @@ QMessageId QMessageContentContainerId::messageId() const
     using setContent(), appendHeaderField() or setHeaderField() the first charset in the list 
     returned by preferredCharsets() that is capable of encoding  all characters in the given 
     unicode QString text will be used, or if none is capable UTF-8 will be used.
-
-    The ordered by preference list of names of charsets to use when encoding unicode QString 
-    text with setContent(), appendHeaderField() or setHeaderField() can be set using 
-    setPreferredCharsets().
+    
+    If the container has been modified since it was last constructed containerDataModified() 
+    returns true.
 
     \sa QMessage, QMessageContentContainerId
 */
@@ -612,7 +611,19 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 */
 const QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId id) const
 {
-// Non const result will make QMessage::dataModified more complicated to implement.
+    Q_UNUSED(id)
+    return QMessageContentContainer(); // stub
+}
+
+/*!
+    If the container contains another container with identifier \a id either directly or 
+    recursively then returns that other container; otherwise returns an empty container 
+    constructed with the default constructor.
+
+    \sa contentIds(), clearContents(), appendContent(), replaceContent()
+*/
+QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId id)
+{
     Q_UNUSED(id)
     return QMessageContentContainer(); // stub
 }
@@ -738,6 +749,23 @@ QList<QByteArray> QMessageContentContainer::preferredCharsets()
 }
 
 /*!
+    Returns true if the container has been modified since it was constructed; 
+    otherwise returns false.
+*/
+bool QMessageContentContainer::containerDataModified() const
+{
+    return false; // stub
+}
+
+/*!
+    Sets the modified data state of the container to \a modified.
+*/
+void QMessageContentContainer::setContainerDataModified(bool modified)
+{
+    Q_UNUSED(modified);
+}
+
+/*!
     Prepend \a content to the start of the list of content contained.
 
     For a non multipart container, before a part is prepended the content type of the 
@@ -764,16 +792,16 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     QMessage supports a number of types. Including internet email messages, 
     the telephony types SMS and MMS, and also XMPP messages.
      
-    A QMessage can be constructed piece by piece using functions such as 
-    setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments().
-
+    The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
+    retrieval from the message store via their identifier using QMessageStore::message(). A 
+    QMessage can also be constructed piece by piece using functions such as 
+    setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
+    
     Alternatively a message can be initialized from raw data using fromTransmissionFormat().
-    
-    Messages can be added to the QMessageStore, or retrieved from the store via their QMessageId 
-    identifier.
-    
     A message may be serialized to a QDataStream, or returned as a QByteArray using 
     toTransmissionFormat().
+    
+    If a message has been modified since it was last constructed dataModified() returns true.
 
     A list of attachments identifiers will be returned by attachments() and an identifier for the 
     message body will be returned by body(). Attachments can be appended to the content of the 
@@ -2029,25 +2057,22 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
     \ingroup messaging
 
-    The QMessageStore class is accessed through a singleton interface and provides functions 
-    for adding messages to the message store, and updating and deleting messages in the message store.
+    The QMessageStore class is accessed through a singleton interface and provides a functions
+    for adding, and updating, deleting and querying in the message store.
 
     QMessageStore also provides functions for querying and counting of QMessages
-    when used in conjunction with QMessageFilerKey class.
+    when used in conjunction with QMessageFilterKey class, namely queryMessages() and 
+    countMessages().
 
     If a QMessageStore operation fails, the lastError() function will return an error code
     value indicating the failure mode encountered.  A successful operation will set the 
     lastError() result to QMessageStore::NoError.
 
     Messages in the message store are identified by QMessageId objects. The data associated
-    with a message is retrieved in the form of a QMessage object. Message content
-    such as the message body and message parts are identified by QMessageContentContainerId objects.
-    The data associated with message content is retrieved in the form of a QMessageContentContainer
-    object.
+    with a message is retrieved in the form of a QMessage object using message().
 
-    Message objects are accessed via the message() and queryMessages() functions. Messages 
-    can be inserted into the store using the addMessage() function, and messages in the 
-    store can be manipulated via the updateMessage() function and removed by the 
+    Messages can be inserted into the store using the addMessage() function, messages in the 
+    store can be manipulated via the updateMessage() function ,and removed by the 
     removeMessage() functions.
     
     Message store manipulations involving messages are reported via the messagesAdded(), 
@@ -2140,6 +2165,8 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     QMessageStore::CreateRemovalRecord then a removal record will be created for the
     removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
+
+    \sa removeMessages(), addMessage(), updateMessage()
 */
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 {
@@ -2165,6 +2192,8 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
         return QMessageStore::instance()->removeMessages(idsFilter);
     }
     \endcode
+
+    \sa removeMessage(), addMessage(), updateMessage()
 */
 bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
 {
@@ -2176,6 +2205,20 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 /*!
     Updates the existing QMessage \a m on the message store.
     Returns \c true if the operation completed successfully, or \c false otherwise. 
+
+    \sa message(), updateMessage(), removeMessage()
+*/
+bool QMessageStore::addMessage(QMessage *m)
+{
+    Q_UNUSED(m)
+    return true; // stub
+}
+
+/*!
+    Updates the existing QMessage \a m on the message store.
+    Returns \c true if the operation completed successfully, or \c false otherwise. 
+    
+    \sa addMessage(), removeMessage()
 */
 bool QMessageStore::updateMessage(QMessage *m)
 {

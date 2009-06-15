@@ -68,6 +68,7 @@
         <keyword ref="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</keyword>
         <keyword ref="qmessagecontentcontainer.html#clearContents">clearContents</keyword>
         <keyword ref="qmessagecontentcontainer.html#container">container</keyword>
+        <keyword ref="qmessagecontentcontainer.html#containerDataModified">containerDataModified</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentAvailable">contentAvailable</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
@@ -200,6 +201,7 @@
         <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::NoRemovalRecord</keyword>
+        <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>

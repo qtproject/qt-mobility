@@ -82,7 +82,9 @@ public:
     virtual void replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content);
     virtual void clearContents();
     virtual QMessageContentContainerIdList contentIds() const;
-    virtual const QMessageContentContainer container(const QMessageContentContainerId) const; 
+
+    virtual const QMessageContentContainer container(const QMessageContentContainerId) const;
+    virtual QMessageContentContainer container(const QMessageContentContainerId);
 
     virtual void appendHeaderField(const QByteArray &name, const QString &value);
     virtual void setHeaderField(const QByteArray &name, const QString &value);
@@ -94,9 +96,13 @@ public:
 
     static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
     static QList<QByteArray> preferredCharsets();
+    virtual bool containerDataModified() const;
 
 protected:
     virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);
+
+private:
+    virtual void setContainerDataModified(bool modified);
 
 private:
     // ...
@@ -329,9 +335,10 @@ public:
     QMessageStore::ErrorCode lastError() const;
     QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
     int countMessages(const QMessageFilterKey &key) const;
+    bool addMessage(QMessage *m);
+    bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, RemovalOption option = NoRemovalRecord);
     bool removeMessages(const QMessageFilterKey &key, RemovalOption option = NoRemovalRecord);
-    bool updateMessage(QMessage *m);
     QMessage message(const QMessageId &id) const;
     void setMaximumWorkingIds(uint maximumIds);
     uint maximumWorkingIds();
