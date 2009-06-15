@@ -13,10 +13,10 @@ class QMessageId
 {
 public:
     QMessageId();
-    QMessageId(const QMessageId& other);
-    QMessageId(const QString& id);
-    bool operator==(const QMessageId& other) const;
-    QMessageId& operator=(const QMessageId& other);
+    QMessageId(const QMessageId &other);
+    QMessageId(const QString &id);
+    bool operator==(const QMessageId &other) const;
+    QMessageId& operator=(const QMessageId &other);
 
     QString toString() const;
     bool isValid() const;
@@ -25,50 +25,85 @@ private:
     // ...
 };
 
-class QMessageContentId
+class QMessageContentContainerId
 {
 public:
-    QMessageContentId();
-    QMessageContentId(const QMessageContentId& other);
-    QMessageContentId(const QString& id);
-    bool operator==(const QMessageContentId& other) const;
-    QMessageContentId& operator=(const QMessageContentId& other);
+    QMessageContentContainerId();
+    QMessageContentContainerId(const QMessageContentContainerId &other);
+    QMessageContentContainerId(const QString &id);
+    bool operator==(const QMessageContentContainerId &other) const;
+    QMessageContentContainerId& operator=(const QMessageContentContainerId &other);
 
     QString toString() const;
     bool isValid() const;
+
+    QMessageId messageId() const;
 
 private:
     // ...
 };
 
 typedef QList<QMessageId> QMessageIdList;
-typedef QList<QMessageContentId> QMessageContentIdList;
+typedef QList<QMessageContentContainerId> QMessageContentContainerIdList;
 
-class QMessageContent {
+class QMessageContentContainer {
 public:
-    QMessageContent();
-    QMessageContent(const QMessageContentId& id);
-    virtual ~QMessageContent();
+    QMessageContentContainer();
+    QMessageContentContainer(const QMessageContentContainerId &id);
+    virtual ~QMessageContentContainer();
 
-    virtual QMessageContentId id() const;
-    virtual void setId(const QMessageContentId &id);
+    virtual QMessageContentContainerId containerId() const;
+    virtual void setContainerId(const QMessageContentContainerId &id);
 
+    virtual void setContentType(const QByteArray &data);
+    virtual QByteArray contentType() const;
+    virtual void setContentSubType(const QByteArray &data);
+    virtual QByteArray contentSubType() const;
+    virtual void setContentCharset(const QByteArray &data);
+    virtual QByteArray contentCharset() const;
+    virtual void setContentFileName(const QByteArray &data);
+    virtual QByteArray contentFileName() const;
+
+    virtual void setContentAvailable(bool available);
     virtual bool contentAvailable() const;
+    virtual void setIndicativeSize(uint size);
     virtual uint indicativeSize() const;
-    virtual QString contentType() const;
-    virtual QString contentSubType() const;
-    virtual QString fileName() const;
 
     virtual QString decodedTextContent() const;
     virtual QByteArray decodedContent() const;
     virtual QString decodedContentFileName() const;
-    virtual void serialize(QDataStream& out) const;        
+    virtual void writeContentTo(QDataStream &out) const;
+
+    virtual void setContent(const QString &text);
+    virtual void setContent(const QByteArray &data);
+    virtual void setContentFromFile(const QString &fileName);
+    virtual void readContentFrom(QDataStream &in);
+
+    virtual QMessageContentContainerId appendContent(const QMessageContentContainer &content);
+    virtual void replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content);
+    virtual void clearContents();
+    virtual QMessageContentContainerIdList contentIds() const;
+    virtual const QMessageContentContainer container(const QMessageContentContainerId) const; 
+
+    virtual void appendHeaderField(const QByteArray &name, const QString &value);
+    virtual void setHeaderField(const QByteArray &name, const QString &value);
+    virtual QString headerField(const QByteArray &name) const;
+    virtual QList<QString> headerFieldValues(const QByteArray &name) const;
+    virtual QList<QByteArray> headerFields() const;
+    virtual void appendHeaderField(const QByteArray &name, const QByteArray &value);
+    virtual void setHeaderField(const QByteArray &name, const QByteArray &value);
+
+    static void setCharsetList(const QList<QByteArray> &charsetNames);
+    static QList<QByteArray> charsetList();
+
+protected:
+    virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);
 
 private:
     // ...
 };
 
-class QMessage {
+class QMessage : public QMessageContentContainer {
 public:
     enum Type
     {
@@ -97,14 +132,14 @@ public:
     };
 
     QMessage();
-    QMessage(const QMessageId& id);
+    QMessage(const QMessageId &id);
     virtual ~QMessage();
 
     static QMessage fromTransmissionFormat(Type t, const QByteArray &ba);
-    static QMessage fromTransmissionFormatFile(Type t, const QString& fileName);
+    static QMessage fromTransmissionFormatFile(Type t, const QString &fileName);
 
     virtual QByteArray toTransmissionFormat() const;
-    virtual void toTransmissionFormat(QDataStream& out) const;
+    virtual void toTransmissionFormat(QDataStream &out) const;
 
     virtual QMessageId id() const;
     virtual void setId(const QMessageId &id);
@@ -125,12 +160,12 @@ public:
     virtual void setReceivedDate(const QDateTime &d);
 
     virtual QList<QString> to() const;
-    virtual void setTo(const QList<QString>& toList);
-    virtual void setTo(const QString& s);
+    virtual void setTo(const QList<QString> &toList);
+    virtual void setTo(const QString &s);
     virtual QList<QString> cc() const;
-    virtual void setCc(const QList<QString>& ccList);
+    virtual void setCc(const QList<QString> &ccList);
     virtual QList<QString> bcc() const;
-    virtual void setBcc(const QList<QString>& bccList);
+    virtual void setBcc(const QList<QString> &bccList);
 
     virtual quint64 status() const;
     virtual void setStatus(quint64 newStatus);
@@ -141,17 +176,22 @@ public:
     virtual uint size() const;
     virtual void setSize(uint size);
 
-    virtual QMessageContentId body() const;
-    virtual void setBody(const QString &body, bool html = false);
-    virtual void setBodyFromFile(const QString &fileName, bool html = false);
+    virtual QMessageContentContainerId body() const;
+    virtual void setBody(const QString &body);
+    virtual void setBodyFromFile(const QString &fileName);
 
-    virtual QMessageContentIdList attachments() const;
-    virtual void setAttachments(const QStringList &fileNames);
+    virtual QMessageContentContainerIdList attachments() const;
+    virtual void appendAttachments(const QStringList &fileNames);
+    virtual void clearAttachments();
 
     virtual void setOriginatorPort(uint port);
     virtual uint originatorPort();
     virtual void setDestinationPort(uint port);
     virtual uint destinationPort();
+
+    QString customField(const QString &name) const;
+    void setCustomField(const QString &name, const QString &value);
+    QList<QString> customFields() const;
 
     virtual bool dataModified() const;
 
@@ -190,13 +230,13 @@ public:
     bool isEmpty() const;
 
     QMessageFilterKey operator~() const;
-    QMessageFilterKey operator&(const QMessageFilterKey& other) const;
-    QMessageFilterKey operator|(const QMessageFilterKey& other) const;
-    const QMessageFilterKey& operator&=(const QMessageFilterKey& other);
-    const QMessageFilterKey& operator|=(const QMessageFilterKey& other);
+    QMessageFilterKey operator&(const QMessageFilterKey &other) const;
+    QMessageFilterKey operator|(const QMessageFilterKey &other) const;
+    const QMessageFilterKey& operator&=(const QMessageFilterKey &other);
+    const QMessageFilterKey& operator|=(const QMessageFilterKey &other);
 
-    bool operator==(const QMessageFilterKey& other) const;
-    const QMessageFilterKey& operator=(const QMessageFilterKey& other);
+    bool operator==(const QMessageFilterKey &other) const;
+    const QMessageFilterKey& operator=(const QMessageFilterKey &other);
 
     static QMessageFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
@@ -231,6 +271,9 @@ public:
     static QMessageFilterKey size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey size(int value, QMessageDataComparator::RelationComparator cmp);
 
+    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp);
+
 private:
     // ...
 };
@@ -240,11 +283,11 @@ public:
     QMessageSortKey();
     bool isEmpty() const;
 
-    QMessageSortKey operator+(const QMessageSortKey& other) const;
-    QMessageSortKey& operator+=(const QMessageSortKey& other);
+    QMessageSortKey operator+(const QMessageSortKey &other) const;
+    QMessageSortKey& operator+=(const QMessageSortKey &other);
 
-    bool operator==(const QMessageSortKey& other) const;
-    const QMessageSortKey& operator=(const QMessageSortKey& other);
+    bool operator==(const QMessageSortKey &other) const;
+    const QMessageSortKey& operator=(const QMessageSortKey &other);
 
     static QMessageSortKey id(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey type(Qt::SortOrder order = Qt::AscendingOrder);
@@ -286,12 +329,11 @@ public:
 
     QMessageStore::ErrorCode lastError() const;
     QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
-    int countMessages(const QMessageFilterKey& key) const;
-    bool removeMessage(const QMessageId& id, RemovalOption option = NoRemovalRecord);
-    bool removeMessages(const QMessageFilterKey& key, RemovalOption option = NoRemovalRecord);
+    int countMessages(const QMessageFilterKey &key) const;
+    bool removeMessage(const QMessageId &id, RemovalOption option = NoRemovalRecord);
+    bool removeMessages(const QMessageFilterKey &key, RemovalOption option = NoRemovalRecord);
     bool updateMessage(QMessage *m);
-    QMessage message(const QMessageId& id) const;
-    QMessageContent messageContent(const QMessageContentId& id) const;
+    QMessage message(const QMessageId &id) const;
     void setMaximumWorkingIds(uint maximumIds);
     uint maximumWorkingIds();
     
@@ -327,9 +369,9 @@ public:
     void compose(const QMessage &message);
     void reply(const QMessageId &id);
     void forward(const QMessageId &id);
-    void retrieve(const QMessageId& id);
-    void retrieve(const QMessageContentId& id);
-    void show(const QMessageId& id);
+    void retrieve(const QMessageId &id);
+    void retrieve(const QMessageContentContainerId &id);
+    void show(const QMessageId &id);
     Activity activity() const;
 
 public slots:
