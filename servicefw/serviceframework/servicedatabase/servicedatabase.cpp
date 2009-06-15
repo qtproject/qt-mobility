@@ -111,6 +111,9 @@ void DBError::setError(ErrorCode error, const QString &text)
         case(ComponentAlreadyRegistered):
         case(IfaceImplAlreadyRegistered):
         case(InvalidSearchCriteria):
+        case(CannotCreateDbDir):
+        case(CannotOpenSystemDb):
+        case(CannotOpenUserDb):
             m_text = text;
             break;
         default:
@@ -162,17 +165,27 @@ bool ServiceDatabase::open()
         iDatabasePath = databasePath();
 
     path = iDatabasePath;
+   QFileInfo dbFileInfo(path);
+   if (!dbFileInfo.dir().exists()) {
+       if(!QDir::root().mkpath(dbFileInfo.path())) {
+           QString errorText("Could not create database directory: %1");
+           m_lastError.setError(DBError::CannotCreateDbDir, errorText.arg(dbFileInfo.path()));
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+           qWarning() << "ServiceDatabase::open():-"
+                        << "Problem:" << qPrintable(m_lastError.text());
+#endif
+           close();
+           return false;
+        }
+   }
 
-    if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
-        path.append(RESOLVERDATABASE_PATH_SEPARATOR);
-    }
-    path.append(RESOLVERDATABASE);
+   m_connectionName = dbFileInfo.completeBaseName();
     //Create and/or open database and create tables if neccessary
     QSqlDatabase  database;
-    if(QSqlDatabase::contains(RESOLVERDATABASE_DEFAULT_CONNECTION)) {
-        database = QSqlDatabase::database(RESOLVERDATABASE_DEFAULT_CONNECTION);
+    if(QSqlDatabase::contains(m_connectionName)) {
+        database = QSqlDatabase::database(m_connectionName);
     } else {
-        database = QSqlDatabase::addDatabase("QSQLITE");
+        database = QSqlDatabase::addDatabase("QSQLITE", m_connectionName);
         database.setDatabaseName(path);
     }
 
@@ -186,9 +199,11 @@ bool ServiceDatabase::open()
     if (!database.isOpen()) {
         if(!database.open()) {
             m_lastError.setError(DBError::SqlError, database.lastError().text());
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::open():-"
                         << "Problem:" << "Could not open database"
                         << "\nReason:" << m_lastError.text();
+#endif
             close();
             return false;
         }
@@ -232,7 +247,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -579,7 +594,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         return interfaces;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Prepare search query, bind criteria values and execute search
@@ -687,7 +702,7 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool 
 #endif
         return services;
     }
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
     QString selectComponent("SELECT DISTINCT Service.Name COLLATE NOCASE ");
     QString fromComponent;
@@ -735,7 +750,7 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
         return interface;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
     QString statement("SELECT InterfaceID FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE");
     QList<QVariant> bindValues;
@@ -755,6 +770,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     {
         if ( ok != NULL )
             *ok = true;
+        QString errorText("No default service found for interface: \"%1\"");
+        m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
         return interface;
     }
     else
@@ -838,7 +855,7 @@ bool ServiceDatabase::setDefaultService(const QString &serviceName, const QStrin
         return false;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -919,7 +936,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         return false;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -1006,7 +1023,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         return false;
     }
 
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -1190,7 +1207,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 bool ServiceDatabase::close()
 {
     if(iDatabaseOpen) {
-        QSqlDatabase database = QSqlDatabase::database();
+        QSqlDatabase database = QSqlDatabase::database(m_connectionName);
         if (database.isValid()){
             if(database.isOpen()) {
                 database.close();
@@ -1239,6 +1256,10 @@ QString ServiceDatabase::databasePath() const
         path = settings.value("ServicesDB/Path").toString();
         if (path.isEmpty()) {
             path = QDir::currentPath();
+            if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
+            path.append(RESOLVERDATABASE_PATH_SEPARATOR);
+    }
+            path.append(RESOLVERDATABASE);
         }
     } else {
         path = iDatabasePath;
@@ -1253,7 +1274,7 @@ QString ServiceDatabase::databasePath() const
 */
 bool ServiceDatabase::createTables()
 {
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -1341,7 +1362,7 @@ bool ServiceDatabase::createTables()
 bool ServiceDatabase::checkTables()
 {
     bool bTables(false);
-    QStringList tables = QSqlDatabase::database().tables();
+    QStringList tables = QSqlDatabase::database(m_connectionName).tables();
     if (tables.contains(SERVICE_TABLE)
         && tables.contains(INTERFACE_TABLE)
         && tables.contains(DEFAULTS_TABLE)
@@ -1414,7 +1435,7 @@ bool ServiceDatabase::checkConnection()
         return false;
     }
 
-    if (!QSqlDatabase::database().isValid())
+    if (!QSqlDatabase::database(m_connectionName).isValid())
     {
         m_lastError.setError(DBError::InvalidDatabaseConnection);
         return false;
@@ -1443,7 +1464,7 @@ void ServiceDatabase::databaseRollback(QSqlQuery *query, QSqlDatabase *database)
 
 bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, const QString &interfaceID)
 {
-    QSqlQuery query(QSqlDatabase::database());
+    QSqlQuery query(QSqlDatabase::database(m_connectionName));
     QString statement("SELECT Key, Value FROM InterfaceProperty WHERE InterfaceID = ?");
     QList<QVariant> bindValues;
     bindValues.append(interfaceID);
@@ -1490,7 +1511,7 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
 
 bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *interface, const QString &serviceID)
 {
-    QSqlQuery query(QSqlDatabase::database());
+    QSqlQuery query(QSqlDatabase::database(m_connectionName));
     QString statement("SELECT Key, Value FROM ServiceProperty WHERE ServiceID = ?");
     QList<QVariant> bindValues;
     bindValues.append(serviceID);

@@ -46,6 +46,13 @@
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../sampleserviceplugin/sampleserviceplugin.h"
 
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
+
 typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
 Q_DECLARE_METATYPE(QServiceFilter)
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
@@ -1039,8 +1046,8 @@ void tst_QServiceManager::serviceAdded()
     QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString)));
     QVERIFY(mgr.addService(&buffer));
 
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
-    QCOMPARE(spy.count(), 1);
+    // QFileSystemWatcher doesn't emit fileChanged() immediately
+    QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
     delete listener;
@@ -1074,13 +1081,13 @@ void tst_QServiceManager::serviceRemoved()
     connect(&mgr, SIGNAL(serviceRemoved(QString)), listener, SLOT(serviceRemoved(QString)));
 
     QVERIFY(mgr.addService(&buffer));
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    QTest::qWait(2000);     // QFileSystemWatcher doesn't emit fileChanged() immediately
 
     QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
     QVERIFY(mgr.removeService(serviceName));
 
-    QTest::qWait(100);     // QFileSystemWatcher doesn't emit fileChanged() immediately
-    QCOMPARE(spy.count(), 1);
+    // QFileSystemWatcher doesn't emit fileChanged() immediately
+    QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), serviceName);
 
     delete listener;

@@ -164,7 +164,7 @@ public:
 
     void setDatabaseMonitorEnabled(bool enable)
     {
-        QString databasePath = database->databasePath() + QDir::separator() + "services.db";
+        QString databasePath = database->databasePath();
         if (!watcher) {
             watcher = new QFileSystemWatcher;
             connect(watcher, SIGNAL(fileChanged(QString)),
