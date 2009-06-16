@@ -652,7 +652,7 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
     The type, subtype and charset of the container are stored in the 'Content-Type' header
     field, the transfer encoding, such as quoted-printable, is stored in the 
     'Content-Transfer-Encoding' header field, the filename of the container is stored in
-    the 'Content-Disposition' header fields. These header fields should not be modified using
+    the 'Content-Disposition' header field. These header fields should not be modified using
     the setHeaderField() function and doing so may result in undefined behavior.
 
     \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
@@ -776,6 +776,100 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     Q_UNUSED(content);
     return QMessageContentContainerId(); // stub
 }
+
+
+/*!
+    \class QMessageAddress
+
+    \preliminary
+    \brief The QMessageAddress class provides an interface for a message address.
+
+    \ingroup messaging
+   
+    A message address consists of a recipient string and a type.
+*/    
+
+/*!
+    \enum QMessageAddress::Type
+
+    This enum type is used to describe the type of a message address.
+    
+    \value System   A system address.
+    \value Phone    A telephony address.
+    \value Email    An Email, Internet Message Format address.
+    \value Xmpp     An XMPP, Extensible Messaging and Presence Protocol address.
+    
+    \sa type(), setType()
+*/
+
+/*!
+    Constructs an empty message address.
+*/
+QMessageAddress::QMessageAddress()
+{
+}
+
+/*!
+    Constructs a message address with the given recipient \a recipient and type \a type.
+*/
+QMessageAddress::QMessageAddress(const QString &recipient, Type type)
+{
+    Q_UNUSED(recipient);
+    Q_UNUSED(type);
+}
+
+/*!
+    Destroys the message address.
+*/
+QMessageAddress::~QMessageAddress()
+{
+}
+
+/*!
+    Returns the recipient.
+
+    \sa setRecipient()
+*/
+QString QMessageAddress::recipient() const
+{
+    return QString(); // stub
+}
+
+/*!
+    Sets the recipient to \a recipient.
+
+    \sa recipient()
+*/
+void QMessageAddress::setRecipient(const QString &recipient)
+{
+    Q_UNUSED(recipient);
+}
+
+/*!
+    Returns the type of the message address.
+
+    \sa setType()
+*/
+QMessageAddress::Type QMessageAddress::type() const
+{
+    return System; // stub
+}
+
+/*!
+    Sets the type of the message address to \a type.
+
+    \sa type()
+*/
+void QMessageAddress::setType(Type type)
+{
+    Q_UNUSED(type);
+}
+
+/*! \typedef QMessageAddressList
+
+    Qt-style synonym for QList<QMessageAddress>
+*/
+
 
 /*!
     \class QMessage
@@ -1000,19 +1094,19 @@ void QMessage::setType(Type t)
 
     \sa setFrom(), QMessageFilterKey::sender()
 */
-QString QMessage::from() const
+QMessageAddress QMessage::from() const
 {
-    return QString(); // stub
+    return QMessageAddress(); // stub
 }
 
 /*!
-    Sets the from address, that is the originating address of the message to \a s.
+    Sets the from address, that is the originating address of the message to \a address.
 
     \sa from()
 */
-void QMessage::setFrom(const QString &s)
+void QMessage::setFrom(const QMessageAddress &address)
 {
-    Q_UNUSED(s)
+    Q_UNUSED(address)
 }
 
 /*!
@@ -1082,9 +1176,9 @@ void QMessage::setReceivedDate(const QDateTime &d)
 
     \sa setTo(), QMessageFilterKey::recipients()
 */
-QList<QString> QMessage::to() const
+QMessageAddressList QMessage::to() const
 {
-    return QList<QString>(); // stub
+    return QMessageAddressList(); // stub
 }
 
 /*! 
@@ -1092,19 +1186,19 @@ QList<QString> QMessage::to() const
     
     \sa to()
 */
-void QMessage::setTo(const QList<QString>& toList)
+void QMessage::setTo(const QMessageAddressList& toList)
 {
     Q_UNUSED(toList)
 }
 
 /*! 
-    Sets the primary recipient for the message to \a s.
+    Sets the primary recipient for the message to \a address.
     
     \sa to()
 */
-void QMessage::setTo(const QString& s)
+void QMessage::setTo(const QMessageAddress& address)
 {
-    Q_UNUSED(s)
+    Q_UNUSED(address)
 }
 
 /*!
@@ -1112,9 +1206,9 @@ void QMessage::setTo(const QString& s)
 
     \sa to(), bcc(), setCc(), QMessageFilterKey::recipients()
 */  
-QList<QString> QMessage::cc() const
+QMessageAddressList QMessage::cc() const
 {
-    return QList<QString>(); // stub
+    return QMessageAddressList(); // stub
 }
 
 /*!
@@ -1122,7 +1216,7 @@ QList<QString> QMessage::cc() const
 
     \sa cc(), setTo(), setBcc()
 */  
-void QMessage::setCc(const QList<QString>& ccList)
+void QMessage::setCc(const QMessageAddressList& ccList)
 {
     Q_UNUSED(ccList)
 }
@@ -1132,19 +1226,19 @@ void QMessage::setCc(const QList<QString>& ccList)
 
     \sa to(), cc(), setBcc()
 */  
-QList<QString> QMessage::bcc() const
+QMessageAddressList QMessage::bcc() const
 {
-    return QList<QString>(); // stub
+    return QMessageAddressList(); // stub
 }
 
 /*!
-    Set the list of bcc (blind carbon copy) recipients for the message to \a s.
+    Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
 
     \sa bcc(), setTo(), setCc()
 */  
-void QMessage::setBcc(const QList<QString>& s)
+void QMessage::setBcc(const QMessageAddressList& bccList)
 {
-    Q_UNUSED(s)
+    Q_UNUSED(bccList)
 }
 
 /*!

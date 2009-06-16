@@ -24,6 +24,7 @@ To build the library, run \tt qmake and \tt make.
 
 \list
     \o \l{QMessage}
+    \o \l{QMessageAddress}
     \o \l{QMessageContentContainer}
     \o \l{QMessageContentContainerId}
     \o \l{QMessageDataComparator}

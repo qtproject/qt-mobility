@@ -113,6 +113,30 @@ private:
     // ...
 };
 
+class QMessageAddress {
+public:
+    enum Type {
+        System = 1,
+        Phone,
+        Email,
+        Xmpp
+        // Extensible
+    };
+
+    QMessageAddress();
+    QMessageAddress(const QString &recipient, Type type);
+    virtual ~QMessageAddress();
+    QString recipient() const;
+    void setRecipient(const QString &recipient);
+    Type type() const;
+    void setType(Type type);
+
+private:
+    // ...
+};
+
+typedef QList<QMessageAddress> QMessageAddressList;
+
 
 class QMessage : public QMessageContentContainer {
 public:
@@ -159,8 +183,8 @@ public:
     virtual Type type() const;
     virtual void setType(Type t);
 
-    virtual QString from() const;
-    virtual void setFrom(const QString &s);
+    virtual QMessageAddress from() const;
+    virtual void setFrom(const QMessageAddress &address);
 
     virtual QString subject() const;
     virtual void setSubject(const QString &s);
@@ -171,13 +195,13 @@ public:
     virtual QDateTime receivedDate() const;
     virtual void setReceivedDate(const QDateTime &d);
 
-    virtual QList<QString> to() const;
-    virtual void setTo(const QList<QString> &toList);
-    virtual void setTo(const QString &s);
-    virtual QList<QString> cc() const;
-    virtual void setCc(const QList<QString> &ccList);
-    virtual QList<QString> bcc() const;
-    virtual void setBcc(const QList<QString> &bccList);
+    virtual QMessageAddressList to() const;
+    virtual void setTo(const QMessageAddressList &toList);
+    virtual void setTo(const QMessageAddress &address);
+    virtual QMessageAddressList cc() const;
+    virtual void setCc(const QMessageAddressList &ccList);
+    virtual QMessageAddressList bcc() const;
+    virtual void setBcc(const QMessageAddressList &bccList);
 
     virtual StatusFlags status() const;
     virtual void setStatus(StatusFlags newStatus);
