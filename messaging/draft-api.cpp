@@ -24,7 +24,7 @@
 /*!
     \fn QMessageId::QMessageId()
 
-    Creates an invalid identifier, toString() will return an empty string.
+    Creates an invalid identifier, toString() will return a null string.
 */
 QMessageId::QMessageId()
 {
@@ -80,7 +80,7 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
 
     Returns the string representation of this identifier.
     
-    An empty string should be returned if and only if the identifier is invalid.
+    An null string should be returned if and only if the identifier is invalid.
 */
 QString QMessageId::toString() const
 {
@@ -127,7 +127,7 @@ bool QMessageId::isValid() const
 /*!
     \fn QMessageContentContainerId::QMessageContentContainerId()
 
-    Creates an invalid identifier, toString() will return an empty string;
+    Creates an invalid identifier, toString() will return a null string;
 */
 QMessageContentContainerId::QMessageContentContainerId()
 {
@@ -183,7 +183,7 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 
     Returns the string representation of this identifier.
     
-    An empty string should be returned if and only if the identifier is invalid.
+    A null string should be returned if and only if the identifier is invalid.
 */
 QString QMessageContentContainerId::toString() const
 {
@@ -452,13 +452,13 @@ uint QMessageContentContainer::indicativeSize() const
 
 /*!
     For textual content encoded with a recognized charset decodedTextContent() will return 
-    the content as a unicode string; otherwise an empty string is returned.
+    the content as a unicode string; otherwise a null string is returned.
     
     \sa preferredCharsets()
 */
 QString QMessageContentContainer::decodedTextContent() const
 {
-    return QString();
+    return QString::null;
 }
 
 /*!
@@ -1110,13 +1110,13 @@ void QMessage::setFrom(const QMessageAddress &address)
 }
 
 /*!
-    Returns the subject of the message, if present; otherwise returns an empty string.
+    Returns the subject of the message, if present; otherwise returns a null string.
 
     \sa setSubject(), QMessageFilterKey::subject()
 */
 QString QMessage::subject() const
 {
-    return QString(); //stub
+    return QString::null; //stub
 }
 
 /*!
@@ -1131,7 +1131,7 @@ void QMessage::setSubject(const QString &s)
 
 /*!
     Returns the timestamp contained in the origination date header field of the message, if present; 
-    otherwise returns an empty timestamp.
+    otherwise returns a null timestamp.
     
     \sa setDate(), QMessageFilterKey::timeStamp()
 */
@@ -1152,7 +1152,7 @@ void QMessage::setDate(const QDateTime &d)
 
 /*!
     Returns the timestamp placed in the message during reception by the device, if present;
-    otherwise returns an empty timestamp.
+    otherwise returns a null timestamp.
     
     \sa setReceivedDate(), QMessageFilterKey::receptionTimeStamp()
 */
