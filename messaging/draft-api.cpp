@@ -768,8 +768,6 @@ void QMessageContentContainer::setContainerDataModified(bool modified)
     container is set to "multipart" and the contents of the container cleared with clearContents().
 
     Returns an identifier for the prepended content.
-
-    \sa QMessage::setBody()
 */
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
 {
