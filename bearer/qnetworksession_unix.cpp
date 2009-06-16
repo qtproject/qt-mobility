@@ -423,9 +423,6 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
     state = QNetworkSession::Invalid;
 //    if(!iface) {
         iface = new QNetworkManagerInterface();
-        connect(iface,SIGNAL(stateChanged(const QString &, quint32)),
-                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-//    }
     currentBearerName == "";
     if(publicConfig.identifier().contains( NM_DBUS_PATH_ACCESS_POINT)) {
 
