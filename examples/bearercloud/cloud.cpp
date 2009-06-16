@@ -181,7 +181,6 @@ void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Cloud::stateChanged(QNetworkSession::State state)
 {
-    qWarning() << __PRETTY_FUNCTION__ << configuration.name() <<configuration.identifier() << sessionStateToString(state);
     if (configuration.name().isEmpty())
         finalOpacity = qreal(0.1);
     else if (session->state() == QNetworkSession::NotAvailable)
