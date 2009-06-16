@@ -389,7 +389,6 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
     if( newState != state) {
         state = newState;
         emit q->newConfigurationActivated();
-        qWarning() << __FUNCTION__ <<  "emit q->stateChanged(state)";
         emit q->stateChanged(state);
     }
 }
@@ -422,15 +421,16 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
     triedServiceConnection = -1;
     state = QNetworkSession::Invalid;
 //    if(!iface) {
-        iface = new QNetworkManagerInterface();
+    iface = new QNetworkManagerInterface();
     currentBearerName == "";
+    QString ok;
     if(publicConfig.identifier().contains( NM_DBUS_PATH_ACCESS_POINT)) {
-
         QString APPAth = publicConfig.identifier();
         accessPointIface = new QNetworkManagerInterfaceAccessPoint(APPAth);
         currentBearerName = "WLAN";
         connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                 this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+     //   updateServiceNetworkState();
     }
 
     if(publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
@@ -439,6 +439,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
 
         foreach(QDBusObjectPath devicePath, devicesList) {
             devIface = new QNetworkManagerInterfaceDevice( devicePath.path());
+            QString devInterface = devIface->interface().name();
+            
             if(devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
                 devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
                 if(devWirelessIface->hwAddress() == publicConfig.identifier()) {
@@ -450,7 +452,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
                     connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
                             this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
                     break;
-                } else if(devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
+                }
+            } else if(devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
 
                     devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
                     if(devWiredIface->hwAddress() == publicConfig.identifier()) {
@@ -463,33 +466,18 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
                                 this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
                         break;
                     }
-                }
             } // end devIface
         }
     } else {
         //service network
         //  QNetworkSession::State oldState = state;
-
-        if (!publicConfig.isValid()) {
-            state = QNetworkSession::Invalid;
-        } else if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-            state = QNetworkSession::Connected;
-        } else if ((publicConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-            state = QNetworkSession::Disconnected;
-        } else if ((publicConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
-            state = QNetworkSession::NotAvailable;
-        } else if ((publicConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
-            state = QNetworkSession::NotAvailable;
+        updateServiceNetworkState();
+        if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+            deviceStateChanged(8);
+            // start time for new sessions
         }
-        emit q->stateChanged(state);
-
-    }
-    if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-        deviceStateChanged(8);
-        // start time for new sessions
     }
     setActiveTimeStamp();
-
 }
 
 void QNetworkSessionPrivate::activateNmSession()
@@ -709,7 +697,9 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
 void QNetworkSessionPrivate::updateDeviceInterfaceState(const QString &path, quint32 nmState)
 {
     Q_UNUSED(path);
-   deviceStateChanged(nmState);
+    deviceStateChanged(nmState);
+    if(publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
+        updateServiceNetworkState();
 }
 
 void QNetworkSessionPrivate::propertiesChanged( const QString & path, QMap<QString,QVariant> map)
@@ -729,8 +719,42 @@ void QNetworkSessionPrivate::propertiesChanged( const QString & path, QMap<QStri
 
 void QNetworkSessionPrivate::configChanged(const QNetworkConfiguration& config)
 {
-    qWarning() << __FUNCTION__ << config.identifier() << config.name();
+    if(config.type() == QNetworkConfiguration::ServiceNetwork) {
+        disconnect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
+                   this, SLOT(configChanged(QNetworkConfiguration)));
+        updateServiceNetworkState();
+    }
 }
+
+void QNetworkSessionPrivate::updateServiceNetworkState()
+{
+    connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
+            this, SLOT(configChanged(QNetworkConfiguration)));
+    foreach (const QNetworkConfiguration &config, publicConfig.children()) {
+        if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+            QString devicePath = "/org/freedesktop/Hal/devices/net_" + config.identifier().replace(":","_").toLower();
+            QNetworkManagerInterfaceDevice *devIfaceL;
+            devIfaceL = new QNetworkManagerInterfaceDevice( devicePath);
+            currentBearerName = getBearerName(devIfaceL->deviceType());
+            break;
+        }
+    }
+ //   currentConnectionPath = getConnectionPath();
+
+    if (!publicConfig.isValid()) {
+        state = QNetworkSession::Invalid;
+    } else if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+        state = QNetworkSession::Connected;
+    } else if ((publicConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+        state = QNetworkSession::Disconnected;
+    } else if ((publicConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
+        state = QNetworkSession::NotAvailable;
+    } else if ((publicConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
+        state = QNetworkSession::NotAvailable;
+    }
+    emit q->stateChanged(state);
+}
+
 
 #endif
 
