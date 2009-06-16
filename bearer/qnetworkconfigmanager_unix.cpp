@@ -456,7 +456,10 @@ void QNetworkConfigurationManagerPrivate::updateServiceNetworkState(bool isWifi)
         }
         wptr.data()->state = state;
     }
-    emit configurationUpdateComplete();
+
+   if (!firstUpdate && !updating) {
+       emit configurationUpdateComplete();
+   }
 }
 
 
@@ -487,16 +490,16 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
     QString activeAPPath = devWirelessIface->activeAccessPoint().path();
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
     accessPointIface = new QNetworkManagerInterfaceAccessPoint(path.path());
-    
+
     QString ident = accessPointIface->connectionInterface()->path();
     quint32 vState = devIface->state();
-    
+
     bool addIt = true;
-    
+
     QString ssid = accessPointIface->ssid();
     QString hwAddy = accessPointIface->hwAddress();
     QString sInterface = devIface->interface().name();
-    
+
     if(addIt) {
         QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
         cpPriv->name = ssid;
@@ -505,13 +508,13 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
         cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
         cpPriv->hwAddress = hwAddy;
         cpPriv->serviceInterface = devIface->interface();
-        
+
         bool knownSsid = false;
         if(knownSsids.contains(cpPriv->name)) {
             knownSsid = true;
         }
         cpPriv->state = getAPState(vState, knownSsids.contains(cpPriv->name));
-        
+
         if(activeAPPath == accessPointIface->connectionInterface()->path()) {
             cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Active);
         }
@@ -519,7 +522,7 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
             cpPriv->purpose = QNetworkConfiguration::Private;
         else
             cpPriv->purpose = QNetworkConfiguration::Public;
-        
+
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
         accessPointConfigurations.insert(ident, ptr);
         if (!firstUpdate) {
