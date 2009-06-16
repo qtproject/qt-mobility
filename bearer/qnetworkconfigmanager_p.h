@@ -66,11 +66,12 @@ class QIoctlWifiEngine;
 #endif
 #include <QStringList>
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#include <qnetworkmanagerservice_p.h>
+
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QObject>
 #include <QDBusObjectPath>
-class QNmDBusHelper;
 #endif
 
 class QNetworkConfigurationManagerPrivate : public QObject
@@ -115,10 +116,6 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     bool firstUpdate;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    QNmDBusHelper *testobj;
-#endif
-
 public slots:
     void updateConfigurations();
 Q_SIGNALS:
@@ -144,21 +141,31 @@ private:
     void abort();
 #endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+//    QNetworkManagerInterface *iface;
+
     QStringList knownSsids;
     bool updating;
     QString currentActiveAP;
     QString defaultConnectionPath;
     QStringList getKnownSsids();
-    void updateEthConfigurations(QDBusInterface &devIface);
-    void updateWifiConfigurations(QDBusInterface &devIface);
-    void updateServiceNetworks(QDBusInterface &devIface);
+
+    void updateEthConfigurations(QNetworkManagerInterfaceDevice *devIface);
+    void updateWifiConfigurations(QNetworkManagerInterfaceDevice *devIface);
+    void updateServiceNetworks(QNetworkManagerInterfaceDevice *devIface);
+
     void updateServiceNetworkState(bool isWifi);
     void updateState(const QString &ident, quint32 state);
-    QString getNameForConfiguration(QDBusInterface &devIface);
+
+    QString getNameForConfiguration(QNetworkManagerInterfaceDevice *devIface);
 
     QStringList getActiveConnectionsPaths(QDBusInterface &iface);
     QNetworkConfiguration::StateFlags getAPState(qint32 vState, bool isKnown);
-//    QStringList getActiveDevicesPaths(QDBusInterface &iface);
+
+     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
+     QNetworkManagerInterfaceDevice *devIface;
+     QNetworkManagerInterface *iface;
+
+    //    QStringList getActiveDevicesPaths(QDBusInterface &iface);
 #endif
 #ifdef Q_OS_WIN
     QNlaEngine *nla;

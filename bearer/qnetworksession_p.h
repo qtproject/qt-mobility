@@ -64,7 +64,6 @@
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include <QDBusPendingCallWatcher>
-class QNmDBusHelper;
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -166,7 +165,6 @@ private:
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
     bool keepActive;
     qint32 triedServiceConnection;
-    QNmDBusHelper *nmDBusObj;
     QDateTime startTime;
     QString currentBearerName;
     QString currentConnectionPath;
@@ -178,7 +176,14 @@ private:
     void updateNetworkConfigurations();
     void activateNmSession();
     void deactivateNmSession();
-    void activateConnection(QDBusInterface &iface, const QString & connPath, const QString &devicePath);
+    void activateConnection(/*QDBusInterface &iface,*/ const QString & connPath, const QString &devicePath);
+
+    QNetworkManagerInterface * iface;
+    QNetworkManagerInterfaceDevice *devIface;
+    QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
+    QNetworkManagerInterfaceAccessPoint *accessPointIface;
+    QNetworkManagerInterfaceDeviceWired * devWiredIface;
+
 #endif
 };
 

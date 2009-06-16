@@ -157,10 +157,31 @@ void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         event->accept();
     }
+    if (event->button() == Qt::RightButton) {
+        qWarning() << configuration.name()
+                << configuration.identifier();
+        qWarning() << "    configuration state:" << configurationStateToString(configuration.state());
+        qWarning() << "    session bearername:" << session->bearerName();
+        qWarning() << "    active time:"<< session->activeTime();
+        qWarning() << "    session state:" << sessionStateToString(session->state());
+        qWarning() << "    sent data:"<< session->sentData();
+        qWarning() << "    received sdata:"<< session->receivedData();
+
+
+        if(configuration.type() == QNetworkConfiguration::ServiceNetwork) {
+           qWarning() << configuration.name() << "is servicenetwork";
+            foreach (const QNetworkConfiguration &config, configuration.children()) {
+                qWarning() << "    "<< config.name() << config.identifier() << config.state();
+            }
+        }
+
+        event->accept();
+    }
 }
 
 void Cloud::stateChanged(QNetworkSession::State state)
 {
+    qWarning() << __PRETTY_FUNCTION__ << configuration.name() <<configuration.identifier() << sessionStateToString(state);
     if (configuration.name().isEmpty())
         finalOpacity = qreal(0.1);
     else if (session->state() == QNetworkSession::NotAvailable)
@@ -259,3 +280,50 @@ void Cloud::newConfigurationActivated()
     stateChanged(session->state());
 }
 
+QString Cloud::configurationStateToString(QNetworkConfiguration::StateFlags state)
+{
+    QString stateStr;
+
+    if ((state & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+        stateStr += "Active | ";
+    }
+    if ((state & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+        stateStr += "Discovered | ";
+    }
+    if ((state & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
+        stateStr += "Defined | ";
+    }
+    if ((state & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
+        stateStr += "Undefined";
+    }
+
+    return stateStr;
+}
+
+QString Cloud::sessionStateToString(QNetworkSession::State state)
+{
+    switch (state) {
+    case QNetworkSession::Invalid:
+        return "Invalid";
+        break;
+    case QNetworkSession::NotAvailable:
+        return "Not Available";
+        break;
+    case QNetworkSession::Connecting:
+        return "Connecting";
+        break;
+    case QNetworkSession::Connected:
+        return "Connected";
+        break;
+    case QNetworkSession::Closing:
+        return "Closing";
+        break;
+    case QNetworkSession::Disconnected:
+        return "Disconnected";
+        break;
+    case QNetworkSession::Roaming:
+        return "Roaming";
+        break;
+    };
+    return QString();
+}

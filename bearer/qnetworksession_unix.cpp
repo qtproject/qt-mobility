@@ -51,20 +51,17 @@
 #include <QDBusInterface>
 #include <QDBusMessage>
 #include <QDBusReply>
-#include <qnmdbushelper_p.h>
-
+#include <qnetworkmanagerservice_p.h>
 #endif
 
 #include <QNetworkInterface>
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    static QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
-#endif
+static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 QT_BEGIN_NAMESPACE
 static bool NetworkManagerAvailable()
 {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
@@ -85,7 +82,6 @@ quint64 QNetworkSessionPrivate::sentData() const
             foreach (const QNetworkConfiguration &config, publicConfig.children()) {
                 if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
                     devFile = config.d->serviceInterface.name();
-                    qWarning() << devFile;
                 }
             }
         } else {
@@ -276,22 +272,18 @@ QString QNetworkSessionPrivate::getActiveConnectionPath()
     }
 
     QString connPath;
-    QVariant prop = iface.property("ActiveConnections");
-    QList<QDBusObjectPath> connections = prop.value<QList<QDBusObjectPath> >();
+
+    QNetworkManagerInterface * ifaceD;
+    ifaceD = new QNetworkManagerInterface();
+    QList<QDBusObjectPath> connections = ifaceD->activeConnections();
     foreach(QDBusObjectPath path, connections) {
-        QDBusInterface conDetails(NM_DBUS_SERVICE,
-                                  path.path(),
-                                  NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
-                                  dbusConnection);
-
-        if (conDetails.isValid()) {
-
-            QList<QDBusObjectPath> devices = conDetails.property("Devices").value<QList<QDBusObjectPath> >();
-            foreach(QDBusObjectPath devpath, devices) {
-                QString str = devpath.path();
-                if( str.contains(interface)) {
-                    return path.path();
-                }
+        QNetworkManagerConnectionActive *conDetailsD;
+        conDetailsD = new QNetworkManagerConnectionActive( path.path());
+        QList<QDBusObjectPath> devices = conDetailsD->devices();
+        foreach(QDBusObjectPath devpath, devices) {
+            QString str = devpath.path();
+            if( str.contains(interface)) {
+                return path.path();
             }
         }
     }
@@ -315,55 +307,37 @@ QString QNetworkSessionPrivate::getConnectionPath(const QString &name)
     connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
     connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
 
-    qDBusRegisterMetaType<SettingsMap>();
+    qDBusRegisterMetaType<QNmSettingsMap>();
 
     QString connPath;
 
     foreach (QString service, connectionServices) {
-        QDBusInterface allCons(service,
-                               NM_DBUS_PATH_SETTINGS,
-                               NM_DBUS_IFACE_SETTINGS,
-                               dbusConnection);
-        if (allCons.isValid()) {
-            QDBusReply<QList<QDBusObjectPath> > reply = allCons.call("ListConnections");
-            if ( reply.isValid() ) {
-                QList<QDBusObjectPath> list = reply.value();
-                foreach(QDBusObjectPath path, list) {
-                    QDBusInterface sysIface(service,
-                                            path.path(),
-                                            NM_DBUS_IFACE_SETTINGS_CONNECTION,
-                                            dbusConnection);
-                    if (sysIface.isValid()) {
-
-
-                       QDBusReply< SettingsMap > rep = sysIface.call("GetSettings");
-                        if(rep.isValid()) {
-                            QMap< QString, QMap<QString,QVariant> > map = rep.value();
-                            QMap< QString, QMap<QString,QVariant> >::const_iterator i = map.find("connection");
-                            while (i != map.end() && i.key() == "connection") {
-                                QMap<QString,QVariant> innerMap = i.value();
-                                QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
-                                while (ii != innerMap.end() && ii.key() == "id") {
-                                    if(ii.value().toString() == configName) {
-                                        connPath = path.path();
-                                        return connPath;
-                                    }
-                                    ii++;
-                                }
-                                i++;
-                            }
-                        }
-                    } else {
-                        qWarning() << "not valid";
+        QNetworkManagerSettings *settingsiface;
+        settingsiface = new QNetworkManagerSettings(service);
+        QList<QDBusObjectPath> list = settingsiface->listConnections();
+        foreach(QDBusObjectPath path, list) {
+            QNetworkManagerSettingsConnection *sysIface;
+            sysIface = new QNetworkManagerSettingsConnection(service, path.path());
+            QNmSettingsMap map = sysIface->getSettings();
+            QMap< QString, QMap<QString,QVariant> >::const_iterator i = map.find("connection");
+            while (i != map.end() && i.key() == "connection") {
+                QMap<QString,QVariant> innerMap = i.value();
+                QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
+                while (ii != innerMap.end() && ii.key() == "id") {
+                    if(ii.value().toString() == configName) {
+                        connPath = path.path();
+                        return connPath;
                     }
-                } // end foreach
-            } else {
-                qWarning() << "ListConnections not validd" << service;
+                    ii++;
+                }
+                i++;
+//            } else {
+//                qWarning() << "ListConnections not validd" << service;
             }
 
-        } else {
+        }/* else {
             qWarning() << "not vvalid" << service;
-        }
+        }*/
     }
     return QString();
 }
@@ -410,8 +384,8 @@ void QNetworkSessionPrivate::deviceStateChanged(quint32 devstate)
         }
         break;
     };
-if(!isActive && keepActive)
-    activateNmSession();
+//if(!isActive && keepActive)
+//    activateNmSession();
     if( newState != state) {
         state = newState;
         emit q->newConfigurationActivated();
@@ -444,105 +418,69 @@ QString QNetworkSessionPrivate::getBearerName(quint32 type)
 
 void QNetworkSessionPrivate::updateNetworkConfigurations()
 {
-    qWarning() << __PRETTY_FUNCTION__;
     keepActive = false;
     triedServiceConnection = -1;
-    nmDBusObj = new QNmDBusHelper;
     state = QNetworkSession::Invalid;
-
-    if (!iface.isValid()) {
-        qWarning() << "Could not find NetworkManager";
-        emit q->error(QNetworkSession::SessionAbortedError);
-        return;
-    }
-
-    connect(nmDBusObj,SIGNAL(pathForStateChanged(const QString &, quint32)),
-            this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-
+//    if(!iface) {
+        iface = new QNetworkManagerInterface();
+        connect(iface,SIGNAL(stateChanged(const QString &, quint32)),
+                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
+//    }
     currentBearerName == "";
-
     if(publicConfig.identifier().contains( NM_DBUS_PATH_ACCESS_POINT)) {
 
         QString APPAth = publicConfig.identifier();
-        QDBusInterface accessPointIface(NM_DBUS_SERVICE,
-                                        APPAth,
-                                        NM_DBUS_INTERFACE_ACCESS_POINT,
-                                        dbusConnection);
-        if (accessPointIface.isValid()) {
-            currentBearerName = "WLAN";
-            connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-                    this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-            if(dbusConnection.connect(NM_DBUS_SERVICE,
-                                      APPAth,
-                                      NM_DBUS_INTERFACE_ACCESS_POINT,
-                                      "PropertiesChanged",
-                                      nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-            }
-        } else
-            qWarning() << "NOT VALID";
+        accessPointIface = new QNetworkManagerInterfaceAccessPoint(APPAth);
+        currentBearerName = "WLAN";
+        connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     }
+
     if(publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         // this is device interface
-        QDBusReply<QList<QDBusObjectPath> > reply = iface.call("GetDevices");
-        if ( reply.isValid() ) {
-            QList<QDBusObjectPath> devicesList = reply.value();
+        QList<QDBusObjectPath> devicesList = iface->getDevices();
 
-            foreach(QDBusObjectPath devicePath, devicesList) {
-                QDBusInterface devIface(NM_DBUS_SERVICE,
-                                        devicePath.path(),
-                                        NM_DBUS_INTERFACE_DEVICE,
-                                        dbusConnection);
-                if (devIface.isValid()) {
-                    QVariant v = devIface.property("DeviceType");
+        foreach(QDBusObjectPath devicePath, devicesList) {
+            devIface = new QNetworkManagerInterfaceDevice( devicePath.path());
+            if(devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
+                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
+                if(devWirelessIface->hwAddress() == publicConfig.identifier()) {
 
-                    if(v.toUInt() == DEVICE_TYPE_802_11_WIRELESS) {
-                        QDBusInterface devWirelessIface(NM_DBUS_SERVICE,
-                                                        devIface.path(),
-                                                        NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-                                                        dbusConnection);
-                        if (devWirelessIface.isValid()) {
-                            if(devWirelessIface.property("HwAddress").toString() == publicConfig.identifier()) {
+                    currentBearerName = getBearerName(DEVICE_TYPE_802_11_WIRELESS);
+                    currentConnectionPath = getConnectionPath();
+                    deviceStateChanged(devIface->state());
 
-                                currentBearerName = getBearerName(DEVICE_TYPE_802_11_WIRELESS);
+            connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
+                    this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
 
-                                currentConnectionPath = getConnectionPath();
-                                v = devIface.property("State");
-                                deviceStateChanged(v.toUInt());
-                                if(dbusConnection.connect(NM_DBUS_SERVICE,
-                                                          devicePath.path(),
-                                                          NM_DBUS_INTERFACE_DEVICE,
-                                                          "StateChanged",
-                                                          nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-                                }
-                                break;
-                            }
-                        }
-                    } else if(v.toUInt() == DEVICE_TYPE_802_3_ETHERNET) {
+//            if(dbusConnection.connect(NM_DBUS_SERVICE,
+//                                              devicePath.path(),
+//                                              NM_DBUS_INTERFACE_DEVICE,
+//                                              "StateChanged",
+//                                              nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
+//                    }
+                    break;
+                } else if(devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
 
-                        QDBusInterface devWiredIface(NM_DBUS_SERVICE,
-                                                     devIface.path(),
-                                                     NM_DBUS_INTERFACE_DEVICE_WIRED,
-                                                     dbusConnection);
-                        if (devWiredIface.isValid()) {
-                            if(devWiredIface.property("HwAddress").toString() == publicConfig.identifier()) {
+                    devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
+                    if(devWiredIface->hwAddress() == publicConfig.identifier()) {
 
-                                currentBearerName = getBearerName( DEVICE_TYPE_802_3_ETHERNET);
-                                currentConnectionPath = getConnectionPath();
+                        currentBearerName = getBearerName( DEVICE_TYPE_802_3_ETHERNET);
+                        currentConnectionPath = getConnectionPath();
 
-                                v = devIface.property("State");
-                                deviceStateChanged(v.toUInt());
-                                if(dbusConnection.connect(NM_DBUS_SERVICE,
-                                                          devicePath.path(),
-                                                          NM_DBUS_INTERFACE_DEVICE,
-                                                          "StateChanged",
-                                                          nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-                                }
-                                break;
-                            }
-                        }
+                        deviceStateChanged(devIface->state());
+                        connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
+                                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
+                        //                        if(dbusConnection.connect(NM_DBUS_SERVICE,
+//                                                  devicePath.path(),
+//                                                  NM_DBUS_INTERFACE_DEVICE,
+//                                                  "StateChanged",
+//                                                  nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
+//                        }
+                        break;
                     }
-                } // end devIface
-            }
+                }
+            } // end devIface
         }
     } else {
         //service network
@@ -572,7 +510,6 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
 
 void QNetworkSessionPrivate::activateNmSession()
 {
-    qWarning() << __FUNCTION__;
     bool ok = false;
     currentBearerName == "";
 
@@ -611,128 +548,81 @@ void QNetworkSessionPrivate::activateNmSession()
         return;
     }
 
-    if (!iface.isValid()) {
-        qWarning() << "Could not find NetworkManager";
-        emit q->error(QNetworkSession::SessionAbortedError);
-        return;
-    }
+//    if (!iface.isValid()) {
+//        qWarning() << "Could not find NetworkManager";
+//        emit q->error(QNetworkSession::SessionAbortedError);
+//        return;
+//    }
 
     QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
+//    QNetworkManagerInterfaceDevice *devIface;
+    devIface = new QNetworkManagerInterfaceDevice(devicePath);
+    currentBearerName = getBearerName(devIface->deviceType());
 
-    QDBusInterface devIface(NM_DBUS_SERVICE,
-                            devicePath,
-                            NM_DBUS_INTERFACE_DEVICE,
-                            dbusConnection);
-    QVariant v;
-    if (devIface.isValid()) {
+    if( devIface->state() != NM_DEVICE_STATE_ACTIVATED) {
+        if(devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
 
-        v = devIface.property("DeviceType");
-        currentBearerName = getBearerName(v.toUInt());
+            devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
 
-        v = devIface.property("State");
+            connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                    this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
-        if( v.toUInt() != NM_DEVICE_STATE_ACTIVATED) {
-            if(devIface.property("DeviceType").toUInt() == DEVICE_TYPE_802_11_WIRELESS) {
-                QDBusInterface devWirelessIface(NM_DBUS_SERVICE,
-                                                devIface.path(),
-                                                NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-                                                dbusConnection);
-                if (devWirelessIface.isValid()) {
-
-                    connect(nmDBusObj, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-                            this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-
-                    if(dbusConnection.connect(NM_DBUS_SERVICE,
-                                              devIface.path(),
-                                              NM_DBUS_INTERFACE_DEVICE_WIRELESS,
-                                              "PropertiesChanged",
-                                              nmDBusObj,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-                    } else {
-                        qWarning() << "NOT connect";
-                    }
-                    ok = true;
-                } else {
-                    qWarning() << "devWirelessIface is not valid" << devIface.path();
-                }
-            } else { // Wired interface
-                QDBusInterface devWiredIface(NM_DBUS_SERVICE,
-                                             devIface.path(),
-                                             NM_DBUS_INTERFACE_DEVICE_WIRED,
-                                             dbusConnection);
-                if (devWiredIface.isValid()) {
-
-                    if(devWiredIface.property("Carrier").toBool()) {
-                        ok = true;
-                    }
-                }
+            ok = true;
+        } else { // Wired interface
+            devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
+            if(devWiredIface->carrier()) {
+                ok = true;
             }
+        }
 
-            if(ok) {
-                activateConnection(iface, connPath, devIface.path());
-            } else {
-                qWarning() << "NOT OK";
-                emit q->error(QNetworkSession::SessionAbortedError);
-            }
+        if(ok) {
+            activateConnection( connPath, devIface->connectionInterface()->path());
         } else {
-            emit q->newConfigurationActivated();
+            qWarning() << "NOT OK";
+            emit q->error(QNetworkSession::SessionAbortedError);
         }
     } else {
-        qWarning() << "not VALID";
-        emit q->error(QNetworkSession::SessionAbortedError);
+        emit q->newConfigurationActivated();
     }
+    //    } else {
+//        qWarning() << "not VALID";
+//        emit q->error(QNetworkSession::SessionAbortedError);
+//    }
 }
 
-void QNetworkSessionPrivate::activateConnection(QDBusInterface &iface, const QString & connPath, const QString &devPath)
+void QNetworkSessionPrivate::activateConnection( const QString & connPath, const QString &devPath)
 {
-if(!dbusConnection.connect(NM_DBUS_SERVICE,
-                               devPath,
-                               NM_DBUS_INTERFACE_DEVICE,
-                               "StateChanged",
-                               nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-        qWarning() << __FUNCTION__ << "XXXXXXXXXX dbus connect NOT successful" <<  devPath;
-    }
-
     QStringList connectionServices;
     connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
     connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
 
     QDBusObjectPath connectionPath(connPath);
     QDBusObjectPath devicePath(devPath);
-
+    
     foreach (QString service, connectionServices) {
-        QDBusInterface settingsiface(service,
-                                     NM_DBUS_PATH_SETTINGS,
-                                     NM_DBUS_IFACE_SETTINGS,
-                                     dbusConnection);
-        //NetworkManagerSettings interface
-        if (settingsiface.isValid()) {
-            QDBusReply<QList<QDBusObjectPath> > reply2 = settingsiface.call("ListConnections");
-            if ( reply2.isValid() ) {
-                QList<QDBusObjectPath> list = reply2.value();
-                foreach(QDBusObjectPath path, list) {
-
-                    if(path == connectionPath) {
-
-                        triedServiceConnection = connectionPath.path().section('/', 4, 4, QString::SectionSkipEmpty).toInt();
-
-                        state = QNetworkSession::Connecting;
-                        emit q->stateChanged(state);
-
-                        connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
-                                this, SLOT(configChanged(QNetworkConfiguration)));
-
-                        QDBusPendingCall pendingCall = iface.asyncCall("ActivateConnection",
-                                                                       QVariant(service),
-                                                                       QVariant::fromValue(connectionPath),
-                                                                       QVariant::fromValue(devicePath),
-                                                                       QVariant::fromValue(connectionPath));
-
-                        QDBusPendingCallWatcher *callWatcher = new QDBusPendingCallWatcher(pendingCall, this);
-
-                        QObject::connect(callWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                                         this, SLOT(slotActivationFinished(QDBusPendingCallWatcher*)));
-                    }
-                }
+        QNetworkManagerSettings *settingsiface;
+        settingsiface = new QNetworkManagerSettings(service);
+        QList<QDBusObjectPath> list = settingsiface->listConnections();
+        foreach(QDBusObjectPath path, list) {
+            if(path == connectionPath) {
+                triedServiceConnection = connectionPath.path().section('/', 4, 4, QString::SectionSkipEmpty).toInt();
+                
+                state = QNetworkSession::Connecting;
+                emit q->stateChanged(state);
+                
+                connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
+                        this, SLOT(configChanged(QNetworkConfiguration)));
+                
+                iface = new QNetworkManagerInterface();
+                connect(iface,SIGNAL(stateChanged(const QString &, quint32)),
+                        this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
+                iface->activateConnection(
+                        service,
+                        connectionPath,
+                        devicePath,
+                        connectionPath);
+                connect(iface, SIGNAL(activationFinished(QDBusPendingCallWatcher*)),
+                        this, SLOT(slotActivationFinished(QDBusPendingCallWatcher*)));
             }
         }
     }
@@ -756,13 +646,11 @@ void QNetworkSessionPrivate::deactivateNmSession()
     QString activeConnectionPath = getActiveConnectionPath();
     if (!activeConnectionPath.isEmpty()) {
         QDBusObjectPath dbpath(activeConnectionPath);
-        if (!iface.isValid()) {
-            emit q->error(QNetworkSession::UnknownSessionError);
-            return;
-        }
-        iface.call("DeactivateConnection", QVariant::fromValue(dbpath));
+        QNetworkManagerInterface * iface;
+        iface = new QNetworkManagerInterface();
+        iface->deactivateConnection(dbpath);
         disconnect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
-                this, SLOT(configChanged(QNetworkConfiguration)));
+                   this, SLOT(configChanged(QNetworkConfiguration)));
     } else {
         qWarning() <<"Could not stop. No active path";
     }
@@ -776,68 +664,56 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
     QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
 
     QString path;
+    QNetworkManagerInterface * ifaceD;
+    ifaceD = new QNetworkManagerInterface();
+    QList<QDBusObjectPath> connections = ifaceD->activeConnections();
+    foreach(QDBusObjectPath conpath, connections) {
+        QNetworkManagerConnectionActive *conDetails;
+        conDetails = new QNetworkManagerConnectionActive(conpath.path());
+        QDBusObjectPath connection = conDetails->connection();
 
-    if (iface.isValid()) {
-        QVariant prop = iface.property("ActiveConnections");
-        QList<QDBusObjectPath> connections = prop.value<QList<QDBusObjectPath> >();
-        foreach(QDBusObjectPath conpath, connections) {
-            QDBusInterface conDetails(NM_DBUS_SERVICE,
-                                      conpath.path(),
-                                      NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
-                                      dbusConnection);
-            if (conDetails.isValid()) {
-                QVariant prop = conDetails.property("Connection");
-                QDBusObjectPath connection = prop.value<QDBusObjectPath>();
+        QList<QDBusObjectPath> so = conDetails->devices();
+        foreach(QDBusObjectPath device, so) {
 
-                QVariant Sprop = conDetails.property("Devices");
-                QList<QDBusObjectPath> so = Sprop.value<QList<QDBusObjectPath> >();
-                foreach(QDBusObjectPath device, so) {
-
-                    if(device.path() == devicePath) {
-                        path = connection.path();
-                    }
-                    break;
-                }
+            if(device.path() == devicePath) {
+                path = connection.path();
             }
+            break;
         }
     }
 
     QStringList connectionServices;
     connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
     connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
-    qDBusRegisterMetaType<SettingsMap>();
+    qDBusRegisterMetaType<QNmSettingsMap>();
 
     foreach (QString service, connectionServices) {
-        QDBusInterface sysIface(service,
-                                path,
-                                NM_DBUS_IFACE_SETTINGS_CONNECTION,
-                                dbusConnection);
-        if (sysIface.isValid()) {
-            QDBusReply< SettingsMap > rep = sysIface.call("GetSettings");
-            if(rep.isValid()) {
-                bool tmOk = false;
-                QMap< QString, QMap<QString,QVariant> > map = rep.value();
-                QMap< QString, QMap<QString,QVariant> >::const_iterator i = map.find("connection");
-                while (i != map.end() && i.key() == "connection") {
-                    QMap<QString,QVariant> innerMap = i.value();
-                    QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
-                    while (ii != innerMap.end() && ii.key() == "id") {
-                        if(ii.value().toString() == q->configuration().name()) {
-                            tmOk = true;
-                        } else
-                            tmOk = false;
-                        ii++;
-                    }
-                    while (ii != innerMap.end() && ii.key() == "timestamp" && tmOk) {
-                        startTime = QDateTime::fromTime_t(ii.value().toUInt());
-                        ii++;
-                        break;
-                    }
-                    i++;
+        QNetworkManagerSettings *settingsiface;
+        settingsiface = new QNetworkManagerSettings(service);
+        QList<QDBusObjectPath> list = settingsiface->listConnections();
+        foreach(QDBusObjectPath path, list) {
+            QNetworkManagerSettingsConnection *sysIface;
+            sysIface = new QNetworkManagerSettingsConnection(service, path.path());
+            QNmSettingsMap map = sysIface->getSettings();
+
+            bool tmOk = false;
+            QMap< QString, QMap<QString,QVariant> >::const_iterator i = map.find("connection");
+            while (i != map.end() && i.key() == "connection") {
+                QMap<QString,QVariant> innerMap = i.value();
+                QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
+                while (ii != innerMap.end() && ii.key() == "id") {
+                    if(ii.value().toString() == q->configuration().name()) {
+                        tmOk = true;
+                    } else
+                        tmOk = false;
+                    ii++;
                 }
-            } else {
-                //                qWarning() << "session GetSettings failed";
-                break;
+                while (ii != innerMap.end() && ii.key() == "timestamp" && tmOk) {
+                    startTime = QDateTime::fromTime_t(ii.value().toUInt());
+                    ii++;
+                    break;
+                }
+                i++;
             }
         }
     }
@@ -860,19 +736,17 @@ void QNetworkSessionPrivate::propertiesChanged( const QString & path, QMap<QStri
         i.next();
 
         if( i.key() == "State") { //only applies to device interfaces
-            deviceStateChanged(i.value().toUInt());
+           deviceStateChanged(i.value().toUInt());
         }
         else if( i.key() == "ActiveAccessPoint") {
         }
     }
 }
 
-void QNetworkSessionPrivate::configChanged(const QNetworkConfiguration& /*config*/)
+void QNetworkSessionPrivate::configChanged(const QNetworkConfiguration& config)
 {
-//    qWarning() << __FUNCTION__ << config.identifier() << config.name();
+    qWarning() << __FUNCTION__ << config.identifier() << config.name();
 }
-
-
 
 #endif
 

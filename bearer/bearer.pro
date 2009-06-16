@@ -56,8 +56,8 @@ symbian: {
 
     unix:contains(QT_CONFIG,dbus): {
         QT += dbus
-        HEADERS += qnmdbushelper_p.h
-        SOURCES += qnmdbushelper.cpp
+        HEADERS += qnmdbushelper_p.h qnetworkmanagerservice_p.h
+        SOURCES += qnmdbushelper.cpp qnetworkmanagerservice_p.cpp
     }
 
     win32: {

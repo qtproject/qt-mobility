@@ -44,14 +44,10 @@
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include <QDBusObjectPath>
 #include <QDBusContext>
+#include <QMap>
 #endif
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-
-typedef QMap< QString, QMap<QString,QVariant> > SettingsMap;
-Q_DECLARE_METATYPE(SettingsMap)
-typedef QList<quint32> ServerThing;
-Q_DECLARE_METATYPE(ServerThing)
 
 
 class QNmDBusHelper: public QObject, protected QDBusContext
