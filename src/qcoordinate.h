@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #ifndef QCOORDINATE_H
+#define QCOORDINATE_H
 
 #include "qlocationglobal.h"
 
