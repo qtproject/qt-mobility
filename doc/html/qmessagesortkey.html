@@ -31,7 +31,6 @@
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#id">id</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#priority">priority</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#recipients">recipients</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
@@ -58,9 +57,6 @@
 <p>A default-constructed key (one for which <a href="qmessagesortkey.html#isEmpty">isEmpty</a>() returns true) sorts no messages.</p>
 <p>The result of combining an empty key with a non-empty key is the same as the original non-empty key.</p>
 <p>The result of combining two empty keys is an empty key.</p>
-<h3 class="fn"><a name="id"></a>QMessageSortKey QMessageSortKey::id ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns a key that sorts messages by their identifiers, according to <i>order</i>.</p>
-<p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
 <h3 class="fn"><a name="priority"></a>QMessageSortKey QMessageSortKey::priority ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>

@@ -24,11 +24,19 @@ To build the library, run \tt qmake and \tt make.
 
 \list
     \o \l{QMessage}
+    \o \l{QMessageAccount}
+    \o \l{QMessageAccountId}
+    \o \l{QMessageAccountFilterKey}
+    \o \l{QMessageAccountSortKey}
     \o \l{QMessageAddress}
     \o \l{QMessageContentContainer}
     \o \l{QMessageContentContainerId}
     \o \l{QMessageDataComparator}
     \o \l{QMessageFilterKey}
+    \o \l{QMessageFolder}
+    \o \l{QMessageFolderId}
+    \o \l{QMessageFolderFilterKey}
+    \o \l{QMessageFolderSortKey}
     \o \l{QMessageId}
     \o \l{QMessageServiceAction}
     \o \l{QMessageSortKey}

@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageId Class Reference</h1>
-<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message. <a href="#details">More...</a></p>
+<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message within the scope of the message store. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessageId&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
 <li><a href="qmessageid-members.html">List of all members, including inherited members</a></li>
@@ -32,12 +32,12 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message.</p>
+<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message within the scope of the message store.</p>
 <p>A QMessageId can be constructed from a string, or converted to a string with <a href="qmessageid.html#toString">toString</a>().</p>
 <p>A QMessageId instance can be tested for validity with <a href="qmessageid.html#isValid">isValid</a>(), and compared to other instances for equality.</p>
 <p>If the message a QMessageId identifies is removed from the message store then the identifier will not be reused.</p>
 <p>The QMessageId implementation should be small, ideally less than or equal to 16 bytes.</p>
-<p>See also <a href="qmessagestore.html">QMessageStore</a>, <a href="qmessage.html">QMessage</a>, and <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
+<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagestore.html">QMessageStore</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageId"></a>QMessageId::QMessageId ()</h3>
@@ -51,7 +51,7 @@
 <p>Returns true if this identifier is valid; otherwise returns false.</p>
 <h3 class="fn"><a name="toString"></a>QString QMessageId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
-<p>An null string should be returned if and only if the identifier is invalid.</p>
+<p>A null string should be returned if and only if the identifier is invalid.</p>
 <h3 class="fn"><a name="operator-eq"></a>QMessageId &amp; QMessageId::operator= ( const QMessageId &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this identifier and returns a reference to this identifier.</p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageId::operator== ( const QMessageId &amp; <i>other</i> ) const</h3>

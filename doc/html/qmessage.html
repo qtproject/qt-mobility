@@ -48,6 +48,8 @@
 <li><div class="fn"></div>virtual QMessageAddress <b><a href="qmessage.html#from">from</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
+<li><div class="fn"></div>QMessageAccountId <b><a href="qmessage.html#parentAccountId">parentAccountId</a></b> () const</li>
+<li><div class="fn"></div>QMessageFolderId <b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</li>
 <li><div class="fn"></div>virtual Priority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QMessageAddressList &amp; <i>bccList</i> )</li>
@@ -100,6 +102,7 @@
 <p>Alternatively a message can be initialized from raw data using <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>(). A message may be serialized to a QDataStream, or returned as a QByteArray using <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <p>If a message has been modified since it was last constructed <a href="qmessage.html#dataModified">dataModified</a>() returns true.</p>
 <p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachments">attachments</a>() and an identifier for the message body will be returned by <a href="qmessage.html#body">body</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>() or <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>().</p>
+<p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
 <p>The following transmission formats are used both when constructing and encapsulating messages:</p>
 <ul>
 <li><a href="qmessage.html#Type-enum">QMessage::Sms</a> <a href="http://www.3gpp.org/ftp/Specs/html-info/23040.htm">3GPP TS 23.040</a> (Technical realization of the Short Message Service).</li>
@@ -209,6 +212,10 @@
 <p>Only relevant for SMS messages.</p>
 <p>Default is 0.</p>
 <p>See also <a href="qmessage.html#setOriginatorPort">setOriginatorPort</a>() and <a href="qmessage.html#setDestinationPort">setDestinationPort</a>().</p>
+<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const</h3>
+<p>Returns the identifier of the parent account of the message if any; otherwise returns an invalid identifier.</p>
+<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const</h3>
+<p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
 <h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the priority of the message.</p>
 <p>The default is Normal.</p>

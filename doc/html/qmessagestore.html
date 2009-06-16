@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageStore Class Reference</h1>
-<p>The QMessageStore class represents the main interface for storage and retrieval of messages in the message store. <a href="#details">More...</a></p>
+<p>The QMessageStore class represents the main interface for storage and retrieval of messages, folders and accounts in the message store. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessageStore&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
 <li><a href="qmessagestore-members.html">List of all members, including inherited members</a></li>
@@ -27,11 +27,17 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
+<li><div class="fn"></div>QMessageAccount <b><a href="qmessagestore.html#account">account</a></b> ( const QMessageAccountId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * <i>m</i> )</li>
+<li><div class="fn"></div>int <b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> ) const</li>
+<li><div class="fn"></div>int <b><a href="qmessagestore.html#countFolders">countFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i> ) const</li>
 <li><div class="fn"></div>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> ) const</li>
+<li><div class="fn"></div>QMessageFolder <b><a href="qmessagestore.html#folder">folder</a></b> ( const QMessageFolderId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
 <li><div class="fn"></div>uint <b><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a></b> ()</li>
 <li><div class="fn"></div>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
+<li><div class="fn"></div>QMessageAccountIdList <b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i>, const QMessageAccountSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>QMessageFolderIdList <b><a href="qmessagestore.html#queryFolders">queryFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i>, const QMessageFolderSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
@@ -59,11 +65,11 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QMessageStore class represents the main interface for storage and retrieval of messages in the message store.</p>
-<p>The QMessageStore class is accessed through a singleton interface and provides a functions for adding, and updating, deleting and querying in the message store.</p>
-<p>QMessageStore also provides functions for querying and counting of QMessages when used in conjunction with <a href="qmessagefilterkey.html">QMessageFilterKey</a> class, namely <a href="qmessagestore.html#queryMessages">queryMessages</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
+<p>The QMessageStore class represents the main interface for storage and retrieval of messages, folders and accounts in the message store.</p>
+<p>The QMessageStore class is accessed through a singleton interface and provides functions for adding, updating and deleting messages in the message store.</p>
+<p>QMessageStore also provides <a href="qmessagestore.html#queryMessages">queryMessages</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>() functions for querying and counting of <a href="qmessage.html">QMessage</a>, <a href="qmessagefolder.html">QMessageFolder</a> and <a href="qmessageaccount.html">QMessageAccount</a> objects by using the <a href="qmessagefilterkey.html">QMessageFilterKey</a>, <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a>, <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> classes respectively.</p>
 <p>If a QMessageStore operation fails, the <a href="qmessagestore.html#lastError">lastError</a>() function will return an error code value indicating the failure mode encountered. A successful operation will set the <a href="qmessagestore.html#lastError">lastError</a>() result to <a href="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</a>.</p>
-<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>().</p>
+<p>Messages in the message store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>(). Likewise a folder is retrieved in the form of a <a href="qmessagefolder.html">QMessageFolder</a> object using <a href="qmessagestore.html#folder">folder</a>(), and an account is retrieved in the form of a <a href="qmessageaccount.html">QMessageAccount</a> object using <a href="qmessagestore.html#account">account</a>().</p>
 <p>Messages can be inserted into the store using the <a href="qmessagestore.html#addMessage">addMessage</a>() function, messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function ,and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
 <p>Message store manipulations involving messages are reported via the <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() and <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() signals.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessageid.html">QMessageId</a>, <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, and <a href="qmessagesortkey.html">QMessageSortKey</a>.</p>
@@ -90,12 +96,22 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="account"></a><a href="qmessageaccount.html">QMessageAccount</a> QMessageStore::account ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> ) const</h3>
+<p>Returns the <a href="qmessageaccount.html">QMessageAccount</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="addMessage"></a>bool QMessageStore::addMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
 <p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the message store. Returns <tt>true</tt> if the operation completed successfully, or <tt>false</tt> otherwise.</p>
 <p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessagestore.html#removeMessage">removeMessage</a>().</p>
+<h3 class="fn"><a name="countAccounts"></a>int QMessageStore::countAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> ) const</h3>
+<p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<h3 class="fn"><a name="countFolders"></a>int QMessageStore::countFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i> ) const</h3>
+<p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>int QMessageStore::countMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessagefilterkey.html">QMessageFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<h3 class="fn"><a name="folder"></a><a href="qmessagefolder.html">QMessageFolder</a> QMessageStore::folder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> ) const</h3>
+<p>Returns the <a href="qmessagefolder.html">QMessageFolder</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="instance"></a>QMessageStore * QMessageStore::instance ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the single instance of the <a href="qmessagestore.html">QMessageStore</a> class.</p>
 <p>If necessary, the store will be instantiated and initialized.</p>
@@ -107,7 +123,7 @@
 <p>The default working list size is platform specific.</p>
 <p>See also <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="message"></a><a href="qmessage.html">QMessage</a> QMessageStore::message ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> ) const</h3>
-<p>Returns the <a href="qmessage.html">QMessage</a> defined by the <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> <i>id</i> from the store.</p>
+<p>Returns the <a href="qmessage.html">QMessage</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="messagesAdded"></a>void QMessageStore::messagesAdded ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when the messages identified by the list <i>ids</i> are added to the message store.</p>
 <p>See also <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
@@ -117,6 +133,12 @@
 <h3 class="fn"><a name="messagesUpdated"></a>void QMessageStore::messagesUpdated ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when the messages in the list <i>ids</i> are updated within the message store.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
+<h3 class="fn"><a name="queryAccounts"></a>QMessageAccountIdList QMessageStore::queryAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i>, const <a href="qmessageaccountsortkey.html">QMessageAccountSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
+<p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the message store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<h3 class="fn"><a name="queryFolders"></a>QMessageFolderIdList QMessageStore::queryFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i>, const <a href="qmessagefoldersortkey.html">QMessageFolderSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
+<p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the message store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
 <h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the message store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
