@@ -169,7 +169,6 @@
 <p>Prepend <i>content</i> to the start of the list of content contained.</p>
 <p>For a non multipart container, before a part is prepended the content type of the container is set to &quot;multipart&quot; and the contents of the container cleared with <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>().</p>
 <p>Returns an identifier for the prepended content.</p>
-<p>See also <a href="qmessage.html#setBody">QMessage::setBody</a>().</p>
 <h3 class="fn"><a name="readContentFrom"></a>void QMessageContentContainer::readContentFrom ( QDataStream &amp; <i>in</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>For a multipart container does nothing; otherwise sets the content of the container by reading from the stream <i>in</i>.</p>
 <p>Does not modify the content type, subtype or charset, they should be set separately.</p>
