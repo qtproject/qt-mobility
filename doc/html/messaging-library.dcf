@@ -180,6 +180,7 @@
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
         <keyword ref="qmessageserviceaction.html#forward">forward</keyword>
+        <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
         <keyword ref="qmessageserviceaction.html#reply">reply</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>

@@ -24,6 +24,7 @@
 <li><div class="fn"></div>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#forward">forward</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#reply">reply</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
@@ -46,6 +47,7 @@
 <p>The QMessageServiceAction class provides the interface for requesting external message services.</p>
 <p>QMessageServiceAction provides the mechanisms for messaging clients to request actions from external services, and to receive information in response. All actions present the same interface for communicating status, connectivity and progress information.</p>
 <p>All actions communicate changes in their operational state by emitting the <a href="qmessageserviceaction.html#activityChanged">activityChanged</a>() signal.</p>
+<p>If an action operation fails, the <a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a>() function will return a string indicating the failure mode encountered. A successful operation will set the lastError() result to a null string.</p>
 <p>A user may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
 <p>A QMessageServiceAction instance supports only a single request at any time. A client may, however, use multiple QMessageServiceAction instances to send independent requests concurrently. Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivered.</p>
 <hr />
@@ -59,25 +61,26 @@
 <h3 class="fn"><a name="cancelOperation"></a>void QMessageServiceAction::cancelOperation ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to cancel the last requested operation.</p>
 <h3 class="fn"><a name="compose"></a>void QMessageServiceAction::compose ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
-<p>Open a composer window using <i>message</i> as a prototype.</p>
-<p>The default application for handling the type <i>message</i> should be used.</p>
+<p>Open a composer application using <i>message</i> as a prototype.</p>
+<p>The default application for handling the type of <i>message</i> should be used.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="forward"></a>void QMessageServiceAction::forward ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Open a composer window forwarding the message identified by <i>id</i>.</p>
+<p>Open a composer application forwarding the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
+<h3 class="fn"><a name="lastErrorString"></a>QString QMessageServiceAction::lastErrorString () const</h3>
+<p>Returns a string indicating the last error condition reported by the action if any; otherwise returns a null string.</p>
 <h3 class="fn"><a name="reply"></a>void QMessageServiceAction::reply ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Open a composer window replying to the message identified by <i>id</i>.</p>
+<p>Open a composer application replying to the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Requests that the message server retrieve data regarding the message identified by <i>id</i>.</p>
+<p>Retrieve meta data of the message identified by <i>id</i>.</p>
 <p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved.</p>
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
 <h3 class="fn"><a name="retrieve-2"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
-<p>Requests that the message server retrieve data regarding the message identified by <i>id</i>.</p>
-<p>The entirety of the message content identified by <i>id</i> should be retrieved.</p>
+<p>Retrieve the container identified by <i>id</i>, the contents of the container should also be retrieved.</p>
 <p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
 <p>Transmit <i>message</i> using the default account for the type of <i>message</i>.</p>
