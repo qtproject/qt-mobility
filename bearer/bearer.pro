@@ -50,11 +50,11 @@ symbian: {
                qnetworkconfiguration_p.h \
                qnetworksession_p.h
 
-    unix:SOURCES += qnetworkconfigmanager_unix.cpp \
+    !mac:unix:SOURCES += qnetworkconfigmanager_unix.cpp \
                     qnetworkconfiguration_unix.cpp \
                     qnetworksession_unix.cpp
 
-    unix:contains(QT_CONFIG,dbus): {
+    !mac:unix:contains(QT_CONFIG,dbus): {
         QT += dbus
         HEADERS += qnmdbushelper_p.h qnetworkmanagerservice_p.h
         SOURCES += qnmdbushelper.cpp qnetworkmanagerservice_p.cpp
