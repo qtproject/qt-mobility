@@ -525,6 +525,25 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         }
         ++iter;
     }
+
+    //add custom properties
+    QHash<QString, QString>::const_iterator customIter = interface.d->customProperties.constBegin();
+    while(customIter!=interface.d->customProperties.constEnd()) {
+        bindValues.clear();
+        bindValues.append(interfaceID);
+        //to avoid key clashes use separate c_ namespace ->is this sufficient?
+        bindValues.append("c_"+customIter.key());
+        bindValues.append(customIter.value());
+        if (!executeQuery(query, statement, bindValues)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+            qWarning() << "ServiceDatabase::insertInterfaceData(customProps):-"
+                            << qPrintable(m_lastError.text());
+#endif
+            return false;
+        }
+        ++customIter;
+    }
+
     return true;
 }
 
@@ -651,6 +670,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QStringList capabilities;
     QString serviceID;
     QString interfaceID;
+
     while(query.next()){
         interface.d->interfaceName =query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
