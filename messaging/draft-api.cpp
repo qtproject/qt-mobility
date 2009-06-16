@@ -1358,8 +1358,8 @@ void QMessage::setBodyFromFile(const QString &fileName)
 
     The body of the message will not be included in the list.
     
-    TODO: Example attachment list generation algorithm, message parts are the main issue, have to 
-    recurse into them.
+    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
+    have to recurse into them, somewhat ambiguous.
     
     \sa appendAttachments(), clearAttachments()
 */
@@ -2227,7 +2227,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
 /*
     TODO capabilities AtomicBooleanSarch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
-      ExtendedServices, AtomicCustomSearching
+      ExtendedServices, AtomicCustomSearching, CaseInsensitiveSearching, FullWordSearching
 
     Activate/deactive on only adds, deletes or updates? Requires enum,
     enum NotificationType 
