@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS =
+SUBDIRS = tst_qcoordinate
