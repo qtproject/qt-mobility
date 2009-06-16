@@ -1,16 +1,19 @@
-#ifndef QMEDIAPLAYLIST_H
-#define QMEDIAPLAYLIST_H
+#ifndef QSHAREDMEDIAPLAYLIST_H
+#define QSHAREDMEDIAPLAYLIST_H
 
 #include "qabstractmediaplaylist.h"
 
-class QMediaPlaylistPrivate;
-class QMediaPlaylist : public QAbstractMediaPlaylist
+class QSharedMediaPlaylistPrivate;
+class QSharedMediaPlaylist : public QAbstractMediaPlaylist
 {
     Q_OBJECT
 public:
-    QMediaPlaylist(QObject *parent = 0);
-    QMediaPlaylist(const QMediaSource &source, QObject* parent = 0);
-    virtual ~QMediaPlaylist();
+    QSharedMediaPlaylist(const QString& name, QObject *parent = 0);
+    virtual ~QSharedMediaPlaylist();
+
+    QString name() const;
+
+    static QStringList sharedPlaylists();
 
     virtual int currentItemPos() const;
     virtual int size() const;
@@ -31,7 +34,8 @@ public Q_SLOTS:
     virtual void unshuffle();
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlaylist)
+    Q_DECLARE_PRIVATE(QSharedMediaPlaylist)
 };
 
-#endif  // QMEDIAPLAYLIST_H
+
+#endif // QSHAREDMEDIAPLAYLIST_H

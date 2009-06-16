@@ -1,6 +1,5 @@
-#include <private/qobject_p.h>
-
 #include "qmediaplaylist.h"
+#include "qabstractmediaplaylist_p.h"
 
 /*!
     \class QMediaPlaylist
@@ -12,53 +11,66 @@
     \sa
 */
 
-class QMediaPlaylistPrivate : public QObjectPrivate
+class QMediaPlaylistPrivate : public QAbstractMediaPlaylistPrivate
 {
 public:
 };
 
-QMediaPlaylist::QMediaPlaylist(QString name, QPlayListSource = defaultPlayListSource(), QObject* parent = 0):
-    QObject(*new QMediaPlaylistPrivate, parent)
+QMediaPlaylist::QMediaPlaylist(QObject *parent)
+    :QAbstractMediaPlaylist(*new QMediaPlaylistPrivate, parent)
 {
+}
+
+QMediaPlaylist::QMediaPlaylist(const QMediaSource &source, QObject* parent)
+    :QAbstractMediaPlaylist(*new QMediaPlaylistPrivate, parent)
+{
+    append(source);
 }
 
 QMediaPlaylist::~QMediaPlaylist()
 {
 }
 
-void QMediaPlaylist::enqueue(QMediaSource)
+int QMediaPlaylist::currentItemPos() const
 {
 }
 
-void QMediaPlaylist::remove(QMediaSource)
+int QMediaPlaylist::size() const
 {
 }
 
-void QMediaPlaylist::clear()
+QMediaSource QMediaPlaylist::operator [](int pos) const
 {
 }
 
-//public Q_SLOTS:
-void QMediaPlaylist::start()
+void QMediaPlaylist::append(const QMediaSource &source)
 {
 }
 
-void QMediaPlaylist::pause()
+void QMediaPlaylist::append(const QList<QMediaSource> &sources)
 {
 }
 
-void QMediaPlaylist::stop()
+void QMediaPlaylist::insert(int pos, const QMediaSource &source)
 {
 }
 
-void QMediaPlaylist::next()
+void QMediaPlaylist::remove(int fromPos, int toPos)
 {
 }
 
-void QMediaPlaylist::prev()
+bool QMediaPlaylist::isShuffled() const
 {
 }
 
 void QMediaPlaylist::jump(int)
+{
+}
+
+void QMediaPlaylist::shuffle()
+{
+}
+
+void QMediaPlaylist::unshuffle()
 {
 }
