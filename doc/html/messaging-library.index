@@ -126,6 +126,29 @@
                 <parameter left="const QMessageContentContainer &amp;" right="" name="content" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAddress" href="qmessageaddress.html" location="draft-api.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMessageAddress::Type" href="qmessageaddress.html#Type-enum" location="draft-api.h">
+                <value name="System" value="1"/>
+                <value name="Phone" value="2"/>
+                <value name="Email" value="3"/>
+                <value name="Xmpp" value="4"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAddress()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress-2" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAddress(const QString &amp; recipient, Type type)">
+                <parameter left="const QString &amp;" right="" name="recipient" default=""/>
+                <parameter left="Type" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageAddress" fullname="QMessageAddress::~QMessageAddress" href="qmessageaddress.html#dtor.QMessageAddress" location="draft-api.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageAddress()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="recipient" fullname="QMessageAddress::recipient" href="qmessageaddress.html#recipient" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="recipient() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRecipient" fullname="QMessageAddress::setRecipient" href="qmessageaddress.html#setRecipient" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRecipient(const QString &amp; recipient)">
+                <parameter left="const QString &amp;" right="" name="recipient" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMessageAddress::type" href="qmessageaddress.html#type" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Type" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessageAddress::setType" href="qmessageaddress.html#setType" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type type)">
+                <parameter left="Type" right="" name="type" default=""/>
+            </function>
+        </class>
+        <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageAddressList" href="#QMessageAddressList-typedef" location="draft-api.h"/>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessage" href="qmessage.html" location="draft-api.h" bases="QMessageContentContainer" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMessage::Type" href="qmessage.html#Type-enum" location="draft-api.h" typedef="QMessage::TypeFlags">
                 <value name="Mms" value="0x1"/>
@@ -170,9 +193,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessage::setType" href="qmessage.html#setType" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type t)">
                 <parameter left="Type" right="" name="t" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="from" fullname="QMessage::from" href="qmessage.html#from" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="from() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFrom" fullname="QMessage::setFrom" href="qmessage.html#setFrom" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFrom(const QString &amp; s)">
-                <parameter left="const QString &amp;" right="" name="s" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="from" fullname="QMessage::from" href="qmessage.html#from" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageAddress" signature="from() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFrom" fullname="QMessage::setFrom" href="qmessage.html#setFrom" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFrom(const QMessageAddress &amp; address)">
+                <parameter left="const QMessageAddress &amp;" right="" name="address" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subject" fullname="QMessage::subject" href="qmessage.html#subject" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="subject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSubject" fullname="QMessage::setSubject" href="qmessage.html#setSubject" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubject(const QString &amp; s)">
@@ -186,20 +209,20 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setReceivedDate" fullname="QMessage::setReceivedDate" href="qmessage.html#setReceivedDate" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setReceivedDate(const QDateTime &amp; d)">
                 <parameter left="const QDateTime &amp;" right="" name="d" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="to" fullname="QMessage::to" href="qmessage.html#to" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="to() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setTo" fullname="QMessage::setTo" href="qmessage.html#setTo" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setTo(const QList&lt;QString&gt; &amp; toList)">
-                <parameter left="const QList&lt;QString&gt; &amp;" right="" name="toList" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="to" fullname="QMessage::to" href="qmessage.html#to" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageAddressList" signature="to() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTo" fullname="QMessage::setTo" href="qmessage.html#setTo" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setTo(const QMessageAddressList &amp; toList)">
+                <parameter left="const QMessageAddressList &amp;" right="" name="toList" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setTo" fullname="QMessage::setTo" href="qmessage.html#setTo-2" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setTo(const QString &amp; s)">
-                <parameter left="const QString &amp;" right="" name="s" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTo" fullname="QMessage::setTo" href="qmessage.html#setTo-2" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setTo(const QMessageAddress &amp; address)">
+                <parameter left="const QMessageAddress &amp;" right="" name="address" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="cc" fullname="QMessage::cc" href="qmessage.html#cc" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="cc() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCc" fullname="QMessage::setCc" href="qmessage.html#setCc" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCc(const QList&lt;QString&gt; &amp; ccList)">
-                <parameter left="const QList&lt;QString&gt; &amp;" right="" name="ccList" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cc" fullname="QMessage::cc" href="qmessage.html#cc" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageAddressList" signature="cc() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCc" fullname="QMessage::setCc" href="qmessage.html#setCc" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCc(const QMessageAddressList &amp; ccList)">
+                <parameter left="const QMessageAddressList &amp;" right="" name="ccList" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bcc" fullname="QMessage::bcc" href="qmessage.html#bcc" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="bcc() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setBcc" fullname="QMessage::setBcc" href="qmessage.html#setBcc" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBcc(const QList&lt;QString&gt; &amp; s)">
-                <parameter left="const QList&lt;QString&gt; &amp;" right="" name="s" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bcc" fullname="QMessage::bcc" href="qmessage.html#bcc" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageAddressList" signature="bcc() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setBcc" fullname="QMessage::setBcc" href="qmessage.html#setBcc" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBcc(const QMessageAddressList &amp; bccList)">
+                <parameter left="const QMessageAddressList &amp;" right="" name="bccList" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QMessage::status" href="qmessage.html#status" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="StatusFlags" signature="status() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setStatus" fullname="QMessage::setStatus" href="qmessage.html#setStatus" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setStatus(QFlags&lt;QMessage::Status&gt; newStatus)">

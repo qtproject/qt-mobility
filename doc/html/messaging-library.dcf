@@ -63,6 +63,19 @@
         <keyword ref="qmessage.html#type">type</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
+    <section ref="qmessageaddress.html" title="QMessageAddress Class Reference">
+        <keyword ref="qmessageaddress.html">QMessageAddress</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">Type</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Xmpp</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Email</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Phone</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::System</keyword>
+        <keyword ref="qmessageaddress.html#recipient">recipient</keyword>
+        <keyword ref="qmessageaddress.html#setRecipient">setRecipient</keyword>
+        <keyword ref="qmessageaddress.html#setType">setType</keyword>
+        <keyword ref="qmessageaddress.html#type">type</keyword>
+        <section ref="qmessageaddress-members.html" title="List of all members"/>
+    </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
         <keyword ref="qmessagecontentcontainer.html">QMessageContentContainer</keyword>
         <keyword ref="qmessagecontentcontainer.html#appendContent">appendContent</keyword>
