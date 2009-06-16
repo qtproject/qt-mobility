@@ -2477,6 +2477,10 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
     All actions communicate changes in their operational state by emitting the activityChanged()
     signal.
     
+    If an action operation fails, the lastErrorString() function will return a string
+    indicating the failure mode encountered.  A successful operation will set the 
+    lastError() result to a null string.
+    
     A user may attempt to cancel an operation after it has been initiated.  The cancelOperation()
     slot is provided for this purpose.
 
@@ -2508,9 +2512,9 @@ void QMessageServiceAction::send(const QMessage &message)
 }
 
 /*!
-  Open a composer window using \a message as a prototype.
-
-  The default application for handling the type \a message should be used.
+  Open a composer application using \a message as a prototype.
+  
+  The default application for handling the type of \a message should be used.
   
   \sa QMessage::type()
 */
@@ -2520,7 +2524,7 @@ void QMessageServiceAction::compose(const QMessage &message)
 }
 
 /*!
-  Open a composer window replying to the message identified by \a id.
+  Open a composer application replying to the message identified by \a id.
 
   The default application for handling the type of message that \a id identifies should be used.
   
@@ -2532,7 +2536,7 @@ void QMessageServiceAction::reply(const QMessageId &id)
 }
 
 /*!
-  Open a composer window forwarding the message identified by \a id.
+  Open a composer application forwarding the message identified by \a id.
   
   The default application for handling the type of message that \a id identifies should be used.
 
@@ -2544,7 +2548,7 @@ void QMessageServiceAction::forward(const QMessageId &id)
 }
 
 /*!
-    Requests that the message server retrieve data regarding the message identified by \a id.  
+    Retrieve meta data of the message identified by \a id.  
 
     The meta data (including flags, from, to, subject, and date fields where applicable) of 
     the message identified by \a id should be retrieved.
@@ -2560,10 +2564,9 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
 }
 
 /*!
-    Requests that the message server retrieve data regarding the message identified by \a id.  
-
-    The entirety of the message content identified by \a id should be retrieved.
-
+    Retrieve the container identified by \a id, the contents of the container should also be 
+    retrieved.
+    
     \sa QMessageContentContainerId
 */
 void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
@@ -2611,6 +2614,15 @@ void QMessageServiceAction::cancelOperation()
 void QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
 {
     Q_UNUSED(a)
+}
+
+/*!
+    Returns a string indicating the last error condition reported by the action if any; 
+    otherwise returns a null string.
+*/
+QString QMessageServiceAction::lastErrorString() const
+{
+    return QString::null;
 }
 
 //#include "draft-api.moc"

@@ -433,6 +433,7 @@ public:
     void retrieve(const QMessageContentContainerId &id);
     void show(const QMessageId &id);
     Activity activity() const;
+    QString lastErrorString() const;
 
 public slots:
     void cancelOperation();
