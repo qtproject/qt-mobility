@@ -6,7 +6,8 @@
     \ingroup messaging
 
     \preliminary
-    \brief The QMessageId class provides a unique identifier for a QMessage message.
+    \brief The QMessageId class provides a unique identifier for a QMessage message within the 
+    scope of the message store.
 
     A QMessageId can be constructed from a string, or converted to a string with toString().
 
@@ -18,7 +19,7 @@
     
     The QMessageId implementation should be small, ideally less than or equal to 16 bytes.
     
-    \sa QMessageStore, QMessage, QMessageContentContainer
+    \sa QMessage, QMessageStore
 */
 
 /*!
@@ -80,7 +81,7 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
 
     Returns the string representation of this identifier.
     
-    An null string should be returned if and only if the identifier is invalid.
+    A null string should be returned if and only if the identifier is invalid.
 */
 QString QMessageId::toString() const
 {
@@ -108,7 +109,8 @@ bool QMessageId::isValid() const
 
     \preliminary
     \brief The QMessageContentContainerId class provides a unique identifier for 
-    QMessageContentContainer internet media (MIME) type entities.
+    QMessageContentContainer internet media (MIME) type entities, within the scope of the
+    containing message.
 
     A QMessageContentContainerId can be constructed from a string, or converted to a string 
     with toString().
@@ -121,7 +123,7 @@ bool QMessageId::isValid() const
     If the object a QMessageContentContainerId identifies is removed then the identifier will not 
     be reused.
     
-    \sa QMessageStore, QMessage, QMessageContentContainer
+    \sa QMessageContentContainer
 */
 
 /*!
@@ -214,6 +216,206 @@ QMessageId QMessageContentContainerId::messageId() const
 /*! \typedef QMessageContentContainerIdList
 
     Qt-style synonym for QList<QMessageContentContainerId>
+*/
+
+/*!
+    \class QMessageFolderId
+    \ingroup messaging
+
+    \preliminary
+    \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
+    folder, within the scope of the message store.
+
+    A QMessageFolderId can be constructed from a string, or converted to a string with toString().
+
+    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other instances
+    for equality.
+    
+    If the message a QMessageFolderId identifies is removed from the message store then the identifier will not be 
+    reused.
+    
+    \sa QMessageFolder
+*/
+
+/*!
+    \fn QMessageFolderId::QMessageFolderId()
+
+    Creates an invalid identifier, toString() will return a null string.
+*/
+QMessageFolderId::QMessageFolderId()
+{
+}
+
+/*!
+    \fn QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
+
+    Constructs a copy of \a other.
+*/
+QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
+    \fn QMessageFolderId::QMessageFolderId(const QString& id)
+
+    Constructs an identifier from \a id.
+    
+    \sa toString()
+*/
+QMessageFolderId::QMessageFolderId(const QString& id)
+{
+    Q_UNUSED(id)
+}
+
+/*!
+    \fn bool QMessageFolderId::operator==(const QMessageFolderId &other) const
+
+    Returns true if this identifier and the \a other identifier are identical;
+    otherwise returns false.
+*/
+bool QMessageFolderId::operator==(const QMessageFolderId& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    \fn QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId &other)
+
+    Assigns \a other to this identifier and returns a reference to this identifier.
+*/
+QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
+    \fn bool QMessageFolderId::toString() const
+
+    Returns the string representation of this identifier.
+    
+    A null string should be returned if and only if the identifier is invalid.
+*/
+QString QMessageFolderId::toString() const
+{
+    return QString::null; // stub
+}
+
+/*!
+    \fn bool QMessageFolderId::isValid() const
+
+    Returns true if this identifier is valid; otherwise returns false.
+*/
+bool QMessageFolderId::isValid() const
+{
+    return false; // stub
+}
+
+/*! \typedef QMessageFolderIdList
+
+    Qt-style synonym for QList<QMessageFolderId>
+*/
+
+/*!
+    \class QMessageAccountId
+    \ingroup messaging
+
+    \preliminary
+    \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount 
+    messaging account, within the scope of the message store.
+
+    A QMessageAccountId can be constructed from a string, or converted to a string with toString().
+
+    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other instances
+    for equality.
+    
+    If the message a QMessageAccountId identifies is removed from the message store then the identifier will not be 
+    reused.
+    
+    \sa QMessageAccount
+*/
+
+/*!
+    \fn QMessageAccountId::QMessageAccountId()
+
+    Creates an invalid identifier, toString() will return a null string.
+*/
+QMessageAccountId::QMessageAccountId()
+{
+}
+
+/*!
+    \fn QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
+
+    Constructs a copy of \a other.
+*/
+QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
+    \fn QMessageAccountId::QMessageAccountId(const QString& id)
+
+    Constructs an identifier from \a id.
+    
+    \sa toString()
+*/
+QMessageAccountId::QMessageAccountId(const QString& id)
+{
+    Q_UNUSED(id)
+}
+
+/*!
+    \fn bool QMessageAccountId::operator==(const QMessageAccountId &other) const
+
+    Returns true if this identifier and the \a other identifier are identical;
+    otherwise returns false.
+*/
+bool QMessageAccountId::operator==(const QMessageAccountId& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
+
+    Assigns \a other to this identifier and returns a reference to this identifier.
+*/
+QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
+    \fn bool QMessageAccountId::toString() const
+
+    Returns the string representation of this identifier.
+    
+    A null string should be returned if and only if the identifier is invalid.
+*/
+QString QMessageAccountId::toString() const
+{
+    return QString::null; // stub
+}
+
+/*!
+    \fn bool QMessageAccountId::isValid() const
+
+    Returns true if this identifier is valid; otherwise returns false.
+*/
+bool QMessageAccountId::isValid() const
+{
+    return false; // stub
+}
+
+/*! \typedef QMessageAccountIdList
+
+    Qt-style synonym for QList<QMessageAccountId>
 */
 
 /*!
@@ -863,6 +1065,7 @@ void QMessageAddress::setType(Type type)
     Q_UNUSED(type);
 }
 
+
 /*! \typedef QMessageAddressList
 
     Qt-style synonym for QList<QMessageAddress>
@@ -895,6 +1098,9 @@ void QMessageAddress::setType(Type type)
     message body will be returned by body(). Attachments can be appended to the content of the 
     message using appendAttachments(), the body of the message can be set with setBody() or
     setBodyFromFile().
+    
+    The folder and account a message is associated with are returned by parentFolderId() and
+    parentAccountId() respectively.
     
     The following transmission formats are used both when constructing and encapsulating messages:
     \list
@@ -1085,6 +1291,40 @@ QMessage::Type QMessage::type() const
 void QMessage::setType(Type t)
 {
     Q_UNUSED(t)
+}
+
+/*!
+    Returns the identifier of the parent account of the message if any; otherwise returns an 
+    invalid identifier.
+*/
+QMessageAccountId QMessage::parentAccountId() const
+{
+    return QMessageAccountId(); // stub
+}
+    
+/*!
+    Sets the identifier of the parent account of the message to \a accountId.
+*/
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
+{
+    Q_UNUSED(accountId)
+}
+
+/*!
+    Returns the identifier of the folder that contains the message if any; otherwise returns an 
+    invalid identifier.
+*/
+QMessageFolderId QMessage::parentFolderId() const
+{
+    return QMessageFolderId(); // stub
+}
+    
+/*!
+    Sets the identifier of the folder that contains the message to \a folderId.
+*/
+void QMessage::setParentFolderId(const QMessageFolderId &folderId)
+{
+    Q_UNUSED(folderId)
 }
 
 /*!
@@ -1492,6 +1732,223 @@ void QMessage::setDataModified(bool modified)
     Q_UNUSED(modified);
 }
 
+
+/*!
+    \class QMessageFolder
+
+    \preliminary
+    \brief The QMessageFolder class provides an interface for folders containing messages in the 
+    message store.
+    
+    \ingroup messaging
+ 
+    QMessageFolder represents a folder of messages, either fully or partially stored in the 
+    message store. A QMessageFolder object has an optional parent of the same type, allowing 
+    folders to be arranged in tree structures. Messages may be associated with folders, allowing 
+    for simple classification and access by their parentFolderId property.
+
+    \sa QMessage, QMessageStore::folder()
+*/
+
+/*!
+    \enum QMessageFolder::StandardFolder
+
+    Defines the standard folders.
+
+    \value InboxFolder   Represents the standard inbox folder.
+    \value DraftsFolder  Represents the standard drafts folder.
+    \value OutboxFolder  Represents the standard outbox folder.
+    \value SentFolder    Represents the standard sent folder.
+    \value TrashFolder   Represents the standard trash folder.
+*/
+
+/*!
+    Constructor that creates an empty and invalid QMessageFolder. An empty folder is one which 
+    has no path, no parent folder and no parent account. An invalid folder does not exist in 
+    the database and has an invalid id.
+*/
+QMessageFolder::QMessageFolder()
+{
+}
+
+/*!
+    Constructor that creates a QMessageFolder by loading the data from the message store as 
+    specified by the QMessageFolderId \a id. If the folder does not exist in the message 
+    store, then this constructor will create an empty and invalid QMessageFolder.
+*/
+QMessageFolder::QMessageFolder(const QMessageFolderId &id)
+{
+    Q_UNUSED(id)
+}
+
+/*!
+    Constructor that loads a standard QMessageFolder specified by \a sf for the account 
+    identified by \a parentAccountId from the message store.
+*/
+QMessageFolder::QMessageFolder(StandardFolder sf, const QMessageAccountId &parentAccountId)
+{
+    Q_UNUSED(sf)
+    Q_UNUSED(parentAccountId)
+}
+
+/*!
+    Destroys the QMessageFolder object.
+*/
+QMessageFolder::~QMessageFolder()
+{
+}
+
+/*!
+    Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid 
+    identifier does not yet exist in the message store.
+*/
+QMessageFolderId QMessageFolder::id() const
+{
+    return QMessageFolderId(); // stub
+}
+
+/*!
+    Returns the identifier of the parent account of the folder. If the folder is not linked to 
+    an account an invalid identifier is returned.
+*/
+QMessageAccountId QMessageFolder::parentAccountId() const
+{
+    return QMessageAccountId(); // stub
+}
+
+/*!
+    Returns the identifier of the parent folder. This folder is a root folder if the parent 
+    identifier is invalid.
+*/
+QMessageFolderId QMessageFolder::parentFolderId() const
+{
+    return QMessageFolderId(); // stub
+}
+
+/*!
+    Returns the display name of the folder suitable for viewing in a user interface.
+*/
+QString QMessageFolder::displayName() const
+{
+    return QString::null; // stub
+}
+
+/*!
+    Returns the path of the folder.
+*/
+QString QMessageFolder::path() const
+{
+    return QString::null; // stub
+}
+
+
+/*!
+    \class QMessageAccount
+
+    \preliminary
+    \brief The QMessageAccount class represents a messaging account in the message store.
+    
+    \ingroup messaging
+
+    A QMessageAccount is a logical entity that groups messages according to the 
+    method by which they are sent and received.  An account can support one or more 
+    message sources, from which messages are imported into the message store, and 
+    one or more message sinks by which messages are transmitted to external messaging 
+    services.  
+    
+    The QMessageAccount class is used for accessing properties of the account related 
+    to dealing with the account's folders and messages, rather than for modifying 
+    the account itself.
+    
+    \sa QMessageStore::account()
+*/
+
+/*!
+    Creates an empty and invalid account object.
+*/
+QMessageAccount::QMessageAccount()
+{
+}
+
+/*!
+    Convenience constructor that creates a QMessageAccount by loading the data from the message 
+    store as specified by the QMessageAccountId \a id. If the account does not exist in the 
+    store, then this constructor will create an empty and invalid QMessageAccount.
+    
+    \sa QMessageStore::account()
+*/
+QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+{
+    Q_UNUSED(id)
+}
+
+/*!
+    Destroys the account object.
+*/
+QMessageAccount::~QMessageAccount()
+{
+}
+
+/*!
+    Returns the identifier for this account.
+*/
+QMessageAccountId QMessageAccount::id() const
+{
+    return QMessageAccountId();  // stub
+}
+
+/*!
+    Returns the name of the account for display purposes.
+*/
+QString QMessageAccount::name() const
+{
+    return QString(); // stub
+}
+
+/*!
+    Returns the folder configured for the standard folder role \a folder for this account.
+*/
+QMessageFolderId QMessageAccount::standardFolder(QMessageFolder::StandardFolder folder) const
+{
+    Q_UNUSED(folder)
+        return QMessageFolderId(); // stub
+}
+
+/*!
+    Returns the address from which the account's outgoing messages should be reported as originating.
+*/
+QMessageAddress QMessageAccount::fromAddress() const
+{
+    return QMessageAddress(); // stub
+}
+
+/*!
+    Returns the types of messages this account deals with.
+*/
+QMessage::TypeFlags QMessageAccount::types() const
+{
+    return QMessage::None; // stub
+}
+
+/*!
+    Return the signature for the account if one exists and is enabled; otherwise returns an empty 
+    string.
+*/
+QString QMessageAccount::signature() const
+{
+    return QString(); // stub
+}
+
+/*!
+    Returns the default account for messages of type \a type.
+*/
+QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
+{
+    Q_UNUSED(type)
+    return QMessageAccountId(); // stub
+}
+
+
 /*!
     \namespace QMessageDataComparator
     \ingroup messaging
@@ -1535,6 +1992,699 @@ void QMessage::setDataModified(bool modified)
 */
 
 /*!
+    \enum QMessageDataComparator::Option
+
+    This enum describes additional matching criteria when performing a search.
+    
+    \value FullWord        The key should only match a complete word
+    \value CaseSensitive   The key should be case sensitive.
+*/
+
+
+/*!
+    \class QMessageAccountFilterKey
+
+    \preliminary
+    \brief The QMessageAccountFilterKey class defines the parameters used for querying a subset of
+    all available accounts from the message store.
+    \ingroup messaging
+
+    A QMessageAccountFilterKey is composed of an account property, an optional comparison operator
+    and a comparison value. The QMessageAccountFilterKey class is used in conjunction with the 
+    QMessageStore::queryAccounts() and QMessageStore::countAccounts() functions to filter results 
+    which meet the criteria defined by the key.
+
+    QMessageAccountFilterKeys can be combined using the logical operators (&), (|) and (~) to
+    create more refined queries.
+
+    \sa QMessageStore, QMessageAccount
+*/
+
+/*!
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    Q_UNUSED(options)
+}
+
+/*!
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
+*/
+QMessageDataComparator::Options QMessageAccountFilterKey::options()
+{
+    return 0;
+}
+
+/*!
+    Creates a QMessageAccountFilterKey without specifying matching parameters.
+
+    A default-constructed key (one for which isEmpty() returns true) matches all accounts. 
+
+    \sa isEmpty()
+*/
+QMessageAccountFilterKey::QMessageAccountFilterKey()
+{
+}
+
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false. 
+
+    An empty key matches all accounts.
+
+    The result of combining an empty key with a non-empty key is the original non-empty key. 
+    This is true regardless of whether the combination is formed by an AND or an OR operation.
+
+    The result of combining two empty keys is an empty key.
+*/
+bool QMessageAccountFilterKey::isEmpty() const
+{
+    return false; // stub
+}
+
+/*!
+    Returns a key that is the logical NOT of the value of this key.
+
+    If this key is empty, the result will be a non-matching key; if this key is 
+    non-matching, the result will be an empty key.
+
+    \sa isEmpty()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::operator~() const
+{
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key that is the logical AND of this key and the value of key \a other.
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::operator&(const QMessageAccountFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key that is the logical OR of this key and the value of key \a other.
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::operator|(const QMessageAccountFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Performs a logical AND with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageAccountFilterKey& QMessageAccountFilterKey::operator&=(const QMessageAccountFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this;
+}
+
+/*!
+    Performs a logical OR with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageAccountFilterKey& QMessageAccountFilterKey::operator|=(const QMessageAccountFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this;
+}
+
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageAccountFilterKey::operator==(const QMessageAccountFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    Assign the value of the QMessageAccountFilterKey \a other to this.
+*/
+const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessageAccountFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
+    Returns a key matching accounts whose identifier matches \a id, according to \a cmp.
+
+    \sa QMessageAccount::id()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose identifier is a member of \a ids, according to \a cmp.
+
+    \sa QMessageAccount::id()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(ids)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose identifier is a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessageAccount::id()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose from address matches \a value, according to \a cmp.
+
+    \sa QMessageAccount::fromAddress()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose from address matches the substring \a value, according to \a cmp.
+
+    \sa QMessageAccount::fromAddress()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose name matches \a value, according to \a cmp.
+
+    \sa QMessageAccount::name()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching accounts whose name matches the substring \a value, according to \a cmp.
+
+    \sa QMessageAccount::name()
+*/
+QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageAccountFilterKey(); // stub
+}
+
+
+/*!
+    \class QMessageAccountSortKey
+
+    \preliminary
+    \brief The QMessageAccountSortKey class defines the parameters used for sorting a subset of 
+    queried accounts from the message store.
+    \ingroup messaging
+
+    A QMessageAccountSortKey is composed of a account property to sort and a sort order. 
+    The QMessageAccountSortKey class is used in conjunction with the QMessageStore::queryAccounts() 
+    function to sort account results according to the criteria defined by the sort key.
+    
+    \sa QMessageStore, QMessageAccountFilterKey
+*/
+
+/*!
+    Create a QMessageAccountSortKey with specifying matching parameters.
+
+    A default-constructed key (one for which isEmpty() returns true) sorts no accounts. 
+
+    The result of combining an empty key with a non-empty key is the same as the original 
+    non-empty key.
+
+    The result of combining two empty keys is an empty key.
+*/
+QMessageAccountSortKey::QMessageAccountSortKey()
+{
+}
+
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false.
+*/
+bool QMessageAccountSortKey::isEmpty() const
+{
+    return false; // stub
+}
+
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    Assign the value of the QMessageAccountSortKey \a other to this.
+*/
+const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+    
+/*!
+    Returns a key that sorts accounts by name, according to \a order.
+
+    \sa QMessageAccount::name()
+*/
+QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageAccountSortKey(); // stub
+}
+
+
+/*!
+    \class QMessageFolderFilterKey
+
+    \preliminary
+    \brief The QMessageFolderFilterKey class defines the parameters used for querying a subset of
+    all available folders from the message store.
+    \ingroup messaging
+
+    A QMessageFolderFilterKey is composed of a folder property, an optional comparison operator
+    and a comparison value. The QMessageFolderFilterKey class is used in conjunction with the 
+    QMessageStore::queryFolders() and QMessageStore::countFolders() functions to filter results 
+    which meet the criteria defined by the key.
+
+    QMessageFolderFilterKeys can be combined using the logical operators (&), (|) and (~) to
+    create more refined queries.
+
+    \sa QMessageStore, QMessageFolder
+*/
+
+/*!
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    Q_UNUSED(options)
+}
+
+/*!
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
+*/
+QMessageDataComparator::Options QMessageFolderFilterKey::options()
+{
+    return 0;
+}
+
+/*!
+    Creates a QMessageFolderFilterKey without specifying matching parameters.
+
+    A default-constructed key (one for which isEmpty() returns true) matches all folders. 
+
+    \sa isEmpty()
+*/
+QMessageFolderFilterKey::QMessageFolderFilterKey()
+{
+}
+
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false. 
+
+    An empty key matches all folders.
+
+    The result of combining an empty key with a non-empty key is the original non-empty key. 
+    This is true regardless of whether the combination is formed by an AND or an OR operation.
+
+    The result of combining two empty keys is an empty key.
+*/
+bool QMessageFolderFilterKey::isEmpty() const
+{
+    return false; // stub
+}
+
+/*!
+    Returns a key that is the logical NOT of the value of this key.
+
+    If this key is empty, the result will be a non-matching key; if this key is 
+    non-matching, the result will be an empty key.
+
+    \sa isEmpty()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::operator~() const
+{
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key that is the logical AND of this key and the value of key \a other.
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::operator&(const QMessageFolderFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key that is the logical OR of this key and the value of key \a other.
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::operator|(const QMessageFolderFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Performs a logical AND with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageFolderFilterKey& QMessageFolderFilterKey::operator&=(const QMessageFolderFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this;
+}
+
+/*!
+    Performs a logical OR with this key and the key \a other and assigns the result
+    to this key.
+*/
+const QMessageFolderFilterKey& QMessageFolderFilterKey::operator|=(const QMessageFolderFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this;
+}
+
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageFolderFilterKey::operator==(const QMessageFolderFilterKey& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    Assign the value of the QMessageFolderFilterKey \a other to this.
+*/
+const QMessageFolderFilterKey& QMessageFolderFilterKey::operator=(const QMessageFolderFilterKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
+    Returns a key matching folders whose identifier matches \a id, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose identifier is a member of \a ids, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(ids)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose identifier is a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose display name matches \a value, according to \a cmp.
+
+    \sa QMessageFolder::displayName()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose display name matches the substring \a value, according to \a cmp.
+
+    \sa QMessageFolder::displayName()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose path matches \a value, according to \a cmp.
+
+    \sa QMessageFolder::path()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose path matches the substring \a value, according to \a cmp.
+
+    \sa QMessageFolder::path()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose parent account identifier matches \a id, according to \a cmp.
+
+    \sa QMessageAccount::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose parent account identifier is a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessageAccount::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose parent folder identifier matches \a id, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose parent folder identifier is a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose ancestor folders' identifiers contain \a id, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching folders whose ancestor folders' identifiers contain a member of the set yielded by \a key, according to \a cmp.
+
+    \sa QMessageFolder::id()
+*/
+QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFolderFilterKey(); // stub
+}
+
+
+/*!
+    \class QMessageFolderSortKey
+
+    \preliminary
+    \brief The QMessageFolderSortKey class defines the parameters used for sorting a subset of 
+    queried folders from the message store.
+    \ingroup messaging
+
+    A QMessageFolderSortKey is composed of a folder property to sort and a sort order. 
+    The QMessageFolderSortKey class is used in conjunction with the QMessageStore::queryFolders() 
+    function to sort folder results according to the criteria defined by the sort key.
+    
+    \sa QMessageStore, QMessageFolderFilterKey
+*/
+
+/*!
+    Create a QMessageFolderSortKey with specifying matching parameters.
+
+    A default-constructed key (one for which isEmpty() returns true) sorts no folders. 
+
+    The result of combining an empty key with a non-empty key is the same as the original 
+    non-empty key.
+
+    The result of combining two empty keys is an empty key.
+*/
+QMessageFolderSortKey::QMessageFolderSortKey()
+{
+}
+
+/*!
+    Returns true if the key remains empty after default construction; otherwise returns false.
+*/
+bool QMessageFolderSortKey::isEmpty() const
+{
+    return false; // stub
+}
+
+/*!
+    Returns a key that which is the result of concatenating the vaue of this key and the value 
+    of key \a other.
+*/
+QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageFolderSortKey(); // stub
+}
+
+/*!
+    Appends the value of the key \a other with the value of this key and assigns the result
+    to this key.
+*/
+QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
+    Returns \c true if the value of this key is the same as the key \a other. Returns 
+    \c false otherwise.
+*/
+bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+/*!
+    Assign the value of the QMessageFolderSortKey \a other to this.
+*/
+const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+    
+/*!
+    Returns a key that sorts folders by display name, according to \a order.
+
+    \sa QMessageFolder::displayName()
+*/
+QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortKey(); // stub
+}
+
+/*!
+    Returns a key that sorts messages by path according to \a order.
+
+    \sa QMessageFolder::path()
+*/
+QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortKey(); // stub
+}
+
+
+/*!
     \class QMessageFilterKey
 
     \preliminary
@@ -1563,22 +2713,11 @@ void QMessage::setDataModified(bool modified)
 */
 
 /*!
-    \enum QMessageFilterKey::Option
-
-    This enum describes additional matching criteria when performing a search.
-    
-    \value FullWord        The key should only match a complete word
-    \value CaseInsensitive The key should not be case sensitive.
-    
-    \sa options(), setOptions()
-*/
-
-/*!
     Set the options for the search key to \a options.
 
     \sa options()
 */
-void QMessageFilterKey::setOptions(Options options)
+void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
 {
     Q_UNUSED(options)
 }
@@ -1590,7 +2729,7 @@ void QMessageFilterKey::setOptions(Options options)
 
     \sa setOptions()
 */
-QMessageFilterKey::Options QMessageFilterKey::options()
+QMessageDataComparator::Options QMessageFilterKey::options()
 {
     return 0;
 }
@@ -1989,6 +3128,84 @@ QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QStr
 }
 
 /*!
+    Returns a key matching messages whose parent account's identifier matches \a id, according to 
+    \a cmp.
+    
+    \sa QMessage::parentAccountId()
+*/
+QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose parent account's identifier is a member of the set 
+    yielded by \a key, according to \a cmp.
+
+    \sa QMessage::parentAccountId()
+*/
+QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose parent folder's identifier matches \a id, according to 
+    \a cmp.
+    
+    \sa QMessage::parentFolderId()
+*/
+QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose parent folder's identifier is a member of the set 
+    yielded by \a key, according to \a cmp.
+
+    \sa QMessage::parentFolderId()
+*/
+QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose ancestor folders' identifiers contain \a id, according 
+    to \a cmp.
+    
+    \sa QMessage::parentFolderId()
+*/
+QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
+    Returns a key matching messages whose ancestor folders' identifiers contain a member of the 
+    set yielded by \a key, according to \a cmp.
+        
+    \sa QMessage::parentFolderId()
+*/
+QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey(); // stub
+}
+
+/*!
     \class QMessageSortKey
 
     \preliminary
@@ -2071,17 +3288,6 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
     return *this; // stub
 }
     
-/*!
-    Returns a key that sorts messages by their identifiers, according to \a order.
-
-    \sa QMessage::id()
-*/
-QMessageSortKey QMessageSortKey::id(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
-
 /*!
     Returns a key that sorts messages by their message type, according to \a order.
 
@@ -2186,23 +3392,26 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
     \preliminary
     \brief The QMessageStore class represents the main interface for storage and retrieval
-    of messages in the message store.
+    of messages, folders and accounts in the message store.
 
     \ingroup messaging
 
-    The QMessageStore class is accessed through a singleton interface and provides a functions
-    for adding, and updating, deleting and querying in the message store.
-
-    QMessageStore also provides functions for querying and counting of QMessages
-    when used in conjunction with QMessageFilterKey class, namely queryMessages() and 
-    countMessages().
-
+    The QMessageStore class is accessed through a singleton interface and provides functions 
+    for adding, updating and deleting messages in the message store. 
+    
+    QMessageStore also provides queryMessages() and countMessages() functions for querying 
+    and counting of QMessage, QMessageFolder and QMessageAccount objects by using the
+    QMessageFilterKey, QMessageFolderFilterKey, QMessageAccountFilterKey classes 
+    respectively.
+    
     If a QMessageStore operation fails, the lastError() function will return an error code
     value indicating the failure mode encountered.  A successful operation will set the 
     lastError() result to QMessageStore::NoError.
 
     Messages in the message store are identified by QMessageId objects. The data associated
-    with a message is retrieved in the form of a QMessage object using message().
+    with a message is retrieved in the form of a QMessage object using message(). Likewise 
+    a folder is retrieved in the form of a QMessageFolder object using folder(), and an 
+    account is retrieved in the form of a QMessageAccount object using account().
 
     Messages can be inserted into the store using the addMessage() function, messages in the 
     store can be manipulated via the updateMessage() function ,and removed by the 
@@ -2281,6 +3490,48 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 }
 
 /*!
+    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    only messages matching the parameters set by \a key will be returned, otherwise 
+    all message identifiers will be returned.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countMessages(), setMaximumWorkingIds()
+*/
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
+{
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
+    return QMessageFolderIdList(); // stub
+}
+
+/*!
+    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    only messages matching the parameters set by \a key will be returned, otherwise 
+    all message identifiers will be returned.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countMessages(), setMaximumWorkingIds()
+*/
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
+{
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
+    return QMessageAccountIdList(); // stub
+}
+
+/*!
     Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
@@ -2288,6 +3539,32 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     \sa lastError(), queryMessages(), setMaximumWorkingIds()
 */
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
+{
+    Q_UNUSED(key)
+    return 0; // stub
+}
+
+/*!
+    Returns the count of the number of messages which match the 
+    filtering criteria defined in QMessageFolderFilterKey \a key. If 
+    key is empty a count of all messages is returned.
+    
+    \sa lastError(), queryMessages(), setMaximumWorkingIds()
+*/
+int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
+{
+    Q_UNUSED(key)
+    return 0; // stub
+}
+
+/*!
+    Returns the count of the number of messages which match the 
+    filtering criteria defined in QMessageAccountFilterKey \a key. If 
+    key is empty a count of all messages is returned.
+    
+    \sa lastError(), queryMessages(), setMaximumWorkingIds()
+*/
+int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 {
     Q_UNUSED(key)
     return 0; // stub
@@ -2360,12 +3637,30 @@ bool QMessageStore::updateMessage(QMessage *m)
 }
 
 /*!
-   Returns the QMessage defined by the QMessageContentContainerId \a id from the store.
+   Returns the QMessage identified by \a id from the store.
 */
 QMessage QMessageStore::message(const QMessageId& id) const
 {
     Q_UNUSED(id)
     return QMessage(); // stub
+}
+
+/*!
+   Returns the QMessageFolder identified by \a id from the store.
+*/
+QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
+{
+    Q_UNUSED(id)
+    return QMessageFolder(); // stub
+}
+
+/*!
+   Returns the QMessageAccount identified by \a id from the store.
+*/
+QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
+{
+    Q_UNUSED(id)
+    return QMessageAccount(); // stub
 }
 
 /*!
@@ -2502,13 +3797,14 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
 */
 
 /*!
-  Transmit \a message using the default account for the type of \a message.
+  Transmit \a message using the account identified by \a accountId.
   
-  \sa QMessage::type()
+  \sa QMessage, QMessageAccountId
 */
-void QMessageServiceAction::send(const QMessage &message)
+void QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
 {
     Q_UNUSED(message)
+    Q_UNUSED(accountId)
 }
 
 /*!
