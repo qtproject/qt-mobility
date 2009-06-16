@@ -31,7 +31,21 @@ class tst_QCoordinate : public QObject
 {
     Q_OBJECT
 
+private:
+    enum TestDataType {
+        Latitude,
+        Longitude,
+        Altitude
+    };
+
 private slots:
+    void constructor()
+    {
+        QCoordinate c;
+        QVERIFY(!c.isValid());
+        QCOMPARE(c, QCoordinate());
+    }
+
     void type()
     {
         QCoordinate c;
@@ -51,16 +65,34 @@ private slots:
         QVERIFY(c.type() == QCoordinate::Coordinate3D);
     }
 
-    // TODO fix tests to test range (-90 -> 90 for lat, -180 -> 180 for long)
-    void addDataValues()
+    void addDataValues(TestDataType type)
     {
         QTest::addColumn<double>("value");
-        QTest::newRow("negative") << -1.0;
-        QTest::newRow("zero") << 0.0;
-        QTest::newRow("positive") << 1.0;
+        QTest::addColumn<bool>("valid");
+
+        QTest::newRow("negative") << -1.0 << true;
+        QTest::newRow("zero") << 0.0 << true;
+        QTest::newRow("positive") << 1.0 << true;
+
+        switch (type) {
+            case Latitude:
+                QTest::newRow("too low") << -90.1 << false;
+                QTest::newRow("not too low") << -90.0 << true;
+                QTest::newRow("not too hight") << 90.0 << true;
+                QTest::newRow("too high") << 90.1;
+                break;
+            case Longitude:
+                QTest::newRow("too low") << -180.1 << false;
+                QTest::newRow("not too low") << -180.0 << true;
+                QTest::newRow("not too hight") << 180.0 << true;
+                QTest::newRow("too high") << 180.1;
+                break;
+            case Altitude:
+                break;
+        }
     }
 
-    void latitude_data() { addDataValues(); }
+    void latitude_data() { addDataValues(Latitude); }
     void latitude()
     {
         QFETCH(double, value);
@@ -70,9 +102,10 @@ private slots:
 
         QCoordinate c2 = c;
         QCOMPARE(QString::number(c2.latitude()), QString::number(value));
+        QCOMPARE(c2, c);
     }
 
-    void longitude_data() { addDataValues(); }
+    void longitude_data() { addDataValues(Longitude); }
     void longitude()
     {
         QFETCH(double, value);
@@ -82,9 +115,10 @@ private slots:
 
         QCoordinate c2 = c;
         QCOMPARE(QString::number(c2.longitude()), QString::number(value));
+        QCOMPARE(c2, c);
     }
 
-    void altitude_data() { addDataValues(); }
+    void altitude_data() { addDataValues(Altitude); }
     void altitude()
     {
         QFETCH(double, value);
@@ -94,6 +128,7 @@ private slots:
 
         QCoordinate c2 = c;
         QCOMPARE(QString::number(c2.altitude()), QString::number(value));
+        QCOMPARE(c2, c);
     }
 
     void distanceTo_data()
@@ -285,6 +320,29 @@ private slots:
         QCOMPARE(coord.toString(format), string);
     }
 
+    void datastream()
+    {
+        QFETCH(QCoordinate, coord);
+        
+        QByteArray ba;
+        QDataStream out(&ba, QIODevice::WriteOnly);
+        out << coord;
+
+        QDataStream in(&ba, QIODevice::ReadOnly);
+        QCoordinate inCoord;
+        in >> inCoord;
+        QCOMPARE(inCoord, coord);
+    }
+
+    void datastream_data()
+    {
+        QTest::addColumn<QCoordinate>("coord");
+
+        QTest::newRow("invalid") << QCoordinate();
+        QTest::newRow("valid lat, long") << BRISBANE;
+        QTest::newRow("valid lat, long, alt") << QCoordinate(-1, -1, -1);
+        QTest::newRow("valid lat, long, alt again") << QCoordinate(1, 1, 1);
+    }
 };
 
 QTEST_MAIN(tst_QCoordinate)

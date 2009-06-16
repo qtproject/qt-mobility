@@ -12,6 +12,7 @@
 
 #include <QDateTime>
 #include <QHash>
+#include <QDataStream>
 #include <QDebug>
 #include <qnumeric.h>
 #include <qmath.h>
@@ -141,6 +142,17 @@ QCoordinate &QCoordinate::operator=(const QCoordinate &other)
     d->alt = other.d->alt;
 
     return *this;
+}
+
+/*!
+    Returns true if the latitude, longitude and altitude of this
+    coordinate are the same as those of \a other.
+*/
+bool QCoordinate::operator==(const QCoordinate &other) const
+{
+    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat) )
+            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng) )
+            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt) );
 }
 
 /*!
@@ -433,5 +445,42 @@ QDebug operator<<(QDebug dbg, const QCoordinate &coord)
         dbg.nospace() << '?';
     dbg.nospace() << ')';
     return dbg;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    Writes the given \a coordinate to the specified \a stream.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator<<(QDataStream &stream, const QCoordinate &coordinate)
+{
+    stream << coordinate.latitude();
+    stream << coordinate.longitude();
+    stream << coordinate.altitude();
+    return stream;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    Reads a coordinate from the specified \a stream into the given
+    \a coordinate.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator>>(QDataStream &stream, QCoordinate &coordinate)
+{
+    double value;
+    stream >> value;
+    coordinate.setLatitude(value);
+    stream >> value;
+    coordinate.setLongitude(value);
+    stream >> value;
+    coordinate.setAltitude(value);
+    return stream;
 }
 #endif

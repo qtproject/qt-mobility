@@ -46,6 +46,7 @@
 #include <QString>
 
 class QDebug;
+class QDataStream;
 class QCoordinatePrivate;
 
 QT_BEGIN_HEADER
@@ -77,7 +78,7 @@ public:
     ~QCoordinate();
 
     QCoordinate &operator=(const QCoordinate &other);
-    // TODO ==operator
+    bool operator==(const QCoordinate &other) const;
 
     bool isValid() const;
     CoordinateType type() const;
@@ -102,6 +103,11 @@ private:
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QCoordinate &);
+#endif
+
+#ifndef QT_NO_DATASTREAM
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QCoordinate &coordinate);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QCoordinate &coordinate);
 #endif
 
 QT_END_NAMESPACE
