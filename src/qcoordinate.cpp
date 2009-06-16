@@ -14,6 +14,7 @@
 #include <QHash>
 #include <QDebug>
 #include <qnumeric.h>
+#include <qmath.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -261,10 +262,10 @@ qreal QCoordinate::distanceTo(const QCoordinate &other) const
     // Haversine formula
     double dlat = QCoordinate_degToRad(other.d->lat - d->lat);
     double dlon = QCoordinate_degToRad(other.d->lng - d->lng);
-    double y = sin(dlat/2) * sin(dlat/2)
-            + cos(QCoordinate_degToRad(d->lat))
-            * cos(QCoordinate_degToRad(other.d->lat))
-            * sin(dlon/2) * sin(dlon/2);
+    double y = qSin(dlat/2) * qSin(dlat/2)
+            + qCos(QCoordinate_degToRad(d->lat))
+            * qCos(QCoordinate_degToRad(other.d->lat))
+            * qSin(dlon/2) * qSin(dlon/2);
     double x = 2 * atan2(sqrt(y), sqrt(1-y));
     return qreal(x * QCoordinate_EARTH_MEAN_RADIUS * 1000);
 }
@@ -290,8 +291,8 @@ qreal QCoordinate::azimuthTo(const QCoordinate &other) const
     double lat1Rad = QCoordinate_degToRad(d->lat);
     double lat2Rad = QCoordinate_degToRad(other.d->lat);
 
-    double y = sin(dlon) * cos(lat2Rad);
-    double x = cos(lat1Rad) * sin(lat2Rad) - sin(lat1Rad) * cos(lat2Rad) * cos(dlon);
+    double y = qSin(dlon) * qCos(lat2Rad);
+    double x = qCos(lat1Rad) * qSin(lat2Rad) - qSin(lat1Rad) * qCos(lat2Rad) * qCos(dlon);
 
     double whole;
     double fraction = modf(QCoordinate_radToDeg(atan2(y, x)), &whole);
