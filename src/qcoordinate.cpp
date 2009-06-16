@@ -15,7 +15,9 @@
 #include <QDebug>
 #include <qnumeric.h>
 
-#include <math.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 static const double QCoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
