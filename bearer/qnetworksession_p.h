@@ -177,7 +177,7 @@ private:
     void activateNmSession();
     void deactivateNmSession();
     void activateConnection(/*QDBusInterface &iface,*/ const QString & connPath, const QString &devicePath);
-
+    void updateServiceNetworkState();
     QNetworkManagerInterface * iface;
     QNetworkManagerInterfaceDevice *devIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
