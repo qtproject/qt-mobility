@@ -247,8 +247,10 @@ void QNetworkConfigurationManagerPrivate::updateEthConfigurations(QNetworkManage
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             switch (devIface->state()) {
             case  NM_DEVICE_STATE_UNKNOWN:
-            case  NM_DEVICE_STATE_UNAVAILABLE:
                     cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+                break;
+            case  NM_DEVICE_STATE_UNAVAILABLE:
+                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
                 break;
             case NM_DEVICE_STATE_DISCONNECTED:
                 {
@@ -312,7 +314,27 @@ void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManag
                          | QNetworkConfiguration::Discovered
                          | QNetworkConfiguration::Active );
     } else {
-        cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+            switch (devIface->state()) {
+            case  NM_DEVICE_STATE_UNKNOWN:
+                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+                break;
+            case  NM_DEVICE_STATE_UNAVAILABLE:
+                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
+                break;
+            case NM_DEVICE_STATE_DISCONNECTED:
+                {
+                    cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Discovered
+                                      | QNetworkConfiguration::Defined);
+                }
+                break;
+            case NM_DEVICE_STATE_ACTIVATED:
+                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Active );
+                break;
+            default:
+                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+                break;
+
+            };
     }
 
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
