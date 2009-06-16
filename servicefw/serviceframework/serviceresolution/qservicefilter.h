@@ -85,6 +85,7 @@ public:
 private:
     QServiceFilterPrivate *d;
     friend class QServiceManager;
+    friend class ServiceDatabase;
 #ifndef QT_NO_DATASTREAM
     friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
     friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
