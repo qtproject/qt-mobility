@@ -41,7 +41,7 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageId"></a>QMessageId::QMessageId ()</h3>
-<p>Creates an invalid identifier, <a href="qmessageid.html#toString">toString</a>() will return an empty string.</p>
+<p>Creates an invalid identifier, <a href="qmessageid.html#toString">toString</a>() will return a null string.</p>
 <h3 class="fn"><a name="QMessageId-2"></a>QMessageId::QMessageId ( const QMessageId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
 <h3 class="fn"><a name="QMessageId-3"></a>QMessageId::QMessageId ( const QString &amp; <i>id</i> )</h3>
@@ -51,7 +51,7 @@
 <p>Returns true if this identifier is valid; otherwise returns false.</p>
 <h3 class="fn"><a name="toString"></a>QString QMessageId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
-<p>An empty string should be returned if and only if the identifier is invalid.</p>
+<p>An null string should be returned if and only if the identifier is invalid.</p>
 <h3 class="fn"><a name="operator-eq"></a>QMessageId &amp; QMessageId::operator= ( const QMessageId &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this identifier and returns a reference to this identifier.</p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageId::operator== ( const QMessageId &amp; <i>other</i> ) const</h3>

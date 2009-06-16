@@ -42,7 +42,7 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageContentContainerId"></a>QMessageContentContainerId::QMessageContentContainerId ()</h3>
-<p>Creates an invalid identifier, <a href="qmessagecontentcontainerid.html#toString">toString</a>() will return an empty string;</p>
+<p>Creates an invalid identifier, <a href="qmessagecontentcontainerid.html#toString">toString</a>() will return a null string;</p>
 <h3 class="fn"><a name="QMessageContentContainerId-2"></a>QMessageContentContainerId::QMessageContentContainerId ( const QMessageContentContainerId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
 <h3 class="fn"><a name="QMessageContentContainerId-3"></a>QMessageContentContainerId::QMessageContentContainerId ( const QString &amp; <i>id</i> )</h3>
@@ -54,7 +54,7 @@
 <p>Returns the identifier of the containing (parent) message if any; otherwise returns an invalid message identifier.</p>
 <h3 class="fn"><a name="toString"></a>QString QMessageContentContainerId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
-<p>An empty string should be returned if and only if the identifier is invalid.</p>
+<p>A null string should be returned if and only if the identifier is invalid.</p>
 <h3 class="fn"><a name="operator-eq"></a>QMessageContentContainerId &amp; QMessageContentContainerId::operator= ( const QMessageContentContainerId &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this identifier and returns a reference to this identifier.</p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageContentContainerId::operator== ( const QMessageContentContainerId &amp; <i>other</i> ) const</h3>

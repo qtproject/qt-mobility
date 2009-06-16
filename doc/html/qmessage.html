@@ -159,7 +159,7 @@
 <h3 class="fn"><a name="attachments"></a>QMessageContentContainerIdList QMessage::attachments () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of attachments for the message.</p>
 <p>The body of the message will not be included in the list.</p>
-<p>TODO: Example attachment list generation algorithm, message parts are the main issue, have to recurse into them.</p>
+<p>TODO: Example attachment list generation algorithm, message parts are the main issue, maybe have to recurse into them, somewhat ambiguous.</p>
 <p>See also <a href="qmessage.html#appendAttachments">appendAttachments</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
 <h3 class="fn"><a name="bcc"></a>QMessageAddressList QMessage::bcc () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of all the bcc (blind carbon copy) recipients specified for the message.</p>
@@ -183,7 +183,7 @@
 <h3 class="fn"><a name="dataModified"></a>bool QMessage::dataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the message has been modified since it was constructed; otherwise returns false.</p>
 <h3 class="fn"><a name="date"></a>QDateTime QMessage::date () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the timestamp contained in the origination date header field of the message, if present; otherwise returns an empty timestamp.</p>
+<p>Returns the timestamp contained in the origination date header field of the message, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setDate">setDate</a>() and <a href="qmessagefilterkey.html#timeStamp">QMessageFilterKey::timeStamp</a>().</p>
 <h3 class="fn"><a name="destinationPort"></a>uint QMessage::destinationPort ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the destination port of the message.</p>
@@ -214,7 +214,7 @@
 <p>The default is Normal.</p>
 <p>See also <a href="qmessage.html#setPriority">setPriority</a>() and <a href="qmessagefilterkey.html#priority">QMessageFilterKey::priority</a>().</p>
 <h3 class="fn"><a name="receivedDate"></a>QDateTime QMessage::receivedDate () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns an empty timestamp.</p>
+<p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setReceivedDate">setReceivedDate</a>() and <a href="qmessagefilterkey.html#receptionTimeStamp">QMessageFilterKey::receptionTimeStamp</a>().</p>
 <h3 class="fn"><a name="setBcc"></a>void QMessage::setBcc ( const QMessageAddressList &amp; <i>bccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>bccList</i>.</p>
@@ -281,7 +281,7 @@
 <p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilterkey.html#status">QMessageFilterKey::status</a>().</p>
 <h3 class="fn"><a name="subject"></a>QString QMessage::subject () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the subject of the message, if present; otherwise returns an empty string.</p>
+<p>Returns the subject of the message, if present; otherwise returns a null string.</p>
 <p>See also <a href="qmessage.html#setSubject">setSubject</a>() and <a href="qmessagefilterkey.html#subject">QMessageFilterKey::subject</a>().</p>
 <h3 class="fn"><a name="to"></a>QMessageAddressList QMessage::to () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of primary recipients for the message.</p>
