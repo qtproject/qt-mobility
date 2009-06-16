@@ -447,15 +447,8 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
                     currentConnectionPath = getConnectionPath();
                     deviceStateChanged(devIface->state());
 
-            connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
-                    this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-
-//            if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                              devicePath.path(),
-//                                              NM_DBUS_INTERFACE_DEVICE,
-//                                              "StateChanged",
-//                                              nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-//                    }
+                    connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
+                            this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
                     break;
                 } else if(devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
 
@@ -468,12 +461,6 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
                         deviceStateChanged(devIface->state());
                         connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
                                 this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-                        //                        if(dbusConnection.connect(NM_DBUS_SERVICE,
-//                                                  devicePath.path(),
-//                                                  NM_DBUS_INTERFACE_DEVICE,
-//                                                  "StateChanged",
-//                                                  nmDBusObj,SLOT(deviceStateChanged(quint32)))) {
-//                        }
                         break;
                     }
                 }
