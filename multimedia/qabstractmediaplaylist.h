@@ -47,7 +47,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void currentItemChanged(const QMediaSource&);
-    void nextItemChanged(const QMediaSource&);
 
     void itemsInserted(int start, int end);
     void itemsRemoved(int start, int end);
@@ -57,7 +56,7 @@ protected:
     QAbstractMediaPlaylist(QAbstractMediaPlaylistPrivate &dd, QObject *parent);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlaylist)
+    Q_DECLARE_PRIVATE(QAbstractMediaPlaylist)
 };
 
 #endif // QABSTRACTMEDIAPLAYLIST_H

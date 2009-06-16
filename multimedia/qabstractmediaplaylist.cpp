@@ -60,12 +60,12 @@
 
 /*!
   */
-QAbstractMediaPlaylist::QAbstractMediaPlaylist(QObject* parent = 0)
+QAbstractMediaPlaylist::QAbstractMediaPlaylist(QObject* parent)
     :QObject(*new QAbstractMediaPlaylistPrivate, parent)
 {
 }
 
-QAbstractMediaPlaylist(QAbstractMediaPlaylistPrivate &dd, QObject *parent)
+QAbstractMediaPlaylist::QAbstractMediaPlaylist(QAbstractMediaPlaylistPrivate &dd, QObject *parent)
     :QObject(dd,parent)
 {
 }
@@ -94,7 +94,7 @@ bool QAbstractMediaPlaylist::save(const QString &location, const char *format)
   */
 QMediaSource QAbstractMediaPlaylist::currentItem() const
 {
-    return this*[currentItemPos()];
+    return (*this)[currentItemPos()];
 }
 
 /*!
@@ -103,7 +103,7 @@ QMediaSource QAbstractMediaPlaylist::nextItem() const
 {
     int nextPos = currentItemPos()+1;
     if (nextPos < size())
-        return  this*[currentItemPos()+1];
+        return  (*this)[currentItemPos()+1];
     else
         return QMediaSource();
 }

@@ -1,6 +1,8 @@
 #include "qsharedmediaplaylist.h"
 #include "qabstractmediaplaylist_p.h"
 
+#include <QStringList>
+
 /*!
     \class QSharedMediaPlaylist
     \ingroup multimedia
@@ -11,14 +13,14 @@
     \sa
 */
 
-class QMediaPlaylistPrivate : public QAbstractMediaPlaylistPrivate
+class QSharedMediaPlaylistPrivate : public QAbstractMediaPlaylistPrivate
 {
 public:
     QString name;
 };
 
 QSharedMediaPlaylist::QSharedMediaPlaylist(const QString& name, QObject *parent)
-    :QAbstractMediaPlaylist(*new QMediaPlaylistPrivate, parent)
+    :QAbstractMediaPlaylist(*new QSharedMediaPlaylistPrivate, parent)
 {
     Q_D(QSharedMediaPlaylist);
     d->name = name;
@@ -33,7 +35,7 @@ QString QSharedMediaPlaylist::name() const
     return d_func()->name;
 }
 
-static QStringList QSharedMediaPlaylist::sharedPlaylists()
+QStringList QSharedMediaPlaylist::sharedPlaylists()
 {
     return QStringList();
 }
