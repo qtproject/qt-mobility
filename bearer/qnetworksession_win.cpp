@@ -304,6 +304,9 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     if (!publicConfig.isValid() || !engine)
         return QNetworkInterface();
 
+    if (state != QNetworkSession::Connected)
+        return QNetworkInterface();
+
     QStringList interfaces;
 
     if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
