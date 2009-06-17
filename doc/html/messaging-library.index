@@ -421,6 +421,19 @@
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccountSortKey" href="qmessageaccountsortkey.html" location="draft-api.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountSortKey" fullname="QMessageAccountSortKey::QMessageAccountSortKey" href="qmessageaccountsortkey.html#QMessageAccountSortKey" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccountSortKey()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QMessageAccountSortKey::isEmpty" href="qmessageaccountsortkey.html#isEmpty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QMessageAccountSortKey::operator==" href="qmessageaccountsortkey.html#operator==" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QMessageAccountSortKey &amp; other) const">
+                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageAccountSortKey::operator=" href="qmessageaccountsortkey.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageAccountSortKey &amp;" signature="operator=(const QMessageAccountSortKey &amp; other)">
+                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QMessageAccountSortKey::name" href="qmessageaccountsortkey.html#name" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageAccountSortKey" signature="name(Qt::SortOrder order)">
+                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderFilterKey" href="qmessagefolderfilterkey.html" location="draft-api.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="setOptions" fullname="QMessageFolderFilterKey::setOptions" href="qmessagefolderfilterkey.html#setOptions" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setOptions(QFlags&lt;QMessageDataComparator::Option&gt; options)">
                 <parameter left="QFlags&lt;QMessageDataComparator::Option&gt;" right="" name="options" default=""/>
@@ -498,6 +511,28 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="ancestorFolderIds" fullname="QMessageFolderFilterKey::ancestorFolderIds" href="qmessagefolderfilterkey.html#ancestorFolderIds-2" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="true" overload-number="2" type="QMessageFolderFilterKey" signature="ancestorFolderIds(const QMessageFolderFilterKey &amp; key, QMessageDataComparator::InclusionComparator cmp)">
                 <parameter left="const QMessageFolderFilterKey &amp;" right="" name="key" default=""/>
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderSortKey" href="qmessagefoldersortkey.html" location="draft-api.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderSortKey" fullname="QMessageFolderSortKey::QMessageFolderSortKey" href="qmessagefoldersortkey.html#QMessageFolderSortKey" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderSortKey()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QMessageFolderSortKey::isEmpty" href="qmessagefoldersortkey.html#isEmpty" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator+" fullname="QMessageFolderSortKey::operator+" href="qmessagefoldersortkey.html#operator+" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageFolderSortKey" signature="operator+(const QMessageFolderSortKey &amp; other) const">
+                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator+=" fullname="QMessageFolderSortKey::operator+=" href="qmessagefoldersortkey.html#operator+=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMessageFolderSortKey &amp;" signature="operator+=(const QMessageFolderSortKey &amp; other)">
+                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QMessageFolderSortKey::operator==" href="qmessagefoldersortkey.html#operator==" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QMessageFolderSortKey &amp; other) const">
+                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageFolderSortKey::operator=" href="qmessagefoldersortkey.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageFolderSortKey &amp;" signature="operator=(const QMessageFolderSortKey &amp; other)">
+                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="displayName" fullname="QMessageFolderSortKey::displayName" href="qmessagefoldersortkey.html#displayName" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortKey" signature="displayName(Qt::SortOrder order)">
+                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QMessageFolderSortKey::path" href="qmessagefoldersortkey.html#path" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortKey" signature="path(Qt::SortOrder order)">
+                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFilterKey" href="qmessagefilterkey.html" location="draft-api.h" bases="" module="">
@@ -806,47 +841,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="cancelOperation" fullname="QMessageServiceAction::cancelOperation" href="qmessageserviceaction.html#cancelOperation" location="draft-api.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelOperation()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="activityChanged" fullname="QMessageServiceAction::activityChanged" href="qmessageserviceaction.html#activityChanged" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="activityChanged(QMessageServiceAction::Activity a)">
                 <parameter left="QMessageServiceAction::Activity" right="" name="a" default=""/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderSortKey" href="qmessagefoldersortkey.html" location="sortkeysaccountfolders.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderSortKey" fullname="QMessageFolderSortKey::QMessageFolderSortKey" href="qmessagefoldersortkey.html#QMessageFolderSortKey" location="sortkeysaccountfolders.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderSortKey()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QMessageFolderSortKey::isEmpty" href="qmessagefoldersortkey.html#isEmpty" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator+" fullname="QMessageFolderSortKey::operator+" href="qmessagefoldersortkey.html#operator+" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageFolderSortKey" signature="operator+(const QMessageFolderSortKey &amp; other) const">
-                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator+=" fullname="QMessageFolderSortKey::operator+=" href="qmessagefoldersortkey.html#operator+=" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMessageFolderSortKey &amp;" signature="operator+=(const QMessageFolderSortKey &amp; other)">
-                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QMessageFolderSortKey::operator==" href="qmessagefoldersortkey.html#operator==" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QMessageFolderSortKey &amp; other) const">
-                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageFolderSortKey::operator=" href="qmessagefoldersortkey.html#operator=" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageFolderSortKey &amp;" signature="operator=(const QMessageFolderSortKey &amp; other)">
-                <parameter left="const QMessageFolderSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="displayName" fullname="QMessageFolderSortKey::displayName" href="qmessagefoldersortkey.html#displayName" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortKey" signature="displayName(Qt::SortOrder order)">
-                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QMessageFolderSortKey::path" href="qmessagefoldersortkey.html#path" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortKey" signature="path(Qt::SortOrder order)">
-                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccountSortKey" href="qmessageaccountsortkey.html" location="sortkeysaccountfolders.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountSortKey" fullname="QMessageAccountSortKey::QMessageAccountSortKey" href="qmessageaccountsortkey.html#QMessageAccountSortKey" location="sortkeysaccountfolders.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccountSortKey()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QMessageAccountSortKey::isEmpty" href="qmessageaccountsortkey.html#isEmpty" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator+" fullname="QMessageAccountSortKey::operator+" href="qmessageaccountsortkey.html#operator+" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageAccountSortKey" signature="operator+(const QMessageAccountSortKey &amp; other) const">
-                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator+=" fullname="QMessageAccountSortKey::operator+=" href="qmessageaccountsortkey.html#operator+=" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMessageAccountSortKey &amp;" signature="operator+=(const QMessageAccountSortKey &amp; other)">
-                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QMessageAccountSortKey::operator==" href="qmessageaccountsortkey.html#operator==" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QMessageAccountSortKey &amp; other) const">
-                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageAccountSortKey::operator=" href="qmessageaccountsortkey.html#operator=" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageAccountSortKey &amp;" signature="operator=(const QMessageAccountSortKey &amp; other)">
-                <parameter left="const QMessageAccountSortKey &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QMessageAccountSortKey::name" href="qmessageaccountsortkey.html#name" location="sortkeysaccountfolders.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageAccountSortKey" signature="name(Qt::SortOrder order)">
-                <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Messaging Library Developer Resources" fulltitle="Messaging Library Developer Resources" subtitle="" location="index.qdoc">

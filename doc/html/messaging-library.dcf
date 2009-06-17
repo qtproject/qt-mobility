@@ -105,8 +105,6 @@
         <keyword ref="qmessageaccountsortkey.html">QMessageAccountSortKey</keyword>
         <keyword ref="qmessageaccountsortkey.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmessageaccountsortkey.html#name">name</keyword>
-        <keyword ref="qmessageaccountsortkey.html#operator-2b">operator+</keyword>
-        <keyword ref="qmessageaccountsortkey.html#operator-2b-eq">operator+=</keyword>
         <keyword ref="qmessageaccountsortkey.html#operator-eq">operator=</keyword>
         <keyword ref="qmessageaccountsortkey.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessageaccountsortkey-members.html" title="List of all members"/>
