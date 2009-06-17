@@ -156,6 +156,13 @@ bool QCoordinate::operator==(const QCoordinate &other) const
 }
 
 /*!
+    \fn bool QCoordinate::operator!=(const QCoordinate &other) const;
+
+    Returns true if the latitude, longitude or altitude of this
+    coordinate are not the same as those of \a other.
+*/
+
+/*!
     Returns true if the type() is Coordinate2D or Coordinate3D.
 */
 bool QCoordinate::isValid() const
@@ -435,14 +442,23 @@ QString QCoordinate::toString(CoordinateFormat format) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QCoordinate &coord)
 {
-    dbg.nospace() << "QCoordinate(" << coord.latitude();
-    dbg.nospace() << ", ";
-    dbg.nospace() << coord.longitude();
-    dbg.nospace() << ", ";
-    if (coord.type() == QCoordinate::Coordinate3D)
-        dbg.nospace() << coord.altitude();
-    else
+    double lat = coord.latitude();
+    double lng = coord.longitude();
+
+    dbg.nospace() << "QCoordinate(";
+    if (qIsNaN(lat))
         dbg.nospace() << '?';
+    else
+        dbg.nospace() << lat;
+    dbg.nospace() << ", ";
+    if (qIsNaN(lng))
+        dbg.nospace() << '?';
+    else
+        dbg.nospace() << lng;
+    if (coord.type() == QCoordinate::Coordinate3D) {
+        dbg.nospace() << ", ";
+        dbg.nospace() << coord.altitude();
+    }
     dbg.nospace() << ')';
     return dbg;
 }
