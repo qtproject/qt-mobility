@@ -19,8 +19,6 @@
 #include <cdbcols.h>
 #include <d32dbms.h>
 
-#include <QMessageBox>
-
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <cmdestination.h>
     #include <cmconnectionmethod.h>
@@ -143,7 +141,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             knownConfigs.removeOne(ident);
         } else {
             QNetworkConfigurationPrivate* cpPriv = NULL;
-            TRAP(error, cpPriv = configFromConnectioMethodL(connectionMethod));
+            TRAP(error, cpPriv = configFromConnectionMethodL(connectionMethod));
             if (error == KErrNone) {
                 QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
                 accessPointConfigurations.insert(cpPriv->id, ptr);
@@ -209,7 +207,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data() == 0) {
                 QNetworkConfigurationPrivate* cpPriv = NULL; 
-                TRAP(error, cpPriv = configFromConnectioMethodL(connectionMethod));
+                TRAP(error, cpPriv = configFromConnectionMethodL(connectionMethod));
                 if (error == KErrNone) {
                     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
                     accessPointConfigurations.insert(cpPriv->id, ptr);
@@ -310,7 +308,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
 }
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromConnectioMethodL(
+QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromConnectionMethodL(
         RCmConnectionMethod& connectionMethod)
 {
     QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
@@ -335,9 +333,6 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
         break;
     case KCommDbBearerLAN:
         cpPriv->bearer = QNetworkConfigurationPrivate::BearerEthernet;
-        break;
-    case KCommDbBearerCdma2000:
-        cpPriv->bearer = QNetworkConfigurationPrivate::BearerCDMA2000;
         break;
     case KCommDbBearerVirtual:
         cpPriv->bearer = QNetworkConfigurationPrivate::BearerUnknown;
@@ -375,9 +370,13 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
 QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration()
 {
     QNetworkConfiguration config;
-    stopCommsDatabaseNotifications();
-    TRAP_IGNORE(config = defaultConfigurationL());
-    startCommsDatabaseNotifications();
+
+    if (iInitOk) {
+        stopCommsDatabaseNotifications();
+        TRAP_IGNORE(config = defaultConfigurationL());
+        startCommsDatabaseNotifications();
+    }
+
     return config;
 }
 

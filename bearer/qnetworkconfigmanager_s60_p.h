@@ -103,7 +103,7 @@ private:
     void readNetworkConfigurationValuesFromCommsDbL(
             TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration);
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    QNetworkConfigurationPrivate* configFromConnectioMethodL(RCmConnectionMethod& connectionMethod);    //insp: minor, Typo in function name: "Connectio"
+    QNetworkConfigurationPrivate* configFromConnectionMethodL(RCmConnectionMethod& connectionMethod);
 #endif    
     
     void updateConfigurationsL();
@@ -129,7 +129,6 @@ public: // Data
     //this table contains an up to date list of all configs at any time.
     //it must be updated if configurations change, are added/removed or
     //the members of ServiceNetworks change
-    //insp: major, Why the keys are QString? Originally they seem to be IAP ids that are always converted into QStrings. Why not use e.g. unsigned long as a key type?
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QNetworkConfigurationManager::CapabilityFlags capFlags;
