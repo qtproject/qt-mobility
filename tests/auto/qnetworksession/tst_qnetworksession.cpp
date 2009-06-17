@@ -120,7 +120,8 @@ void tst_QNetworkSession::sessionProperties()
 
     QVERIFY(session.configuration() == configuration);
 
-    QStringList validBearerNames = QStringList() << QLatin1String("Ethernet")
+    QStringList validBearerNames = QStringList() << QString()
+                                                 << QLatin1String("Ethernet")
                                                  << QLatin1String("WLAN")
                                                  << QLatin1String("2G")
                                                  << QLatin1String("CDMA2000")
