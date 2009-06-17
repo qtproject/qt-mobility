@@ -205,6 +205,8 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test30.xml") << "Test30.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
     //empty key attribute for custom property tag
     QTest::newRow("Test31.xml") << "Test31.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
+    //same key exists twice
+    QTest::newRow("Test32.xml") << "Test32.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY;
 
 }
 

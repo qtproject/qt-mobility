@@ -355,10 +355,18 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CUSTOM_PROPERTY) {
             parseError = true;
             if (aXMLReader.attributes().hasAttribute("key")) {
-                const QStringRef ref = aXMLReader.attributes().value("key");
+                const QString ref = aXMLReader.attributes().value("key").toString();
                 if (!ref.isEmpty()) {
-                    aInterface.d->customProperties[ref.toString()] = aXMLReader.readElementText();
-                    parseError = false;
+                    if (aInterface.d->customProperties.contains(ref)) {
+                        latestError = SFW_ERROR_DUPLICATED_CUSTOM_KEY;
+                        continue;
+                    } else {
+                        QString value = aXMLReader.readElementText();
+                        if (value.isNull())
+                            value = QString("");
+                        aInterface.d->customProperties[ref] = value;
+                        parseError = false;
+                    }
                 }
             }
             if (parseError)

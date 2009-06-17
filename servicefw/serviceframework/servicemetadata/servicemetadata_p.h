@@ -88,7 +88,8 @@ public:
         SFW_ERROR_DUPLICATED_INTERFACE,                     /* The same interface is defined twice */
         SFW_ERROR_INVALID_VERSION,
         SFW_ERROR_DUPLICATED_TAG,                           /* The tag appears twice */
-        SFW_ERROR_INVALID_CUSTOM_TAG                        /* The customproperty tag is not corectly formatted or otherwise incorrect*/
+        SFW_ERROR_INVALID_CUSTOM_TAG,                       /* The customproperty tag is not corectly formatted or otherwise incorrect*/
+        SFW_ERROR_DUPLICATED_CUSTOM_KEY                     /* The customproperty appears twice*/
     };
 
 public:
