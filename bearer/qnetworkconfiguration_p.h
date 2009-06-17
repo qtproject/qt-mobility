@@ -90,9 +90,6 @@ public:
 
     QList<QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > serviceNetworkMembers;
     QNetworkInterface serviceInterface;
-#ifndef QT_NO_DBUS
-    QString hwAddress;
-#endif
 
 private:
 
