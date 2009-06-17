@@ -242,7 +242,6 @@ void QNetworkConfigurationManagerPrivate::updateEthConfigurations(QNetworkManage
             cpPriv->name = getNameForConfiguration(devIface);
             cpPriv->isValid = true;
             cpPriv->id = ident;
-            cpPriv->hwAddress = devWiredIface->hwAddress();
             cpPriv->serviceInterface = devIface->interface();
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             switch (devIface->state()) {
@@ -307,7 +306,6 @@ void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManag
     cpPriv->isValid = true;
     cpPriv->id = ident;
     cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-    cpPriv->hwAddress = devWirelessIface->hwAddress();
     cpPriv->serviceInterface = devIface->interface();
     if(activeAPPath.length() > 2) {
         cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined
@@ -528,7 +526,6 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
         cpPriv->isValid = true;
         cpPriv->id = ident;
         cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-        cpPriv->hwAddress = hwAddy;
         cpPriv->serviceInterface = devIface->interface();
 
         bool knownSsid = false;

@@ -55,7 +55,6 @@
 #endif
 
 #include <QNetworkInterface>
-static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 QT_BEGIN_NAMESPACE
 static bool NetworkManagerAvailable()
@@ -430,47 +429,21 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
         currentBearerName = "WLAN";
         connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                 this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-     //   updateServiceNetworkState();
     }
 
     if(publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         // this is device interface
-        QList<QDBusObjectPath> devicesList = iface->getDevices();
+        QString devicePath = "/org/freedesktop/Hal/devices/net_"
+                             + publicConfig.d->serviceInterface.hardwareAddress().replace(":","_").toLower();
+        devIface = new QNetworkManagerInterfaceDevice( devicePath);
 
-        foreach(QDBusObjectPath devicePath, devicesList) {
-            devIface = new QNetworkManagerInterfaceDevice( devicePath.path());
-            QString devInterface = devIface->interface().name();
-            
-            if(devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
-                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
-                if(devWirelessIface->hwAddress() == publicConfig.identifier()) {
-
-                    currentBearerName = getBearerName(DEVICE_TYPE_802_11_WIRELESS);
-                    currentConnectionPath = getConnectionPath();
-                    deviceStateChanged(devIface->state());
-
-                    connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
-                            this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-                    break;
-                }
-            } else if(devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
-
-                    devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
-                    if(devWiredIface->hwAddress() == publicConfig.identifier()) {
-
-                        currentBearerName = getBearerName( DEVICE_TYPE_802_3_ETHERNET);
-                        currentConnectionPath = getConnectionPath();
-
-                        deviceStateChanged(devIface->state());
-                        connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
-                                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-                        break;
-                    }
-            } // end devIface
-        }
+        currentBearerName = getBearerName(devIface->deviceType());
+        currentConnectionPath = getConnectionPath();
+        deviceStateChanged(devIface->state());
+        connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
+                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
     } else {
         //service network
-        //  QNetworkSession::State oldState = state;
         updateServiceNetworkState();
         if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
             deviceStateChanged(8);
@@ -527,7 +500,6 @@ void QNetworkSessionPrivate::activateNmSession()
 //    }
 
     QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
-//    QNetworkManagerInterfaceDevice *devIface;
     devIface = new QNetworkManagerInterfaceDevice(devicePath);
     currentBearerName = getBearerName(devIface->deviceType());
 
@@ -728,18 +700,21 @@ void QNetworkSessionPrivate::configChanged(const QNetworkConfiguration& config)
 
 void QNetworkSessionPrivate::updateServiceNetworkState()
 {
+    qWarning() << Q_FUNC_INFO;
     connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
             this, SLOT(configChanged(QNetworkConfiguration)));
     foreach (const QNetworkConfiguration &config, publicConfig.children()) {
         if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-            QString devicePath = "/org/freedesktop/Hal/devices/net_" + config.identifier().replace(":","_").toLower();
+
+            QString hwAddress = config.d->serviceInterface.hardwareAddress();
+            QString devicePath = "/org/freedesktop/Hal/devices/net_" + hwAddress.replace(":","_").toLower();
             QNetworkManagerInterfaceDevice *devIfaceL;
             devIfaceL = new QNetworkManagerInterfaceDevice( devicePath);
             currentBearerName = getBearerName(devIfaceL->deviceType());
             break;
         }
     }
- //   currentConnectionPath = getConnectionPath();
+// /  currentConnectionPath = getConnectionPath();
 
     if (!publicConfig.isValid()) {
         state = QNetworkSession::Invalid;
