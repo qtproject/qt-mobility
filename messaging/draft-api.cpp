@@ -7,15 +7,15 @@
 
     \preliminary
     \brief The QMessageId class provides a unique identifier for a QMessage message within the 
-    scope of the message store.
+    scope of the messaging store.
 
     A QMessageId can be constructed from a string, or converted to a string with toString().
 
     A QMessageId instance can be tested for validity with isValid(), and compared to other instances
     for equality.
     
-    If the message a QMessageId identifies is removed from the message store then the identifier will not be 
-    reused.
+    If the message a QMessageId identifies is removed from the messaging store then the identifier 
+    will not be reused.
     
     The QMessageId implementation should be small, ideally less than or equal to 16 bytes.
     
@@ -224,15 +224,15 @@ QMessageId QMessageContentContainerId::messageId() const
 
     \preliminary
     \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
-    folder, within the scope of the message store.
+    folder, within the scope of the messaging store.
 
     A QMessageFolderId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other instances
-    for equality.
+    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other 
+    instances for equality.
     
-    If the message a QMessageFolderId identifies is removed from the message store then the identifier will not be 
-    reused.
+    If the message a QMessageFolderId identifies is removed from the messaging store then the 
+    identifier will not be reused.
     
     \sa QMessageFolder
 */
@@ -324,15 +324,15 @@ bool QMessageFolderId::isValid() const
 
     \preliminary
     \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount 
-    messaging account, within the scope of the message store.
+    messaging account, within the scope of the messaging store.
 
     A QMessageAccountId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other instances
-    for equality.
+    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other 
+    instances for equality.
     
-    If the message a QMessageAccountId identifies is removed from the message store then the identifier will not be 
-    reused.
+    If the message a QMessageAccountId identifies is removed from the messaging store then the 
+    identifier will not be reused.
     
     \sa QMessageAccount
 */
@@ -1084,7 +1084,7 @@ void QMessageAddress::setType(Type type)
     the telephony types SMS and MMS, and also XMPP messages.
      
     The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
-    retrieval from the message store via their identifier using QMessageStore::message(). A 
+    retrieval from the messaging store via their identifier using QMessageStore::message(). A 
     QMessage can also be constructed piece by piece using functions such as 
     setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
     
@@ -1181,7 +1181,7 @@ QMessage::QMessage()
 }
 
 /*!
-    Constructs a message from data stored in the message store with identifier \a id.
+    Constructs a message from data stored in the messaging store with identifier \a id.
     
     \sa QMessageStore
 */
@@ -1738,12 +1738,12 @@ void QMessage::setDataModified(bool modified)
 
     \preliminary
     \brief The QMessageFolder class provides an interface for folders containing messages in the 
-    message store.
+    messaging store.
     
     \ingroup messaging
  
     QMessageFolder represents a folder of messages, either fully or partially stored in the 
-    message store. A QMessageFolder object has an optional parent of the same type, allowing 
+    messaging store. A QMessageFolder object has an optional parent of the same type, allowing 
     folders to be arranged in tree structures. Messages may be associated with folders, allowing 
     for simple classification and access by their parentFolderId property.
 
@@ -1772,8 +1772,8 @@ QMessageFolder::QMessageFolder()
 }
 
 /*!
-    Constructor that creates a QMessageFolder by loading the data from the message store as 
-    specified by the QMessageFolderId \a id. If the folder does not exist in the message 
+    Constructor that creates a QMessageFolder by loading the data from the messaging store as 
+    specified by the QMessageFolderId \a id. If the folder does not exist in the messaging  
     store, then this constructor will create an empty and invalid QMessageFolder.
 */
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
@@ -1783,7 +1783,7 @@ QMessageFolder::QMessageFolder(const QMessageFolderId &id)
 
 /*!
     Constructor that loads a standard QMessageFolder specified by \a sf for the account 
-    identified by \a parentAccountId from the message store.
+    identified by \a parentAccountId from the messaging store.
 */
 QMessageFolder::QMessageFolder(StandardFolder sf, const QMessageAccountId &parentAccountId)
 {
@@ -1800,7 +1800,7 @@ QMessageFolder::~QMessageFolder()
 
 /*!
     Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid 
-    identifier does not yet exist in the message store.
+    identifier does not yet exist in the messaging store.
 */
 QMessageFolderId QMessageFolder::id() const
 {
@@ -1846,13 +1846,13 @@ QString QMessageFolder::path() const
     \class QMessageAccount
 
     \preliminary
-    \brief The QMessageAccount class represents a messaging account in the message store.
+    \brief The QMessageAccount class represents a messaging account in the messaging store.
     
     \ingroup messaging
 
     A QMessageAccount is a logical entity that groups messages according to the 
     method by which they are sent and received.  An account can support one or more 
-    message sources, from which messages are imported into the message store, and 
+    message sources, from which messages are imported into the messaging store, and 
     one or more message sinks by which messages are transmitted to external messaging 
     services.  
     
@@ -1871,7 +1871,7 @@ QMessageAccount::QMessageAccount()
 }
 
 /*!
-    Convenience constructor that creates a QMessageAccount by loading the data from the message 
+    Convenience constructor that creates a QMessageAccount by loading the data from the messaging 
     store as specified by the QMessageAccountId \a id. If the account does not exist in the 
     store, then this constructor will create an empty and invalid QMessageAccount.
     
@@ -2006,7 +2006,7 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 
     \preliminary
     \brief The QMessageAccountFilterKey class defines the parameters used for querying a subset of
-    all available accounts from the message store.
+    all available accounts from the messaging store.
     \ingroup messaging
 
     A QMessageAccountFilterKey is composed of an account property, an optional comparison operator
@@ -2228,7 +2228,7 @@ QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QM
 
     \preliminary
     \brief The QMessageAccountSortKey class defines the parameters used for sorting a subset of 
-    queried accounts from the message store.
+    queried accounts from the messaging store.
     \ingroup messaging
 
     A QMessageAccountSortKey is composed of a account property to sort and a sort order. 
@@ -2296,7 +2296,7 @@ QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
 
     \preliminary
     \brief The QMessageFolderFilterKey class defines the parameters used for querying a subset of
-    all available folders from the message store.
+    all available folders from the messaging store.
     \ingroup messaging
 
     A QMessageFolderFilterKey is composed of a folder property, an optional comparison operator
@@ -2590,7 +2590,7 @@ QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessag
 
     \preliminary
     \brief The QMessageFolderSortKey class defines the parameters used for sorting a subset of 
-    queried folders from the message store.
+    queried folders from the messaging store.
     \ingroup messaging
 
     A QMessageFolderSortKey is composed of a folder property to sort and a sort order. 
@@ -2689,7 +2689,7 @@ QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
 
     \preliminary
     \brief The QMessageFilterKey class defines the parameters used for querying a subset of
-    all available messages from the message store.
+    all available messages from the messaging store.
     \ingroup messaging
 
     A QMessageFilterKey is composed of a message property, an optional comparison operator
@@ -3210,7 +3210,7 @@ QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilte
 
     \preliminary
     \brief The QMessageSortKey class defines the parameters used for sorting a subset of 
-    queried messages from the message store.
+    queried messages from the messaging store.
     \ingroup messaging
 
     A QMessageSortKey is composed of a message property to sort and a sort order. 
@@ -3392,12 +3392,12 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
     \preliminary
     \brief The QMessageStore class represents the main interface for storage and retrieval
-    of messages, folders and accounts in the message store.
+    of messages, folders and accounts in the messaging store.
 
     \ingroup messaging
 
     The QMessageStore class is accessed through a singleton interface and provides functions 
-    for adding, updating and deleting messages in the message store. 
+    for adding, updating and deleting messages in the messaging store. 
     
     QMessageStore also provides queryMessages() and countMessages() functions for querying 
     and counting of QMessage, QMessageFolder and QMessageAccount objects by using the
@@ -3408,7 +3408,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     value indicating the failure mode encountered.  A successful operation will set the 
     lastError() result to QMessageStore::NoError.
 
-    Messages in the message store are identified by QMessageId objects. The data associated
+    Messages in the messaging store are identified by QMessageId objects. The data associated 
     with a message is retrieved in the form of a QMessage object using message(). Likewise 
     a folder is retrieved in the form of a QMessageFolder object using folder(), and an 
     account is retrieved in the form of a QMessageAccount object using account().
@@ -3417,7 +3417,7 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     store can be manipulated via the updateMessage() function ,and removed by the 
     removeMessage() functions.
     
-    Message store manipulations involving messages are reported via the messagesAdded(), 
+    Messaging store manipulations involving messages are reported via the messagesAdded(), 
     messagesUpdated() and messagesRemoved() signals.
 
     \sa QMessage, QMessageId, QMessageContentContainerId, QMessageFilterKey, QMessageSortKey
@@ -3449,19 +3449,19 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 /*!
     \enum QMessageStore::ErrorCode
 
-    Defines the result of attempting to perform a message store operation.
+    Defines the result of attempting to perform a messaging store operation.
 
     \value NoError              The operation was successfully performed.
     \value InvalidId            The operation failed due to the specification of an invalid identifier.
     \value ConstraintFailure    The operation failed due to a constraint violation.
-    \value ContentInaccessible  The operation failed because the content data cannot be accessed by the message store.
-    \value NotYetImplemented    The operation failed because the message store does not yet implement the operation.
-    \value FrameworkFault       The operation failed because the message store encountered an error in performing the operation.
-    \value WorkingIdsOverflow   The operation failed because the message store could not perform the operation within the constraint specified by setMaximumWorkingIds().
+    \value ContentInaccessible  The operation failed because the content data cannot be accessed by the messaging store.
+    \value NotYetImplemented    The operation failed because the messaging store does not yet implement the operation.
+    \value FrameworkFault       The operation failed because the messaging store encountered an error in performing the operation.
+    \value WorkingIdsOverflow   The operation failed because the messaging store could not perform the operation within the constraint specified by setMaximumWorkingIds().
 */
 
 /*!
-    Returns the code of the last error condition reported by the message store.
+    Returns the code of the last error condition reported by the messaging store.
 */
 QMessageStore::ErrorCode QMessageStore::lastError() const
 {
@@ -3469,7 +3469,7 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
 }
 
 /*!
-    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
@@ -3490,7 +3490,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 }
 
 /*!
-    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
@@ -3511,7 +3511,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
 }
 
 /*!
-    Returns the \l{QMessageId}s of messages in the message store. If \a key is not empty 
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
@@ -3571,7 +3571,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 }
 
 /*!
-    Removes the message with QMessageId \a id from the message store. If \a option is 
+    Removes the message with QMessageId \a id from the messaging store. If \a option is 
     QMessageStore::CreateRemovalRecord then a removal record will be created for the
     removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
@@ -3586,7 +3586,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 }
 
 /*!
-    Removes all messages identified by the key \a key from the message store.
+    Removes all messages identified by the key \a key from the messaging store.
     If \a option is QMessageStore::CreateRemovalRecord then removal records will be 
     created for each removed message.
     Returns \c true if the operation completed successfully, \c false otherwise. 
@@ -3594,7 +3594,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     For example:
 
     To implement a function to remove a list messages identified by QMessageIds
-    from the message store.
+    from the messaging store.
     \code
     bool removeMessages(const QMessageIdList& ids)
     {
@@ -3613,7 +3613,7 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 }
 
 /*!
-    Updates the existing QMessage \a m on the message store.
+    Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation completed successfully, or \c false otherwise. 
 
     \sa message(), updateMessage(), removeMessage()
@@ -3625,7 +3625,7 @@ bool QMessageStore::addMessage(QMessage *m)
 }
 
 /*!
-    Updates the existing QMessage \a m on the message store.
+    Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation completed successfully, or \c false otherwise. 
     
     \sa addMessage(), removeMessage()
@@ -3711,7 +3711,7 @@ QMessageStore* QMessageStore::instance()
     \fn void QMessageStore::messagesAdded(const QMessageIdList& ids)
 
     Signal that is emitted when the messages identified by the list \a ids are
-    added to the message store.
+    added to the messaging store.
 
     \sa messagesRemoved(), messagesUpdated(), startNotifications()
 */
@@ -3720,7 +3720,7 @@ QMessageStore* QMessageStore::instance()
     \fn void QMessageStore::messagesRemoved(const QMessageIdList& ids)
 
     Signal that is emitted when the messages in the list \a ids are
-    removed from the message store.
+    removed from the messaging store.
 
     \sa messagesAdded(), messagesUpdated(), startNotifications()
 */
@@ -3729,7 +3729,7 @@ QMessageStore* QMessageStore::instance()
     \fn void QMessageStore::messagesUpdated(const QMessageIdList& ids)
 
     Signal that is emitted when the messages in the list \a ids are
-    updated within the message store.
+    updated within the messaging store.
 
     \sa messagesAdded(), messagesRemoved(), startNotifications()
 */
