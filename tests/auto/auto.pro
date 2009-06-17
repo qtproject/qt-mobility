@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = tst_qcoordinate
+SUBDIRS = tst_qcoordinate \
+          tst_qpositionupdate
