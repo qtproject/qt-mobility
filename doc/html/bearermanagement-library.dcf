@@ -58,7 +58,9 @@
         <keyword ref="qnetworksession.html#SessionError-enum">SessionError</keyword>
         <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::RoamingError</keyword>
         <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::SessionAbortedError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::OperationNotSupportedError</keyword>
         <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::UnknownSessionError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::InvalidConfigurationError</keyword>
         <keyword ref="qnetworksession.html#State-enum">State</keyword>
         <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Invalid</keyword>
         <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Roaming</keyword>

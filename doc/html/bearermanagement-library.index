@@ -3,149 +3,149 @@
 <INDEX url="" title="Bearer Management Library Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" href="qnetworkconfiguration.html" location="qnetworkconfiguration.h" bases="" module="QtNetwork">
-            <contents name="configuration-states" title="Configuration states" level="1"></contents>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" fullname="QNetworkConfiguration::QNetworkConfiguration" href="qnetworkconfiguration.html#QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfiguration()"></function>
+            <contents name="configuration-states" title="Configuration states" level="1"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" fullname="QNetworkConfiguration::QNetworkConfiguration" href="qnetworkconfiguration.html#QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfiguration()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" fullname="QNetworkConfiguration::QNetworkConfiguration" href="qnetworkconfiguration.html#QNetworkConfiguration-2" location="qnetworkconfiguration.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QNetworkConfiguration(const QNetworkConfiguration &amp; other)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QNetworkConfiguration::operator=" href="qnetworkconfiguration.html#operator=" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QNetworkConfiguration &amp;" signature="operator=(const QNetworkConfiguration &amp; other)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfiguration" fullname="QNetworkConfiguration::~QNetworkConfiguration" href="qnetworkconfiguration.html#dtor.QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfiguration()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfiguration" fullname="QNetworkConfiguration::~QNetworkConfiguration" href="qnetworkconfiguration.html#dtor.QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfiguration()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QNetworkConfiguration::operator==" href="qnetworkconfiguration.html#operator==" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QNetworkConfiguration &amp; other) const">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QNetworkConfiguration::operator!=" href="qnetworkconfiguration.html#operator!=" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QNetworkConfiguration &amp; other) const">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="other" default=""/>
             </function>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QNetworkConfiguration::Type" href="qnetworkconfiguration.html#Type-enum" location="qnetworkconfiguration.h">
-                <value name="InternetAccessPoint" value="0"></value>
-                <value name="ServiceNetwork" value="1"></value>
-                <value name="Invalid" value="2"></value>
+                <value name="InternetAccessPoint" value="0"/>
+                <value name="ServiceNetwork" value="1"/>
+                <value name="Invalid" value="2"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Purpose" fullname="QNetworkConfiguration::Purpose" href="qnetworkconfiguration.html#Purpose-enum" location="qnetworkconfiguration.h">
-                <value name="Unknown" value="0"></value>
-                <value name="Public" value="1"></value>
-                <value name="Private" value="2"></value>
-                <value name="ServiceSpecific" value="3"></value>
+                <value name="Unknown" value="0"/>
+                <value name="Public" value="1"/>
+                <value name="Private" value="2"/>
+                <value name="ServiceSpecific" value="3"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="StateFlag" fullname="QNetworkConfiguration::StateFlag" href="qnetworkconfiguration.html#StateFlag-enum" location="qnetworkconfiguration.h" typedef="QNetworkConfiguration::StateFlags">
-                <value name="Undefined" value="0x0000001"></value>
-                <value name="Defined" value="0x0000002"></value>
-                <value name="Discovered" value="0x0000006"></value>
-                <value name="Active" value="0x000000e"></value>
+                <value name="Undefined" value="0x0000001"/>
+                <value name="Defined" value="0x0000002"/>
+                <value name="Discovered" value="0x0000006"/>
+                <value name="Active" value="0x000000e"/>
             </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="StateFlags" fullname="QNetworkConfiguration::StateFlags" href="qnetworkconfiguration.html#StateFlags-typedef" location="qnetworkconfiguration.h" enum="QNetworkConfiguration::StateFlag"></typedef>
-            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QNetworkConfiguration::state" href="qnetworkconfiguration.html#state" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="StateFlags" signature="state() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QNetworkConfiguration::type" href="qnetworkconfiguration.html#type" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Type" signature="type() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="purpose" fullname="QNetworkConfiguration::purpose" href="qnetworkconfiguration.html#purpose" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Purpose" signature="purpose() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="identifier" fullname="QNetworkConfiguration::identifier" href="qnetworkconfiguration.html#identifier" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="identifier() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="roamingAvailable" fullname="QNetworkConfiguration::roamingAvailable" href="qnetworkconfiguration.html#roamingAvailable" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="roamingAvailable() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="QNetworkConfiguration::children" href="qnetworkconfiguration.html#children" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="children() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QNetworkConfiguration::name" href="qnetworkconfiguration.html#name" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QNetworkConfiguration::isValid" href="qnetworkconfiguration.html#isValid" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="StateFlags" fullname="QNetworkConfiguration::StateFlags" href="qnetworkconfiguration.html#StateFlags-typedef" location="qnetworkconfiguration.h" enum="QNetworkConfiguration::StateFlag"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QNetworkConfiguration::state" href="qnetworkconfiguration.html#state" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="StateFlags" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QNetworkConfiguration::type" href="qnetworkconfiguration.html#type" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Type" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="purpose" fullname="QNetworkConfiguration::purpose" href="qnetworkconfiguration.html#purpose" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Purpose" signature="purpose() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="identifier" fullname="QNetworkConfiguration::identifier" href="qnetworkconfiguration.html#identifier" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="identifier() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="roamingAvailable" fullname="QNetworkConfiguration::roamingAvailable" href="qnetworkconfiguration.html#roamingAvailable" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="roamingAvailable() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="QNetworkConfiguration::children" href="qnetworkconfiguration.html#children" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="children() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QNetworkConfiguration::name" href="qnetworkconfiguration.html#name" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QNetworkConfiguration::isValid" href="qnetworkconfiguration.html#isValid" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html" location="qnetworkconfigmanager.h" bases="" module="QtNetwork">
             <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlag" fullname="QNetworkConfigurationManager::CapabilityFlag" href="qnetworkconfigurationmanager.html#CapabilityFlag-enum" location="qnetworkconfigmanager.h" typedef="QNetworkConfigurationManager::CapabilityFlags">
-                <value name="BearerManagement" value="0x00000001"></value>
-                <value name="DirectConnectionRouting" value="0x00000002"></value>
-                <value name="SystemSessionSupport" value="0x00000004"></value>
-                <value name="ApplicationLevelRoaming" value="0x00000008"></value>
-                <value name="ForcedRoaming" value="0x00000010"></value>
-                <value name="DataStatistics" value="0x00000020"></value>
+                <value name="BearerManagement" value="0x00000001"/>
+                <value name="DirectConnectionRouting" value="0x00000002"/>
+                <value name="SystemSessionSupport" value="0x00000004"/>
+                <value name="ApplicationLevelRoaming" value="0x00000008"/>
+                <value name="ForcedRoaming" value="0x00000010"/>
+                <value name="DataStatistics" value="0x00000020"/>
             </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlags" fullname="QNetworkConfigurationManager::CapabilityFlags" href="qnetworkconfigurationmanager.html#CapabilityFlags-typedef" location="qnetworkconfigmanager.h" enum="QNetworkConfigurationManager::CapabilityFlag"></typedef>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlags" fullname="QNetworkConfigurationManager::CapabilityFlags" href="qnetworkconfigurationmanager.html#CapabilityFlags-typedef" location="qnetworkconfigmanager.h" enum="QNetworkConfigurationManager::CapabilityFlag"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfigurationManager(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::~QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#dtor.QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfigurationManager()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QNetworkConfigurationManager::capabilities" href="qnetworkconfigurationmanager.html#capabilities" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfigurationManager::CapabilityFlags" signature="capabilities() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultConfiguration" fullname="QNetworkConfigurationManager::defaultConfiguration" href="qnetworkconfigurationmanager.html#defaultConfiguration" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="defaultConfiguration() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::~QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#dtor.QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfigurationManager()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QNetworkConfigurationManager::capabilities" href="qnetworkconfigurationmanager.html#capabilities" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfigurationManager::CapabilityFlags" signature="capabilities() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultConfiguration" fullname="QNetworkConfigurationManager::defaultConfiguration" href="qnetworkconfigurationmanager.html#defaultConfiguration" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="defaultConfiguration() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="allConfigurations" fullname="QNetworkConfigurationManager::allConfigurations" href="qnetworkconfigurationmanager.html#allConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="allConfigurations(QFlags&lt;QNetworkConfiguration::StateFlag&gt; filter) const">
-                <parameter left="QFlags&lt;QNetworkConfiguration::StateFlag&gt;" right="" name="filter" default="0"></parameter>
+                <parameter left="QFlags&lt;QNetworkConfiguration::StateFlag&gt;" right="" name="filter" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="configurationFromIdentifier" fullname="QNetworkConfigurationManager::configurationFromIdentifier" href="qnetworkconfigurationmanager.html#configurationFromIdentifier" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="configurationFromIdentifier(const QString &amp; identifier) const">
-                <parameter left="const QString &amp;" right="" name="identifier" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="identifier" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateConfigurations" fullname="QNetworkConfigurationManager::updateConfigurations" href="qnetworkconfigurationmanager.html#updateConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="updateConfigurations()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateConfigurations" fullname="QNetworkConfigurationManager::updateConfigurations" href="qnetworkconfigurationmanager.html#updateConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="updateConfigurations()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="configurationAdded" fullname="QNetworkConfigurationManager::configurationAdded" href="qnetworkconfigurationmanager.html#configurationAdded" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationAdded(const QNetworkConfiguration &amp; config)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="configurationRemoved" fullname="QNetworkConfigurationManager::configurationRemoved" href="qnetworkconfigurationmanager.html#configurationRemoved" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationRemoved(const QNetworkConfiguration &amp; configuration)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="configuration" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="configuration" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="configurationChanged" fullname="QNetworkConfigurationManager::configurationChanged" href="qnetworkconfigurationmanager.html#configurationChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationChanged(const QNetworkConfiguration &amp; config)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="onlineStateChanged" fullname="QNetworkConfigurationManager::onlineStateChanged" href="qnetworkconfigurationmanager.html#onlineStateChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="onlineStateChanged(bool isOnline)">
-                <parameter left="bool" right="" name="isOnline" default=""></parameter>
+                <parameter left="bool" right="" name="isOnline" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" href="qnetworksession.html" location="qnetworksession.h" bases="" module="QtNetwork">
-            <contents name="roaming" title="Roaming" level="2"></contents>
+            <contents name="roaming" title="Roaming" level="1"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QNetworkSession::State" href="qnetworksession.html#State-enum" location="qnetworksession.h">
-                <value name="Invalid" value="0"></value>
-                <value name="NotAvailable" value="1"></value>
-                <value name="Connecting" value="2"></value>
-                <value name="Connected" value="3"></value>
-                <value name="Closing" value="4"></value>
-                <value name="Disconnected" value="5"></value>
-                <value name="Roaming" value="6"></value>
+                <value name="Invalid" value="0"/>
+                <value name="NotAvailable" value="1"/>
+                <value name="Connecting" value="2"/>
+                <value name="Connected" value="3"/>
+                <value name="Closing" value="4"/>
+                <value name="Disconnected" value="5"/>
+                <value name="Roaming" value="6"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="SessionError" fullname="QNetworkSession::SessionError" href="qnetworksession.html#SessionError-enum" location="qnetworksession.h">
-                <value name="UnknownSessionError" value="0"></value>
-                <value name="SessionAbortedError" value="1"></value>
-                <value name="RoamingError" value="2"></value>
-                <value name="OperationNotSupportedError" value="3"></value>
-                <value name="InvalidConfigurationError" value="4"></value>
+                <value name="UnknownSessionError" value="0"/>
+                <value name="SessionAbortedError" value="1"/>
+                <value name="RoamingError" value="2"/>
+                <value name="OperationNotSupportedError" value="3"/>
+                <value name="InvalidConfigurationError" value="4"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" fullname="QNetworkSession::QNetworkSession" href="qnetworksession.html#QNetworkSession" location="qnetworksession.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkSession(const QNetworkConfiguration &amp; connectionConfig, QObject * parent)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="connectionConfig" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="connectionConfig" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkSession" fullname="QNetworkSession::~QNetworkSession" href="qnetworksession.html#dtor.QNetworkSession" location="qnetworksession.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkSession()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QNetworkSession::isActive" href="qnetworksession.html#isActive" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isActive() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="configuration" fullname="QNetworkSession::configuration" href="qnetworksession.html#configuration" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="configuration() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bearerName" fullname="QNetworkSession::bearerName" href="qnetworksession.html#bearerName" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="bearerName() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="interface" fullname="QNetworkSession::interface" href="qnetworksession.html#interface" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkInterface" signature="interface() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QNetworkSession::state" href="qnetworksession.html#state" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="State" signature="state() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QNetworkSession::error" href="qnetworksession.html#error" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SessionError" signature="error() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QNetworkSession::errorString" href="qnetworksession.html#errorString" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkSession" fullname="QNetworkSession::~QNetworkSession" href="qnetworksession.html#dtor.QNetworkSession" location="qnetworksession.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkSession()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QNetworkSession::isActive" href="qnetworksession.html#isActive" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isActive() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="configuration" fullname="QNetworkSession::configuration" href="qnetworksession.html#configuration" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="configuration() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bearerName" fullname="QNetworkSession::bearerName" href="qnetworksession.html#bearerName" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="bearerName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="interface" fullname="QNetworkSession::interface" href="qnetworksession.html#interface" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkInterface" signature="interface() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QNetworkSession::state" href="qnetworksession.html#state" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="State" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QNetworkSession::error" href="qnetworksession.html#error" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SessionError" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QNetworkSession::errorString" href="qnetworksession.html#errorString" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QNetworkSession::property" href="qnetworksession.html#property" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(const QString &amp; key) const">
-                <parameter left="const QString &amp;" right="" name="key" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sentData" fullname="QNetworkSession::sentData" href="qnetworksession.html#sentData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="sentData() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="receivedData" fullname="QNetworkSession::receivedData" href="qnetworksession.html#receivedData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="receivedData() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="activeTime" fullname="QNetworkSession::activeTime" href="qnetworksession.html#activeTime" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="activeTime() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sentData" fullname="QNetworkSession::sentData" href="qnetworksession.html#sentData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="sentData() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="receivedData" fullname="QNetworkSession::receivedData" href="qnetworksession.html#receivedData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="receivedData() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="activeTime" fullname="QNetworkSession::activeTime" href="qnetworksession.html#activeTime" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="activeTime() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="waitForOpened" fullname="QNetworkSession::waitForOpened" href="qnetworksession.html#waitForOpened" location="qnetworksession.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="waitForOpened(int msecs)">
-                <parameter left="int" right="" name="msecs" default="30000"></parameter>
+                <parameter left="int" right="" name="msecs" default="30000"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="open" fullname="QNetworkSession::open" href="qnetworksession.html#open" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="open()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QNetworkSession::close" href="qnetworksession.html#close" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="close()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QNetworkSession::stop" href="qnetworksession.html#stop" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="migrate" fullname="QNetworkSession::migrate" href="qnetworksession.html#migrate" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="migrate()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="ignore" fullname="QNetworkSession::ignore" href="qnetworksession.html#ignore" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="ignore()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="accept" fullname="QNetworkSession::accept" href="qnetworksession.html#accept" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="accept()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="reject" fullname="QNetworkSession::reject" href="qnetworksession.html#reject" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="reject()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="open" fullname="QNetworkSession::open" href="qnetworksession.html#open" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="open()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QNetworkSession::close" href="qnetworksession.html#close" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="close()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QNetworkSession::stop" href="qnetworksession.html#stop" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="migrate" fullname="QNetworkSession::migrate" href="qnetworksession.html#migrate" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="migrate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="ignore" fullname="QNetworkSession::ignore" href="qnetworksession.html#ignore" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="ignore()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="accept" fullname="QNetworkSession::accept" href="qnetworksession.html#accept" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="accept()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="reject" fullname="QNetworkSession::reject" href="qnetworksession.html#reject" location="qnetworksession.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="reject()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QNetworkSession::stateChanged" href="qnetworksession.html#stateChanged" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QNetworkSession::State state)">
-                <parameter left="QNetworkSession::State" right="" name="state" default=""></parameter>
+                <parameter left="QNetworkSession::State" right="" name="state" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sessionOpened" fullname="QNetworkSession::sessionOpened" href="qnetworksession.html#sessionOpened" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="sessionOpened()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sessionClosed" fullname="QNetworkSession::sessionClosed" href="qnetworksession.html#sessionClosed" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="sessionClosed()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sessionOpened" fullname="QNetworkSession::sessionOpened" href="qnetworksession.html#sessionOpened" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="sessionOpened()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sessionClosed" fullname="QNetworkSession::sessionClosed" href="qnetworksession.html#sessionClosed" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="sessionClosed()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QNetworkSession::error" href="qnetworksession.html#error-2" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QNetworkSession::SessionError error)">
-                <parameter left="QNetworkSession::SessionError" right="" name="error" default=""></parameter>
+                <parameter left="QNetworkSession::SessionError" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="preferredConfigurationChanged" fullname="QNetworkSession::preferredConfigurationChanged" href="qnetworksession.html#preferredConfigurationChanged" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="preferredConfigurationChanged(const QNetworkConfiguration &amp; config, bool isSeamless)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
-                <parameter left="bool" right="" name="isSeamless" default=""></parameter>
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""/>
+                <parameter left="bool" right="" name="isSeamless" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="newConfigurationActivated" fullname="QNetworkSession::newConfigurationActivated" href="qnetworksession.html#newConfigurationActivated" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConfigurationActivated()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="newConfigurationActivated" fullname="QNetworkSession::newConfigurationActivated" href="qnetworksession.html#newConfigurationActivated" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConfigurationActivated()"/>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Bearer Management Library Developer Resources" fulltitle="Bearer Management Library Developer Resources" subtitle="" location="index.qdoc">
-            <contents name="introduction" title="Introduction" level="1"></contents>
-            <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
-            <contents name="main-classes" title="Main classes" level="2"></contents>
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="reference-documentation" title="Reference documentation" level="1"/>
+            <contents name="main-classes" title="Main classes" level="2"/>
         </page>
     </namespace>
 </INDEX>

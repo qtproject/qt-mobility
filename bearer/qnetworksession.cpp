@@ -70,8 +70,8 @@ QT_BEGIN_NAMESPACE
     capabilities may support out-of-process sessions. If the same 
     network configuration is used by multiple active sessions the underlying network interface is only terminated once
     the last session has been closed.
-    
-    \section2 Roaming
+
+    \section1 Roaming
 
     Applications may connect to the preferredConfigurationChanged() signal in order to 
     receive notifications when a more suitable access point becomes available. 
@@ -83,10 +83,10 @@ QT_BEGIN_NAMESPACE
 
     Some platforms may support the notion of forced roaming and application level roaming (ALR). 
     ALR implies that the application controls (via migrate(), ignore(), accept() and reject()) 
-    whether a network session can roam from one network configuration to the next. Such control is usefull 
-    if the application maintains statefull socket connections and wants to control the transition from
+    whether a network session can roam from one network configuration to the next. Such control is useful
+    if the application maintains stateful socket connections and wants to control the transition from
     one interface to the next.
-    
+
     Forced roaming implies that the system automatically roams to the next network without 
     consulting the application. This has the advantage that the application can make use of roaming features
     without actually being aware of it. It is expected that the application detects that the underlying 
@@ -139,7 +139,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \fn void QNetworkSession::stateChanged(QNetworkSession::State state)
 
-    This signal is emitted whenever QNetworkSession's state changes.
+    This signal is emitted whenever the state of the network session changes.
     The \a state parameter is the new state.
 
     \sa state()
@@ -148,7 +148,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \fn void QNetworkSession::error(QNetworkSession::SessionError error)
 
-    This signal is emitted after an error occurred. the \a error paramter 
+    This signal is emitted after an error occurred. The \a error parameter
     describes the error that occurred.
 
     \sa error(), errorString()
@@ -181,7 +181,7 @@ QT_BEGIN_NAMESPACE
     whether it wants to be consulted (ALR use case) by connecting to this signal. For as long as this signal 
     connection remains the session remains registered as a roaming stakeholder; otherwise roaming will 
     be enforced by the platform.
-   
+
     \sa migrate(), ignore(), QNetworkConfiguration::roamingAvailable()
 */
 
@@ -245,7 +245,7 @@ QNetworkSession::~QNetworkSession()
     detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signal.
+    by connecting to the stateChanged(), sessionOpened() or error() signals.
 
     It is not a requirement to open a session in order to monitor the underlying network interface.
 
@@ -297,13 +297,13 @@ bool QNetworkSession::waitForOpened(int msecs)
     Decreases the session counter on the associated network configuration. If the session counter reaches zero
     the active network interface is shut down. This also means that state() will only change from \l Connected to
     \l Disconnected if this was the last active session.
-   
-    If the platform does not support out-of-process sessions calling this function may stop the interface despite 
-    of active sessions held by other processes.
+
+    If the platform does not support out-of-process sessions calling this function may stop the
+    interface in despite of active sessions held by other processes.
     The platform capabilities can be detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signal.
+    by connecting to the stateChanged(), sessionOpened() or error() signals.
 
     \sa open(), stop(), isActive()
 */
@@ -337,7 +337,7 @@ QNetworkConfiguration QNetworkSession::configuration() const
 /*!
     Returns the type of bearer currently used by this session. The string is not translated and therefore can 
     not be shown to the user. The subsequent table presents the currently known bearer types:
-    
+
     \table
         \header 
             \o Value
@@ -491,7 +491,7 @@ QVariant QNetworkSession::property(const QString& key) const
 /*!
     Instructs the session to roam to the new access point. The old access point remains active 
     until the application calls accept().
-    
+
    The newConfigurationActivated() signal is emitted once roaming has been completed.
 
     \sa accept()
@@ -522,7 +522,6 @@ void QNetworkSession::ignore()
     The old access point may be closed in the process if there are no other network sessions for it.
     Therefore any open socket that still uses the old access point 
     may become unusable and should be closed before completing the migration.
- 
 */
 void QNetworkSession::accept()
 {
@@ -544,13 +543,13 @@ void QNetworkSession::reject()
 
 /*!
     Returns the amount of data sent in bytes; otherwise 0.
-    
+
     This field value includes the usage across all active network 
     sessions which use the same network interface.
 
     If the session is based on a service network configuration the number of 
     sent bytes across all active member configurations are returned.
-    
+
     This function may not always be supported on all platforms and returns
     0. The platform capability can be detected via QNetworkConfigurationManager::DataStatistics.
 */

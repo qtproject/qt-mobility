@@ -55,15 +55,15 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtNetwork
 
-    QNetworkConfiguration encapsulates single access points or service networks.
+    QNetworkConfiguration encapsulates a single access point or service network.
     In most cases a single access point configuration can be mapped to one network
     interface. However a single network interface may not always map to only one
     access point configuration. Multiple configurations for the same
     network device may enable multiple access points. An example
-    device that could inhibit such a configuration might be a
+    device that could exhibit such a configuration might be a
     Smartphone which allows the user to manage multiple WLAN
     configurations while the device itself has only one WLAN network device.
- 
+
     The QNetworkConfiguration also supports the concept of service networks.
     This concept allows the grouping of multiple access point configurations
     into one entity. Such a group is called service network and can be
@@ -111,9 +111,9 @@ QT_BEGIN_NAMESPACE
     from \l Discovered to \l Defined as well. A similar use case might be triggered by
     WLAN availability. QNetworkConfigurationManager::updateConfigurations() can be used to
     manually trigger updates of states. Note that some platforms do not require such updates
-    as they implicitly change the state once it has been discovered. If the state of a 
+    as they implicitly change the state once it has been discovered. If the state of a
     configuration changes all related QNetworkConfiguration instances change their state automatically.
-    
+
     \sa QNetworkSession, QNetworkConfigurationManager
 */
 
@@ -123,14 +123,14 @@ QT_BEGIN_NAMESPACE
     This enum describes the type of configuration.
 
     \value InternetAccessPoint  The configuration specifies the details for a single access point.
-                                Note that this configuration may again be part of other 
-                                QNetworkConfigurations (of type ServiceNetwork).
-    \value ServiceNetwork       The configuration is based on a group of 
-                                other QNetworkConfigurations (of type InternetAccessPoint). 
-                                All group members can reach the same target network. This 
-                                type of configuration is a mandatory requirement for roaming enabled
-                                network sessions. On some platforms this form of configuration may also 
-                                be called Service Network Access Point (SNAP).
+                                Note that configurations of type InternetAccessPoint may be part
+                                of other QNetworkConfigurations of type ServiceNetwork.
+    \value ServiceNetwork       The configuration is based on a group of QNetworkConfigurations of
+                                type InternetAccessPoint. All group members can reach the same
+                                target network. This type of configuration is a mandatory
+                                requirement for roaming enabled network sessions. On some
+                                platforms this form of configuration may also be called Service
+                                Network Access Point (SNAP).
     \value Invalid              The configuration is invalid.
 */
 
@@ -139,23 +139,27 @@ QT_BEGIN_NAMESPACE
 
     Specifies the configuration states.
 
-    \value Undefined            This state is used for transient configurations such as newly discovered WLAN's
-                                for which the user has not actually created a configuration yet.
-    \value Defined              Defined configurations are known to the system but are not immediately usable (e.g. a configured WLAN 
-                                is not within range or the Ethernet cable is currently not plugged into the machine).
-    \value Discovered           A discovered configuration can be immediately used to create a new QNetworkSession. An
-                                example of a discovered configuration could be a WLAN which is within in range. If the device
-                                moves out of range the discovered flag is dropped.
-                                A second example is a GPRS configuration which generally remains discovered for as long 
-                                as the phone has network coverage.
-                                A configuration that has this state is also in state QNetworkConfiguration::Defined.
-                                If the configuration is a service network this flag is set
-                                if at least one of the underlying access points/configurations has been discovered.
-    \value Active               The configuration is currently used by an open/active network session (see \l QNetworkSession::isActive()).
-                                However this does not mean that the current process is the entity that created the active session. It merely indicates
-                                that if a new QNetworkSession were to be constructed based on this configuration \l QNetworkSession::state()
-                                would return \l QNetworkSession::Connected.
-                                This state implies the QNetworkConfiguration::Discovered state. 
+    \value Undefined    This state is used for transient configurations such as newly discovered
+                        WLANs for which the user has not actually created a configuration yet.
+    \value Defined      Defined configurations are known to the system but are not immediately
+                        usable (e.g. a configured WLAN is not within range or the Ethernet cable
+                        is currently not plugged into the machine).
+    \value Discovered   A discovered configuration can be immediately used to create a new
+                        QNetworkSession. An example of a discovered configuration could be a WLAN
+                        which is within in range. If the device moves out of range the discovered
+                        flag is dropped. A second example is a GPRS configuration which generally
+                        remains discovered for as long as the phone has network coverage. A
+                        configuration that has this state is also in state
+                        QNetworkConfiguration::Defined. If the configuration is a service network
+                        this flag is set if at least one of the underlying access points
+                        configurations has the Discovered state.
+    \value Active       The configuration is currently used by an open/active network session
+                        (see \l QNetworkSession::isActive()). However this does not mean that the
+                        current process is the entity that created the active session. It merely
+                        indicates that if a new QNetworkSession were to be constructed based on
+                        this configuration \l QNetworkSession::state() would return
+                        \l QNetworkSession::Connected. This state implies the
+                        QNetworkConfiguration::Discovered state.
 */
 
 /*!
@@ -163,14 +167,15 @@ QT_BEGIN_NAMESPACE
 
     Specifies the purpose of the configuration.
 
-    \value Unknown        The configuration doesn't specify any purpose. This is the default value.
+    \value Unknown          The configuration doesn't specify any purpose. This is the default value.
     \value Public           The configuration can be used for general purpose internet access.
-    \value Private          The configuration is suitable to access a private network such as an office Intranet. 
-    \value ServiceSpecific  The configuration can be used for e.g. operator specific services.
+    \value Private          The configuration is suitable to access a private network such as an office Intranet.
+    \value ServiceSpecific  The configuration can be used for operator specific services (e.g.
+                            receiving MMS messages or content streaming).
 */
 
 /*!
-    Constructs an empty/invalid configuration object.
+    Constructs an invalid configuration object.
 
     \sa isValid()
 */
@@ -180,8 +185,7 @@ QNetworkConfiguration::QNetworkConfiguration()
 }
 
 /*!
-    Creates a copy of the QNetworkConfiguration object contained in \a 
-    other.
+    Creates a copy of the QNetworkConfiguration object contained in \a other.
 */
 QNetworkConfiguration::QNetworkConfiguration(const QNetworkConfiguration& other)
     : d(other.d)
@@ -189,8 +193,7 @@ QNetworkConfiguration::QNetworkConfiguration(const QNetworkConfiguration& other)
 }
 
 /*!
-    Copies the content of the QNetworkConfiguration object contained in \a 
-    other into this one.
+    Copies the content of the QNetworkConfiguration object contained in \a other into this one.
 */
 QNetworkConfiguration& QNetworkConfiguration::operator=(const QNetworkConfiguration& other)
 {
@@ -223,15 +226,15 @@ bool QNetworkConfiguration::operator==(const QNetworkConfiguration& other) const
 
 /*!
     \fn bool QNetworkConfiguration::operator!=(const QNetworkConfiguration& other) const
-    
-    Returns true if this configuration is not the same as the \a other 
+
+    Returns true if this configuration is not the same as the \a other
     configuration given; otherwise returns false.
 */
 
 /*!
-    Returns the user visible name of this configuration. 
-    
-    The name may either be the name of the underlying access point or the 
+    Returns the user visible name of this configuration.
+
+    The name may either be the name of the underlying access point or the
     name for service network that this configuration represents.
 */
 QString QNetworkConfiguration::name() const
@@ -240,7 +243,7 @@ QString QNetworkConfiguration::name() const
 }
 
 /*!
-    Returns the unique and platform specific identifier for this network configuration; 
+    Returns the unique and platform specific identifier for this network configuration;
     otherwise an empty string.
 */
 QString QNetworkConfiguration::identifier() const
@@ -249,11 +252,11 @@ QString QNetworkConfiguration::identifier() const
 }
 
 /*!
-    Returns the type of the configuration. 
-    
-    A configuration can represent a single access point configuration or 
-    a set of acess point configuration. Such a set is called service network.
-    A configuration that is based on a service network can potentially support 
+    Returns the type of the configuration.
+
+    A configuration can represent a single access point configuration or
+    a set of access point configurations. Such a set is called service network.
+    A configuration that is based on a service network can potentially support
     roaming of network sessions.
 */
 QNetworkConfiguration::Type QNetworkConfiguration::type() const
@@ -266,7 +269,7 @@ QNetworkConfiguration::Type QNetworkConfiguration::type() const
     A configuration may become invalid if the user deletes the configuration or
     the configuration was default-constructed.
 
-    The addition and removal of configurations can be monitored via the 
+    The addition and removal of configurations can be monitored via the
     QNetworkConfigurationManager.
 
     \sa QNetworkConfigurationManager
@@ -279,17 +282,16 @@ bool QNetworkConfiguration::isValid() const
 /*!
     Returns the current state of the configuration.
 */
-
 QNetworkConfiguration::StateFlags QNetworkConfiguration::state() const
 {
     return d ? d->state : QNetworkConfiguration::Undefined;
 }
 
 /*!
-    Returns the purpose of this configuration. 
+    Returns the purpose of this configuration.
 
-    The purpose field may be used to programmatically determine the 
-    purpose of a configuration. Such information is usually part of the 
+    The purpose field may be used to programmatically determine the
+    purpose of a configuration. Such information is usually part of the
     access point or service network meta data.
 */
 QNetworkConfiguration::Purpose QNetworkConfiguration::purpose() const
@@ -334,5 +336,4 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
 
 
 QT_END_NAMESPACE
-
 
