@@ -59,6 +59,9 @@ public slots:
 private slots:
     void invalidSession();
 
+    void sessionProperties_data();
+    void sessionProperties();
+
     void inProcessSessionManagement_data();
     void inProcessSessionManagement();
 
@@ -95,6 +98,45 @@ void tst_QNetworkSession::invalidSession()
     QNetworkSession session(QNetworkConfiguration(), 0);
     QVERIFY(!session.isActive());
     QVERIFY(session.state() == QNetworkSession::Invalid);
+}
+
+void tst_QNetworkSession::sessionProperties_data()
+{
+    QTest::addColumn<QNetworkConfiguration>("configuration");
+
+    QTest::newRow("invalid configuration") << QNetworkConfiguration();
+
+    foreach (const QNetworkConfiguration &config, manager.allConfigurations()) {
+        const QString name = config.name().isEmpty() ? QString("<Hidden>") : config.name();
+        QTest::newRow(name.toLocal8Bit().constData()) << config;
+    }
+}
+
+void tst_QNetworkSession::sessionProperties()
+{
+    QFETCH(QNetworkConfiguration, configuration);
+
+    QNetworkSession session(configuration);
+
+    QVERIFY(session.configuration() == configuration);
+
+    QStringList validBearerNames = QStringList() << QLatin1String("Ethernet")
+                                                 << QLatin1String("WLAN")
+                                                 << QLatin1String("2G")
+                                                 << QLatin1String("CDMA2000")
+                                                 << QLatin1String("WCDMA")
+                                                 << QLatin1String("HSPA")
+                                                 << QLatin1String("Bluetooth")
+                                                 << QLatin1String("WiMAX");
+
+    if (!configuration.isValid())
+        QVERIFY(session.bearerName().isEmpty());
+    else
+        QVERIFY(validBearerNames.contains(session.bearerName()));
+
+    // QNetworkSession::interface() should return an invalid interface unless
+    // session is in the connected state.
+    QCOMPARE(session.state() == QNetworkSession::Connected, session.interface().isValid());
 }
 
 void tst_QNetworkSession::inProcessSessionManagement_data()
