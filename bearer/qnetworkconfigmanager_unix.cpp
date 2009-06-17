@@ -162,6 +162,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         foreach(QDBusObjectPath path, list) {
 
             devIface = new QNetworkManagerInterfaceDevice(path.path());
+            devIface->setConnections();
 
             connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
                     this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
@@ -285,14 +286,14 @@ void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManag
 
     devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
     if(firstUpdate) { //only connect once
+        devWirelessIface->setConnections();
+        connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                this,SLOT(cmpPropertiesChanged( const QString &, QMap<QString,QVariant>)));
+        connect(devWirelessIface, SIGNAL(accessPointAdded(const QString &,QDBusObjectPath)),
+                this,SLOT(accessPointAdded(const QString &,QDBusObjectPath)));
 
-    connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-            this,SLOT(cmpPropertiesChanged( const QString &, QMap<QString,QVariant>)));
-    connect(devWirelessIface, SIGNAL(accessPointAdded(const QString &,QDBusObjectPath)),
-            this,SLOT(accessPointAdded(const QString &,QDBusObjectPath)));
-
-    connect(devWirelessIface, SIGNAL(accessPointRemoved(const QString &,QDBusObjectPath)),
-            this,SLOT(accessPointRemoved(const QString &,QDBusObjectPath)));
+        connect(devWirelessIface, SIGNAL(accessPointRemoved(const QString &,QDBusObjectPath)),
+                this,SLOT(accessPointRemoved(const QString &,QDBusObjectPath)));
     }
     // get the wifi interface state first.. do we need this?
     QString activeAPPath = devWirelessIface->activeAccessPoint().path();
