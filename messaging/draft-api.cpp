@@ -1851,10 +1851,8 @@ QString QMessageFolder::path() const
     \ingroup messaging
 
     A QMessageAccount is a logical entity that groups messages according to the 
-    method by which they are sent and received.  An account can support one or more 
-    message sources, from which messages are imported into the messaging store, and 
-    one or more message sinks by which messages are transmitted to external messaging 
-    services.  
+    method by which they are sent and received.  An account may either transmit messages 
+    receive messages or both.
     
     The QMessageAccount class is used for accessing properties of the account related 
     to dealing with the account's folders and messages, rather than for modifying 
@@ -3763,10 +3761,10 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
     \ingroup messaging
 
     \brief The QMessageServiceAction class provides the interface for requesting 
-    external message services.
+    messaging services.
 
-    QMessageServiceAction provides the mechanisms for messaging clients to request actions from 
-    external services, and to receive information in response.  All actions present the same 
+    QMessageServiceAction provides the mechanisms for messaging clients to request services, 
+    and to receive information in response.  All actions present the same 
     interface for communicating status, connectivity and progress information.
 
     All actions communicate changes in their operational state by emitting the activityChanged()
