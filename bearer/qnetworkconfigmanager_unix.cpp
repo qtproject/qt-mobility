@@ -619,7 +619,9 @@ void QNetworkConfigurationManagerPrivate::cmpPropertiesChanged( const QString & 
 
         if( i.key() == "State") { //only applies to device interfaces
             updateAccessPointState(path, i.value().toUInt());
-// updateServiceNetworkState();
+            QNetworkManagerInterfaceDevice *devIface;
+            devIface = new QNetworkManagerInterfaceDevice(path);
+            updateServiceNetworkState(devIface->deviceType());
         }
         else if( i.key() == "ActiveAccessPoint") {
             if(i.value().value<QDBusObjectPath>().path().length() > 2)
