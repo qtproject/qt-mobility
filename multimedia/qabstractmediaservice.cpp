@@ -1,0 +1,5 @@
+
+
+QAbstractMediaService::QAbstractMediaServiceQObject *parent):
+{
+}

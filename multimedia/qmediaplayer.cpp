@@ -180,6 +180,10 @@ void QMediaPlayer::setMuted(bool muted)
 {
 }
 
+QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
+{
+    return qobject_cast<QMediaPlayerService*>(provider->createObject("com.nokia.Qt.MediaPlayer/1.0"));
+}
 
 /*!
     \enum QMediaPlayer::State

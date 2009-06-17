@@ -6,7 +6,7 @@
 class QMedidPlayerSession;
 class QMediaPlayerPrivate;
 
-class QMediaPlayer : public QObject
+class QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 
@@ -27,7 +27,7 @@ class QMediaPlayer : public QObject
 public:
     enum State { LoadingState, PlayingState, PausedState, StoppedState, EndOfStreamState };
 
-    QMediaPlayer(QMediaPlayerSession* session = createMediaPlayerSession(), QObject* parent = 0);
+    QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObjectl *parent = 0);
     ~QMediaPlayer();
 
     State state() const;
@@ -44,7 +44,7 @@ public:
 
     bool isVideoAvailable() const;
 
-    QMediaPlayerSession* session() const;
+    QMediaPlayerService* service() const;
 
 public Q_SLOTS:
     void setMediaSource(QMediaSource mediaSource);
@@ -74,5 +74,7 @@ private:
 
     QMediaPlayerImpl* de
 };
+
+extern QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
 #endif  // QMEDIAPLAYER_H
