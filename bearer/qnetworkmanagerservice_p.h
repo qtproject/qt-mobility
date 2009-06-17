@@ -82,6 +82,7 @@ public:
     bool wirelessHardwareEnabled() const;
     QList <QDBusObjectPath> activeConnections() const;
     quint32 state();
+    bool setConnections();
     
 Q_SIGNALS:
     void deviceAdded(QDBusObjectPath);
@@ -156,6 +157,7 @@ public:
     quint32 mode() const;
     quint32 maxBitrate() const;
     quint32 strength() const;
+    bool setConnections();
     
 Q_SIGNALS:
     void propertiesChanged(QMap <QString,QVariant>);
@@ -185,6 +187,7 @@ public:
     quint32 deviceType() const;
     
     QDBusObjectPath ip4config() const;
+    bool setConnections();
     
 Q_SIGNALS:
     void stateChanged(const QString &, quint32);
@@ -209,6 +212,7 @@ public:
     QString hwAddress() const;
     quint32 speed() const;
     bool carrier() const;
+    bool setConnections();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -247,6 +251,7 @@ public:
     quint32 bitrate() const;
     QDBusObjectPath activeAccessPoint() const;
     quint32 wirelessCapabilities() const;
+    bool setConnections();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -270,7 +275,7 @@ public:
     
     QDBusInterface  *connectionInterface() const;
     QList <QDBusObjectPath> listConnections();
-    
+    bool setConnections();
 Q_SIGNALS:
     void newConnection(QDBusObjectPath);
 private:
@@ -291,6 +296,7 @@ public:
     QDBusInterface  *connectionInterface() const;
     QNmSettingsMap getSettings();
     //    void update(QNmSettingsMap map);
+    bool setConnections();
 
 Q_SIGNALS:
     
@@ -325,6 +331,7 @@ public:
     QList<QDBusObjectPath> devices() const;
     quint32 state() const;
     bool defaultRoute() const;
+    bool setConnections();
     
 Q_SIGNALS:
     void propertiesChanged(QList<QDBusObjectPath>);

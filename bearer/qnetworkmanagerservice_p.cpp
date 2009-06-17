@@ -58,7 +58,7 @@
 
 //Q_DECLARE_METATYPE(QList<uint>)
 
-//static QDBusConnection dbusConnection = QDBusConnection::systemBus();
+static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 //static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
 
 class QNetworkManagerInterfacePrivate
@@ -70,7 +70,6 @@ public:
 QNetworkManagerInterface::QNetworkManagerInterface(QObject *parent)
         : QObject(parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerInterfacePrivate();
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
                                                 NM_DBUS_PATH,
@@ -86,28 +85,40 @@ QNetworkManagerInterface::QNetworkManagerInterface(QObject *parent)
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
             this, SIGNAL(stateChanged(const QString&, quint32)));
 
-    dbusConnection.connect(NM_DBUS_SERVICE,
-                                  NM_DBUS_PATH,
-                                  NM_DBUS_INTERFACE,
-                                  "PropertiesChanged",
-                                  nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>)));
-    dbusConnection.connect(NM_DBUS_SERVICE,
-                                  NM_DBUS_PATH,
-                                  NM_DBUS_INTERFACE,
-                                  "DeviceAdded",
-                                  this,SIGNAL(deviceAdded(QDBusObjectPath)));
-    dbusConnection.connect(NM_DBUS_SERVICE,
-                                  NM_DBUS_PATH,
-                                  NM_DBUS_INTERFACE,
-                                  "DeviceRemoved",
-                                  this,SIGNAL(deviceRemoved(QDBusObjectPath)));
-
 }
 
 QNetworkManagerInterface::~QNetworkManagerInterface()
 {
     delete d->connectionInterface;
     delete d;
+}
+
+bool QNetworkManagerInterface::setConnections()
+{
+    bool allOk = false;
+    if (!dbusConnection.connect(NM_DBUS_SERVICE,
+                                  NM_DBUS_PATH,
+                                  NM_DBUS_INTERFACE,
+                                  "PropertiesChanged",
+                                nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>)))) {
+        allOk = true;
+    }
+    if (!dbusConnection.connect(NM_DBUS_SERVICE,
+                                  NM_DBUS_PATH,
+                                  NM_DBUS_INTERFACE,
+                                  "DeviceAdded",
+                                this,SIGNAL(deviceAdded(QDBusObjectPath)))) {
+        allOk = true;
+    }
+    if (!dbusConnection.connect(NM_DBUS_SERVICE,
+                                  NM_DBUS_PATH,
+                                  NM_DBUS_INTERFACE,
+                                  "DeviceRemoved",
+                                  this,SIGNAL(deviceRemoved(QDBusObjectPath)))) {
+        allOk = true;
+    }
+
+    return allOk;
 }
 
 QDBusInterface *QNetworkManagerInterface::connectionInterface()  const
@@ -174,7 +185,6 @@ public:
 QNetworkManagerInterfaceAccessPoint::QNetworkManagerInterfaceAccessPoint(const QString &dbusPathName, QObject *parent)
         : QObject(parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerInterfaceAccessPointPrivate();
     d->path = dbusPathName;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
@@ -186,6 +196,17 @@ QNetworkManagerInterfaceAccessPoint::QNetworkManagerInterfaceAccessPoint(const Q
         return;
     }
 
+}
+
+QNetworkManagerInterfaceAccessPoint::~QNetworkManagerInterfaceAccessPoint()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QNetworkManagerInterfaceAccessPoint::setConnections()
+{
+    bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -195,13 +216,10 @@ QNetworkManagerInterfaceAccessPoint::QNetworkManagerInterfaceAccessPoint(const Q
                               NM_DBUS_INTERFACE_ACCESS_POINT,
                               "PropertiesChanged",
                               nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-    }
-}
+        allOk = true;
 
-QNetworkManagerInterfaceAccessPoint::~QNetworkManagerInterfaceAccessPoint()
-{
-    delete d->connectionInterface;
-    delete d;
+    }
+    return allOk;
 }
 
 QDBusInterface *QNetworkManagerInterfaceAccessPoint::connectionInterface() const
@@ -265,7 +283,6 @@ public:
 QNetworkManagerInterfaceDevice::QNetworkManagerInterfaceDevice(const QString &deviceObjectPath, QObject *parent)
         : QObject(parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerInterfaceDevicePrivate();
     d->path = deviceObjectPath;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
@@ -276,7 +293,17 @@ QNetworkManagerInterfaceDevice::QNetworkManagerInterfaceDevice(const QString &de
         qWarning() << "Could not find NetworkManager";
         return;
     }
+}
 
+QNetworkManagerInterfaceDevice::~QNetworkManagerInterfaceDevice()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QNetworkManagerInterfaceDevice::setConnections()
+{
+    bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
             this, SIGNAL(stateChanged(const QString&, quint32)));
@@ -285,13 +312,9 @@ QNetworkManagerInterfaceDevice::QNetworkManagerInterfaceDevice(const QString &de
                               NM_DBUS_INTERFACE_DEVICE,
                               "StateChanged",
                               nmDBusHelper,SLOT(deviceStateChanged(quint32)))) {
+        allOk = true;
     }
-}
-
-QNetworkManagerInterfaceDevice::~QNetworkManagerInterfaceDevice()
-{
-    delete d->connectionInterface;
-    delete d;
+    return allOk;
 }
 
 QDBusInterface *QNetworkManagerInterfaceDevice::connectionInterface() const
@@ -340,7 +363,6 @@ public:
 
 QNetworkManagerInterfaceDeviceWired::QNetworkManagerInterfaceDeviceWired(const QString &ifaceDevicePath, QObject *parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerInterfaceDeviceWiredPrivate();
     d->path = ifaceDevicePath;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
@@ -351,17 +373,6 @@ QNetworkManagerInterfaceDeviceWired::QNetworkManagerInterfaceDeviceWired(const Q
         qWarning() << "Could not find InterfaceDeviceWired";
         return;
     }
-
-    nmDBusHelper = new QNmDBusHelper;
-    connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
-            this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-    if(dbusConnection.connect(NM_DBUS_SERVICE,
-                              d->path,
-                              NM_DBUS_INTERFACE_DEVICE_WIRED,
-                              "PropertiesChanged",
-                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
-    }
-
 }
 
 QNetworkManagerInterfaceDeviceWired::~QNetworkManagerInterfaceDeviceWired()
@@ -370,6 +381,21 @@ QNetworkManagerInterfaceDeviceWired::~QNetworkManagerInterfaceDeviceWired()
     delete d;
 }
 
+bool QNetworkManagerInterfaceDeviceWired::setConnections()
+{
+    bool allOk = false;
+    nmDBusHelper = new QNmDBusHelper;
+    connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
+            this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+    if(dbusConnection.connect(NM_DBUS_SERVICE,
+                              d->path,
+                              NM_DBUS_INTERFACE_DEVICE_WIRED,
+                              "PropertiesChanged",
+                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) )  {
+        allOk = true;
+    }
+    return allOk;
+}
 
 QDBusInterface *QNetworkManagerInterfaceDeviceWired::connectionInterface() const
 {
@@ -401,7 +427,6 @@ public:
 
 QNetworkManagerInterfaceDeviceWireless::QNetworkManagerInterfaceDeviceWireless(const QString &ifaceDevicePath, QObject *parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerInterfaceDeviceWirelessPrivate();
     d->path = ifaceDevicePath;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
@@ -412,7 +437,17 @@ QNetworkManagerInterfaceDeviceWireless::QNetworkManagerInterfaceDeviceWireless(c
         qWarning() << "Could not find InterfaceDeviceWireless";
         return;
     }
+}
 
+QNetworkManagerInterfaceDeviceWireless::~QNetworkManagerInterfaceDeviceWireless()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QNetworkManagerInterfaceDeviceWireless::setConnections()
+{
+    bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -423,29 +458,33 @@ QNetworkManagerInterfaceDeviceWireless::QNetworkManagerInterfaceDeviceWireless(c
     connect(nmDBusHelper, SIGNAL(pathForAccessPointRemoved(const QString &,QDBusObjectPath)),
             this,SIGNAL(accessPointRemoved(const QString &,QDBusObjectPath)));
 
-    dbusConnection.connect(NM_DBUS_SERVICE,
+    if(!dbusConnection.connect(NM_DBUS_SERVICE,
                               d->path,
                               NM_DBUS_INTERFACE_DEVICE_WIRELESS,
                               "AccessPointAdded",
-                              nmDBusHelper, SLOT(slotAccessPointAdded( QDBusObjectPath )));
+                              nmDBusHelper, SLOT(slotAccessPointAdded( QDBusObjectPath )))) {
+        allOk = true;
+    }
 
-    dbusConnection.connect(NM_DBUS_SERVICE,
+
+    if(!dbusConnection.connect(NM_DBUS_SERVICE,
                               d->path,
                               NM_DBUS_INTERFACE_DEVICE_WIRELESS,
                               "AccessPointRemoved",
-                              nmDBusHelper, SLOT(slotAccessPointRemoved( QDBusObjectPath )));
+                              nmDBusHelper, SLOT(slotAccessPointRemoved( QDBusObjectPath )))) {
+        allOk = true;
+    }
 
-    dbusConnection.connect(NM_DBUS_SERVICE,
+
+    if(!dbusConnection.connect(NM_DBUS_SERVICE,
                               d->path,
                               NM_DBUS_INTERFACE_DEVICE_WIRELESS,
                               "PropertiesChanged",
-                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>)));
-}
+                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>)))) {
+        allOk = true;
+    }
 
-QNetworkManagerInterfaceDeviceWireless::~QNetworkManagerInterfaceDeviceWireless()
-{
-    delete d->connectionInterface;
-    delete d;
+    return allOk;
 }
 
 QDBusInterface *QNetworkManagerInterfaceDeviceWireless::connectionInterface() const
@@ -496,7 +535,6 @@ QNetworkManagerSettings::QNetworkManagerSettings(const QString &settingsService,
         : QObject(parent)
 {
 //    qWarning() << __PRETTY_FUNCTION__;
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerSettingsPrivate();
     d->path = settingsService;
     d->connectionInterface = new QDBusInterface(settingsService,
@@ -507,16 +545,25 @@ QNetworkManagerSettings::QNetworkManagerSettings(const QString &settingsService,
         qWarning() << "Could not find NetworkManagerSettings";
         return;
     }
-
-    dbusConnection.connect(settingsService, NM_DBUS_PATH_SETTINGS,
-                           NM_DBUS_IFACE_SETTINGS, "NewConnection",
-                           this, SIGNAL(newConnection(QDBusObjectPath)));
 }
 
 QNetworkManagerSettings::~QNetworkManagerSettings()
 {
     delete d->connectionInterface;
     delete d;
+}
+
+bool QNetworkManagerSettings::setConnections()
+{
+    bool allOk = false;
+
+    if (!dbusConnection.connect(d->path, NM_DBUS_PATH_SETTINGS,
+                           NM_DBUS_IFACE_SETTINGS, "NewConnection",
+                           this, SIGNAL(newConnection(QDBusObjectPath)))) {
+        allOk = true;
+    }
+
+    return allOk;
 }
 
 QList <QDBusObjectPath> QNetworkManagerSettings::listConnections()
@@ -537,14 +584,15 @@ class QNetworkManagerSettingsConnectionPrivate
 public:
     QDBusInterface *connectionInterface;
     QString path;
+    QString service;
 };
 
 QNetworkManagerSettingsConnection::QNetworkManagerSettingsConnection(const QString &settingsService, const QString &connectionObjectPath, QObject *parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     qDBusRegisterMetaType<QNmSettingsMap>();
     d = new QNetworkManagerSettingsConnectionPrivate();
     d->path = connectionObjectPath;
+    d->service = settingsService;
     d->connectionInterface = new QDBusInterface(settingsService,
                                                 d->path,
                                                 NM_DBUS_IFACE_SETTINGS_CONNECTION,
@@ -554,13 +602,6 @@ QNetworkManagerSettingsConnection::QNetworkManagerSettingsConnection(const QStri
         return;
     }
 
-    dbusConnection.connect(settingsService, d->path,
-                           NM_DBUS_IFACE_SETTINGS_CONNECTION, "NewConnection",
-                           this, SIGNAL(updated(QNmSettingsMap)));
-    dbusConnection.connect(settingsService, d->path,
-                           NM_DBUS_IFACE_SETTINGS_CONNECTION, "Removed",
-                           this, SIGNAL(removed()));
-
 }
 
 QNetworkManagerSettingsConnection::~QNetworkManagerSettingsConnection()
@@ -569,6 +610,23 @@ QNetworkManagerSettingsConnection::~QNetworkManagerSettingsConnection()
     delete d;
 }
 
+bool QNetworkManagerSettingsConnection::setConnections()
+{
+    bool allOk = false;
+    if(!dbusConnection.connect(d->service, d->path,
+                           NM_DBUS_IFACE_SETTINGS_CONNECTION, "NewConnection",
+                           this, SIGNAL(updated(QNmSettingsMap)))) {
+        allOk = true;
+    }
+
+    if (!dbusConnection.connect(d->service, d->path,
+                           NM_DBUS_IFACE_SETTINGS_CONNECTION, "Removed",
+                           this, SIGNAL(removed()))) {
+        allOk = true;
+    }
+
+    return allOk;
+}
 //QNetworkManagerSettingsConnection::update(QNmSettingsMap map)
 //{
 //    d->connectionInterface->call("Update", QVariant::fromValue(map));
@@ -596,7 +654,6 @@ public:
 
 QNetworkManagerConnectionActive::QNetworkManagerConnectionActive( const QString &activeConnectionObjectPath, QObject *parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerConnectionActivePrivate();
     d->path = activeConnectionObjectPath;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
@@ -607,7 +664,17 @@ QNetworkManagerConnectionActive::QNetworkManagerConnectionActive( const QString 
         qWarning() << "Could not find NetworkManagerSettingsConnection";
         return;
     }
+}
 
+QNetworkManagerConnectionActive::~QNetworkManagerConnectionActive()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QNetworkManagerConnectionActive::setConnections()
+{
+    bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -615,14 +682,11 @@ QNetworkManagerConnectionActive::QNetworkManagerConnectionActive( const QString 
                               d->path,
                               NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
                               "PropertiesChanged",
-                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) ) {
+                              nmDBusHelper,SLOT(slotPropertiesChanged( QMap<QString,QVariant>))) )  {
+        allOk = true;
     }
-}
 
-QNetworkManagerConnectionActive::~QNetworkManagerConnectionActive()
-{
-    delete d->connectionInterface;
-    delete d;
+    return allOk;
 }
 
 QDBusInterface *QNetworkManagerConnectionActive::connectionInterface() const
@@ -674,7 +738,6 @@ public:
 
 QNetworkManagerIp4Config::QNetworkManagerIp4Config( const QString &deviceObjectPath, QObject *parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QNetworkManagerIp4ConfigPrivate();
     d->path = deviceObjectPath;
     d->connectionInterface = new QDBusInterface(NM_DBUS_SERVICE,
