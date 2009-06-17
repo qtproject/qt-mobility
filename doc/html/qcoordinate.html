@@ -42,7 +42,9 @@
 <li><div class="fn"/>void <b><a href="qcoordinate.html#setLongitude">setLongitude</a></b> ( double <i>longitude</i> )</li>
 <li><div class="fn"/>QString <b><a href="qcoordinate.html#toString">toString</a></b> ( CoordinateFormat <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</li>
 <li><div class="fn"/>CoordinateType <b><a href="qcoordinate.html#type">type</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qcoordinate.html#operator-not-eq">operator!=</a></b> ( const QCoordinate &amp; <i>other</i> ) const</li>
 <li><div class="fn"/>QCoordinate &amp; <b><a href="qcoordinate.html#operator-eq">operator=</a></b> ( const QCoordinate &amp; <i>other</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcoordinate.html#operator-eq-eq">operator==</a></b> ( const QCoordinate &amp; <i>other</i> ) const</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -132,8 +134,12 @@
 </table></p>
 <h3 class="fn"><a name="type"></a><a href="qcoordinate.html#CoordinateType-enum">CoordinateType</a> QCoordinate::type () const</h3>
 <p>Returns the type of the coordinate.</p>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QCoordinate::operator!= ( const QCoordinate &amp; <i>other</i> ) const</h3>
+<p>Returns true if the latitude, longitude or altitude of this coordinate are not the same as those of <i>other</i>.</p>
 <h3 class="fn"><a name="operator-eq"></a>QCoordinate &amp; QCoordinate::operator= ( const QCoordinate &amp; <i>other</i> )</h3>
 <p>Assigns the values from <i>other</i> to this coordinate.</p>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QCoordinate::operator== ( const QCoordinate &amp; <i>other</i> ) const</h3>
+<p>Returns true if the latitude, longitude and altitude of this coordinate are the same as those of <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>

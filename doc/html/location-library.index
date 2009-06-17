@@ -33,6 +33,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QCoordinate::operator=" href="qcoordinate.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QCoordinate &amp;" signature="operator=(const QCoordinate &amp; other)">
                 <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QCoordinate::operator==" href="qcoordinate.html#operator==" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QCoordinate &amp; other) const">
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QCoordinate::operator!=" href="qcoordinate.html#operator!=" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QCoordinate &amp; other) const">
+                <parameter left="const QCoordinate &amp;" right="" name="other" default=""></parameter>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QCoordinate::isValid" href="qcoordinate.html#isValid" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCoordinate::type" href="qcoordinate.html#type" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CoordinateType" signature="type() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLatitude" fullname="QCoordinate::setLatitude" href="qcoordinate.html#setLatitude" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLatitude(double latitude)">
@@ -76,6 +82,12 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QPositionUpdate" fullname="QPositionUpdate::~QPositionUpdate" href="qpositionupdate.html#dtor.QPositionUpdate" location="draft-api.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPositionUpdate()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QPositionUpdate::operator=" href="qpositionupdate.html#operator=" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPositionUpdate &amp;" signature="operator=(const QPositionUpdate &amp; other)">
+                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QPositionUpdate::operator==" href="qpositionupdate.html#operator==" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QPositionUpdate &amp; other) const">
+                <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QPositionUpdate::operator!=" href="qpositionupdate.html#operator!=" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QPositionUpdate &amp; other) const">
                 <parameter left="const QPositionUpdate &amp;" right="" name="other" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QPositionUpdate::isValid" href="qpositionupdate.html#isValid" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>

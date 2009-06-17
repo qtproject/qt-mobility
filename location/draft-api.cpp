@@ -71,6 +71,21 @@
     Assigns the values from \a other to this coordinate.
 */
 
+
+/*!
+    \fn bool QCoordinate::operator==(const QCoordinate &other) const;
+
+    Returns true if the latitude, longitude and altitude of this
+    coordinate are the same as those of \a other.
+*/
+
+/*!
+    \fn bool QCoordinate::operator!=(const QCoordinate &other) const;
+
+    Returns true if the latitude, longitude or altitude of this
+    coordinate are not the same as those of \a other.
+*/
+
 /*!
     \fn bool QCoordinate::isValid() const;
 
@@ -253,6 +268,20 @@
     \fn QPositionUpdate &QPositionUpdate::operator=(const QPositionUpdate &other);
 
     Assigns the values from \a other to this update.
+*/
+
+/*!
+    \fn bool QPositionUpdate::operator==(const QPositionUpdate &other) const
+
+    Returns true if all of this update's values are the same as those of
+    \a other.
+*/
+
+/*!
+    \fn bool QPositionUpdate::operator!=(const QPositionUpdate &other) const
+
+    Returns true if any of this update's values are not the same as those of
+    \a other.
 */
 
 /*!

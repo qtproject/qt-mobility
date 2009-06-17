@@ -38,7 +38,9 @@
 <li><div class="fn"/>void <b><a href="qpositionupdate.html#setDoubleProperty">setDoubleProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</li>
 <li><div class="fn"/>void <b><a href="qpositionupdate.html#setUpdateTime">setUpdateTime</a></b> ( const QDateTime &amp; <i>updateTime</i> )</li>
 <li><div class="fn"/>QDateTime <b><a href="qpositionupdate.html#updateTime">updateTime</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qpositionupdate.html#operator-not-eq">operator!=</a></b> ( const QPositionUpdate &amp; <i>other</i> ) const</li>
 <li><div class="fn"/>QPositionUpdate &amp; <b><a href="qpositionupdate.html#operator-eq">operator=</a></b> ( const QPositionUpdate &amp; <i>other</i> )</li>
+<li><div class="fn"/>bool <b><a href="qpositionupdate.html#operator-eq-eq">operator==</a></b> ( const QPositionUpdate &amp; <i>other</i> ) const</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -99,8 +101,12 @@
 <p>Returns the date and time at which this update was received, in UTC time.</p>
 <p>Returns an invalid QDateTime if no date/time value has been set.</p>
 <p>See also <a href="qpositionupdate.html#setUpdateTime">setUpdateTime</a>().</p>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QPositionUpdate::operator!= ( const QPositionUpdate &amp; <i>other</i> ) const</h3>
+<p>Returns true if any of this update's values are not the same as those of <i>other</i>.</p>
 <h3 class="fn"><a name="operator-eq"></a>QPositionUpdate &amp; QPositionUpdate::operator= ( const QPositionUpdate &amp; <i>other</i> )</h3>
 <p>Assigns the values from <i>other</i> to this update.</p>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QPositionUpdate::operator== ( const QPositionUpdate &amp; <i>other</i> ) const</h3>
+<p>Returns true if all of this update's values are the same as those of <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 QtSoftware</td>
