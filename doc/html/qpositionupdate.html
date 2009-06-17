@@ -32,7 +32,7 @@
 <li><div class="fn"/>QCoordinate <b><a href="qpositionupdate.html#coordinate">coordinate</a></b> () const</li>
 <li><div class="fn"/>qreal <b><a href="qpositionupdate.html#doubleProperty">doubleProperty</a></b> ( Property <i>property</i> ) const</li>
 <li><div class="fn"/>bool <b><a href="qpositionupdate.html#hasProperty">hasProperty</a></b> ( Property <i>property</i> ) const</li>
-<li><div class="fn"/>bool <b><a href="qpositionupdate.html#isNull">isNull</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qpositionupdate.html#isValid">isValid</a></b> () const</li>
 <li><div class="fn"/>void <b><a href="qpositionupdate.html#removeProperty">removeProperty</a></b> ( Property <i>property</i> )</li>
 <li><div class="fn"/>void <b><a href="qpositionupdate.html#setCoordinate">setCoordinate</a></b> ( const QCoordinate &amp; <i>coordinate</i> )</li>
 <li><div class="fn"/>void <b><a href="qpositionupdate.html#setDoubleProperty">setDoubleProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</li>
@@ -62,8 +62,8 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QPositionUpdate"></a>QPositionUpdate::QPositionUpdate ()</h3>
-<p>Creates a null update.</p>
-<p>See also <a href="qpositionupdate.html#isNull">isNull</a>().</p>
+<p>Creates an invalid update.</p>
+<p>See also <a href="qpositionupdate.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QPositionUpdate-2"></a>QPositionUpdate::QPositionUpdate ( const <a href="qcoordinate.html">QCoordinate</a> &amp; <i>coordinate</i>, const QDateTime &amp; <i>updateTime</i> )</h3>
 <p>Creates an update with the given <i>coordinate</i> and <i>updateTime</i>.</p>
 <h3 class="fn"><a name="QPositionUpdate-3"></a>QPositionUpdate::QPositionUpdate ( const QPositionUpdate &amp; <i>other</i> )</h3>
@@ -80,8 +80,9 @@
 <p>See also <a href="qpositionupdate.html#hasProperty">hasProperty</a>() and <a href="qpositionupdate.html#setDoubleProperty">setDoubleProperty</a>().</p>
 <h3 class="fn"><a name="hasProperty"></a>bool QPositionUpdate::hasProperty ( <a href="qpositionupdate.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns true if the specified <i>property</i> is present in this update.</p>
-<h3 class="fn"><a name="isNull"></a>bool QPositionUpdate::isNull () const</h3>
-<p>Returns true if the update does not contain any values.</p>
+<h3 class="fn"><a name="isValid"></a>bool QPositionUpdate::isValid () const</h3>
+<p>Returns true if the update's <a href="qpositionupdate.html#updateTime">updateTime</a>() and <a href="qpositionupdate.html#coordinate">coordinate</a>() values are both valid.</p>
+<p>See also <a href="qcoordinate.html#isValid">QCoordinate::isValid</a>() and QDateTime::isValid().</p>
 <h3 class="fn"><a name="removeProperty"></a>void QPositionUpdate::removeProperty ( <a href="qpositionupdate.html#Property-enum">Property</a> <i>property</i> )</h3>
 <p>Removes the specified <i>property</i> and its value.</p>
 <h3 class="fn"><a name="setCoordinate"></a>void QPositionUpdate::setCoordinate ( const <a href="qcoordinate.html">QCoordinate</a> &amp; <i>coordinate</i> )</h3>

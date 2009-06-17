@@ -68,7 +68,7 @@ public:
 
     QPositionUpdate &operator=(const QPositionUpdate &other);
 
-    bool isNull() const;
+    bool isValid() const;
 
     void setUpdateTime(const QDateTime &updateTime);
     QDateTime updateTime() const;

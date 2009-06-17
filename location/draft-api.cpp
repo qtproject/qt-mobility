@@ -226,9 +226,9 @@
 /*!
     \fn QPositionUpdate::QPositionUpdate();
 
-    Creates a null update.
+    Creates an invalid update.
 
-    \sa isNull()
+    \sa isValid()
 */
 
 /*!
@@ -256,9 +256,11 @@
 */
 
 /*!
-    \fn bool QPositionUpdate::isNull() const;
+    \fn bool QPositionUpdate::isValid() const;
 
-    Returns true if the update does not contain any values.
+    Returns true if the update's updateTime() and coordinate() values are both valid.
+
+    \sa QCoordinate::isValid(), QDateTime::isValid()
 */
 
 /*!
