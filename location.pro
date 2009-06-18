@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 CONFIG+=ordered
-SUBDIRS += src tests
+SUBDIRS += location tests

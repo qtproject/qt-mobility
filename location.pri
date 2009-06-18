@@ -15,12 +15,12 @@ QT += core
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
-INCLUDEPATH += $$PWD/src/
+INCLUDEPATH += $$PWD/location/
 
-HEADERS +=  $$PWD/src/qlocationglobal.h \
-            $$PWD/src/qcoordinate.h \
-            $$PWD/src/qpositionupdate.h
+HEADERS +=  $$PWD/location/qlocationglobal.h \
+            $$PWD/location/qcoordinate.h \
+            $$PWD/location/qpositionupdate.h
 
-SOURCES +=  $$PWD/src/qcoordinate.cpp \
-            $$PWD/src/qpositionupdate.cpp
+SOURCES +=  $$PWD/location/qcoordinate.cpp \
+            $$PWD/location/qpositionupdate.cpp
 
