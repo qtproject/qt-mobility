@@ -1,6 +1,32 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="multimedia-library.png" imagedir="../../gif" title="Multimedia Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="qabstractmediaplaylist.html" title="QAbstractMediaPlaylist Class Reference">
+        <keyword ref="qabstractmediaplaylist.html">QAbstractMediaPlaylist</keyword>
+        <keyword ref="qabstractmediaplaylist.html#append">append</keyword>
+        <keyword ref="qabstractmediaplaylist.html#clear">clear</keyword>
+        <keyword ref="qabstractmediaplaylist.html#currentItem">currentItem</keyword>
+        <keyword ref="qabstractmediaplaylist.html#currentItemChanged">currentItemChanged</keyword>
+        <keyword ref="qabstractmediaplaylist.html#currentItemPos">currentItemPos</keyword>
+        <keyword ref="qabstractmediaplaylist.html#insert">insert</keyword>
+        <keyword ref="qabstractmediaplaylist.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qabstractmediaplaylist.html#isShuffled">isShuffled</keyword>
+        <keyword ref="qabstractmediaplaylist.html#itemsChanged">itemsChanged</keyword>
+        <keyword ref="qabstractmediaplaylist.html#itemsInserted">itemsInserted</keyword>
+        <keyword ref="qabstractmediaplaylist.html#itemsRemoved">itemsRemoved</keyword>
+        <keyword ref="qabstractmediaplaylist.html#jump">jump</keyword>
+        <keyword ref="qabstractmediaplaylist.html#load">load</keyword>
+        <keyword ref="qabstractmediaplaylist.html#next">next</keyword>
+        <keyword ref="qabstractmediaplaylist.html#nextItem">nextItem</keyword>
+        <keyword ref="qabstractmediaplaylist.html#prev">prev</keyword>
+        <keyword ref="qabstractmediaplaylist.html#remove">remove</keyword>
+        <keyword ref="qabstractmediaplaylist.html#save">save</keyword>
+        <keyword ref="qabstractmediaplaylist.html#shuffle">shuffle</keyword>
+        <keyword ref="qabstractmediaplaylist.html#size">size</keyword>
+        <keyword ref="qabstractmediaplaylist.html#unshuffle">unshuffle</keyword>
+        <keyword ref="qabstractmediaplaylist.html#operator-5b-5d">operator[]</keyword>
+        <section ref="qabstractmediaplaylist-members.html" title="List of all members"/>
+    </section>
     <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
         <keyword ref="qmediaimageviewer.html">QMediaImageViewer</keyword>
         <keyword ref="qmediaimageviewer.html#State-enum">State</keyword>
@@ -52,7 +78,7 @@
         <keyword ref="qmediaplayer.html#pause">pause</keyword>
         <keyword ref="qmediaplayer.html#play">play</keyword>
         <keyword ref="qmediaplayer.html#positionChanged">positionChanged</keyword>
-        <keyword ref="qmediaplayer.html#session">session</keyword>
+        <keyword ref="qmediaplayer.html#service">service</keyword>
         <keyword ref="qmediaplayer.html#setMuted">setMuted</keyword>
         <keyword ref="qmediaplayer.html#state">state</keyword>
         <keyword ref="qmediaplayer.html#stateChanged">stateChanged</keyword>
@@ -79,39 +105,72 @@
     <section ref="qmediarecorder.html" title="QMediaRecorder Class Reference">
         <keyword ref="qmediarecorder.html">QMediaRecorder</keyword>
         <keyword ref="qmediarecorder.html#State-enum">State</keyword>
+        <keyword ref="qmediarecorder.html#position-prop">position</keyword>
         <keyword ref="qmediarecorder.html#pause">pause</keyword>
         <keyword ref="qmediarecorder.html#record">record</keyword>
-        <keyword ref="qmediarecorder.html#session">session</keyword>
-        <keyword ref="qmediarecorder.html#setMediaSink">setMediaSink</keyword>
-        <keyword ref="qmediarecorder.html#setMuted">setMuted</keyword>
-        <keyword ref="qmediarecorder.html#setVolume">setVolume</keyword>
+        <keyword ref="qmediarecorder.html#service">service</keyword>
+        <keyword ref="qmediarecorder.html#setRecordingSink">setRecordingSink</keyword>
+        <keyword ref="qmediarecorder.html#setRecordingSource">setRecordingSource</keyword>
         <keyword ref="qmediarecorder.html#sink">sink</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>
         <keyword ref="qmediarecorder.html#stateChangeed">stateChangeed</keyword>
         <keyword ref="qmediarecorder.html#stop">stop</keyword>
         <section ref="qmediarecorder-members.html" title="List of all members"/>
     </section>
+    <section ref="qmediasource.html" title="QMediaSource Class Reference">
+        <keyword ref="qmediasource.html">QMediaSource</keyword>
+        <keyword ref="qmediasource.html#dataLocation">dataLocation</keyword>
+        <keyword ref="qmediasource.html#isNull">isNull</keyword>
+        <keyword ref="qmediasource.html#mimeType">mimeType</keyword>
+        <keyword ref="qmediasource.html#setDataLocation">setDataLocation</keyword>
+        <keyword ref="qmediasource.html#setMimeType">setMimeType</keyword>
+        <keyword ref="qmediasource.html#operator-eq">operator=</keyword>
+        <section ref="qmediasource-members.html" title="List of all members"/>
+    </section>
     <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">
         <keyword ref="qradioplayer.html">QRadioPlayer</keyword>
         <keyword ref="qradioplayer.html#Band-enum">Band</keyword>
         <keyword ref="qradioplayer.html#band-prop">band</keyword>
         <keyword ref="qradioplayer.html#band-prop">setBand</keyword>
+        <keyword ref="qradioplayer.html#duration-prop">duration</keyword>
         <keyword ref="qradioplayer.html#frequency-prop">frequency</keyword>
         <keyword ref="qradioplayer.html#signalStrength-prop">signalStrength</keyword>
         <keyword ref="qradioplayer.html#stereo-prop">stereo</keyword>
         <keyword ref="qradioplayer.html#stereo-prop">isStereo</keyword>
         <keyword ref="qradioplayer.html#stereo-prop">setStereo</keyword>
+        <keyword ref="qradioplayer.html#volume-prop">volume</keyword>
+        <keyword ref="qradioplayer.html#volume-prop">setVolume</keyword>
         <keyword ref="qradioplayer.html#bandChanged">bandChanged</keyword>
+        <keyword ref="qradioplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qradioplayer.html#frequency">frequency</keyword>
         <keyword ref="qradioplayer.html#frequencyChanged">frequencyChanged</keyword>
-        <keyword ref="qradioplayer.html#radioService">radioService</keyword>
+        <keyword ref="qradioplayer.html#isMuted">isMuted</keyword>
+        <keyword ref="qradioplayer.html#mutingChanged">mutingChanged</keyword>
         <keyword ref="qradioplayer.html#searchBackward">searchBackward</keyword>
         <keyword ref="qradioplayer.html#searchForward">searchForward</keyword>
+        <keyword ref="qradioplayer.html#service">service</keyword>
         <keyword ref="qradioplayer.html#setFrequency">setFrequency</keyword>
-        <keyword ref="qradioplayer.html#setSignalStrength">setSignalStrength</keyword>
+        <keyword ref="qradioplayer.html#setMuted">setMuted</keyword>
         <keyword ref="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</keyword>
         <keyword ref="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</keyword>
+        <keyword ref="qradioplayer.html#volumeChanged">volumeChanged</keyword>
         <section ref="qradioplayer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsharedmediaplaylist.html" title="QSharedMediaPlaylist Class Reference">
+        <keyword ref="qsharedmediaplaylist.html">QSharedMediaPlaylist</keyword>
+        <keyword ref="qsharedmediaplaylist.html#append">append</keyword>
+        <keyword ref="qsharedmediaplaylist.html#currentItemPos">currentItemPos</keyword>
+        <keyword ref="qsharedmediaplaylist.html#insert">insert</keyword>
+        <keyword ref="qsharedmediaplaylist.html#isShuffled">isShuffled</keyword>
+        <keyword ref="qsharedmediaplaylist.html#jump">jump</keyword>
+        <keyword ref="qsharedmediaplaylist.html#name">name</keyword>
+        <keyword ref="qsharedmediaplaylist.html#remove">remove</keyword>
+        <keyword ref="qsharedmediaplaylist.html#sharedPlaylists">sharedPlaylists</keyword>
+        <keyword ref="qsharedmediaplaylist.html#shuffle">shuffle</keyword>
+        <keyword ref="qsharedmediaplaylist.html#size">size</keyword>
+        <keyword ref="qsharedmediaplaylist.html#unshuffle">unshuffle</keyword>
+        <keyword ref="qsharedmediaplaylist.html#operator-5b-5d">operator[]</keyword>
+        <section ref="qsharedmediaplaylist-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
