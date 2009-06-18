@@ -176,7 +176,7 @@ void QNetworkConfigurationManagerPrivate::updateWlanIoctlConfigurations(QList<QS
     while (i.hasNext()) {
         const QString identifier = i.next();
 
-        if (identifier.startsWith("WLAN:")) {
+        if (ioctlWifi->hasIdentifier(identifier)) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr =
                 accessPointConfigurations.value(identifier);
 

@@ -78,7 +78,8 @@ public:
     virtual ~QNetworkSessionEngine();
 
     virtual QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0) = 0;
-    virtual QStringList getInterfacesFromId(const QString &id) = 0;
+    virtual QString getInterfaceFromId(const QString &id) = 0;
+    virtual bool hasIdentifier(const QString &id) = 0;
 
     virtual QString bearerName(const QString &id) = 0;
 
