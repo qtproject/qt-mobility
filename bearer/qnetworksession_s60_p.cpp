@@ -401,7 +401,7 @@ QString QNetworkSessionPrivate::bearerName() const
         }
     }
     if (!config.isValid()) {
-        return QString("Unknown");
+        return QString();
     }
 
     switch (config.d.data()->bearer) {
