@@ -70,7 +70,8 @@ public:
     ~QNativeWifiEngine();
 
     QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
-    QStringList getInterfacesFromId(const QString &id);
+    QString getInterfaceFromId(const QString &id);
+    bool hasIdentifier(const QString &id);
 
     QString bearerName(const QString &id);
 
