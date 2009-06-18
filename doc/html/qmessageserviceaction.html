@@ -18,6 +18,11 @@
 <ul>
 <li><a href="qmessageserviceaction-members.html">List of all members, including inherited members</a></li>
 </ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qmessageserviceaction.html#Activity-enum">Activity</a></b> { Pending, InProgress, Successful, Failed }</li>
+</ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
@@ -51,11 +56,22 @@
 <p>A user may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
 <p>A QMessageServiceAction instance supports only a single request at any time. A client may, however, use multiple QMessageServiceAction instances to send independent requests concurrently. Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivered.</p>
 <hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="Activity-enum"></a>enum QMessageServiceAction::Activity</h3>
+<p>This enum type is used to describe the activity state of the requested action.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMessageServiceAction::Pending</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The action has not yet begun execution.</td></tr>
+<tr><td valign="top"><tt>QMessageServiceAction::InProgress</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The action is currently executing.</td></tr>
+<tr><td valign="top"><tt>QMessageServiceAction::Successful</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The action has completed successfully.</td></tr>
+<tr><td valign="top"><tt>QMessageServiceAction::Failed</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The action could not be completed successfully, and has finished execution.</td></tr>
+</table></p>
+<hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="activity"></a>Activity QMessageServiceAction::activity () const</h3>
+<h3 class="fn"><a name="activity"></a><a href="qmessageserviceaction.html#Activity-enum">Activity</a> QMessageServiceAction::activity () const</h3>
 <p>Returns the current activity state of the action.</p>
 <p>See also <a href="qmessageserviceaction.html#activityChanged">activityChanged</a>().</p>
-<h3 class="fn"><a name="activityChanged"></a>void QMessageServiceAction::activityChanged ( QMessageServiceAction::Activity <i>a</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="activityChanged"></a>void QMessageServiceAction::activityChanged ( <a href="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Activity</a> <i>a</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the activity status of the action changes, with the new state described by <i>a</i>.</p>
 <p>See also <a href="qmessageserviceaction.html#activity">activity</a>().</p>
 <h3 class="fn"><a name="cancelOperation"></a>void QMessageServiceAction::cancelOperation ()&nbsp;&nbsp;<tt> [slot]</tt></h3>

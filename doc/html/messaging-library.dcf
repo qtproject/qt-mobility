@@ -278,6 +278,11 @@
     </section>
     <section ref="qmessageserviceaction.html" title="QMessageServiceAction Class Reference">
         <keyword ref="qmessageserviceaction.html">QMessageServiceAction</keyword>
+        <keyword ref="qmessageserviceaction.html#Activity-enum">Activity</keyword>
+        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::InProgress</keyword>
+        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Failed</keyword>
+        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Pending</keyword>
+        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Successful</keyword>
         <keyword ref="qmessageserviceaction.html#activity">activity</keyword>
         <keyword ref="qmessageserviceaction.html#activityChanged">activityChanged</keyword>
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>

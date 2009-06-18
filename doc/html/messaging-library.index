@@ -814,6 +814,12 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageServiceAction" href="qmessageserviceaction.html" location="draft-api.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Activity" fullname="QMessageServiceAction::Activity" href="qmessageserviceaction.html#Activity-enum" location="draft-api.h">
+                <value name="Pending" value="0"/>
+                <value name="InProgress" value="1"/>
+                <value name="Successful" value="2"/>
+                <value name="Failed" value="3"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="send" fullname="QMessageServiceAction::send" href="qmessageserviceaction.html#send" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="send(const QMessage &amp; message, const QMessageAccountId &amp; accountId)">
                 <parameter left="const QMessage &amp;" right="" name="message" default=""/>
                 <parameter left="const QMessageAccountId &amp;" right="" name="accountId" default=""/>
