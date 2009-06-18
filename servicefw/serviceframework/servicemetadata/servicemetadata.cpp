@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -355,10 +355,18 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CUSTOM_PROPERTY) {
             parseError = true;
             if (aXMLReader.attributes().hasAttribute("key")) {
-                const QStringRef ref = aXMLReader.attributes().value("key");
+                const QString ref = aXMLReader.attributes().value("key").toString();
                 if (!ref.isEmpty()) {
-                    aInterface.d->customProperties[ref.toString()] = aXMLReader.readElementText();
-                    parseError = false;
+                    if (aInterface.d->customProperties.contains(ref)) {
+                        latestError = SFW_ERROR_DUPLICATED_CUSTOM_KEY;
+                        continue;
+                    } else {
+                        QString value = aXMLReader.readElementText();
+                        if (value.isNull())
+                            value = QString("");
+                        aInterface.d->customProperties[ref] = value;
+                        parseError = false;
+                    }
                 }
             }
             if (parseError)

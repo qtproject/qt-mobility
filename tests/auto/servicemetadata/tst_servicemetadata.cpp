@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -205,6 +205,8 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test30.xml") << "Test30.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
     //empty key attribute for custom property tag
     QTest::newRow("Test31.xml") << "Test31.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
+    //same key exists twice
+    QTest::newRow("Test32.xml") << "Test32.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY;
 
 }
 
