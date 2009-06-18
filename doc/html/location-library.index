@@ -161,10 +161,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QSatelliteInfoSource::requestTimeout" href="qsatelliteinfosource.html#requestTimeout" location="draft-api.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"></function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QPositionSource" href="qpositionsource.html" location="draft-api.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="IntervalType" fullname="QPositionSource::IntervalType" href="qpositionsource.html#IntervalType-enum" location="draft-api.h">
-                <value name="TimeInterval" value="0"></value>
-                <value name="DistanceInterval" value="1"></value>
-            </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="PositioningMethod" fullname="QPositionSource::PositioningMethod" href="qpositionsource.html#PositioningMethod-enum" location="draft-api.h" typedef="QPositionSource::PositioningMethods">
                 <value name="SatellitePositioningMethods" value="0x000000ff"></value>
                 <value name="NonSatellitePositioningMethods" value="0xffffff00"></value>
@@ -174,12 +170,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QPositionSource" fullname="QPositionSource::QPositionSource" href="qpositionsource.html#QPositionSource" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPositionSource(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QPositionSource::setUpdateInterval" href="qpositionsource.html#setUpdateInterval" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateInterval(IntervalType type, int interval)">
-                <parameter left="IntervalType" right="" name="type" default=""></parameter>
-                <parameter left="int" right="" name="interval" default=""></parameter>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QPositionSource::setUpdateInterval" href="qpositionsource.html#setUpdateInterval" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateInterval(int msec)">
+                <parameter left="int" right="" name="msec" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalType" fullname="QPositionSource::updateIntervalType" href="qpositionsource.html#updateIntervalType" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="IntervalType" signature="updateIntervalType() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateIntervalValue" fullname="QPositionSource::updateIntervalValue" href="qpositionsource.html#updateIntervalValue" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="updateIntervalValue() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QPositionSource::updateInterval" href="qpositionsource.html#updateInterval" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="updateInterval() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPreferredPositioningMethods" fullname="QPositionSource::setPreferredPositioningMethods" href="qpositionsource.html#setPreferredPositioningMethods" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPreferredPositioningMethods(QFlags&lt;QPositionSource::PositioningMethod&gt; methods)">
                 <parameter left="QFlags&lt;QPositionSource::PositioningMethod&gt;" right="" name="methods" default=""></parameter>
             </function>
@@ -188,9 +182,7 @@
                 <parameter left="bool" right="" name="fromSatellitePositioningMethodsOnly" default="false"></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedPositioningMethods" fullname="QPositionSource::supportedPositioningMethods" href="qpositionsource.html#supportedPositioningMethods" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="PositioningMethods" signature="supportedPositioningMethods() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="minimumIntervalForType" fullname="QPositionSource::minimumIntervalForType" href="qpositionsource.html#minimumIntervalForType" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumIntervalForType(IntervalType type) const">
-                <parameter left="IntervalType" right="" name="type" default=""></parameter>
-            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minimumUpdateInterval" fullname="QPositionSource::minimumUpdateInterval" href="qpositionsource.html#minimumUpdateInterval" location="draft-api.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumUpdateInterval() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="createSource" fullname="QPositionSource::createSource" href="qpositionsource.html#createSource" location="draft-api.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QPositionSource *" signature="createSource(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"></parameter>
             </function>

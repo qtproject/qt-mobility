@@ -543,18 +543,12 @@
     If regular position updates are required, setUpdateInterval() can be used
     to specify how often these updates should be emitted. (If no interval is
     specified, updates are simply provided whenever they are available.)
-    The interval can either be specified by time and/or distance. For example:
+    For example:
 
     \code
         // Emit updates every 10 seconds if available
         QPositionSource *source = QPositionSource::createSource();
-        source->setUpdateInterval(QPositionSource::TimeInterval, 10000);
-    \endcode
-
-    \code
-        // Emit updates each time there is a distance change greater than 100 meters
-        MyPositionSource *source = QPositionSource::createSource();
-        source->setUpdateInterval(QPositionSource::DistanceInterval, 100);
+        source->setUpdateInterval(10000);
     \endcode
 
     To remove an update interval that was previously set, call
@@ -562,14 +556,6 @@
 
     Note that the position source may have a minimum value requirement for
     update intervals, as returned by minimumIntervalForType().
-*/
-
-/*!
-    \enum QPositionSource::IntervalType
-    Defines the types that can be specified when calling setUpdateInterval().
-
-    \value TimeInterval Update intervals are specified in milliseconds.
-    \value DistanceInterval Update intervals are specified in metres.
 */
 
 /*!
@@ -588,36 +574,27 @@
 */
 
 /*!
-    \fn virtual void QPositionSource::setUpdateInterval(IntervalType type, int interval);
+    \fn virtual void QPositionSource::setUpdateInterval(int msec);
 
-    Sets the update interval type to \a type and the interval value to \a interval.
-    To remove interval-based updates, set \a interval to 0.
+    Sets the source to emit updates every \a msec milliseconds.
+    If \a msec is 0, interval-based updates are disabled and the source
+    provides updates whenever they are available.
 
-    If \a interval is not 0 and is less than the value returned by
-    minimumIntervalForType() for the specified type, the interval will be
-    set to the minimum interval.
+    If \a msec is not 0 and is less than the value returned by
+    minimumUpdateInterval(), the interval will be set to the minimum interval.
 
     Note that implementations may not provide updates at the exact
     interval specified. For example, a given millisecond interval value may be
     rounded to the nearest second if the implementation does not support
     intervals specified to millisecond precision.
 
-
     \bold {Note:} When reimplementing this method, subclasses must call the
-    base method implementation to ensure updateIntervalType() and
-    updateIntervalValue() returns the correct value.
+    base method implementation to ensure updateInterval() returns the correct
+    value.
 */
 
 /*!
-    \fn IntervalType QPositionSource::updateIntervalType() const;
-
-    Returns the interval type set by setUpdateInterval().
-
-    The return value is undefined if no interval has been set.
-*/
-
-/*!
-    \fn int QPositionSource::updateIntervalValue() const;
+    \fn int QPositionSource::updateInterval() const;
 
     Returns the interval value set by setUpdateInterval().
 
@@ -661,10 +638,9 @@
 */
 
 /*!
-    \fn virtual int QPositionSource::minimumIntervalForType(IntervalType type) const = 0;
+    \fn virtual int QPositionSource::minimumUpdateInterval() const = 0;
 
-    Returns the minimum interval for the given \a type that can be passed
-    to setUpdateInterval().
+    Returns the minimum value accepted by setUpdateInterval().
 */
 
 /*!

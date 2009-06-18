@@ -155,11 +155,6 @@ class QPositionSource : public QObject
 {
     Q_OBJECT
 public:
-    enum IntervalType {
-        TimeInterval,
-        DistanceInterval
-    };
-
     enum PositioningMethod {
         SatellitePositioningMethods = 0x000000ff,
         NonSatellitePositioningMethods = 0xffffff00,
@@ -170,9 +165,8 @@ public:
 
     explicit QPositionSource(QObject *parent = 0);
 
-    virtual void setUpdateInterval(IntervalType type, int interval);
-    IntervalType updateIntervalType() const;
-    int updateIntervalValue() const;
+    virtual void setUpdateInterval(int msec);
+    int updateInterval() const;
 
     virtual void setPreferredPositioningMethods(PositioningMethods methods);
     PositioningMethods preferredPositioningMethods() const;
@@ -180,7 +174,7 @@ public:
     QPositionUpdate lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 
     virtual PositioningMethods supportedPositioningMethods() const = 0;
-    virtual int minimumIntervalForType(IntervalType type) const = 0;
+    virtual int minimumUpdateInterval() const = 0;
 
     static QPositionSource *createSource(QObject *parent = 0);
 
