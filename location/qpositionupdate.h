@@ -91,9 +91,9 @@ public:
     bool hasProperty(Property property) const;
 
 private:
-    friend QDebug operator<<(QDebug dbg, const QPositionUpdate &update);
-    friend QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update);
-    friend QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QPositionUpdate &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update);
     QPositionUpdatePrivate *d;
 };
 
