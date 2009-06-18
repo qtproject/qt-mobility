@@ -1,33 +1,30 @@
-
 #ifndef QMEDIASOURCE_H
 #define QMEDIASOURCE_H
 
-#include <QObject>
 #include <QString>
-#include <QVariantl>
-
+#include <QVariant>
+#include <QSharedDataPointer>
 
 class QMediaSourcePrivate;
-
-class QMediaSource : public QObject
+class QMediaSource
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QString mimeType READ mimeType WRITE setMimeType)
-    Q_PROPERTY(QVariant dataLocation READ dataLocation WRITE setDataLocation)
-
 public:
-    QMediaSource(QObject* parent = 0);
+    QMediaSource();
+    QMediaSource(const QString &mimeType, const QVariant &url);
+    QMediaSource(const QMediaSource &other);
+    QMediaSource &operator =(const QMediaSource &other);
     ~QMediaSource();
 
-    QString mimeType() const;
-    void setMimeType(QString const& mimeType);
+    bool isNull() const;
 
-    QVariant dataLocation() const
-    void setDataLocation(QVariant const& url);
+    QString mimeType() const;
+    void setMimeType(const QString &mimeType);
+
+    QVariant dataLocation() const;
+    void setDataLocation(const QVariant &url);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSource)
+    QSharedDataPointer<QMediaSourcePrivate> d;
 };
 
 #endif  // QMEDIASOURCE_H

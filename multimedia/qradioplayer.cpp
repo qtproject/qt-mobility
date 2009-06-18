@@ -12,65 +12,109 @@
     \sa
 */
 
-class QRadioPlayerPrivate : public QObjectPrivate
+class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QRadioService*  service;
+    QRadioTuner*    tuner;
 };
 
 
-QRadioPlayer::QRadioPlayer(QRadioService* service, QObject* parent):
-    QObject(*new QRadioPlayerPrivate, parent)
+QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
+    QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
 {
-    d_func()->service = service;
+    Q_ASSERT(service != 0);
+
+    Q_D(QRadioPlayer)
+    d->service = service;
+    d->tuner = service->control();
 }
 
 QRadioPlayer::~QRadioPlayer()
 {
+    Q_D(QRadioPlayer)
+
+    delete d->tuner;
+    delete d->service;
 }
 
-Band QRadioPlayer::band() const
+QRadioPlayer::Band QRadioPlayer::band() const
 {
+    return d_func()->tuner->band();
 }
 
-void QRadioPlayer::setBand(Band band)
+int QRadioPlayer::frequency() const
 {
+    return d_func()->tuner->frequency();
 }
 
-int QRadioPlayer:;frequency() const
+bool QRadioPlayer::isStereo() const
 {
-}
-
-void QRadioPlayer::setFrequency(int frequenct)
-{
-}
-
-bool QRadioPlayer:;isStereo() const
-{
-}
-
-void QRadioPlayer::setStereo(bool stereo)
-{
+    return d_func()->tuner->isStereo();
 }
 
 int QRadioPlayer::signalStrength() const
 {
+    return d_func()->tuner->signalStrength();
 }
 
-void QRadioPlayer::setSignalStrength(int signalStength)
+qint64 QRadioPlayer::duration() const
 {
+    return d_func()->tuner->duration();
 }
 
-QRadioService* QRadioPlayer::radioService() const
+int QRadioPlayer::volume() const
 {
+    return d_func()->tuner->volume();
 }
 
-//public Q_SLOTS:
+bool QRadioPlayer::isMuted() const
+{
+    return d_func()->tuner->isMuted();
+}
+
+QRadioService* QRadioPlayer::service() const
+{
+    return d_func()->service;
+}
+
+void QRadioPlayer::setBand(QRadioPlayer::Band band)
+{
+    d_func()->tuner->setBand(band):
+}
+
+void QRadioPlayer::setFrequency(int frequency)
+{
+    d_func()->tuner->setFrequency(frequency);
+}
+
+void QRadioPlayer::setStereo(bool stereo)
+{
+    d_func()->tuner->setStereo(stereo);
+}
+
+void QRadioPlayer::setVolume(int volume)
+{
+    d_func()->tuner->setVolume(volume);
+}
+
+void QRadioPlayer::setMuted(bool muted)
+{
+    d_func()->tuner->setMuted(muted);
+}
+
 void QRadioPlayer::searchForward()
 {
+    d_func()->tuner->searchForward();
 }
 
 void QRadioPlayer::searchBackward()
 {
+    d_func()->tuner->searchBackward();
 }
 
+
+QRadioService* createRadioService(QMediaServiceProvider *provider)
+{
+    return qobject_cast<QRadioService*>(provider->createObject("com.nokia.Qt.RadioSerice/1.0"));
+}
