@@ -1,17 +1,17 @@
 #ifndef QABSTRACTMEDIAOBJECT_H
 #define QABSTRACTMEDIAOBJECT_H
 
+class QAbstractMediaObjectPrivate;
+
 class QAbstractMediaObject : public QObject
 {
+    Q_OBJECT
+
 public:
-    virtual void setUserObject(QObject* userObject);
+    virtual QAbstractMediaService* service() const = 0;
 
 protected:
-    virtual bool propertyValueChanged(QByteArray const& name, QVariant const& value) = 0;
-
-    virtual bool event(QEvent* e);
-
-    QObject* userObject;
+    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
 };
 
 

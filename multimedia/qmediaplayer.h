@@ -1,7 +1,7 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <QObject>
+#include <QtCore/qobject.h>
 
 class QMedidPlayerSession;
 class QMediaPlayerPrivate;
@@ -20,7 +20,6 @@ class QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
     Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(QMediaPlayerSession* mediaSession READ mediaSesssion)
 
     Q_ENUMS(State)
 
@@ -71,8 +70,6 @@ Q_SIGNALS:
 private:
     Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_DISABLE_COPY(QMediaPlayer)
-
-    QMediaPlayerImpl* de
 };
 
 extern QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));

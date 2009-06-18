@@ -1,9 +1,9 @@
 
 #include "qmediaserviceprovider.h"
-
+#include "qmediaserviceproviderfactory_p.h"
 
 QMediaServiceProvider* defaultServiceProvider(const char *type)
 {
-    // Check Static and dynamic plugins for the type
-    return 0;
+    return QMediaServiceProviderFactory::defaultServiceProvider(QLatin1String(type));
 }
+

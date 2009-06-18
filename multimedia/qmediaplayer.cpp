@@ -1,5 +1,5 @@
 
-#include <private/qobject_p.h>
+#include <QtCore/private/qobject_p.h>
 
 #include "qmediaplayer.h"
 
@@ -17,6 +17,7 @@ class QMediaPlayerPrivate : public QObjectPrivate
 {
 public:
     QMediaPlayerSession* session;
+    QMediaPlayerControl* control;
 };
 
 
@@ -25,9 +26,13 @@ public:
 */
 
 QMediaPlayer::QMediaPlayer(QMediaPlayerSession* session, QObject* parent):
-    QObject(*new QMediaPlayerPrivate, parent)
+    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
 {
-    d_func()->session = session;
+    Q_ASSERT(session != 0);
+
+    Q_D(QMediaPlayer)
+    d->session = session;
+    d->control = session->control();
 }
 
 /*!
@@ -44,6 +49,7 @@ QMediaPlayer::~QMediaPlayer()
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
+    return d_func()->control->state();
 }
 
 /*!
@@ -60,6 +66,7 @@ QMediaSource QMediaPlayer::mediaSource() const
 
 qint64 QMediaPlayer::duration() const
 {
+    return d_func()->control->duration();
 }
 
 /*!
@@ -68,6 +75,7 @@ qint64 QMediaPlayer::duration() const
 
 qint64 QMediaPlayer::position() const
 {
+    return d_func()->control->position();
 }
 
 /*!
@@ -76,6 +84,7 @@ qint64 QMediaPlayer::position() const
 
 int QMediaPlayer::volume() const
 {
+    return d_func()->control->volume();
 }
 
 /*!
@@ -84,6 +93,7 @@ int QMediaPlayer::volume() const
 
 bool QMediaPlayer::isMuted() const
 {
+    return d_func()->control->isMuted();
 }
 
 /*!
@@ -92,6 +102,7 @@ bool QMediaPlayer::isMuted() const
 
 bool QMediaPlayer::isBuffering() const
 {
+    return d_func()->control->isBuffering();
 }
 
 /*!
@@ -100,6 +111,7 @@ bool QMediaPlayer::isBuffering() const
 
 int QMediaPlayer::bufferStatus() const
 {
+    return d_func()->control->bufferStatus();
 }
 
 /*!
@@ -108,6 +120,7 @@ int QMediaPlayer::bufferStatus() const
 
 bool QMediaPlayer::isVideoAvailable() const
 {
+    return d_func()->control->isVideoAvailable();
 }
 
 /*!
@@ -116,6 +129,7 @@ bool QMediaPlayer::isVideoAvailable() const
 
 QMediaPlayerSession* QMediaPlayer::session() const
 {
+    return d_func()->session;
 }
 
 //public Q_SLOTS:
@@ -126,6 +140,7 @@ QMediaPlayerSession* QMediaPlayer::session() const
 
 void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 {
+    d_func()->control->setMediaSource(mediaSource);
 }
 
 /*!
@@ -134,6 +149,7 @@ void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 
 void QMediaPlayer::play()
 {
+    d_func()->control->play();
 }
 
 /*!
@@ -142,6 +158,7 @@ void QMediaPlayer::play()
 
 void QMediaPlayer::pause()
 {
+    d_func()->control->pause();
 }
 
 /*!
@@ -150,6 +167,7 @@ void QMediaPlayer::pause()
 
 void QMediaPlayer::stop()
 {
+    d_func()->control->stop();
 }
 
 /*!
@@ -182,7 +200,7 @@ void QMediaPlayer::setMuted(bool muted)
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QMediaPlayerService*>(provider->createObject("com.nokia.Qt.MediaPlayer/1.0"));
+    return qobject_cast<QMediaPlayerService*>(provider->createObject("com.nokia.qt.MediaPlayer/1.0"));
 }
 
 /*!

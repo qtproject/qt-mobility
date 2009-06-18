@@ -67,6 +67,6 @@ private:
     Q_DISABLE_COPY(QRadioPlayer)
 };
 
-extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultProvider("radio"));
+extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));
 
 #endif  // QRADIOPLAYER_H
