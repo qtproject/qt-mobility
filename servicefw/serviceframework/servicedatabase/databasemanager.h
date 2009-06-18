@@ -92,7 +92,7 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
 };
 
 
-class DatabaseFileWatcher : public QObject
+class Q_SFW_EXPORT DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
 public:
