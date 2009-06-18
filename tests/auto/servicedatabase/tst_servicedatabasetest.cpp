@@ -62,6 +62,7 @@ private slots:
     void searchByInterfaceAndService();
     void properties();
     void getServiceNames();
+    void defaultExternalIfaceIDs();
     void defaultServiceInterface();
     void setDefaultService_strings();
     void setDefaultService_descriptor();
@@ -711,21 +712,65 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     return true;
 }
 
+void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
+{
+    database.open();
+    QServiceInterfaceDescriptor interface;
+    interface.d = new QServiceInterfaceDescriptorPrivate;
+    interface.d->serviceName = "StargateCommand";
+    interface.d->interfaceName = "gov.usa.stargate";
+    interface.d->major = 13;
+    interface.d->minor = 37;
+
+    //see if we can set a "cross-reference" default interface
+    //ie user db referencing an interfaceID belonging to the system db
+    QVERIFY(database.setDefaultService(interface, "FAKE-INTERFACE-ID"));
+    QString interfaceID;
+    QServiceInterfaceDescriptor descriptor = database.defaultServiceInterface("gov.usa.stargate", &interfaceID);
+    QCOMPARE(database.lastError().errorCode(), DBError::ExternalIfaceIDFound);
+    QCOMPARE(interfaceID, QString("FAKE-INTERFACE-ID"));
+
+    interface.d->interfaceName = "gov.ru.stargate";
+    QVERIFY(database.setDefaultService(interface, "FAKE-INTERFACE-ID2"));
+    QStringList interfaceIDs = database.externalDefaultInterfaceIDs();
+    QCOMPARE(interfaceIDs[0], QString("FAKE-INTERFACE-ID"));
+    QCOMPARE(interfaceIDs[1], QString("FAKE-INTERFACE-ID2"));
+
+    //see if we can remove the "cross-reference" default interface
+    QVERIFY(database.removeExternalDefaultServiceInterface("FAKE-INTERFACE-ID"));
+    interfaceID.clear();
+    descriptor = database.defaultServiceInterface("gov.usa.stargate", &interfaceID);
+    QVERIFY(database.lastError().errorCode() == DBError::NotFound);
+    QVERIFY(interfaceID.isEmpty());
+
+    //try to delete an interfaceID that's actually a local interfaceID
+    QServiceFilter filter;
+    filter.setServiceName("omnI");
+    filter.setInterface("com.omni.Device.Lights");
+    QList<QServiceInterfaceDescriptor> interfaces;
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 1);
+    interfaceID = database.getInterfaceID(interfaces[0]);
+    QVERIFY(!database.removeExternalDefaultServiceInterface(interfaceID));
+    QVERIFY(database.lastError().errorCode()  ==  DBError::IfaceIDNotExternal);
+
+    database.close();
+}
+
 void ServiceDatabaseUnitTest::defaultServiceInterface()
 {
     QServiceInterfaceDescriptor interface;
     bool ok;
 
     //try getting the default service interface implementation when database is not open
-    interface = database.defaultServiceInterface("com.cyberdyne.terminator", &ok);
-    QCOMPARE(ok, false);
+    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
     QCOMPARE(database.lastError().errorCode(), DBError::DatabaseNotOpen);
     QVERIFY(!interface.isValid());
 
     //try getting a valid default, in this case only one implementation exists
     QVERIFY(database.open());
-    interface = database.defaultServiceInterface("com.omni.device.Lights", &ok);
-    QCOMPARE(ok, true);
+    interface = database.defaultServiceInterface("com.omni.device.Lights");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
     QStringList capabilities;
     QVERIFY(compareDescriptor(interface, "com.omni.device.Lights",
@@ -736,8 +781,8 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
 
     //try getting a valid default, in this case two services implement the interface
     ok = false;
-    interface = database.defaultServiceInterface("com.CyBerDynE.Terminator", &ok);
-    QCOMPARE(ok, true);
+    interface = database.defaultServiceInterface("com.CyBerDynE.Terminator");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
 
     capabilities << "NetworkServices";
@@ -749,8 +794,8 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
 
     //try getting a valid default, in this case multiple services implement the interface
     ok = false;
-    interface = database.defaultServiceInterface("com.omni.device.Accelerometer", &ok);
-    QCOMPARE(ok, true);
+    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
     capabilities.clear();
     capabilities << "SurroundingsDD";
@@ -761,22 +806,22 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
                                     "Interface that provides accelerometer readings(omni)"));
 
     //try searching for an interface that isn't registered
-    interface = database.defaultServiceInterface("com.omni.device.FluxCapacitor", &ok);
-    QCOMPARE(ok, true);
+    interface = database.defaultServiceInterface("com.omni.device.FluxCapacitor");
+    QVERIFY(database.lastError().errorCode() == DBError::NotFound);
     QVERIFY(!interface.isValid());
 
     //try getting the default interface impl for a service that is made up of multiple
     //plugins
     interface = database.defaultServiceInterface("com.dharma.electro.discharge");
-    QVERIFY(interface.isValid());
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     capabilities.clear();
     QVERIFY(compareDescriptor(interface, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 4, 0,
                                 capabilities, "C:/island/swan.dll"));
 
     //trying getting the default using an empty interface name
-    interface = database.defaultServiceInterface("", &ok);
-    QVERIFY(ok);
+    interface = database.defaultServiceInterface("");
+    QVERIFY(database.lastError().errorCode() == DBError::NotFound);
     QVERIFY(!interface.isValid());
     QVERIFY(database.close());
 }
@@ -803,8 +848,8 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
     for (int i = 0; i < 2; ++i ) {
     QVERIFY(database.setDefaultService("SkyNET", "COM.cyberdyne.TERMinator"));
 
-    interface = database.defaultServiceInterface("com.CyBerDynE.Terminator", &ok);
-    QCOMPARE(ok, true);
+    interface = database.defaultServiceInterface("com.CyBerDynE.Terminator");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
     capabilities.clear();
     capabilities << "NetworkServices";
@@ -819,8 +864,8 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
     //try setting the default service back to it's original value
     QVERIFY(database.setDefaultService("Cyberdyne", "com.cyberdyne.terminator"));
     ok = false;
-    interface = database.defaultServiceInterface("com.cyberdyne.terminator", &ok);
-    QVERIFY(ok);
+    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
 
     QVERIFY(compareDescriptor(interface, "com.cyberdyne.terminator",
@@ -831,8 +876,8 @@ void ServiceDatabaseUnitTest::setDefaultService_strings()
 
     //try setting the default on a service that is comprised of multiple plugins
     QVERIFY(database.setDefaultService("DharmaInitiative", "com.dharma.electro.discharge"));
-    interface = database.defaultServiceInterface("com.dharma.electro.discharge", &ok);
-    QVERIFY(ok);
+    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    QVERIFY(database.lastError().errorCode() == DBError::NoError);
     QVERIFY(interface.isValid());
     capabilities.clear();
     QVERIFY(compareDescriptor(interface, "com.dharma.electro.discharge",
