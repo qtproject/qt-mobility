@@ -2623,6 +2623,8 @@ bool QMessageFolderSortKey::isEmpty() const
 /*!
     Returns a key that which is the result of concatenating the vaue of this key and the value 
     of key \a other.
+    
+    This function determines sorting precedence.
 */
 QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
 {
@@ -2633,6 +2635,8 @@ QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortK
 /*!
     Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
+    
+    This function determines sorting precedence.
 */
 QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
 {
@@ -3250,6 +3254,8 @@ bool QMessageSortKey::isEmpty() const
 /*!
     Returns a key that which is the result of concatenating the vaue of this key and the value 
     of key \a other.
+
+    This function determines sorting precedence.
 */
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
@@ -3260,6 +3266,8 @@ QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 /*!
     Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
+
+    This function determines sorting precedence.
 */
 QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 {

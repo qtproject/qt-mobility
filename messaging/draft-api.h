@@ -634,6 +634,7 @@ class QMessageServiceAction : public QObject
 {
     Q_OBJECT
 
+public:
     enum Activity {
         Pending = 0,
         InProgress,
@@ -641,7 +642,6 @@ class QMessageServiceAction : public QObject
         Failed
     };
 
-public:
     void send(const QMessage &message, const QMessageAccountId &accountId);
     void compose(const QMessage &message);
     void reply(const QMessageId &id);
