@@ -25,7 +25,9 @@
         <keyword ref="qcoordinate.html#setLongitude">setLongitude</keyword>
         <keyword ref="qcoordinate.html#toString">toString</keyword>
         <keyword ref="qcoordinate.html#type">type</keyword>
+        <keyword ref="qcoordinate.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcoordinate.html#operator-eq">operator=</keyword>
+        <keyword ref="qcoordinate.html#operator-eq-eq">operator==</keyword>
         <section ref="qcoordinate-members.html" title="List of all members"/>
     </section>
     <section ref="qpositionareamonitor.html" title="QPositionAreaMonitor Class Reference">
@@ -76,13 +78,15 @@
         <keyword ref="qpositionupdate.html#coordinate">coordinate</keyword>
         <keyword ref="qpositionupdate.html#doubleProperty">doubleProperty</keyword>
         <keyword ref="qpositionupdate.html#hasProperty">hasProperty</keyword>
-        <keyword ref="qpositionupdate.html#isNull">isNull</keyword>
+        <keyword ref="qpositionupdate.html#isValid">isValid</keyword>
         <keyword ref="qpositionupdate.html#removeProperty">removeProperty</keyword>
         <keyword ref="qpositionupdate.html#setCoordinate">setCoordinate</keyword>
         <keyword ref="qpositionupdate.html#setDoubleProperty">setDoubleProperty</keyword>
         <keyword ref="qpositionupdate.html#setUpdateTime">setUpdateTime</keyword>
         <keyword ref="qpositionupdate.html#updateTime">updateTime</keyword>
+        <keyword ref="qpositionupdate.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qpositionupdate.html#operator-eq">operator=</keyword>
+        <keyword ref="qpositionupdate.html#operator-eq-eq">operator==</keyword>
         <section ref="qpositionupdate-members.html" title="List of all members"/>
     </section>
     <section ref="qsatelliteinfo.html" title="QSatelliteInfo Class Reference">

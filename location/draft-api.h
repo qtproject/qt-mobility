@@ -24,6 +24,9 @@ public:
 
     QCoordinate &operator=(const QCoordinate &other);
 
+    bool operator==(const QCoordinate &other) const;
+    inline bool operator!=(const QCoordinate &other) const { return !operator==(other); }
+
     bool isValid() const;
     CoordinateType type() const;
 
@@ -68,7 +71,10 @@ public:
 
     QPositionUpdate &operator=(const QPositionUpdate &other);
 
-    bool isNull() const;
+    bool operator==(const QPositionUpdate &other) const;
+    inline bool operator!=(const QPositionUpdate &other) const { return !operator==(other); }
+
+    bool isValid() const;
 
     void setUpdateTime(const QDateTime &updateTime);
     QDateTime updateTime() const;
