@@ -80,12 +80,13 @@ public:
     int interfaceMajorVersion() const;
     int interfaceMinorVersion() const;
     VersionMatchRule versionMatchRule() const;
+    QList<QString> customKeys() const;
     QString customConstraint(const QString& key) const;
 
 private:
     QServiceFilterPrivate *d;
     friend class QServiceManager;
-    friend class ServiceDatabase;
+    //friend class ServiceDatabase;
 #ifndef QT_NO_DATASTREAM
     friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
     friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);

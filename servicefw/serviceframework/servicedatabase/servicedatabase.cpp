@@ -627,7 +627,8 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
     QList<QVariant> bindValues;
 
-    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()) {
+    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty() 
+                && filter.customKeys().size() == 0) {
         //do nothing, (don't add any extra constraints to the query
     } else {
 
@@ -646,12 +647,15 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
                 }
                 else if (filter.versionMatchRule() == QServiceFilter::MinimumVersionMatch) {
                     whereComponent.append("AND ((Interface.VerMaj > ?")
-                        .append(") OR Interface.VerMaj = ?").append(" AND Interface.VerMin >= ?").append(")");
+                        .append(") OR Interface.VerMaj = ?").append(" AND Interface.VerMin >= ?").append(") ");
                     bindValues.append(QString::number(filter.interfaceMajorVersion()));
                     bindValues.append(QString::number(filter.interfaceMajorVersion()));
                     bindValues.append(QString::number(filter.interfaceMinorVersion()));
                 }
             }
+        }
+        if (filter.customKeys().size() >0) {
+            //TODO
         }
     }
 
@@ -672,6 +676,8 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QString interfaceID;
 
     while(query.next()){
+        interface.d->customProperties.clear();
+        interface.d->properties.clear();
         interface.d->interfaceName =query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
         interface.d->major = query.value(EBindIndex2).toInt();
@@ -1512,6 +1518,9 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
             }
         } else if (propertyKey == INTERFACE_DESCRIPTION_KEY) {
             interface->d->properties[QServiceInterfaceDescriptor::InterfaceDescription]
+               = query.value(EBindIndex1).toString();
+        } else if (propertyKey.startsWith("c_")) {
+            interface->d->customProperties[propertyKey.mid(2)]
                = query.value(EBindIndex1).toString();
         }
     }

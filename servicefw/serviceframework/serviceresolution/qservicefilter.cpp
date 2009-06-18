@@ -288,6 +288,10 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 {
     return d->matchingRule;
 }
+QList<QString> QServiceFilter::customKeys() const
+{
+    return d->customProperties.keys();
+}
 
 #ifndef QT_NO_DATASTREAM
 /*! 
