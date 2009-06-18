@@ -49,6 +49,8 @@
 QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
+class DatabaseFileWatcher;
+
 class Q_SFW_EXPORT DatabaseManager : public QObject
 {
     Q_OBJECT
@@ -70,6 +72,12 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
 
         DBError lastError(){ return m_lastError;}
 
+        void setChangeNotificationsEnabled(DbScope scope, bool enabled);
+
+    signals:
+        void serviceAdded(const QString &serviceName, DatabaseManager::DbScope scope);
+        void serviceRemoved(const QString &serviceName, DatabaseManager::DbScope scope);
+
     private:
         void initDbPaths();
         bool openDb(DbScope scope);
@@ -78,6 +86,30 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         ServiceDatabase m_userDb;
         ServiceDatabase m_systemDb;
         DBError m_lastError;
+
+        friend class DatabaseFileWatcher;
+        DatabaseFileWatcher *m_fileWatcher;
+};
+
+
+class DatabaseFileWatcher : public QObject
+{
+    Q_OBJECT
+public:
+    DatabaseFileWatcher(DatabaseManager *parent = 0);
+
+    void setEnabled(ServiceDatabase *database, bool enabled);
+
+private slots:
+    void databaseChanged(const QString &path);
+    void databaseDirectoryChanged(const QString &path);
+
+private:
+    void notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope);
+
+    DatabaseManager *manager;
+    QFileSystemWatcher *watcher;
+    QHash<QString, QStringList> knownServices;
 };
 
 QT_END_NAMESPACE

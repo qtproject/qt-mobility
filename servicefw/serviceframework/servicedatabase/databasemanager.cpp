@@ -42,7 +42,112 @@
 #include "databasemanager.h"
 #include <qserviceinterfacedescriptor_p.h>
 
+#include <QFileSystemWatcher>
+#include <QHash>
+
+QT_BEGIN_NAMESPACE
+
+DatabaseFileWatcher::DatabaseFileWatcher(DatabaseManager *parent)
+    : QObject(parent),
+      manager(parent),
+      watcher(0)
+{
+}
+
+void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
+{
+    if (!watcher) {
+        watcher = new QFileSystemWatcher(this);
+        connect(watcher, SIGNAL(fileChanged(QString)),
+            SLOT(databaseChanged(QString)));
+        connect(watcher, SIGNAL(directoryChanged(QString)),
+            SLOT(databaseDirectoryChanged(QString)));
+    }
+
+    if (enabled) {
+        QString path = database->databasePath();
+        if (!QFile::exists(path)) {
+            watcher->addPath(QFileInfo(path).absolutePath());   //directory
+        } else {
+            knownServices[path] = database->getServiceNames(QString());
+            watcher->addPath(path);
+        }
+    } else {
+        watcher->removePath(database->databasePath());
+    }
+}
+
+void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
+{
+    ServiceDatabase *db = 0;
+    DatabaseManager::DbScope scope;
+    if (path == QFileInfo(manager->m_userDb.databasePath()).absolutePath()
+            && QFile::exists(manager->m_userDb.databasePath())) {
+        db = &manager->m_userDb;
+        scope = DatabaseManager::UserOnlyScope;
+    } else if (path == QFileInfo(manager->m_systemDb.databasePath()).absolutePath()
+            && QFile::exists(manager->m_systemDb.databasePath())) {
+        db = &manager->m_systemDb;
+        scope = DatabaseManager::SystemScope;
+    }
+
+    if (db) {
+        setEnabled(db, true);
+        watcher->removePath(path);
+        QStringList newServices = manager->getServiceNames(QString(), scope);
+        for (int i=0; i<newServices.count(); i++)
+            emit manager->serviceAdded(newServices[i], scope);
+    }
+}
+
+void DatabaseFileWatcher::databaseChanged(const QString &path)
+{
+    if (path == manager->m_userDb.databasePath())
+        notifyChanges(&manager->m_userDb, DatabaseManager::UserScope);
+    else if (path == manager->m_systemDb.databasePath())
+        notifyChanges(&manager->m_systemDb, DatabaseManager::SystemScope);
+}
+
+void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope)
+{
+    bool ok = false;
+    QStringList currentServices = database->getServiceNames(QString(), &ok);
+    if (!ok) {
+            qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
+        return;
+    }
+
+    QString dbPath = database->databasePath();
+    const QStringList &knownServicesRef = knownServices[dbPath];
+
+    QSet<QString> currentServicesSet = currentServices.toSet();
+    QSet<QString> knownServicesSet = knownServicesRef.toSet();
+    if (currentServicesSet == knownServicesSet)
+        return;
+
+    QStringList newServices;
+    for (int i=0; i<currentServices.count(); i++) {
+        if (!knownServicesSet.contains(currentServices[i]))
+            newServices << currentServices[i];
+    }
+
+    QStringList removedServices;
+    for (int i=0; i<knownServicesRef.count(); i++) {
+        if (!currentServicesSet.contains(knownServicesRef[i]))
+            removedServices << knownServicesRef[i];
+    }
+
+    knownServices[dbPath] = currentServices;
+    for (int i=0; i<newServices.count(); i++)
+        emit manager->serviceAdded(newServices[i], scope);
+    for (int i=0; i<removedServices.count(); i++)
+        emit manager->serviceRemoved(removedServices[i], scope);
+}
+
+
+
 DatabaseManager::DatabaseManager()
+    : m_fileWatcher(0)
 {
     initDbPaths();
 }
@@ -262,3 +367,12 @@ bool DatabaseManager::openDb(DbScope scope)
     m_lastError.setError(DBError::NoError);
     return true;
 }
+
+void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
+{
+    if (!m_fileWatcher)
+        m_fileWatcher = new DatabaseFileWatcher(this);
+    m_fileWatcher->setEnabled(scope == SystemScope ? &m_systemDb : &m_userDb, enabled);
+}
+
+QT_END_NAMESPACE

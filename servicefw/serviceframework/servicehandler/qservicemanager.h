@@ -146,8 +146,8 @@ protected:
     void disconnectNotify(const char *signal);
 
 Q_SIGNALS:
-    void serviceAdded(const QString& serviceName);
-    void serviceRemoved(const QString& serviceName);
+    void serviceAdded(const QString& serviceName, QServiceManager::Scope scope);
+    void serviceRemoved(const QString& serviceName, QServiceManager::Scope scope);
 
 private:
     friend class QServiceManagerPrivate;
