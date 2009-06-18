@@ -1,20 +1,22 @@
 TEMPLATE = lib
 TARGET = QtLocation
+QT = core
+
+include(../common.pri)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-include(../location.pri)
+DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
-CONFIG(debug, debug|release) {
-    SUBDIRPART = Debug
-} else {
-    SUBDIRPART = Release
-}
+INCLUDEPATH += .
+DEPENDPATH += .
 
-OBJECTS_DIR = ../$$SUBDIRPART/$$TARGET
-DESTDIR = ../$$SUBDIRPART/bin
-MOC_DIR = ../$$SUBDIRPART/$$TARGET/moc
-RCC_DIR = ../$$SUBDIRPART/$$TARGET/rcc
-UI_DIR = ../$$SUBDIRPART/$$TARGET/ui
+HEADERS +=  qlocationglobal.h \
+            qcoordinate.h \
+            qpositionupdate.h
+
+SOURCES +=  qcoordinate.cpp \
+            qpositionupdate.cpp
+

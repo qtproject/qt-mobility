@@ -1,11 +1,15 @@
 TEMPLATE = app
 TARGET = tst_qcoordinate
+CONFIG+=testcase
 
-include (../../../location.pri)
-include (../autotests.pri)
+include (../../../common.pri)
+
+INCLUDEPATH += ../../../location
 
 # Input 
 SOURCES += tst_qcoordinate.cpp
+
+LIBS += -lQtLocation
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB
