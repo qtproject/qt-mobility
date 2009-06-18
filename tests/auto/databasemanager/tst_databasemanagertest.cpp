@@ -60,6 +60,7 @@ private slots:
         void registerService();
         void getInterfaces();
         void getServiceNames();
+        void defaultService();
         void unregisterService();
         void cleanupTestCase();
 private:
@@ -112,6 +113,7 @@ void DatabaseManagerUnitTest::registerService()
 
     QStringList userServiceFiles;
     userServiceFiles << "ServiceAcme.xml" << "ServiceLuthorCorp.xml"
+                    << "ServicePrimatech.xml"
                     << "ServiceDharma_Swan.xml"
                     << "ServiceDharma_Pearl.xml"
                     << "ServiceDharma_Flame.xml";
@@ -139,13 +141,17 @@ void DatabaseManagerUnitTest::getInterfaces()
     QServiceFilter filter(iface);
     QList<QServiceInterfaceDescriptor> descriptors;
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
-    QCOMPARE(descriptors.count(), 3);
+    QCOMPARE(descriptors.count(), 5);
     QVERIFY(compareDescriptor(descriptors[0], iface, "LuthorCorp", 1,2));
     QCOMPARE(descriptors[0].inSystemScope(), false);
-    QVERIFY(compareDescriptor(descriptors[1], iface, "OMNI", 1, 1));
-    QCOMPARE(descriptors[1].inSystemScope(), true);
-    QVERIFY(compareDescriptor(descriptors[2], iface, "WayneEnt", 2, 0));
-    QCOMPARE(descriptors[2].inSystemScope(), true);
+    QVERIFY(compareDescriptor(descriptors[1], iface, "Primatech", 1, 4));
+    QCOMPARE(descriptors[1].inSystemScope(), false);
+    QVERIFY(compareDescriptor(descriptors[2], iface, "Primatech", 1, 2));
+    QCOMPARE(descriptors[2].inSystemScope(), false);
+    QVERIFY(compareDescriptor(descriptors[3], iface, "OMNI", 1, 1));
+    QCOMPARE(descriptors[3].inSystemScope(), true);
+    QVERIFY(compareDescriptor(descriptors[4], iface, "WayneEnt", 2, 0));
+    QCOMPARE(descriptors[4].inSystemScope(), true);
 
     //check that we can get descriptors for a service spread
     //over the user and system databases
@@ -198,7 +204,7 @@ void DatabaseManagerUnitTest::getServiceNames()
     QStringList serviceNames;
     serviceNames = m_dbm->getServiceNames("", DatabaseManager::UserOnlyScope);
     QStringList expectedNames;
-    expectedNames << "acme" << "LuthorCorp" << "DharmaInitiative";
+    expectedNames << "acme" << "LuthorCorp" << "Primatech" << "DharmaInitiative";
     QCOMPARE(serviceNames.count(), expectedNames.count());
     foreach(const QString &expectedName, expectedNames)
         QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
@@ -215,10 +221,79 @@ void DatabaseManagerUnitTest::getServiceNames()
     //and ensure there are no duplicates
     serviceNames = m_dbm->getServiceNames("", DatabaseManager::UserScope);
     expectedNames.clear();
-    expectedNames << "acme" << "LuthorCorp" << "omni" << "WayneEnt" << "DharmaInitiative";
+    expectedNames << "acme" << "LuthorCorp" << "Primatech" << "omni" << "WayneEnt" << "DharmaInitiative";
     QCOMPARE(serviceNames.count(), expectedNames.count());
     foreach(const QString &expectedName, expectedNames)
         QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
+}
+
+void DatabaseManagerUnitTest::defaultService()
+{
+    QServiceInterfaceDescriptor descriptor;
+
+    //get a user default service at user scope
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                    DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor,"com.omni.device.accelerometer", "LuthorCorp", 1, 2));
+    QVERIFY(!descriptor.inSystemScope());
+
+    //user a sytem default from user scope
+    descriptor = m_dbm->defaultServiceInterface("com.Dharma.wheel", DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor,"com.dharma.wheel", "DharmaInitiative", 1,0));
+    QVERIFY(descriptor.inSystemScope());
+
+    //get a system default service at system scope
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                     DatabaseManager::SystemScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer", "omni", 1, 1));
+
+    //set a user default from a user interface implementation
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    filter.setServiceName("Primatech");
+    filter.setInterface("com.omni.device.accelerometer", "1.4");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                    DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor,"com.omni.device.accelerometer", "Primatech", 1, 4));
+    QVERIFY(!descriptor.inSystemScope());
+
+    //set a system default from a  system interface implementation
+    filter.setServiceName("WayneEnt");
+    filter.setInterface("com.omni.device.accelerometer","2.0");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QCOMPARE(descriptors.count(), 1);
+
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::SystemScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                    DatabaseManager::SystemScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer", "WayneEnt", 2,0));
+    QVERIFY(descriptor.inSystemScope());
+
+    //set a user default with a system interface descriptor
+    filter.setServiceName("omni");
+    filter.setInterface("com.omni.device.accelerometer","1.1");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                DatabaseManager::UserScope);
+    QVERIFY(descriptor.isValid());
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer", "omni", 1, 1));
+    QVERIFY(descriptor.inSystemScope());
+
+    //set a system default using a user interface descriptor
+    filter.setServiceName("Primatech");
+    filter.setInterface("com.omni.device.accelerometer","1.4");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+
+    QVERIFY(!m_dbm->setDefaultService(descriptors[0], DatabaseManager::SystemScope));
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::InvalidDescriptorScope);
 }
 
 void DatabaseManagerUnitTest::unregisterService()
@@ -268,6 +343,8 @@ void DatabaseManagerUnitTest::unregisterService()
 bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
         QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
+    if (interface.d == NULL )
+        return false;
     interface.d->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
 
     return compareDescriptor(interface, interfaceName, serviceName, majorVersion, minorVersion,
