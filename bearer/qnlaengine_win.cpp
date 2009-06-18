@@ -376,7 +376,7 @@ DWORD QNlaThread::parseBlob(NLA_BLOB *blob, QNetworkConfigurationPrivate *cpPriv
     case NLA_INTERFACE:
         cpPriv->state = QNetworkConfiguration::Active;
         if (QNlaEngine *engine = qobject_cast<QNlaEngine *>(parent())) {
-            engine->configurationInterface[cpPriv->id] =
+            engine->configurationInterface[cpPriv->id.toUInt()] =
                 QString(blob->data.interfaceData.adapterName);
         }
         break;
@@ -415,7 +415,7 @@ QNetworkConfigurationPrivate *QNlaThread::parseQuerySet(const WSAQUERYSET *query
 
     cpPriv->name = QString::fromUtf16(querySet->lpszServiceInstanceName);
     cpPriv->isValid = true;
-    cpPriv->id = QString("NLA:%1").arg(cpPriv->name);
+    cpPriv->id = QString::number(qHash(QLatin1String("NLA:") + cpPriv->name));
     cpPriv->state = QNetworkConfiguration::Defined;
     cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 
@@ -488,7 +488,14 @@ void QNlaThread::fetchConfigurations()
         const QString humanReadableName = interface.humanReadableName();
         cpPriv->name = humanReadableName.isEmpty() ? interface.name() : humanReadableName;
         cpPriv->isValid = true;
-        cpPriv->id = "NLA:" + interface.hardwareAddress();
+
+        uint identifier;
+        if (interface.index())
+            identifier = qHash(QLatin1String("NLA:") + QString::number(interface.index()));
+        else
+            identifier = qHash(QLatin1String("NLA:") + interface.hardwareAddress());
+
+        cpPriv->id = QString::number(identifier);
         cpPriv->state = QNetworkConfiguration::Discovered;
         cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
         if (interface.flags() & QNetworkInterface::IsUp)
@@ -496,7 +503,7 @@ void QNlaThread::fetchConfigurations()
 
         QNlaEngine *engine = qobject_cast<QNlaEngine *>(parent());
         if (engine)
-            engine->configurationInterface[cpPriv->id] = interface.name();
+            engine->configurationInterface[identifier] = interface.name();
 
         foundConfigurations.append(cpPriv);
     }
@@ -577,22 +584,24 @@ QList<QNetworkConfigurationPrivate *> QNlaEngine::getConfigurations(bool *ok)
     return nlaThread->getConfigurations();
 }
 
-QStringList QNlaEngine::getInterfacesFromId(const QString &id)
+QString QNlaEngine::getInterfaceFromId(const QString &id)
 {
-    return configurationInterface.values(id);
+    return configurationInterface.value(id.toUInt());
+}
+
+bool QNlaEngine::hasIdentifier(const QString &id)
+{
+    return configurationInterface.contains(id.toUInt());
 }
 
 QString QNlaEngine::bearerName(const QString &id)
 {
-    QStringList interfaces = getInterfacesFromId(id);
+    QString interface = getInterfaceFromId(id);
 
-    if (interfaces.isEmpty())
+    if (interface.isEmpty())
         return QString();
 
-    if (interfaces.count() > 1)
-        qWarning("%s: Multiple interfaces returned", __FUNCTION__);
-
-    return qGetInterfaceType(interfaces.at(0));
+    return qGetInterfaceType(interface);
 }
 
 void QNlaEngine::connectToId(const QString &id)

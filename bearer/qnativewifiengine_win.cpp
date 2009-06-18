@@ -223,7 +223,7 @@ QList<QNetworkConfigurationPrivate *> QNativeWifiEngine::getConfigurations(bool 
             cpPriv->isValid = true;
 
             cpPriv->name = networkName;
-            cpPriv->id = QString("WLAN:%1").arg(cpPriv->name);
+            cpPriv->id = QString::number(qHash(QLatin1String("WLAN:") + cpPriv->name));
 
             if (!(network.dwFlags & WLAN_AVAILABLE_NETWORK_HAS_PROFILE))
                 cpPriv->state = QNetworkConfiguration::Undefined;
@@ -257,16 +257,14 @@ QList<QNetworkConfigurationPrivate *> QNativeWifiEngine::getConfigurations(bool 
     return foundConfigurations;
 }
 
-QStringList QNativeWifiEngine::getInterfacesFromId(const QString &id)
+QString QNativeWifiEngine::getInterfaceFromId(const QString &id)
 {
-    QStringList interfaces;
-
     // enumerate interfaces
     WLAN_INTERFACE_INFO_LIST *interfaceList;
     DWORD result = local_WlanEnumInterfaces(handle, 0, &interfaceList);
     if (result != ERROR_SUCCESS) {
         qWarning("%s: WlanEnumInterfaces failed with error %d\n", __FUNCTION__, result);
-        return interfaces;
+        return QString();
     }
 
     for (unsigned int i = 0; i < interfaceList->dwNumberOfItems; ++i) {
@@ -284,7 +282,8 @@ QStringList QNativeWifiEngine::getInterfacesFromId(const QString &id)
             continue;
         }
 
-        if (QString::fromUtf16(connectionAttributes->strProfileName) == id.mid(5)) {
+        if (qHash(QLatin1String("WLAN:") +
+                  QString::fromUtf16(connectionAttributes->strProfileName)) == id.toUInt()) {
             QString guid("{%1-%2-%3-%4%5-%6%7%8%9%10%11}");
 
             guid = guid.arg(interface.InterfaceGuid.Data1, 8, 16, QChar('0'));
@@ -293,13 +292,64 @@ QStringList QNativeWifiEngine::getInterfacesFromId(const QString &id)
             for (int i = 0; i < 8; ++i)
                 guid = guid.arg(interface.InterfaceGuid.Data4[i], 2, 16, QChar('0'));
 
-            interfaces.append(guid.toUpper());
+            local_WlanFreeMemory(connectionAttributes);
+
+            return guid.toUpper();
         }
 
         local_WlanFreeMemory(connectionAttributes);
     }
 
-    return interfaces;
+    return QString();
+}
+
+bool QNativeWifiEngine::hasIdentifier(const QString &id)
+{
+    // enumerate interfaces
+    WLAN_INTERFACE_INFO_LIST *interfaceList;
+    DWORD result = local_WlanEnumInterfaces(handle, 0, &interfaceList);
+    if (result != ERROR_SUCCESS) {
+        qWarning("%s: WlanEnumInterfaces failed with error %d\n", __FUNCTION__, result);
+        return false;
+    }
+
+    for (unsigned int i = 0; i < interfaceList->dwNumberOfItems; ++i) {
+        const WLAN_INTERFACE_INFO &interface = interfaceList->InterfaceInfo[i];
+
+        WLAN_AVAILABLE_NETWORK_LIST *networkList;
+        result = local_WlanGetAvailableNetworkList(handle, &interface.InterfaceGuid,
+                                                   3, 0, &networkList);
+        if (result != ERROR_SUCCESS) {
+            qWarning("%s: WlanGetAvailableNetworkList failed with error %d\n",
+                     __FUNCTION__, result);
+            continue;
+        }
+
+        for (unsigned int j = 0; j < networkList->dwNumberOfItems; ++j) {
+            WLAN_AVAILABLE_NETWORK &network = networkList->Network[j];
+
+            QString networkName;
+
+            if (network.strProfileName[0] != 0) {
+                networkName = QString::fromUtf16(network.strProfileName);
+            } else {
+                networkName = QByteArray(reinterpret_cast<char *>(network.dot11Ssid.ucSSID),
+                                         network.dot11Ssid.uSSIDLength);
+            }
+
+            if (qHash(QLatin1String("WLAN:") + networkName) == id.toUInt()) {
+                local_WlanFreeMemory(networkList);
+                local_WlanFreeMemory(interfaceList);
+                return true;
+            }
+        }
+
+        local_WlanFreeMemory(networkList);
+    }
+
+    local_WlanFreeMemory(interfaceList);
+
+    return false;
 }
 
 QString QNativeWifiEngine::bearerName(const QString &)
@@ -317,7 +367,7 @@ void QNativeWifiEngine::connectToId(const QString &id)
         return;
     }
 
-    bool foundProfile = false;
+    QString profile;
 
     for (unsigned int i = 0; i < interfaceList->dwNumberOfItems; ++i) {
         const WLAN_INTERFACE_INFO &interface = interfaceList->InterfaceInfo[i];
@@ -331,25 +381,22 @@ void QNativeWifiEngine::connectToId(const QString &id)
             continue;
         }
 
-        QStringList seenNetworks;
-
         for (unsigned int j = 0; j < networkList->dwNumberOfItems; ++j) {
             WLAN_AVAILABLE_NETWORK &network = networkList->Network[j];
 
-            QString networkName;
+            profile = QString::fromUtf16(network.strProfileName);
 
-            if (QString::fromUtf16(network.strProfileName) == id.mid(5)) {
-                foundProfile = true;
+            if (qHash(QLatin1String("WLAN:") + profile) == id.toUInt())
                 break;
-            }
+            else
+                profile.clear();
         }
 
         local_WlanFreeMemory(networkList);
 
-        if (foundProfile) {
+        if (!profile.isEmpty()) {
             WLAN_CONNECTION_PARAMETERS parameters;
             parameters.wlanConnectionMode = wlan_connection_mode_profile;
-            const QString profile = id.mid(5);
             parameters.strProfile = profile.utf16();
             parameters.pDot11Ssid = 0;
             parameters.pDesiredBssidList = 0;
@@ -369,20 +416,19 @@ void QNativeWifiEngine::connectToId(const QString &id)
 
     local_WlanFreeMemory(interfaceList);
 
-    if (!foundProfile)
+    if (profile.isEmpty())
         emit connectionError(id, InterfaceLookupError);
 }
 
 void QNativeWifiEngine::disconnectFromId(const QString &id)
 {
-    QStringList interfaces = getInterfacesFromId(id);
+    QString interface = getInterfaceFromId(id);
 
-    if (interfaces.isEmpty()) {
+    if (interface.isEmpty()) {
         emit connectionError(id, InterfaceLookupError);
         return;
     }
 
-    const QString interface = interfaces.at(0);
     QStringList split = interface.mid(1, interface.length() - 2).split('-');
 
     GUID guid;

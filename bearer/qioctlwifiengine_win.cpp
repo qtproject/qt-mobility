@@ -126,7 +126,7 @@ QList<QNetworkConfigurationPrivate *> QIoctlWifiEngine::getConfigurations(bool *
 
             cpPriv->name = ssid;
             cpPriv->isValid = true;
-            cpPriv->id = QString("WLAN:%1").arg(cpPriv->name);
+            cpPriv->id = QString::number(qHash(QLatin1String("IOWLAN:") + cpPriv->name));
 
             /*
                 TODO
@@ -160,10 +160,8 @@ QList<QNetworkConfigurationPrivate *> QIoctlWifiEngine::getConfigurations(bool *
     return foundConfigurations;
 }
 
-QStringList QIoctlWifiEngine::getInterfacesFromId(const QString &id)
+QString QIoctlWifiEngine::getInterfaceFromId(const QString &id)
 {
-    QStringList interfaces;
-
     unsigned long oid = OID_802_11_SSID;
     NDIS_802_11_SSID ssid;
     DWORD bytesWritten;
@@ -194,11 +192,74 @@ QStringList QIoctlWifiEngine::getInterfacesFromId(const QString &id)
         QByteArray currentSsid =
             QByteArray::fromRawData(reinterpret_cast<char *>(ssid.Ssid), ssid.SsidLength);
 
-        if (currentSsid == id.mid(5))
-            interfaces.append(interface.name());
+        if (qHash(QLatin1String("IOWLAN:") + currentSsid) == id.toUInt())
+            return interface.name();
     }
 
-    return interfaces;
+    return QString();
+}
+
+bool QIoctlWifiEngine::hasIdentifier(const QString &id)
+{
+    unsigned long oid;
+    char buffer[0x10000];
+    DWORD bytesWritten;
+
+    foreach (const QNetworkInterface &interface, QNetworkInterface::allInterfaces()) {
+        HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(interface.name()).utf16(), 0,
+                                   FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+        if (handle == INVALID_HANDLE_VALUE)
+            continue;
+
+        // Get active access point
+        oid = OID_802_11_SSID;
+        bytesWritten = 0;
+        bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                      buffer, sizeof(buffer), &bytesWritten, 0);
+        if (!result) {
+            int error = GetLastError();
+            if (error != ERROR_NOT_SUPPORTED)
+                qWarning("%s: DeviceIoControl failed with error %d\n", __FUNCTION__, error);
+            CloseHandle(handle);
+            continue;
+        }
+
+        NDIS_802_11_SSID *ssid = reinterpret_cast<NDIS_802_11_SSID *>(buffer);
+
+        QByteArray activeSsid(reinterpret_cast<char *>(ssid->Ssid), ssid->SsidLength);
+
+        oid = OID_802_11_BSSID_LIST;
+        bytesWritten = 0;
+        result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                 buffer, sizeof(buffer), &bytesWritten, 0);
+        if (!result) {
+            int error = GetLastError();
+            if (error != ERROR_NOT_SUPPORTED)
+                qWarning("%s: DeviceIoControl failed with error %d\n", __FUNCTION__, error);
+            CloseHandle(handle);
+            continue;
+        }
+
+        NDIS_802_11_BSSID_LIST *bssIdList = reinterpret_cast<NDIS_802_11_BSSID_LIST *>(buffer);
+
+        char *bssIdBuffer = reinterpret_cast<char *>(bssIdList->Bssid);
+
+        int bssIdCount = bssIdList->NumberOfItems;
+        while (bssIdBuffer < buffer + bytesWritten && bssIdCount > 0) {
+            NDIS_WLAN_BSSID *bssId = reinterpret_cast<NDIS_WLAN_BSSID *>(bssIdBuffer);
+
+            QByteArray ssid(reinterpret_cast<char *>(bssId->Ssid.Ssid), bssId->Ssid.SsidLength);
+
+            if (qHash(QLatin1String("IOWLAN:") + ssid) == id.toUInt()) {
+                CloseHandle(handle);
+                return true;
+            }
+        }
+
+        CloseHandle(handle);
+    }
+
+    return false;
 }
 
 QString QIoctlWifiEngine::bearerName(const QString &)

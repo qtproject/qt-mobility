@@ -55,7 +55,7 @@
 
 #include "qnetworksessionengine_win_p.h"
 
-#include <QHash>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -81,7 +81,8 @@ public:
     ~QNlaEngine();
 
     QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
-    QStringList getInterfacesFromId(const QString &id);
+    QString getInterfaceFromId(const QString &id);
+    bool hasIdentifier(const QString &id);
 
     QString bearerName(const QString &id);
 
@@ -95,7 +96,7 @@ public:
 private:
     QWindowsSockInit winSock;
     QNlaThread *nlaThread;
-    QHash<QString, QString> configurationInterface;
+    QMap<uint, QString> configurationInterface;
 };
 
 QT_END_NAMESPACE

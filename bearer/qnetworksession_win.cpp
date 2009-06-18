@@ -59,22 +59,19 @@ QT_BEGIN_NAMESPACE
 
 static QNetworkSessionEngine *getEngineFromId(const QString &id)
 {
-    if (id.startsWith("WLAN:")) {
+    QNlaEngine *nla = QNlaEngine::instance();
+    if (nla && nla->hasIdentifier(id))
+        return nla;
+
 #ifndef Q_OS_WINCE
-        QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
-        if (nativeWifi) {
-            return nativeWifi;
-        } else {
-            QIoctlWifiEngine *ioctlWifi = QIoctlWifiEngine::instance();
-            if (ioctlWifi)
-                return ioctlWifi;
-        }
+    QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
+    if (nativeWifi && nativeWifi->hasIdentifier(id))
+        return nativeWifi;
+
+    QIoctlWifiEngine *ioctlWifi = QIoctlWifiEngine::instance();
+    if (ioctlWifi && ioctlWifi->hasIdentifier(id))
+        return ioctlWifi;
 #endif
-    } else if (id.startsWith("NLA:")) {
-        QNlaEngine *nla = QNlaEngine::instance();
-        if (nla)
-            return nla;
-    }
 
     return 0;
 }
@@ -307,19 +304,17 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     if (state != QNetworkSession::Connected)
         return QNetworkInterface();
 
-    QStringList interfaces;
+    QString interface;
 
     if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
-        interfaces = engine->getInterfacesFromId(actualConfig.identifier());
+        interface = engine->getInterfaceFromId(actualConfig.identifier());
     else
-        interfaces = engine->getInterfacesFromId(publicConfig.identifier());
+        interface = engine->getInterfaceFromId(publicConfig.identifier());
 
-    if (interfaces.isEmpty())
+    if (interface.isEmpty())
         return QNetworkInterface();
 
-    if (interfaces.count() > 1) qWarning("%s: Multiple interfaces returned", __FUNCTION__);
-
-    return QNetworkInterface::interfaceFromName(interfaces.at(0));
+    return QNetworkInterface::interfaceFromName(interface);
 }
 
 QVariant QNetworkSessionPrivate::property(const QString& key)
