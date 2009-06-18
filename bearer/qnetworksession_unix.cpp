@@ -427,6 +427,7 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
         QString APPAth = publicConfig.identifier();
         accessPointIface = new QNetworkManagerInterfaceAccessPoint(APPAth);
         currentBearerName = "WLAN";
+        accessPointIface->setConnections();
         connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                 this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     }
@@ -440,6 +441,7 @@ void QNetworkSessionPrivate::updateNetworkConfigurations()
         currentBearerName = getBearerName(devIface->deviceType());
         currentConnectionPath = getConnectionPath();
         deviceStateChanged(devIface->state());
+        devIface->setConnections();
         connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
                 this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
     } else {
@@ -507,7 +509,7 @@ void QNetworkSessionPrivate::activateNmSession()
         if(devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
 
             devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
-
+            devWirelessIface->setConnections();
             connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                     this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
@@ -558,6 +560,7 @@ void QNetworkSessionPrivate::activateConnection( const QString & connPath, const
                         this, SLOT(configChanged(QNetworkConfiguration)));
                 
                 iface = new QNetworkManagerInterface();
+                iface->setConnections();
                 connect(iface,SIGNAL(stateChanged(const QString &, quint32)),
                         this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
                 iface->activateConnection(

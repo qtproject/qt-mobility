@@ -136,7 +136,7 @@ static QString qGetInterfaceType(const QString &interface)
     HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(interface).utf16(), 0,
                                FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
     if (handle == INVALID_HANDLE_VALUE)
-        return QLatin1String("Unknown");
+        return QString();
 
     oid = OID_GEN_MEDIA_SUPPORTED;
     bytesWritten = 0;
@@ -144,7 +144,7 @@ static QString qGetInterfaceType(const QString &interface)
                                   &medium, sizeof(medium), &bytesWritten, 0);
     if (!result) {
         CloseHandle(handle);
-        return QLatin1String("Unknown");
+        return QString();
     }
 
     oid = OID_GEN_PHYSICAL_MEDIUM;
@@ -157,7 +157,7 @@ static QString qGetInterfaceType(const QString &interface)
         if (medium == NdisMedium802_3)
             return QLatin1String("Ethernet");
         else
-            return QLatin1String("Unknown");
+            return QString();
     }
 
     CloseHandle(handle);
@@ -184,7 +184,7 @@ static QString qGetInterfaceType(const QString &interface)
 
 #endif
 
-    return QLatin1String("Unknown");
+    return QString();
 }
 
 class QNlaThread : public QThread
