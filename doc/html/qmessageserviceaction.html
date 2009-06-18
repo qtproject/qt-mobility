@@ -21,25 +21,25 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#forward">forward</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#reply">reply</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#forward">forward</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#reply">reply</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#activityChanged">activityChanged</a></b> ( QMessageServiceAction::Activity <i>a</i> )</li>
+<li><div class="fn"/>void <b><a href="qmessageserviceaction.html#activityChanged">activityChanged</a></b> ( QMessageServiceAction::Activity <i>a</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -80,6 +80,7 @@
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
 <h3 class="fn"><a name="retrieve-2"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Retrieve the container identified by <i>id</i>, the contents of the container should also be retrieved.</p>
 <p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
@@ -91,7 +92,7 @@
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td align="right"><div align="right">Messaging API</div></td>
 </tr></table></div></address></body>
 </html>

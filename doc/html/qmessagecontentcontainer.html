@@ -22,52 +22,52 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</li>
-<li><div class="fn"></div>virtual <b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</li>
-<li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#appendContent">appendContent</a></b> ( const QMessageContentContainer &amp; <i>content</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField-2">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#clearContents">clearContents</a></b> ()</li>
-<li><div class="fn"></div>virtual const QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId <i>id</i> ) const</li>
-<li><div class="fn"></div>virtual QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container-2">container</a></b> ( const QMessageContentContainerId <i>id</i> )</li>
-<li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#containerId">containerId</a></b> () const</li>
-<li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageContentContainerIdList <b><a href="qmessagecontentcontainer.html#contentIds">contentIds</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentType">contentType</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a></b> () const</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</a></b> () const</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessagecontentcontainer.html#decodedTextContent">decodedTextContent</a></b> () const</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessagecontentcontainer.html#headerField">headerField</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
-<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
-<li><div class="fn"></div>virtual QList&lt;QByteArray&gt; <b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a></b> ( QDataStream &amp; <i>in</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a></b> ( const QMessageContentContainerId &amp; <i>id</i>, const QMessageContentContainer &amp; <i>content</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContent">setContent</a></b> ( const QString &amp; <i>text</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContent-2">setContent</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentFileName">setContentFileName</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentType">setContentType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
+<li><div class="fn"/><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</li>
+<li><div class="fn"/>virtual <b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</li>
+<li><div class="fn"/>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#appendContent">appendContent</a></b> ( const QMessageContentContainer &amp; <i>content</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField-2">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#clearContents">clearContents</a></b> ()</li>
+<li><div class="fn"/>virtual const QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId <i>id</i> ) const</li>
+<li><div class="fn"/>virtual QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container-2">container</a></b> ( const QMessageContentContainerId <i>id</i> )</li>
+<li><div class="fn"/>virtual bool <b><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a></b> () const</li>
+<li><div class="fn"/>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#containerId">containerId</a></b> () const</li>
+<li><div class="fn"/>virtual bool <b><a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a></b> () const</li>
+<li><div class="fn"/>virtual QMessageContentContainerIdList <b><a href="qmessagecontentcontainer.html#contentIds">contentIds</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentType">contentType</a></b> () const</li>
+<li><div class="fn"/>virtual QByteArray <b><a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a></b> () const</li>
+<li><div class="fn"/>virtual QString <b><a href="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</a></b> () const</li>
+<li><div class="fn"/>virtual QString <b><a href="qmessagecontentcontainer.html#decodedTextContent">decodedTextContent</a></b> () const</li>
+<li><div class="fn"/>virtual QString <b><a href="qmessagecontentcontainer.html#headerField">headerField</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
+<li><div class="fn"/>virtual QList&lt;QString&gt; <b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
+<li><div class="fn"/>virtual QList&lt;QByteArray&gt; <b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</li>
+<li><div class="fn"/>virtual uint <b><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a></b> () const</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a></b> ( QDataStream &amp; <i>in</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a></b> ( const QMessageContentContainerId &amp; <i>id</i>, const QMessageContentContainer &amp; <i>content</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContent">setContent</a></b> ( const QString &amp; <i>text</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContent-2">setContent</a></b> ( const QByteArray &amp; <i>data</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a></b> ( const QByteArray &amp; <i>data</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContentFileName">setContentFileName</a></b> ( const QByteArray &amp; <i>data</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setContentType">setContentType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
+<li><div class="fn"/>virtual void <b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"></div>QList&lt;QByteArray&gt; <b><a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</a></b> ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )</li>
+<li><div class="fn"/>QList&lt;QByteArray&gt; <b><a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</a></b> ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )</li>
 </ul>
 <a name="protected-functions"></a>
 <h3>Protected Functions</h3>
 <ul>
-<li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#prependContent">prependContent</a></b> ( const QMessageContentContainer &amp; <i>content</i> )</li>
+<li><div class="fn"/>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#prependContent">prependContent</a></b> ( const QMessageContentContainer &amp; <i>content</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -104,6 +104,7 @@
 <p>If <i>value</i> is not ASCII text then it will be encoded by the first charset returned by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>() that can encode <i>value</i> if any; otherwise <i>value</i> will be encoded using &quot;UTF-8&quot;.</p>
 <p>See also <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), and <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>().</p>
 <h3 class="fn"><a name="appendHeaderField-2"></a>void QMessageContentContainer::appendHeaderField ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Append a header field with name <i>name</i> and value <i>value</i> to the end of the list of header fields for the container. Any existing header field with the same name is not modified.</p>
 <p>See also <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="clearContents"></a>void QMessageContentContainer::clearContents ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -114,6 +115,7 @@
 <p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns that other container; otherwise returns an empty container constructed with the default constructor.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
 <h3 class="fn"><a name="container-2"></a>QMessageContentContainer QMessageContentContainer::container ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns that other container; otherwise returns an empty container constructed with the default constructor.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
 <h3 class="fn"><a name="containerDataModified"></a>bool QMessageContentContainer::containerDataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -181,6 +183,7 @@
 <p>Does not modify the content subtype, the subtype should be set separately.</p>
 <p>See also <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>() and <a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a>().</p>
 <h3 class="fn"><a name="setContent-2"></a>void QMessageContentContainer::setContent ( const QByteArray &amp; <i>data</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Sets the content to <i>data</i>.</p>
 <p>Does not modify the content type, subtype or charset, they should be set separately.</p>
 <p>See also <a href="qmessagecontentcontainer.html#setContentType">setContentType</a>(), <a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a>(), and <a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a>().</p>
@@ -207,6 +210,7 @@
 <p>The type, subtype and charset of the container are stored in the 'Content-Type' header field, the transfer encoding, such as quoted-printable, is stored in the 'Content-Transfer-Encoding' header field, the filename of the container is stored in the 'Content-Disposition' header field. These header fields should not be modified using the setHeaderField() function and doing so may result in undefined behavior.</p>
 <p>See also <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="setHeaderField-2"></a>void QMessageContentContainer::setHeaderField ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Sets the value of the first header field of the container with name <i>name</i> to <i>value</i> if it already exists; otherwise appends a header with the supplied name and value.</p>
 <p>See also <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="setPreferredCharsets"></a>void QMessageContentContainer::setPreferredCharsets ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -217,7 +221,7 @@
 <p>See also <a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td align="right"><div align="right">Messaging API</div></td>
 </tr></table></div></address></body>
 </html>

@@ -3,22 +3,6 @@
 <section ref="classes.html" title="Classes">
     <section ref="qmessage.html" title="QMessage Class Reference">
         <keyword ref="qmessage.html">QMessage</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessage.html#MessagePriority-enum">MessagePriority</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::High</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::Normal</keyword>
-        <keyword ref="qmessage.html#MessagePriority-enum">QMessage::Low</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">MessageStatus</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::HasAttachments</keyword>
-        <keyword ref="qmessage.html#MessageStatus-enum">QMessage::Read</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">MessageType</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Sms</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Xmpp</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::None</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Email</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::AnyType</keyword>
-        <keyword ref="qmessage.html#MessageType-enum">QMessage::Mms</keyword>
-=======
         <keyword ref="qmessage.html#Priority-enum">Priority</keyword>
         <keyword ref="qmessage.html#Priority-enum">QMessage::High</keyword>
         <keyword ref="qmessage.html#Priority-enum">QMessage::Normal</keyword>
@@ -38,17 +22,13 @@
         <keyword ref="qmessage.html#Type-enum">QMessage::AnyType</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Mms</keyword>
         <keyword ref="qmessage.html#appendAttachments">appendAttachments</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessage.html#attachments">attachments</keyword>
         <keyword ref="qmessage.html#bcc">bcc</keyword>
         <keyword ref="qmessage.html#body">body</keyword>
         <keyword ref="qmessage.html#cc">cc</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessage.html#clearAttachments">clearAttachments</keyword>
         <keyword ref="qmessage.html#customField">customField</keyword>
         <keyword ref="qmessage.html#customFields">customFields</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessage.html#dataModified">dataModified</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
         <keyword ref="qmessage.html#destinationPort">destinationPort</keyword>
@@ -56,35 +36,19 @@
         <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
         <keyword ref="qmessage.html#id">id</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessage.html#messageType">messageType</keyword>
-        <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
-        <keyword ref="qmessage.html#priority">priority</keyword>
-        <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
-        <keyword ref="qmessage.html#setAttachments">setAttachments</keyword>
-=======
         <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
         <keyword ref="qmessage.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessage.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessage.html#setBcc">setBcc</keyword>
         <keyword ref="qmessage.html#setBody">setBody</keyword>
         <keyword ref="qmessage.html#setBodyFromFile">setBodyFromFile</keyword>
         <keyword ref="qmessage.html#setCc">setCc</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessage.html#setDate">setDate</keyword>
-        <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
-        <keyword ref="qmessage.html#setFrom">setFrom</keyword>
-        <keyword ref="qmessage.html#setId">setId</keyword>
-        <keyword ref="qmessage.html#setMessageType">setMessageType</keyword>
-=======
         <keyword ref="qmessage.html#setCustomField">setCustomField</keyword>
         <keyword ref="qmessage.html#setDate">setDate</keyword>
         <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
@@ -92,41 +56,12 @@
         <keyword ref="qmessage.html#setStatus">setStatus</keyword>
         <keyword ref="qmessage.html#setSubject">setSubject</keyword>
         <keyword ref="qmessage.html#setTo">setTo</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessage.html#setType">setType</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessage.html#size">size</keyword>
         <keyword ref="qmessage.html#status">status</keyword>
         <keyword ref="qmessage.html#subject">subject</keyword>
         <keyword ref="qmessage.html#to">to</keyword>
         <keyword ref="qmessage.html#toTransmissionFormat">toTransmissionFormat</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <section ref="qmessage-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagecontent.html" title="QMessageContent Class Reference">
-        <keyword ref="qmessagecontent.html">QMessageContent</keyword>
-        <keyword ref="qmessagecontent.html#contentAvailable">contentAvailable</keyword>
-        <keyword ref="qmessagecontent.html#contentSubType">contentSubType</keyword>
-        <keyword ref="qmessagecontent.html#contentType">contentType</keyword>
-        <keyword ref="qmessagecontent.html#decodedContent">decodedContent</keyword>
-        <keyword ref="qmessagecontent.html#decodedContentFileName">decodedContentFileName</keyword>
-        <keyword ref="qmessagecontent.html#decodedTextContent">decodedTextContent</keyword>
-        <keyword ref="qmessagecontent.html#fileName">fileName</keyword>
-        <keyword ref="qmessagecontent.html#id">id</keyword>
-        <keyword ref="qmessagecontent.html#indicativeSize">indicativeSize</keyword>
-        <keyword ref="qmessagecontent.html#serialize">serialize</keyword>
-        <keyword ref="qmessagecontent.html#setId">setId</keyword>
-        <section ref="qmessagecontent-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagecontentid.html" title="QMessageContentId Class Reference">
-        <keyword ref="qmessagecontentid.html">QMessageContentId</keyword>
-        <keyword ref="qmessagecontentid.html#isValid">isValid</keyword>
-        <keyword ref="qmessagecontentid.html#toString">toString</keyword>
-        <keyword ref="qmessagecontentid.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagecontentid.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagecontentid-members.html" title="List of all members"/>
-=======
         <keyword ref="qmessage.html#type">type</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
@@ -231,7 +166,6 @@
         <keyword ref="qmessagecontentcontainerid.html#operator-eq">operator=</keyword>
         <keyword ref="qmessagecontentcontainerid.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessagecontentcontainerid-members.html" title="List of all members"/>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
     </section>
     <section ref="qmessagedatacomparator.html" title="QMessageDataComparator Namespace Reference">
         <keyword ref="qmessagedatacomparator.html">QMessageDataComparator</keyword>
@@ -241,13 +175,10 @@
         <keyword ref="qmessagedatacomparator.html#InclusionComparator-enum">InclusionComparator</keyword>
         <keyword ref="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::Includes</keyword>
         <keyword ref="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::Excludes</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessagedatacomparator.html#Option-enum">Option</keyword>
         <keyword ref="qmessagedatacomparator.html#Option-enum">Options</keyword>
         <keyword ref="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::CaseSensitive</keyword>
         <keyword ref="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::FullWord</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagedatacomparator.html#RelationComparator-enum">RelationComparator</keyword>
         <keyword ref="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::GreaterThan</keyword>
         <keyword ref="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::LessThanEqual</keyword>
@@ -256,12 +187,6 @@
     </section>
     <section ref="qmessagefilterkey.html" title="QMessageFilterKey Class Reference">
         <keyword ref="qmessagefilterkey.html">QMessageFilterKey</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessagefilterkey.html#body">body</keyword>
-        <keyword ref="qmessagefilterkey.html#id">id</keyword>
-        <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefilterkey.html#messageType">messageType</keyword>
-=======
         <keyword ref="qmessagefilterkey.html#ancestorFolderIds">ancestorFolderIds</keyword>
         <keyword ref="qmessagefilterkey.html#body">body</keyword>
         <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
@@ -270,23 +195,16 @@
         <keyword ref="qmessagefilterkey.html#options">options</keyword>
         <keyword ref="qmessagefilterkey.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessagefilterkey.html#parentFolderId">parentFolderId</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
         <keyword ref="qmessagefilterkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagefilterkey.html#recipients">recipients</keyword>
         <keyword ref="qmessagefilterkey.html#sender">sender</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessagefilterkey.html#setOptions">setOptions</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagefilterkey.html#size">size</keyword>
         <keyword ref="qmessagefilterkey.html#status">status</keyword>
         <keyword ref="qmessagefilterkey.html#subject">subject</keyword>
         <keyword ref="qmessagefilterkey.html#timeStamp">timeStamp</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessagefilterkey.html#type">type</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagefilterkey.html#operator-and">operator&amp;</keyword>
         <keyword ref="qmessagefilterkey.html#operator-and-eq">operator&amp;=</keyword>
         <keyword ref="qmessagefilterkey.html#operator-eq">operator=</keyword>
@@ -296,8 +214,6 @@
         <keyword ref="qmessagefilterkey.html#operator-7e">operator~</keyword>
         <section ref="qmessagefilterkey-members.html" title="List of all members"/>
     </section>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
     <section ref="qmessagefolder.html" title="QMessageFolder Class Reference">
         <keyword ref="qmessagefolder.html">QMessageFolder</keyword>
         <keyword ref="qmessagefolder.html#StandardFolder-enum">StandardFolder</keyword>
@@ -352,7 +268,6 @@
         <keyword ref="qmessagefoldersortkey.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessagefoldersortkey-members.html" title="List of all members"/>
     </section>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
     <section ref="qmessageid.html" title="QMessageId Class Reference">
         <keyword ref="qmessageid.html">QMessageId</keyword>
         <keyword ref="qmessageid.html#isValid">isValid</keyword>
@@ -368,10 +283,7 @@
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
         <keyword ref="qmessageserviceaction.html#forward">forward</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessageserviceaction.html#reply">reply</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>
@@ -380,13 +292,7 @@
     </section>
     <section ref="qmessagesortkey.html" title="QMessageSortKey Class Reference">
         <keyword ref="qmessagesortkey.html">QMessageSortKey</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessagesortkey.html#id">id</keyword>
         <keyword ref="qmessagesortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagesortkey.html#messageType">messageType</keyword>
-=======
-        <keyword ref="qmessagesortkey.html#isEmpty">isEmpty</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagesortkey.html#priority">priority</keyword>
         <keyword ref="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagesortkey.html#recipients">recipients</keyword>
@@ -395,10 +301,7 @@
         <keyword ref="qmessagesortkey.html#status">status</keyword>
         <keyword ref="qmessagesortkey.html#subject">subject</keyword>
         <keyword ref="qmessagesortkey.html#timeStamp">timeStamp</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-=======
         <keyword ref="qmessagesortkey.html#type">type</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagesortkey.html#operator-2b">operator+</keyword>
         <keyword ref="qmessagesortkey.html#operator-2b-eq">operator+=</keyword>
         <keyword ref="qmessagesortkey.html#operator-eq">operator=</keyword>
@@ -412,24 +315,6 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NotYetImplemented</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::FrameworkFault</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::InvalidId</keyword>
-<<<<<<< HEAD:doc/html/messaging-library.dcf
-        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
-        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">QMessageStore::CreateRemovalRecord</keyword>
-        <keyword ref="qmessagestore.html#MessageRemovalOption-enum">QMessageStore::NoRemovalRecord</keyword>
-        <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
-        <keyword ref="qmessagestore.html#instance">instance</keyword>
-        <keyword ref="qmessagestore.html#lastError">lastError</keyword>
-        <keyword ref="qmessagestore.html#message">message</keyword>
-        <keyword ref="qmessagestore.html#messageContent">messageContent</keyword>
-        <keyword ref="qmessagestore.html#messagesAdded">messagesAdded</keyword>
-        <keyword ref="qmessagestore.html#messagesRemoved">messagesRemoved</keyword>
-        <keyword ref="qmessagestore.html#messagesUpdated">messagesUpdated</keyword>
-        <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
-        <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
-        <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
-=======
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingIdsOverflow</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
@@ -455,7 +340,6 @@
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
         <keyword ref="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</keyword>
->>>>>>> e1b40a3da390cc569ae3169752250f09efce66ae:doc/html/messaging-library.dcf
         <keyword ref="qmessagestore.html#startNotifications">startNotifications</keyword>
         <keyword ref="qmessagestore.html#stopNotifications">stopNotifications</keyword>
         <keyword ref="qmessagestore.html#updateMessage">updateMessage</keyword>
