@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../messaging/draft-api.cpp -->
+<head>
+  <title>QMessageAccount Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageAccount Class Reference</h1>
+<p>The QMessageAccount class represents a messaging account in the messaging store. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMessageAccount&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
+<li><a href="qmessageaccount-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qmessageaccount.html#QMessageAccount">QMessageAccount</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmessageaccount.html#QMessageAccount-2">QMessageAccount</a></b> ( const QMessageAccountId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>virtual <b><a href="qmessageaccount.html#dtor.QMessageAccount">~QMessageAccount</a></b> ()</li>
+<li><div class="fn"></div>QMessageAddress <b><a href="qmessageaccount.html#fromAddress">fromAddress</a></b> () const</li>
+<li><div class="fn"></div>QMessageAccountId <b><a href="qmessageaccount.html#id">id</a></b> () const</li>
+<li><div class="fn"></div>QString <b><a href="qmessageaccount.html#name">name</a></b> () const</li>
+<li><div class="fn"></div>QString <b><a href="qmessageaccount.html#signature">signature</a></b> () const</li>
+<li><div class="fn"></div>QMessageFolderId <b><a href="qmessageaccount.html#standardFolder">standardFolder</a></b> ( QMessageFolder::StandardFolder <i>folder</i> ) const</li>
+<li><div class="fn"></div>QMessage::TypeFlags <b><a href="qmessageaccount.html#types">types</a></b> () const</li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"></div>QMessageAccountId <b><a href="qmessageaccount.html#defaultAccount">defaultAccount</a></b> ( QMessage::Type <i>type</i> )</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMessageAccount class represents a messaging account in the messaging store.</p>
+<p>A QMessageAccount is a logical entity that groups messages according to the method by which they are sent and received. An account may either transmit messages receive messages or both.</p>
+<p>The QMessageAccount class is used for accessing properties of the account related to dealing with the account's folders and messages, rather than for modifying the account itself.</p>
+<p>See also <a href="qmessagestore.html#account">QMessageStore::account</a>().</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMessageAccount"></a>QMessageAccount::QMessageAccount ()</h3>
+<p>Creates an empty and invalid account object.</p>
+<h3 class="fn"><a name="QMessageAccount-2"></a>QMessageAccount::QMessageAccount ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> )</h3>
+<p>Convenience constructor that creates a <a href="qmessageaccount.html">QMessageAccount</a> by loading the data from the messaging store as specified by the <a href="qmessageaccountid.html">QMessageAccountId</a> <i>id</i>. If the account does not exist in the store, then this constructor will create an empty and invalid <a href="qmessageaccount.html">QMessageAccount</a>.</p>
+<p>See also <a href="qmessagestore.html#account">QMessageStore::account</a>().</p>
+<h3 class="fn"><a name="dtor.QMessageAccount"></a>QMessageAccount::~QMessageAccount ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the account object.</p>
+<h3 class="fn"><a name="defaultAccount"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessageAccount::defaultAccount ( <a href="qmessage.html#Type-enum">QMessage::Type</a> <i>type</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the default account for messages of type <i>type</i>.</p>
+<h3 class="fn"><a name="fromAddress"></a><a href="qmessageaddress.html">QMessageAddress</a> QMessageAccount::fromAddress () const</h3>
+<p>Returns the address from which the account's outgoing messages should be reported as originating.</p>
+<h3 class="fn"><a name="id"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessageAccount::id () const</h3>
+<p>Returns the identifier for this account.</p>
+<h3 class="fn"><a name="name"></a>QString QMessageAccount::name () const</h3>
+<p>Returns the name of the account for display purposes.</p>
+<h3 class="fn"><a name="signature"></a>QString QMessageAccount::signature () const</h3>
+<p>Return the signature for the account if one exists and is enabled; otherwise returns an empty string.</p>
+<h3 class="fn"><a name="standardFolder"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageAccount::standardFolder ( <a href="qmessagefolder.html#StandardFolder-enum">QMessageFolder::StandardFolder</a> <i>folder</i> ) const</h3>
+<p>Returns the folder configured for the standard folder role <i>folder</i> for this account.</p>
+<h3 class="fn"><a name="types"></a><a href="qmessage.html#Type-enum">QMessage::TypeFlags</a> QMessageAccount::types () const</h3>
+<p>Returns the types of messages this account deals with.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="right"><div align="right">Messaging API</div></td>
+</tr></table></div></address></body>
+</html>

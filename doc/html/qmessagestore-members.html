@@ -16,23 +16,31 @@
 <p>This is the complete list of members for <a href="qmessagestore.html">QMessageStore</a>, including inherited members.</p>
 <p><table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"/>enum <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></li>
-<li><div class="fn"/>enum <a href="qmessagestore.html#MessageRemovalOption-enum">MessageRemovalOption</a></li>
-<li><div class="fn"/><a href="qmessagestore.html#countMessages">countMessages</a> ( const QMessageFilterKey &amp; ) const : int</li>
-<li><div class="fn"/><a href="qmessagestore.html#instance">instance</a> () : QMessageStore *</li>
-<li><div class="fn"/><a href="qmessagestore.html#lastError">lastError</a> () const : QMessageStore::ErrorCode</li>
-<li><div class="fn"/><a href="qmessagestore.html#message">message</a> ( const QMessageId &amp; ) const : QMessage</li>
-<li><div class="fn"/><a href="qmessagestore.html#messageContent">messageContent</a> ( const QMessageContentId &amp; ) const : QMessageContent</li>
-<li><div class="fn"/><a href="qmessagestore.html#messagesAdded">messagesAdded</a> ( const QMessageIdList &amp; )</li>
+<li><div class="fn"></div>enum <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></li>
+<li><div class="fn"></div>enum <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></li>
+<li><div class="fn"></div><a href="qmessagestore.html#account">account</a> ( const QMessageAccountId &amp; ) const : QMessageAccount</li>
+<li><div class="fn"></div><a href="qmessagestore.html#addMessage">addMessage</a> ( QMessage * ) : bool</li>
+<li><div class="fn"></div><a href="qmessagestore.html#countAccounts">countAccounts</a> ( const QMessageAccountFilterKey &amp; ) const : int</li>
+<li><div class="fn"></div><a href="qmessagestore.html#countFolders">countFolders</a> ( const QMessageFolderFilterKey &amp; ) const : int</li>
+<li><div class="fn"></div><a href="qmessagestore.html#countMessages">countMessages</a> ( const QMessageFilterKey &amp; ) const : int</li>
+<li><div class="fn"></div><a href="qmessagestore.html#folder">folder</a> ( const QMessageFolderId &amp; ) const : QMessageFolder</li>
+<li><div class="fn"></div><a href="qmessagestore.html#instance">instance</a> () : QMessageStore *</li>
+<li><div class="fn"></div><a href="qmessagestore.html#lastError">lastError</a> () const : QMessageStore::ErrorCode</li>
+<li><div class="fn"></div><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a> () : uint</li>
+<li><div class="fn"></div><a href="qmessagestore.html#message">message</a> ( const QMessageId &amp; ) const : QMessage</li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"/><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a> ( const QMessageIdList &amp; )</li>
-<li><div class="fn"/><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a> ( const QMessageIdList &amp; )</li>
-<li><div class="fn"/><a href="qmessagestore.html#queryMessages">queryMessages</a> ( const QMessageFilterKey &amp;, const QMessageSortKey &amp;, uint, uint ) const : QMessageIdList</li>
-<li><div class="fn"/><a href="qmessagestore.html#removeMessage">removeMessage</a> ( const QMessageId &amp;, MessageRemovalOption ) : bool</li>
-<li><div class="fn"/><a href="qmessagestore.html#removeMessages">removeMessages</a> ( const QMessageFilterKey &amp;, MessageRemovalOption ) : bool</li>
-<li><div class="fn"/><a href="qmessagestore.html#startNotifications">startNotifications</a> ( const QMessageFilterKey &amp; )</li>
-<li><div class="fn"/><a href="qmessagestore.html#stopNotifications">stopNotifications</a> ( const QMessageFilterKey &amp; )</li>
-<li><div class="fn"/><a href="qmessagestore.html#updateMessage">updateMessage</a> ( QMessage * ) : bool</li>
+<li><div class="fn"></div><a href="qmessagestore.html#messagesAdded">messagesAdded</a> ( const QMessageIdList &amp; )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a> ( const QMessageIdList &amp; )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a> ( const QMessageIdList &amp; )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#queryAccounts">queryAccounts</a> ( const QMessageAccountFilterKey &amp;, const QMessageAccountSortKey &amp;, uint, uint ) const : QMessageAccountIdList</li>
+<li><div class="fn"></div><a href="qmessagestore.html#queryFolders">queryFolders</a> ( const QMessageFolderFilterKey &amp;, const QMessageFolderSortKey &amp;, uint, uint ) const : QMessageFolderIdList</li>
+<li><div class="fn"></div><a href="qmessagestore.html#queryMessages">queryMessages</a> ( const QMessageFilterKey &amp;, const QMessageSortKey &amp;, uint, uint ) const : QMessageIdList</li>
+<li><div class="fn"></div><a href="qmessagestore.html#removeMessage">removeMessage</a> ( const QMessageId &amp;, RemovalOption ) : bool</li>
+<li><div class="fn"></div><a href="qmessagestore.html#removeMessages">removeMessages</a> ( const QMessageFilterKey &amp;, RemovalOption ) : bool</li>
+<li><div class="fn"></div><a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a> ( uint )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#startNotifications">startNotifications</a> ( const QMessageFilterKey &amp; )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#stopNotifications">stopNotifications</a> ( const QMessageFilterKey &amp; )</li>
+<li><div class="fn"></div><a href="qmessagestore.html#updateMessage">updateMessage</a> ( QMessage * ) : bool</li>
 </ul>
 </td></tr>
 </table></p>
