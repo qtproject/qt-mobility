@@ -31,5 +31,8 @@
         <version>1.1</version>
         <capabilities>ReadUserData,WriteUserData,ExecUserData</capabilities>
         <description>Interface that provides message receiving support</description>
+        <customproperty key="key1">value1</customproperty>
+        <customproperty key="key2">value2</customproperty>
+        <customproperty key="key3"></customproperty>
     </interface>
 </service>

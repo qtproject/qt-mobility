@@ -29,10 +29,12 @@
 <li><div class="fn"/><b><a href="qservicefilter.html#QServiceFilter-2">QServiceFilter</a></b> ( const QServiceFilter &amp; <i>other</i> )</li>
 <li><div class="fn"/><b><a href="qservicefilter.html#QServiceFilter-3">QServiceFilter</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</li>
 <li><div class="fn"/><b><a href="qservicefilter.html#dtor.QServiceFilter">~QServiceFilter</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qservicefilter.html#customConstraint">customConstraint</a></b> ( const QString &amp; <i>key</i> ) const</li>
 <li><div class="fn"/>int <b><a href="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</a></b> () const</li>
 <li><div class="fn"/>int <b><a href="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qservicefilter.html#interfaceName">interfaceName</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qservicefilter.html#serviceName">serviceName</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qservicefilter.html#setCustomConstraint">setCustomConstraint</a></b> ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"/>void <b><a href="qservicefilter.html#setInterface">setInterface</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</li>
 <li><div class="fn"/>void <b><a href="qservicefilter.html#setServiceName">setServiceName</a></b> ( const QString &amp; <i>serviceName</i> )</li>
 <li><div class="fn"/>VersionMatchRule <b><a href="qservicefilter.html#versionMatchRule">versionMatchRule</a></b> () const</li>
@@ -68,6 +70,9 @@
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
+<h3 class="fn"><a name="customConstraint"></a>QString QServiceFilter::customConstraint ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
+<p>See also <a href="qservicefilter.html#setCustomConstraint">setCustomConstraint</a>().</p>
 <h3 class="fn"><a name="interfaceMajorVersion"></a>int QServiceFilter::interfaceMajorVersion () const</h3>
 <p>Returns the major interface version for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
@@ -80,6 +85,9 @@
 <h3 class="fn"><a name="serviceName"></a>QString QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
+<h3 class="fn"><a name="setCustomConstraint"></a>void QServiceFilter::setCustomConstraint ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3>
+<p>The filter only matches implementations which have the custom constraint <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
+<p>See also <a href="qservicefilter.html#customConstraint">customConstraint</a>().</p>
 <h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>
 <p>This method does nothing if <i>version</i> is not a valid version string or if <i>interfaceName</i> is empty.</p>

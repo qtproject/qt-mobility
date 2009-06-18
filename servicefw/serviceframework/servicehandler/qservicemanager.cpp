@@ -605,8 +605,8 @@ QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QStri
     }
     bool ok = false;
     QServiceInterfaceDescriptor info;
-    info = d->database->defaultServiceInterface(interfaceName, &ok);
-    if (!ok) {
+    info = d->database->defaultServiceInterface(interfaceName);
+    if (d->database->lastError().errorCode() != DBError::NoError) {
         d->setError();
         return QServiceInterfaceDescriptor();
     }

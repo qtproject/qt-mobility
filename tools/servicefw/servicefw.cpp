@@ -167,6 +167,21 @@ void CommandProcessor::search(const QStringList &args)
     }
 }
 
+static const char * const errorTable[] = {
+    "No error", //0
+    "Storage permission error",
+    "Storage read error", //2
+    "Invalid service location",
+    "Invalid service xml", //4
+    "Invalid service interface descriptor",
+    "Service exists already", //6
+    "Implementation exists already",
+    "Loading of plug-in failed",  //8
+    "Component not found",
+    "Insufficient capabilities to access service", //10
+    "Unknown error" 
+};
+
 void CommandProcessor::add(const QStringList &args)
 {
     if (args.isEmpty()) {
@@ -180,11 +195,15 @@ void CommandProcessor::add(const QStringList &args)
         return;
     }
 
-    if (serviceManager->addService(xmlPath))
+    if (serviceManager->addService(xmlPath)) {
         *stdoutStream << "Registered service at " << xmlPath << '\n';
-    else
+    } else {
+        int error = serviceManager->error();
+        if (error > 11) //map anything larger than 11 to 11
+            error = 11;
         *stdoutStream << "Error: cannot register service at " << xmlPath
-                << " (error=" << serviceManager->error() << ")" << '\n';
+                << " (" << errorTable[error] << ")" << '\n';
+    }
 }
 
 void CommandProcessor::remove(const QStringList &args)

@@ -7,10 +7,13 @@
         <name>com.nokia.qt.TestInterfaceA</name>
         <version>1.0</version>
         <description>tst_QServiceManager test interface A 1.0</description>
+        <customproperty key="testkey">testvalue for A</customproperty>
     </interface>
     <interface>
         <name>com.nokia.qt.TestInterfaceB</name>
         <version>1.0</version>
         <description>tst_QServiceManager test interface B 1.0</description>
+        <customproperty key="testkey">testvalue for B</customproperty>
+        <customproperty key="additionalkey">custom</customproperty>
     </interface>
 </service>

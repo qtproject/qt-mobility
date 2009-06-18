@@ -336,6 +336,131 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
     return serviceNames;
 }
 
+QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QString &interfaceName, DbScope scope)
+{
+    QServiceInterfaceDescriptor descriptor;
+    if (scope == UserScope) {
+        if (!openDb(UserScope))
+            return QServiceInterfaceDescriptor();
+        QString interfaceID;
+        descriptor = m_userDb.defaultServiceInterface(interfaceName, &interfaceID);
+
+        if (m_userDb.lastError().errorCode() == DBError::NoError) {
+            descriptor.d->systemScope = false;
+            return descriptor;
+        } else if (m_userDb.lastError().errorCode() == DBError::ExternalIfaceIDFound) {
+            //default hasn't been found in user db, but we have found an ID
+            //that may refer to an interface implementation in the system db
+            if (!openDb(SystemScope)) {
+                QString errorText("No default service found for interface: \"%1\"");
+                m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
+                return QServiceInterfaceDescriptor();
+            }
+
+            descriptor = m_systemDb.getInterface(interfaceID);
+            //found the service from the system database
+            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+                m_lastError.setError(DBError::NoError);
+                descriptor.d->systemScope = true;
+                return descriptor;
+            } else if(m_systemDb.lastError().errorCode() == DBError::NotFound){
+                //service implementing interface doesn't exist in the system db
+                //so the user db must contain a stale entry so remove it
+                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+                QString errorText("No default service found for interface: \"%1\"");
+                m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
+                return QServiceInterfaceDescriptor();
+            }
+        } else if (m_userDb.lastError().errorCode() == DBError::NotFound) {
+            //do nothing, the search for a default in the system db continues
+            //further down
+        } else { //error occurred at user db level, so return
+            m_lastError = m_userDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    }
+
+    //search at system scope because we haven't found a default at user scope
+    //or because we're specifically only querying at system scope
+    if (!openDb(SystemScope)) {
+        if (scope == SystemScope) {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        } else if (scope == UserScope && m_userDb.lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_userDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    } else {
+        descriptor = m_systemDb.defaultServiceInterface(interfaceName);
+        if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+            descriptor.d->systemScope = true;
+            return descriptor;
+        } else if (m_systemDb.lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        } else {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    }
+
+    //should not be possible to reach here
+    m_lastError.setError(DBError::UnknownError);
+    return QServiceInterfaceDescriptor();
+}
+
+bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
+{
+    if (scope == UserScope) {
+        if(!openDb(UserScope))
+            return false;
+        if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
+            if(m_userDb.setDefaultService(descriptor)) {
+                m_lastError.setError(DBError::NoError);
+                return true;
+            } else {
+                m_lastError = m_userDb.lastError();
+                return false;
+            }
+        } else { //otherwise we need to get the interfaceID from the system db and set this
+                 //as an external default interface ID in the user db
+            if (!openDb(SystemScope))
+                return false;
+
+            QString interfaceDescriptorID = m_systemDb.getInterfaceID(descriptor);
+            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+                if(m_userDb.setDefaultService(descriptor, interfaceDescriptorID)) {
+                    m_lastError.setError(DBError::NoError);
+                    return true;
+                } else {
+                    m_lastError = m_userDb.lastError();
+                    return false;
+                }
+            } else {
+                m_lastError = m_systemDb.lastError();
+                return false;
+            }
+        }
+    }
+
+    if (scope == SystemScope) {
+        if (!descriptor.inSystemScope()) {
+            QString errorText("Cannot set default service at system scope with a user scope "
+                                "interface descriptor");
+            m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
+            return false;
+        } else {
+            if (m_systemDb.setDefaultService(descriptor)) {
+                m_lastError.setError(DBError::NoError);
+                return true;
+            } else {
+                m_lastError = m_systemDb.lastError();
+                return false;
+            }
+        }
+    }
+}
+
 bool DatabaseManager::openDb(DbScope scope)
 {
     ServiceDatabase *db;
@@ -362,6 +487,16 @@ bool DatabaseManager::openDb(DbScope scope)
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
         return false;
+    }
+
+    if (scope == SystemScope && m_userDb.isOpen()) {
+        QStringList interfaceIDs = m_userDb.externalDefaultInterfaceIDs();
+        QServiceInterfaceDescriptor interface;
+        foreach( const QString &interfaceID, interfaceIDs ) {
+            interface = m_userDb.getInterface(interfaceID);
+            if (m_userDb.lastError().errorCode() == DBError::NotFound)
+                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+        }
     }
 
     m_lastError.setError(DBError::NoError);

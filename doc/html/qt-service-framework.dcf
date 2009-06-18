@@ -25,10 +25,12 @@
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
+        <keyword ref="qservicefilter.html#customConstraint">customConstraint</keyword>
         <keyword ref="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
         <keyword ref="qservicefilter.html#serviceName">serviceName</keyword>
+        <keyword ref="qservicefilter.html#setCustomConstraint">setCustomConstraint</keyword>
         <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
         <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
@@ -44,6 +46,7 @@
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Location</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customProperty">customProperty</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#inSystemScope">inSystemScope</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>

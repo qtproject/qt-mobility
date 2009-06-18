@@ -28,6 +28,7 @@
 <li><div class="fn"/><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor">QServiceInterfaceDescriptor</a></b> ()</li>
 <li><div class="fn"/><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor-2">QServiceInterfaceDescriptor</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</li>
 <li><div class="fn"/><b><a href="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor">~QServiceInterfaceDescriptor</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qserviceinterfacedescriptor.html#customProperty">customProperty</a></b> ( const QString &amp; <i>key</i> ) const</li>
 <li><div class="fn"/>bool <b><a href="qserviceinterfacedescriptor.html#inSystemScope">inSystemScope</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qserviceinterfacedescriptor.html#interfaceName">interfaceName</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qserviceinterfacedescriptor.html#isValid">isValid</a></b> () const</li>
@@ -76,6 +77,8 @@
 <p>Creates a copy of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> contained in <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor ()</h3>
 <p>Destroys the <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object.</p>
+<h3 class="fn"><a name="customProperty"></a>QString QServiceInterfaceDescriptor::customProperty ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
 <h3 class="fn"><a name="inSystemScope"></a>bool QServiceInterfaceDescriptor::inSystemScope () const</h3>
 <p>Returns true if this implementation is provided for all users on the system.</p>
 <p>See also <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a>.</p>

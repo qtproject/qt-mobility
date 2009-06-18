@@ -137,6 +137,10 @@ void ServiceMetadataTest::parseValidServiceXML()
     QVERIFY(capabilities.contains("WriteUserData"));
     QVERIFY(capabilities.contains("ExecUserData"));
     QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message receiving support"));
+    QCOMPARE(aInterface.customProperty("key1"), QString("value1"));
+    QCOMPARE(aInterface.customProperty("key2"), QString("value2"));
+    QCOMPARE(aInterface.customProperty("key3"), QString(""));
+    QCOMPARE(aInterface.customProperty("key4"), QString());
     
     ServiceMetaData parser1(dir.absoluteFilePath("WrongOrder.xml"));
     QCOMPARE(parser1.extractMetadata(),true);
@@ -197,6 +201,10 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test28.xml") << "Test28.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
     //duplicated interface capabilities tag
     QTest::newRow("Test29.xml") << "Test29.xml" << (int)ServiceMetaData::SFW_ERROR_DUPLICATED_TAG;
+    //missing key attribute for custom property tag
+    QTest::newRow("Test30.xml") << "Test30.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
+    //empty key attribute for custom property tag
+    QTest::newRow("Test31.xml") << "Test31.xml" << (int)ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG;
 
 }
 

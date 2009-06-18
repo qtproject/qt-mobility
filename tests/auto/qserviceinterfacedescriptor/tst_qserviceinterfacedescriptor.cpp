@@ -102,12 +102,17 @@ void tst_QServiceInterfaceDescriptor::comparison()
     d->interfaceName = "interface";
     d->major = 3;
     d->minor = 1;
+    d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("mydescription"));
+    d->customProperties.insert(QString("ckey"), QString("cvalue"));
     d->systemScope = true;
 
     QCOMPARE(valid.interfaceName(), QString("interface"));
     QCOMPARE(valid.serviceName(), QString("name"));
     QCOMPARE(valid.majorVersion(), 3);
     QCOMPARE(valid.minorVersion(), 1);
+    QCOMPARE(valid.customProperty("ckey"), QString("cvalue"));
+    QCOMPARE(valid.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("mydescription"));
+    QCOMPARE(valid.property(QServiceInterfaceDescriptor::Location).toString(), QString(""));
     QCOMPARE(valid.inSystemScope(), true);
     QVERIFY(valid.isValid());
 
@@ -128,6 +133,8 @@ void tst_QServiceInterfaceDescriptor::comparison()
     QCOMPARE(validCopy.majorVersion(), 3);
     QCOMPARE(validCopy.minorVersion(), 1);
     QCOMPARE(validCopy.property(QServiceInterfaceDescriptor::Location).toString(), QString("myValue"));
+    QCOMPARE(validCopy.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("mydescription"));
+    QCOMPARE(validCopy.customProperty("ckey"),QString("cvalue"));
     QCOMPARE(validCopy.inSystemScope(), true);
     QVERIFY(validCopy.isValid());
 
@@ -136,7 +143,7 @@ void tst_QServiceInterfaceDescriptor::comparison()
     QVERIFY(valid==validCopy2);
     QVERIFY(validCopy2==valid);
 
-    QServiceInterfaceDescriptorPrivate::getPrivate(&validCopy2)->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue"));
+    QServiceInterfaceDescriptorPrivate::getPrivate(&validCopy2)->properties.insert(QServiceInterfaceDescriptor::Location, QString("myValue2"));
     QVERIFY(valid!=validCopy2);
     QVERIFY(validCopy2!=valid);
 
@@ -144,7 +151,9 @@ void tst_QServiceInterfaceDescriptor::comparison()
     QCOMPARE(validCopy2.serviceName(), QString("name"));
     QCOMPARE(validCopy2.majorVersion(), 3);
     QCOMPARE(validCopy2.minorVersion(), 1);
-    QCOMPARE(validCopy2.property(QServiceInterfaceDescriptor::Location).toString(), QString("myValue"));
+    QCOMPARE(validCopy2.property(QServiceInterfaceDescriptor::Location).toString(), QString("myValue2"));
+    QCOMPARE(validCopy2.customProperty("ckey"),QString("cvalue"));
+    QCOMPARE(validCopy2.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("mydescription"));
     QCOMPARE(validCopy2.inSystemScope(), true);
     QVERIFY(validCopy2.isValid());
 
@@ -184,6 +193,9 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
     d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
     d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
+    d->customProperties.insert(QString("key1"), QString("value1"));
+    d->customProperties.insert(QString("abcd"), QString("efgh"));
+    d->customProperties.insert(QString("empty"), QString(""));
     d->systemScope = true;
     QVERIFY(valid.isValid());
     QServiceInterfaceDescriptor validref = valid;
@@ -221,6 +233,14 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     QVERIFY(invalid2.property(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
     QVERIFY(invalid2.property(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
     QVERIFY(invalid2.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
+    QCOMPARE(invalid2.customProperty("key1"), QString("value1"));
+    QCOMPARE(invalid2.customProperty("abcd"), QString("efgh"));
+    QCOMPARE(invalid2.customProperty("notvalid"), QString());
+    QVERIFY(invalid2.customProperty("notvalid").isEmpty());
+    QVERIFY(invalid2.customProperty("notvalid").isNull());
+    QCOMPARE(invalid2.customProperty("empty"), QString(""));
+    QVERIFY(invalid2.customProperty("empty").isEmpty());
+    QVERIFY(!invalid2.customProperty("empty").isNull());
     QCOMPARE(invalid2.inSystemScope(), true);
 
     //stream valid into valid
@@ -235,8 +255,21 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     d2->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val3" << "val4");
     d2->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the second service description"));
     d2->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the second interface description"));
+    d2->customProperties.insert(QString("key1"), QString("value2"));
+    d2->customProperties.insert(QString("abcd1"), QString("efgh"));
+    d2->customProperties.insert(QString("empty"), QString(""));
     d2->systemScope = false;
     QVERIFY(valid2.isValid());
+    QCOMPARE(valid2.customProperty("key1"), QString("value2"));
+    QCOMPARE(valid2.customProperty("abcd1"), QString("efgh"));
+    QCOMPARE(valid2.customProperty("abcd"), QString());
+    QVERIFY(valid2.customProperty("abcd").isEmpty());
+    QVERIFY(valid2.customProperty("abcd").isNull());
+    QCOMPARE(valid2.customProperty("empty"), QString(""));
+    QVERIFY(valid2.customProperty("empty").isEmpty());
+    QVERIFY(!valid2.customProperty("empty").isNull());
+
+
     QVERIFY(valid2 != valid);
     QVERIFY(!(valid2 == valid));
 
@@ -255,6 +288,15 @@ void tst_QServiceInterfaceDescriptor::testStreamOperators()
     QVERIFY(valid2.property(QServiceInterfaceDescriptor::Capabilities).toStringList() == (QStringList() << "val1" << "val2"));
     QVERIFY(valid2.property(QServiceInterfaceDescriptor::ServiceDescription).toString() == QString("This is the service description"));
     QVERIFY(valid2.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() == QString("This is the interface description"));
+    QCOMPARE(valid2.customProperty("key1"), QString("value1"));
+    QCOMPARE(valid2.customProperty("abcd"), QString("efgh"));
+    QCOMPARE(valid2.customProperty("notvalid"), QString());
+    QVERIFY(valid2.customProperty("notvalid").isEmpty());
+    QVERIFY(valid2.customProperty("notvalid").isNull());
+    QCOMPARE(valid2.customProperty("empty"), QString(""));
+    QVERIFY(valid2.customProperty("empty").isEmpty());
+    QVERIFY(!valid2.customProperty("empty").isNull());
+    QCOMPARE(valid2.customProperty("abcd1"), QString());
     QCOMPARE(valid2.inSystemScope(), true);
 }
 #endif //QT_NO_DATASTREAM
@@ -313,6 +355,7 @@ void tst_QServiceInterfaceDescriptor::destructor()
     d->properties.insert(QServiceInterfaceDescriptor::Capabilities, QStringList() << "val1" << "val2");
     d->properties.insert(QServiceInterfaceDescriptor::ServiceDescription, QString("This is the service description"));
     d->properties.insert(QServiceInterfaceDescriptor::InterfaceDescription, QString("This is the interface description"));
+    d->customProperties.insert("ckey", "cvalue");
     QVERIFY(valid->isValid());
     delete valid;
 }
