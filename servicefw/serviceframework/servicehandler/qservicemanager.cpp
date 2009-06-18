@@ -42,15 +42,12 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
-#include "servicedatabase.h"
 #include "databasemanager.h"
 
 #include <QObject>
 #include <QPluginLoader>
-#include <QBuffer>
 #include <QFile>
 #include <QDebug>
-#include <QFileSystemWatcher>
 
 QT_BEGIN_NAMESPACE
 
@@ -102,7 +99,6 @@ class QServiceManagerPrivate : public QObject
     Q_OBJECT
 public:
     QServiceManager *manager;
-    ServiceDatabase *database;
     DatabaseManager *dbManager;
     QServiceManager::Scope scope;
     QServiceManager::Error error;
@@ -110,7 +106,6 @@ public:
     QServiceManagerPrivate(QServiceManager *parent = 0)
         : QObject(parent),
           manager(parent),
-          database(new ServiceDatabase),
           dbManager(new DatabaseManager)
     {
         connect(dbManager, SIGNAL(serviceAdded(QString, DatabaseManager::DbScope)),
@@ -121,18 +116,7 @@ public:
 
     ~QServiceManagerPrivate()
     {
-        delete database;
         delete dbManager;
-    }
-
-    void init(QServiceManager::Scope databaseScope)
-    {
-        scope = databaseScope;
-
-        if (!database->open()) {
-            setError();
-            qWarning("QServiceManager: unable to open services database");
-        }
     }
 
     void setError(QServiceManager::Error err)
@@ -142,7 +126,7 @@ public:
 
     void setError()
     {
-        switch (database->lastError().errorCode()) {
+        switch (dbManager->lastError().errorCode()) {
             case DBError::NoError:
                 error = QServiceManager::NoError;
                 break;
@@ -266,7 +250,7 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    d->init(UserScope);
+    d->scope = UserScope;
 }
 
 /*!
@@ -276,7 +260,7 @@ QServiceManager::QServiceManager(Scope scope, QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    d->init(scope);
+    d->scope = scope;
 }
 
 /*!
@@ -561,7 +545,33 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
         return false;
     }
 
-    if (!d->database->setDefaultService(service, interfaceName)) {
+    // TODO change to use DatabaseManager setDefaultService() when it's implemented there
+    QServiceFilter filter;
+    filter.setServiceName(service);
+    filter.setInterface(interfaceName);
+    QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(filter);
+    if (descriptors.isEmpty()) {
+        d->setError(ComponentNotFound);
+        return false;
+    }
+    int maxVersionIndex = 0;
+    int maxMajor = descriptors[0].majorVersion();
+    int maxMinor = descriptors[0].minorVersion();
+    int major;
+    int minor;
+    for (int i=1; i<descriptors.count(); i++) {
+        major = descriptors[i].majorVersion();
+        minor = descriptors[i].minorVersion();
+        if (major > maxMajor || (major == maxMajor && minor > maxMinor)) {
+            maxVersionIndex = i;
+            maxMajor = major;
+            maxMinor = minor;
+        }
+    }
+
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    if (!d->dbManager->setDefaultService(descriptors[maxVersionIndex], scope)) {
         d->setError();
         return false;
     }
@@ -579,15 +589,9 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
 */
 bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor)
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return false;
-    }
-    if (!descriptor.isValid()) {
-        d->setError(InvalidServiceInterfaceDescriptor);
-        return false;
-    }
-    if (!d->database->setDefaultService(descriptor)) {
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    if (!d->dbManager->setDefaultService(descriptor, scope)) {
         d->setError();
         return false;
     }
@@ -599,18 +603,13 @@ bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescr
 */
 QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QString& interfaceName) const
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return QServiceInterfaceDescriptor();
-    }
-    bool ok = false;
-    QServiceInterfaceDescriptor info;
-    info = d->database->defaultServiceInterface(interfaceName);
-    if (d->database->lastError().errorCode() != DBError::NoError) {
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    QServiceInterfaceDescriptor info = d->dbManager->defaultServiceInterface(interfaceName, scope);
+    if (d->dbManager->lastError().errorCode() != DBError::NoError) {
         d->setError();
         return QServiceInterfaceDescriptor();
     }
-
     return info;
 }
 

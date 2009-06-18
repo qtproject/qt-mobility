@@ -203,7 +203,7 @@ private:
 
     }
 
-    QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties()) const
+    QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties(), bool systemScope = false) const
     {
         QString version = QString("%1.%2").arg(major).arg(minor);
 
@@ -212,6 +212,7 @@ private:
         priv->interfaceName = interfaceName;
         priv->major = major;
         priv->minor = minor;
+        priv->systemScope = systemScope;
 
         priv->properties = properties;
         foreach (QServiceInterfaceDescriptor::PropertyKey key, DEFAULT_DESCRIPTOR_PROPERTIES.keys()) {
@@ -244,7 +245,7 @@ private slots:
 
     void findInterfaces_scope();
     void findInterfaces_scope_data();
-/*
+
     void loadInterface_string();
 
     void loadInterface_descriptor();
@@ -266,10 +267,12 @@ private slots:
 
     void setDefaultServiceForInterface_strings();
     void setDefaultServiceForInterface_strings_multipleInterfaces();
+
     void setDefaultServiceForInterface_descriptor();
+    void setDefaultServiceForInterface_descriptor_data();
 
     void defaultServiceInterface();
-*/
+
     void serviceAdded();
     void serviceAdded_data();
 
@@ -298,6 +301,9 @@ void tst_QServiceManager::init()
 {
     QFile(tst_qservicemanager_userDbPath()).remove();
     QFile(tst_qservicemanager_systemDbPath()).remove();
+
+    QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
+    settings.setValue("installed", false);
 }
 
 void tst_QServiceManager::cleanupTestCase()
@@ -692,7 +698,7 @@ void tst_QServiceManager::findInterfaces_scope_data()
     findServices_scope_data();
 }
 
-/*
+
 void tst_QServiceManager::loadInterface_string()
 {
     // The sampleservice.xml and sampleservice2.xml services in
@@ -1113,7 +1119,11 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfac
 
 void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
 {
-    QServiceManager mgr;
+    QFETCH(QServiceManager::Scope, scope_add);
+    QFETCH(QServiceManager::Scope, scope_find);
+    QFETCH(bool, expectFound);
+
+    QServiceManager mgr(scope_add);
     QServiceInterfaceDescriptor desc;
 
     QString interfaceName = "com.nokia.qt.serviceframework.TestInterface";
@@ -1122,7 +1132,8 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
 
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
 
-    desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties);
+    desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties,
+            scope_add == QServiceManager::SystemScope);
 
     // fails if the specified interface hasn't been registered
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
@@ -1135,6 +1146,26 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), true);
 
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), desc);
+
+    QServiceManager mgrWithOtherScope(scope_find);
+    QCOMPARE(mgrWithOtherScope.defaultServiceInterface(interfaceName).isValid(), expectFound);
+}
+
+void tst_QServiceManager::setDefaultServiceForInterface_descriptor_data()
+{
+    QTest::addColumn<QServiceManager::Scope>("scope_add");
+    QTest::addColumn<QServiceManager::Scope>("scope_find");
+    QTest::addColumn<bool>("expectFound");
+
+    QTest::newRow("user scope")
+            << QServiceManager::UserScope << QServiceManager::UserScope << true;
+    QTest::newRow("system scope")
+            << QServiceManager::SystemScope << QServiceManager::SystemScope << true;
+
+    QTest::newRow("user scope - add, system scope - find")
+            << QServiceManager::UserScope << QServiceManager::SystemScope << false;
+    QTest::newRow("system scope - add, user scope - find")
+            << QServiceManager::SystemScope << QServiceManager::UserScope << true;
 }
 
 void tst_QServiceManager::defaultServiceInterface()
@@ -1142,7 +1173,7 @@ void tst_QServiceManager::defaultServiceInterface()
     QServiceManager mgr;
     QVERIFY(!mgr.defaultServiceInterface("").isValid());
 }
-*/
+
 void tst_QServiceManager::serviceAdded()
 {
     QFETCH(QByteArray, xml);
