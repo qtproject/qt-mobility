@@ -21,47 +21,47 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qnetworksession.html#SessionError-enum">SessionError</a></b> { UnknownSessionError, SessionAbortedError, RoamingError, OperationNotSupportedError, InvalidConfigurationError }</li>
-<li><div class="fn"></div>enum <b><a href="qnetworksession.html#State-enum">State</a></b> { Invalid, NotAvailable, Connecting, Connected, ..., Roaming }</li>
+<li><div class="fn"/>enum <b><a href="qnetworksession.html#SessionError-enum">SessionError</a></b> { UnknownSessionError, SessionAbortedError, RoamingError, OperationNotSupportedError, InvalidConfigurationError }</li>
+<li><div class="fn"/>enum <b><a href="qnetworksession.html#State-enum">State</a></b> { Invalid, NotAvailable, Connecting, Connected, ..., Roaming }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qnetworksession.html#QNetworkSession">QNetworkSession</a></b> ( const QNetworkConfiguration &amp; <i>connectionConfig</i>, QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div>virtual <b><a href="qnetworksession.html#dtor.QNetworkSession">~QNetworkSession</a></b> ()</li>
-<li><div class="fn"></div>quint64 <b><a href="qnetworksession.html#activeTime">activeTime</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qnetworksession.html#bearerName">bearerName</a></b> () const</li>
-<li><div class="fn"></div>QNetworkConfiguration <b><a href="qnetworksession.html#configuration">configuration</a></b> () const</li>
-<li><div class="fn"></div>SessionError <b><a href="qnetworksession.html#error">error</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qnetworksession.html#errorString">errorString</a></b> () const</li>
-<li><div class="fn"></div>QNetworkInterface <b><a href="qnetworksession.html#interface">interface</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qnetworksession.html#isActive">isActive</a></b> () const</li>
-<li><div class="fn"></div>QVariant <b><a href="qnetworksession.html#property">property</a></b> ( const QString &amp; <i>key</i> ) const</li>
-<li><div class="fn"></div>quint64 <b><a href="qnetworksession.html#receivedData">receivedData</a></b> () const</li>
-<li><div class="fn"></div>quint64 <b><a href="qnetworksession.html#sentData">sentData</a></b> () const</li>
-<li><div class="fn"></div>State <b><a href="qnetworksession.html#state">state</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qnetworksession.html#waitForOpened">waitForOpened</a></b> ( int <i>msecs</i> = 30000 )</li>
+<li><div class="fn"/><b><a href="qnetworksession.html#QNetworkSession">QNetworkSession</a></b> ( const QNetworkConfiguration &amp; <i>connectionConfig</i>, QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>virtual <b><a href="qnetworksession.html#dtor.QNetworkSession">~QNetworkSession</a></b> ()</li>
+<li><div class="fn"/>quint64 <b><a href="qnetworksession.html#activeTime">activeTime</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qnetworksession.html#bearerName">bearerName</a></b> () const</li>
+<li><div class="fn"/>QNetworkConfiguration <b><a href="qnetworksession.html#configuration">configuration</a></b> () const</li>
+<li><div class="fn"/>SessionError <b><a href="qnetworksession.html#error">error</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qnetworksession.html#errorString">errorString</a></b> () const</li>
+<li><div class="fn"/>QNetworkInterface <b><a href="qnetworksession.html#interface">interface</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qnetworksession.html#isActive">isActive</a></b> () const</li>
+<li><div class="fn"/>QVariant <b><a href="qnetworksession.html#property">property</a></b> ( const QString &amp; <i>key</i> ) const</li>
+<li><div class="fn"/>quint64 <b><a href="qnetworksession.html#receivedData">receivedData</a></b> () const</li>
+<li><div class="fn"/>quint64 <b><a href="qnetworksession.html#sentData">sentData</a></b> () const</li>
+<li><div class="fn"/>State <b><a href="qnetworksession.html#state">state</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qnetworksession.html#waitForOpened">waitForOpened</a></b> ( int <i>msecs</i> = 30000 )</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#accept">accept</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#close">close</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#ignore">ignore</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#migrate">migrate</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#open">open</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#reject">reject</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#stop">stop</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#accept">accept</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#close">close</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#ignore">ignore</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#migrate">migrate</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#open">open</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#reject">reject</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#stop">stop</a></b> ()</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#error-2">error</a></b> ( QNetworkSession::SessionError <i>error</i> )</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a></b> ( const QNetworkConfiguration &amp; <i>config</i>, bool <i>isSeamless</i> )</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#sessionClosed">sessionClosed</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#sessionOpened">sessionOpened</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qnetworksession.html#stateChanged">stateChanged</a></b> ( QNetworkSession::State <i>state</i> )</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#error-2">error</a></b> ( QNetworkSession::SessionError <i>error</i> )</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a></b> ( const QNetworkConfiguration &amp; <i>config</i>, bool <i>isSeamless</i> )</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#sessionClosed">sessionClosed</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#sessionOpened">sessionOpened</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qnetworksession.html#stateChanged">stateChanged</a></b> ( QNetworkSession::State <i>state</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -139,6 +139,7 @@
 <p>Returns the type of error that last occurred.</p>
 <p>See also <a href="qnetworksession.html#state">state</a>() and <a href="qnetworksession.html#errorString">errorString</a>().</p>
 <h3 class="fn"><a name="error-2"></a>void QNetworkSession::error ( <a href="qnetworksession.html#SessionError-enum">QNetworkSession::SessionError</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>This signal is emitted after an error occurred. The <i>error</i> parameter describes the error that occurred.</p>
 <p>See also <a href="qnetworksession.html#error">error</a>() and <a href="qnetworksession.html#errorString">errorString</a>().</p>
 <h3 class="fn"><a name="errorString"></a>QString QNetworkSession::errorString () const</h3>
@@ -234,7 +235,7 @@
 <p>See also <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#error">error</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 QtSoftware</td>
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td align="right"><div align="right">Bearer management API</div></td>
 </tr></table></div></address></body>
 </html>
