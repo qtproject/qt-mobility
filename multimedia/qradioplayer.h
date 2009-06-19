@@ -63,8 +63,8 @@ Q_SIGNALS:
     void mutingChanged(bool muted);
 
 private:
-    Q_DELCARE_PRIVATE(QRadioPlayer)
     Q_DISABLE_COPY(QRadioPlayer)
+    QRadioPlayerPrivate* d;
 };
 
 extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));

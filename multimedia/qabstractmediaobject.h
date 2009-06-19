@@ -1,6 +1,11 @@
 #ifndef QABSTRACTMEDIAOBJECT_H
 #define QABSTRACTMEDIAOBJECT_H
 
+#include <QtCore/qobject.h>
+
+class QAbstractMediaService;
+
+
 class QAbstractMediaObjectPrivate;
 
 class QAbstractMediaObject : public QObject
@@ -11,7 +16,7 @@ public:
     virtual QAbstractMediaService* service() const = 0;
 
 protected:
-    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
+    QAbstractMediaObject(QObject *parent);
 };
 
 

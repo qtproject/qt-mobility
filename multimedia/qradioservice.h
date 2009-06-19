@@ -9,10 +9,13 @@ class QRadioService : public QAbstractMediaService
     Q_OBJECT
 
 public:
-    QRadioService(QObject *parent = 0);
     ~QRadioService();
 
     virtual QRadioTuner* control() const = 0;
+
+protected:
+    QRadioService(QObject *parent = 0);
+
 };
 
 #endif

@@ -1,32 +1,6 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="multimedia-library.png" imagedir="../../gif" title="Multimedia Library Reference Documentation">
 <section ref="classes.html" title="Classes">
-    <section ref="qabstractmediaplaylist.html" title="QAbstractMediaPlaylist Class Reference">
-        <keyword ref="qabstractmediaplaylist.html">QAbstractMediaPlaylist</keyword>
-        <keyword ref="qabstractmediaplaylist.html#append">append</keyword>
-        <keyword ref="qabstractmediaplaylist.html#clear">clear</keyword>
-        <keyword ref="qabstractmediaplaylist.html#currentItem">currentItem</keyword>
-        <keyword ref="qabstractmediaplaylist.html#currentItemChanged">currentItemChanged</keyword>
-        <keyword ref="qabstractmediaplaylist.html#currentItemPos">currentItemPos</keyword>
-        <keyword ref="qabstractmediaplaylist.html#insert">insert</keyword>
-        <keyword ref="qabstractmediaplaylist.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qabstractmediaplaylist.html#isShuffled">isShuffled</keyword>
-        <keyword ref="qabstractmediaplaylist.html#itemsChanged">itemsChanged</keyword>
-        <keyword ref="qabstractmediaplaylist.html#itemsInserted">itemsInserted</keyword>
-        <keyword ref="qabstractmediaplaylist.html#itemsRemoved">itemsRemoved</keyword>
-        <keyword ref="qabstractmediaplaylist.html#jump">jump</keyword>
-        <keyword ref="qabstractmediaplaylist.html#load">load</keyword>
-        <keyword ref="qabstractmediaplaylist.html#next">next</keyword>
-        <keyword ref="qabstractmediaplaylist.html#nextItem">nextItem</keyword>
-        <keyword ref="qabstractmediaplaylist.html#prev">prev</keyword>
-        <keyword ref="qabstractmediaplaylist.html#remove">remove</keyword>
-        <keyword ref="qabstractmediaplaylist.html#save">save</keyword>
-        <keyword ref="qabstractmediaplaylist.html#shuffle">shuffle</keyword>
-        <keyword ref="qabstractmediaplaylist.html#size">size</keyword>
-        <keyword ref="qabstractmediaplaylist.html#unshuffle">unshuffle</keyword>
-        <keyword ref="qabstractmediaplaylist.html#operator-5b-5d">operator[]</keyword>
-        <section ref="qabstractmediaplaylist-members.html" title="List of all members"/>
-    </section>
     <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
         <keyword ref="qmediaimageviewer.html">QMediaImageViewer</keyword>
         <keyword ref="qmediaimageviewer.html#State-enum">State</keyword>
@@ -54,6 +28,7 @@
     <section ref="qmediaplayer.html" title="QMediaPlayer Class Reference">
         <keyword ref="qmediaplayer.html">QMediaPlayer</keyword>
         <keyword ref="qmediaplayer.html#State-enum">State</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::SeekingState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PausedState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::EndOfStreamState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PlayingState</keyword>
@@ -102,6 +77,31 @@
         <keyword ref="qmediaplaylist.html#stop">stop</keyword>
         <section ref="qmediaplaylist-members.html" title="List of all members"/>
     </section>
+    <section ref="qmediaplaylistsource.html" title="QMediaPlaylistSource Class Reference">
+        <keyword ref="qmediaplaylistsource.html">QMediaPlaylistSource</keyword>
+        <keyword ref="qmediaplaylistsource.html#currentItem-prop">currentItem</keyword>
+        <keyword ref="qmediaplaylistsource.html#currentItem-prop">setCurrentItem</keyword>
+        <keyword ref="qmediaplaylistsource.html#playbackMode-prop">playbackMode</keyword>
+        <keyword ref="qmediaplaylistsource.html#playbackMode-prop">setPlaybackMode</keyword>
+        <keyword ref="qmediaplaylistsource.html#append">append</keyword>
+        <keyword ref="qmediaplaylistsource.html#clear">clear</keyword>
+        <keyword ref="qmediaplaylistsource.html#currentItemChanged">currentItemChanged</keyword>
+        <keyword ref="qmediaplaylistsource.html#insert">insert</keyword>
+        <keyword ref="qmediaplaylistsource.html#isReadOnly">isReadOnly</keyword>
+        <keyword ref="qmediaplaylistsource.html#isShuffled">isShuffled</keyword>
+        <keyword ref="qmediaplaylistsource.html#itemAt">itemAt</keyword>
+        <keyword ref="qmediaplaylistsource.html#itemsChanged">itemsChanged</keyword>
+        <keyword ref="qmediaplaylistsource.html#itemsInserted">itemsInserted</keyword>
+        <keyword ref="qmediaplaylistsource.html#itemsRemoved">itemsRemoved</keyword>
+        <keyword ref="qmediaplaylistsource.html#load">load</keyword>
+        <keyword ref="qmediaplaylistsource.html#playbackModeChanged">playbackModeChanged</keyword>
+        <keyword ref="qmediaplaylistsource.html#remove">remove</keyword>
+        <keyword ref="qmediaplaylistsource.html#save">save</keyword>
+        <keyword ref="qmediaplaylistsource.html#shuffle">shuffle</keyword>
+        <keyword ref="qmediaplaylistsource.html#size">size</keyword>
+        <keyword ref="qmediaplaylistsource.html#unshuffle">unshuffle</keyword>
+        <section ref="qmediaplaylistsource-members.html" title="List of all members"/>
+    </section>
     <section ref="qmediarecorder.html" title="QMediaRecorder Class Reference">
         <keyword ref="qmediarecorder.html">QMediaRecorder</keyword>
         <keyword ref="qmediarecorder.html#State-enum">State</keyword>
@@ -124,7 +124,9 @@
         <keyword ref="qmediasource.html#mimeType">mimeType</keyword>
         <keyword ref="qmediasource.html#setDataLocation">setDataLocation</keyword>
         <keyword ref="qmediasource.html#setMimeType">setMimeType</keyword>
+        <keyword ref="qmediasource.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qmediasource.html#operator-eq">operator=</keyword>
+        <keyword ref="qmediasource.html#operator-eq-eq">operator==</keyword>
         <section ref="qmediasource-members.html" title="List of all members"/>
     </section>
     <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">

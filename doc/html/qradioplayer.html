@@ -20,57 +20,57 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qradioplayer.html#Band-enum">Band</a></b> { AM, FM, SW }</li>
+<li><div class="fn"></div>enum <b><a href="qradioplayer.html#Band-enum">Band</a></b> { AM, FM, SW }</li>
 </ul>
 <a name="properties"></a>
 <h3>Properties</h3>
 <p><table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"/><b><a href="qradioplayer.html#band-prop">band</a></b> : Band</li>
-<li><div class="fn"/><b><a href="qradioplayer.html#duration-prop">duration</a></b> : const qint64</li>
-<li><div class="fn"/><b><a href="qradioplayer.html#frequency-prop">frequency</a></b> : const int</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#band-prop">band</a></b> : Band</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#duration-prop">duration</a></b> : const qint64</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#frequency-prop">frequency</a></b> : const int</li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"/><b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> : const int</li>
-<li><div class="fn"/><b><a href="qradioplayer.html#stereo-prop">stereo</a></b> : bool</li>
-<li><div class="fn"/><b><a href="qradioplayer.html#volume-prop">volume</a></b> : int</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> : const int</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#stereo-prop">stereo</a></b> : bool</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#volume-prop">volume</a></b> : int</li>
 </ul>
 </td></tr>
 </table></p>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QRadioService * <i>radioService</i> = createRadioService(), QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qradioplayer.html#dtor.QRadioPlayer">~QRadioPlayer</a></b> ()</li>
-<li><div class="fn"/>Band <b><a href="qradioplayer.html#band-prop">band</a></b> () const</li>
-<li><div class="fn"/>qint64 <b><a href="qradioplayer.html#duration-prop">duration</a></b> () const</li>
-<li><div class="fn"/>int <b><a href="qradioplayer.html#frequency">frequency</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qradioplayer.html#isMuted">isMuted</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qradioplayer.html#stereo-prop">isStereo</a></b> () const</li>
-<li><div class="fn"/>QRadioService * <b><a href="qradioplayer.html#service">service</a></b> () const</li>
-<li><div class="fn"/>int <b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> () const</li>
-<li><div class="fn"/>int <b><a href="qradioplayer.html#volume-prop">volume</a></b> () const</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QRadioService * <i>radioService</i> = createRadioService(), QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#dtor.QRadioPlayer">~QRadioPlayer</a></b> ()</li>
+<li><div class="fn"></div>Band <b><a href="qradioplayer.html#band-prop">band</a></b> () const</li>
+<li><div class="fn"></div>qint64 <b><a href="qradioplayer.html#duration-prop">duration</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#frequency">frequency</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#isMuted">isMuted</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#stereo-prop">isStereo</a></b> () const</li>
+<li><div class="fn"></div>virtual QRadioService * <b><a href="qradioplayer.html#service">service</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#volume-prop">volume</a></b> () const</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#searchBackward">searchBackward</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#searchForward">searchForward</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#band-prop">setBand</a></b> ( Band <i>band</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#setFrequency">setFrequency</a></b> ( int <i>frequency</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#setMuted">setMuted</a></b> ( bool <i>muted</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#stereo-prop">setStereo</a></b> ( bool <i>stereo</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#searchBackward">searchBackward</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#searchForward">searchForward</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#band-prop">setBand</a></b> ( Band <i>band</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#setFrequency">setFrequency</a></b> ( int <i>frequency</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#setMuted">setMuted</a></b> ( bool <i>muted</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#stereo-prop">setStereo</a></b> ( bool <i>stereo</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#bandChanged">bandChanged</a></b> ( QRadioPlayer::Band <i>band</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>durattion</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>signalStrength</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</li>
-<li><div class="fn"/>void <b><a href="qradioplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#bandChanged">bandChanged</a></b> ( QRadioPlayer::Band <i>band</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>durattion</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>signalStrength</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -83,31 +83,31 @@
 <h3 class="fn"><a name="band-prop"></a>band : <a href="qradioplayer.html#Band-enum">Band</a></h3>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"/><b>Band band () const</b></li>
-<li><div class="fn"/><b>void setBand ( Band <i>band</i> )</b></li>
+<li><div class="fn"></div><b>Band band () const</b></li>
+<li><div class="fn"></div><b>void setBand ( Band <i>band</i> )</b></li>
 </ul>
 <h3 class="fn"><a name="duration-prop"></a>duration : const qint64</h3>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"/><b>qint64 duration () const</b></li>
+<li><div class="fn"></div><b>qint64 duration () const</b></li>
 </ul>
 <h3 class="fn"><a name="frequency-prop"></a>frequency : const int</h3>
 <h3 class="fn"><a name="signalStrength-prop"></a>signalStrength : const int</h3>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"/><b>int signalStrength () const</b></li>
+<li><div class="fn"></div><b>int signalStrength () const</b></li>
 </ul>
 <h3 class="fn"><a name="stereo-prop"></a>stereo : bool</h3>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"/><b>bool isStereo () const</b></li>
-<li><div class="fn"/><b>void setStereo ( bool <i>stereo</i> )</b></li>
+<li><div class="fn"></div><b>bool isStereo () const</b></li>
+<li><div class="fn"></div><b>void setStereo ( bool <i>stereo</i> )</b></li>
 </ul>
 <h3 class="fn"><a name="volume-prop"></a>volume : int</h3>
 <p>Access functions:</p>
 <ul>
-<li><div class="fn"/><b>int volume () const</b></li>
-<li><div class="fn"/><b>void setVolume ( int <i>volume</i> )</b></li>
+<li><div class="fn"></div><b>int volume () const</b></li>
+<li><div class="fn"></div><b>void setVolume ( int <i>volume</i> )</b></li>
 </ul>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -122,7 +122,7 @@
 <h3 class="fn"><a name="mutingChanged"></a>void QRadioPlayer::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="searchBackward"></a>void QRadioPlayer::searchBackward ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <h3 class="fn"><a name="searchForward"></a>void QRadioPlayer::searchForward ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="service"></a>QRadioService * QRadioPlayer::service () const</h3>
+<h3 class="fn"><a name="service"></a>QRadioService * QRadioPlayer::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <h3 class="fn"><a name="setFrequency"></a>void QRadioPlayer::setFrequency ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>See also <a href="qradioplayer.html#frequency">frequency</a>().</p>
 <h3 class="fn"><a name="setMuted"></a>void QRadioPlayer::setMuted ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>

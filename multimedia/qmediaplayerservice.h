@@ -8,6 +8,8 @@ class QMediaPlayerServicePrivate;
 
 class QMediaPlayerService : public QAbstractMediaService
 {
+    Q_OBJECT
+
 public:
     ~QMediaPlayerService();
 
@@ -15,9 +17,6 @@ public:
 
 protected:
     QMediaPlayerService(QObject *parent);
-
-Q_SLOTS:
-    void propertyWatch();
 };
 
 #endif  // QMEDIAPLAYERSERVICE_H

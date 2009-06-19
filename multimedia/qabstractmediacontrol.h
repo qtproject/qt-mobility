@@ -1,6 +1,11 @@
 #ifndef QABSTRACTMEDIACONTROL_H
 #define QABSTRACTMEDIACONTROL_H
 
+#include <QtCore/qobject.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qvariant.h>
+
+
 class QAbstractMediaControlPrivate;
 
 class QAbstractMediaControl : public QObject

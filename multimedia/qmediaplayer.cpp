@@ -1,7 +1,8 @@
 
-#include <QtCore/private/qobject_p.h>
-
 #include "qmediaplayer.h"
+#include "qmediaplayerservice.h"
+#include "qmediaplayercontrol.h"
+
 
 /*!
     \class QMediaPlayer
@@ -13,10 +14,10 @@
     \sa
 */
 
-class QMediaPlayerPrivate : public QObjectPrivate
+class QMediaPlayerPrivate
 {
 public:
-    QMediaPlayerSession* session;
+    QMediaPlayerService* service;
     QMediaPlayerControl* control;
 };
 
@@ -25,14 +26,15 @@ public:
     Construct a QMediaPlayer to operate on the QMediaPlayerSession \a session, parented to \a parent.
 */
 
-QMediaPlayer::QMediaPlayer(QMediaPlayerSession* session, QObject* parent):
-    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
+QMediaPlayer::QMediaPlayer(QMediaPlayerService *session, QObject *parent):
+    QAbstractMediaObject(parent),
+    d(new QMediaPlayerPrivate)
 {
     Q_ASSERT(session != 0);
 
-    Q_D(QMediaPlayer)
-    d->session = session;
-    d->control = session->control();
+    d->service = service;
+    d->control = service->control();
+    d->control->setNotifyObject(this);
 }
 
 /*!
@@ -41,6 +43,8 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerSession* session, QObject* parent):
 
 QMediaPlayer::~QMediaPlayer()
 {
+    delete d->control;
+    delete d->service;
 }
 
 /*!
@@ -49,7 +53,7 @@ QMediaPlayer::~QMediaPlayer()
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
-    return d_func()->control->state();
+    return d->control->state();
 }
 
 /*!
@@ -58,6 +62,7 @@ QMediaPlayer::State QMediaPlayer::state() const
 
 QMediaSource QMediaPlayer::mediaSource() const
 {
+    return d->control->mediaSource();
 }
 
 /*!
@@ -66,7 +71,7 @@ QMediaSource QMediaPlayer::mediaSource() const
 
 qint64 QMediaPlayer::duration() const
 {
-    return d_func()->control->duration();
+    return d->control->duration();
 }
 
 /*!
@@ -75,7 +80,7 @@ qint64 QMediaPlayer::duration() const
 
 qint64 QMediaPlayer::position() const
 {
-    return d_func()->control->position();
+    return d->control->position();
 }
 
 /*!
@@ -84,7 +89,7 @@ qint64 QMediaPlayer::position() const
 
 int QMediaPlayer::volume() const
 {
-    return d_func()->control->volume();
+    return d->control->volume();
 }
 
 /*!
@@ -93,7 +98,7 @@ int QMediaPlayer::volume() const
 
 bool QMediaPlayer::isMuted() const
 {
-    return d_func()->control->isMuted();
+    return d->control->isMuted();
 }
 
 /*!
@@ -102,7 +107,7 @@ bool QMediaPlayer::isMuted() const
 
 bool QMediaPlayer::isBuffering() const
 {
-    return d_func()->control->isBuffering();
+    return d->control->isBuffering();
 }
 
 /*!
@@ -111,7 +116,7 @@ bool QMediaPlayer::isBuffering() const
 
 int QMediaPlayer::bufferStatus() const
 {
-    return d_func()->control->bufferStatus();
+    return d->control->bufferStatus();
 }
 
 /*!
@@ -120,7 +125,7 @@ int QMediaPlayer::bufferStatus() const
 
 bool QMediaPlayer::isVideoAvailable() const
 {
-    return d_func()->control->isVideoAvailable();
+    return d->control->isVideoAvailable();
 }
 
 /*!
@@ -129,7 +134,7 @@ bool QMediaPlayer::isVideoAvailable() const
 
 QMediaPlayerSession* QMediaPlayer::session() const
 {
-    return d_func()->session;
+    return d->session;
 }
 
 //public Q_SLOTS:
@@ -140,7 +145,7 @@ QMediaPlayerSession* QMediaPlayer::session() const
 
 void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 {
-    d_func()->control->setMediaSource(mediaSource);
+    d->control->setMediaSource(mediaSource);
 }
 
 /*!
@@ -149,7 +154,7 @@ void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 
 void QMediaPlayer::play()
 {
-    d_func()->control->play();
+    d->control->play();
 }
 
 /*!
@@ -158,7 +163,7 @@ void QMediaPlayer::play()
 
 void QMediaPlayer::pause()
 {
-    d_func()->control->pause();
+    d->control->pause();
 }
 
 /*!
@@ -167,7 +172,7 @@ void QMediaPlayer::pause()
 
 void QMediaPlayer::stop()
 {
-    d_func()->control->stop();
+    d->control->stop();
 }
 
 /*!
@@ -177,6 +182,7 @@ void QMediaPlayer::stop()
 
 void QMediaPlayer::setPosition(qint64 position)
 {
+    d->control->setPosition(position);
 }
 
 /*!
@@ -186,6 +192,7 @@ void QMediaPlayer::setPosition(qint64 position)
 
 void QMediaPlayer::setVolume(int volume)
 {
+    d->control-setVolume(volume);
 }
 
 /*!
@@ -196,6 +203,7 @@ void QMediaPlayer::setVolume(int volume)
 
 void QMediaPlayer::setMuted(bool muted)
 {
+    d->control->setMuted(muted);
 }
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
@@ -215,6 +223,7 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
     \value StoppedState The player object has stopped playing the content, with
                         stop being requested by the stop() function, position information is retained but will
                         be reset on next call to play()
+    \value SeekingState The player object is currently performing a seek operation.
     \value EndOfStreamState The player object has stopped playing the content
                             as the content has reached a natural end.
 */

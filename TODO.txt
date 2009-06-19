@@ -1,0 +1,8 @@
+
+Design
+- Fix up audio/video device (inputs and outputs) representation
+
+Add Interfaces
+- QAudioEncoder
+- (QVideoEncoder - later)
+- (QMovieEncoder - later)

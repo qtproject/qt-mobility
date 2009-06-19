@@ -24,7 +24,7 @@ class QMediaPlayer : public QAbstractMediaObject
     Q_ENUMS(State)
 
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState, EndOfStreamState };
+    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObjectl *parent = 0);
     ~QMediaPlayer();
@@ -68,8 +68,8 @@ Q_SIGNALS:
     void bufferStatusChanged(int percentFilled);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_DISABLE_COPY(QMediaPlayer)
+    QMediaPlayerPrivate* d;
 };
 
 extern QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
