@@ -2,9 +2,9 @@
 #ifndef QRADIOSERVICE_H
 #define QRADIOSERVICE_H
 
-#include <QtCore/qobject.h>
+#include "abstractmediaservice.h"
 
-class QRadioService : public QAbstractMediaService, public QRadioServiceInterface
+class QRadioService : public QAbstractMediaService
 {
     Q_OBJECT
 

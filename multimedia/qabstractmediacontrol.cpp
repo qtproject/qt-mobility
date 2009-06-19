@@ -5,56 +5,113 @@
 
 #include "qabstractmediacontrol.h"
 
-class QMediaControlPrivate : public QObjectPrivate
+
+
+class QAbstractMediaControlPrivate : public QObjectPrivate
 {
 public:
+    int         notifyInterval;
     QTimer*     notifyTimer;
+    QList<QString>  notifyProperties;
+    QObject*    notifyObject;
 };
 
 QAbstractMediaControl::~QAbstractMediaControl()
 {
 }
 
-
-void QAbstractMediaService::addPropertyWatch(QString const& name)
+void QAbstractMediaControl::setNotifyObject(QObject* notifyObject)
 {
+    d_func()->notifyObject = notifyObject;
 }
 
+int QAbstractMediaControl::notifyInterval() const
+{
+    return d_func()->notifyInterval;
+}
 
-virtual void setUserObject(QObject* userObject);
-virtual bool propertyValueChanged(QByteArray const& name, QVariant const& value) = 0;
+void QAbstractMediaControl::setNofifyInterval(int milliSeconds)
+{
+    Q_D(QAbstractMediaControl)
 
-    bool event(QEvent* e)
-    {
-        if (e->type() == QEvent::DynamicPropertyChange) {
-            QByteArray pn = qobject_cast<QDynamicpropertyChangeEvent*>(e)->propertyName();
-            QVariant pv = property(pn.constData());
-            if (!propertyValueChanged(pn, pv))
-                return false;
-
-            const QMetaObject* m = userObject->metaObject();
-
-            int pi = m->indexOfProperty(pn);
-            if (pi == -1)
-                return false;
-
-            QMetaProperty p = m->property(pi);
-            if (!p.hasNotifySignal()) {
-                return false
-
-            p->notifySignal().invoke(userObject, QGenericArgument(QMetaType::typeName(p.userType), property(pn).data()));
-
-            e->accept();
-            return true;
-        }
-
-        return false;
+    if (d->notifyInterval != milliSeconds) {
+        d->notifyInterval = milliSeconds;
+        if (d->notifyTimer->active())
+            d->notifyTimer->start(d->notifyInterval);
+        emit notifyIntervalChanged(d->notifyInterval);
     }
+}
 
-    QObject* userObject;
-};
+void QAbstractMediaControl::addPropertyWatch(QString const& name)
+{
+    Q_D(QAbstractMediaControl)
+
+    const bool beginNotify = d->notifyProperties.isEmpty();
+
+    d->notifyProperties << name;
+
+    if (beginNotify)
+        d->notifyTimer->start(notifyInterval());
+}
+
+void QAbstractMediaControl::removePropertyWatch(QString const& name)
+{
+    Q_D(QAbstractMediaControl);
+
+    d->notifyProperties.removeAll(name);
+
+    if (d->notifyProperties.isEmpty())
+        d->notifyTimer->stop();
+}
 
 QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
     QObject(*new QAbstractMediaControlPrivate, parent)
 {
+    Q_D(QAbstractMediaControl)
+
+    d->notifyTimer = new QTimer(this);
+    connect(d->notifyTimer, SIGNAL(timeout()), SLOT(notifyCheck()));
+}
+
+void QAbstractMediaControl::changePropertyValue(const char *name, QVariant const& value)
+{
+    if (property(name) != value) {
+        if (propertyValueChanged(name, value)) {
+            setProperty(name, value);
+            notifyPropertyValueChanged(name, value);
+        }
+    }
+}
+
+bool QAbstractMediaControl::propertyValueChangedconst(const char *name, QVariant const &value)
+{
+    Q_UNUSED(name)
+    Q_UNUSED(value)
+
+    return true;
+}
+
+void QAbstractMediaControl::notifyPropertyValueChanged(const char *name, QVariant const &value)
+{
+    const QMetaObject* m = notifyObject->metaObject();
+
+    int pi = m->indexOfProperty(name);
+    if (pi == -1)
+        return;
+
+    QMetaProperty p = m->property(pi);
+    if (p.hasNotifySignal())
+        p->notifySignal().invoke(notifyObject, QGenericArgument(QMetaType::typeName(p.userType), value.data()));
+}
+
+void QAbstractMediaControl::notifyCheck()
+{
+    Q_D(QAbstractMediaControl);
+
+    const int len = d->notifyProperties.length();
+
+    foreach (int i = 0; i < len; ++i) {
+        const char *name = d->notifyProperties.at(i).toAscii().constData();
+        notifyPropertyValueChanged(name, propery(name));
+    }
 }

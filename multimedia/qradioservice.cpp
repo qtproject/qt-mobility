@@ -6,7 +6,6 @@
 QRadioService::QRadioService(QObject* parent):
     QAbstractMediaService(parent)
 {
-
 }
 
 

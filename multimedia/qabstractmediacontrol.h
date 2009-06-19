@@ -1,6 +1,7 @@
 #ifndef QABSTRACTMEDIACONTROL_H
 #define QABSTRACTMEDIACONTROL_H
 
+class QAbstractMediaControlPrivate;
 
 class QAbstractMediaControl : public QObject
 {
@@ -10,23 +11,26 @@ class QAbstractMediaControl : public QObject
 public:
     ~QAbstractMediaControl();
 
-    virtual void setUserObject(QObject* userObject);
+    virtual void setNotifyObject(QObject* userObject);
+
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
     void addPropertyWatch(QString const& name);
+    void removePropertyWatch(QString const& name);
 
 Q_SIGNALS:
     void notifyIntervalChanged(int milliSeconds);
 
 protected:
-    QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent);
+    QAbstractMediaControl(QObject *parent);
 
-    virtual bool propertyValueChanged(QByteArray const& name, QVariant const& value) = 0;
+    virtual void changePropertyValue(const char *name, QVariant const &value);
+    virtual bool propertyValueChanged(const char *name, QVariant const &value);
+    virtual void notifyPropertyValueChanged(const char* name, QVariant const &value);
 
-    virtual bool event(QEvent* e);
-
-    QObject* userObject;
+private Q_SLOTS:
+    void notifyCheck();
 };
 
 

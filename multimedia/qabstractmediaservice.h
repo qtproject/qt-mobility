@@ -1,6 +1,14 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
+#include <QtCore/qobject.h>
+#include <QtCore/qlist.h>
+
+class QMediaAudioOutput {};
+class QMediaVideoOutput {};
+
+class QAbstractMediaControl;
+
 class QAbstractMediaService : public QObject
 {
     Q_OBJECT
@@ -12,12 +20,15 @@ public:
 
     QMediaAudioOutput videoOutput() const;
     void setVideoOutput(QMediaVideoOutput const &videoOutput);
-    QList<QMediaAudioOutput> availableVideoOutputs() const;
+    QList<QMediaVideoOutput> availableVideoOutputs() const;
 
     virtual QAbstractMediaControl* control() const = 0;
 
 protected:
     QAbstractMediaService(QObject* parent);
+
+private:
+    Q_DECLARE_PRIVATE(QAbstractMediaService)
 };
 
 

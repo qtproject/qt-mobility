@@ -13,5 +13,32 @@ public:
 QAbstractMediaService::QAbstractMediaService(QObject *parent):
     QObject(*new QAbstractMediaServicePrivate, parent)
 {
-    Q_D(QAbstractMediaService
+}
+
+QMediaAudioOutput QAbstractMediaService::audioOutput() const
+{
+    return QMediaAudioOutput();
+}
+
+void QAbstractMediaService::setAudioOutput(QMediaAudioOutput const &audioOutput)
+{
+}
+
+QList<QMediaAudioOutput> QAbstractMediaService::availableAudioOutputs() const
+{
+    return QList<QMediaAudioOutout>();
+}
+
+QMediaAudioOutput QAbstractMediaService::videoOutput() const
+{
+    return QMediaAudioOutut();
+}
+
+void QAbstractMediaService::setVideoOutput(QMediaVideoOutput const &videoOutput)
+{
+}
+
+QList<QMediaVideoOutput> QAbstractMediaService::availableVideoOutputs() const
+{
+    return QList<QMediaVideoOutout>();
 }
