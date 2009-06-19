@@ -1,30 +1,30 @@
 #ifndef QMEDIAMETADATA_H
 #define QMEDIAMETADATA_H
 
-#include <QObject>
+#include <QtCore/qobject.h>
 
-// Needs to change to be attached to any media object
-// Potentially needs to set data as well
+class QAbstractMediaObject;
+class QMediaMetadataPrivate;
 
-class QMediaMetaData : public QObject
+class QMediaMetadata : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool metaDataAvailable READ metaDataAvailable NOTIFY metaDataAvailabilityChanged)
 
 public:
-    QMediaMetaData(QMediaPlayer* mediaPlayer);
-    ~QMediaMetaData();
+    QMediaMetadata(QAbstractMediaObject *mediaObject);
+    ~QMediaMetadata();
 
     bool metaDataAvailable() const;
 
-    QList<QString> availableMetaData() const;
-    QVariant valueFor(QString const& name) const;
+    QList<QString> availableMetadata() const;
+    QVariant valueFor(QString const &name) const;
 
 Q_SIGNALS:
     void metaDataAvailabilityChanged(bool metaDataAvailable);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaMetaData)
+    Q_DECLARE_PRIVATE(QMediaMetadata)
 };
 
 

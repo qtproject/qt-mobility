@@ -1,8 +1,12 @@
 
+#include <QtCore/private/qobject_p.h>
+
 #include "qmediametadata.h"
+#include "qabstractmediaobject.h"
+
 
 /*!
-    \class QMediaMetaData
+    \class QMediaMetadata
     \ingroup multimedia
 
     \preliminary
@@ -11,24 +15,29 @@
     \sa
 */
 
+class QMediaMetadataPrivate : public QObjectPrivate
+{
+public:
+};
 
-QMediaMetaData::QMediaMetaData(QMediaPlayer* mediaPlayer):
-    QObject(mediaPlayer)
+
+QMediaMetadata::QMediaMetaData(QAbstractMediaObject *mediaObject):
+    QObject(*new QMediaMetadataPrivate, mediaObject)
 {
 }
 
-QMediaMetaData::~QMediaMetaData()
+QMediaMetadata::~QMediaMetaData()
 {
 }
 
-bool QmediMetaData::metaDataAvailable() const
+bool QMediaMetadata::metaDataAvailable() const
 {
 }
 
-QList<QString> QMediaMetaData::availableMetaData() const
+QList<QString> QMediaMetadata::availableMetaData() const
 {
 }
 
-QVariant QMediaMetaData::valueFor(QString const& name) const
+QVariant QMediaMetadata::valueFor(QString const &name) const
 {
 }

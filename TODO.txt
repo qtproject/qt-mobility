@@ -6,3 +6,6 @@ Add Interfaces
 - QAudioEncoder
 - (QVideoEncoder - later)
 - (QMovieEncoder - later)
+
+QMediaMetaData 
+- Potentially needs to set data
