@@ -271,9 +271,6 @@
                 <parameter left="Priority" right="" name="newPriority" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="size" fullname="QMessage::size" href="qmessage.html#size" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="uint" signature="size() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSize" fullname="QMessage::setSize" href="qmessage.html#setSize" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSize(uint size)">
-                <parameter left="uint" right="" name="size" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="body" fullname="QMessage::body" href="qmessage.html#body" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageContentContainerId" signature="body() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setBody" fullname="QMessage::setBody" href="qmessage.html#setBody" location="draft-api.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBody(const QString &amp; body)">
                 <parameter left="const QString &amp;" right="" name="body" default=""/>

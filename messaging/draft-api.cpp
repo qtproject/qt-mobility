@@ -1524,7 +1524,7 @@ void QMessage::setPriority(Priority newPriority)
 /*!
     Returns the complete size of the message as indicated on the originating server.
     
-    \sa setSize(), QMessageFilterKey::size()
+    \sa QMessageFilterKey::size()
 */
 uint QMessage::size() const
 {

@@ -63,7 +63,6 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSize">setSize</a></b> ( uint <i>size</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</li>
@@ -262,9 +261,6 @@
 <h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const QDateTime &amp; <i>d</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the timestamp indicating the time of message reception by the device to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">receivedDate</a>().</p>
-<h3 class="fn"><a name="setSize"></a>void QMessage::setSize ( uint <i>size</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Sets the complete size of the message as found on the originating server to <i>size</i>.</p>
-<p>See also <a href="qmessage.html#size">size</a>().</p>
 <h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the status flags value for the message to <i>newStatus</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
@@ -283,7 +279,7 @@
 <p>See also <a href="qmessage.html#type">type</a>().</p>
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
-<p>See also <a href="qmessage.html#setSize">setSize</a>() and <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
+<p>See also <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
 <h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilterkey.html#status">QMessageFilterKey::status</a>().</p>

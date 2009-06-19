@@ -52,7 +52,6 @@
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
-        <keyword ref="qmessage.html#setSize">setSize</keyword>
         <keyword ref="qmessage.html#setStatus">setStatus</keyword>
         <keyword ref="qmessage.html#setSubject">setSubject</keyword>
         <keyword ref="qmessage.html#setTo">setTo</keyword>
