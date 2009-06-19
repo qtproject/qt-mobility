@@ -98,11 +98,11 @@ void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
     }
 
     if (db) {
+        setEnabled(db, true);
         watcher->removePath(path);
         QStringList newServices = manager->getServiceNames(QString(), scope);
         for (int i=0; i<newServices.count(); i++)
             emit manager->serviceAdded(newServices[i], scope);
-        setEnabled(db, true);
     }
 }
 
