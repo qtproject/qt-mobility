@@ -70,7 +70,9 @@ void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
             return;
 
         if (!QFile::exists(path)) {
-            watcher->addPath(QFileInfo(path).absolutePath());   //directory
+            QString dirPath = QFileInfo(path).absolutePath();
+            if (QFile::exists(dirPath) && !watcher->directories().contains(dirPath))
+                watcher->addPath(dirPath);
         } else {
             knownServices[path] = database->getServiceNames(QString());
             watcher->addPath(path);
