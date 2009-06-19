@@ -251,7 +251,6 @@ public:
     virtual void setPriority(Priority newPriority);
 
     virtual uint size() const;
-    virtual void setSize(uint size);
 
     virtual QMessageContentContainerId body() const;
     virtual void setBody(const QString &body);
@@ -279,6 +278,7 @@ private:
     void setDataModified(bool modified);
     void setParentAccountId(const QMessageAccountId &accountId);
     void setParentFolderId(const QMessageFolderId &folderId);
+    void setSize(uint size);
     // ...
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
