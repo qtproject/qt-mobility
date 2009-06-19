@@ -1,34 +1,75 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-#include "qabstractmediaplaylist.h"
+#include "qmediasource.h"
+#include <QObject>
+
+class QMediaPlaylistSource;
 
 class QMediaPlaylistPrivate;
-class QMediaPlaylist : public QAbstractMediaPlaylist
+class QMediaPlaylist : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(PlaybackMode);
+    Q_PROPERTY(PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
 public:
-    QMediaPlaylist(QObject *parent = 0);
-    QMediaPlaylist(const QMediaSource &source, QObject* parent = 0);
+    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop };
+
+    QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);    
     virtual ~QMediaPlaylist();
 
-    virtual int currentItemPos() const;
-    virtual int size() const;
+    QMediaPlaylistSource *playlistSource();
+    const QMediaPlaylistSource *playlistSource() const;
 
-    virtual QMediaSource operator [](int pos) const;
+    PlaybackMode playbackMode() const;
+    void setPlaybackMode(PlaybackMode mode);
+    
+    QMediaSource currentItem() const;
+    QMediaSource nextItem() const;
+    QMediaSource itemAt(int pos) const;
 
-    virtual void append(const QMediaSource &source);
-    virtual void append(const QList<QMediaSource> &sources);
-    virtual void insert(int pos, const QMediaSource &source);
-    virtual void remove(int fromPos, int toPos);
+    int size() const;
+    bool isEmpty() const;
 
-    virtual bool isShuffled() const;
+    bool append(const QMediaSource &source);
+    bool append(const QList<QMediaSource> &sources);
+    bool insert(int pos, const QMediaSource &source);
+    bool remove(int pos);
+    bool remove(int start, int end);
+    bool clear();
+
+    bool load(const QString &location, const char *format = 0);
+    bool load(QIODevice * device, const char *format = 0);
+    bool save(const QString &location, const char *format = 0);
+    bool save(QIODevice * device, const char *format);
+
+    bool isShuffled() const;
 
 public Q_SLOTS:
-    virtual void jump(int);
+    void advance();
 
-    virtual void shuffle();
-    virtual void unshuffle();
+    void next();
+    void prev();
+
+    void jump(int);
+
+    void shuffle();
+    void unshuffle();
+
+Q_SIGNALS:
+    void activated(const QMediaSource&);
+
+    void currentItemChanged(const QMediaSource&);
+    void currentItemPosChanged(int);
+
+    void playbackModeChanged(PlaybackMode mode);
+
+    void itemsInserted(int start, int end);
+    void itemsRemoved(int start, int end);
+    void itemsChanged(int start, int end);
+
+private slots:
+    void updateCurrentItem(int);
 
 private:
     Q_DECLARE_PRIVATE(QMediaPlaylist)

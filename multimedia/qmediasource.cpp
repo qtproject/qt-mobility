@@ -105,3 +105,17 @@ void QMediaSource::setDataLocation(QVariant const& url)
 {
     d->url = url;
 }
+
+/*!
+*/
+bool QMediaSource::operator ==(const QMediaSource& other) const
+{
+    return d->url == other.d->url;
+}
+
+/*!
+*/
+bool QMediaSource::operator !=(const QMediaSource& other) const
+{
+    return d->url != other.d->url;
+}

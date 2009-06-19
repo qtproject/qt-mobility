@@ -23,6 +23,9 @@ public:
     QVariant dataLocation() const;
     void setDataLocation(const QVariant &url);
 
+    bool operator ==(const QMediaSource& other) const;
+    bool operator !=(const QMediaSource& other) const;
+
 private:
     QSharedDataPointer<QMediaSourcePrivate> d;
 };
