@@ -64,8 +64,11 @@ void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
             SLOT(databaseDirectoryChanged(QString)));
     }
 
+    QString path = database->databasePath();
     if (enabled) {
-        QString path = database->databasePath();
+        if (knownServices.contains(path))
+            return;
+
         if (!QFile::exists(path)) {
             watcher->addPath(QFileInfo(path).absolutePath());   //directory
         } else {
@@ -73,7 +76,8 @@ void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
             watcher->addPath(path);
         }
     } else {
-        watcher->removePath(database->databasePath());
+        watcher->removePath(path);
+        knownServices.remove(path);
     }
 }
 
