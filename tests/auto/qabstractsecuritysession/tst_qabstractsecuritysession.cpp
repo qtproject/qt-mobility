@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "../qsfwtestutil.h"
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <qservicemanager.h>
@@ -83,8 +85,12 @@ private:
 void tst_QAbstractSecuritySession::initTestCase()
 {
     path = QCoreApplication::applicationDirPath() + "/xmldata/";
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+
+    QSfwTestUtil::setupTempUserDb();
+    QSfwTestUtil::setupTempSystemDb();
+
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 void tst_QAbstractSecuritySession::testSecSessionHandling()
@@ -170,8 +176,8 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
 
 void tst_QAbstractSecuritySession::cleanupTestCase()
 {
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 QTEST_MAIN(tst_QAbstractSecuritySession)

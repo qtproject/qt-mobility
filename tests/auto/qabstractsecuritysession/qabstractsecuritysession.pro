@@ -9,8 +9,9 @@ QT = core
 
 include(../../../common.pri)
 
-# Input 
-SOURCES += tst_qabstractsecuritysession.cpp
+HEADERS += ../qsfwtestutil.h
+SOURCES += tst_qabstractsecuritysession.cpp \
+           ../qsfwtestutil.cpp
 
 LIBS += -lQtServiceFramework
 

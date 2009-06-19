@@ -10,8 +10,9 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
-# Input 
-SOURCES += tst_databasemanagertest.cpp
+HEADERS += ../qsfwtestutil.h
+SOURCES += tst_databasemanagertest.cpp \
+           ../qsfwtestutil.cpp
 
 LIBS += -lQtServiceFramework
 

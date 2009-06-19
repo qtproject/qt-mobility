@@ -43,6 +43,7 @@
 #include <qabstractsecuritysession.h>
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../sampleserviceplugin/sampleserviceplugin.h"
+#include "../qsfwtestutil.h"
 
 #include <QtTest/QtTest>
 #include <QtCore>
@@ -67,34 +68,6 @@ Q_DECLARE_METATYPE(QList<QByteArray>)
 Q_DECLARE_METATYPE(QServiceManager::Scope)
 
 typedef QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
-
-
-// TODO make private DatabaseManager header so the path retrieval isn't duplicated
-static QString tst_qservicemanager_systemDbPath()
-{
-    QSettings systemSettings(QSettings::IniFormat, QSettings::SystemScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    QFileInfo fi(systemSettings.fileName());
-    QDir dir = fi.dir();
-
-    QString qtVersion(qVersion());
-    qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFW_") + qtVersion + QLatin1String("_system.db");
-    return dir.path() + QDir::separator() + dbName;
-}
-
-static QString tst_qservicemanager_userDbPath()
-{
-    QSettings userSettings(QSettings::IniFormat, QSettings::UserScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    QFileInfo fi(userSettings.fileName());
-    QDir dir = fi.dir();
-
-    QString qtVersion(qVersion());
-    qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFW_") + qtVersion + QLatin1String("_user.db");
-    return dir.path() + QDir::separator()  + dbName;
-}
 
 uint qHash(const QServiceInterfaceDescriptor &desc)
 {
@@ -280,27 +253,18 @@ private slots:
     void serviceRemoved_data();
 };
 
-static QString settingsPath(const QString &path)
-{
-    // Temporary path for files that are specified explictly in the constructor.
-    QString tempPath = QDir::tempPath();
-    if (tempPath.endsWith("/"))
-        tempPath.truncate(tempPath.size() - 1);
-    return QDir::toNativeSeparators(tempPath + "/tst_DatabaseManager/" + path);
-}
-
 void tst_QServiceManager::initTestCase()
 {
     qRegisterMetaType<QServiceManager::Scope>("QServiceManager::Scope");
 
-    QSettings::setSystemIniPath(settingsPath("__system__"));
-    QSettings::setUserIniPath(settingsPath("__user__"));
+    QSfwTestUtil::setupTempUserDb();
+    QSfwTestUtil::setupTempSystemDb();
 }
 
 void tst_QServiceManager::init()
 {
-    QFile(tst_qservicemanager_userDbPath()).remove();
-    QFile(tst_qservicemanager_systemDbPath()).remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", false);
@@ -308,8 +272,8 @@ void tst_QServiceManager::init()
 
 void tst_QServiceManager::cleanupTestCase()
 {
-    QFile(tst_qservicemanager_userDbPath()).remove();
-    QFile(tst_qservicemanager_systemDbPath()).remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 void tst_QServiceManager::constructor()

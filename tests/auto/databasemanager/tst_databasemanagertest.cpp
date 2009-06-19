@@ -50,6 +50,7 @@
 #include <qservicefilter.h>
 #include <databasemanager.h>
 #include "../../../servicefw/serviceframework/servicedatabase/databasemanager.cpp"
+#include "../qsfwtestutil.h"
 
 class DatabaseManagerUnitTest: public QObject
 {
@@ -81,28 +82,13 @@ private:
                QString interfaceDescription="");
 
         DatabaseManager *m_dbm;
-        QString m_userSettingsDir;
-        QString m_systemSettingsDir;
         QDir m_testdir;
-
-        void removeDirectory(const QString &path);
 };
-
-static QString settingsPath(const char *path = "")
-{
-    // Temporary path for files that are specified explictly in the constructor.
-    QString tempPath = QDir::tempPath();
-    if (tempPath.endsWith("/"))
-        tempPath.truncate(tempPath.size() - 1);
-    return QDir::toNativeSeparators(tempPath + "/tst_DatabaseManager/" + QLatin1String(path));
-}
 
 void DatabaseManagerUnitTest::initTestCase()
 {
-    m_userSettingsDir = settingsPath("__system__");
-    m_systemSettingsDir = settingsPath("__user__");
-    QSettings::setSystemIniPath(m_userSettingsDir);
-    QSettings::setUserIniPath(m_systemSettingsDir);
+    QSfwTestUtil::setupTempUserDb();
+    QSfwTestUtil::setupTempSystemDb();
     m_dbm = new DatabaseManager;
 }
 
@@ -430,24 +416,10 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
 void DatabaseManagerUnitTest::cleanupTestCase()
 {
     m_dbm->close();
-    removeDirectory(settingsPath());
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
     delete m_dbm;
 }
-
-void DatabaseManagerUnitTest::removeDirectory(const QString &path)
-{
-    QDir dir(path);
-    QFileInfoList fileList = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
-    foreach(QFileInfo file, fileList) {
-        if(file.isFile()) {
-            QFile::remove (file.canonicalFilePath());
-        }
-        if(file.isDir())
-            removeDirectory(file.canonicalFilePath());
-    }
-    QFile::remove(path);
-}
-
 
 QTEST_MAIN(DatabaseManagerUnitTest)
 #include "tst_databasemanagertest.moc"
