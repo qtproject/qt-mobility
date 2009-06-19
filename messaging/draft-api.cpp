@@ -202,17 +202,6 @@ bool QMessageContentContainerId::isValid() const
     return false; // stub
 }
 
-/*!
-    \fn QMessageId QMessageContentContainerId::messageId() const
-
-    Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
-    message identifier.
-*/
-QMessageId QMessageContentContainerId::messageId() const
-{
-    return QMessageId(); // stub
-}
-
 /*! \typedef QMessageContentContainerIdList
 
     Qt-style synonym for QList<QMessageContentContainerId>
@@ -514,6 +503,17 @@ QMessageContentContainerId QMessageContentContainer::containerId() const
 void QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
 {
     Q_UNUSED(id)
+}
+
+/*!
+    \fn QMessageId QMessageContentContainer::messageId() const
+
+    Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
+    message identifier.
+*/
+QMessageId QMessageContentContainer::messageId() const
+{
+    return QMessageId(); // stub
 }
 
 /*!

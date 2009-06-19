@@ -41,8 +41,6 @@ public:
     QString toString() const;
     bool isValid() const;
 
-    QMessageId messageId() const;
-
 private:
     // ...
 };
@@ -94,6 +92,7 @@ public:
     virtual ~QMessageContentContainer();
 
     virtual QMessageContentContainerId containerId() const;
+    virtual QMessageId messageId() const;
 
     virtual void setContentType(const QByteArray &data);
     virtual QByteArray contentType() const;
