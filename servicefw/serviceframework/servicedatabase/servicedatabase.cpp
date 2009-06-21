@@ -380,7 +380,8 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     QServiceInterfaceDescriptor defaultInterface;
     foreach(const QServiceInterfaceDescriptor &interface, interfaces) {
         defaultInterface = defaultServiceInterface(interface.interfaceName());
-        if (m_lastError.errorCode() == DBError::NoError) {
+        if (m_lastError.errorCode() == DBError::NoError
+                || m_lastError.errorCode() == DBError::ExternalIfaceIDFound) {
             continue;
         } else if (m_lastError.errorCode() == DBError::NotFound) {
             //default does not already exist so create one
@@ -808,11 +809,12 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
                                 "Service.FilePath, "
                                 "Service.ID ";
     QString fromComponent = "FROM Interface, Service ";
-    QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
+    QString whereComponent = "WHERE Service.ID = Interface.ServiceID "
+                                    "AND Interface.ID = ? ";
     QList<QVariant> bindValues;
     bindValues.append(interfaceID);
 
-    if (!executeQuery(&query, selectComponent + fromComponent + whereComponent)) {
+    if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getInterfaces():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -1063,6 +1065,7 @@ bool ServiceDatabase::setDefaultService(const QString &serviceName, const QStrin
 
     //End Transaction
     databaseCommit(&query, &database);
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 

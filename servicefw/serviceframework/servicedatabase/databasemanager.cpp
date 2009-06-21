@@ -41,7 +41,6 @@
 
 #include "databasemanager.h"
 #include <qserviceinterfacedescriptor_p.h>
-
 #include <QFileSystemWatcher>
 #include <QHash>
 
@@ -148,7 +147,13 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
         emit manager->serviceRemoved(removedServices[i], scope);
 }
 
-
+bool lessThan(const QServiceInterfaceDescriptor &d1,
+                                        const QServiceInterfaceDescriptor &d2)
+{
+        return (d1.majorVersion() < d2.majorVersion())
+                || ( d1.majorVersion() == d2.majorVersion()
+                && d1.minorVersion() < d2.minorVersion());
+}
 
 DatabaseManager::DatabaseManager()
     : m_fileWatcher(0)
@@ -257,6 +262,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         if (!openDb(UserScope))
             return descriptors;
         descriptors =  m_userDb.getInterfaces(filter, &ok);
+
         if (ok == false) {
             descriptors.clear();
             m_lastError = m_userDb.lastError();
@@ -374,6 +380,9 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
                 QString errorText("No default service found for interface: \"%1\"");
                 m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
                 return QServiceInterfaceDescriptor();
+            } else {
+                m_lastError.setError(DBError::NoError);
+                return QServiceInterfaceDescriptor();
             }
         } else if (m_userDb.lastError().errorCode() == DBError::NotFound) {
             //do nothing, the search for a default in the system db continues
@@ -413,10 +422,99 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
     return QServiceInterfaceDescriptor();
 }
 
+bool DatabaseManager::setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope)
+{
+    QList<QServiceInterfaceDescriptor> descriptors;
+    int userDescriptorCount = 0;
+    bool ok;
+    QServiceFilter filter;
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
+
+    if (scope == UserScope){
+        if (!openDb(UserScope))
+            return false;
+        descriptors = m_userDb.getInterfaces(filter, &ok);
+        if (!ok) {
+            m_lastError = m_userDb.lastError();
+            return false;
+        }
+        userDescriptorCount = descriptors.count();
+        for (int i = 0; i < userDescriptorCount; ++i) {
+            descriptors[i].d->systemScope = false;
+        }
+    }
+
+    if (openDb(SystemScope)) {
+        descriptors.append(m_systemDb.getInterfaces(filter, &ok));
+        if (!ok) {
+            m_lastError = m_systemDb.lastError();
+            return false;
+        }
+
+        for (int i = userDescriptorCount; i < descriptors.count(); ++i) {
+            descriptors[i].d->systemScope = true;
+        }
+    } else if (scope == SystemScope) { //if couldn't open at system scope return error
+        m_lastError = m_systemDb.lastError();
+        return false;
+    }
+
+    if (descriptors.count() == 0) {
+        QString errorText("No implementation for interface \"%1\" "
+                "found for service \"%2\"");
+        m_lastError.setError(DBError::NotFound,
+                errorText.arg(interfaceName)
+                .arg(serviceName));
+        return false;
+    }
+
+    //find the descriptor with the latest version
+    int latestIndex = 0;
+        for (int i = 1; i < descriptors.count(); ++i) {
+            if (lessThan(descriptors[latestIndex], descriptors[i]))
+                latestIndex = i;
+    }
+
+    if (scope == UserScope) {
+        if (descriptors[latestIndex].inSystemScope()) {
+            QString interfaceID = m_systemDb.getInterfaceID(descriptors[latestIndex]);
+            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+                if(m_userDb.setDefaultService(descriptors[latestIndex], interfaceID)) {
+                    m_lastError.setError(DBError::NoError);
+                    return true;
+                } else {
+                    m_lastError = m_userDb.lastError();
+                    return false;
+                }
+            } else {
+                m_lastError = m_systemDb.lastError();
+                return false;
+            }
+        } else {
+            if(m_userDb.setDefaultService(descriptors[latestIndex])){
+                m_lastError.setError(DBError::NoError);
+                return true;
+            } else {
+                m_lastError = m_userDb.lastError();
+                return false;
+            }
+        }
+    } else { //scope == SystemScope
+        if(m_systemDb.setDefaultService(descriptors[latestIndex])) {
+            m_lastError.setError(DBError::NoError);
+            return true;
+        } else {
+            m_lastError = m_systemDb.lastError();
+            return false;
+        }
+    }
+}
+
 bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
     if (scope == UserScope) {
-        if(!openDb(UserScope))
+        if (!openDb(UserScope))
             return false;
         if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
             if(m_userDb.setDefaultService(descriptor)) {
@@ -445,21 +543,23 @@ bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descr
                 return false;
             }
         }
-    }
-
-    if (scope == SystemScope) {
+    } else {  //scope == SystemScope
         if (!descriptor.inSystemScope()) {
             QString errorText("Cannot set default service at system scope with a user scope "
                                 "interface descriptor");
             m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
             return false;
         } else {
-            if (m_systemDb.setDefaultService(descriptor)) {
-                m_lastError.setError(DBError::NoError);
-                return true;
-            } else {
-                m_lastError = m_systemDb.lastError();
+            if (!openDb(SystemScope)) {
                 return false;
+            } else {
+                if (m_systemDb.setDefaultService(descriptor)) {
+                    m_lastError.setError(DBError::NoError);
+                    return true;
+                } else {
+                    m_lastError = m_systemDb.lastError();
+                    return false;
+                }
             }
         }
     }
