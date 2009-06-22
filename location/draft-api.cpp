@@ -455,10 +455,10 @@
 */
 
 /*!
-    \fn static QSatelliteInfoSource *QSatelliteInfoSource::createSource();
+    \fn static QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject *parent = 0);
 
-    Creates and returns a source that reads from the system's default
-    source of satellite update information.
+    Creates and returns a source with the given \a parent that reads from 
+    the system's default source of satellite update information.
 
     Returns 0 if the system has no default source.
 */

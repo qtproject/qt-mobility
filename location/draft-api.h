@@ -131,7 +131,7 @@ class QSatelliteInfoSource : public QObject
 public:
     explicit QSatelliteInfoSource(QObject *parent = 0);
 
-    static QSatelliteInfoSource *createSource();
+    static QSatelliteInfoSource *createSource(QObject *parent = 0);
 
 public slots:
     virtual void startUpdates() = 0;
