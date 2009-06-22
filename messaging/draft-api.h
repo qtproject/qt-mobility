@@ -651,6 +651,7 @@ public:
     void retrieve(const QMessageId &id);
     void retrieve(const QMessageContentContainerId &id);
     void show(const QMessageId &id);
+    void exportUpdates();
     Activity activity() const;
     QString lastErrorString() const;
 

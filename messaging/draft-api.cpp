@@ -3609,9 +3609,13 @@ int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
     Removes the message with QMessageId \a id from the messaging store. If \a option is 
     QMessageStore::CreateRemovalRecord then a removal record will be created for the
     removed message.
-    Returns \c true if the operation completed successfully, \c false otherwise. 
 
-    \sa removeMessages(), addMessage(), updateMessage()
+    Returns \c true if the operation successfully updates the store; otherwise returns \c false.
+    
+    To ensure the change is propogated to any affected external server
+    QMessageServiceAction::exportUpdates() should be subsequently called.
+
+    \sa removeMessages(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 {
@@ -3624,7 +3628,12 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     Removes all messages identified by the key \a key from the messaging store.
     If \a option is QMessageStore::CreateRemovalRecord then removal records will be 
     created for each removed message.
-    Returns \c true if the operation completed successfully, \c false otherwise. 
+
+    Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
+    
+    To ensure the change is propogated to any affected external server
+    QMessageServiceAction::exportUpdates() should be subsequently called.
+
 
     For example:
 
@@ -3638,7 +3647,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     }
     \endcode
 
-    \sa removeMessage(), addMessage(), updateMessage()
+    \sa removeMessage(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
 bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
 {
@@ -3649,9 +3658,12 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 
 /*!
     Updates the existing QMessage \a m on the messaging store.
-    Returns \c true if the operation completed successfully, or \c false otherwise. 
+    Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
+    
+    To ensure the change is propogated to any affected external server
+    QMessageServiceAction::exportUpdates() should be subsequently called.
 
-    \sa message(), updateMessage(), removeMessage()
+    \sa message(), updateMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
 */
 bool QMessageStore::addMessage(QMessage *m)
 {
@@ -3661,9 +3673,12 @@ bool QMessageStore::addMessage(QMessage *m)
 
 /*!
     Updates the existing QMessage \a m on the messaging store.
-    Returns \c true if the operation completed successfully, or \c false otherwise. 
+    Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
+
+    To ensure the change is propogated to any affected external server 
+    QMessageServiceAction::exportUpdates() should be subsequently called.
     
-    \sa addMessage(), removeMessage()
+    \sa addMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
 */
 bool QMessageStore::updateMessage(QMessage *m)
 {
@@ -3891,6 +3906,15 @@ void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 void QMessageServiceAction::show(const QMessageId& id)
 {
     Q_UNUSED(id)
+}
+    
+/*!
+    Synchronize any changes that have been queued by message store operations with external servers.
+
+    \sa QMessageStore::addMessage(), QMessageStore::updateMessage(), QMessageStore::removeMessage(), QMessageStore::removeMessages()
+*/
+void QMessageServiceAction::exportUpdates()
+{
 }
     
 /*!
