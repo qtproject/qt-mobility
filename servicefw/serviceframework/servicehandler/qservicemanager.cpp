@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -42,14 +42,12 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
-#include "servicedatabase.h"
+#include "databasemanager.h"
 
 #include <QObject>
 #include <QPluginLoader>
-#include <QBuffer>
 #include <QFile>
 #include <QDebug>
-#include <QFileSystemWatcher>
 
 QT_BEGIN_NAMESPACE
 
@@ -101,32 +99,24 @@ class QServiceManagerPrivate : public QObject
     Q_OBJECT
 public:
     QServiceManager *manager;
-    ServiceDatabase *database;
+    DatabaseManager *dbManager;
     QServiceManager::Scope scope;
     QServiceManager::Error error;
 
     QServiceManagerPrivate(QServiceManager *parent = 0)
         : QObject(parent),
           manager(parent),
-          database(new ServiceDatabase),
-          watcher(0)
+          dbManager(new DatabaseManager)
     {
+        connect(dbManager, SIGNAL(serviceAdded(QString, DatabaseManager::DbScope)),
+                SLOT(serviceAdded(QString, DatabaseManager::DbScope)));
+        connect(dbManager, SIGNAL(serviceRemoved(QString, DatabaseManager::DbScope)),
+                SLOT(serviceRemoved(QString, DatabaseManager::DbScope)));
     }
 
     ~QServiceManagerPrivate()
     {
-        delete database;
-        delete watcher;
-    }
-
-    void init(QServiceManager::Scope databaseScope)
-    {
-        scope = databaseScope;
-
-        if (!database->open()) {
-            setError();
-            qWarning("QServiceManager: unable to open services database");
-        }
+        delete dbManager;
     }
 
     void setError(QServiceManager::Error err)
@@ -136,13 +126,16 @@ public:
 
     void setError()
     {
-        switch (database->lastError().errorCode()) {
+        switch (dbManager->lastError().errorCode()) {
             case DBError::NoError:
                 error = QServiceManager::NoError;
                 break;
             case DBError::DatabaseNotOpen:
             case DBError::InvalidDatabaseConnection:
-                error = QServiceManager::StorageReadError;
+            case DBError::CannotCreateDbDir:
+            case DBError::CannotOpenSystemDb:
+            case DBError::CannotOpenUserDb:
+                error = QServiceManager::StorageAccessError;
                 break;
             case DBError::ComponentAlreadyRegistered:
                 error = QServiceManager::ServiceAlreadyExists;
@@ -156,69 +149,27 @@ public:
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
             case DBError::CannotCloseDatabase:
+            case DBError::InvalidDescriptorScope:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
                 break;
         }
     }
 
-    void setDatabaseMonitorEnabled(bool enable)
+private slots:
+    void serviceAdded(const QString &service, DatabaseManager::DbScope dbScope)
     {
-        QString databasePath = database->databasePath();
-        if (!watcher) {
-            watcher = new QFileSystemWatcher;
-            connect(watcher, SIGNAL(fileChanged(QString)),
-                SLOT(databaseChanged()));
-        }
-        if (enable) {
-            bool ok = false;
-            knownServices = database->getServiceNames(QString(), &ok);
-            if (!ok) {
-                qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
-                return;
-            }
-            watcher->addPath(databasePath);
-        } else {
-            watcher->removePath(databasePath);
-        }
+        QServiceManager::Scope s = (dbScope == DatabaseManager::SystemScope ?
+                QServiceManager::SystemScope : QServiceManager::UserScope);
+        emit manager->serviceAdded(service, s);
     }
 
-public slots:
-    void databaseChanged()
+    void serviceRemoved(const QString &service, DatabaseManager::DbScope dbScope)
     {
-        bool ok = false;
-        QStringList currentServices = database->getServiceNames(QString(), &ok);
-        if (!ok) {
-                qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
-            return;
-        }
-        QSet<QString> currentServicesSet = currentServices.toSet();
-        QSet<QString> knownServicesSet = knownServices.toSet();
-        if (currentServicesSet == knownServicesSet)
-            return;
-
-        QStringList newServices;
-        for (int i=0; i<currentServices.count(); i++) {
-            if (!knownServicesSet.contains(currentServices[i]))
-                newServices << currentServices[i];
-        }
-
-        QStringList removedServices;
-        for (int i=0; i<knownServices.count(); i++) {
-            if (!currentServicesSet.contains(knownServices[i]))
-                removedServices << knownServices[i];
-        }
-
-        knownServices = currentServices;
-        for (int i=0; i<newServices.count(); i++)
-            emit manager->serviceAdded(newServices[i]);
-        for (int i=0; i<removedServices.count(); i++)
-            emit manager->serviceRemoved(removedServices[i]);
+        QServiceManager::Scope s = (dbScope == DatabaseManager::SystemScope ?
+                QServiceManager::SystemScope : QServiceManager::UserScope);
+        emit manager->serviceRemoved(service, s);
     }
-
-private:
-    QFileSystemWatcher *watcher;
-    QStringList knownServices;
 };
 
 /*!
@@ -263,8 +214,7 @@ private:
     Defines the possible errors for the service manager.
 
     \value NoError No error occurred.
-    \value StoragePermissionsError The service data storage cannot be accessed.
-    \value StorageReadError The service data storage is not available.
+    \value StorageAccessError The service data storage is not accessible. This could be because the caller does not have the required permissions.
     \value InvalidServiceLocation The service was not found at its specified \l{QServiceInterfaceDescriptor::Location}{location}.
     \value InvalidServiceXml The XML defining the service metadata is invalid.
     \value InvalidServiceInterfaceDescriptor The service interface descriptor is invalid.
@@ -303,7 +253,7 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    d->init(UserScope);
+    d->scope = UserScope;
 }
 
 /*!
@@ -313,7 +263,7 @@ QServiceManager::QServiceManager(Scope scope, QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    d->init(scope);
+    d->scope = scope;
 }
 
 /*!
@@ -338,10 +288,10 @@ QServiceManager::Scope QServiceManager::scope() const
 */
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
+    d->setError(NoError);
     QStringList services;
-    if (!d->database->isOpen())
-        return services;
-    services = d->database->getServiceNames(interfaceName);
+    services = d->dbManager->getServiceNames(interfaceName,
+            d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
     d->setError();
     return services;
 }
@@ -351,11 +301,10 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServiceFilter& filter) const
 {
-    if (!d->database->isOpen())
-        return QList<QServiceInterfaceDescriptor>();
-    bool ok = false;
-    QList<QServiceInterfaceDescriptor> descriptors = d->database->getInterfaces(filter, &ok);
-    if (!ok) {
+    d->setError(NoError);
+    QList<QServiceInterfaceDescriptor> descriptors = d->dbManager->getInterfaces(filter,
+            d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
+    if (descriptors.isEmpty() && d->dbManager->lastError().errorCode() != DBError::NoError) {
         d->setError();
         return QList<QServiceInterfaceDescriptor>();
     }
@@ -400,6 +349,7 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
 */
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
+    d->setError(NoError);
     if (!descriptor.isValid()) {
         d->setError(InvalidServiceInterfaceDescriptor);
         return 0;
@@ -509,17 +459,16 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 */
 bool QServiceManager::addService(QIODevice *device)
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return false;
-    }
+    d->setError(NoError);
     ServiceMetaData data(device);
     if (!data.extractMetadata()) {
         d->setError(InvalidServiceXml);
         return false;
     }
 
-    bool result = d->database->registerService(data);
+    DatabaseManager::DbScope scope = d->scope == UserScope ?
+            DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
+    bool result = d->dbManager->registerService(data, scope);
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location()));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
@@ -528,7 +477,7 @@ bool QServiceManager::addService(QIODevice *device)
         } else {
             d->setError(PluginLoadingFailed);
             result = false;
-            d->database->unregisterService(data.name());
+            d->dbManager->unregisterService(data.name(), scope);
         }
         loader->unload();
         delete loader;
@@ -553,10 +502,7 @@ bool QServiceManager::addService(QIODevice *device)
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return false;
-    }
+    d->setError(NoError);
     if (serviceName.isEmpty()) {
         d->setError(ComponentNotFound);
         return false;
@@ -582,7 +528,8 @@ bool QServiceManager::removeService(const QString& serviceName)
         delete loader;
     }
 
-    if (!d->database->unregisterService(serviceName)) {
+    if (!d->dbManager->unregisterService(serviceName, d->scope == UserScope ?
+            DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {
         d->setError();
         return false;
     }
@@ -601,20 +548,14 @@ bool QServiceManager::removeService(const QString& serviceName)
 */
 bool QServiceManager::setDefaultServiceForInterface(const QString &service, const QString &interfaceName)
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return false;
-    }
-    if (service.isEmpty()) {
+    d->setError(NoError);
+    if (service.isEmpty() || interfaceName.isEmpty()) {
         d->setError(ComponentNotFound);
         return false;
     }
-    if (interfaceName.isEmpty()) {
-        d->setError(ComponentNotFound);
-        return false;
-    }
-
-    if (!d->database->setDefaultService(service, interfaceName)) {
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    if (!d->dbManager->setDefaultService(service, interfaceName, scope)) {
         d->setError();
         return false;
     }
@@ -632,15 +573,10 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
 */
 bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor)
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return false;
-    }
-    if (!descriptor.isValid()) {
-        d->setError(InvalidServiceInterfaceDescriptor);
-        return false;
-    }
-    if (!d->database->setDefaultService(descriptor)) {
+    d->setError(NoError);
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    if (!d->dbManager->setDefaultService(descriptor, scope)) {
         d->setError();
         return false;
     }
@@ -652,18 +588,14 @@ bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescr
 */
 QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QString& interfaceName) const
 {
-    if (!d->database->isOpen()) {
-        d->setError(StorageReadError);
-        return QServiceInterfaceDescriptor();
-    }
-    bool ok = false;
-    QServiceInterfaceDescriptor info;
-    info = d->database->defaultServiceInterface(interfaceName, &ok);
-    if (!ok) {
+    d->setError(NoError);
+    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+            DatabaseManager::SystemScope : DatabaseManager::UserScope;
+    QServiceInterfaceDescriptor info = d->dbManager->defaultServiceInterface(interfaceName, scope);
+    if (d->dbManager->lastError().errorCode() != DBError::NoError) {
         d->setError();
         return QServiceInterfaceDescriptor();
     }
-
     return info;
 }
 
@@ -680,9 +612,10 @@ QServiceManager::Error QServiceManager::error() const
 */
 void QServiceManager::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString))
-            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString))) {
-        d->setDatabaseMonitorEnabled(true);
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
+        d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, true);
+        d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, true);
     }
 }
 
@@ -691,11 +624,12 @@ void QServiceManager::connectNotify(const char *signal)
 */
 void QServiceManager::disconnectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString))
-            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString))) {
-        if (receivers(SIGNAL(serviceAdded(QString))) == 0
-                && receivers(SIGNAL(serviceRemoved(QString))) == 0) {
-            d->setDatabaseMonitorEnabled(false);
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
+        if (receivers(SIGNAL(serviceAdded(QString,QServiceManager::Scope))) == 0
+                && receivers(SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) == 0) {
+            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, false);
+            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, false);
         }
     }
 }

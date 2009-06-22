@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -48,6 +48,8 @@
 
 QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
+
+class DatabaseFileWatcher;
 
 class Q_SFW_EXPORT DatabaseManager : public QObject
 {
@@ -64,11 +66,17 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);
         QStringList getServiceNames(const QString &interfaceName, DbScope scope);
 
-//      QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName);
-//      bool setDefaultService(const QString &serviceName, const QString &interfaceName);
-//      bool setDefaultService(const QServiceInterfaceDescriptor &interface);
+      QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, DbScope scope);
+      bool setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope);
+      bool setDefaultService(const QServiceInterfaceDescriptor &interface, DbScope scope);
 
         DBError lastError(){ return m_lastError;}
+
+        void setChangeNotificationsEnabled(DbScope scope, bool enabled);
+
+    signals:
+        void serviceAdded(const QString &serviceName, DatabaseManager::DbScope scope);
+        void serviceRemoved(const QString &serviceName, DatabaseManager::DbScope scope);
 
     private:
         void initDbPaths();
@@ -78,6 +86,30 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         ServiceDatabase m_userDb;
         ServiceDatabase m_systemDb;
         DBError m_lastError;
+
+        friend class DatabaseFileWatcher;
+        DatabaseFileWatcher *m_fileWatcher;
+};
+
+
+class Q_SFW_EXPORT DatabaseFileWatcher : public QObject
+{
+    Q_OBJECT
+public:
+    DatabaseFileWatcher(DatabaseManager *parent = 0);
+
+    void setEnabled(ServiceDatabase *database, bool enabled);
+
+private slots:
+    void databaseChanged(const QString &path);
+    void databaseDirectoryChanged(const QString &path);
+
+private:
+    void notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope);
+
+    DatabaseManager *manager;
+    QFileSystemWatcher *watcher;
+    QHash<QString, QStringList> knownServices;
 };
 
 QT_END_NAMESPACE

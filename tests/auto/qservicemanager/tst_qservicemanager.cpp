@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,17 +34,22 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtTest/QtTest>
-#include <QtCore>
 #include <qservicemanager.h>
 #include <qservicecontext.h>
 #include <qabstractsecuritysession.h>
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../sampleserviceplugin/sampleserviceplugin.h"
+#include "../qsfwtestutil.h"
+
+#include <QtTest/QtTest>
+#include <QtCore>
+#include <QSettings>
+#include <QFileInfo>
+#include <QDir>
 
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -114,8 +119,8 @@ class ServicesListener : public QObject
 {
     Q_OBJECT
 public slots:
-    void serviceAdded(const QString &) {}
-    void serviceRemoved(const QString &) {}
+    void serviceAdded(const QString &, QServiceManager::Scope) {}
+    void serviceRemoved(const QString &, QServiceManager::Scope) {}
 };
 
 
@@ -171,7 +176,7 @@ private:
 
     }
 
-    QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties()) const
+    QServiceInterfaceDescriptor createDescriptor(const QString &interfaceName, int major, int minor, const QString &serviceName, const DescriptorProperties &properties = DescriptorProperties(), bool systemScope = false) const
     {
         QString version = QString("%1.%2").arg(major).arg(minor);
 
@@ -180,6 +185,7 @@ private:
         priv->interfaceName = interfaceName;
         priv->major = major;
         priv->minor = minor;
+        priv->systemScope = systemScope;
 
         priv->properties = properties;
         foreach (QServiceInterfaceDescriptor::PropertyKey key, DEFAULT_DESCRIPTOR_PROPERTIES.keys()) {
@@ -204,8 +210,14 @@ private slots:
     void findServices();
     void findServices_data();
 
+    void findServices_scope();
+    void findServices_scope_data();
+
     void findInterfaces_filter();
     void findInterfaces_filter_data();
+
+    void findInterfaces_scope();
+    void findInterfaces_scope_data();
 
     void loadInterface_string();
 
@@ -228,7 +240,9 @@ private slots:
 
     void setDefaultServiceForInterface_strings();
     void setDefaultServiceForInterface_strings_multipleInterfaces();
+
     void setDefaultServiceForInterface_descriptor();
+    void setDefaultServiceForInterface_descriptor_data();
 
     void defaultServiceInterface();
 
@@ -241,12 +255,16 @@ private slots:
 
 void tst_QServiceManager::initTestCase()
 {
+    qRegisterMetaType<QServiceManager::Scope>("QServiceManager::Scope");
+
+    QSfwTestUtil::setupTempUserDb();
+    QSfwTestUtil::setupTempSystemDb();
 }
 
 void tst_QServiceManager::init()
 {
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", false);
@@ -254,8 +272,8 @@ void tst_QServiceManager::init()
 
 void tst_QServiceManager::cleanupTestCase()
 {
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 void tst_QServiceManager::constructor()
@@ -351,6 +369,44 @@ void tst_QServiceManager::findServices_data()
             << interfaces2
             << (QSet<QString>() << "TestServiceWithOtherInterfaces")
             << (QSet<QString>() << "SomeTestService" << "TestServiceWithOtherInterfaces");
+}
+
+void tst_QServiceManager::findServices_scope()
+{
+    QFETCH(QServiceManager::Scope, scope_add);
+    QFETCH(QServiceManager::Scope, scope_find);
+    QFETCH(bool, expectFound);
+
+    QByteArray xml = createServiceXml("SomeTestService",
+            createInterfaceXml("com.nokia.qt.TestInterface"), VALID_PLUGIN_FILES[0]);
+    QBuffer buffer(&xml);
+
+    QServiceManager mgrUser(QServiceManager::UserScope);
+    QServiceManager mgrSystem(QServiceManager::SystemScope);
+
+    QServiceManager *mgrAdd = scope_add == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+    QServiceManager *mgrFind = scope_find == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+
+    QVERIFY(mgrAdd->addService(&buffer));
+    QStringList result = mgrFind->findServices();
+    QCOMPARE(!result.isEmpty(), expectFound);
+}
+
+void tst_QServiceManager::findServices_scope_data()
+{
+    QTest::addColumn<QServiceManager::Scope>("scope_add");
+    QTest::addColumn<QServiceManager::Scope>("scope_find");
+    QTest::addColumn<bool>("expectFound");
+
+    QTest::newRow("user scope")
+            << QServiceManager::UserScope << QServiceManager::UserScope << true;
+    QTest::newRow("system scope")
+            << QServiceManager::SystemScope << QServiceManager::SystemScope << true;
+
+    QTest::newRow("user scope - add, system scope - find")
+            << QServiceManager::UserScope << QServiceManager::SystemScope << false;
+    QTest::newRow("system scope - add, user scope - find")
+            << QServiceManager::SystemScope << QServiceManager::UserScope << true;
 }
 
 void tst_QServiceManager::findInterfaces_filter()
@@ -579,6 +635,33 @@ void tst_QServiceManager::findInterfaces_filter_data()
             << filter
             << descriptors;
 }
+
+void tst_QServiceManager::findInterfaces_scope()
+{
+    QFETCH(QServiceManager::Scope, scope_add);
+    QFETCH(QServiceManager::Scope, scope_find);
+    QFETCH(bool, expectFound);
+
+    QByteArray xml = createServiceXml("SomeTestService",
+            createInterfaceXml("com.nokia.qt.TestInterface"), VALID_PLUGIN_FILES[0]);
+    QBuffer buffer(&xml);
+
+    QServiceManager mgrUser(QServiceManager::UserScope);
+    QServiceManager mgrSystem(QServiceManager::SystemScope);
+
+    QServiceManager *mgrAdd = scope_add == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+    QServiceManager *mgrFind = scope_find == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+
+    QVERIFY(mgrAdd->addService(&buffer));
+    QList<QServiceInterfaceDescriptor> result = mgrFind->findInterfaces("SomeTestService");
+    QCOMPARE(!result.isEmpty(), expectFound);
+}
+
+void tst_QServiceManager::findInterfaces_scope_data()
+{
+    findServices_scope_data();
+}
+
 
 void tst_QServiceManager::loadInterface_string()
 {
@@ -1000,7 +1083,11 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfac
 
 void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
 {
-    QServiceManager mgr;
+    QFETCH(QServiceManager::Scope, scope_add);
+    QFETCH(QServiceManager::Scope, scope_find);
+    QFETCH(bool, expectFound);
+
+    QServiceManager mgr(scope_add);
     QServiceInterfaceDescriptor desc;
 
     QString interfaceName = "com.nokia.qt.serviceframework.TestInterface";
@@ -1009,7 +1096,8 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
 
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
 
-    desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties);
+    desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties,
+            scope_add == QServiceManager::SystemScope);
 
     // fails if the specified interface hasn't been registered
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
@@ -1022,6 +1110,26 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), true);
 
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), desc);
+
+    QServiceManager mgrWithOtherScope(scope_find);
+    QCOMPARE(mgrWithOtherScope.defaultServiceInterface(interfaceName).isValid(), expectFound);
+}
+
+void tst_QServiceManager::setDefaultServiceForInterface_descriptor_data()
+{
+    QTest::addColumn<QServiceManager::Scope>("scope_add");
+    QTest::addColumn<QServiceManager::Scope>("scope_find");
+    QTest::addColumn<bool>("expectFound");
+
+    QTest::newRow("user scope")
+            << QServiceManager::UserScope << QServiceManager::UserScope << true;
+    QTest::newRow("system scope")
+            << QServiceManager::SystemScope << QServiceManager::SystemScope << true;
+
+    QTest::newRow("user scope - add, system scope - find")
+            << QServiceManager::UserScope << QServiceManager::SystemScope << false;
+    QTest::newRow("system scope - add, user scope - find")
+            << QServiceManager::SystemScope << QServiceManager::UserScope << true;
 }
 
 void tst_QServiceManager::defaultServiceInterface()
@@ -1034,21 +1142,37 @@ void tst_QServiceManager::serviceAdded()
 {
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
+    QFETCH(QServiceManager::Scope, scope_modify);
+    QFETCH(QServiceManager::Scope, scope_listen);
 
     QBuffer buffer;
     buffer.setData(xml);
-    QServiceManager mgr;
+    QServiceManager mgr_modify(scope_modify);
+    QServiceManager mgr_listen(scope_listen);
 
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
-    connect(&mgr, SIGNAL(serviceAdded(QString)), listener, SLOT(serviceAdded(QString)));
+    connect(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)),
+            listener, SLOT(serviceAdded(QString,QServiceManager::Scope)));
 
-    QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString)));
-    QVERIFY(mgr.addService(&buffer));
+    QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.addService(&buffer));
 
-    // QFileSystemWatcher doesn't emit fileChanged() immediately
-    QTRY_COMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+    QTRY_COMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+
+    // try it again
+    QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+
+    spyAdd.clear();
+    buffer.seek(0);
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
     delete listener;
 }
@@ -1057,38 +1181,67 @@ void tst_QServiceManager::serviceAdded_data()
 {
     QTest::addColumn<QByteArray>("xml");
     QTest::addColumn<QString>("serviceName");
+    QTest::addColumn<QServiceManager::Scope>("scope_modify");
+    QTest::addColumn<QServiceManager::Scope>("scope_listen");
 
     QFile file1(xmlTestDataPath("sampleservice.xml"));
     QVERIFY(file1.open(QIODevice::ReadOnly));
     QFile file2(xmlTestDataPath("testserviceplugin.xml"));
     QVERIFY(file2.open(QIODevice::ReadOnly));
 
-    QTest::newRow("SampleService") << file1.readAll() << "SampleService";
-    QTest::newRow("TestService") << file2.readAll() << "TestService";
+    QByteArray file1Data = file1.readAll();
+
+    QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
+            << QServiceManager::UserScope << QServiceManager::UserScope;
+    QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
+            << QServiceManager::UserScope << QServiceManager::UserScope;
+
+    QTest::newRow("system scope") << file1Data << "SampleService"
+            << QServiceManager::SystemScope << QServiceManager::SystemScope;
+    QTest::newRow("modify as user, listen in system") << file1Data << "SampleService"
+            << QServiceManager::UserScope << QServiceManager::SystemScope;
+    QTest::newRow("modify as system, listen in user") << file1Data << "SampleService"
+            << QServiceManager::SystemScope << QServiceManager::UserScope;
 }
 
 void tst_QServiceManager::serviceRemoved()
 {
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
+    QFETCH(QServiceManager::Scope, scope_modify);
+    QFETCH(QServiceManager::Scope, scope_listen);
 
     QBuffer buffer;
     buffer.setData(xml);
-    QServiceManager mgr;
+    QServiceManager mgr_modify(scope_modify);
+    QServiceManager mgr_listen(scope_listen);
 
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
-    connect(&mgr, SIGNAL(serviceRemoved(QString)), listener, SLOT(serviceRemoved(QString)));
+    connect(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)),
+            listener, SLOT(serviceRemoved(QString,QServiceManager::Scope)));
 
-    QVERIFY(mgr.addService(&buffer));
-    QTest::qWait(2000);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
 
-    QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString)));
-    QVERIFY(mgr.removeService(serviceName));
+    QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
-    // QFileSystemWatcher doesn't emit fileChanged() immediately
-    QTRY_COMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+    // try it again
+    spyAdd.clear();
+    buffer.seek(0);
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
+
+    spyRemove.clear();
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
     delete listener;
 }
@@ -1097,6 +1250,7 @@ void tst_QServiceManager::serviceRemoved_data()
 {
     serviceAdded_data();
 }
+
 
 QTEST_MAIN(tst_QServiceManager)
 

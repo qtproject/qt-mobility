@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,10 +34,12 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "../qsfwtestutil.h"
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <qservicemanager.h>
@@ -83,8 +85,12 @@ private:
 void tst_QAbstractSecuritySession::initTestCase()
 {
     path = QCoreApplication::applicationDirPath() + "/xmldata/";
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+
+    QSfwTestUtil::setupTempUserDb();
+    QSfwTestUtil::setupTempSystemDb();
+
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 void tst_QAbstractSecuritySession::testSecSessionHandling()
@@ -170,8 +176,8 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
 
 void tst_QAbstractSecuritySession::cleanupTestCase()
 {
-    QFile f(QCoreApplication::applicationDirPath() + "/services.db");
-    f.remove();
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
 }
 
 QTEST_MAIN(tst_QAbstractSecuritySession)

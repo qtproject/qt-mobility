@@ -38,52 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "qsfwtestutil.h"
 
-#include "qabstractsecuritysession.h"
+#include <QDir>
+#include <QFileInfoList>
+#include <QFile>
+#include <QSettings>
 
-QT_BEGIN_NAMESPACE
-
-/*!
-    \class QAbstractSecuritySession
-    \brief The QAbstractSecuritySession class provides a generic mechanism to enable
-    permission checks for services.
-
-    A QAbstractSecuritySession encapsulates the service client's capabilities. QServiceManager
-    can match those capabilites with the capabilites required by a particular service. 
-    Service capabilites are declared via the services XML description. 
-
-    The use of a security session is not mandated by the service manager. If the client
-    is passing a security session object QServiceManager ensures that the permissions
-    are checked before the requested service is loaded and forwards the session to the 
-    service in case the service intends to implement additional checks. If no security 
-    session is passed to QServiceManager capability checks are not performed.
-
-    QAbstractSecuritySession describes the abstract interface that security/permission
-    engines must implement in order to provide capability related functionality.
-
-    \sa QServiceManager, QServicePluginInterface
-*/
-
-/*!
-    Constrcuts an abstract item model with the given \a parent.
-*/
-QAbstractSecuritySession::QAbstractSecuritySession(QObject* parent)
-    : QObject(parent)
+void QSfwTestUtil::setupTempUserDb()
 {
+    QSettings::setUserIniPath(tempSettingsPath("__user__"));
 }
 
-/*!
-    Destroys the abstract security session.
-*/
-QAbstractSecuritySession::~QAbstractSecuritySession()
+void QSfwTestUtil::setupTempSystemDb()
 {
+    QSettings::setSystemIniPath(tempSettingsPath("__system__"));
 }
 
-/*! 
-    \fn bool QAbstractSecuritySession::isAllowed(const QStringList& capabilities) = 0;
+void QSfwTestUtil::removeTempUserDb()
+{
+    removeDirectory(tempSettingsPath("__user__"));
+}
 
-    Returns true if the security session has sufficient rights to access the required
-    service \a capabilities. 
-*/
+void QSfwTestUtil::removeTempSystemDb()
+{
+    removeDirectory(tempSettingsPath("__system__"));
+}
 
-QT_END_NAMESPACE
+QString QSfwTestUtil::tempSettingsPath(const char *path)
+{
+    // Temporary path for files that are specified explictly in the constructor.
+    QString tempPath = QDir::tempPath();
+    if (tempPath.endsWith("/"))
+        tempPath.truncate(tempPath.size() - 1);
+    return QDir::toNativeSeparators(tempPath + "/QtServiceFramework_tests/" + QLatin1String(path));
+}
+
+void QSfwTestUtil::removeDirectory(const QString &path)
+{
+    QDir dir(path);
+    QFileInfoList fileList = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+    foreach(QFileInfo file, fileList) {
+        if(file.isFile()) {
+            QFile::remove (file.canonicalFilePath());
+        }
+        if(file.isDir())
+            removeDirectory(file.canonicalFilePath());
+    }
+    QFile::remove(path);
+}

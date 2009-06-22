@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -65,10 +65,13 @@ class DBError
             NotFound,
             SqlError,
             InvalidSearchCriteria,
+            IfaceIDNotExternal,
             CannotCloseDatabase,
             CannotCreateDbDir,
             CannotOpenSystemDb,
             CannotOpenUserDb,
+            ExternalIfaceIDFound,
+            InvalidDescriptorScope,
             UnknownError
         };
         DBError();
@@ -108,11 +111,17 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         bool unregisterService(const QString &serviceName);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
+        QServiceInterfaceDescriptor getInterface(const QString &interfaceID);
+        QString getInterfaceID(const QServiceInterfaceDescriptor &interface);
         QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
 
-        QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, bool *ok = 0);
+        QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName,
+                                                            QString *interfaceID = 0);
         bool setDefaultService(const QString &serviceName, const QString &interfaceName);
-        bool setDefaultService(const QServiceInterfaceDescriptor &interface);
+        bool setDefaultService(const QServiceInterfaceDescriptor &interface,
+                                const QString &externalInterfaceID = QString());
+        QStringList externalDefaultInterfaceIDs();
+        bool removeExternalDefaultServiceInterface(const QString &interfaceID);
 
         DBError lastError() const { return m_lastError; }
 
@@ -125,15 +134,17 @@ Q_SIGNALS:
         bool dropTables();
         bool checkTables();
 
-        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
+        bool checkConnection();
+
         bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
+        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
         bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
+
         void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
         void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
+
         bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
         bool populateServiceProperties(QServiceInterfaceDescriptor *descriptor, const QString &serviceID);
-
-        bool checkConnection();
 
         QString iDatabasePath;
         QString m_connectionName;

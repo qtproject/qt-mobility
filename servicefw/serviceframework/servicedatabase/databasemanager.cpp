@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,15 +34,131 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "databasemanager.h"
 #include <qserviceinterfacedescriptor_p.h>
+#include <QFileSystemWatcher>
+#include <QHash>
+
+QT_BEGIN_NAMESPACE
+
+DatabaseFileWatcher::DatabaseFileWatcher(DatabaseManager *parent)
+    : QObject(parent),
+      manager(parent),
+      watcher(0)
+{
+}
+
+void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
+{
+    if (!watcher) {
+        watcher = new QFileSystemWatcher(this);
+        connect(watcher, SIGNAL(fileChanged(QString)),
+            SLOT(databaseChanged(QString)));
+        connect(watcher, SIGNAL(directoryChanged(QString)),
+            SLOT(databaseDirectoryChanged(QString)));
+    }
+
+    QString path = database->databasePath();
+    if (enabled) {
+        if (knownServices.contains(path))
+            return;
+
+        if (!QFile::exists(path)) {
+            QString dirPath = QFileInfo(path).absolutePath();
+            if (QFile::exists(dirPath) && !watcher->directories().contains(dirPath))
+                watcher->addPath(dirPath);
+        } else {
+            knownServices[path] = database->getServiceNames(QString());
+            watcher->addPath(path);
+        }
+    } else {
+        watcher->removePath(path);
+        knownServices.remove(path);
+    }
+}
+
+void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
+{
+    ServiceDatabase *db = 0;
+    DatabaseManager::DbScope scope;
+    if (path == QFileInfo(manager->m_userDb.databasePath()).absolutePath()
+            && QFile::exists(manager->m_userDb.databasePath())) {
+        db = &manager->m_userDb;
+        scope = DatabaseManager::UserOnlyScope;
+    } else if (path == QFileInfo(manager->m_systemDb.databasePath()).absolutePath()
+            && QFile::exists(manager->m_systemDb.databasePath())) {
+        db = &manager->m_systemDb;
+        scope = DatabaseManager::SystemScope;
+    }
+
+    if (db) {
+        watcher->removePath(path);
+        QStringList newServices = manager->getServiceNames(QString(), scope);
+        for (int i=0; i<newServices.count(); i++)
+            emit manager->serviceAdded(newServices[i], scope);
+        setEnabled(db, true);
+    }
+}
+
+void DatabaseFileWatcher::databaseChanged(const QString &path)
+{
+    if (path == manager->m_userDb.databasePath())
+        notifyChanges(&manager->m_userDb, DatabaseManager::UserScope);
+    else if (path == manager->m_systemDb.databasePath())
+        notifyChanges(&manager->m_systemDb, DatabaseManager::SystemScope);
+}
+
+void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope)
+{
+    bool ok = false;
+    QStringList currentServices = database->getServiceNames(QString(), &ok);
+    if (!ok) {
+            qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
+        return;
+    }
+
+    QString dbPath = database->databasePath();
+    const QStringList &knownServicesRef = knownServices[dbPath];
+
+    QSet<QString> currentServicesSet = currentServices.toSet();
+    QSet<QString> knownServicesSet = knownServicesRef.toSet();
+    if (currentServicesSet == knownServicesSet)
+        return;
+
+    QStringList newServices;
+    for (int i=0; i<currentServices.count(); i++) {
+        if (!knownServicesSet.contains(currentServices[i]))
+            newServices << currentServices[i];
+    }
+
+    QStringList removedServices;
+    for (int i=0; i<knownServicesRef.count(); i++) {
+        if (!currentServicesSet.contains(knownServicesRef[i]))
+            removedServices << knownServicesRef[i];
+    }
+
+    knownServices[dbPath] = currentServices;
+    for (int i=0; i<newServices.count(); i++)
+        emit manager->serviceAdded(newServices[i], scope);
+    for (int i=0; i<removedServices.count(); i++)
+        emit manager->serviceRemoved(removedServices[i], scope);
+}
+
+bool lessThan(const QServiceInterfaceDescriptor &d1,
+                                        const QServiceInterfaceDescriptor &d2)
+{
+        return (d1.majorVersion() < d2.majorVersion())
+                || ( d1.majorVersion() == d2.majorVersion()
+                && d1.minorVersion() < d2.minorVersion());
+}
 
 DatabaseManager::DatabaseManager()
+    : m_fileWatcher(0)
 {
     initDbPaths();
 }
@@ -148,6 +264,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         if (!openDb(UserScope))
             return descriptors;
         descriptors =  m_userDb.getInterfaces(filter, &ok);
+
         if (ok == false) {
             descriptors.clear();
             m_lastError = m_userDb.lastError();
@@ -231,6 +348,168 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
     return serviceNames;
 }
 
+QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QString &interfaceName, DbScope scope)
+{
+    QServiceInterfaceDescriptor descriptor;
+    if (scope == UserScope) {
+        if (!openDb(UserScope))
+            return QServiceInterfaceDescriptor();
+        QString interfaceID;
+        descriptor = m_userDb.defaultServiceInterface(interfaceName, &interfaceID);
+
+        if (m_userDb.lastError().errorCode() == DBError::NoError) {
+            descriptor.d->systemScope = false;
+            return descriptor;
+        } else if (m_userDb.lastError().errorCode() == DBError::ExternalIfaceIDFound) {
+            //default hasn't been found in user db, but we have found an ID
+            //that may refer to an interface implementation in the system db
+            if (!openDb(SystemScope)) {
+                QString errorText("No default service found for interface: \"%1\"");
+                m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
+                return QServiceInterfaceDescriptor();
+            }
+
+            descriptor = m_systemDb.getInterface(interfaceID);
+            //found the service from the system database
+            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+                m_lastError.setError(DBError::NoError);
+                descriptor.d->systemScope = true;
+                return descriptor;
+            } else if(m_systemDb.lastError().errorCode() == DBError::NotFound){
+                //service implementing interface doesn't exist in the system db
+                //so the user db must contain a stale entry so remove it
+                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+                QString errorText("No default service found for interface: \"%1\"");
+                m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
+                return QServiceInterfaceDescriptor();
+            } else {
+                m_lastError.setError(DBError::NoError);
+                return QServiceInterfaceDescriptor();
+            }
+        } else if (m_userDb.lastError().errorCode() == DBError::NotFound) {
+            //do nothing, the search for a default in the system db continues
+            //further down
+        } else { //error occurred at user db level, so return
+            m_lastError = m_userDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    }
+
+    //search at system scope because we haven't found a default at user scope
+    //or because we're specifically only querying at system scope
+    if (!openDb(SystemScope)) {
+        if (scope == SystemScope) {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        } else if (scope == UserScope && m_userDb.lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_userDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    } else {
+        descriptor = m_systemDb.defaultServiceInterface(interfaceName);
+        if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+            descriptor.d->systemScope = true;
+            return descriptor;
+        } else if (m_systemDb.lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        } else {
+            m_lastError = m_systemDb.lastError();
+            return QServiceInterfaceDescriptor();
+        }
+    }
+
+    //should not be possible to reach here
+    m_lastError.setError(DBError::UnknownError);
+    return QServiceInterfaceDescriptor();
+}
+
+bool DatabaseManager::setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope)
+{
+    QList<QServiceInterfaceDescriptor> descriptors;
+    int userDescriptorCount = 0;
+    bool ok;
+    QServiceFilter filter;
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
+
+    descriptors = getInterfaces(filter, scope);
+    if (m_lastError.errorCode() != DBError::NoError)
+        return false;
+
+    if (descriptors.count() == 0) {
+        QString errorText("No implementation for interface \"%1\" "
+                "found for service \"%2\"");
+        m_lastError.setError(DBError::NotFound,
+                errorText.arg(interfaceName)
+                .arg(serviceName));
+        return false;
+    }
+
+    //find the descriptor with the latest version
+    int latestIndex = 0;
+        for (int i = 1; i < descriptors.count(); ++i) {
+            if (lessThan(descriptors[latestIndex], descriptors[i]))
+                latestIndex = i;
+    }
+
+    return setDefaultService(descriptors[latestIndex], scope);
+}
+
+bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
+{
+    if (scope == UserScope) {
+        if (!openDb(UserScope))
+            return false;
+        if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
+            if(m_userDb.setDefaultService(descriptor)) {
+                m_lastError.setError(DBError::NoError);
+                return true;
+            } else {
+                m_lastError = m_userDb.lastError();
+                return false;
+            }
+        } else { //otherwise we need to get the interfaceID from the system db and set this
+                 //as an external default interface ID in the user db
+            if (!openDb(SystemScope))
+                return false;
+
+            QString interfaceDescriptorID = m_systemDb.getInterfaceID(descriptor);
+            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+                if(m_userDb.setDefaultService(descriptor, interfaceDescriptorID)) {
+                    m_lastError.setError(DBError::NoError);
+                    return true;
+                } else {
+                    m_lastError = m_userDb.lastError();
+                    return false;
+                }
+            } else {
+                m_lastError = m_systemDb.lastError();
+                return false;
+            }
+        }
+    } else {  //scope == SystemScope
+        if (!descriptor.inSystemScope()) {
+            QString errorText("Cannot set default service at system scope with a user scope "
+                                "interface descriptor");
+            m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
+            return false;
+        } else {
+            if (!openDb(SystemScope)) {
+                return false;
+            } else {
+                if (m_systemDb.setDefaultService(descriptor)) {
+                    m_lastError.setError(DBError::NoError);
+                    return true;
+                } else {
+                    m_lastError = m_systemDb.lastError();
+                    return false;
+                }
+            }
+        }
+    }
+}
+
 bool DatabaseManager::openDb(DbScope scope)
 {
     ServiceDatabase *db;
@@ -259,6 +538,25 @@ bool DatabaseManager::openDb(DbScope scope)
         return false;
     }
 
+    if (scope == SystemScope && m_userDb.isOpen()) {
+        QStringList interfaceIDs = m_userDb.externalDefaultInterfaceIDs();
+        QServiceInterfaceDescriptor interface;
+        foreach( const QString &interfaceID, interfaceIDs ) {
+            interface = m_userDb.getInterface(interfaceID);
+            if (m_userDb.lastError().errorCode() == DBError::NotFound)
+                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+        }
+    }
+
     m_lastError.setError(DBError::NoError);
     return true;
 }
+
+void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
+{
+    if (!m_fileWatcher)
+        m_fileWatcher = new DatabaseFileWatcher(this);
+    m_fileWatcher->setEnabled(scope == SystemScope ? &m_systemDb : &m_userDb, enabled);
+}
+
+QT_END_NAMESPACE
