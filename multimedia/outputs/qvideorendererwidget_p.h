@@ -5,6 +5,7 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
+class QImageMediaOutput;
 class QVideoRendererMediaOutput;
 
 class QVideoRendererWidgetPrivate;
@@ -17,11 +18,21 @@ public:
     QVideoRendererWidget(QWidget *parent = 0);
     ~QVideoRendererWidget();
 
-    QVideoRendererMediaOutput *renderer() const;
-    void setRenderer(QVideoRendererMediaOutput *renderer);
+    QVideoRendererMediaOutput *rendererOutput() const;
+    void setRendererOutput(QVideoRendererMediaOutput *output);
+
+    QImageMediaOutput *imageOutput() const;
+    void setImageOutput(QImageMediaOutput *output);
 
 public Q_SLOTS:
     void setFullscreen(bool fullscreen);
+
+protected:
+    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
+
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_imageChanged(const QImage &);
 };
 
 #endif

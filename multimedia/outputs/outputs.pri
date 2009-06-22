@@ -2,16 +2,18 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/qimagemodelmediaoutput.h \
+    $$PWD/qimagemediaoutput.h \
+    $$PWD/qpaintervideosurface_p.h \
     $$PWD/qvideorenderermediaoutput.h \
     $$PWD/qvideorendererwidget_p.h \
     $$PWD/qwidgetmediaoutput.h \
     $$PWD/qwidgetmediaoutput_p.h
 
 SOURCES += \
-    $$PWD/qimagemodelmediaoutput.cpp \
+    $$PWD/qimagemediaoutput.cpp \
+    $$PWD/qpaintervideosurface.cpp \
     $$PWD/qvideorenderermediaoutput.cpp \
     $$PWD/qvideorendererwidget.cpp \
     $$PWD/qwidgetmediaoutput.cpp
 
-
+DEFINES += QT_NO_VIDEOSURFACE
