@@ -15,18 +15,21 @@ class QMediaPlaylist : public QObject
 public:
     enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop };
 
-    QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);    
+    QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
-
-    QMediaPlaylistSource *playlistSource();
-    const QMediaPlaylistSource *playlistSource() const;
 
     PlaybackMode playbackMode() const;
     void setPlaybackMode(PlaybackMode mode);
     
     QMediaSource currentItem() const;
     QMediaSource nextItem() const;
-    QMediaSource itemAt(int pos) const;
+    QMediaSource previousItem() const;
+
+    QMediaSource itemAt(int position) const;
+
+    int currentPosition() const;
+    int nextPosition(int position) const;
+    int previousPosition(int position) const;
 
     int size() const;
     bool isEmpty() const;
@@ -47,6 +50,7 @@ public:
 
 public Q_SLOTS:
     void advance();
+    void back();
 
     void next();
     void prev();
@@ -60,7 +64,7 @@ Q_SIGNALS:
     void activated(const QMediaSource&);
 
     void currentItemChanged(const QMediaSource&);
-    void currentItemPosChanged(int);
+    void currentPositionChanged(int);
 
     void playbackModeChanged(PlaybackMode mode);
 
@@ -70,6 +74,9 @@ Q_SIGNALS:
 
 private slots:
     void updateCurrentItem(int);
+
+protected:
+    QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);
 
 private:
     Q_DECLARE_PRIVATE(QMediaPlaylist)

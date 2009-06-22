@@ -1,10 +1,15 @@
 #include "qmediaplaylist.h"
+#include "qmediaplaylist_p.h"
 #include "qmediaplaylistsource.h"
 #include "qlocalmediaplaylistsource.h"
+#include "qmediaplaylistioplugin.h"
 
-#include <QList>
+#include <QtCore/QList>
 
-#include <QtCore/private/qobject_p.h>
+#include <private/qfactoryloader_p.h>
+
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
+        (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
 
 /*!
     \class QMediaPlaylist
@@ -16,21 +21,13 @@
     \sa
 */
 
-class QMediaPlaylistPrivate : public QObjectPrivate
-{
-public:
-    QMediaPlaylistSource *source;    
-    QMediaSource currentItem;
-
-    int nextItemPos() const;
-};
-
-int QMediaPlaylistPrivate::nextItemPos() const
+int QMediaPlaylistPrivate::nextItemPos(int currentPos) const
 {
     if (source->size() == 0)
         return -1;
 
-    int currentPos = source->currentItem();
+    if (currentPos == -1)
+        currentPos = source->currentItem();
 
     switch (source->playbackMode()) {
         case QMediaPlaylist::NoPlayback:
@@ -47,10 +44,34 @@ int QMediaPlaylistPrivate::nextItemPos() const
     return -1;
 }
 
+int QMediaPlaylistPrivate::previousItemPos(int currentPos) const
+{
+    if (source->size() == 0)
+        return -1;
+
+    if (currentPos == -1)
+        currentPos = source->currentItem();
+
+    switch (source->playbackMode()) {
+        case QMediaPlaylist::NoPlayback:
+        case QMediaPlaylist::CurrentItemOnce:
+            return -1;
+        case QMediaPlaylist::CurrentItemInLoop:
+            return currentPos;
+        case QMediaPlaylist::Linear:
+            return currentPos>0 ? currentPos-1 : -1;
+        case QMediaPlaylist::Loop:
+            return currentPos>0 ? currentPos-1 : source->size()-1;
+    }
+
+    return -1;
+}
+
 
 /*!
 enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop };
 */
+
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *playlistSource, QObject *parent)
     :QObject(*new QMediaPlaylistPrivate, parent)
 {
@@ -68,18 +89,19 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *playlistSource, QObject *pa
     connect(d->source, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
 }
 
+QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
+    :QObject(dd, parent)
+{
+    Q_D(QMediaPlaylist);
+
+    connect(d->source, SIGNAL(currentItemChanged(int)), this, SLOT(updateCurrentItem(int)));
+    connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
+    connect(d->source, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
+    connect(d->source, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
+}
+
 QMediaPlaylist::~QMediaPlaylist()
 {
-}
-
-QMediaPlaylistSource *QMediaPlaylist::playlistSource()
-{
-    return d_func()->source;
-}
-
-const QMediaPlaylistSource *QMediaPlaylist::playlistSource() const
-{
-    return d_func()->source;
 }
 
 
@@ -110,6 +132,21 @@ QMediaSource QMediaPlaylist::itemAt(int pos) const
         return QMediaSource();
     else
         return d_func()->source->itemAt(pos);
+}
+
+int QMediaPlaylist::currentPosition() const
+{
+    return d_func()->source->currentItem();
+}
+
+int QMediaPlaylist::nextPosition(int position) const
+{
+    return d_func()->nextItemPos(position);
+}
+
+int QMediaPlaylist::previousPosition(int position) const
+{
+    return d_func()->previousItemPos(position);
 }
 
 int QMediaPlaylist::size() const
@@ -158,13 +195,46 @@ bool QMediaPlaylist::clear()
     return d->source->clear();
 }
 
+bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
+{
+    while (!reader->atEnd()) {
+        QMediaSource src = reader->readItem();
+        source->append(src);
+    }
+
+    return true;
+}
+
+bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
+{
+    for (int i=0; i<source->size(); i++) {
+        if (!writter->writeItem(source->itemAt(i)))
+            return false;
+    }
+    writter->close();
+    return true;
+}
+
+
 bool QMediaPlaylist::load(const QString &location, const char *format)
 {
     Q_D(QMediaPlaylist);
     if (d->source->load(location,format))
         return true;
 
-    //TODO: implement playlist loading
+    foreach (QString const& key, playlistIOLoader()->keys()) {
+        QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
+        if (plugin && plugin->canRead(location,format)) {
+            QMediaPlaylistReader *reader = plugin->createReader(location,QByteArray(format));
+            if (reader && d->readItems(reader)) {
+                delete reader;
+                delete plugin;
+                return true;
+            }
+            delete reader;
+        }
+        delete plugin;
+    }
 
     return false;
 }
@@ -212,16 +282,25 @@ void QMediaPlaylist::advance()
     jump(d_func()->nextItemPos());
 }
 
+void QMediaPlaylist::back()
+{
+    jump(d_func()->previousItemPos());
+}
+
 void QMediaPlaylist::next()
 {
     Q_D(QMediaPlaylist);
-    jump( d->source->currentItem()+1 );
+    int currentPos = d->source->currentItem();
+    if (currentPos < size())
+        jump(currentPos+1);
 }
 
 void QMediaPlaylist::prev()
 {
     Q_D(QMediaPlaylist);
-    jump( d->source->currentItem()-1 );
+    int currentPos = d->source->currentItem();
+    if (currentPos > 0)
+        jump(currentPos-1);
 }
 
 void QMediaPlaylist::jump(int pos)
@@ -246,7 +325,7 @@ void QMediaPlaylist::updateCurrentItem(int pos)
 {
     Q_D(QMediaPlaylist);
 
-    emit currentItemPosChanged(pos);
+    emit currentPositionChanged(pos);
     QMediaSource src = d->source->itemAt(d->source->currentItem());
     if (src != d->currentItem) {
         d->currentItem = src;
@@ -265,7 +344,7 @@ void QMediaPlaylist::updateCurrentItem(int pos)
     void activated(const QMediaSource&);
 
     void currentItemChanged(const QMediaSource&);
-    void currentItemPosChanged(int);
+    void currentPositionChanged(int);
 
     void playbackModeChanged(PlaybackMode mode);
 

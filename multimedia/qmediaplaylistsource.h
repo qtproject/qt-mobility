@@ -5,6 +5,8 @@
 #include "qmediasource.h"
 #include "qmediaplaylist.h"
 
+class QString;
+
 class QMediaPlaylistSourcePrivate;
 class QMediaPlaylistSource : public QObject
 {
