@@ -18,17 +18,11 @@
 <ul>
 <li><a href="qmessagefolder-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qmessagefolder.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</li>
-</ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"></div><b><a href="qmessagefolder.html#QMessageFolder">QMessageFolder</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessagefolder.html#QMessageFolder-2">QMessageFolder</a></b> ( const QMessageFolderId &amp; <i>id</i> )</li>
-<li><div class="fn"></div><b><a href="qmessagefolder.html#QMessageFolder-3">QMessageFolder</a></b> ( StandardFolder <i>sf</i>, const QMessageAccountId &amp; <i>parentAccountId</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessagefolder.html#dtor.QMessageFolder">~QMessageFolder</a></b> ()</li>
 <li><div class="fn"></div>QString <b><a href="qmessagefolder.html#displayName">displayName</a></b> () const</li>
 <li><div class="fn"></div>QMessageFolderId <b><a href="qmessagefolder.html#id">id</a></b> () const</li>
@@ -43,25 +37,11 @@
 <p>QMessageFolder represents a folder of messages, either fully or partially stored in the messaging store. A QMessageFolder object has an optional parent of the same type, allowing folders to be arranged in tree structures. Messages may be associated with folders, allowing for simple classification and access by their parentFolderId property.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagestore.html#folder">QMessageStore::folder</a>().</p>
 <hr />
-<h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="StandardFolder-enum"></a>enum QMessageFolder::StandardFolder</h3>
-<p>Defines the standard folders.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMessageFolder::InboxFolder</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Represents the standard inbox folder.</td></tr>
-<tr><td valign="top"><tt>QMessageFolder::DraftsFolder</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Represents the standard drafts folder.</td></tr>
-<tr><td valign="top"><tt>QMessageFolder::OutboxFolder</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Represents the standard outbox folder.</td></tr>
-<tr><td valign="top"><tt>QMessageFolder::SentFolder</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Represents the standard sent folder.</td></tr>
-<tr><td valign="top"><tt>QMessageFolder::TrashFolder</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Represents the standard trash folder.</td></tr>
-</table></p>
-<hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageFolder"></a>QMessageFolder::QMessageFolder ()</h3>
 <p>Constructor that creates an empty and invalid <a href="qmessagefolder.html">QMessageFolder</a>. An empty folder is one which has no path, no parent folder and no parent account. An invalid folder does not exist in the database and has an invalid id.</p>
 <h3 class="fn"><a name="QMessageFolder-2"></a>QMessageFolder::QMessageFolder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> )</h3>
 <p>Constructor that creates a <a href="qmessagefolder.html">QMessageFolder</a> by loading the data from the messaging store as specified by the <a href="qmessagefolderid.html">QMessageFolderId</a> <i>id</i>. If the folder does not exist in the messaging store, then this constructor will create an empty and invalid <a href="qmessagefolder.html">QMessageFolder</a>.</p>
-<h3 class="fn"><a name="QMessageFolder-3"></a>QMessageFolder::QMessageFolder ( <a href="qmessagefolder.html#StandardFolder-enum">StandardFolder</a> <i>sf</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>parentAccountId</i> )</h3>
-<p>Constructor that loads a standard <a href="qmessagefolder.html">QMessageFolder</a> specified by <i>sf</i> for the account identified by <i>parentAccountId</i> from the messaging store.</p>
 <h3 class="fn"><a name="dtor.QMessageFolder"></a>QMessageFolder::~QMessageFolder ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qmessagefolder.html">QMessageFolder</a> object.</p>
 <h3 class="fn"><a name="displayName"></a>QString QMessageFolder::displayName () const</h3>

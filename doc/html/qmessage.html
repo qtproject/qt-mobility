@@ -23,6 +23,7 @@
 <h3>Public Types</h3>
 <ul>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Priority-enum">Priority</a></b> { High, Normal, Low }</li>
+<li><div class="fn"></div>enum <b><a href="qmessage.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</li>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</li>
 <li><div class="fn"></div>flags <b><a href="qmessage.html#Status-enum">StatusFlags</a></b></li>
 <li><div class="fn"></div>enum <b><a href="qmessage.html#Type-enum">Type</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
@@ -63,12 +64,14 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
+<li><div class="fn"></div>StandardFolder <b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</li>
 <li><div class="fn"></div>virtual StatusFlags <b><a href="qmessage.html#status">status</a></b> () const</li>
 <li><div class="fn"></div>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#to">to</a></b> () const</li>
@@ -121,6 +124,16 @@
 <tr><td valign="top"><tt>QMessage::High</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The message is high priority.</td></tr>
 <tr><td valign="top"><tt>QMessage::Normal</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The message is normal priority.</td></tr>
 <tr><td valign="top"><tt>QMessage::Low</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The message is low priority.</td></tr>
+</table></p>
+<h3 class="fn"><a name="StandardFolder-enum"></a>enum QMessage::StandardFolder</h3>
+<p>Defines the standard folders.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMessage::InboxFolder</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Represents the standard inbox folder.</td></tr>
+<tr><td valign="top"><tt>QMessage::DraftsFolder</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Represents the standard drafts folder.</td></tr>
+<tr><td valign="top"><tt>QMessage::OutboxFolder</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Represents the standard outbox folder.</td></tr>
+<tr><td valign="top"><tt>QMessage::SentFolder</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Represents the standard sent folder.</td></tr>
+<tr><td valign="top"><tt>QMessage::TrashFolder</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Represents the standard trash folder.</td></tr>
 </table></p>
 <h3 class="flags"><a name="Status-enum"></a>enum QMessage::Status<br />flags QMessage::StatusFlags</h3>
 <p>This enum type is used to describe the status of a message.</p>
@@ -261,6 +274,9 @@
 <h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const QDateTime &amp; <i>d</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the timestamp indicating the time of message reception by the device to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">receivedDate</a>().</p>
+<h3 class="fn"><a name="setStandardFolder"></a>void QMessage::setStandardFolder ( <a href="qmessage.html#StandardFolder-enum">StandardFolder</a> <i>sf</i> )</h3>
+<p>Sets the standard folder of the message to <i>sf</i>.</p>
+<p>See also <a href="qmessage.html#standardFolder">standardFolder</a>().</p>
 <h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the status flags value for the message to <i>newStatus</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
@@ -280,6 +296,10 @@
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
 <p>See also <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
+<h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const</h3>
+<p>Returns the standard folder of the message.</p>
+<p>Defaults to <a href="qmessage.html#StandardFolder-enum">InboxFolder</a>.</p>
+<p>See also <a href="qmessage.html#setStandardFolder">setStandardFolder</a>().</p>
 <h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilterkey.html#status">QMessageFilterKey::status</a>().</p>

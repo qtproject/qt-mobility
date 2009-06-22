@@ -7,6 +7,12 @@
         <keyword ref="qmessage.html#Priority-enum">QMessage::High</keyword>
         <keyword ref="qmessage.html#Priority-enum">QMessage::Normal</keyword>
         <keyword ref="qmessage.html#Priority-enum">QMessage::Low</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">StandardFolder</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">QMessage::DraftsFolder</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">QMessage::OutboxFolder</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">QMessage::TrashFolder</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">QMessage::SentFolder</keyword>
+        <keyword ref="qmessage.html#StandardFolder-enum">QMessage::InboxFolder</keyword>
         <keyword ref="qmessage.html#Status-enum">Status</keyword>
         <keyword ref="qmessage.html#Status-enum">StatusFlags</keyword>
         <keyword ref="qmessage.html#Status-enum">QMessage::HasAttachments</keyword>
@@ -52,11 +58,13 @@
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
+        <keyword ref="qmessage.html#setStandardFolder">setStandardFolder</keyword>
         <keyword ref="qmessage.html#setStatus">setStatus</keyword>
         <keyword ref="qmessage.html#setSubject">setSubject</keyword>
         <keyword ref="qmessage.html#setTo">setTo</keyword>
         <keyword ref="qmessage.html#setType">setType</keyword>
         <keyword ref="qmessage.html#size">size</keyword>
+        <keyword ref="qmessage.html#standardFolder">standardFolder</keyword>
         <keyword ref="qmessage.html#status">status</keyword>
         <keyword ref="qmessage.html#subject">subject</keyword>
         <keyword ref="qmessage.html#to">to</keyword>
@@ -71,7 +79,6 @@
         <keyword ref="qmessageaccount.html#id">id</keyword>
         <keyword ref="qmessageaccount.html#name">name</keyword>
         <keyword ref="qmessageaccount.html#signature">signature</keyword>
-        <keyword ref="qmessageaccount.html#standardFolder">standardFolder</keyword>
         <keyword ref="qmessageaccount.html#types">types</keyword>
         <section ref="qmessageaccount-members.html" title="List of all members"/>
     </section>
@@ -215,12 +222,6 @@
     </section>
     <section ref="qmessagefolder.html" title="QMessageFolder Class Reference">
         <keyword ref="qmessagefolder.html">QMessageFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">StandardFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">QMessageFolder::DraftsFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">QMessageFolder::OutboxFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">QMessageFolder::TrashFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">QMessageFolder::SentFolder</keyword>
-        <keyword ref="qmessagefolder.html#StandardFolder-enum">QMessageFolder::InboxFolder</keyword>
         <keyword ref="qmessagefolder.html#displayName">displayName</keyword>
         <keyword ref="qmessagefolder.html#id">id</keyword>
         <keyword ref="qmessagefolder.html#parentAccountId">parentAccountId</keyword>
