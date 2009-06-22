@@ -1762,6 +1762,36 @@ void QMessage::setDataModified(bool modified)
     Q_UNUSED(modified);
 }
 
+/*!
+  Creates a reply to sender response to the message
+  
+  \sa QMessageServiceAction::compose()
+*/
+QMessage QMessage::replyTo() const
+{
+    return QMessage(); // stub
+}
+
+/*!
+  Creates a reply to all response to the message
+  
+  \sa QMessageServiceAction::compose()
+*/
+QMessage QMessage::replyToAll() const
+{
+    return QMessage(); // stub
+}
+
+/*!
+  Creates a copy the message in a format suitable for forwarding.
+  
+  \sa QMessageServiceAction::compose()
+*/
+QMessage QMessage::forward() const
+{
+    return QMessage(); // stub
+}
+
 
 /*!
     \class QMessageFolder
@@ -3822,30 +3852,6 @@ void QMessageServiceAction::send(const QMessage &message, const QMessageAccountI
 void QMessageServiceAction::compose(const QMessage &message)
 {
     Q_UNUSED(message)
-}
-
-/*!
-  Open a composer application replying to the message identified by \a id.
-
-  The default application for handling the type of message that \a id identifies should be used.
-  
-  \sa QMessageId, QMessage::type()
-*/
-void QMessageServiceAction::reply(const QMessageId &id)
-{
-    Q_UNUSED(id)
-}
-
-/*!
-  Open a composer application forwarding the message identified by \a id.
-  
-  The default application for handling the type of message that \a id identifies should be used.
-
-  \sa QMessageId, QMessage::type()
-*/
-void QMessageServiceAction::forward(const QMessageId &id)
-{
-    Q_UNUSED(id)
 }
 
 /*!

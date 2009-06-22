@@ -282,6 +282,10 @@ public:
 
     virtual bool dataModified() const;
 
+    virtual QMessage replyTo() const;
+    virtual QMessage replyToAll() const;
+    virtual QMessage forward() const;
+
 private:
     friend class QMessageStore;
 
@@ -644,8 +648,6 @@ public:
 
     void send(const QMessage &message, const QMessageAccountId &accountId);
     void compose(const QMessage &message);
-    void reply(const QMessageId &id);
-    void forward(const QMessageId &id);
     void retrieve(const QMessageId &id);
     void retrieve(const QMessageContentContainerId &id);
     void show(const QMessageId &id);
