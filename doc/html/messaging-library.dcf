@@ -290,6 +290,7 @@
         <keyword ref="qmessageserviceaction.html#activityChanged">activityChanged</keyword>
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
+        <keyword ref="qmessageserviceaction.html#exportUpdates">exportUpdates</keyword>
         <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>

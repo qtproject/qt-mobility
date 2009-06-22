@@ -99,8 +99,9 @@
 <h3 class="fn"><a name="account"></a><a href="qmessageaccount.html">QMessageAccount</a> QMessageStore::account ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> ) const</h3>
 <p>Returns the <a href="qmessageaccount.html">QMessageAccount</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="addMessage"></a>bool QMessageStore::addMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
-<p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation completed successfully, or <tt>false</tt> otherwise.</p>
-<p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessagestore.html#removeMessage">removeMessage</a>().</p>
+<p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
+<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), <a href="qmessagestore.html#removeMessage">removeMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="countAccounts"></a>int QMessageStore::countAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
@@ -143,10 +144,14 @@
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
 <h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
-<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then a removal record will be created for the removed message. Returns <tt>true</tt> if the operation completed successfully, <tt>false</tt> otherwise.</p>
-<p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), and <a href="qmessagestore.html#updateMessage">updateMessage</a>().</p>
+<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then a removal record will be created for the removed message.</p>
+<p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
+<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
-<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then removal records will be created for each removed message. Returns <tt>true</tt> if the operation completed successfully, <tt>false</tt> otherwise.</p>
+<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then removal records will be created for each removed message.</p>
+<p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
+<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>For example:</p>
 <p>To implement a function to remove a list messages identified by QMessageIds from the messaging store.</p>
 <pre>    bool removeMessages(const QMessageIdList&amp; ids)
@@ -154,7 +159,7 @@
         QMessageFilterKey idsFilter(ids);
         return QMessageStore::instance()-&gt;removeMessages(idsFilter);
     }</pre>
-<p>See also <a href="qmessagestore.html#removeMessage">removeMessage</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), and <a href="qmessagestore.html#updateMessage">updateMessage</a>().</p>
+<p>See also <a href="qmessagestore.html#removeMessage">removeMessage</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="setMaximumWorkingIds"></a>void QMessageStore::setMaximumWorkingIds ( uint <i>maximumIds</i> )</h3>
 <p>If <i>maximumIds</i> is 0, removes any constraint on the maximum number of ids that can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <p>Otherwise sets the maximum number of ids than can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>(). A failure to satisfy the working list size constraint is reported by <a href="qmessagestore.html#lastError">lastError</a>() returning <a href="qmessagestore.html#ErrorCode-enum">WorkingIdsOverflow</a>.</p>
@@ -167,8 +172,9 @@
 <p>Stops emission of <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() and <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() signals for messages that match <i>key</i>.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
 <h3 class="fn"><a name="updateMessage"></a>bool QMessageStore::updateMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
-<p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation completed successfully, or <tt>false</tt> otherwise.</p>
-<p>See also <a href="qmessagestore.html#addMessage">addMessage</a>() and <a href="qmessagestore.html#removeMessage">removeMessage</a>().</p>
+<p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
+<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>See also <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#removeMessage">removeMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
