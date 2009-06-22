@@ -91,9 +91,13 @@ public:
     bool hasProperty(Property property) const;
 
 private:
+#ifndef QT_NO_DEBUG_STREAM
     friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QPositionUpdate &update);
+#endif
+#ifndef QT_NO_DATASTREAM
     friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update);
     friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update);
+#endif
     QPositionUpdatePrivate *d;
 };
 
