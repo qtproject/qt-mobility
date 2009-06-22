@@ -308,6 +308,9 @@ void BearerDialog::showConfigurationFor(QTreeWidgetItem *item)
     case QNetworkConfiguration::ServiceNetwork:
         configurationType->setText(tr("Service Network"));
         break;
+    case QNetworkConfiguration::UserChoice:
+        configurationType->setText(tr("User Choice"));
+        break;
     case QNetworkConfiguration::Invalid:
         configurationType->setText(tr("Invalid"));
         break;

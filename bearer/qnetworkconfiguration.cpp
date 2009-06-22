@@ -80,6 +80,11 @@ QT_BEGIN_NAMESPACE
     to the changing environment and may enable optimization with regards to
     cost, speed or other network parameters.
 
+    Special configurations of type UserChoice provide a placeholder configuration which is
+    resolved to an actual network configuration by the platform when a
+    \l {QNetworkSession}{session} is \l {QNetworkSession::open()}{opened}. Not all platforms
+    support the concept of a user choice configuration.
+
     \section1 Configuration states
 
     The list of available configurations can be obtained via
@@ -131,6 +136,8 @@ QT_BEGIN_NAMESPACE
                                 requirement for roaming enabled network sessions. On some
                                 platforms this form of configuration may also be called Service
                                 Network Access Point (SNAP).
+    \value UserChoice           The configuration is a placeholder which will be resolved to an
+                                actual configuration by the platform when a session is opened.
     \value Invalid              The configuration is invalid.
 */
 
@@ -212,7 +219,6 @@ QNetworkConfiguration::~QNetworkConfiguration()
     Returns true, if this configuration is the same as the \a other
     configuration given; otherwise returns false.
 */
-
 bool QNetworkConfiguration::operator==(const QNetworkConfiguration& other) const
 {
     if (!d)

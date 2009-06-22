@@ -114,6 +114,7 @@ public:
     //the members of ServiceNetworks change
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> userChoiceConfiguration;
     bool firstUpdate;
 
 public slots:
@@ -132,11 +133,9 @@ private:
 #ifndef Q_OS_WINCE
     bool updateWlanNativeConfigurations(QList<QString> &knownConfigs);
     void updateWlanIoctlConfigurations(QList<QString> &knownConfigs);
-#endif
-    void updateInternetServiceConfiguration(QList<QString> &knownConfigs);
-#ifndef Q_OS_WINCE
     void updateWlanConfigurations(QList<QString> &knownConfigs);
 #endif
+    void updateInternetServiceConfiguration(QList<QString> &knownConfigs);
 
     void abort();
 #endif

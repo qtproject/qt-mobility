@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QEventLoop>
 #include <QTimer>
 
@@ -455,11 +456,11 @@ QString QNetworkSession::errorString() const
     \table
         \header
             \o Key \o Description
-        \row 
+        \row
             \o ActiveConfigurationIdentifier
-            \o If the session \l isActive() this property returns the identifier of the 
+            \o If the session \l isActive() this property returns the identifier of the
             QNetworkConfiguration that is used by this session; otherwise an empty string.
-            
+
             The main purpose of this key is to determine which Internet access point is used
             if the session is based on a \l{QNetworkConfiguration::ServiceNetwork}{ServiceNetwork}. 
             The following code snippet highlights the difference:
@@ -477,14 +478,43 @@ QString QNetworkSession::errorString() const
                         Q_ASSERT( ap.identifier() == ident );
                     }
                 \endcode
- 
+        \row
+            \o UserChoiceConfigurationIdentifier
+            \o If the session \l isActive() and is bound to a QNetworkConfiguration of type
+            UserChoice, this property returns the identifier of the QNetworkConfiguration that the
+            configuration resolved to when \l open() was called; otherwise an empty string.
 
-            A session that is based on an \l{QNetworkConfiguration::InternetAccessPoint}{InternetAccessPoint} configuration returns 
-            the same identifier as the identifier of the configuration returned by \l configuration(). 
+            The purpose of this key is to determine the real QNetworkConfiguration that the
+            session is using. This key is different to \l ActiveConfigurationIdentifier in that
+            this key may return an identifier for either a
+            \l {QNetworkConfiguration::ServiceNetwork}{service network} or a
+            \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations
+            whereas \l ActiveConfigurationIdentifier always returns identifiers for
+            \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations.
     \endtable
 */
 QVariant QNetworkSession::property(const QString& key) const
 {
+    if (!d->publicConfig.isValid())
+        return QVariant();
+
+    if (key == "ActiveConfigurationIdentifier") {
+        if (!d->isActive)
+            return QString();
+        else
+            return d->activeConfig.identifier();
+    }
+
+    if (key == "UserChoiceConfigurationIdentifier") {
+        if (!d->isActive || d->publicConfig.type() != QNetworkConfiguration::UserChoice)
+            return QString();
+
+        if (d->serviceConfig.isValid())
+            return d->serviceConfig.identifier();
+        else
+            return d->activeConfig.identifier();
+    }
+
     return d->property(key);
 }
 

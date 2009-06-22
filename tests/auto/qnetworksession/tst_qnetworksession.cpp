@@ -62,6 +62,9 @@ private slots:
     void sessionProperties_data();
     void sessionProperties();
 
+    void userChoiceSession_data();
+    void userChoiceSession();
+
     void inProcessSessionManagement_data();
     void inProcessSessionManagement();
 
@@ -138,6 +141,113 @@ void tst_QNetworkSession::sessionProperties()
     // QNetworkSession::interface() should return an invalid interface unless
     // session is in the connected state.
     QCOMPARE(session.state() == QNetworkSession::Connected, session.interface().isValid());
+}
+
+void tst_QNetworkSession::userChoiceSession_data()
+{
+    QTest::addColumn<QNetworkConfiguration>("configuration");
+
+    QNetworkConfiguration config = manager.defaultConfiguration();
+    if (config.type() == QNetworkConfiguration::UserChoice)
+        QTest::newRow("UserChoice") << config;
+    else
+        QSKIP("Default configuration is not a UserChoice configuration.", SkipAll);
+}
+
+void tst_QNetworkSession::userChoiceSession()
+{
+    QFETCH(QNetworkConfiguration, configuration);
+
+    QVERIFY(configuration.type() == QNetworkConfiguration::UserChoice);
+
+    QNetworkSession session(configuration);
+
+    QVERIFY(session.configuration() == configuration);
+
+    QVERIFY(!session.isActive());
+
+    QVERIFY(session.property("ActiveConfigurationIdentifier").toString().isEmpty());
+
+
+    // The remaining tests require the session to be not NotAvailable.
+    if (session.state() == QNetworkSession::NotAvailable)
+        QSKIP("Network is not available.", SkipSingle);
+
+    QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
+    QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
+    QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
+    QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
+
+    // Test opening the session.
+    {
+        bool expectStateChange = session.state() != QNetworkSession::Connected;
+
+        session.open();
+
+        QTRY_VERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
+        if (!errorSpy.isEmpty()) {
+            QNetworkSession::SessionError error =
+                qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
+            if (error == QNetworkSession::OperationNotSupportedError) {
+                // The session needed to bring up the interface,
+                // but the operation is not supported.
+                QSKIP("Configuration does not support open().", SkipSingle);
+            } else if (error == QNetworkSession::InvalidConfigurationError) {
+                // The session needed to bring up the interface, but it is not possible for the
+                // specified configuration.
+                if ((session.configuration().state() & QNetworkConfiguration::Discovered) ==
+                    QNetworkConfiguration::Discovered) {
+                    QFAIL("Failed to open session for Discovered configuration.");
+                } else {
+                    QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
+                }
+            } else {
+                QFAIL("Error opening session.");
+            }
+        } else if (!sessionOpenedSpy.isEmpty()) {
+            QCOMPARE(sessionOpenedSpy.count(), 1);
+            QVERIFY(sessionClosedSpy.isEmpty());
+            QVERIFY(errorSpy.isEmpty());
+
+            if (expectStateChange)
+                QTRY_VERIFY(!stateChangedSpy.isEmpty());
+
+            QVERIFY(session.state() == QNetworkSession::Connected);
+
+            const QString userChoiceIdentifier =
+                session.property("UserChoiceConfigurationIdentifier").toString();
+
+            QVERIFY(!userChoiceIdentifier.isEmpty());
+            QVERIFY(userChoiceIdentifier != configuration.identifier());
+
+            QNetworkConfiguration userChoiceConfiguration =
+                manager.configurationFromIdentifier(userChoiceIdentifier);
+
+            QVERIFY(userChoiceConfiguration.isValid());
+            QVERIFY(userChoiceConfiguration.type() != QNetworkConfiguration::UserChoice);
+
+            const QString activeIdentifier =
+                session.property("ActiveConfigurationIdentifier").toString();
+
+            QVERIFY(!activeIdentifier.isEmpty());
+            QVERIFY(activeIdentifier != configuration.identifier());
+
+            QNetworkConfiguration activeConfiguration =
+                manager.configurationFromIdentifier(activeIdentifier);
+
+            QVERIFY(activeConfiguration.isValid());
+            QVERIFY(activeConfiguration.type() == QNetworkConfiguration::InternetAccessPoint);
+
+            if (userChoiceConfiguration.type() == QNetworkConfiguration::InternetAccessPoint) {
+                QVERIFY(userChoiceConfiguration == activeConfiguration);
+            } else {
+                QVERIFY(userChoiceConfiguration.type() == QNetworkConfiguration::ServiceNetwork);
+                QVERIFY(userChoiceConfiguration.children().contains(activeConfiguration));
+            }
+        } else {
+            QFAIL("Timeout waiting for session to open.");
+        }
+    }
 }
 
 void tst_QNetworkSession::inProcessSessionManagement_data()

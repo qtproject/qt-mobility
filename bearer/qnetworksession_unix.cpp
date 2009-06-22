@@ -208,18 +208,6 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 
 QVariant QNetworkSessionPrivate::property(const QString& key)
 {
-    if (!publicConfig.isValid())
-        return QVariant();
-
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!isActive) {
-            return QString();
-        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return actualConfig.identifier();
-        } else {
-            return publicConfig.identifier();
-        }
-    }
     return QVariant();
 }
 

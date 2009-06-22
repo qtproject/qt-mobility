@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNETWORKCONFIGURATION_H
 #define QNETWORKCONFIGURATION_H
 
@@ -69,6 +70,7 @@ public:
     enum Type {
         InternetAccessPoint = 0,
         ServiceNetwork,
+        UserChoice,
         Invalid
     };
 

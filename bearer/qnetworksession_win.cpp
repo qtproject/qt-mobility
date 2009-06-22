@@ -201,12 +201,22 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     qRegisterMetaType<QNetworkSessionEngine::ConnectionError>
         ("QNetworkSessionEngine::ConnectionError");
 
-    if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-        engine = getEngineFromId(publicConfig.identifier());
+    switch (publicConfig.type()) {
+    case QNetworkConfiguration::InternetAccessPoint:
+        activeConfig = publicConfig;
+        engine = getEngineFromId(activeConfig.identifier());
         connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
                 this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
                 Qt::QueuedConnection);
-    } else {
+        break;
+    case QNetworkConfiguration::ServiceNetwork:
+        serviceConfig = publicConfig;
+        // Defer setting engine and signals until open().
+        // fall through
+    case QNetworkConfiguration::UserChoice:
+        // Defer setting serviceConfig and activeConfig until open().
+        // fall through
+    default:
         engine = 0;
     }
 
@@ -215,15 +225,11 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 
 void QNetworkSessionPrivate::open()
 {
-    QNetworkConfigurationManager manager;
-
-    if (manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) {
-        qFatal("System Session supported not available on Microsoft Windows.");
-    } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+    if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else if (!isActive) {
-        if ((publicConfig.state() & QNetworkConfiguration::Discovered) !=
+        if ((activeConfig.state() & QNetworkConfiguration::Discovered) !=
             QNetworkConfiguration::Discovered) {
             lastError =QNetworkSession::InvalidConfigurationError;
             emit q->error(lastError);
@@ -231,8 +237,8 @@ void QNetworkSessionPrivate::open()
         }
         // increment session count
         opened = true;
-        sessionManager()->increment(publicConfig);
-        isActive = (publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
+        sessionManager()->increment(activeConfig);
+        isActive = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
         if (isActive)
             emit quitPendingWaitsForOpened();
     }
@@ -240,16 +246,12 @@ void QNetworkSessionPrivate::open()
 
 void QNetworkSessionPrivate::close()
 {
-    QNetworkConfigurationManager manager;
-
-    if (manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) {
-        qFatal("System Session supported not available on Microsoft Windows.");
-    } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+    if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else if (isActive) {
         // decrement session count
-        sessionManager()->decrement(publicConfig);
+        sessionManager()->decrement(activeConfig);
 
         opened = false;
         isActive = false;
@@ -259,16 +261,12 @@ void QNetworkSessionPrivate::close()
 
 void QNetworkSessionPrivate::stop()
 {
-    QNetworkConfigurationManager manager;
-
-    if (manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) {
-        qFatal("System Session supported not available on Microsoft Windows.");
-    } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+    if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else {
         // force the session reference count to 0
-        sessionManager()->clear(publicConfig);
+        sessionManager()->clear(activeConfig);
 
         opened = false;
         isActive = false;
@@ -298,18 +296,10 @@ void QNetworkSessionPrivate::reject()
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
-    if (!publicConfig.isValid() || !engine)
+    if (!publicConfig.isValid() || !engine || state != QNetworkSession::Connected)
         return QNetworkInterface();
 
-    if (state != QNetworkSession::Connected)
-        return QNetworkInterface();
-
-    QString interface;
-
-    if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
-        interface = engine->getInterfaceFromId(actualConfig.identifier());
-    else
-        interface = engine->getInterfaceFromId(publicConfig.identifier());
+    QString interface = engine->getInterfaceFromId(activeConfig.identifier());
 
     if (interface.isEmpty())
         return QNetworkInterface();
@@ -319,19 +309,8 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 
 QVariant QNetworkSessionPrivate::property(const QString& key)
 {
-    if (!publicConfig.isValid())
-        return QVariant();
-
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!isActive) {
-            return QString();
-        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return actualConfig.identifier();
-        } else {
-            return publicConfig.identifier();
-        }
-    } else if (key == "SessionReferenceCount") {
-        return QVariant::fromValue(sessionManager()->referenceCount(publicConfig));
+    if (key == "SessionReferenceCount") {
+        return QVariant::fromValue(sessionManager()->referenceCount(activeConfig));
     }
 
     return QVariant();
@@ -342,10 +321,7 @@ QString QNetworkSessionPrivate::bearerName() const
     if (!publicConfig.isValid() || !engine)
         return QString();
 
-    if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
-        return engine->bearerName(actualConfig.identifier());
-    else
-        return engine->bearerName(publicConfig.identifier());
+    return engine->bearerName(activeConfig.identifier());
 }
 
 QString QNetworkSessionPrivate::errorString() const
@@ -388,18 +364,18 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
 {
     QNetworkSession::State oldState = state;
 
-    foreach (const QNetworkConfiguration &config, publicConfig.children()) {
+    foreach (const QNetworkConfiguration &config, serviceConfig.children()) {
         if ((config.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active)
             continue;
 
-        if (actualConfig != config) {
+        if (activeConfig != config) {
             if (engine) {
                 disconnect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
                            this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)));
             }
 
-            actualConfig = config;
-            engine = getEngineFromId(actualConfig.identifier());
+            activeConfig = config;
+            engine = getEngineFromId(activeConfig.identifier());
             connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
                     this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
                     Qt::QueuedConnection);
@@ -419,22 +395,22 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
         emit q->stateChanged(state);
 }
 
-void QNetworkSessionPrivate::updateStateFromPublicConfig()
+void QNetworkSessionPrivate::updateStateFromActiveConfig()
 {
     QNetworkSession::State oldState = state;
 
     bool newActive = false;
 
-    if (!publicConfig.isValid()) {
+    if (!activeConfig.isValid()) {
         state = QNetworkSession::Invalid;
-    } else if ((publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+    } else if ((activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
         state = QNetworkSession::Connected;
         newActive = opened;
-    } else if ((publicConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+    } else if ((activeConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
         state = QNetworkSession::Disconnected;
-    } else if ((publicConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
+    } else if ((activeConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
         state = QNetworkSession::NotAvailable;
-    } else if ((publicConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
+    } else if ((activeConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
         state = QNetworkSession::NotAvailable;
     }
 
@@ -452,25 +428,23 @@ void QNetworkSessionPrivate::updateStateFromPublicConfig()
 
 void QNetworkSessionPrivate::networkConfigurationsChanged()
 {
-    if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork)
+    if (serviceConfig.isValid())
         updateStateFromServiceNetwork();
     else
-        updateStateFromPublicConfig();
+        updateStateFromActiveConfig();
 }
 
 void QNetworkSessionPrivate::configurationChanged(const QNetworkConfiguration &config)
 {
-    if (config == publicConfig && publicConfig.type() == QNetworkConfiguration::ServiceNetwork ||
-        config == actualConfig) {
+    if (serviceConfig.isValid() && (config == serviceConfig || config == activeConfig))
         updateStateFromServiceNetwork();
-    } else {
-        updateStateFromPublicConfig();
-    }
+    else if (config == activeConfig)
+        updateStateFromActiveConfig();
 }
 
 void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &config)
 {
-    if (publicConfig == config) {
+    if (activeConfig == config) {
         opened = false;
         isActive = false;
 
@@ -483,17 +457,12 @@ void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &con
 
 void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error)
 {
-    if (publicConfig.identifier() == id ||
-        publicConfig.type() == QNetworkConfiguration::ServiceNetwork &&
-        actualConfig.identifier() == id) {
+    if (activeConfig.identifier() == id) {
         switch (error) {
         case QNetworkSessionEngine::OperationNotSupported:
             lastError = QNetworkSession::OperationNotSupportedError;
             opened = false;
-            if (publicConfig.identifier() == id)
-                sessionManager()->decrement(publicConfig);
-            else
-                sessionManager()->decrement(actualConfig);
+            sessionManager()->decrement(activeConfig);
             break;
         case QNetworkSessionEngine::InterfaceLookupError:
         case QNetworkSessionEngine::ConnectError:

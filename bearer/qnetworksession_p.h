@@ -111,7 +111,7 @@ public:
 private:
 #ifdef Q_OS_WIN
     void updateStateFromServiceNetwork();
-    void updateStateFromPublicConfig();
+    void updateStateFromActiveConfig();
 #endif
 
 Q_SIGNALS:
@@ -143,11 +143,17 @@ private:
     quint64 rx_data;
     quint64 m_activeTime;
 
-    //the config set on QNetworkSession
+    // The config set on QNetworkSession.
     QNetworkConfiguration publicConfig;
 
-    //in case SNAP this one may be different to publicConfig
-    QNetworkConfiguration actualConfig;
+    // If publicConfig is a ServiceNetwork this is a copy of publicConfig.
+    // If publicConfig is an UserChoice that is resolved to a ServiceNetwork this is the actual
+    // ServiceNetwork configuration.
+    QNetworkConfiguration serviceConfig;
+
+    // This is the actual active configuration currently in use by the session.
+    // Either a copy of publicConfig or one of serviceConfig.children().
+    QNetworkConfiguration activeConfig;
 
     QNetworkSession::State state;
     bool isActive;
