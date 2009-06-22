@@ -628,9 +628,8 @@ void QServiceManager::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
             || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
-        DatabaseManager::DbScope scope = d->scope == SystemScope ?
-                DatabaseManager::SystemScope : DatabaseManager::UserScope;
-        d->dbManager->setChangeNotificationsEnabled(scope, true);
+        d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, true);
+        d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, true);
     }
 }
 
@@ -643,9 +642,8 @@ void QServiceManager::disconnectNotify(const char *signal)
             || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
         if (receivers(SIGNAL(serviceAdded(QString,QServiceManager::Scope))) == 0
                 && receivers(SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) == 0) {
-            DatabaseManager::DbScope scope = d->scope == SystemScope ?
-                    DatabaseManager::SystemScope : DatabaseManager::UserScope;
-            d->dbManager->setChangeNotificationsEnabled(scope, false);
+            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, false);
+            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, false);
         }
     }
 }

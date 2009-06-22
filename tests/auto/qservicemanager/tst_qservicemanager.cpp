@@ -1142,21 +1142,37 @@ void tst_QServiceManager::serviceAdded()
 {
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
+    QFETCH(QServiceManager::Scope, scope_modify);
+    QFETCH(QServiceManager::Scope, scope_listen);
 
     QBuffer buffer;
     buffer.setData(xml);
-    QServiceManager mgr;
+    QServiceManager mgr_modify(scope_modify);
+    QServiceManager mgr_listen(scope_listen);
 
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
-    connect(&mgr, SIGNAL(serviceAdded(QString,QServiceManager::Scope)),
+    connect(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)),
             listener, SLOT(serviceAdded(QString,QServiceManager::Scope)));
 
-    QSignalSpy spy(&mgr, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
-    QVERIFY(mgr.addService(&buffer));
+    QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.addService(&buffer));
 
-    QTRY_COMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+    QTRY_COMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+
+    // try it again
+    QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+
+    spyAdd.clear();
+    buffer.seek(0);
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
     delete listener;
 }
@@ -1165,38 +1181,67 @@ void tst_QServiceManager::serviceAdded_data()
 {
     QTest::addColumn<QByteArray>("xml");
     QTest::addColumn<QString>("serviceName");
+    QTest::addColumn<QServiceManager::Scope>("scope_modify");
+    QTest::addColumn<QServiceManager::Scope>("scope_listen");
 
     QFile file1(xmlTestDataPath("sampleservice.xml"));
     QVERIFY(file1.open(QIODevice::ReadOnly));
     QFile file2(xmlTestDataPath("testserviceplugin.xml"));
     QVERIFY(file2.open(QIODevice::ReadOnly));
 
-    QTest::newRow("SampleService") << file1.readAll() << "SampleService";
-    QTest::newRow("TestService") << file2.readAll() << "TestService";
-}
+    QByteArray file1Data = file1.readAll();
 
+    QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
+            << QServiceManager::UserScope << QServiceManager::UserScope;
+    QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
+            << QServiceManager::UserScope << QServiceManager::UserScope;
+
+    QTest::newRow("system scope") << file1Data << "SampleService"
+            << QServiceManager::SystemScope << QServiceManager::SystemScope;
+    QTest::newRow("modify as user, listen in system") << file1Data << "SampleService"
+            << QServiceManager::UserScope << QServiceManager::SystemScope;
+    QTest::newRow("modify as system, listen in user") << file1Data << "SampleService"
+            << QServiceManager::SystemScope << QServiceManager::UserScope;
+}
 
 void tst_QServiceManager::serviceRemoved()
 {
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
+    QFETCH(QServiceManager::Scope, scope_modify);
+    QFETCH(QServiceManager::Scope, scope_listen);
 
     QBuffer buffer;
     buffer.setData(xml);
-    QServiceManager mgr;
+    QServiceManager mgr_modify(scope_modify);
+    QServiceManager mgr_listen(scope_listen);
 
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
-    connect(&mgr, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)),
+    connect(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)),
             listener, SLOT(serviceRemoved(QString,QServiceManager::Scope)));
 
-    QVERIFY(mgr.addService(&buffer));
-    QTest::qWait(2000);     // QFileSystemWatcher doesn't emit fileChanged() immediately
+    QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
 
-    QSignalSpy spy(&mgr, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
-    QVERIFY(mgr.removeService(serviceName));
-    QTRY_COMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toString(), serviceName);
+    QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+
+    // try it again
+    spyAdd.clear();
+    buffer.seek(0);
+    QVERIFY(mgr_modify.addService(&buffer));
+    QTRY_COMPARE(spyAdd.count(), 1);
+
+    spyRemove.clear();
+    QVERIFY(mgr_modify.removeService(serviceName));
+    QTRY_COMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
     delete listener;
 }
@@ -1205,6 +1250,7 @@ void tst_QServiceManager::serviceRemoved_data()
 {
     serviceAdded_data();
 }
+
 
 QTEST_MAIN(tst_QServiceManager)
 
