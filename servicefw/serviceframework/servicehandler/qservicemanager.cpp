@@ -132,7 +132,10 @@ public:
                 break;
             case DBError::DatabaseNotOpen:
             case DBError::InvalidDatabaseConnection:
-                error = QServiceManager::StorageReadError;
+            case DBError::CannotCreateDbDir:
+            case DBError::CannotOpenSystemDb:
+            case DBError::CannotOpenUserDb:
+                error = QServiceManager::StorageAccessError;
                 break;
             case DBError::ComponentAlreadyRegistered:
                 error = QServiceManager::ServiceAlreadyExists;
@@ -146,6 +149,7 @@ public:
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
             case DBError::CannotCloseDatabase:
+            case DBError::InvalidDescriptorScope:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
                 break;
@@ -210,8 +214,7 @@ private slots:
     Defines the possible errors for the service manager.
 
     \value NoError No error occurred.
-    \value StoragePermissionsError The service data storage cannot be accessed.
-    \value StorageReadError The service data storage is not available.
+    \value StorageAccessError The service data storage is not accessible. This could be because the caller does not have the required permissions.
     \value InvalidServiceLocation The service was not found at its specified \l{QServiceInterfaceDescriptor::Location}{location}.
     \value InvalidServiceXml The XML defining the service metadata is invalid.
     \value InvalidServiceInterfaceDescriptor The service interface descriptor is invalid.
@@ -285,6 +288,7 @@ QServiceManager::Scope QServiceManager::scope() const
 */
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
+    d->setError(NoError);
     QStringList services;
     services = d->dbManager->getServiceNames(interfaceName,
             d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
@@ -297,6 +301,7 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServiceFilter& filter) const
 {
+    d->setError(NoError);
     QList<QServiceInterfaceDescriptor> descriptors = d->dbManager->getInterfaces(filter,
             d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
     if (descriptors.isEmpty() && d->dbManager->lastError().errorCode() != DBError::NoError) {
@@ -344,6 +349,7 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
 */
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
+    d->setError(NoError);
     if (!descriptor.isValid()) {
         d->setError(InvalidServiceInterfaceDescriptor);
         return 0;
@@ -453,6 +459,7 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 */
 bool QServiceManager::addService(QIODevice *device)
 {
+    d->setError(NoError);
     ServiceMetaData data(device);
     if (!data.extractMetadata()) {
         d->setError(InvalidServiceXml);
@@ -495,6 +502,7 @@ bool QServiceManager::addService(QIODevice *device)
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
+    d->setError(NoError);
     if (serviceName.isEmpty()) {
         d->setError(ComponentNotFound);
         return false;
@@ -540,6 +548,7 @@ bool QServiceManager::removeService(const QString& serviceName)
 */
 bool QServiceManager::setDefaultServiceForInterface(const QString &service, const QString &interfaceName)
 {
+    d->setError(NoError);
     if (service.isEmpty() || interfaceName.isEmpty()) {
         d->setError(ComponentNotFound);
         return false;
@@ -589,6 +598,7 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
 */
 bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor)
 {
+    d->setError(NoError);
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     if (!d->dbManager->setDefaultService(descriptor, scope)) {
@@ -603,6 +613,7 @@ bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescr
 */
 QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QString& interfaceName) const
 {
+    d->setError(NoError);
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     QServiceInterfaceDescriptor info = d->dbManager->defaultServiceInterface(interfaceName, scope);

@@ -72,8 +72,7 @@ public:
 
     enum Error {
         NoError,
-        StoragePermissionsError,
-        StorageReadError,
+        StorageAccessError,
         InvalidServiceLocation,
         InvalidServiceXml,
         InvalidServiceInterfaceDescriptor,
