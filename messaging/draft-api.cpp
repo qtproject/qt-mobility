@@ -1174,6 +1174,18 @@ void QMessageAddress::setType(Type type)
 */
 
 /*!
+    \enum QMessage::StandardFolder
+
+    Defines the standard folders.
+
+    \value InboxFolder   Represents the standard inbox folder.
+    \value DraftsFolder  Represents the standard drafts folder.
+    \value OutboxFolder  Represents the standard outbox folder.
+    \value SentFolder    Represents the standard sent folder.
+    \value TrashFolder   Represents the standard trash folder.
+*/
+
+/*!
     Constructs an empty message.
 */
 QMessage::QMessage()
@@ -1327,6 +1339,24 @@ void QMessage::setParentFolderId(const QMessageFolderId &folderId)
     Q_UNUSED(folderId)
 }
 
+/*!
+    Returns the standard folder of the message.
+    
+    Defaults to InboxFolder.
+*/
+QMessage::StandardFolder QMessage::standardFolder() const
+{
+    return QMessage::InboxFolder; // stub
+}
+    
+/*!
+    Sets the standard folder of the message to \a sf.
+*/
+void QMessage::setStandardFolder(StandardFolder sf)
+{
+    Q_UNUSED(sf)
+}
+    
 /*!
     Returns the originating address of the message.
 
@@ -1751,18 +1781,6 @@ void QMessage::setDataModified(bool modified)
 */
 
 /*!
-    \enum QMessageFolder::StandardFolder
-
-    Defines the standard folders.
-
-    \value InboxFolder   Represents the standard inbox folder.
-    \value DraftsFolder  Represents the standard drafts folder.
-    \value OutboxFolder  Represents the standard outbox folder.
-    \value SentFolder    Represents the standard sent folder.
-    \value TrashFolder   Represents the standard trash folder.
-*/
-
-/*!
     Constructor that creates an empty and invalid QMessageFolder. An empty folder is one which 
     has no path, no parent folder and no parent account. An invalid folder does not exist in 
     the database and has an invalid id.
@@ -1779,16 +1797,6 @@ QMessageFolder::QMessageFolder()
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
 {
     Q_UNUSED(id)
-}
-
-/*!
-    Constructor that loads a standard QMessageFolder specified by \a sf for the account 
-    identified by \a parentAccountId from the messaging store.
-*/
-QMessageFolder::QMessageFolder(StandardFolder sf, const QMessageAccountId &parentAccountId)
-{
-    Q_UNUSED(sf)
-    Q_UNUSED(parentAccountId)
 }
 
 /*!
@@ -1901,15 +1909,6 @@ QMessageAccountId QMessageAccount::id() const
 QString QMessageAccount::name() const
 {
     return QString(); // stub
-}
-
-/*!
-    Returns the folder configured for the standard folder role \a folder for this account.
-*/
-QMessageFolderId QMessageAccount::standardFolder(QMessageFolder::StandardFolder folder) const
-{
-    Q_UNUSED(folder)
-        return QMessageFolderId(); // stub
 }
 
 /*!

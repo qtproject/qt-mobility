@@ -205,6 +205,15 @@ public:
         Low
     };
 
+    enum StandardFolder
+    {
+        InboxFolder = 1,
+        OutboxFolder,
+        DraftsFolder,
+        SentFolder,
+        TrashFolder
+    };
+
     QMessage();
     QMessage(const QMessageId &id);
     virtual ~QMessage();
@@ -222,6 +231,9 @@ public:
 
     QMessageAccountId parentAccountId() const;
     QMessageFolderId parentFolderId() const;
+
+    StandardFolder standardFolder() const;
+    void setStandardFolder(StandardFolder sf);
 
     virtual QMessageAddress from() const;
     virtual void setFrom(const QMessageAddress &address);
@@ -286,18 +298,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
 
 class QMessageFolder {
 public:
-    enum StandardFolder
-    {
-        InboxFolder = 1,
-        OutboxFolder,
-        DraftsFolder,
-        SentFolder,
-        TrashFolder
-    };
-
     QMessageFolder();
     QMessageFolder(const QMessageFolderId & id);
-    QMessageFolder(StandardFolder sf, const QMessageAccountId &parentAccountId);
     virtual ~QMessageFolder();
 
     QMessageFolderId id() const;
@@ -320,7 +322,6 @@ public:
 
     QMessageAccountId id() const;
     QString name() const;
-    QMessageFolderId standardFolder(QMessageFolder::StandardFolder folder) const;
     QMessageAddress fromAddress() const;
     QMessage::TypeFlags types() const;
     QString signature() const;
