@@ -46,6 +46,7 @@
 <li><div class="fn"></div>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
+<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#forward">forward</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageAddress <b><a href="qmessage.html#from">from</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
@@ -53,6 +54,8 @@
 <li><div class="fn"></div>virtual QMessageFolderId <b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</li>
 <li><div class="fn"></div>virtual Priority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
+<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#replyTo">replyTo</a></b> () const</li>
+<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#replyToAll">replyToAll</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QMessageAddressList &amp; <i>bccList</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
@@ -205,6 +208,9 @@
 <p>Only relevant for SMS messages.</p>
 <p>Default is 0.</p>
 <p>See also <a href="qmessage.html#setDestinationPort">setDestinationPort</a>() and <a href="qmessage.html#setOriginatorPort">setOriginatorPort</a>().</p>
+<h3 class="fn"><a name="forward"></a>QMessage QMessage::forward () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Creates a copy the message in a format suitable for forwarding.</p>
+<p>See also <a href="qmessageserviceaction.html#compose">QMessageServiceAction::compose</a>().</p>
 <h3 class="fn"><a name="from"></a><a href="qmessageaddress.html">QMessageAddress</a> QMessage::from () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the originating address of the message.</p>
 <p>See also <a href="qmessage.html#setFrom">setFrom</a>() and <a href="qmessagefilterkey.html#sender">QMessageFilterKey::sender</a>().</p>
@@ -235,6 +241,12 @@
 <h3 class="fn"><a name="receivedDate"></a>QDateTime QMessage::receivedDate () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setReceivedDate">setReceivedDate</a>() and <a href="qmessagefilterkey.html#receptionTimeStamp">QMessageFilterKey::receptionTimeStamp</a>().</p>
+<h3 class="fn"><a name="replyTo"></a>QMessage QMessage::replyTo () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Creates a reply to sender response to the message</p>
+<p>See also <a href="qmessageserviceaction.html#compose">QMessageServiceAction::compose</a>().</p>
+<h3 class="fn"><a name="replyToAll"></a>QMessage QMessage::replyToAll () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Creates a reply to all response to the message</p>
+<p>See also <a href="qmessageserviceaction.html#compose">QMessageServiceAction::compose</a>().</p>
 <h3 class="fn"><a name="setBcc"></a>void QMessage::setBcc ( const QMessageAddressList &amp; <i>bccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>bccList</i>.</p>
 <p>See also <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setCc">setCc</a>().</p>

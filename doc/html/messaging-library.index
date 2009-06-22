@@ -311,6 +311,9 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="customFields" fullname="QMessage::customFields" href="qmessage.html#customFields" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="customFields() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="dataModified" fullname="QMessage::dataModified" href="qmessage.html#dataModified" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="dataModified() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="replyTo" fullname="QMessage::replyTo" href="qmessage.html#replyTo" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessage" signature="replyTo() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="replyToAll" fullname="QMessage::replyToAll" href="qmessage.html#replyToAll" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessage" signature="replyToAll() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="forward" fullname="QMessage::forward" href="qmessage.html#forward" location="draft-api.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessage" signature="forward() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolder" href="qmessagefolder.html" location="draft-api.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolder()"/>
@@ -820,12 +823,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="compose" fullname="QMessageServiceAction::compose" href="qmessageserviceaction.html#compose" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="compose(const QMessage &amp; message)">
                 <parameter left="const QMessage &amp;" right="" name="message" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="reply" fullname="QMessageServiceAction::reply" href="qmessageserviceaction.html#reply" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="reply(const QMessageId &amp; id)">
-                <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="forward" fullname="QMessageServiceAction::forward" href="qmessageserviceaction.html#forward" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="forward(const QMessageId &amp; id)">
-                <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="retrieve" fullname="QMessageServiceAction::retrieve" href="qmessageserviceaction.html#retrieve" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="retrieve(const QMessageId &amp; id)">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>

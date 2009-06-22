@@ -38,6 +38,7 @@
         <keyword ref="qmessage.html#dataModified">dataModified</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
         <keyword ref="qmessage.html#destinationPort">destinationPort</keyword>
+        <keyword ref="qmessage.html#forward">forward</keyword>
         <keyword ref="qmessage.html#from">from</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
@@ -47,6 +48,8 @@
         <keyword ref="qmessage.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
+        <keyword ref="qmessage.html#replyTo">replyTo</keyword>
+        <keyword ref="qmessage.html#replyToAll">replyToAll</keyword>
         <keyword ref="qmessage.html#setBcc">setBcc</keyword>
         <keyword ref="qmessage.html#setBody">setBody</keyword>
         <keyword ref="qmessage.html#setBodyFromFile">setBodyFromFile</keyword>
@@ -287,9 +290,7 @@
         <keyword ref="qmessageserviceaction.html#activityChanged">activityChanged</keyword>
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
-        <keyword ref="qmessageserviceaction.html#forward">forward</keyword>
         <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
-        <keyword ref="qmessageserviceaction.html#reply">reply</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>
         <keyword ref="qmessageserviceaction.html#show">show</keyword>

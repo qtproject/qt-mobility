@@ -28,9 +28,7 @@
 <ul>
 <li><div class="fn"></div>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#forward">forward</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#reply">reply</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
@@ -80,16 +78,8 @@
 <p>Open a composer application using <i>message</i> as a prototype.</p>
 <p>The default application for handling the type of <i>message</i> should be used.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="forward"></a>void QMessageServiceAction::forward ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Open a composer application forwarding the message identified by <i>id</i>.</p>
-<p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
-<p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="lastErrorString"></a>QString QMessageServiceAction::lastErrorString () const</h3>
 <p>Returns a string indicating the last error condition reported by the action if any; otherwise returns a null string.</p>
-<h3 class="fn"><a name="reply"></a>void QMessageServiceAction::reply ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Open a composer application replying to the message identified by <i>id</i>.</p>
-<p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
-<p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve meta data of the message identified by <i>id</i>.</p>
 <p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved.</p>
