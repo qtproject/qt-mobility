@@ -1575,12 +1575,14 @@ void QMessage::setSize(uint size)
     Returns the identifier for the body content contained by the Message if a body exists; 
     otherwise returns an invalid identifier.
     
-    TODO: Example body finding algorithm.
-    
     \sa QMessageContentContainer, setBody()
 */
 QMessageContentContainerId QMessage::body() const
 {
+    // TODO: Example body finding algorithm.
+    // If the content type of the message is text, then that is the body
+    // otherwise if the first part of the body is text then that is the body.
+    
     return QMessageContentContainerId(); // stub
 }
 
@@ -1626,13 +1628,14 @@ void QMessage::setBodyFromFile(const QString &fileName)
 
     The body of the message will not be included in the list.
     
-    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
-    have to recurse into them, somewhat ambiguous.
-    
     \sa appendAttachments(), clearAttachments()
 */
 QMessageContentContainerIdList QMessage::attachments() const
 {
+    //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
+    //    have to recurse into them, somewhat ambiguous.
+    //    Don't recurse, just ignore any body part, see body() for body finding algorithm.
+    
     // Implementation note, this should be platform independent.
     return QMessageContentContainerIdList(); // stub
 }
@@ -3468,8 +3471,12 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 */
 
 /*
-    TODO capabilities AtomicBooleanSarch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
-      ExtendedServices, AtomicCustomSearching, CaseInsensitiveSearching, FullWordSearching
+    TODO capabilities AtomicBooleanSearch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
+      ExtendedServices AtomicCustomSearching CaseInsensitiveSearching FullWordSearching
+      
+    Maybe capabilities are not necessary.
+      Sms, Mms, Email, Xmpp are only enabled if a valid default account exists for that type.
+    All other capabilities are searching related, lack of support for them can be detected by a QMailStore::lastError of NotYetImplemented.
 
     Activate/deactive on only adds, deletes or updates? Requires enum,
     enum NotificationType 
@@ -3478,7 +3485,8 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
         Removed,
         Changed
     }
-    constraint(), setConstraint()
+    
+    MAPI has move and copy signals, QMF does not.
 */
 
 /*!
