@@ -553,34 +553,9 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
         d->setError(ComponentNotFound);
         return false;
     }
-
-    // TODO change to use DatabaseManager setDefaultService() when it's implemented there
-    QServiceFilter filter;
-    filter.setServiceName(service);
-    filter.setInterface(interfaceName);
-    QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(filter);
-    if (descriptors.isEmpty()) {
-        d->setError(ComponentNotFound);
-        return false;
-    }
-    int maxVersionIndex = 0;
-    int maxMajor = descriptors[0].majorVersion();
-    int maxMinor = descriptors[0].minorVersion();
-    int major;
-    int minor;
-    for (int i=1; i<descriptors.count(); i++) {
-        major = descriptors[i].majorVersion();
-        minor = descriptors[i].minorVersion();
-        if (major > maxMajor || (major == maxMajor && minor > maxMinor)) {
-            maxVersionIndex = i;
-            maxMajor = major;
-            maxMinor = minor;
-        }
-    }
-
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
-    if (!d->dbManager->setDefaultService(descriptors[maxVersionIndex], scope)) {
+    if (!d->dbManager->setDefaultService(service, interfaceName, scope)) {
         d->setError();
         return false;
     }
