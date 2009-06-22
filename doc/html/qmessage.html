@@ -41,37 +41,37 @@
 <li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessage.html#body">body</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#cc">cc</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#clearAttachments">clearAttachments</a></b> ()</li>
-<li><div class="fn"></div>QString <b><a href="qmessage.html#customField">customField</a></b> ( const QString &amp; <i>name</i> ) const</li>
-<li><div class="fn"></div>QList&lt;QString&gt; <b><a href="qmessage.html#customFields">customFields</a></b> () const</li>
+<li><div class="fn"></div>virtual QString <b><a href="qmessage.html#customField">customField</a></b> ( const QString &amp; <i>name</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#customFields">customFields</a></b> () const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
 <li><div class="fn"></div>virtual QMessageAddress <b><a href="qmessage.html#from">from</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
-<li><div class="fn"></div>QMessageAccountId <b><a href="qmessage.html#parentAccountId">parentAccountId</a></b> () const</li>
-<li><div class="fn"></div>QMessageFolderId <b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</li>
+<li><div class="fn"></div>virtual QMessageAccountId <b><a href="qmessage.html#parentAccountId">parentAccountId</a></b> () const</li>
+<li><div class="fn"></div>virtual QMessageFolderId <b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</li>
 <li><div class="fn"></div>virtual Priority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
 <li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QMessageAddressList &amp; <i>bccList</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCc">setCc</a></b> ( const QMessageAddressList &amp; <i>ccList</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessage.html#setCustomField">setCustomField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCustomField">setCustomField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</li>
 <li><div class="fn"></div>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
-<li><div class="fn"></div>StandardFolder <b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</li>
+<li><div class="fn"></div>virtual StandardFolder <b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</li>
 <li><div class="fn"></div>virtual StatusFlags <b><a href="qmessage.html#status">status</a></b> () const</li>
 <li><div class="fn"></div>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#to">to</a></b> () const</li>
@@ -189,10 +189,10 @@
 <h3 class="fn"><a name="clearAttachments"></a>void QMessage::clearAttachments ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Clears the list of attachments for the message, leaving only the message body, if any.</p>
 <p>See also <a href="qmessage.html#attachments">attachments</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
-<h3 class="fn"><a name="customField"></a>QString QMessage::customField ( const QString &amp; <i>name</i> ) const</h3>
+<h3 class="fn"><a name="customField"></a>QString QMessage::customField ( const QString &amp; <i>name</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the value of the custom field with name <i>name</i>.</p>
 <p>See also <a href="qmessage.html#setCustomField">setCustomField</a>() and <a href="qmessage.html#customFields">customFields</a>().</p>
-<h3 class="fn"><a name="customFields"></a>QList&lt;QString&gt; QMessage::customFields () const</h3>
+<h3 class="fn"><a name="customFields"></a>QList&lt;QString&gt; QMessage::customFields () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of names of custom fields.</p>
 <p>See also <a href="qmessage.html#customField">customField</a>() and <a href="qmessage.html#setCustomField">setCustomField</a>().</p>
 <h3 class="fn"><a name="dataModified"></a>bool QMessage::dataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -224,9 +224,9 @@
 <p>Only relevant for SMS messages.</p>
 <p>Default is 0.</p>
 <p>See also <a href="qmessage.html#setOriginatorPort">setOriginatorPort</a>() and <a href="qmessage.html#setDestinationPort">setDestinationPort</a>().</p>
-<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const</h3>
+<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the parent account of the message if any; otherwise returns an invalid identifier.</p>
-<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const</h3>
+<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
 <h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the priority of the message.</p>
@@ -251,7 +251,7 @@
 <h3 class="fn"><a name="setCc"></a>void QMessage::setCc ( const QMessageAddressList &amp; <i>ccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of cc (carbon copy) recipients for the message to <i>ccList</i>.</p>
 <p>See also <a href="qmessage.html#cc">cc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
-<h3 class="fn"><a name="setCustomField"></a>void QMessage::setCustomField ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setCustomField"></a>void QMessage::setCustomField ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the value of the custom field with name <i>name</i> to <i>value</i>.</p>
 <p>See also <a href="qmessage.html#customField">customField</a>() and <a href="qmessage.html#customFields">customFields</a>().</p>
 <h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const QDateTime &amp; <i>d</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -274,7 +274,7 @@
 <h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const QDateTime &amp; <i>d</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the timestamp indicating the time of message reception by the device to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">receivedDate</a>().</p>
-<h3 class="fn"><a name="setStandardFolder"></a>void QMessage::setStandardFolder ( <a href="qmessage.html#StandardFolder-enum">StandardFolder</a> <i>sf</i> )</h3>
+<h3 class="fn"><a name="setStandardFolder"></a>void QMessage::setStandardFolder ( <a href="qmessage.html#StandardFolder-enum">StandardFolder</a> <i>sf</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the standard folder of the message to <i>sf</i>.</p>
 <p>See also <a href="qmessage.html#standardFolder">standardFolder</a>().</p>
 <h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -296,7 +296,7 @@
 <h3 class="fn"><a name="size"></a>uint QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
 <p>See also <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
-<h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const</h3>
+<h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the standard folder of the message.</p>
 <p>Defaults to <a href="qmessage.html#StandardFolder-enum">InboxFolder</a>.</p>
 <p>See also <a href="qmessage.html#setStandardFolder">setStandardFolder</a>().</p>
