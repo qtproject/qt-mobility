@@ -63,6 +63,14 @@
                 <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"></parameter>
             </function>
         </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="#operator&lt;&lt;" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QCoordinate &amp; coordinate)">
+            <parameter left="QDataStream &amp;" right="" name="stream" default=""></parameter>
+            <parameter left="const QCoordinate &amp;" right="" name="coordinate" default=""></parameter>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="#operator&gt;&gt;" location="draft-api.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QCoordinate &amp; coordinate)">
+            <parameter left="QDataStream &amp;" right="" name="stream" default=""></parameter>
+            <parameter left="QCoordinate &amp;" right="" name="coordinate" default=""></parameter>
+        </function>
         <class access="public" threadsafety="unspecified" status="commendable" name="QPositionUpdate" href="qpositionupdate.html" location="draft-api.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Property" fullname="QPositionUpdate::Property" href="qpositionupdate.html#Property-enum" location="draft-api.h">
                 <value name="Heading" value="0"></value>
