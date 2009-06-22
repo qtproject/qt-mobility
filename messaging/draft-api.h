@@ -229,11 +229,11 @@ public:
     virtual Type type() const;
     virtual void setType(Type t);
 
-    QMessageAccountId parentAccountId() const;
-    QMessageFolderId parentFolderId() const;
+    virtual QMessageAccountId parentAccountId() const;
+    virtual QMessageFolderId parentFolderId() const;
 
-    StandardFolder standardFolder() const;
-    void setStandardFolder(StandardFolder sf);
+    virtual StandardFolder standardFolder() const;
+    virtual void setStandardFolder(StandardFolder sf);
 
     virtual QMessageAddress from() const;
     virtual void setFrom(const QMessageAddress &address);
@@ -276,9 +276,9 @@ public:
     virtual void setDestinationPort(uint port);
     virtual uint destinationPort();
 
-    QString customField(const QString &name) const;
-    void setCustomField(const QString &name, const QString &value);
-    QList<QString> customFields() const;
+    virtual QString customField(const QString &name) const;
+    virtual void setCustomField(const QString &name, const QString &value);
+    virtual QList<QString> customFields() const;
 
     virtual bool dataModified() const;
 
