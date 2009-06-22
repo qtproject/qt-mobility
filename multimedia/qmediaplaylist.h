@@ -12,8 +12,12 @@ class QMediaPlaylist : public QObject
     Q_OBJECT
     Q_ENUMS(PlaybackMode);
     Q_PROPERTY(PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
+    Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
+    Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
+    Q_PROPERTY(QMediaSource nextItem READ nextItem)
+    Q_PROPERTY(QMediaSource previousItem READ previousItem)
 public:
-    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop };
+    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
     QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
@@ -46,19 +50,13 @@ public:
     bool save(const QString &location, const char *format = 0);
     bool save(QIODevice * device, const char *format);
 
-    bool isShuffled() const;
-
 public Q_SLOTS:
     void advance();
     void back();
 
-    void next();
-    void prev();
-
     void jump(int);
 
     void shuffle();
-    void unshuffle();
 
 Q_SIGNALS:
     void activated(const QMediaSource&);
