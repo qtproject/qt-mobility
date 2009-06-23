@@ -89,12 +89,15 @@ QString ifaceToId( const QNetworkInterface& netiface)
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
     if (NetworkManagerAvailable())
-        capFlags |= QNetworkConfigurationManager::BearerManagement;
+        capFlags = QNetworkConfigurationManager::BearerManagement
+                    | QNetworkConfigurationManager::ForcedRoaming
+                    | QNetworkConfigurationManager::DataStatistics
+                    /*| QNetworkConfigurationManager::SystemSessionSupport*/;
 #ifdef Q_OS_LINUX
     //see SO_BINDTODEVICE
-    capFlags |= QNetworkConfigurationManager::DirectConnectionRouting;
+//    capFlags |= QNetworkConfigurationManager::DirectConnectionRouting;
 #endif
-    capFlags |= QNetworkConfigurationManager::DataStatistics;
+
 
 }
 
@@ -102,6 +105,7 @@ QTimer* updateTimer = 0;
 
 void QNetworkConfigurationManagerPrivate::updateConfigurations()
 {
+
     QList<QString> knownConfigs = accessPointConfigurations.keys();
     if (!NetworkManagerAvailable()) {
         QList<QNetworkInterface> systemIfaces = QNetworkInterface::allInterfaces();
@@ -236,9 +240,7 @@ void QNetworkConfigurationManagerPrivate::updateEthConfigurations(QNetworkManage
     devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
         ident = devWiredIface->hwAddress();
 
-        if (accessPointConfigurations.contains(ident)) {
-            knownConfigs.removeOne(ident);
-              }
+        if (!knownConfigs.contains(ident)) {
             QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
             cpPriv->name = getNameForConfiguration(devIface);
             cpPriv->isValid = true;
@@ -247,11 +249,17 @@ void QNetworkConfigurationManagerPrivate::updateEthConfigurations(QNetworkManage
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             switch (devIface->state()) {
             case  NM_DEVICE_STATE_UNKNOWN:
+            case NM_DEVICE_STATE_UNMANAGED:
+            case NM_DEVICE_STATE_FAILED:
                     cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
                 break;
             case  NM_DEVICE_STATE_UNAVAILABLE:
                     cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
                 break;
+            case NM_DEVICE_STATE_PREPARE:
+            case NM_DEVICE_STATE_CONFIG:
+            case NM_DEVICE_STATE_NEED_AUTH:
+            case NM_DEVICE_STATE_IP_CONFIG:
             case NM_DEVICE_STATE_DISCONNECTED:
                 {
                     cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Discovered
@@ -278,6 +286,7 @@ void QNetworkConfigurationManagerPrivate::updateEthConfigurations(QNetworkManage
         emit configurationUpdateComplete();
         }
 }
+}
 
 void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManagerInterfaceDevice *devIface)
 {
@@ -299,26 +308,25 @@ void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManag
     QString activeAPPath = devWirelessIface->activeAccessPoint().path();
     ident = devWirelessIface->hwAddress();
 
-    if (accessPointConfigurations.contains(ident)) {
-        knownConfigs.removeOne(ident);
-    }
-    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-    cpPriv->name = getNameForConfiguration(devIface);
-    cpPriv->isValid = true;
-    cpPriv->id = ident;
-    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-    cpPriv->serviceInterface = devIface->interface();
-    if(activeAPPath.length() > 2) {
-        cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined
-                         | QNetworkConfiguration::Discovered
-                         | QNetworkConfiguration::Active );
-    } else {
+#if 0
+    if (!knownConfigs.contains(ident)) {
+        QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+        cpPriv->name = getNameForConfiguration(devIface);
+        cpPriv->isValid = true;
+        cpPriv->id = ident;
+        cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+        cpPriv->serviceInterface = devIface->interface();
+        if(activeAPPath.length() > 2) {
+            cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined
+                             | QNetworkConfiguration::Discovered
+                             | QNetworkConfiguration::Active );
+        } else {
             switch (devIface->state()) {
             case  NM_DEVICE_STATE_UNKNOWN:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+                cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
                 break;
             case  NM_DEVICE_STATE_UNAVAILABLE:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
+                cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
                 break;
             case NM_DEVICE_STATE_DISCONNECTED:
                 {
@@ -327,23 +335,25 @@ void QNetworkConfigurationManagerPrivate::updateWifiConfigurations(QNetworkManag
                 }
                 break;
             case NM_DEVICE_STATE_ACTIVATED:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Active );
+                cpPriv->state = (cpPriv->state | QNetworkConfiguration::Active );
                 break;
             default:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
+                cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
                 break;
 
             };
-    }
+        }
 
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
-    accessPointConfigurations.insert(ident, ptr);
-    if (!firstUpdate) {
-        QNetworkConfiguration item;
-        item.d = ptr;
-        emit configurationAdded(item);
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+        accessPointConfigurations.insert(ident, ptr);
+        if (!firstUpdate) {
+            QNetworkConfiguration item;
+            item.d = ptr;
+            emit configurationAdded(item);
+        }
     }
-
+#endif
+    
     QList<QDBusObjectPath> list = devWirelessIface->getAccessPoints();
     foreach(QDBusObjectPath path, list) {
         ////////////// AccessPoints
@@ -453,6 +463,12 @@ void QNetworkConfigurationManagerPrivate::updateServiceNetworkState(bool isWifi)
             ++i;
         }
         ptr.data()->state = state;
+        if (!firstUpdate ) {
+            QNetworkConfiguration item;
+            item.d = ptr;
+            emit configurationChanged(item);
+        }
+
     } else {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> wptr =
                 snapConfigurations.value(QLatin1String("Wireless Service Network"));
@@ -476,6 +492,11 @@ void QNetworkConfigurationManagerPrivate::updateServiceNetworkState(bool isWifi)
             ++wi;
         }
         wptr.data()->state = state;
+        if (!firstUpdate ) {
+            QNetworkConfiguration item;
+            item.d = wptr;
+            emit configurationChanged(item);
+        }
     }
 
    if (!firstUpdate && !updating) {
@@ -507,21 +528,21 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
     devIface = new QNetworkManagerInterfaceDevice(iPath);
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
     devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(iPath);
+
     QList<QString> knownConfigs = accessPointConfigurations.keys();
     QString activeAPPath = devWirelessIface->activeAccessPoint().path();
+
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
     accessPointIface = new QNetworkManagerInterfaceAccessPoint(path.path());
 
     QString ident = accessPointIface->connectionInterface()->path();
-    quint32 vState = devIface->state();
-
-    bool addIt = true;
+    quint32 nmState = devIface->state();
 
     QString ssid = accessPointIface->ssid();
     QString hwAddy = accessPointIface->hwAddress();
     QString sInterface = devIface->interface().name();
 
-    if(addIt) {
+    if (!knownConfigs.contains(ident)) {
         QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
         cpPriv->name = ssid;
         cpPriv->isValid = true;
@@ -529,11 +550,7 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
         cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
         cpPriv->serviceInterface = devIface->interface();
 
-        bool knownSsid = false;
-        if(knownSsids.contains(cpPriv->name)) {
-            knownSsid = true;
-        }
-        cpPriv->state = getAPState(vState, knownSsids.contains(cpPriv->name));
+        cpPriv->state = getAPState(nmState, knownSsids.contains(cpPriv->name));
 
         if(activeAPPath == accessPointIface->connectionInterface()->path()) {
             cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Active);
@@ -550,7 +567,24 @@ void QNetworkConfigurationManagerPrivate::accessPointAdded( const QString &iPath
             item.d = ptr;
             emit configurationAdded(item);
         } // end devWirelessIface
+    } else {
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv
+                = accessPointConfigurations.value(ident);
+        QNetworkConfiguration::StateFlags oldState = priv->state;
+
+        if(activeAPPath == accessPointIface->connectionInterface()->path()) {
+            oldState = ( priv->state | QNetworkConfiguration::Active);
+        } else {
+            QNetworkConfiguration::StateFlags newState = getAPState(nmState, knownSsids.contains(priv->name));
+            if(oldState != newState) {
+                priv->state = newState;
+                    QNetworkConfiguration item;
+                    item.d = priv;
+                    emit configurationChanged(item);
+                }
+        }
     }
+
     if(!updating) {
         emit configurationUpdateComplete();
     }
@@ -575,7 +609,7 @@ void QNetworkConfigurationManagerPrivate::accessPointRemoved( const QString &aPa
     updating = false;
 }
 
-QNetworkConfiguration::StateFlags QNetworkConfigurationManagerPrivate::getAPState(qint32 vState, bool isKnown)
+QNetworkConfiguration::StateFlags QNetworkConfigurationManagerPrivate::getAPState(qint32 nmState, bool isKnown)
 {
     QNetworkConfiguration::StateFlags state = QNetworkConfiguration::Undefined;
 
@@ -583,7 +617,7 @@ QNetworkConfiguration::StateFlags QNetworkConfigurationManagerPrivate::getAPStat
     if(isKnown)
         state = ( QNetworkConfiguration::Defined);
 
-    switch(vState) { //device interface state, not AP state
+    switch(nmState) { //device interface state, not AP state
     case  NM_DEVICE_STATE_UNKNOWN:
     case  NM_DEVICE_STATE_UNMANAGED:
         state = (QNetworkConfiguration::Undefined);
@@ -699,6 +733,7 @@ void QNetworkConfigurationManagerPrivate::updateState(const QString &ident, quin
             priv->state = (QNetworkConfiguration::Defined);
             switch (nmState) {
             case  NM_DEVICE_STATE_UNKNOWN:
+            case NM_DEVICE_STATE_FAILED:
                 priv->state = (QNetworkConfiguration::Undefined);
                 break;
             case  NM_DEVICE_STATE_UNAVAILABLE:
@@ -714,7 +749,7 @@ void QNetworkConfigurationManagerPrivate::updateState(const QString &ident, quin
                 }
                 break;
             default:
-                priv->state = ( QNetworkConfiguration::Undefined);
+                priv->state = ( QNetworkConfiguration::Defined);
                 break;
             };
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(priv);

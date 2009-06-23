@@ -109,10 +109,8 @@ public:
     quint64 activeTime() const;
 
 private:
-#ifdef Q_OS_WIN
     void updateStateFromServiceNetwork();
     void updateStateFromActiveConfig();
-#endif
 
 Q_SIGNALS:
     //releases any pending waitForOpened() calls
@@ -133,6 +131,10 @@ private Q_SLOTS:
     void updateDeviceInterfaceState(const QString &, quint32);
     void propertiesChanged( const QString & path, QMap<QString,QVariant> map);
     void configChanged(const QNetworkConfiguration &config);
+
+    void activateNmSession(const QNetworkConfiguration &config);
+    void deactivateNmSession(const QNetworkConfiguration &config);
+    void forcedSessionClose(const QNetworkConfiguration &config);
 #endif
 
 
@@ -180,10 +182,7 @@ private:
     QString getBearerName(quint32 type);
     void setActiveTimeStamp();
     void updateNetworkConfigurations();
-    void activateNmSession();
-    void deactivateNmSession();
     void activateConnection(/*QDBusInterface &iface,*/ const QString & connPath, const QString &devicePath);
-    void updateServiceNetworkState();
     QNetworkManagerInterface * iface;
     QNetworkManagerInterfaceDevice *devIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
