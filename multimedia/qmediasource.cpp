@@ -4,24 +4,27 @@ class QMediaSourcePrivate : public QSharedData
 {
 public:
     QMediaSourcePrivate()
-        :QSharedData() {}
+        :QSharedData() { ref.ref(); }
 
     QMediaSourcePrivate(const QString &mimeType, const QVariant &url)
         :QSharedData(),
          mimeType(mimeType),
-         url(url)
+         url(url),
+         duration(-1)
     {}
 
     QMediaSourcePrivate(const QMediaSourcePrivate &other)
         :QSharedData(other),
          mimeType(other.mimeType),
-         url(other.url)
+         url(other.url),
+         duration(other.duration)
     {}
 
     ~QMediaSourcePrivate() {}
 
     QString mimeType;
     QVariant url;
+    int duration;
 };
 
 Q_GLOBAL_STATIC(QMediaSourcePrivate, qt_sharedMediaSource)
@@ -104,6 +107,23 @@ QVariant QMediaSource::dataLocation() const
 void QMediaSource::setDataLocation(QVariant const& url)
 {
     d->url = url;
+}
+
+/*!
+  Return the duration of media in miliseconds
+  or -1 if duration is not available.
+*/
+int QMediaSource::duration() const
+{
+    return d->duration;
+}
+
+/*!
+  Set the duration of media in miliseconds.  
+*/
+void QMediaSource::setDuration(int ms)
+{
+    d->duration = ms;
 }
 
 /*!

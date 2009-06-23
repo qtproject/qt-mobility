@@ -23,6 +23,9 @@ public:
     QVariant dataLocation() const;
     void setDataLocation(const QVariant &url);
 
+    int duration() const;
+    void setDuration(int ms);
+
     bool operator ==(const QMediaSource& other) const;
     bool operator !=(const QMediaSource& other) const;
 
