@@ -70,7 +70,7 @@ QString QSystemsInfoPrivate::countryCode() const
     return QString(setlocale(LC_ALL,"")).mid(3,2);
 }
 
-qint32 QSystemsInfoPrivate::getCellNetworkStatus()
+QSystemsInfo::CellNetworkStatus QSystemsInfoPrivate::getCellNetworkStatus()
 {
     return QSystemsInfo::NoNetworkAvailable;
 }
@@ -85,7 +85,7 @@ qint32 QSystemsInfoPrivate::cellId()
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::lac()
+qint32 QSystemsInfoPrivate::locationAreaCode()
 {
     return -1;
 }
@@ -230,9 +230,9 @@ qint64 QSystemsInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return -1;
 }
 
-int QSystemsInfoPrivate::getVolumeType(const QString &driveVolume)
+QSystemsInfo::VolumeType QSystemsInfoPrivate::getVolumeType(const QString &driveVolume)
 {
-    return -1;
+    return QSystemsInfo::NoVolume;
 }
 
 QStringList QSystemsInfoPrivate::listOfVolumes()
@@ -261,12 +261,12 @@ QString QSystemsInfoPrivate::model() const
     return QString();
 }
 
-qint32 QSystemsInfoPrivate::batteryLevel() const
+QSystemsInfo::BatteryLevel QSystemsInfoPrivate::batteryLevel() const
 {
-    return -1;
+    return QSystemsInfo::NoBatteryLevel;
 }
 
-qint32 QSystemsInfoPrivate::getSimStatus()
+QSystemsInfo::SimStatus QSystemsInfoPrivate::getSimStatus()
 {
     return QSystemsInfo::SimNotAvailable;
 }

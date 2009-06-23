@@ -54,7 +54,7 @@ public:
         Roaming
     };
 
-    qint32 getCellNetworkStatus();
+	QSystemsInfo::CellNetworkStatus getCellNetworkStatus();
 
     enum NetworkMode {
         UnknownMode = 0x00000000,
@@ -67,7 +67,7 @@ public:
 
     qint32 networkSignalStrength();
     qint32 cellId();
-    qint32 lac();
+    qint32 locationAreaCode();
 
     qint32 currentMCC(); // Mobile Country Code
     qint32 currentMNC(); // Mobile Network Code
@@ -111,7 +111,8 @@ public:
 
 // memory
     enum VolumeType {
-		Internal = 0,
+        NoVolume = 0,
+        Internal,
         Removable
 	};
 
@@ -120,11 +121,12 @@ public:
     qlonglong totalDiskSpace(const QString &driveVolume);
     qlonglong availableDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
-    int getVolumeType(const QString &driveVolume); //returns enum
+	QSystemsInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
 
 
 // device
     enum BatteryLevel {
+        NoBatteryLevel = 0,
         BatteryCritical = 1,
         BatteryVeryLow,
         BatteryLow,
@@ -144,14 +146,14 @@ public:
         KeysAndTouch
     };
 
-    qint32 getInputMethodType();
+    QSystemsInfo::InputMethods getInputMethodType();
 
     QString imei() const;
     QString imsi() const;
     QString manufacturer() const;
     QString model() const;
 
-    qint32 batteryLevel() const;
+    QSystemsInfo::BatteryLevel batteryLevel() const;
 
     enum Profile {
         UnknownProfile = -1,
@@ -170,7 +172,7 @@ public:
 		Locked
 	};
 
-    qint32 getSimStatus();
+    QSystemsInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
 
 Q_SIGNALS:

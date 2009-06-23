@@ -249,7 +249,7 @@ QString QSystemsInfo::countryCode() const
 /*!
     Returns the status of the cell network.
 */
-qint32 QSystemsInfo::getCellNetworkStatus() {
+QSystemsInfo::CellNetworkStatus QSystemsInfo::getCellNetworkStatus() {
     return d->getCellNetworkStatus();
 }
 
@@ -272,9 +272,9 @@ qint32 QSystemsInfo::cellId()
 /*!
     Returns the Location Area Code, in the range of 0 to 65,535.
 */
-qint32 QSystemsInfo::lac()
+qint32 QSystemsInfo::locationAreaCode()
 {
-    return d->lac();
+    return d->locationAreaCode();
 }
 
  /*!
@@ -435,7 +435,7 @@ QStringList QSystemsInfo::listOfVolumes()
 /*!
   Returns the type of volume \a driveVolume
 */
-int QSystemsInfo::getVolumeType(const QString &driveVolume)
+QSystemsInfo::VolumeType QSystemsInfo::getVolumeType(const QString &driveVolume)
 {
     return d->getVolumeType(driveVolume);
 }
@@ -443,7 +443,7 @@ int QSystemsInfo::getVolumeType(const QString &driveVolume)
 /*!
     Returns the InputMethodType that the system uses.
 */
-qint32 QSystemsInfo::getInputMethodType()
+QSystemsInfo::InputMethods QSystemsInfo::getInputMethodType()
 {
  return d->getInputMethodType();
 }
@@ -484,7 +484,7 @@ QString QSystemsInfo::model() const
 /*!
     Returns the battery charge level as percentage 1 - 100 scale
 */
-qint32 QSystemsInfo::batteryLevel() const
+QSystemsInfo::BatteryLevel QSystemsInfo::batteryLevel() const
 {
     return d->batteryLevel();
 }
@@ -492,7 +492,7 @@ qint32 QSystemsInfo::batteryLevel() const
 /*!
   Returns status of SIM card.
 */
-qint32 QSystemsInfo::getSimStatus()
+QSystemsInfo::SimStatus QSystemsInfo::getSimStatus()
 {
     return d->getSimStatus();
 }

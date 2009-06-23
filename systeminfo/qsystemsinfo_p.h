@@ -30,10 +30,10 @@ public:
 
     QString countryCode() const; //2 letter ISO 3166-1
 
-    qint32 getCellNetworkStatus();
+    QSystemsInfo::CellNetworkStatus getCellNetworkStatus();
     qint32 networkSignalStrength();
     qint32 cellId();
-    qint32 lac();
+    qint32 locationAreaCode();
 
     qint32 currentMCC(); // Mobile Country Code
     qint32 currentMNC(); // Mobile Network Code
@@ -62,7 +62,7 @@ public:
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
-    int getVolumeType(const QString &driveVolume); //returns enum
+    QSystemsInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
 
 
 // device
@@ -73,11 +73,11 @@ public:
     QString manufacturer() const;
     QString model() const;
 
-    qint32 getInputMethodType();
+   QSystemsInfo::InputMethods getInputMethodType();
 
-    qint32 batteryLevel() const;
+    QSystemsInfo::BatteryLevel batteryLevel() const;
 
-    qint32 getSimStatus();
+    QSystemsInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
 
 Q_SIGNALS:
