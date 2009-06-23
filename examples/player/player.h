@@ -4,6 +4,7 @@
 #include <QtGui/QWidget>
 
 class QMediaPlayerService;
+class QSlider;
 
 class Player : public QWidget
 {
@@ -14,9 +15,12 @@ public:
 
 private slots:
     void open();
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 progress);
 
 private:
     QMediaPlayerService *service;
+    QSlider *slider;
 };
 
 #endif

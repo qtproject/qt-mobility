@@ -10,6 +10,7 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
 {
     m_player->get_controls(&m_controls);
     m_player->get_settings(&m_settings);
+    m_player->get_network(&m_network);
 
 }
 
@@ -17,6 +18,47 @@ QWmpPlayerControl::~QWmpPlayerControl()
 {
     // if (m_controls) m_controls->Release(); ?
     // if (m_settings) m_settings->Release(); ?
+}
+
+qint64 QWmpPlayerControl::position() const
+{
+    double position;
+
+    if (m_controls)
+        m_controls->get_currentPosition(&position);
+
+    return position;
+}
+
+int QWmpPlayerControl::bufferingProgress() const
+{
+    long progress = 0;
+
+    if (m_network)
+        m_network->get_bufferingProgress(&progress);
+
+    return progress;
+}
+
+
+int QWmpPlayerControl::volume() const
+{
+    long volume = 0;
+
+    if (m_settings)
+        m_settings->get_volume(&volume);
+
+    return volume;
+}
+
+bool QWmpPlayerControl::isMuted() const
+{
+    VARIANT_BOOL mute = FALSE;
+
+    if (m_settings)
+        m_settings->get_mute(&mute);
+
+    return mute;
 }
 
 QUrl QWmpPlayerControl::url() const
@@ -60,4 +102,17 @@ void QWmpPlayerControl::stop()
 {
     if (m_controls)
         m_controls->stop();
+}
+
+
+void QWmpPlayerControl::setVolume(int volume)
+{
+    if (m_settings)
+        m_settings->put_volume(volume);
+}
+
+void QWmpPlayerControl::setMuted(bool muted)
+{
+    if (m_settings)
+        m_settings->put_mute(muted ? TRUE : FALSE);
 }
