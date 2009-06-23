@@ -29,7 +29,7 @@
 <li><div class="fn"/><a href="qsystemsinfo.html#QSystemsInfo">QSystemsInfo</a> ( QObject * )</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#availableDiskSpace">availableDiskSpace</a> ( const QString &amp; ) : qlonglong</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#availableLanguages">availableLanguages</a> () const : QStringList</li>
-<li><div class="fn"/><a href="qsystemsinfo.html#batteryLevel">batteryLevel</a> () const : qint32</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#batteryLevel">batteryLevel</a> () const : QSystemsInfo::BatteryLevel</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#batteryLevelChanged">batteryLevelChanged</a> ( QSystemsInfo::BatteryLevel )</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#batteryLevelCritical">batteryLevelCritical</a> ( qint32 )</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#cellId">cellId</a> () : qint32</li>
@@ -41,13 +41,13 @@
 <li><div class="fn"/><a href="qsystemsinfo.html#diskSpaceCritical">diskSpaceCritical</a> ( QString &amp;, qint32 )</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#displayBrightness">displayBrightness</a> () : qint32</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#freeMemoryLevel">freeMemoryLevel</a> () const : quint64</li>
-<li><div class="fn"/><a href="qsystemsinfo.html#getCellNetworkStatus">getCellNetworkStatus</a> () : qint32</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#getCellNetworkStatus">getCellNetworkStatus</a> () : QSystemsInfo::CellNetworkStatus</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#getDetailOfFeature">getDetailOfFeature</a> ( QSystemsInfo::Feature ) : QString</li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"/><a href="qsystemsinfo.html#getInputMethodType">getInputMethodType</a> () : qint32</li>
-<li><div class="fn"/><a href="qsystemsinfo.html#getSimStatus">getSimStatus</a> () : qint32</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#getInputMethodType">getInputMethodType</a> () : QSystemsInfo::InputMethods</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#getSimStatus">getSimStatus</a> () : QSystemsInfo::SimStatus</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#getVersion">getVersion</a> ( QSystemsInfo::Version, const QString &amp; ) : QString</li>
-<li><div class="fn"/><a href="qsystemsinfo.html#getVolumeType">getVolumeType</a> ( const QString &amp; ) : int</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#getVolumeType">getVolumeType</a> ( const QString &amp; ) : QSystemsInfo::VolumeType</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#hasFeatureSupported">hasFeatureSupported</a> ( QSystemsInfo::Feature ) : bool</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</a> () : bool</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#homeMCC">homeMCC</a> () : qint32</li>
@@ -58,8 +58,8 @@
 <li><div class="fn"/><a href="qsystemsinfo.html#isLocationEnabled">isLocationEnabled</a> () const : bool</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#isScreenLockOn">isScreenLockOn</a> () : bool</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#isWLANAccessible">isWLANAccessible</a> () const : bool</li>
-<li><div class="fn"/><a href="qsystemsinfo.html#lac">lac</a> () : qint32</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#listOfVolumes">listOfVolumes</a> () : QStringList</li>
+<li><div class="fn"/><a href="qsystemsinfo.html#locationAreaCode">locationAreaCode</a> () : qint32</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#manufacturer">manufacturer</a> () const : QString</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#memoryCritical">memoryCritical</a> ( qint32 )</li>
 <li><div class="fn"/><a href="qsystemsinfo.html#model">model</a> () const : QString</li>

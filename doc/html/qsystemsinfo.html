@@ -20,7 +20,7 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qsystemsinfo.html#BatteryLevel-enum">BatteryLevel</a></b> { BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</li>
+<li><div class="fn"/>enum <b><a href="qsystemsinfo.html#BatteryLevel-enum">BatteryLevel</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</li>
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#CellNetworkStatus-enum">CellNetworkStatus</a></b> { UndefinedStatus, NoNetworkAvailable, EmergencyOnly, Searching, ..., Roaming }</li>
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#Feature-enum">Feature</a></b> { UnknownFeature, BluetoothFeature, CameraFeature, FmradioFeature, ..., HapticsFeature }</li>
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#InputMethods-enum">InputMethods</a></b> { KeysOnly, TouchOnly, KeysAndTouch }</li>
@@ -29,7 +29,7 @@
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</li>
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</li>
 <li><div class="fn"/>enum <b><a href="qsystemsinfo.html#Version-enum">Version</a></b> { Os, QtCore, WrtCore, Webkit, ..., Firmware }</li>
-<li><div class="fn"/>enum <b><a href="qsystemsinfo.html#VolumeType-enum">VolumeType</a></b> { Internal, Removable }</li>
+<li><div class="fn"/>enum <b><a href="qsystemsinfo.html#VolumeType-enum">VolumeType</a></b> { NoVolume, Internal, Removable }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
@@ -37,7 +37,7 @@
 <li><div class="fn"/><b><a href="qsystemsinfo.html#QSystemsInfo">QSystemsInfo</a></b> ( QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"/>qlonglong <b><a href="qsystemsinfo.html#availableDiskSpace">availableDiskSpace</a></b> ( const QString &amp; <i>volumeDrive</i> )</li>
 <li><div class="fn"/>QStringList <b><a href="qsystemsinfo.html#availableLanguages">availableLanguages</a></b> () const</li>
-<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#batteryLevel">batteryLevel</a></b> () const</li>
+<li><div class="fn"/>QSystemsInfo::BatteryLevel <b><a href="qsystemsinfo.html#batteryLevel">batteryLevel</a></b> () const</li>
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#cellId">cellId</a></b> ()</li>
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#colorDepth">colorDepth</a></b> ( qint32 <i>screenNumber</i> )</li>
 <li><div class="fn"/>QString <b><a href="qsystemsinfo.html#countryCode">countryCode</a></b> () const</li>
@@ -46,12 +46,12 @@
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#currentMNC">currentMNC</a></b> ()</li>
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#displayBrightness">displayBrightness</a></b> ()</li>
 <li><div class="fn"/>quint64 <b><a href="qsystemsinfo.html#freeMemoryLevel">freeMemoryLevel</a></b> () const</li>
-<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#getCellNetworkStatus">getCellNetworkStatus</a></b> ()</li>
+<li><div class="fn"/>QSystemsInfo::CellNetworkStatus <b><a href="qsystemsinfo.html#getCellNetworkStatus">getCellNetworkStatus</a></b> ()</li>
 <li><div class="fn"/>QString <b><a href="qsystemsinfo.html#getDetailOfFeature">getDetailOfFeature</a></b> ( QSystemsInfo::Feature <i>feature</i> )</li>
-<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#getInputMethodType">getInputMethodType</a></b> ()</li>
-<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#getSimStatus">getSimStatus</a></b> ()</li>
+<li><div class="fn"/>QSystemsInfo::InputMethods <b><a href="qsystemsinfo.html#getInputMethodType">getInputMethodType</a></b> ()</li>
+<li><div class="fn"/>QSystemsInfo::SimStatus <b><a href="qsystemsinfo.html#getSimStatus">getSimStatus</a></b> ()</li>
 <li><div class="fn"/>QString <b><a href="qsystemsinfo.html#getVersion">getVersion</a></b> ( QSystemsInfo::Version <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</li>
-<li><div class="fn"/>int <b><a href="qsystemsinfo.html#getVolumeType">getVolumeType</a></b> ( const QString &amp; <i>driveVolume</i> )</li>
+<li><div class="fn"/>QSystemsInfo::VolumeType <b><a href="qsystemsinfo.html#getVolumeType">getVolumeType</a></b> ( const QString &amp; <i>driveVolume</i> )</li>
 <li><div class="fn"/>bool <b><a href="qsystemsinfo.html#hasFeatureSupported">hasFeatureSupported</a></b> ( QSystemsInfo::Feature <i>feature</i> )</li>
 <li><div class="fn"/>bool <b><a href="qsystemsinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</a></b> ()</li>
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#homeMCC">homeMCC</a></b> ()</li>
@@ -62,8 +62,8 @@
 <li><div class="fn"/>bool <b><a href="qsystemsinfo.html#isLocationEnabled">isLocationEnabled</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qsystemsinfo.html#isScreenLockOn">isScreenLockOn</a></b> ()</li>
 <li><div class="fn"/>bool <b><a href="qsystemsinfo.html#isWLANAccessible">isWLANAccessible</a></b> () const</li>
-<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#lac">lac</a></b> ()</li>
 <li><div class="fn"/>QStringList <b><a href="qsystemsinfo.html#listOfVolumes">listOfVolumes</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#locationAreaCode">locationAreaCode</a></b> ()</li>
 <li><div class="fn"/>QString <b><a href="qsystemsinfo.html#manufacturer">manufacturer</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qsystemsinfo.html#model">model</a></b> () const</li>
 <li><div class="fn"/>qint32 <b><a href="qsystemsinfo.html#networkSignalStrength">networkSignalStrength</a></b> ()</li>
@@ -93,6 +93,7 @@
 <p>This enum describes the level of the main battery.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QSystemsInfo::NoBatteryLevel</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Battery level undetermined.</td></tr>
 <tr><td valign="top"><tt>QSystemsInfo::BatteryCritical</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Battery level is critical 3% or less.</td></tr>
 <tr><td valign="top"><tt>QSystemsInfo::BatteryVeryLow</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Battery level is very low, 10% or less.</td></tr>
 <tr><td valign="top"><tt>QSystemsInfo::BatteryLow</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Battery level is low 40% or less.</td></tr>
@@ -198,8 +199,9 @@
 <p>This enum describes the type of drive or volume</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QSystemsInfo::Internal</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Is internal drive</td></tr>
-<tr><td valign="top"><tt>QSystemsInfo::Removable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Is removable</td></tr>
+<tr><td valign="top"><tt>QSystemsInfo::NoVolume</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Volume type undetermined.</td></tr>
+<tr><td valign="top"><tt>QSystemsInfo::Internal</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Is internal drive</td></tr>
+<tr><td valign="top"><tt>QSystemsInfo::Removable</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Is removable</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -209,7 +211,7 @@
 <p>Returns the amount of available free space on the <i>volumeDrive</i>.</p>
 <h3 class="fn"><a name="availableLanguages"></a>QStringList QSystemsInfo::availableLanguages () const</h3>
 <p>Returns a QStringList of available languages in 2 letter ISO 639-1 format.</p>
-<h3 class="fn"><a name="batteryLevel"></a>qint32 QSystemsInfo::batteryLevel () const</h3>
+<h3 class="fn"><a name="batteryLevel"></a><a href="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryLevel</a> QSystemsInfo::batteryLevel () const</h3>
 <p>Returns the battery charge level as percentage 1 - 100 scale</p>
 <h3 class="fn"><a name="batteryLevelChanged"></a>void QSystemsInfo::batteryLevelChanged ( <a href="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryLevel</a> <i>level</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when battery level has changed. <i>level</i> is the new level.</p>
@@ -233,19 +235,19 @@
 <p>Returns the display brightness in %, 1 - 100 scale</p>
 <h3 class="fn"><a name="freeMemoryLevel"></a>quint64 QSystemsInfo::freeMemoryLevel () const</h3>
 <p>Returns the amount of free RAM memory in kilobytes.</p>
-<h3 class="fn"><a name="getCellNetworkStatus"></a>qint32 QSystemsInfo::getCellNetworkStatus ()</h3>
+<h3 class="fn"><a name="getCellNetworkStatus"></a><a href="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::CellNetworkStatus</a> QSystemsInfo::getCellNetworkStatus ()</h3>
 <p>Returns the status of the cell network.</p>
 <h3 class="fn"><a name="getDetailOfFeature"></a>QString QSystemsInfo::getDetailOfFeature ( <a href="qsystemsinfo.html#Feature-enum">QSystemsInfo::Feature</a> <i>feature</i> )</h3>
 <p>Returns further detail of Feature <i>feature</i>.</p>
-<h3 class="fn"><a name="getInputMethodType"></a>qint32 QSystemsInfo::getInputMethodType ()</h3>
+<h3 class="fn"><a name="getInputMethodType"></a><a href="qsystemsinfo.html#InputMethods-enum">QSystemsInfo::InputMethods</a> QSystemsInfo::getInputMethodType ()</h3>
 <p>Returns the InputMethodType that the system uses.</p>
-<h3 class="fn"><a name="getSimStatus"></a>qint32 QSystemsInfo::getSimStatus ()</h3>
+<h3 class="fn"><a name="getSimStatus"></a><a href="qsystemsinfo.html#SimStatus-enum">QSystemsInfo::SimStatus</a> QSystemsInfo::getSimStatus ()</h3>
 <p>Returns status of SIM card.</p>
 <h3 class="fn"><a name="getVersion"></a>QString QSystemsInfo::getVersion ( <a href="qsystemsinfo.html#Version-enum">QSystemsInfo::Version</a> <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</h3>
 <p>Returns the version of <a href="qsystemsinfo.html#Version-enum">QSystemsInfo::Version</a> <i>type</i>, with optional <i>parameter</i> as a string.</p>
 <p>Note: Version will always be returned in &quot;major.minor.build&quot; format.</p>
 <p>In case a particular version does not use the &quot;build&quot; part, it is set to 0. If a particular element is not available at all, an error &quot;Not Installed&quot; will be returned by the API.</p>
-<h3 class="fn"><a name="getVolumeType"></a>int QSystemsInfo::getVolumeType ( const QString &amp; <i>driveVolume</i> )</h3>
+<h3 class="fn"><a name="getVolumeType"></a><a href="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::VolumeType</a> QSystemsInfo::getVolumeType ( const QString &amp; <i>driveVolume</i> )</h3>
 <p>Returns the type of volume <i>driveVolume</i></p>
 <h3 class="fn"><a name="hasFeatureSupported"></a>bool QSystemsInfo::hasFeatureSupported ( <a href="qsystemsinfo.html#Feature-enum">QSystemsInfo::Feature</a> <i>feature</i> )</h3>
 <p>Returns true if feature <i>feature</i> is supported, otherwise false.</p>
@@ -267,10 +269,10 @@
 <p>Returns whether the systems screen lock is turned on.</p>
 <h3 class="fn"><a name="isWLANAccessible"></a>bool QSystemsInfo::isWLANAccessible () const</h3>
 <p>Returns true if the system has an accessab;e WLan, otherwise false.</p>
-<h3 class="fn"><a name="lac"></a>qint32 QSystemsInfo::lac ()</h3>
-<p>Returns the Location Area Code, in the range of 0 to 65,535.</p>
 <h3 class="fn"><a name="listOfVolumes"></a>QStringList QSystemsInfo::listOfVolumes ()</h3>
 <p>Returns a QStringList of volumes or partitions.</p>
+<h3 class="fn"><a name="locationAreaCode"></a>qint32 QSystemsInfo::locationAreaCode ()</h3>
+<p>Returns the Location Area Code, in the range of 0 to 65,535.</p>
 <h3 class="fn"><a name="manufacturer"></a>QString QSystemsInfo::manufacturer () const</h3>
 <p>Returns the name of the manufacturer.</p>
 <h3 class="fn"><a name="memoryCritical"></a>void QSystemsInfo::memoryCritical ( qint32 <i>percent</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

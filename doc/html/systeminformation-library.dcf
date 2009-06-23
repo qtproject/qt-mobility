@@ -5,6 +5,7 @@
         <keyword ref="qsystemsinfo.html">QSystemsInfo</keyword>
         <keyword ref="qsystemsinfo.html#BatteryLevel-enum">BatteryLevel</keyword>
         <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryCritical</keyword>
+        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::NoBatteryLevel</keyword>
         <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryVeryLow</keyword>
         <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryLow</keyword>
         <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryNormal</keyword>
@@ -75,6 +76,7 @@
         <keyword ref="qsystemsinfo.html#VolumeType-enum">VolumeType</keyword>
         <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::Internal</keyword>
         <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::Removable</keyword>
+        <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::NoVolume</keyword>
         <keyword ref="qsystemsinfo.html#availableDiskSpace">availableDiskSpace</keyword>
         <keyword ref="qsystemsinfo.html#availableLanguages">availableLanguages</keyword>
         <keyword ref="qsystemsinfo.html#batteryLevel">batteryLevel</keyword>
@@ -105,8 +107,8 @@
         <keyword ref="qsystemsinfo.html#isLocationEnabled">isLocationEnabled</keyword>
         <keyword ref="qsystemsinfo.html#isScreenLockOn">isScreenLockOn</keyword>
         <keyword ref="qsystemsinfo.html#isWLANAccessible">isWLANAccessible</keyword>
-        <keyword ref="qsystemsinfo.html#lac">lac</keyword>
         <keyword ref="qsystemsinfo.html#listOfVolumes">listOfVolumes</keyword>
+        <keyword ref="qsystemsinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemsinfo.html#manufacturer">manufacturer</keyword>
         <keyword ref="qsystemsinfo.html#memoryCritical">memoryCritical</keyword>
         <keyword ref="qsystemsinfo.html#model">model</keyword>

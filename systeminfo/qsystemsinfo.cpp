@@ -92,6 +92,7 @@ QT_BEGIN_NAMESPACE
     \enum QSystemsInfo::BatteryLevel
     This enum describes the level of the main battery.
 
+    \value NoBatteryLevel          Battery level undetermined.
     \value BatteryCritical         Battery level is critical 3% or less.
     \value BatteryVeryLow          Battery level is very low, 10% or less.
     \value BatteryLow              Battery level is low 40% or less.
@@ -134,6 +135,7 @@ QT_BEGIN_NAMESPACE
     \enum QSystemsInfo::VolumeType
     This enum describes the type of drive or volume
 
+    \value NoVolume                Volume type undetermined.
     \value Internal                Is internal drive
     \value Removable               Is removable
 */
