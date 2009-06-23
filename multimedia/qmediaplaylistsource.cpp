@@ -115,11 +115,6 @@ bool QMediaPlaylistSource::clear()
     return remove(0, size()-1);
 }
 
-bool QMediaPlaylistSource::isShuffled() const
-{
-    return false;
-}
-
 QMediaPlaylist::PlaybackMode QMediaPlaylistSource::playbackMode()
 {
     return d_func()->playbackMode;
@@ -146,9 +141,5 @@ void QMediaPlaylistSource::setCurrentItem(int pos)
 }
 
 void QMediaPlaylistSource::shuffle()
-{
-}
-
-void QMediaPlaylistSource::unshuffle()
 {
 }

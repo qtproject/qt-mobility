@@ -5,6 +5,8 @@
 #include "qmediasource.h"
 #include "qmediaplaylist.h"
 
+class QString;
+
 class QMediaPlaylistSourcePrivate;
 class QMediaPlaylistSource : public QObject
 {
@@ -34,15 +36,12 @@ public:
     virtual bool remove(int start, int end);
     virtual bool clear();
 
-    virtual bool isShuffled() const;
-
     virtual QMediaPlaylist::PlaybackMode playbackMode();
 
 public Q_SLOTS:
     virtual void setCurrentItem(int pos);
     virtual void setPlaybackMode(QMediaPlaylist::PlaybackMode);
     virtual void shuffle();
-    virtual void unshuffle();
 
 Q_SIGNALS:
     void currentItemChanged(int);

@@ -1,5 +1,5 @@
 #include "qsharedmediaplaylist.h"
-#include "qabstractmediaplaylist_p.h"
+#include "qmediaplaylist_p.h"
 
 #include <QStringList>
 
@@ -13,17 +13,23 @@
     \sa
 */
 
-class QSharedMediaPlaylistPrivate : public QAbstractMediaPlaylistPrivate
+class QSharedMediaPlaylistPrivate : public QMediaPlaylistPrivate
 {
 public:
+    QSharedMediaPlaylistPrivate(const QString &playlistName)
+        :name(playlistName)
+    {
+        //system depended shared playlist source
+        //source = new QSharedPlaylistSource(name);
+        source = 0;
+    }
+
     QString name;
 };
 
 QSharedMediaPlaylist::QSharedMediaPlaylist(const QString& name, QObject *parent)
-    :QAbstractMediaPlaylist(*new QSharedMediaPlaylistPrivate, parent)
-{
-    Q_D(QSharedMediaPlaylist);
-    d->name = name;
+    :QMediaPlaylist(*new QSharedMediaPlaylistPrivate(name), parent)
+{    
 }
 
 QSharedMediaPlaylist::~QSharedMediaPlaylist()
@@ -37,49 +43,6 @@ QString QSharedMediaPlaylist::name() const
 
 QStringList QSharedMediaPlaylist::sharedPlaylists()
 {
+    //return QSharedPlaylistSource::sharedPlaylists();
     return QStringList();
-}
-
-int QSharedMediaPlaylist::currentItemPos() const
-{
-}
-
-int QSharedMediaPlaylist::size() const
-{
-}
-
-QMediaSource QSharedMediaPlaylist::operator [](int pos) const
-{
-}
-
-void QSharedMediaPlaylist::append(const QMediaSource &source)
-{
-}
-
-void QSharedMediaPlaylist::append(const QList<QMediaSource> &sources)
-{
-}
-
-void QSharedMediaPlaylist::insert(int pos, const QMediaSource &source)
-{
-}
-
-void QSharedMediaPlaylist::remove(int fromPos, int toPos)
-{
-}
-
-bool QSharedMediaPlaylist::isShuffled() const
-{
-}
-
-void QSharedMediaPlaylist::jump(int)
-{
-}
-
-void QSharedMediaPlaylist::shuffle()
-{
-}
-
-void QSharedMediaPlaylist::unshuffle()
-{
 }
