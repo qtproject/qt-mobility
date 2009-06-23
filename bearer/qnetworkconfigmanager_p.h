@@ -81,6 +81,7 @@ public:
     QNetworkConfigurationManagerPrivate()
     :   QObject(0), capFlags(0), firstUpdate(true)
     {
+        userChoiceConfiguration = new QNetworkConfigurationPrivate;
         registerPlatformCapabilities();
         updateConfigurations();
     }
