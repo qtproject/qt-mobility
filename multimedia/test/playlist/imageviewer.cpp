@@ -9,13 +9,13 @@ ImageViewer::ImageViewer(QWidget *parent)
     ui->setupUi(this);
     playlist = new QMediaPlaylist(0, this);
     model = new QMediaPlaylistModel(playlist,this);
-    playlistIterator = new QMediaPlaylistIterator(playlist,this);
+    navigator = new QMediaPlaylistNavigator(playlist,this);
 
-    connect(playlistIterator, SIGNAL(activated(QMediaSource)), SLOT(display(QMediaSource)));
-    connect(playlistIterator, SIGNAL(playbackModeChanged(QMediaPlaylistIterator::PlaybackMode)), SLOT(updatePlaybackMode(QMediaPlaylistIterator::PlaybackMode)));
+    connect(navigator, SIGNAL(activated(QMediaSource)), SLOT(display(QMediaSource)));
+    connect(navigator, SIGNAL(playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode)), SLOT(updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode)));
     connect(ui->listView, SIGNAL(activated(QModelIndex)), SLOT(jump(QModelIndex)));
 
-    playlistIterator->setPlaybackMode(QMediaPlaylistIterator::Linear);
+    navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
     ui->listView->setModel(model);
 
@@ -35,18 +35,18 @@ void ImageViewer::addImage()
             playlist->append(QMediaSource("image/png", fileName));
         }
 
-        playlistIterator->jump(firstPos);
+        navigator->jump(firstPos);
     }
 }
 
 void ImageViewer::advance()
 {
-    playlistIterator->advance();
+    navigator->advance();
 }
 
 void ImageViewer::back()
 {
-    playlistIterator->back();
+    navigator->back();
 }
 
 void ImageViewer::shuffle()
@@ -60,22 +60,22 @@ void ImageViewer::display(const QMediaSource &src)
         ui->listView->clearSelection();
         ui->label->clear();
     } else {
-        ui->listView->setCurrentIndex(model->index(playlistIterator->currentPosition()));
+        ui->listView->setCurrentIndex(model->index(navigator->currentPosition()));
         ui->label->setPixmap(src.dataLocation().toString());
     }
 }
 
 void ImageViewer::jump(const QModelIndex &index)
 {
-    playlistIterator->jump(index.row());
+    navigator->jump(index.row());
 }
 
 void ImageViewer::setPlaybackMode(int mode)
 {
-    playlistIterator->setPlaybackMode(QMediaPlaylistIterator::PlaybackMode(mode));
+    navigator->setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode(mode));
 }
 
-void ImageViewer::updatePlaybackMode(QMediaPlaylistIterator::PlaybackMode mode)
+void ImageViewer::updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
 {
     ui->playbackMode->setCurrentIndex(int(mode));    
 }

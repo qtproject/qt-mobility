@@ -69,6 +69,9 @@ QMediaPlaylist::~QMediaPlaylist()
 }
 
 /*!
+  Returns the number of items in the playlist.
+
+  \sa isEmpty()
   */
 int QMediaPlaylist::size() const
 {
@@ -76,12 +79,17 @@ int QMediaPlaylist::size() const
 }
 
 /*!
+  Returns true if the playlist contains no items; otherwise returns false.
+  \sa size().
   */
 bool QMediaPlaylist::isEmpty() const
 {
     return size() > 0;
 }
 
+/*!
+  Returns the media source at index \a position in the playlist.  
+  */
 QMediaSource QMediaPlaylist::itemAt(int position) const
 {
     if (position<0 || position>=size())
@@ -91,6 +99,7 @@ QMediaSource QMediaPlaylist::itemAt(int position) const
 }
 
 /*!
+  Append the media \a source to the playlist.
   */
 bool QMediaPlaylist::append(const QMediaSource &source)
 {
@@ -99,6 +108,7 @@ bool QMediaPlaylist::append(const QMediaSource &source)
 }
 
 /*!
+  Append the list of media \a sources to the playlist.
   */
 bool QMediaPlaylist::append(const QList<QMediaSource> &sources)
 {
@@ -107,6 +117,7 @@ bool QMediaPlaylist::append(const QList<QMediaSource> &sources)
 }
 
 /*!
+  Insert the media \a source to the playlist at position \a pos.
   */
 bool QMediaPlaylist::insert(int pos, const QMediaSource &source)
 {
@@ -115,6 +126,7 @@ bool QMediaPlaylist::insert(int pos, const QMediaSource &source)
 }
 
 /*!
+  Remove the item from the playlist at position \a pos.
   */
 bool QMediaPlaylist::remove(int pos)
 {
@@ -123,6 +135,7 @@ bool QMediaPlaylist::remove(int pos)
 }
 
 /*!
+  Remove the items from the playlist from position \a start to \a end inclusive.
   */
 bool QMediaPlaylist::remove(int start, int end)
 {
@@ -131,6 +144,7 @@ bool QMediaPlaylist::remove(int start, int end)
 }
 
 /*!
+  Remove all the items from the playlist.
   */
 bool QMediaPlaylist::clear()
 {
@@ -138,8 +152,6 @@ bool QMediaPlaylist::clear()
     return d->source->clear();
 }
 
-/*!
-  */
 bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 {
     while (!reader->atEnd()) {
@@ -150,8 +162,6 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
     return true;
 }
 
-/*!
-  */
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 {
     for (int i=0; i<source->size(); i++) {

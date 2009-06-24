@@ -1,24 +1,24 @@
-#include "qmediaplaylistiterator.h"
+#include "qmediaplaylistnavigator.h"
 #include "qmediaplaylist.h"
 
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/qdebug.h>
 #include "qmediasource.h"
 
-class QMediaPlaylistIteratorPrivate : public QObjectPrivate
+class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
 {
 public:
-    QMediaPlaylistIteratorPrivate()
+    QMediaPlaylistNavigatorPrivate()
         :playlist(0),
         currentPos(-1),        
-        playbackMode(QMediaPlaylistIterator::NoPlayback),
+        playbackMode(QMediaPlaylistNavigator::NoPlayback),
         currentPosAfterListModifications(0)
     {
     }
 
     QMediaPlaylist *playlist;
     int currentPos;
-    QMediaPlaylistIterator::PlaybackMode playbackMode;
+    QMediaPlaylistNavigator::PlaybackMode playbackMode;
     QMediaSource currentItem;
 
     int currentPosAfterListModifications;
@@ -28,7 +28,7 @@ public:
 };
 
 
-int QMediaPlaylistIteratorPrivate::nextItemPos(int steps) const
+int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
 {
     if (playlist->size() == 0)
         return -1;
@@ -37,26 +37,26 @@ int QMediaPlaylistIteratorPrivate::nextItemPos(int steps) const
         return currentPos;
 
     switch (playbackMode) {
-        case QMediaPlaylistIterator::NoPlayback:
-        case QMediaPlaylistIterator::CurrentItemOnce:
+        case QMediaPlaylistNavigator::NoPlayback:
+        case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
-        case QMediaPlaylistIterator::CurrentItemInLoop:
+        case QMediaPlaylistNavigator::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylistIterator::Linear:
+        case QMediaPlaylistNavigator::Linear:
             {
                 int nextPos = currentPos+steps;
                 return nextPos < playlist->size() ? nextPos : -1;
             }
-        case QMediaPlaylistIterator::Loop:            
+        case QMediaPlaylistNavigator::Loop:
             return (currentPos+steps) % playlist->size();
-        case QMediaPlaylistIterator::Random:
+        case QMediaPlaylistNavigator::Random:
             return qrand() % playlist->size();
     }
 
     return -1;
 }
 
-int QMediaPlaylistIteratorPrivate::previousItemPos(int steps) const
+int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
 {
     if (playlist->size() == 0)
         return -1;
@@ -65,24 +65,24 @@ int QMediaPlaylistIteratorPrivate::previousItemPos(int steps) const
         return currentPos;
 
     switch (playbackMode) {
-        case QMediaPlaylistIterator::NoPlayback:
-        case QMediaPlaylistIterator::CurrentItemOnce:
+        case QMediaPlaylistNavigator::NoPlayback:
+        case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
-        case QMediaPlaylistIterator::CurrentItemInLoop:
+        case QMediaPlaylistNavigator::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylistIterator::Linear:
+        case QMediaPlaylistNavigator::Linear:
             {
                 int prevPos = currentPos - steps;
                 return prevPos>=0 ? prevPos : -1;
             }
-        case QMediaPlaylistIterator::Loop:
+        case QMediaPlaylistNavigator::Loop:
             {
                 int prevPos = currentPos - steps;
                 while (prevPos<0)
                     prevPos += playlist->size();
                 return prevPos;
             }
-        case QMediaPlaylistIterator::Random:
+        case QMediaPlaylistNavigator::Random:
             return qrand() % playlist->size();
     }
 
@@ -91,7 +91,7 @@ int QMediaPlaylistIteratorPrivate::previousItemPos(int steps) const
 
 
 /*!
-enum QMediaPlaylistIterator::PlaybackMode
+enum QMediaPlaylistNavigator::PlaybackMode
 
 \item
     NoPlayback No item is playing right now.
@@ -104,7 +104,7 @@ enum QMediaPlaylistIterator::PlaybackMode
 
 \item Linear
     Playback starts from the first to the last items and stops.
-    QMediaPlaylistIterator::nextItem() returns null item when the last
+    QMediaPlaylistNavigator::nextItem() returns null item when the last
     one is currently playing.
 
 \item Loop
@@ -116,12 +116,12 @@ enum QMediaPlaylistIterator::PlaybackMode
 
 
 /*!
-  Create a new \a playlist iterator object.
+  Create a new \a playlist navigator object.
   */
-QMediaPlaylistIterator::QMediaPlaylistIterator(QMediaPlaylist *playlist, QObject *parent)
-    :QObject(*new QMediaPlaylistIteratorPrivate, parent)
+QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
+    :QObject(*new QMediaPlaylistNavigatorPrivate, parent)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
     d->playlist = playlist;
 
     connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), SLOT(processInsertedItems(int,int)));
@@ -135,7 +135,7 @@ QMediaPlaylistIterator::QMediaPlaylistIterator(QMediaPlaylist *playlist, QObject
 /*!
 \internal
   */
-QMediaPlaylistIterator::QMediaPlaylistIterator(QMediaPlaylistIteratorPrivate &dd, QObject *parent)
+QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylistNavigatorPrivate &dd, QObject *parent)
     :QObject(dd, parent)
 {
 }
@@ -143,23 +143,23 @@ QMediaPlaylistIterator::QMediaPlaylistIterator(QMediaPlaylistIteratorPrivate &dd
 /*!
   Destroys the playlist.
   */
-QMediaPlaylistIterator::~QMediaPlaylistIterator()
+QMediaPlaylistNavigator::~QMediaPlaylistNavigator()
 {
 }
 
 
 /*!
   */
-QMediaPlaylistIterator::PlaybackMode QMediaPlaylistIterator::playbackMode() const
+QMediaPlaylistNavigator::PlaybackMode QMediaPlaylistNavigator::playbackMode() const
 {
     return d_func()->playbackMode;
 }
 
 /*!
   */
-void QMediaPlaylistIterator::setPlaybackMode(QMediaPlaylistIterator::PlaybackMode mode)
+void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
     if (d->playbackMode == mode)
         return;
 
@@ -173,28 +173,28 @@ void QMediaPlaylistIterator::setPlaybackMode(QMediaPlaylistIterator::PlaybackMod
 
 /*!
   */
-QMediaSource QMediaPlaylistIterator::currentItem() const
+QMediaSource QMediaPlaylistNavigator::currentItem() const
 {
     return itemAt(d_func()->currentPos);
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistIterator::nextItem() const
+QMediaSource QMediaPlaylistNavigator::nextItem() const
 {
     return itemAt(d_func()->nextItemPos());
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistIterator::previousItem() const
+QMediaSource QMediaPlaylistNavigator::previousItem() const
 {
     return itemAt(d_func()->previousItemPos());
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistIterator::itemAt(int pos) const
+QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
 {
     if ( pos<0 || pos>=d_func()->playlist->size() )
         return QMediaSource();
@@ -204,30 +204,30 @@ QMediaSource QMediaPlaylistIterator::itemAt(int pos) const
 
 /*!
   */
-int QMediaPlaylistIterator::currentPosition() const
+int QMediaPlaylistNavigator::currentPosition() const
 {
     return d_func()->currentPos;
 }
 
 /*!
   */
-int QMediaPlaylistIterator::nextPosition(int steps) const
+int QMediaPlaylistNavigator::nextPosition(int steps) const
 {
     return d_func()->nextItemPos(steps);
 }
 
 /*!
   */
-int QMediaPlaylistIterator::previousPosition(int steps) const
+int QMediaPlaylistNavigator::previousPosition(int steps) const
 {
     return d_func()->previousItemPos(steps);
 }
 
 /*!
   */
-void QMediaPlaylistIterator::advance()
+void QMediaPlaylistNavigator::advance()
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
 
     int nextPos = d->nextItemPos();
     if (nextPos >= 0) {
@@ -242,9 +242,9 @@ void QMediaPlaylistIterator::advance()
 
 /*!
   */
-void QMediaPlaylistIterator::back()
+void QMediaPlaylistNavigator::back()
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
 
     int prevPos = d->previousItemPos();
     if (prevPos >= 0) {
@@ -259,9 +259,9 @@ void QMediaPlaylistIterator::back()
 
 /*!
   */
-void QMediaPlaylistIterator::jump(int pos)
+void QMediaPlaylistNavigator::jump(int pos)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
     if (pos != d->currentPos) {
         d->currentPos = pos;
         emit currentPositionChanged(d->currentPos);
@@ -271,22 +271,22 @@ void QMediaPlaylistIterator::jump(int pos)
     if (src != d->currentItem) {
         d->currentItem = src;
         emit currentItemChanged(src);
-        if ( playbackMode() != QMediaPlaylistIterator::NoPlayback )
+        if ( playbackMode() != QMediaPlaylistNavigator::NoPlayback )
                 emit activated(src);
     };
 }
 
-void QMediaPlaylistIterator::processInsertedItems(int start, int end)
+void QMediaPlaylistNavigator::processInsertedItems(int start, int end)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
     if (d->currentPos >= start) {
         d->currentPosAfterListModifications = end-start+1;
     }
 }
 
-void QMediaPlaylistIterator::processRemovedItems(int start, int end)
+void QMediaPlaylistNavigator::processRemovedItems(int start, int end)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
 
     if (d->currentPos > end) {
         d->currentPosAfterListModifications = d->currentPos - end-start+1;
@@ -296,32 +296,32 @@ void QMediaPlaylistIterator::processRemovedItems(int start, int end)
     }
 }
 
-void QMediaPlaylistIterator::updateCurrentItemPos()
+void QMediaPlaylistNavigator::updateCurrentItemPos()
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
 
     if (d->currentPos != d->currentPosAfterListModifications) {
         jump(d->currentPosAfterListModifications);        
     }
 }
 
-void QMediaPlaylistIterator::processChangedItems(int start, int end)
+void QMediaPlaylistNavigator::processChangedItems(int start, int end)
 {
-    Q_D(QMediaPlaylistIterator);
+    Q_D(QMediaPlaylistNavigator);
 
     if (d->currentPos >= start && d->currentPos<=end) {
         QMediaSource src = d->playlist->itemAt(d->currentPos);
         if (src != d->currentItem) {
             d->currentItem = src;
             emit currentItemChanged(src);
-            if ( playbackMode() != QMediaPlaylistIterator::NoPlayback )
+            if ( playbackMode() != QMediaPlaylistNavigator::NoPlayback )
                 emit activated(src);
         }
     }
 }
 
 /*!
-    \fn void QMediaPlaylistIterator::activated(const QMediaSource &source)
+    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &source)
 
     Signal the playback of \a source should be started.
     it's usually related to change of the current item
@@ -329,12 +329,12 @@ void QMediaPlaylistIterator::processChangedItems(int start, int end)
 */
 
 /*!
-  \fn void QMediaPlaylistIterator::currentItemChanged(const QMediaSource &playlist)
+  \fn void QMediaPlaylistNavigator::currentItemChanged(const QMediaSource &playlist)
   */
 
 /*!
-  \fn void QMediaPlaylistIterator::currentPositionChanged(int)
+  \fn void QMediaPlaylistNavigator::currentPositionChanged(int)
   */
 /*!
-  \fn void QMediaPlaylistIterator::playbackModeChanged(PlaybackMode mode)
+  \fn void QMediaPlaylistNavigator::playbackModeChanged(PlaybackMode mode)
   */

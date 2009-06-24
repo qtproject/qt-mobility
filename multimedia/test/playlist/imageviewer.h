@@ -4,7 +4,7 @@
 #include <QtGui/QMainWindow>
 
 #include "qmediaplaylist.h"
-#include "qmediaplaylistiterator.h"
+#include "qmediaplaylistnavigator.h"
 #include "qmediaplaylistmodel.h"
 
 namespace Ui
@@ -34,14 +34,14 @@ public slots:
     void savePlaylist();
 
     void setPlaybackMode(int mode);
-    void updatePlaybackMode(QMediaPlaylistIterator::PlaybackMode mode);
+    void updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
 
 private:
     Ui::ImageViewer *ui;
 
     QMediaPlaylist *playlist;
     QMediaPlaylistModel *model;
-    QMediaPlaylistIterator *playlistIterator;
+    QMediaPlaylistNavigator *navigator;
 };
 
 #endif // IMAGEVIEWER_H

@@ -1,17 +1,15 @@
-#ifndef QMEDIAPLAYLISTITERATOR_H
-#define QMEDIAPLAYLISTITERATOR_H
+#ifndef QMEDIAPLAYLISTNAVIGATOR_H
+#define QMEDIAPLAYLISTNAVIGATOR_H
 
 #include <QtCore/qobject.h>
 #include "qmediaplaylist.h"
 
-//TODO: find a better class name, it's not an iterator
-
-class QMediaPlaylistIteratorPrivate;
-class QMediaPlaylistIterator : public QObject
+class QMediaPlaylistNavigatorPrivate;
+class QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
     Q_ENUMS(PlaybackMode);
-    Q_PROPERTY(QMediaPlaylistIterator::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
+    Q_PROPERTY(QMediaPlaylistNavigator::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
     Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
     Q_PROPERTY(QMediaSource nextItem READ nextItem)
@@ -19,8 +17,8 @@ class QMediaPlaylistIterator : public QObject
 public:
     enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
-    QMediaPlaylistIterator(QMediaPlaylist *playlist, QObject *parent = 0);
-    virtual ~QMediaPlaylistIterator();
+    QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent = 0);
+    virtual ~QMediaPlaylistNavigator();
 
     QMediaPlaylist *playlist() const;
 
@@ -50,7 +48,7 @@ Q_SIGNALS:
     void currentItemChanged(const QMediaSource&);
     void currentPositionChanged(int);
 
-    void playbackModeChanged(QMediaPlaylistIterator::PlaybackMode mode);
+    void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
 
 private slots:
     void processInsertedItems(int start, int end);
@@ -59,10 +57,10 @@ private slots:
     void updateCurrentItemPos();
 
 protected:
-    QMediaPlaylistIterator(QMediaPlaylistIteratorPrivate &dd, QObject *parent);
+    QMediaPlaylistNavigator(QMediaPlaylistNavigatorPrivate &dd, QObject *parent);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlaylistIterator)
+    Q_DECLARE_PRIVATE(QMediaPlaylistNavigator)
 };
 
-#endif // QMEDIAPLAYLISTITERATOR_H
+#endif // QMEDIAPLAYLISTNAVIGATOR_H
