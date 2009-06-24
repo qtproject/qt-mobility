@@ -42,6 +42,7 @@
 //#define QT_SFW_SERVICEDATABASE_DEBUG
 
 #include <QDir>
+#include <QSet>
 #include "servicedatabase.h"
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
@@ -785,7 +786,28 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
             interfaces.clear();
             return interfaces;
         }
-        interfaces.append(interface);
+
+        //only return those interfaces that comply with set custom filters
+        if (filter.customKeys().size()>0) {
+            QSet<QString> keyDiff = filter.customKeys().toSet();
+            keyDiff.subtract(interface.d->customProperties.uniqueKeys().toSet());
+            if (keyDiff.isEmpty()) { //target descriptor has same custom keys as filter
+                bool isMatch = true;
+                const QList<QString> keys = filter.customKeys();
+                for(int i = 0; i<keys.count(); i++) {
+                    if (interface.d->customProperties.value(keys[i]) !=
+                            filter.customConstraint(keys[i])) {
+                        isMatch = false;
+                        break;
+                    }
+                        
+                }
+                if (isMatch)
+                    interfaces.append(interface);
+            }
+        } else { //no custom keys -> SQL statement ensures proper selection already
+            interfaces.append(interface);
+        }
     }
 
     query.finish();
