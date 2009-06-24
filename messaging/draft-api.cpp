@@ -82,6 +82,9 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
     Returns the string representation of this identifier.
     
     A null string should be returned if and only if the identifier is invalid.
+    
+    String representations of identifiers should not be used to test for equality, instead 
+    the equality operator should be used.
 */
 QString QMessageId::toString() const
 {
@@ -186,6 +189,9 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
     Returns the string representation of this identifier.
     
     A null string should be returned if and only if the identifier is invalid.
+
+    String representations of identifiers should not be used to test for equality, instead 
+    the equality operator should be used.
 */
 QString QMessageContentContainerId::toString() const
 {
@@ -286,6 +292,9 @@ QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
     Returns the string representation of this identifier.
     
     A null string should be returned if and only if the identifier is invalid.
+
+    String representations of identifiers should not be used to test for equality, instead 
+    the equality operator should be used.
 */
 QString QMessageFolderId::toString() const
 {
@@ -386,6 +395,9 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     Returns the string representation of this identifier.
     
     A null string should be returned if and only if the identifier is invalid.
+
+    String representations of identifiers should not be used to test for equality, instead 
+    the equality operator should be used.
 */
 QString QMessageAccountId::toString() const
 {
