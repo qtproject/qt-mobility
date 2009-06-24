@@ -12,10 +12,6 @@ class QMediaPlaylistPrivate : public QObjectPrivate
 {
 public:
     QMediaPlaylistSource *source;
-    QMediaSource currentItem;
-
-    int nextItemPos(int currentPos=-1) const;
-    int previousItemPos(int currentPos=-1) const;
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWritter *writter);

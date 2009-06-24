@@ -10,30 +10,11 @@ class QMediaPlaylistPrivate;
 class QMediaPlaylist : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(PlaybackMode);
-    Q_PROPERTY(PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
-    Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
-    Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
-    Q_PROPERTY(QMediaSource nextItem READ nextItem)
-    Q_PROPERTY(QMediaSource previousItem READ previousItem)
 public:
-    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
-
     QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
-    PlaybackMode playbackMode() const;
-    void setPlaybackMode(PlaybackMode mode);
-    
-    QMediaSource currentItem() const;
-    QMediaSource nextItem() const;
-    QMediaSource previousItem() const;
-
     QMediaSource itemAt(int position) const;
-
-    int currentPosition() const;
-    int nextPosition(int position) const;
-    int previousPosition(int position) const;
 
     int size() const;
     bool isEmpty() const;
@@ -51,27 +32,14 @@ public:
     bool save(QIODevice * device, const char *format);
 
 public Q_SLOTS:
-    void advance();
-    void back();
-
-    void jump(int);
-
     void shuffle();
 
 Q_SIGNALS:
-    void activated(const QMediaSource&);
-
-    void currentItemChanged(const QMediaSource&);
-    void currentPositionChanged(int);
-
-    void playbackModeChanged(PlaybackMode mode);
-
-    void itemsInserted(int start, int end);
-    void itemsRemoved(int start, int end);
+    void itemsAboutToBeInserted(int start, int end);
+    void itemsInserted();
+    void itemsAboutToBeRemoved(int start, int end);
+    void itemsRemoved();
     void itemsChanged(int start, int end);
-
-private slots:
-    void updateCurrentItem(int);
 
 protected:
     QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);

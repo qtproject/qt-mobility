@@ -23,6 +23,9 @@ public:
     virtual bool remove(int start, int end);
     virtual bool clear();
 
+public slots:
+    virtual void shuffle();
+
 private:
     Q_DECLARE_PRIVATE(QLocalMediaPlaylistSource)
 };

@@ -61,11 +61,6 @@ bool QMediaPlaylistSource::save(QIODevice * device, const char *format)
     return false;
 }
 
-int QMediaPlaylistSource::currentItem()
-{
-    return d_func()->currentItem;
-}
-
 bool QMediaPlaylistSource::isReadOnly() const
 {
     return true;
@@ -113,31 +108,6 @@ bool QMediaPlaylistSource::remove(int start, int end)
 bool QMediaPlaylistSource::clear()
 {
     return remove(0, size()-1);
-}
-
-QMediaPlaylist::PlaybackMode QMediaPlaylistSource::playbackMode()
-{
-    return d_func()->playbackMode;
-}
-
-void QMediaPlaylistSource::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
-{
-    Q_D(QMediaPlaylistSource);
-
-    if (d->playbackMode != mode) {
-        d->playbackMode = mode;
-        emit playbackModeChanged(mode);
-    }
-}
-
-
-void QMediaPlaylistSource::setCurrentItem(int pos)
-{
-    Q_D(QMediaPlaylistSource);
-    if (d->currentItem != pos) {
-        d->currentItem = pos;
-        emit currentItemChanged(pos);
-    }
 }
 
 void QMediaPlaylistSource::shuffle()

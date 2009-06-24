@@ -22,67 +22,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
     \sa QMediaSource
 */
 
-int QMediaPlaylistPrivate::nextItemPos(int currentPos) const
-{
-    if (source->size() == 0)
-        return -1;
 
-    if (currentPos == -1)
-        currentPos = source->currentItem();
-
-    switch (source->playbackMode()) {
-        case QMediaPlaylist::NoPlayback:
-        case QMediaPlaylist::CurrentItemOnce:
-            return -1;
-        case QMediaPlaylist::CurrentItemInLoop:
-            return currentPos;
-        case QMediaPlaylist::Linear:
-            return currentPos < source->size()-1 ? currentPos+1 : -1;
-        case QMediaPlaylist::Loop:
-            return currentPos < source->size()-1 ? currentPos+1 : 0;
-    }
-
-    return -1;
-}
-
-int QMediaPlaylistPrivate::previousItemPos(int currentPos) const
-{
-    if (source->size() == 0)
-        return -1;
-
-    if (currentPos == -1)
-        currentPos = source->currentItem();
-
-    switch (source->playbackMode()) {
-        case QMediaPlaylist::NoPlayback:
-        case QMediaPlaylist::CurrentItemOnce:
-            return -1;
-        case QMediaPlaylist::CurrentItemInLoop:
-            return currentPos;
-        case QMediaPlaylist::Linear:
-            return currentPos>0 ? currentPos-1 : -1;
-        case QMediaPlaylist::Loop:
-            return currentPos>0 ? currentPos-1 : source->size()-1;
-    }
-
-    return -1;
-}
-
-
-/*!
-enum QMediaPlaylist::PlaybackMode
-
-\item NoPlayback No item is playing right now.
-\item CurrentItemOnce The current item is played only once.
-\item CurrentItemInLoop The current item is played in the loop.
-\item Linear
-    Playback starts from the first to the last items and stops.
-    QMediaPlaylist::nextItem() returns null item when the last
-    one is currently playing.
-
-\item Loop
-    Playback continues from the first item after the last one finished playing.
-*/
 
 /*!
   Create a new playlist object for playlist \a source.
@@ -99,10 +39,11 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
         d->source = new QLocalMediaPlaylistSource(this);
     }
 
-    connect(d->source, SIGNAL(currentItemChanged(int)), this, SLOT(updateCurrentItem(int)));
     connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
+    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
+    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
+    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
+    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
 }
 
 /*!
@@ -113,10 +54,11 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
 {
     Q_D(QMediaPlaylist);
 
-    connect(d->source, SIGNAL(currentItemChanged(int)), this, SLOT(updateCurrentItem(int)));
     connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
+    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
+    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
+    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
+    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
 }
 
 /*!
@@ -124,65 +66,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
   */
 QMediaPlaylist::~QMediaPlaylist()
 {
-}
-
-/*!
-  */
-QMediaPlaylist::PlaybackMode QMediaPlaylist::playbackMode() const
-{
-    return d_func()->source->playbackMode();
-}
-
-/*!
-  */
-void QMediaPlaylist::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
-{
-    d_func()->source->setPlaybackMode(mode);
-}
-
-/*!
-  */
-QMediaSource QMediaPlaylist::currentItem() const
-{
-    return itemAt(d_func()->source->currentItem());
-}
-
-/*!
-  */
-QMediaSource QMediaPlaylist::nextItem() const
-{
-    return itemAt(d_func()->nextItemPos());    
-}
-
-/*!
-  */
-QMediaSource QMediaPlaylist::itemAt(int pos) const
-{
-    if ( pos<0 || pos>=size() )
-        return QMediaSource();
-    else
-        return d_func()->source->itemAt(pos);
-}
-
-/*!
-  */
-int QMediaPlaylist::currentPosition() const
-{
-    return d_func()->source->currentItem();
-}
-
-/*!
-  */
-int QMediaPlaylist::nextPosition(int position) const
-{
-    return d_func()->nextItemPos(position);
-}
-
-/*!
-  */
-int QMediaPlaylist::previousPosition(int position) const
-{
-    return d_func()->previousItemPos(position);
 }
 
 /*!
@@ -197,6 +80,14 @@ int QMediaPlaylist::size() const
 bool QMediaPlaylist::isEmpty() const
 {
     return size() > 0;
+}
+
+QMediaSource QMediaPlaylist::itemAt(int position) const
+{
+    if (position<0 || position>=size())
+        return QMediaSource();
+    else
+        return d_func()->source->itemAt(position);
 }
 
 /*!
@@ -362,75 +253,29 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     return false;
 }
 
-/*!
-  */
-void QMediaPlaylist::advance()
-{
-    jump(d_func()->nextItemPos());
-}
-
-/*!
-  */
-void QMediaPlaylist::back()
-{
-    jump(d_func()->previousItemPos());
-}
-
-/*!
-  */
-void QMediaPlaylist::jump(int pos)
-{
-    Q_D(QMediaPlaylist);
-    d->source->setCurrentItem(pos);
-}
-
-/*!
-  Shuffle the list.
-  */
 void QMediaPlaylist::shuffle()
 {
-    Q_D(QMediaPlaylist);
-    d->source->shuffle();
+    d_func()->source->shuffle();
 }
 
-void QMediaPlaylist::updateCurrentItem(int pos)
-{
-    Q_D(QMediaPlaylist);
-
-    emit currentPositionChanged(pos);
-    QMediaSource src = d->source->itemAt(d->source->currentItem());
-    if (src != d->currentItem) {
-        d->currentItem = src;
-        emit currentItemChanged(src);
-        emit activated(src);
-    } else if ( playbackMode() == CurrentItemInLoop ||
-                (playbackMode() == Loop && size() == 1) ) {
-        d->currentItem = src;
-        emit activated(src);
-    }
-}
 
 /*!
-    \fn void QMediaPlaylist::activated(const QMediaSource &source)
+    \fn void QMediaPlaylist::itemsInserted(int start, int end)
 
-    Signal the playback of \a source should be started.
-    it's usually related to change of the current item
-    in playlist.
-*/
+    This signal is emitted after media sources have been inserted into the playlist.
+    The new items are those between start and end inclusive.
+ */
 
 /*!
-  \fn void QMediaPlaylist::currentItemChanged(const QMediaSource &source)
-  */
+    \fn void QMediaPlaylist::itemsRemoved(int start, int end)
 
+    This signal is emitted after media sources have been removed from the playlist.
+    The removed items are those between start and end inclusive.
+ */
 
-/*
-  TODO: add docs for signals:
+/*!
+    \fn void QMediaPlaylist::itemsChanged(int start, int end)
 
-    void QMediaPlaylist::currentPositionChanged(int);
-
-    void QMediaPlaylist::playbackModeChanged(PlaybackMode mode);
-
-    void QMediaPlaylist::itemsInserted(int start, int end);
-    void QMediaPlaylist::itemsRemoved(int start, int end);
-    void QMediaPlaylist::itemsChanged(int start, int end);
-*/
+    This signal is emitted after media sources have been changed in the playlist
+    between start and end positions inclusive.
+ */

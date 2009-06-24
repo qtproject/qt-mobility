@@ -11,8 +11,6 @@ class QMediaPlaylistSourcePrivate;
 class QMediaPlaylistSource : public QObject
 {
 Q_OBJECT
-Q_PROPERTY(int currentItem READ currentItem WRITE setCurrentItem NOTIFY currentItemChanged)
-Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
 public:
     QMediaPlaylistSource(QObject *parent=0);
     virtual ~QMediaPlaylistSource();
@@ -25,8 +23,6 @@ public:
     virtual int size() const = 0;
     virtual QMediaSource itemAt(int pos) const = 0;
 
-    virtual int currentItem();
-
     virtual bool isReadOnly() const;
 
     virtual bool append(const QMediaSource &source);
@@ -36,20 +32,14 @@ public:
     virtual bool remove(int start, int end);
     virtual bool clear();
 
-    virtual QMediaPlaylist::PlaybackMode playbackMode();
-
 public Q_SLOTS:
-    virtual void setCurrentItem(int pos);
-    virtual void setPlaybackMode(QMediaPlaylist::PlaybackMode);
     virtual void shuffle();
 
 Q_SIGNALS:
-    void currentItemChanged(int);
-
-    void playbackModeChanged(QMediaPlaylist::PlaybackMode);
-
-    void itemsInserted(int start, int end);
-    void itemsRemoved(int start, int end);
+    void itemsAboutToBeInserted(int start, int end);
+    void itemsInserted();
+    void itemsAboutToBeRemoved(int start, int end);
+    void itemsRemoved();
     void itemsChanged(int start, int end);
 
 protected:

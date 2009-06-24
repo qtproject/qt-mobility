@@ -35,31 +35,32 @@ bool QLocalMediaPlaylistSource::append(const QMediaSource &source)
 {
     Q_D(QLocalMediaPlaylistSource);
     int pos = d->sources.size();
+    emit itemsAboutToBeInserted(pos, pos);
     d->sources.append(source);
-    emit itemsInserted(pos, pos);
+    emit itemsInserted();
     return true;
 }
 
 bool QLocalMediaPlaylistSource::append(const QList<QMediaSource> &sources)
 {
     Q_D(QLocalMediaPlaylistSource);
+
     int pos = d->sources.size();
+
+    emit itemsAboutToBeInserted(pos, pos+sources.size()-1);
     d->sources.append(sources);
-    emit itemsInserted(pos, pos+sources.size()-1);
+    emit itemsInserted();
+
     return true;
 }
 
 bool QLocalMediaPlaylistSource::insert(int pos, const QMediaSource &source)
 {
     Q_D(QLocalMediaPlaylistSource);
+
+    emit itemsAboutToBeInserted(pos, pos);
     d->sources.insert(pos, source);
-
-    emit itemsInserted(pos, pos);
-
-    if (pos <= d->currentItem) {
-        d->currentItem++;
-        emit currentItemChanged(d->currentItem);
-    }
+    emit itemsInserted();
 
     return true;
 }
@@ -68,23 +69,24 @@ bool QLocalMediaPlaylistSource::remove(int fromPos, int toPos)
 {
     Q_D(QLocalMediaPlaylistSource);
 
-    //keep the current item at the same source, if possible
-    bool currentChanged = false;
-    if (d->currentItem > toPos ) {
-        d->currentItem -= (toPos-fromPos+1);
-    } else if (d->currentItem >= fromPos && d->currentItem <= toPos) {
-        currentChanged = true;
-        d->currentItem = fromPos+1;
-    }
+    Q_ASSERT(fromPos > 0);
+    Q_ASSERT(fromPos <= toPos);
+    Q_ASSERT(toPos < size());
+
+    emit itemsAboutToBeRemoved(fromPos, toPos);
     d->sources.erase(d->sources.begin()+fromPos, d->sources.begin()+toPos);
-    emit itemsRemoved(fromPos, toPos);
+    emit itemsRemoved();
 
-    if (currentChanged) {
-        if (d->currentItem >= size())
-            d->currentItem = -1;
+    return true;
+}
 
-        emit currentItemChanged(currentItem());
-    }
+bool QLocalMediaPlaylistSource::remove(int pos)
+{
+    Q_D(QLocalMediaPlaylistSource);
+
+    emit itemsAboutToBeRemoved(pos, pos);
+    d->sources.removeAt(pos);
+    emit itemsRemoved();
 
     return true;
 }
@@ -92,13 +94,27 @@ bool QLocalMediaPlaylistSource::remove(int fromPos, int toPos)
 bool QLocalMediaPlaylistSource::clear()
 {
     Q_D(QLocalMediaPlaylistSource);
-    if (!d->sources.isEmpty()) {
-        int oldSize = d->sources.size();
+    if (!d->sources.isEmpty()) {        
+        emit itemsAboutToBeRemoved(0, size()-1);
         d->sources.clear();
-        d->currentItem = -1;
-        emit itemsRemoved(0, oldSize-1);
-        emit currentItemChanged(-1);
+        emit itemsRemoved();
     }
 
     return true;
+}
+
+void QLocalMediaPlaylistSource::shuffle()
+{
+    Q_D(QLocalMediaPlaylistSource);
+    if (!d->sources.isEmpty()) {
+        QList<QMediaSource> sources;
+
+        while (!d->sources.isEmpty()) {
+            sources.append(d->sources.takeAt(qrand() % d->sources.size()));
+        }
+
+        d->sources = sources;
+        emit itemsChanged(0,size()-1);
+    }
+
 }
