@@ -33,8 +33,8 @@ public:
     QMediaSource itemAt(int position) const;
 
     int currentPosition() const;
-    int nextPosition(int position) const;
-    int previousPosition(int position) const;
+    int nextPosition(int steps = 1) const;
+    int previousPosition(int steps = 1) const;
 
 public Q_SLOTS:
     void advance();

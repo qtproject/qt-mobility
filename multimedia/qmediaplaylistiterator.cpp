@@ -10,7 +10,7 @@ class QMediaPlaylistIteratorPrivate : public QObjectPrivate
 public:
     QMediaPlaylistIteratorPrivate()
         :playlist(0),
-        currentPos(-1),
+        currentPos(-1),        
         playbackMode(QMediaPlaylistIterator::NoPlayback),
         currentPosAfterListModifications(0)
     {
@@ -18,36 +18,37 @@ public:
 
     QMediaPlaylist *playlist;
     int currentPos;
-    //int prevRandomPos;
-    //int nextRandomPos;
     QMediaPlaylistIterator::PlaybackMode playbackMode;
     QMediaSource currentItem;
 
     int currentPosAfterListModifications;
 
-    int nextItemPos(int currentPos=-1) const;
-    int previousItemPos(int currentPos=-1) const;
+    int nextItemPos(int steps = 1) const;
+    int previousItemPos(int steps = 1) const;
 };
 
 
-int QMediaPlaylistIteratorPrivate::nextItemPos(int pos) const
+int QMediaPlaylistIteratorPrivate::nextItemPos(int steps) const
 {
     if (playlist->size() == 0)
         return -1;
 
-    if (pos == -1)
-        pos = currentPos;
+    if (steps == 0)
+        return currentPos;
 
     switch (playbackMode) {
         case QMediaPlaylistIterator::NoPlayback:
         case QMediaPlaylistIterator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistIterator::CurrentItemInLoop:
-            return pos;
+            return currentPos;
         case QMediaPlaylistIterator::Linear:
-            return pos < playlist->size()-1 ? pos+1 : -1;
-        case QMediaPlaylistIterator::Loop:
-            return pos < playlist->size()-1 ? pos+1 : 0;
+            {
+                int nextPos = currentPos+steps;
+                return nextPos < playlist->size() ? nextPos : -1;
+            }
+        case QMediaPlaylistIterator::Loop:            
+            return (currentPos+steps) % playlist->size();
         case QMediaPlaylistIterator::Random:
             return qrand() % playlist->size();
     }
@@ -55,24 +56,32 @@ int QMediaPlaylistIteratorPrivate::nextItemPos(int pos) const
     return -1;
 }
 
-int QMediaPlaylistIteratorPrivate::previousItemPos(int pos) const
+int QMediaPlaylistIteratorPrivate::previousItemPos(int steps) const
 {
     if (playlist->size() == 0)
         return -1;
 
-    if (pos == -1)
-        pos = currentPos;
+    if (steps == 0)
+        return currentPos;
 
     switch (playbackMode) {
         case QMediaPlaylistIterator::NoPlayback:
         case QMediaPlaylistIterator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistIterator::CurrentItemInLoop:
-            return pos;
+            return currentPos;
         case QMediaPlaylistIterator::Linear:
-            return pos>0 ? pos-1 : -1;
+            {
+                int prevPos = currentPos - steps;
+                return prevPos>=0 ? prevPos : -1;
+            }
         case QMediaPlaylistIterator::Loop:
-            return pos>0 ? pos-1 : playlist->size()-1;
+            {
+                int prevPos = currentPos - steps;
+                while (prevPos<0)
+                    prevPos += playlist->size();
+                return prevPos;
+            }
         case QMediaPlaylistIterator::Random:
             return qrand() % playlist->size();
     }
@@ -202,16 +211,16 @@ int QMediaPlaylistIterator::currentPosition() const
 
 /*!
   */
-int QMediaPlaylistIterator::nextPosition(int position) const
+int QMediaPlaylistIterator::nextPosition(int steps) const
 {
-    return d_func()->nextItemPos(position);
+    return d_func()->nextItemPos(steps);
 }
 
 /*!
   */
-int QMediaPlaylistIterator::previousPosition(int position) const
+int QMediaPlaylistIterator::previousPosition(int steps) const
 {
-    return d_func()->previousItemPos(position);
+    return d_func()->previousItemPos(steps);
 }
 
 /*!
