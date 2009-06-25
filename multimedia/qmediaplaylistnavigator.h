@@ -25,8 +25,8 @@ public:
     PlaybackMode playbackMode() const;
 
     QMediaSource currentItem() const;
-    QMediaSource nextItem() const;
-    QMediaSource previousItem() const;
+    QMediaSource nextItem(int steps = 1) const;
+    QMediaSource previousItem(int steps = 1) const;
 
     QMediaSource itemAt(int position) const;
 
