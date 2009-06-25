@@ -12,6 +12,7 @@ public:
         :playlist(0),
         currentPos(-1),        
         playbackMode(QMediaPlaylistNavigator::NoPlayback),
+        randomPositionsOffset(-1),
         currentPosAfterListModifications(0)
     {
     }
@@ -20,6 +21,9 @@ public:
     int currentPos;
     QMediaPlaylistNavigator::PlaybackMode playbackMode;
     QMediaSource currentItem;
+
+    mutable QList<int> randomModePositions;
+    mutable int randomPositionsOffset;
 
     int currentPosAfterListModifications;
 
@@ -50,7 +54,19 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
         case QMediaPlaylistNavigator::Loop:
             return (currentPos+steps) % playlist->size();
         case QMediaPlaylistNavigator::Random:
-            return qrand() % playlist->size();
+            {
+                //TODO: limit the history size
+
+                while (randomModePositions.size() < randomPositionsOffset+steps+1)
+                    randomModePositions.append(-1);
+                int res = randomModePositions[randomPositionsOffset+steps];
+                if (res<0 || res >= playlist->size()) {
+                    res = qrand() % playlist->size();
+                    randomModePositions[randomPositionsOffset+steps] = res;
+                }
+
+                return res;
+            }
     }
 
     return -1;
@@ -83,7 +99,22 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
                 return prevPos;
             }
         case QMediaPlaylistNavigator::Random:
-            return qrand() % playlist->size();
+            {
+                //TODO: limit the history size
+
+                while (randomPositionsOffset-steps < 0) {
+                    randomModePositions.prepend(-1);
+                    randomPositionsOffset++;
+                }
+
+                int res = randomModePositions[randomPositionsOffset-steps];
+                if (res<0 || res >= playlist->size()) {
+                    res = qrand() % playlist->size();
+                    randomModePositions[randomPositionsOffset-steps] = res;
+                }
+
+                return res;
+            }
     }
 
     return -1;
@@ -163,6 +194,14 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
     if (d->playbackMode == mode)
         return;
 
+    if (mode == Random) {
+        d->randomPositionsOffset = 0;
+        d->randomModePositions.append(d->currentPos);
+    } else if (d->playbackMode == Random) {
+        d->randomPositionsOffset = -1;
+        d->randomModePositions.clear();
+    }
+
     d->playbackMode = mode;
 
     emit playbackModeChanged(mode);
@@ -172,6 +211,10 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
 }
 
 /*!
+  Returns the current playlist item.
+  It is the same as itemAt(currentPosition());
+
+  \sa currentPosition()
   */
 QMediaSource QMediaPlaylistNavigator::currentItem() const
 {
@@ -180,19 +223,21 @@ QMediaSource QMediaPlaylistNavigator::currentItem() const
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::nextItem() const
+QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
 {
-    return itemAt(d_func()->nextItemPos());
+    return itemAt(nextPosition(steps));
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::previousItem() const
+QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
 {
-    return itemAt(d_func()->previousItemPos());
+    return itemAt(previousPosition(steps));
 }
 
 /*!
+  Returns the media source at playlist position \a pos or
+  invalid media source object if \a pos is out the playlist positions range.
   */
 QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
 {
@@ -203,6 +248,10 @@ QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
 }
 
 /*!
+  Returns the current items position in the playlist
+  or -1 if no items should be currently played.
+
+  \sa nextPosition(int), previousPosition(int), seek(int)
   */
 int QMediaPlaylistNavigator::currentPosition() const
 {
@@ -210,6 +259,14 @@ int QMediaPlaylistNavigator::currentPosition() const
 }
 
 /*!
+  Returns the next position in the playlist to be played or -1 if playback should be stopped.
+  It's usually but not necessary currentPosition()+1 depending on playbackMode().
+
+  For example, for CurrentItemInLoop playback mode it's always the same as currentPosition().
+
+  If \a steps parameter is passed, the item position expected after \a step advance() actions returned.
+
+  \sa currentPosition(), previousPosition(int), PlaybackMode
   */
 int QMediaPlaylistNavigator::nextPosition(int steps) const
 {
@@ -217,6 +274,12 @@ int QMediaPlaylistNavigator::nextPosition(int steps) const
 }
 
 /*!
+  Returns the previously position in playlist.
+  It's usually but not necessary currentPosition()-1 depending on playbackMode().
+
+  If \a steps parameter is passed, the item position expected after \a step back() actions returned.
+
+  \sa nextPosition
   */
 int QMediaPlaylistNavigator::previousPosition(int steps) const
 {
@@ -224,6 +287,9 @@ int QMediaPlaylistNavigator::previousPosition(int steps) const
 }
 
 /*!
+  Advance to the next item in the playlist.
+
+  \sa back(), seek(int), QMediaPlaylistNavigator::PlaybackMode
   */
 void QMediaPlaylistNavigator::advance()
 {
@@ -231,6 +297,9 @@ void QMediaPlaylistNavigator::advance()
 
     int nextPos = d->nextItemPos();
     if (nextPos >= 0) {
+        if ( playbackMode() == Random )
+            d->randomPositionsOffset++;
+
         jump(nextPos);
 
         if (playbackMode() == CurrentItemInLoop ||
@@ -241,6 +310,10 @@ void QMediaPlaylistNavigator::advance()
 }
 
 /*!
+  Advance to the previously item in the playlist,
+  depending on playback mode.
+
+  \sa advance(), seek(int), QMediaPlaylistNavigator::PlaybackMode
   */
 void QMediaPlaylistNavigator::back()
 {
@@ -248,6 +321,9 @@ void QMediaPlaylistNavigator::back()
 
     int prevPos = d->previousItemPos();
     if (prevPos >= 0) {
+        if ( playbackMode() == Random )
+            d->randomPositionsOffset--;
+
         jump(prevPos);
 
         if (playbackMode() == CurrentItemInLoop ||
@@ -258,10 +334,21 @@ void QMediaPlaylistNavigator::back()
 }
 
 /*!
+  Jump to the item at position \a pos.
+  The item is activated in all the modes except of NoPlayback.
   */
 void QMediaPlaylistNavigator::jump(int pos)
 {
     Q_D(QMediaPlaylistNavigator);
+
+    if (playbackMode() == Random) {
+        if (d->randomModePositions[d->randomPositionsOffset] != pos) {
+            d->randomModePositions.clear();
+            d->randomModePositions.append(pos);
+            d->randomPositionsOffset = 0;
+        }
+    }
+
     if (pos != d->currentPos) {
         d->currentPos = pos;
         emit currentPositionChanged(d->currentPos);
@@ -276,6 +363,9 @@ void QMediaPlaylistNavigator::jump(int pos)
     };
 }
 
+/*!
+  \internal
+  */
 void QMediaPlaylistNavigator::processInsertedItems(int start, int end)
 {
     Q_D(QMediaPlaylistNavigator);
@@ -284,6 +374,9 @@ void QMediaPlaylistNavigator::processInsertedItems(int start, int end)
     }
 }
 
+/*!
+  \internal
+  */
 void QMediaPlaylistNavigator::processRemovedItems(int start, int end)
 {
     Q_D(QMediaPlaylistNavigator);
@@ -296,6 +389,9 @@ void QMediaPlaylistNavigator::processRemovedItems(int start, int end)
     }
 }
 
+/*!
+  \internal
+  */
 void QMediaPlaylistNavigator::updateCurrentItemPos()
 {
     Q_D(QMediaPlaylistNavigator);
@@ -305,6 +401,9 @@ void QMediaPlaylistNavigator::updateCurrentItemPos()
     }
 }
 
+/*!
+  \internal
+  */
 void QMediaPlaylistNavigator::processChangedItems(int start, int end)
 {
     Q_D(QMediaPlaylistNavigator);
