@@ -49,8 +49,6 @@
 #include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
 #include <qservicefilter.h>
 
-#define RESOLVERDATABASE "services.db"
-
 class ServiceDatabaseUnitTest: public QObject
 {
     Q_OBJECT
