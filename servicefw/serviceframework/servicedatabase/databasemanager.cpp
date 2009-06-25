@@ -48,73 +48,119 @@ QT_BEGIN_NAMESPACE
 
 DatabaseFileWatcher::DatabaseFileWatcher(DatabaseManager *parent)
     : QObject(parent),
-      manager(parent),
-      watcher(0)
+      m_manager(parent),
+      m_watcher(0)
 {
+}
+
+QString DatabaseFileWatcher::closestExistingParent(const QString &path)
+{
+    if (QFile::exists(path))
+        return path;
+
+    int lastSep = path.lastIndexOf(QDir::separator());
+    if (lastSep < 0)
+        return QString();
+    return closestExistingParent(path.mid(0, lastSep));
+}
+
+void DatabaseFileWatcher::restartDirMonitoring(const QString &dbPath, const QString &previousDirPath)
+{
+    if (m_knownServices.contains(dbPath))
+        return;
+
+    QString existing = closestExistingParent(dbPath);
+    if (existing.isEmpty()) {
+        qWarning() << "QServiceManager: can't find existing directory for path to database" << dbPath
+            << "serviceAdded() and serviceRemoved() will not be emitted";
+        return;
+    }
+    if (existing == dbPath) {
+        ServiceDatabase *db = 0;
+        DatabaseManager::DbScope scope;
+        if (dbPath == m_manager->m_userDb.databasePath()) {
+            db = &m_manager->m_userDb;
+            scope = DatabaseManager::UserOnlyScope;
+        } else if (dbPath == m_manager->m_systemDb.databasePath()) {
+            db = &m_manager->m_systemDb;
+            scope = DatabaseManager::SystemScope;
+        }
+
+        if (db) {
+            if (!previousDirPath.isEmpty())
+                m_watcher->removePath(previousDirPath);
+            QMutableListIterator<QString> i(m_monitoredDbPaths);
+            while (i.hasNext()) {
+                if (i.next() == dbPath)
+                    i.remove();
+            }
+
+            QStringList newServices = m_manager->getServiceNames(QString(), scope);
+            for (int i=0; i<newServices.count(); i++)
+                emit m_manager->serviceAdded(newServices[i], scope);
+            setEnabled(db, true);
+        }
+    } else {
+        if (previousDirPath != existing) {
+            if (!previousDirPath.isEmpty())
+                m_watcher->removePath(previousDirPath);
+            if (!m_watcher->directories().contains(existing))
+                m_watcher->addPath(existing);
+            if (!m_monitoredDbPaths.contains(dbPath))
+                m_monitoredDbPaths << dbPath;
+        }
+    }
 }
 
 void DatabaseFileWatcher::setEnabled(ServiceDatabase *database, bool enabled)
 {
-    if (!watcher) {
-        watcher = new QFileSystemWatcher(this);
-        connect(watcher, SIGNAL(fileChanged(QString)),
+    if (!m_watcher) {
+        m_watcher = new QFileSystemWatcher(this);
+        connect(m_watcher, SIGNAL(fileChanged(QString)),
             SLOT(databaseChanged(QString)));
-        connect(watcher, SIGNAL(directoryChanged(QString)),
+        connect(m_watcher, SIGNAL(directoryChanged(QString)),
             SLOT(databaseDirectoryChanged(QString)));
     }
 
     QString path = database->databasePath();
     if (enabled) {
-        if (knownServices.contains(path))
-            return;
-
-        if (!QFile::exists(path)) {
-            QString dirPath = QFileInfo(path).absolutePath();
-            if (QFile::exists(dirPath) && !watcher->directories().contains(dirPath))
-                watcher->addPath(dirPath);
+        if (QFile::exists(path)) {
+            m_knownServices[path] = database->getServiceNames(QString());
+            m_watcher->addPath(path);
         } else {
-            knownServices[path] = database->getServiceNames(QString());
-            watcher->addPath(path);
+            restartDirMonitoring(path, QString());
         }
     } else {
-        watcher->removePath(path);
-        knownServices.remove(path);
+        m_watcher->removePath(path);
+        m_knownServices.remove(path);
     }
 }
 
 void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
 {
-    ServiceDatabase *db = 0;
-    DatabaseManager::DbScope scope;
-    if (path == QFileInfo(manager->m_userDb.databasePath()).absolutePath()
-            && QFile::exists(manager->m_userDb.databasePath())) {
-        db = &manager->m_userDb;
-        scope = DatabaseManager::UserOnlyScope;
-    } else if (path == QFileInfo(manager->m_systemDb.databasePath()).absolutePath()
-            && QFile::exists(manager->m_systemDb.databasePath())) {
-        db = &manager->m_systemDb;
-        scope = DatabaseManager::SystemScope;
-    }
-
-    if (db) {
-        watcher->removePath(path);
-        QStringList newServices = manager->getServiceNames(QString(), scope);
-        for (int i=0; i<newServices.count(); i++)
-            emit manager->serviceAdded(newServices[i], scope);
-        setEnabled(db, true);
+    for (int i=0; i<m_monitoredDbPaths.count(); i++) {
+        if (m_monitoredDbPaths[i].contains(path))
+            restartDirMonitoring(m_monitoredDbPaths[i], path);
     }
 }
 
 void DatabaseFileWatcher::databaseChanged(const QString &path)
 {
-    if (path == manager->m_userDb.databasePath())
-        notifyChanges(&manager->m_userDb, DatabaseManager::UserScope);
-    else if (path == manager->m_systemDb.databasePath())
-        notifyChanges(&manager->m_systemDb, DatabaseManager::SystemScope);
+    if (path == m_manager->m_userDb.databasePath())
+        notifyChanges(&m_manager->m_userDb, DatabaseManager::UserScope);
+    else if (path == m_manager->m_systemDb.databasePath())
+        notifyChanges(&m_manager->m_systemDb, DatabaseManager::SystemScope);
 }
 
 void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope)
 {
+    QString dbPath = database->databasePath();
+    if (!QFile::exists(dbPath)) {
+        m_knownServices.remove(dbPath);
+        restartDirMonitoring(dbPath, QString());
+        return;
+    }
+
     bool ok = false;
     QStringList currentServices = database->getServiceNames(QString(), &ok);
     if (!ok) {
@@ -122,8 +168,7 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
         return;
     }
 
-    QString dbPath = database->databasePath();
-    const QStringList &knownServicesRef = knownServices[dbPath];
+    const QStringList &knownServicesRef = m_knownServices[dbPath];
 
     QSet<QString> currentServicesSet = currentServices.toSet();
     QSet<QString> knownServicesSet = knownServicesRef.toSet();
@@ -142,11 +187,11 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
             removedServices << knownServicesRef[i];
     }
 
-    knownServices[dbPath] = currentServices;
+    m_knownServices[dbPath] = currentServices;
     for (int i=0; i<newServices.count(); i++)
-        emit manager->serviceAdded(newServices[i], scope);
+        emit m_manager->serviceAdded(newServices[i], scope);
     for (int i=0; i<removedServices.count(); i++)
-        emit manager->serviceRemoved(removedServices[i], scope);
+        emit m_manager->serviceRemoved(removedServices[i], scope);
 }
 
 bool lessThan(const QServiceInterfaceDescriptor &d1,

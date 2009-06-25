@@ -58,6 +58,13 @@
     }                                           \
     QCOMPARE(a, e)
 
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
+
 typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
 Q_DECLARE_METATYPE(QServiceFilter)
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
@@ -196,6 +203,15 @@ private:
         QServiceInterfaceDescriptor desc;
         QServiceInterfaceDescriptorPrivate::setPrivate(&desc, priv);
         return desc;
+    }
+
+    void deleteTestDatabasesAndWaitUntilDone()
+    {
+        QSfwTestUtil::removeTempUserDb();
+        QSfwTestUtil::removeTempSystemDb();
+
+        QTRY_VERIFY(!QFile::exists(QSfwTestUtil::tempUserDbDir()));
+        QTRY_VERIFY(!QFile::exists(QSfwTestUtil::tempSystemDbDir()));
     }
 
 private slots:
@@ -1250,7 +1266,6 @@ void tst_QServiceManager::serviceRemoved_data()
 {
     serviceAdded_data();
 }
-
 
 QTEST_MAIN(tst_QServiceManager)
 
