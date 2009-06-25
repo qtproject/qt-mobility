@@ -10,10 +10,7 @@ class QMediaServiceProvider;
 
 struct Q_MULTIMEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
 {
-    virtual QList<QByteArray> deviceList(QAudioDeviceInfo::Mode) const = 0;
-    virtual QAbstractAudioInput* createInput(const QByteArray& device, const QAudioFormat& format = QAudioFormat()) = 0;
-    virtual QAbstractAudioOutput* createOutput(const QByteArray& device, const QAudioFormat& format = QAudioFormat()) = 0;
-    virtual QAbstractAudioDeviceInfo* createDeviceInfo(const QByteArray& device, QAudioDeviceInfo::Mode mode) = 0;
+    virtual QMediaServiceProvider* create(QString const& key) = 0;
 };
 
 #define QMediaServiceProviderFactoryInterface_iid \
