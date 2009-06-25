@@ -1,15 +1,23 @@
 #include "qwmpplayerservice.h"
 
+#include "qevrwidget.h"
 #include "qwmpplayercontrol.h"
+
+#include <QtCore/qvariant.h>
+
+#include <wmprealestate.h>
 
 QWmpPlayerService::QWmpPlayerService(QObject *parent)
     : QMediaPlayerService(parent)
     , m_ref(1)
-    , m_control(0)
     , m_player(0)
+    , m_videoOutput(0)
+    , m_control(0)
     , m_connectionPoint(0)
     , m_adviseCookie(0)
 {
+    qRegisterMetaType<IMFActivate *>();
+
     if (S_OK == CoCreateInstance(
             __uuidof(WindowsMediaPlayer),
             0,
@@ -55,6 +63,35 @@ QWmpPlayerService::~QWmpPlayerService()
 QMediaPlayerControl *QWmpPlayerService::control()
 {
     return m_control;
+}
+
+
+QWidget *QWmpPlayerService::createWidget()
+{
+    return new QEvrWidget;
+}
+
+QObject *QWmpPlayerService::videoOutput() const
+{
+    return m_videoOutput;
+}
+
+void QWmpPlayerService::setVideoOutput(QObject *output)
+{
+    m_videoOutput = output;
+
+    IWMPVideoRenderConfig *config = 0;
+
+    if (m_player && m_player->QueryInterface(
+            __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
+        IMFActivate *activate = 0;
+
+        if (m_videoOutput)
+            activate = qvariant_cast<IMFActivate *>(m_videoOutput->property("activate"));
+
+        config->put_presenterActivate(activate);
+        config->Release();
+    }
 }
 
 // IUnknown

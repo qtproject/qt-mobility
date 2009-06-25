@@ -16,6 +16,11 @@ class Q_WMP_EXPORT QMediaPlayerService : public QObject
 public:
     QMediaPlayerService(QObject *parent = 0) : QObject(parent) {}
 
+    virtual QWidget *createWidget() = 0;
+
+    virtual QObject *videoOutput() const = 0;
+    virtual void setVideoOutput(QObject *output) = 0;
+
     virtual QMediaPlayerControl *control() = 0;
 };
 
@@ -29,6 +34,11 @@ public:
     ~QWmpPlayerService();
 
     QMediaPlayerControl *control();
+
+    QWidget *createWidget();
+
+    QObject *videoOutput() const;
+    void setVideoOutput(QObject *output);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -44,6 +54,7 @@ public:
 private:
     volatile LONG m_ref;
     IWMPPlayer4 *m_player;
+    QObject *m_videoOutput;
     QWmpPlayerControl *m_control;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
