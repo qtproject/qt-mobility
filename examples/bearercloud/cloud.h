@@ -72,6 +72,7 @@ public:
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
 private Q_SLOTS:
     void stateChanged(QNetworkSession::State state);

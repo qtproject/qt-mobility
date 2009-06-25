@@ -215,14 +215,6 @@ QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVari
 
 void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton) {
-        if (session->isActive())
-            session->close();
-        else
-            session->open();
-
-        event->accept();
-    }
     if (event->button() == Qt::RightButton) {
         qWarning() << configuration.name()
                 << configuration.identifier();
@@ -240,6 +232,18 @@ void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 qWarning() << "    "<< config.name() << config.identifier() << config.state();
             }
         }
+
+        event->accept();
+    }
+}
+
+void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        if (session->isActive())
+            session->close();
+        else
+            session->open();
 
         event->accept();
     }
