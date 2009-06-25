@@ -158,15 +158,17 @@ void Cloud::calculateForces()
 
 bool Cloud::advance()
 {
+    static const qreal scaleDelta = 0.01;
+
     bool animated = false;
 
     if (currentScale < finalScale) {
         animated = true;
-        currentScale = qMin<qreal>(currentScale + 0.01, finalScale);
+        currentScale = qMin<qreal>(currentScale + scaleDelta, finalScale);
         setTransform(QTransform::fromScale(currentScale, currentScale), false);
     } else if (currentScale > finalScale) {
         animated = true;
-        currentScale = qMax<qreal>(currentScale - 0.01, finalScale);
+        currentScale = qMax<qreal>(currentScale - scaleDelta, finalScale);
         setTransform(QTransform::fromScale(currentScale, currentScale), false);
     }
 
@@ -179,7 +181,7 @@ bool Cloud::advance()
         animated = true;
         if (qAbs(finalScale - currentScale) > 0.0) {
             // use scale as reference
-            setOpacity(opacity() + (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
+            setOpacity(opacity() + scaleDelta * (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
         } else {
             setOpacity(finalOpacity);
         }
