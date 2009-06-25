@@ -2,6 +2,7 @@
 #include "qmediasource.h"
 #include <QtCore/qiodevice.h>
 #include <QtCore/qfileinfo.h>
+#include <QtCore/qtextstream.h>
 #include <QFile>
 
 QT_BEGIN_NAMESPACE
@@ -10,8 +11,9 @@ class QM3uPlaylistReader : public QMediaPlaylistReader
 {
 public:
     QM3uPlaylistReader(QIODevice *device)
-        :m_ownDevice(false), m_device(device)
+        :m_ownDevice(false), m_device(device), m_textStream(new QTextStream(m_device))
     {
+        readItem();
     }
 
     QM3uPlaylistReader(const QString& location)
@@ -20,9 +22,12 @@ public:
         QFile *f = new QFile(location);
         if (f->open(QIODevice::ReadOnly | QIODevice::Text)) {
             m_device = f;
+            m_textStream = new QTextStream(m_device);
+            readItem();
         } else {
             delete f;
             m_device = 0;
+            m_textStream = 0;
         }
     }
 
@@ -31,24 +36,31 @@ public:
         if (m_ownDevice) {
             delete m_device;
         }
+        delete m_textStream;
     }
 
     virtual bool atEnd() const
     {
-        return m_device == 0 || m_device->atEnd();
+        //we can't just use m_textStream->atEnd(),
+        //for files with empty lines/comments at end
+        return nextSource.isNull();
     }
 
     virtual QMediaSource readItem()
     {
-        while (!atEnd()) {
-            QString line = QString::fromLocal8Bit(m_device->readLine());
+        QMediaSource res = nextSource;
+        nextSource = QMediaSource();
+
+        while (m_textStream && !m_textStream->atEnd()) {
+            QString line = m_textStream->readLine();
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            return QMediaSource(QString(), line);
+            nextSource = QMediaSource(QString(), line);
+            break;
         }
 
-        return QMediaSource();
+        return res;
     }
 
     virtual void close()
@@ -58,24 +70,27 @@ public:
 private:
     bool m_ownDevice;
     QIODevice *m_device;
+    QTextStream *m_textStream;
+    QMediaSource nextSource;
 };
 
 class QM3uPlaylistWritter : public QMediaPlaylistWritter
 {
 public:
     QM3uPlaylistWritter(QIODevice *device)
-        :m_device(device)
+        :m_device(device), m_textStream(new QTextStream(m_device))
     {
     }
 
     virtual ~QM3uPlaylistWritter()
     {
+        delete m_textStream;
     }
 
     virtual bool writeItem(const QMediaSource& item)
     {
-        QString location = item.dataLocation().toString()+QChar::Separator_Line;
-        return m_device->write(location.toLocal8Bit()) > 0;
+        *m_textStream << item.dataLocation().toString() << endl;
+        return true;
     }
 
     virtual void close()
@@ -84,6 +99,7 @@ public:
 
 private:
     QIODevice *m_device;
+    QTextStream *m_textStream;
 };
 
 

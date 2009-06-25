@@ -21,11 +21,9 @@ class QMediaPlaylistSourcePrivate : public QObjectPrivate
 {
 public:
     QMediaPlaylistSourcePrivate()
-        :currentItem(0), playbackMode(QMediaPlaylist::Linear)
     {}
-
-    int currentItem;
-    QMediaPlaylist::PlaybackMode playbackMode;
+    virtual ~QMediaPlaylistSourcePrivate()
+    {}
 };
 
 

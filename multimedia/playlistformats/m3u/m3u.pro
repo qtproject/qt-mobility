@@ -1,5 +1,6 @@
 TARGET  = qm3u
-CONFIG += qt plugin
+CONFIG += qt plugin static
+TEMPLATE = lib
 
 INCLUDEPATH += ../..
 
@@ -11,4 +12,4 @@ QTDIR_build:DESTDIR = $$QT_BUILD_TREE/plugins/playlistformats
 target.path += $$[QT_INSTALL_PLUGINS]/playlistformats
 INSTALLS += target
 
-LIBS += -L../.. -lqmultimedia
+LIBS += ../../libqmultimedia.a
