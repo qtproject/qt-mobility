@@ -8,6 +8,7 @@
 
 #include <wmp.h>
 
+class QMediaMetaData;
 class QMediaPlayerControl;
 
 class Q_WMP_EXPORT QMediaPlayerService : public QObject
@@ -22,8 +23,10 @@ public:
     virtual void setVideoOutput(QObject *output) = 0;
 
     virtual QMediaPlayerControl *control() = 0;
+    virtual QMediaMetaData *metaData() = 0;
 };
 
+class QWmpMetaData;
 class QWmpPlayerControl;
 
 class Q_WMP_EXPORT QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
@@ -34,6 +37,7 @@ public:
     ~QWmpPlayerService();
 
     QMediaPlayerControl *control();
+    QMediaMetaData *metaData();
 
     QWidget *createWidget();
 
@@ -56,6 +60,7 @@ private:
     IWMPPlayer4 *m_player;
     QObject *m_videoOutput;
     QWmpPlayerControl *m_control;
+    QWmpMetaData *m_metaData;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
 

@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
 #include "qwmpplayerservice.h"
 
@@ -14,6 +15,7 @@ Player::Player(QWidget *parent)
 
     connect(service->control(), SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(service->control(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    connect(service->metaData(), SIGNAL(changed()), this, SLOT(metaDataChanged()));
 
     QWidget *videoWidget = service->createWidget();
 
@@ -88,4 +90,10 @@ void Player::durationChanged(qint64 duration)
 void Player::positionChanged(qint64 progress)
 {
     slider->setValue(progress / 1000);
+}
+
+void Player::metaDataChanged()
+{
+    qDebug(qPrintable(service->metaData()->keys().join(QLatin1String("; "))));
+    setWindowTitle(service->metaData()->value(QLatin1String("Title")).toString());
 }

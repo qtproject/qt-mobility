@@ -84,7 +84,7 @@ int QMediaPlaylist::size() const
   */
 bool QMediaPlaylist::isEmpty() const
 {
-    return size() > 0;
+    return size() == 0;
 }
 
 /*!

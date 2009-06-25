@@ -78,7 +78,7 @@ QUrl QWmpPlayerControl::url() const
 void QWmpPlayerControl::setUrl(const QUrl &url)
 {
     if (m_player) {
-        BSTR string = SysAllocString(reinterpret_cast<const wchar_t *>(url.toString().utf16()));
+        BSTR string = SysAllocString(reinterpret_cast<const wchar_t *>(url.toString().unicode()));
 
         m_player->put_URL(string);
 
