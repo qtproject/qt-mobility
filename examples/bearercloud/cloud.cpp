@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "cloud.h"
+#include "bearercloud.h"
 
 #include <qnetworksession.h>
 
@@ -47,6 +48,7 @@
 #include <QGraphicsSvgItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QSvgRenderer>
+#include <QPainter>
 
 #include <QDebug>
 
@@ -62,6 +64,9 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
             this, SLOT(newConfigurationActivated()));
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(stateChanged(QNetworkSession::State)));
+
+    setFlag(ItemIsMovable);
+    setZValue(1);
 
     icon = new QGraphicsSvgItem(this);
     text = new QGraphicsTextItem(this);
@@ -84,21 +89,75 @@ void Cloud::setFinalScale(qreal factor)
     finalScale = factor;
 }
 
-void Cloud::setOrbit(qreal radius, qreal angle)
-{
-    finalPos = QPointF(radius * cos(angle), radius * sin(angle));
-}
-
 void Cloud::setDeleteAfterAnimation(bool deleteAfter)
 {
     deleteAfterAnimation = deleteAfter;
 }
 
-void Cloud::advance(int phase)
+void Cloud::calculateForces()
 {
-    if (phase == 0)
+    if (!scene() || scene()->mouseGrabberItem() == this) {
+        newPos = pos();
         return;
+    }
 
+    // sum up all the forces push this item away
+    qreal xvel = 0;
+    qreal yvel = 0;
+    QLineF orbitForce;
+    foreach (QGraphicsItem *item, scene()->items()) {
+        // other clouds
+        Cloud *cloud = qgraphicsitem_cast<Cloud *>(item);
+        if (!cloud && item->data(0) != QLatin1String("This Device"))
+            continue;
+
+        qreal factor = 1.0;
+
+        QLineF line(cloud ? item->mapToScene(0, 0) : QPointF(0, 0), mapToScene(0, 0));
+        if (item->data(0) == QLatin1String("This Device"))
+            orbitForce = line;
+
+        if (cloud)
+            factor = cloud->currentScale;
+
+        qreal dx = line.dx();
+        qreal dy = line.dy();
+        double l = 2.0 * (dx * dx + dy * dy);
+        if (l > 0) {
+            xvel += factor * dx * 200.0 / l;
+            yvel += factor * dy * 200.0 / l;
+        }
+    }
+
+    // tendency to stay at a fixed orbit
+    qreal orbit = getRadiusForState(configuration.state());
+    qreal distance = orbitForce.length();
+
+    QLineF unit = orbitForce.unitVector();
+
+    orbitForce.setLength(xvel * unit.dx() + yvel * unit.dy());
+
+    qreal w = 2 - exp(-pow(distance-orbit, 2)/(2 * 50));
+
+    if (distance < orbit) {
+        xvel += orbitForce.dx() * w;
+        yvel += orbitForce.dy() * w;
+    } else {
+        xvel -= orbitForce.dx() * w;
+        yvel -= orbitForce.dy() * w;
+    }
+
+    if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1)
+        xvel = yvel = 0;
+
+    QRectF sceneRect = scene()->sceneRect();
+    newPos = pos() + QPointF(xvel, yvel);
+    newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
+    newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+}
+
+bool Cloud::advance()
+{
     bool animated = false;
 
     if (currentScale < finalScale) {
@@ -111,24 +170,14 @@ void Cloud::advance(int phase)
         setTransform(QTransform::fromScale(currentScale, currentScale), false);
     }
 
-    QPointF direction = finalPos - pos();
-    qreal length = sqrt(direction.rx() * direction.rx() + direction.ry() * direction.ry());
-    if (pos() != finalPos) {
+    if (newPos != pos()) {
+        setPos(newPos);
         animated = true;
-        if (length < 1) {
-            setPos(finalPos);
-        } else {
-            direction = direction / length;
-            setPos(pos() + direction);
-        }
     }
 
     if (opacity() != finalOpacity) {
         animated = true;
-        if (length > 1) {
-            // use translation as reference
-            setOpacity(opacity() + (finalOpacity - opacity()) / length);
-        } else if (qAbs(finalScale - currentScale) > 0.0) {
+        if (qAbs(finalScale - currentScale) > 0.0) {
             // use scale as reference
             setOpacity(opacity() + (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
         } else {
@@ -138,6 +187,8 @@ void Cloud::advance(int phase)
 
     if (!animated && deleteAfterAnimation)
         deleteLater();
+
+    return animated;
 }
 
 QRectF Cloud::boundingRect() const
@@ -147,6 +198,19 @@ QRectF Cloud::boundingRect() const
 
 void Cloud::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
+}
+
+QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    switch (change) {
+    case ItemPositionHasChanged:
+        if (BearerCloud *bearercloud = qobject_cast<BearerCloud *>(scene()))
+            bearercloud->cloudMoved();
+    default:
+        ;
+    };
+
+    return QGraphicsItem::itemChange(change, value);
 }
 
 void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -327,3 +391,24 @@ QString Cloud::sessionStateToString(QNetworkSession::State state)
     };
     return QString();
 }
+
+qreal Cloud::getRadiusForState(QNetworkConfiguration::StateFlags state)
+{
+    switch (state) {
+    case QNetworkConfiguration::Active:
+        return 100;
+        break;
+    case QNetworkConfiguration::Discovered:
+        return 150;
+        break;
+    case QNetworkConfiguration::Defined:
+        return 200;
+        break;
+    case QNetworkConfiguration::Undefined:
+        return 250;
+        break;
+    default:
+        return 300;
+    }
+}
+

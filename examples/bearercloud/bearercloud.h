@@ -55,6 +55,10 @@ public:
     BearerCloud(QObject *parent = 0);
     ~BearerCloud();
 
+    void cloudMoved();
+
+    void timerEvent(QTimerEvent *event);
+
 private Q_SLOTS:
     void updateConfigurations();
     void triggerUpdate();
@@ -68,5 +72,6 @@ private:
     QMap<QNetworkConfiguration::StateFlags, qreal> offset;
 
     bool updateTriggered;
+    int timerId;
 };
 

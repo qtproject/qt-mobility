@@ -55,15 +55,22 @@ public:
     Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent = 0);
     ~Cloud();
 
+    enum { Type = UserType + 1 };
+    int type() const { return Type; }
+
     void setFinalScale(qreal factor);
-    void setOrbit(qreal radius, qreal angle);
     void setDeleteAfterAnimation(bool deleteAfter);
 
-    void advance(int phase);
+    void calculateForces();
+
+    bool advance();
     QRectF boundingRect() const;
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 
+    static qreal getRadiusForState(QNetworkConfiguration::StateFlags state);
+
 protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private Q_SLOTS:
@@ -79,10 +86,11 @@ private:
     QGraphicsTextItem *text;
     QGraphicsSvgItem *icon;
 
-    QPointF finalPos;
     qreal finalOpacity;
     qreal finalScale;
     qreal currentScale;
+
+    QPointF newPos;
 
     bool deleteAfterAnimation;
 };

@@ -55,28 +55,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-static qreal getRadiusFromState(QNetworkConfiguration::StateFlags state)
-{
-    switch (state) {
-    case QNetworkConfiguration::Active:
-        return 100;
-        break;
-    case QNetworkConfiguration::Discovered:
-        return 150;
-        break;
-    case QNetworkConfiguration::Defined:
-        return 200;
-        break;
-    case QNetworkConfiguration::Undefined:
-        return 250;
-        break;
-    default:
-        return 300;
-    }
-}
-
 BearerCloud::BearerCloud(QObject *parent)
-:   QGraphicsScene(parent), updateTriggered(false)
+:   QGraphicsScene(parent), updateTriggered(false), timerId(0)
 {
     setSceneRect(-300, -300, 600, 600);
 
@@ -88,23 +68,24 @@ BearerCloud::BearerCloud(QObject *parent)
     offset[QNetworkConfiguration::Undefined] = offset[QNetworkConfiguration::Undefined] + M_PI / 6;
 
     thisDevice = new QGraphicsTextItem(QHostInfo::localHostName());
+    thisDevice->setData(0, QLatin1String("This Device"));
     thisDevice->setPos(thisDevice->boundingRect().width() / -2,
                        thisDevice->boundingRect().height() / -2);
     addItem(thisDevice);
 
-    qreal radius = getRadiusFromState(QNetworkConfiguration::Active);
+    qreal radius = Cloud::getRadiusForState(QNetworkConfiguration::Active);
     QGraphicsEllipseItem *orbit = new QGraphicsEllipseItem(-radius, -radius, 2*radius, 2*radius);
     orbit->setPen(QColor(Qt::green));
     addItem(orbit);
-    radius = getRadiusFromState(QNetworkConfiguration::Discovered);
+    radius = Cloud::getRadiusForState(QNetworkConfiguration::Discovered);
     orbit = new QGraphicsEllipseItem(-radius, -radius, 2*radius, 2*radius);
     orbit->setPen(QColor(Qt::blue));
     addItem(orbit);
-    radius = getRadiusFromState(QNetworkConfiguration::Defined);
+    radius = Cloud::getRadiusForState(QNetworkConfiguration::Defined);
     orbit = new QGraphicsEllipseItem(-radius, -radius, 2*radius, 2*radius);
     orbit->setPen(QColor(Qt::darkGray));
     addItem(orbit);
-    radius = getRadiusFromState(QNetworkConfiguration::Undefined);
+    radius = Cloud::getRadiusForState(QNetworkConfiguration::Undefined);
     orbit = new QGraphicsEllipseItem(-radius, -radius, 2*radius, 2*radius);
     orbit->setPen(QColor(Qt::lightGray));
     addItem(orbit);
@@ -118,14 +99,37 @@ BearerCloud::BearerCloud(QObject *parent)
             this, SLOT(triggerUpdate()));
     connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
             this, SLOT(triggerUpdate()));
-
-    QTimer *animationTimer = new QTimer(this);
-    connect(animationTimer, SIGNAL(timeout()), this, SLOT(advance()));
-    animationTimer->start(1000 / 33);
 }
 
 BearerCloud::~BearerCloud()
 {
+}
+
+void BearerCloud::cloudMoved()
+{
+    if (!timerId)
+        timerId = startTimer(1000 / 25);
+}
+
+void BearerCloud::timerEvent(QTimerEvent *)
+{
+    QList<Cloud *> clouds;
+    foreach (QGraphicsItem *item, items()) {
+        if (Cloud *cloud = qgraphicsitem_cast<Cloud *>(item))
+            clouds << cloud;
+    }
+
+    foreach (Cloud *cloud, clouds)
+        cloud->calculateForces();
+
+    bool cloudsMoved = false;
+    foreach (Cloud *cloud, clouds)
+        cloudsMoved |= cloud->advance();
+
+    if (!cloudsMoved) {
+        killTimer(timerId);
+        timerId = 0;
+    }
 }
 
 void BearerCloud::updateConfigurations()
@@ -149,15 +153,19 @@ void BearerCloud::updateConfigurations()
             configStates.insert(config.state(), config.identifier());
         }
     }
+
+    bool startAnimation = false;
+
     while (!previousIds.isEmpty()) {
         // delete configuration
         Cloud *item = configurations.take(previousIds.takeFirst());
         item->setFinalScale(0.0);
         item->setDeleteAfterAnimation(true);
+        startAnimation = true;
     }
 
     foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys()) {
-        const qreal radius = getRadiusFromState(state);
+        const qreal radius = Cloud::getRadiusForState(state);
         const qreal angle = 2 * M_PI / configStates.count(state);
 
         QList<QString> identifiers = configStates.values(state);
@@ -166,7 +174,7 @@ void BearerCloud::updateConfigurations()
                 // update animation
                 Cloud *item = configurations.value(identifiers.at(i));
 
-                item->setOrbit(radius, i * angle + offset[state]);
+                startAnimation = true;
             } else {
                 // new animation
                 QNetworkConfiguration config =
@@ -177,14 +185,17 @@ void BearerCloud::updateConfigurations()
 
                 item->setPos(radius * cos(i * angle + offset[state]),
                              radius * sin(i * angle + offset[state]));
-                item->setOrbit(radius, i * angle + offset[state]);
 
                 addItem(item);
+                startAnimation = true;
             }
         }
     }
 
     updateTriggered = false;
+
+    if (startAnimation)
+        cloudMoved();
 }
 
 void BearerCloud::triggerUpdate()
