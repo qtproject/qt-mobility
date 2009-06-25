@@ -83,7 +83,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Linear);
-    navigator.jump(0);
+    navigator.jump(0);//it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 
@@ -133,7 +133,7 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Loop);
-    navigator.jump(0);
+    navigator.jump(0); //it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 

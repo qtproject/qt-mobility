@@ -8,7 +8,7 @@ class QMediaPlaylistNavigatorPrivate;
 class QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(PlaybackMode);
+    Q_ENUMS(PlaybackMode)
     Q_PROPERTY(QMediaPlaylistNavigator::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
     Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
@@ -50,17 +50,14 @@ Q_SIGNALS:
 
     void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
 
-private slots:
-    void processInsertedItems(int start, int end);
-    void processRemovedItems(int start, int end);
-    void processChangedItems(int start, int end);
-    void updateCurrentItemPos();
-
-protected:
-    QMediaPlaylistNavigator(QMediaPlaylistNavigatorPrivate &dd, QObject *parent);
-
 private:
+    Q_DISABLE_COPY(QMediaPlaylistNavigator)
     Q_DECLARE_PRIVATE(QMediaPlaylistNavigator)
+
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateCurrentItemPos())
 };
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H
