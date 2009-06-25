@@ -106,10 +106,13 @@ private slots:
 
 private:
     void notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope);
+    QString closestExistingParent(const QString &path);
+    void restartDirMonitoring(const QString &dbPath, const QString &previousDirPath);
 
-    DatabaseManager *manager;
-    QFileSystemWatcher *watcher;
-    QHash<QString, QStringList> knownServices;
+    DatabaseManager *m_manager;
+    QFileSystemWatcher *m_watcher;
+    QHash<QString, QStringList> m_knownServices;
+    QStringList m_monitoredDbPaths;
 };
 
 QT_END_NAMESPACE

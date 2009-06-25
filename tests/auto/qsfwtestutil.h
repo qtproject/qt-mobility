@@ -52,6 +52,9 @@ public:
     static void removeTempUserDb();
     static void removeTempSystemDb();
 
+    static QString tempUserDbDir();
+    static QString tempSystemDbDir();
+
     static QString tempSettingsPath(const char *path = "");
     static void removeDirectory(const QString &path);
 };

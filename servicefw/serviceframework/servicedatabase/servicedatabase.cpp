@@ -1445,7 +1445,7 @@ bool ServiceDatabase::close()
 */
 void ServiceDatabase::setDatabasePath(const QString &aDatabasePath)
 {
-    iDatabasePath = aDatabasePath; 
+    iDatabasePath = QDir::toNativeSeparators(aDatabasePath); 
 }
 
 /*!
@@ -1461,10 +1461,11 @@ QString ServiceDatabase::databasePath() const
         if (path.isEmpty()) {
             path = QDir::currentPath();
             if (path.lastIndexOf(RESOLVERDATABASE_PATH_SEPARATOR) != path.length() -1) {
-            path.append(RESOLVERDATABASE_PATH_SEPARATOR);
-    }
+                path.append(RESOLVERDATABASE_PATH_SEPARATOR);
+            }
             path.append(RESOLVERDATABASE);
         }
+        path = QDir::toNativeSeparators(path);
     } else {
         path = iDatabasePath;
     }

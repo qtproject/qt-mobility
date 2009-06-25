@@ -52,6 +52,10 @@
 #include "../../../servicefw/serviceframework/servicedatabase/databasemanager.cpp"
 #include "../qsfwtestutil.h"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 class DatabaseManagerUnitTest: public QObject
 {
     Q_OBJECT

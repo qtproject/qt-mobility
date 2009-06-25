@@ -44,25 +44,36 @@
 #include <QFileInfoList>
 #include <QFile>
 #include <QSettings>
+#include <QDebug>
 
 void QSfwTestUtil::setupTempUserDb()
 {
-    QSettings::setUserIniPath(tempSettingsPath("__user__"));
+    QSettings::setUserIniPath(tempUserDbDir());
 }
 
 void QSfwTestUtil::setupTempSystemDb()
 {
-    QSettings::setSystemIniPath(tempSettingsPath("__system__"));
+    QSettings::setSystemIniPath(tempSystemDbDir());
 }
 
 void QSfwTestUtil::removeTempUserDb()
 {
-    removeDirectory(tempSettingsPath("__user__"));
+    removeDirectory(tempUserDbDir());
 }
 
 void QSfwTestUtil::removeTempSystemDb()
 {
-    removeDirectory(tempSettingsPath("__system__"));
+    removeDirectory(tempSystemDbDir());
+}
+
+QString QSfwTestUtil::tempUserDbDir()
+{
+    return tempSettingsPath("__user__");
+}
+
+QString QSfwTestUtil::tempSystemDbDir()
+{
+    return tempSettingsPath("__system__");
 }
 
 QString QSfwTestUtil::tempSettingsPath(const char *path)
@@ -85,5 +96,5 @@ void QSfwTestUtil::removeDirectory(const QString &path)
         if(file.isDir())
             removeDirectory(file.canonicalFilePath());
     }
-    QFile::remove(path);
+    dir.rmpath(path);
 }

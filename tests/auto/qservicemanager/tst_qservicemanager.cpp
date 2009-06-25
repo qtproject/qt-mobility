@@ -58,6 +58,15 @@
     }                                           \
     QCOMPARE(a, e)
 
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
+
+#define PRINT_ERR(a) qPrintable(QString("error = %1").arg(a.error()))
+
 typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
 Q_DECLARE_METATYPE(QServiceFilter)
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
@@ -198,6 +207,15 @@ private:
         return desc;
     }
 
+    void deleteTestDatabasesAndWaitUntilDone()
+    {
+        QSfwTestUtil::removeTempUserDb();
+        QSfwTestUtil::removeTempSystemDb();
+
+        QTRY_VERIFY(!QFile::exists(QSfwTestUtil::tempUserDbDir()));
+        QTRY_VERIFY(!QFile::exists(QSfwTestUtil::tempSystemDbDir()));
+    }
+
 private slots:
     void initTestCase();
     void cleanupTestCase();
@@ -320,7 +338,7 @@ void tst_QServiceManager::findServices()
     foreach (const QByteArray &xml, xmlBlocks) {
         QBuffer buffer;
         buffer.setData(xml);
-        QVERIFY(mgr.addService(&buffer));
+        QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     }
 
     QCOMPARE(mgr.findServices().toSet(), searchAllResult);
@@ -384,11 +402,11 @@ void tst_QServiceManager::findServices_scope()
     QServiceManager mgrUser(QServiceManager::UserScope);
     QServiceManager mgrSystem(QServiceManager::SystemScope);
 
-    QServiceManager *mgrAdd = scope_add == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
-    QServiceManager *mgrFind = scope_find == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+    QServiceManager &mgrAdd = scope_add == QServiceManager::UserScope ? mgrUser : mgrSystem;
+    QServiceManager &mgrFind = scope_find == QServiceManager::UserScope ? mgrUser : mgrSystem;
 
-    QVERIFY(mgrAdd->addService(&buffer));
-    QStringList result = mgrFind->findServices();
+    QVERIFY2(mgrAdd.addService(&buffer), PRINT_ERR(mgrAdd));
+    QStringList result = mgrFind.findServices();
     QCOMPARE(!result.isEmpty(), expectFound);
 }
 
@@ -418,7 +436,7 @@ void tst_QServiceManager::findInterfaces_filter()
     QServiceManager mgr;
 
     QBuffer buffer(&xml);
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
 
     QList<QServiceInterfaceDescriptor> result = mgr.findInterfaces(filter);
     QCOMPARE(result.toSet(), expectedInterfaces.toSet());
@@ -649,11 +667,11 @@ void tst_QServiceManager::findInterfaces_scope()
     QServiceManager mgrUser(QServiceManager::UserScope);
     QServiceManager mgrSystem(QServiceManager::SystemScope);
 
-    QServiceManager *mgrAdd = scope_add == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
-    QServiceManager *mgrFind = scope_find == QServiceManager::UserScope ? &mgrUser : &mgrSystem;
+    QServiceManager &mgrAdd = scope_add == QServiceManager::UserScope ? mgrUser : mgrSystem;
+    QServiceManager &mgrFind = scope_find == QServiceManager::UserScope ? mgrUser : mgrSystem;
 
-    QVERIFY(mgrAdd->addService(&buffer));
-    QList<QServiceInterfaceDescriptor> result = mgrFind->findInterfaces("SomeTestService");
+    QVERIFY2(mgrAdd.addService(&buffer), PRINT_ERR(mgrAdd));
+    QList<QServiceInterfaceDescriptor> result = mgrFind.findInterfaces("SomeTestService");
     QCOMPARE(!result.isEmpty(), expectFound);
 }
 
@@ -682,13 +700,13 @@ void tst_QServiceManager::loadInterface_string()
     QString commonInterface = "com.nokia.qt.TestInterfaceA";
 
     // add first service
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
 
     // add second service
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice2.xml")));
+    QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice2.xml")), PRINT_ERR(mgr));
 
     // if first service is set as default, it should be returned
     QVERIFY(mgr.setDefaultServiceForInterface(serviceA, commonInterface));
@@ -834,8 +852,8 @@ void tst_QServiceManager::getInterface()
     plugin = mgr.getInterface<SampleServicePluginClass>(descriptor, &context, &session);
 
     QVERIFY(plugin != 0);
-    QCOMPARE(plugin->context(), &context);
-    QCOMPARE(plugin->securitySession(), &session);
+    QCOMPARE(plugin->context(), (QServiceContext *)&context);
+    QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
     delete plugin;
     plugin = 0;
@@ -843,7 +861,7 @@ void tst_QServiceManager::getInterface()
     //use database descriptor
     QFile file1(xmlTestDataPath("sampleservice.xml"));
     QVERIFY(file1.exists());
-    QVERIFY(mgr.addService(&file1));
+    QVERIFY2(mgr.addService(&file1), PRINT_ERR(mgr));
 
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceB"), QStringList("SampleService"));
@@ -853,8 +871,8 @@ void tst_QServiceManager::getInterface()
         plugin = mgr.getInterface<SampleServicePluginClass>(ifaces.at(i), &context, &session);
 
         QVERIFY(plugin != 0);
-        QCOMPARE(plugin->context(), &context);
-        QCOMPARE(plugin->securitySession(), &session);
+        QCOMPARE(plugin->context(), (QServiceContext *)&context);
+        QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
         delete plugin;
         plugin = 0;
@@ -863,8 +881,8 @@ void tst_QServiceManager::getInterface()
     //use default lookup
     plugin = mgr.getInterface<SampleServicePluginClass>("com.nokia.qt.TestInterfaceA", &context, &session);
     QVERIFY(plugin != 0);
-    QCOMPARE(plugin->context(), &context);
-    QCOMPARE(plugin->securitySession(), &session);
+    QCOMPARE(plugin->context(), (QServiceContext *)&context);
+    QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
     delete plugin;
     plugin = 0;
@@ -881,9 +899,9 @@ void tst_QServiceManager::getInterface()
 
 #define TST_QSERVICEMANAGER_ADD_SERVICE(paramType, file) { \
     if (paramType == "QString") \
-        QVERIFY(mgr.addService(file->fileName())); \
+        QVERIFY2(mgr.addService(file->fileName()), PRINT_ERR(mgr)); \
     else if (paramType == "QIODevice") \
-        QVERIFY(mgr.addService(file)); \
+        QVERIFY2(mgr.addService(file), PRINT_ERR(mgr)); \
     else \
         QFAIL("tst_QServiceManager::addService(): Bad test parameter"); \
 }
@@ -943,7 +961,7 @@ void tst_QServiceManager::addService_testInvalidServiceXml()
     QBuffer buffer;
     QServiceManager mgr;
 
-    QVERIFY(!mgr.addService(&buffer));
+    QVERIFY2(!mgr.addService(&buffer), PRINT_ERR(mgr));
 
     // a service with no interfaces
     QString xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
@@ -953,7 +971,7 @@ void tst_QServiceManager::addService_testInvalidServiceXml()
     buffer.setData(xml.toLatin1());
     QVERIFY(!mgr.addService(&buffer));
 
-    QVERIFY(mgr.findServices().isEmpty());
+    QVERIFY2(mgr.findServices().isEmpty(), PRINT_ERR(mgr));
 }
 
 void tst_QServiceManager::addService_testPluginLoading()
@@ -965,7 +983,7 @@ void tst_QServiceManager::addService_testPluginLoading()
 
     QByteArray xml = createServiceXml("SomeService", createInterfaceXml("com.qt.serviceframework.Interface"), pluginPath);
     QBuffer buffer(&xml);
-    QCOMPARE(mgr.addService(&buffer), isAdded);
+    QVERIFY2(mgr.addService(&buffer) == isAdded, PRINT_ERR(mgr));
 
     // the service should not be added if the service plugin cannot be loaded
     if (!isAdded)
@@ -987,7 +1005,7 @@ void tst_QServiceManager::addService_testInstallService()
     QCOMPARE(settings.value("installed").toBool(), false);
 
     QServiceManager mgr;
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
     QCOMPARE(mgr.findServices(), QStringList("SampleService"));
 
     // test installService() was called on the plugin
@@ -1003,7 +1021,7 @@ void tst_QServiceManager::removeService()
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     QCOMPARE(settings.value("installed").toBool(), false);
 
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(settings.value("installed").toBool(), true);
 
@@ -1013,7 +1031,7 @@ void tst_QServiceManager::removeService()
     QCOMPARE(settings.value("installed").toBool(), false);
 
     // add it again, should still work
-    QVERIFY(mgr.addService(xmlTestDataPath("sampleservice.xml")));
+    QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(settings.value("installed").toBool(), true);
 }
@@ -1037,7 +1055,7 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
     QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), false);
 
     // now it works
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), true);
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
 
@@ -1049,7 +1067,7 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
             properties[QServiceInterfaceDescriptor::Location].toString());
     buffer.close();
     buffer.setData(xml);
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     QCOMPARE(mgr.setDefaultServiceForInterface("ServiceB", interfaceName), true);
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
 
@@ -1076,7 +1094,7 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfac
     xml = createServiceXml("ServiceC", createInterfaceXml(descriptorList),
             properties[QServiceInterfaceDescriptor::Location].toString());
     QBuffer buffer(&xml);
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     QCOMPARE(mgr.setDefaultServiceForInterface("ServiceC", interfaceName), true);
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptorList[1]);
 }
@@ -1106,7 +1124,7 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
     QByteArray xml = createServiceXml("SomeService",
             createInterfaceXml(QList<QServiceInterfaceDescriptor>() << desc), VALID_PLUGIN_FILES.first());
     QBuffer buffer(&xml);
-    QVERIFY(mgr.addService(&buffer));
+    QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     QCOMPARE(mgr.setDefaultServiceForInterface(desc), true);
 
     QCOMPARE(mgr.defaultServiceInterface(interfaceName), desc);
@@ -1156,7 +1174,7 @@ void tst_QServiceManager::serviceAdded()
             listener, SLOT(serviceAdded(QString,QServiceManager::Scope)));
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
-    QVERIFY(mgr_modify.addService(&buffer));
+    QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
 
     QTRY_COMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
@@ -1169,7 +1187,7 @@ void tst_QServiceManager::serviceAdded()
 
     spyAdd.clear();
     buffer.seek(0);
-    QVERIFY(mgr_modify.addService(&buffer));
+    QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
     QTRY_COMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
     QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
@@ -1222,7 +1240,7 @@ void tst_QServiceManager::serviceRemoved()
             listener, SLOT(serviceRemoved(QString,QServiceManager::Scope)));
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
-    QVERIFY(mgr_modify.addService(&buffer));
+    QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
     QTRY_COMPARE(spyAdd.count(), 1);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
@@ -1234,7 +1252,7 @@ void tst_QServiceManager::serviceRemoved()
     // try it again
     spyAdd.clear();
     buffer.seek(0);
-    QVERIFY(mgr_modify.addService(&buffer));
+    QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
     QTRY_COMPARE(spyAdd.count(), 1);
 
     spyRemove.clear();
@@ -1250,7 +1268,6 @@ void tst_QServiceManager::serviceRemoved_data()
 {
     serviceAdded_data();
 }
-
 
 QTEST_MAIN(tst_QServiceManager)
 
