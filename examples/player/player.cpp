@@ -10,10 +10,15 @@ Player::Player(QWidget *parent)
     , service(0)
     , slider(0)
 {
-    service = new QWmpPlayerService;
+    service = new QWmpPlayerService;    
 
     connect(service->control(), SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(service->control(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+
+    QWidget *videoWidget = service->createWidget();
+
+    if (videoWidget)
+        service->setVideoOutput(videoWidget);
 
     slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, 0);
@@ -53,6 +58,8 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(muteButton);
 
     QBoxLayout *layout = new QVBoxLayout;
+    if (videoWidget)
+        layout->addWidget(videoWidget);
     layout->addWidget(slider);
     layout->addLayout(controlLayout);
 
