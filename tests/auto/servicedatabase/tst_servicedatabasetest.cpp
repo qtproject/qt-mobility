@@ -51,6 +51,10 @@
 
 #define RESOLVERDATABASE "services.db"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 class ServiceDatabaseUnitTest: public QObject
 {
     Q_OBJECT

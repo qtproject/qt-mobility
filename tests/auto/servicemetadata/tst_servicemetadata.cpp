@@ -47,6 +47,10 @@
 #include "servicemetadata_p.h"
 #include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 class ServiceMetadataTest: public QObject
 {
     Q_OBJECT

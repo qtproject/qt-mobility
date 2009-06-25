@@ -850,8 +850,8 @@ void tst_QServiceManager::getInterface()
     plugin = mgr.getInterface<SampleServicePluginClass>(descriptor, &context, &session);
 
     QVERIFY(plugin != 0);
-    QCOMPARE(plugin->context(), &context);
-    QCOMPARE(plugin->securitySession(), &session);
+    QCOMPARE(plugin->context(), (QServiceContext *)&context);
+    QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
     delete plugin;
     plugin = 0;
@@ -869,8 +869,8 @@ void tst_QServiceManager::getInterface()
         plugin = mgr.getInterface<SampleServicePluginClass>(ifaces.at(i), &context, &session);
 
         QVERIFY(plugin != 0);
-        QCOMPARE(plugin->context(), &context);
-        QCOMPARE(plugin->securitySession(), &session);
+        QCOMPARE(plugin->context(), (QServiceContext *)&context);
+        QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
         delete plugin;
         plugin = 0;
@@ -879,8 +879,8 @@ void tst_QServiceManager::getInterface()
     //use default lookup
     plugin = mgr.getInterface<SampleServicePluginClass>("com.nokia.qt.TestInterfaceA", &context, &session);
     QVERIFY(plugin != 0);
-    QCOMPARE(plugin->context(), &context);
-    QCOMPARE(plugin->securitySession(), &session);
+    QCOMPARE(plugin->context(), (QServiceContext *)&context);
+    QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
     delete plugin;
     plugin = 0;
