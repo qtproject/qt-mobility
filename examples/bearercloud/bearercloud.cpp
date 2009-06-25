@@ -154,14 +154,11 @@ void BearerCloud::updateConfigurations()
         }
     }
 
-    bool startAnimation = false;
-
     while (!previousIds.isEmpty()) {
         // delete configuration
         Cloud *item = configurations.take(previousIds.takeFirst());
         item->setFinalScale(0.0);
         item->setDeleteAfterAnimation(true);
-        startAnimation = true;
     }
 
     foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys()) {
@@ -169,33 +166,27 @@ void BearerCloud::updateConfigurations()
         const qreal angle = 2 * M_PI / configStates.count(state);
 
         QList<QString> identifiers = configStates.values(state);
-        for (int i = 0; i < identifiers.count(); ++i) {
-            if (configurations.contains(identifiers.at(i))) {
-                // update animation
-                Cloud *item = configurations.value(identifiers.at(i));
-
-                startAnimation = true;
-            } else {
-                // new animation
+        for (int i = 0, j = configStates.count(state) - 1; i < identifiers.count(); ++i) {
+            if (!configurations.contains(identifiers.at(i))) {
                 QNetworkConfiguration config =
                     manager.configurationFromIdentifier(identifiers.at(i));
                 Cloud *item = new Cloud(config);
 
                 configurations.insert(identifiers.at(i), item);
 
-                item->setPos(radius * cos(i * angle + offset[state]),
-                             radius * sin(i * angle + offset[state]));
+                item->setPos(radius * cos(j * angle + offset[state]),
+                             radius * sin(j * angle + offset[state]));
 
                 addItem(item);
-                startAnimation = true;
+
+                --j;
             }
         }
     }
 
     updateTriggered = false;
 
-    if (startAnimation)
-        cloudMoved();
+    cloudMoved();
 }
 
 void BearerCloud::triggerUpdate()
