@@ -819,7 +819,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
                 const QList<QString> keys = filter.customKeys();
                 for(int i = 0; i<keys.count(); i++) {
                     if (interface.d->customProperties.value(keys[i]) !=
-                            filter.customConstraint(keys[i])) {
+                            filter.customProperty(keys[i])) {
                         isMatch = false;
                         break;
                     }

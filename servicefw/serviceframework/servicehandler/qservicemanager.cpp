@@ -227,19 +227,21 @@ private slots:
 */
 
 /*!
-    \fn void QServiceManager::serviceAdded(const QString& serviceName)
+    \fn void QServiceManager::serviceAdded(const QString& serviceName, QServiceManager::Scope scope)
 
     This signal is emited whenever a new service with the given 
     \a serviceName has been registered with the service manager.
+    \a scope indicates where the service was added.
 
     \sa addService()
 */
 
 /*!
-    \fn void QServiceManager::serviceRemoved(const QString& serviceName)
+    \fn void QServiceManager::serviceRemoved(const QString& serviceName, QServiceManager::Scope scope)
 
     This signal is emited whenever a service with the given 
     \a serviceName has been deregistered with the service manager.
+    \a scope indicates where the service was added.
 
     \sa removeService()
 */
@@ -454,6 +456,9 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     with the same plugin file path.  A service plugin also cannot be added if
     the service is already registered and implements any of the same interface
     versions that the new plugin implements.
+    
+    Services are always added based on the \l scope() of the current 
+    service manager instance.
 
     \sa setDefaultServiceForInterface()
 */
@@ -498,7 +503,10 @@ bool QServiceManager::addService(QIODevice *device)
     with the same version number, the service manager makes a random choice with 
     regards to the new default implementation. If this is 
     not the desired behaviour the default selection should be updated
-    via setDefaultServiceForInterface(). 
+    via setDefaultServiceForInterface().
+
+    Services are always removed based on the \l scope() of the current 
+    service manager instance.
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
