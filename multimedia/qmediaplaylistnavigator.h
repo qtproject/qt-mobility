@@ -48,6 +48,7 @@ Q_SIGNALS:
     void currentPositionChanged(int);
     void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
 
+    void surroundingItemsChanged();
 
 private:
     Q_DISABLE_COPY(QMediaPlaylistNavigator)

@@ -34,7 +34,10 @@ public slots:
     void savePlaylist();
 
     void setPlaybackMode(int mode);
+
+private slots:
     void updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
+    void updateNavigationActions();
 
 private:
     Ui::ImageViewer *ui;

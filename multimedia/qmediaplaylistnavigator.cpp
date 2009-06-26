@@ -206,6 +206,7 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
     d->playbackMode = mode;
 
     emit playbackModeChanged(mode);
+    emit surroundingItemsChanged();
 }
 
 QMediaPlaylist *QMediaPlaylistNavigator::playlist() const
@@ -399,6 +400,7 @@ void QMediaPlaylistNavigator::jump(int pos)
     if (pos != d->currentPos) {
         d->currentPos = pos;
         emit currentPositionChanged(d->currentPos);
+        emit surroundingItemsChanged();
     }
 
     QMediaSource src = d->playlist->itemAt(pos);
@@ -440,6 +442,9 @@ void QMediaPlaylistNavigatorPrivate::_q_updateCurrentItemPos()
     if (currentPos != currentPosAfterListModifications) {
         q->jump(currentPosAfterListModifications);
     }
+
+    //TODO: check if they really changed
+    emit q->surroundingItemsChanged();
 }
 
 /*!
@@ -456,6 +461,9 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
             emit q->activated(src);
         }
     }
+
+    //TODO: check if they really changed
+    emit q->surroundingItemsChanged();
 }
 
 /*!
