@@ -9,16 +9,15 @@
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QServiceManager::Error" href="qservicemanager.html#Error-enum" location="qservicemanager.h">
                 <value name="NoError" value="0"></value>
-                <value name="StoragePermissionsError" value="1"></value>
-                <value name="StorageReadError" value="2"></value>
-                <value name="InvalidServiceLocation" value="3"></value>
-                <value name="InvalidServiceXml" value="4"></value>
-                <value name="InvalidServiceInterfaceDescriptor" value="5"></value>
-                <value name="ServiceAlreadyExists" value="6"></value>
-                <value name="ImplementationAlreadyExists" value="7"></value>
-                <value name="PluginLoadingFailed" value="8"></value>
-                <value name="ComponentNotFound" value="9"></value>
-                <value name="ServiceCapabilityDenied" value="10"></value>
+                <value name="StorageAccessError" value="1"></value>
+                <value name="InvalidServiceLocation" value="2"></value>
+                <value name="InvalidServiceXml" value="3"></value>
+                <value name="InvalidServiceInterfaceDescriptor" value="4"></value>
+                <value name="ServiceAlreadyExists" value="5"></value>
+                <value name="ImplementationAlreadyExists" value="6"></value>
+                <value name="PluginLoadingFailed" value="7"></value>
+                <value name="ComponentNotFound" value="8"></value>
+                <value name="ServiceCapabilityDenied" value="9"></value>
                 <value name="UnknownError" value="100"></value>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceManager(QObject * parent)">
@@ -79,11 +78,13 @@
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QServiceManager::error" href="qservicemanager.html#error" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="serviceAdded" fullname="QServiceManager::serviceAdded" href="qservicemanager.html#serviceAdded" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceAdded(const QString &amp; serviceName)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceAdded" fullname="QServiceManager::serviceAdded" href="qservicemanager.html#serviceAdded" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceAdded(const QString &amp; serviceName, QServiceManager::Scope scope)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""></parameter>
+                <parameter left="QServiceManager::Scope" right="" name="scope" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="serviceRemoved" fullname="QServiceManager::serviceRemoved" href="qservicemanager.html#serviceRemoved" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceRemoved(const QString &amp; serviceName)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceRemoved" fullname="QServiceManager::serviceRemoved" href="qservicemanager.html#serviceRemoved" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceRemoved(const QString &amp; serviceName, QServiceManager::Scope scope)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""></parameter>
+                <parameter left="QServiceManager::Scope" right="" name="scope" default=""></parameter>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractSecuritySession" href="qabstractsecuritysession.html" location="qabstractsecuritysession.h" bases="" module="">
@@ -130,6 +131,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMajorVersion" fullname="QServiceFilter::interfaceMajorVersion" href="qservicefilter.html#interfaceMajorVersion" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMajorVersion() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMinorVersion" fullname="QServiceFilter::interfaceMinorVersion" href="qservicefilter.html#interfaceMinorVersion" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMinorVersion() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="versionMatchRule" fullname="QServiceFilter::versionMatchRule" href="qservicefilter.html#versionMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="VersionMatchRule" signature="versionMatchRule() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customKeys" fullname="QServiceFilter::customKeys" href="qservicefilter.html#customKeys" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="customKeys() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="customConstraint" fullname="QServiceFilter::customConstraint" href="qservicefilter.html#customConstraint" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customConstraint(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""></parameter>
             </function>
