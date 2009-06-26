@@ -17,6 +17,7 @@ private slots:
     void open();
     void durationChanged(qint64 duration);
     void positionChanged(qint64 progress);
+    void metaDataChanged();
 
 private:
     QMediaPlayerService *service;

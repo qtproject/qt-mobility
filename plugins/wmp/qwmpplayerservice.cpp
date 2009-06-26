@@ -1,6 +1,7 @@
 #include "qwmpplayerservice.h"
 
 #include "qevrwidget.h"
+#include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
 
 #include <QtCore/qvariant.h>
@@ -13,6 +14,7 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
     , m_player(0)
     , m_videoOutput(0)
     , m_control(0)
+    , m_metaData(0)
     , m_connectionPoint(0)
     , m_adviseCookie(0)
 {
@@ -25,6 +27,7 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
             __uuidof(IWMPPlayer4),
             reinterpret_cast<void **>(&m_player))) {
         m_control = new QWmpPlayerControl(m_player, this);
+        m_metaData = new QWmpMetaData(this);
 
         IConnectionPointContainer *container = 0;
 
@@ -65,6 +68,10 @@ QMediaPlayerControl *QWmpPlayerService::control()
     return m_control;
 }
 
+QMediaMetaData *QWmpPlayerService::metaData()
+{
+    return m_metaData;
+}
 
 QWidget *QWmpPlayerService::createWidget()
 {
@@ -167,6 +174,8 @@ void QWmpPlayerService::CurrentItemChange(IDispatch *pdispMedia)
         media->get_duration(&duration);
 
         m_control->setDuration(duration);
+
+        m_metaData->setMedia(media);
 
         media->Release();
     }
