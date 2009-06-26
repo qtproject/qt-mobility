@@ -523,8 +523,8 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),5);
 
-    filter.setCustomConstraint("bot", "automatic");
-    QCOMPARE(filter.customConstraint("bot"), QString("automatic"));
+    filter.setCustomProperty("bot", "automatic");
+    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),3);
 
@@ -540,9 +540,9 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     customs["bot"] = "automatic";
     QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Autobot", 1, 9, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
-    filter.setCustomConstraint("extension","multidrive");
-    QCOMPARE(filter.customConstraint("extension"), QString("multidrive"));
-    QCOMPARE(filter.customConstraint("bot"), QString("automatic"));
+    filter.setCustomProperty("extension","multidrive");
+    QCOMPARE(filter.customProperty("extension"), QString("multidrive"));
+    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),1);
     
@@ -552,7 +552,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter manualFilter;
-    manualFilter.setCustomConstraint("bot", "manual");
+    manualFilter.setCustomProperty("bot", "manual");
     interfaces = database.getInterfaces(manualFilter);
     QCOMPARE(interfaces.count(),2);
 
@@ -562,7 +562,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Autobot", 2, 0, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter multidriveFilter;
-    multidriveFilter.setCustomConstraint("extension", "multidrive");
+    multidriveFilter.setCustomProperty("extension", "multidrive");
     interfaces = database.getInterfaces(multidriveFilter);
     QCOMPARE(interfaces.count(),1);
 
