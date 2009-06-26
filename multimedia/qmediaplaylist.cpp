@@ -88,6 +88,15 @@ bool QMediaPlaylist::isEmpty() const
 }
 
 /*!
+  Returns true if the playlist can be modified; otherwise returns false.
+  \sa size().
+  */
+bool QMediaPlaylist::isReadOnly() const
+{
+    return d_func()->source->isReadOnly();
+}
+
+/*!
   Returns the media source at index \a position in the playlist.  
   */
 QMediaSource QMediaPlaylist::itemAt(int position) const

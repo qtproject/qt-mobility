@@ -1,9 +1,25 @@
 #include "qmediaplaylistnavigator.h"
+#include "qmediaplaylistsource.h"
 #include "qmediaplaylist.h"
 
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/qdebug.h>
 #include "qmediasource.h"
+
+class QMediaPlaylistNullSource : public QMediaPlaylistSource
+{
+public:
+    QMediaPlaylistNullSource() :QMediaPlaylistSource() {}
+    virtual ~QMediaPlaylistNullSource() {}
+    virtual int size() const {return 0;}
+    virtual QMediaSource itemAt(int pos) const
+    {
+        Q_UNUSED(pos);
+        return QMediaSource();
+    }
+};
+
+Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource));
 
 class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
 {
@@ -12,7 +28,7 @@ public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
         currentPos(-1),        
-        playbackMode(QMediaPlaylistNavigator::NoPlayback),
+        playbackMode(QMediaPlaylistNavigator::Linear),
         randomPositionsOffset(-1),
         currentPosAfterListModifications(0)
     {
@@ -157,16 +173,8 @@ enum QMediaPlaylistNavigator::PlaybackMode
   */
 QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
     :QObject(*new QMediaPlaylistNavigatorPrivate, parent)
-{
-    Q_D(QMediaPlaylistNavigator);
-    d->playlist = playlist;
-
-    connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
-    connect(playlist, SIGNAL(itemsInserted()), SLOT(_q_updateCurrentItemPos()));
-    connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
-    connect(playlist, SIGNAL(itemsRemoved()), SLOT(_q_updateCurrentItemPos()));
-
-    connect(playlist, SIGNAL(itemsChanged(int,int)), SLOT(_q_itemsChanged(int,int)));
+{    
+    setPlaylist(playlist ? playlist : _q_nullMediaPlaylist());
 }
 
 /*!
@@ -206,6 +214,51 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
 
     if (mode == NoPlayback)
         emit activated(QMediaSource());
+}
+
+QMediaPlaylist *QMediaPlaylistNavigator::playlist() const
+{
+    return d_func()->playlist;
+}
+
+void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
+{
+    Q_D(QMediaPlaylistNavigator);
+
+    if (d->playlist == playlist)
+        return;
+
+    if (d->playlist) {
+        d->playlist->disconnect(this);
+    }
+
+    if (playlist) {
+        d->playlist = playlist;
+    } else {
+        //assign to shared readonly null playlist
+        d->playlist = _q_nullMediaPlaylist();
+    }
+
+    connect(d->playlist, SIGNAL(itemsAboutToBeInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
+    connect(d->playlist, SIGNAL(itemsInserted()), SLOT(_q_updateCurrentItemPos()));
+    connect(d->playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
+    connect(d->playlist, SIGNAL(itemsRemoved()), SLOT(_q_updateCurrentItemPos()));
+
+    connect(d->playlist, SIGNAL(itemsChanged(int,int)), SLOT(_q_itemsChanged(int,int)));
+
+    d->randomPositionsOffset = -1;
+    d->randomModePositions.clear();
+
+    if (d->currentPos != -1) {
+        d->currentPos = -1;
+        emit currentPositionChanged(-1);
+    }
+
+    if (!d->currentItem.isNull()) {
+        d->currentItem = QMediaSource();
+        emit currentItemChanged(d->currentItem);
+        emit activated(d->currentItem); //stop playback
+    }
 }
 
 /*!

@@ -1,8 +1,8 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include <QtCore/qobject.h>
 #include "qmediaplaylist.h"
+#include <QtCore/qobject.h>
 
 class QMediaPlaylistNavigatorPrivate;
 class QMediaPlaylistNavigator : public QObject
@@ -21,6 +21,7 @@ public:
     virtual ~QMediaPlaylistNavigator();
 
     QMediaPlaylist *playlist() const;
+    void setPlaylist(QMediaPlaylist *playlist);
 
     PlaybackMode playbackMode() const;
 

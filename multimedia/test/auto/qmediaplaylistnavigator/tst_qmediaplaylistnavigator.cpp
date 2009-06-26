@@ -54,6 +54,7 @@ public slots:
 
 private slots:
     void construction();
+    void setPlaylist();
     void linearPlayback();
     void loopPlayback();
 };
@@ -75,6 +76,23 @@ void tst_QMediaPlaylistNavigator::construction()
     QMediaPlaylistNavigator navigator(&playlist);
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
+}
+
+void tst_QMediaPlaylistNavigator::setPlaylist()
+{
+    QMediaPlaylistNavigator navigator(0);
+    QVERIFY(navigator.playlist() != 0);
+    QVERIFY(navigator.playlist()->isEmpty());
+    QVERIFY(navigator.playlist()->isReadOnly() );
+
+    QMediaPlaylist playlist;
+    QVERIFY(playlist.isEmpty());
+    QCOMPARE(playlist.size(), 0);
+
+    navigator.setPlaylist(&playlist);
+    QCOMPARE(navigator.playlist(), &playlist);
+    QVERIFY(navigator.playlist()->isEmpty());
+    QVERIFY(!navigator.playlist()->isReadOnly() );
 }
 
 void tst_QMediaPlaylistNavigator::linearPlayback()
