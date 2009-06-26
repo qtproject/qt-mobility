@@ -6,10 +6,12 @@ LIBS += -L$$OUT_PWD/../../lib -lqwmp
 
 DEPENDPATH += $$PWD/../../plugins/wmp
 
+HEADERS = \
+    player.h \
+    playlistmodel.h
+  
 SOURCES = \
     main.cpp \
-    player.cpp
-    
-HEADERS = \
-    player.h
+    player.cpp \
+    playlistmodel.cpp
     

@@ -24,7 +24,6 @@ private:
 QWmpMetaData::QWmpMetaData(QObject *parent)
     : QMediaMetaData(parent)
     , m_media(0)
-    , m_media3(0)
 {
 }
 
@@ -32,23 +31,58 @@ QWmpMetaData::~QWmpMetaData()
 {
     if (m_media)
         m_media->Release();
-
-    if (m_media3)
-        m_media3->Release();
 }
 
 QStringList QWmpMetaData::keys() const
 {
+    return keys(m_media);
+}
+
+int QWmpMetaData::valueCount(const QString &key) const
+{
+    return valueCount(m_media, key);
+}
+
+QVariant QWmpMetaData::value(const QString &key, int value) const
+{
+    return QWmpMetaData::value(m_media, key, value);
+}
+
+QVariantList QWmpMetaData::values(const QString &key) const
+{
+    return values(m_media, key);
+}
+
+IWMPMedia *QWmpMetaData::media() const
+{
+    return m_media;
+}
+
+void QWmpMetaData::setMedia(IWMPMedia *media)
+{
+    if (m_media)
+        m_media->Release();
+
+    m_media = media;
+
+    if (m_media)
+        m_media->AddRef();
+
+    emit changed();
+}
+
+QStringList QWmpMetaData::keys(IWMPMedia *media)
+{
     QStringList keys;
 
-    if (m_media) {
+    if (media) {
         long count = 0;
 
-        if (m_media->get_attributeCount(&count) == S_OK) {
+        if (media->get_attributeCount(&count) == S_OK) {
             for (long i = 0; i < count; ++i) {
                 BSTR string;
 
-                if (m_media->getAttributeName(i, &string) == S_OK) {
+                if (media->getAttributeName(i, &string) == S_OK) {
                     keys.append(QString::fromWCharArray(string, SysStringLen(string)));
 
                     SysFreeString(string);
@@ -57,30 +91,42 @@ QStringList QWmpMetaData::keys() const
         }
     }
     return keys;
+
 }
 
-
-int QWmpMetaData::count(const QString &key) const
+int QWmpMetaData::valueCount(IWMPMedia *media, const QString &key)
 {
     long count = 0;
 
-    if (m_media3)
-        m_media3->getAttributeCountByType(QAutoBStr(key), 0, &count);
+    IWMPMedia3 *media3 = 0;
+
+    if (media && media->QueryInterface(
+            __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
+        media3->getAttributeCountByType(QAutoBStr(key), 0, &count);
+        media3->Release();
+    }
 
     return count;
 }
 
-QVariant QWmpMetaData::value(const QString &key, int index) const
+QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key, int index)
 {
     QVariant value;
 
-    if (m_media3) {
+    IWMPMedia3 *media3 = 0;
+    if (media && media->QueryInterface(
+            __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
         VARIANT var;
-
         VariantInit(&var);
 
-        if (m_media3->getItemInfoByType(QAutoBStr(key), 0, index, &var) == S_OK) {
+        if (media3->getItemInfoByType(QAutoBStr(key), 0, index, &var) == S_OK) {
             switch (var.vt) {
+            case VT_I4:
+                value = var.lVal;
+                break;
+            case VT_INT:
+                value = var.intVal;
+                break;
             case VT_BSTR:
                 value = QString::fromWCharArray(var.bstrVal, SysStringLen(var.bstrVal));
                 break;
@@ -117,46 +163,23 @@ QVariant QWmpMetaData::value(const QString &key, int index) const
             }
             VariantClear(&var);
         }
+        media3->Release();
     }
     return value;
 }
 
-QVariantList QWmpMetaData::values(const QString &key) const
+QVariantList QWmpMetaData::values(IWMPMedia *media, const QString &key)
 {
-    const int c = count(key);
-
     QVariantList values;
 
-    for (int i = 0; i < c; ++i) {
-        QVariant v = value(key, i);
+    const int count = valueCount(media, key);
 
-        if (!v.isNull())
-            values.append(v);
+    for (int i = 0; i < count; ++i) {
+        QVariant value = QWmpMetaData::value(media, key, i);
+
+        if (!value.isNull())
+            values.append(value);
     }
 
     return values;
-}
-
-IWMPMedia *QWmpMetaData::media() const
-{
-    return m_media;
-}
-
-void QWmpMetaData::setMedia(IWMPMedia *media)
-{
-    if (m_media)
-        m_media->Release();
-    if (m_media3)
-        m_media3->Release();
-
-    m_media = media;
-    m_media3 = 0;
-
-    if (m_media) {
-        m_media->AddRef();
-
-        m_media->QueryInterface(__uuidof(IWMPMedia3), reinterpret_cast<void **>(&m_media3));
-    }
-
-    emit changed();
 }
