@@ -70,8 +70,12 @@ class DBError
             CannotCreateDbDir,
             CannotOpenSystemDb,
             CannotOpenUserDb,
+            CannotCreateSystemDbDir,
+            CannotCreateUserDbDir,
             ExternalIfaceIDFound,
             InvalidDescriptorScope,
+            InvalidDatabaseFile,
+            NoWritePermissions,
             UnknownError
         };
         DBError();

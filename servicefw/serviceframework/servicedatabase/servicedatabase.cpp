@@ -116,10 +116,14 @@ void DBError::setError(ErrorCode error, const QString &text)
         case(IfaceImplAlreadyRegistered):
         case(InvalidSearchCriteria):
         case(CannotCreateDbDir):
-        case(CannotOpenSystemDb):
         case(CannotOpenUserDb):
+        case(CannotOpenSystemDb):
         case(InvalidDescriptorScope):
         case(IfaceIDNotExternal):
+        case(CannotCreateSystemDbDir):
+        case(CannotCreateUserDbDir):
+        case(InvalidDatabaseFile):
+        case(NoWritePermissions):
             m_text = text;
             break;
         default:
@@ -308,8 +312,10 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
     if (!executeQuery(&query, statement, bindValues)) {
         databaseRollback(&query, &database);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
+#endif
         return false;
     }
 
@@ -645,9 +651,18 @@ bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, c
         } else {
             parameters = "None";
         }
-        m_lastError.setSQLError(errorText.arg(statement)
-                                        .arg(query->lastError().text())
-                                        .arg(parameters));
+
+        int result = query->lastError().number();
+        if (result == 26 || result == 11) { //SQLILTE_NOTADB || SQLITE_CORRUPT
+            m_lastError.setError(DBError::InvalidDatabaseFile,
+                    errorText.arg(statement).arg(query->lastError().text())
+                             .arg(parameters));
+        } else {
+            m_lastError.setSQLError(errorText.arg(statement)
+                    .arg(query->lastError().text())
+                    .arg(parameters));
+        }
+
         query->finish();
         query->clear();
         return false;
@@ -671,9 +686,17 @@ bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, c
         } else {
             parameters = "None";
         }
-        m_lastError.setSQLError(errorText.arg(statement)
-                                        .arg(query->lastError().text())
-                                        .arg(parameters));
+
+        DBError::ErrorCode errorType;
+        if (query->lastError().number() == 8) //SQLITE_READONLY
+            errorType = DBError::NoWritePermissions;
+         else
+            errorType = DBError::SqlError;
+
+         m_lastError.setError(errorType,
+                 errorText.arg(statement)
+                          .arg(query->lastError().text())
+                          .arg(parameters));
         query->finish();
         query->clear();
         return false;
