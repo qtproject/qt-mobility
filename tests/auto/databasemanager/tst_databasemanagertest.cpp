@@ -59,7 +59,6 @@
 class DatabaseManagerUnitTest: public QObject
 {
     Q_OBJECT
-
 private slots:
         void initTestCase();
         void registerService();
@@ -90,6 +89,8 @@ private:
                QString interfaceDescription="");
 
         void clean();
+        void modifyPermissionSet(QFile::Permissions &permsSet,
+                                            int perm);
 
         DatabaseManager *m_dbm;
         QDir m_testdir;
@@ -489,9 +490,9 @@ void DatabaseManagerUnitTest::permissions()
     QDir::root().mkpath(userDir);
     QDir::root().mkpath(systemDir);
 
-    QFile::Permissions userPerm = QFile::permissions(userDir);
-    userPerm &= ~QFile::ExeOwner & ~QFile::ExeUser;
-    QVERIFY(QFile::setPermissions(userDir, userPerm));
+    QFile::Permissions userPermsSet = QFile::permissions(userDir);
+    modifyPermissionSet(userPermsSet, ~QFile::ExeOwner);
+    QVERIFY(QFile::setPermissions(userDir, userPermsSet));
 
     m_testdir = QDir(TESTDATA_DIR "/testdata");
     ServiceMetaData parser("");
@@ -503,39 +504,39 @@ void DatabaseManagerUnitTest::permissions()
 
     //try to create a system scope database with no permission to
     //create the directory needed for the system db
-    QFile::Permissions systemPerm = QFile::permissions(systemDir);
-    systemPerm &= ~QFile::ExeOwner & ~QFile::ExeUser;
-    QVERIFY(QFile::setPermissions(systemDir, systemPerm));
+    QFile::Permissions systemPermsSet = QFile::permissions(systemDir);
+    modifyPermissionSet(systemPermsSet, ~QFile::ExeOwner);
+    QVERIFY(QFile::setPermissions(systemDir, systemPermsSet));
 
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
 
-
     //restore directory permissions
-    userPerm |= QFile::ExeOwner | QFile::ExeUser;
-    QVERIFY(QFile::setPermissions(userDir, userPerm));
-    systemPerm |= QFile::ExeOwner | QFile::ExeUser;
-    QVERIFY(QFile::setPermissions(systemDir, systemPerm));
+    modifyPermissionSet(userPermsSet, QFile::ExeOwner);
+    QVERIFY(QFile::setPermissions(userDir, userPermsSet));
+    modifyPermissionSet(systemPermsSet, QFile::ExeOwner);
+    QVERIFY(QFile::setPermissions(systemDir, systemPermsSet));
 
     //try to create a user scope database without sufficient permissions
     //for creation of the database file
     QDir::root().mkpath(userDir + "/Nokia/");
-    userPerm = QFile::permissions(userDir + "/Nokia/");
-    userPerm &= ~QFile::WriteOwner & ~QFile::WriteUser;
-    QVERIFY(QFile::setPermissions(userDir + "/Nokia/", userPerm));
+    userPermsSet = QFile::permissions(userDir + "/Nokia/");
+    modifyPermissionSet(userPermsSet, ~QFile::WriteOwner);
+    QVERIFY(QFile::setPermissions(userDir + "/Nokia/", userPermsSet));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
 
     //restore user directory permissions and create and populate a user database
-    userPerm |= QFile::WriteOwner | QFile::WriteUser;
-    QVERIFY(QFile::setPermissions(userDir + "/Nokia", userPerm));
+    modifyPermissionSet(userPermsSet, QFile::WriteOwner);
+    QVERIFY(QFile::setPermissions(userDir + "/Nokia", userPermsSet));
     QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
     QString userDbFilePath = m_dbm->m_userDb.databasePath();
 
     //try to access database without read permissions
-    userPerm = QFile::permissions(userDbFilePath);
-    userPerm &= ~QFile::ReadOwner & ~QFile::ReadUser;
-    QVERIFY(QFile::setPermissions(userDbFilePath, userPerm));
+    userPermsSet = QFile::permissions(userDbFilePath);
+    modifyPermissionSet(userPermsSet, ~QFile::ReadOwner);
+
+    QVERIFY(QFile::setPermissions(userDbFilePath, userPermsSet));
     delete m_dbm;
     QServiceFilter filter;
     m_dbm = new DatabaseManager;
@@ -546,9 +547,9 @@ void DatabaseManagerUnitTest::permissions()
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
 
     //restore permissions
-    userPerm |= QFile::ReadOwner | QFile::ReadUser;
-    QVERIFY(QFile::setPermissions(userDbFilePath, userPerm));
-
+    modifyPermissionSet(userPermsSet, QFile::ReadOwner);
+    QVERIFY(QFile::setPermissions(userDbFilePath, userPermsSet));
+    
     //try to access an artificially corrupted user database
     QFile userDbFile(userDbFilePath);
     QFile acmeFile(m_testdir.absoluteFilePath("ServiceAcme.xml"));
@@ -574,9 +575,9 @@ void DatabaseManagerUnitTest::permissions()
 
     //try to register a service in the user db without write permissions
     delete m_dbm;
-    userPerm = QFile::permissions(userDbFilePath);
-    userPerm &= ~QFile::WriteOwner & ~QFile::WriteUser;
-    QVERIFY(QFile::setPermissions(userDbFilePath, userPerm));
+    userPermsSet = QFile::permissions(userDbFilePath);
+    modifyPermissionSet(userPermsSet, ~QFile::WriteOwner);
+    QVERIFY(QFile::setPermissions(userDbFilePath, userPermsSet));
     m_dbm = new DatabaseManager;
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceLuthorCorp.xml")));
     QVERIFY(parser.extractMetadata());
@@ -584,9 +585,9 @@ void DatabaseManagerUnitTest::permissions()
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 5);
-    
-    userPerm |= QFile::WriteOwner | QFile::WriteUser;
-    QVERIFY(QFile::setPermissions(userDbFilePath, userPerm));
+
+    modifyPermissionSet(userPermsSet, QFile::WriteOwner);
+    QVERIFY(QFile::setPermissions(userDbFilePath, userPermsSet));
     clean();
 }
 
@@ -597,9 +598,9 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
 
     QDir::root().mkpath(userNokiaDir);
     QDir::root().mkpath(systemNokiaDir);
-    QFile::Permissions systemPerms = QFile::permissions(systemNokiaDir);
-    systemPerms &= ~QFile::WriteOwner & ~QFile::WriteUser;
-    QFile::setPermissions(systemNokiaDir, systemPerms);
+    QFile::Permissions systemPermsSet = QFile::permissions(systemNokiaDir);
+    modifyPermissionSet(systemPermsSet, ~QFile::WriteOwner);
+    QFile::setPermissions(systemNokiaDir, systemPermsSet);
 
     m_dbm = new DatabaseManager;
 
@@ -711,8 +712,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
 
     //restore permissions so we can clean up the test directories
-    systemPerms |= QFile::WriteOwner | QFile::WriteUser;
-    QFile::setPermissions(systemNokiaDir, systemPerms);
+    modifyPermissionSet(systemPermsSet, QFile::WriteOwner);
+    QFile::setPermissions(systemNokiaDir, systemPermsSet);
     clean();
 }
 
@@ -743,9 +744,9 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
 
     //make system database non-writable
     QString systemDbFilePath = m_dbm->m_systemDb.databasePath();
-    QFile::Permissions systemPerms = QFile::permissions(systemDbFilePath);
-    systemPerms &= ~QFile::WriteOwner & ~QFile::WriteUser;
-    QFile::setPermissions(systemDbFilePath, systemPerms);
+    QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
+    modifyPermissionSet(systemPermsSet, ~QFile::WriteOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
 
     //== test registration() ==
     delete m_dbm;
@@ -969,9 +970,9 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                     "WayneEnt", 2, 0));
     QString systemDbFilePath = m_dbm->m_systemDb.databasePath();
-    QFile::Permissions systemPermissions = QFile::permissions(systemDbFilePath);
-    systemPermissions &= ~QFile::ReadOwner & ~QFile::ReadUser;
-    QFile::setPermissions(systemDbFilePath, systemPermissions);
+    QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
+    modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
 
     delete m_dbm;
     m_dbm = new DatabaseManager;
@@ -982,8 +983,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
 
-    systemPermissions |= QFile::ReadOwner | QFile::ReadUser;
-    QFile::setPermissions(systemDbFilePath, systemPermissions);
+    modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                                 DatabaseManager::UserScope);
     QVERIFY(m_dbm->m_systemDb.isOpen());
@@ -1007,7 +1008,51 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                             DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+}
 
+void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
+                                                    int perm)
+{
+    switch(perm) {
+        case(QFile::ReadOwner):
+            permsSet |= QFile::ReadOwner;
+#ifdef Q_OS_UNIX
+            permsSet |= QFile::ReadUser;
+#endif
+            break;
+        case(~QFile::ReadOwner):
+            permsSet &= ~QFile::ReadOwner;
+#ifdef Q_OS_UNIX
+            permsSet &= ~QFile::ReadUser;
+#endif
+            break;
+        case(QFile::WriteOwner):
+            permsSet |= QFile::WriteOwner;
+#ifdef Q_OS_UNIX
+            permsSet |= QFile::WriteUser;
+#endif
+            break;
+        case(~QFile::WriteOwner):
+            permsSet &= ~QFile::WriteOwner;
+#ifdef Q_OS_UNIX
+            permsSet &= ~QFile::WriteUser;
+#endif
+            break;
+        case(QFile::ExeOwner):
+            permsSet |= QFile::ExeOwner;
+#ifdef Q_OS_UNIX
+            permsSet |= QFile::ExeUser;
+#endif
+            break;
+        case(~QFile::ExeOwner):
+            permsSet &= ~QFile::ExeOwner;
+#ifdef Q_OS_UNIX
+            permsSet &= ~QFile::ExeUser;
+#endif
+            break;
+        default:
+            break;
+    }
 }
 
 void DatabaseManagerUnitTest::clean()
