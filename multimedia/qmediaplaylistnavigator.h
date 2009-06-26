@@ -15,7 +15,7 @@ class QMediaPlaylistNavigator : public QObject
     Q_PROPERTY(QMediaSource nextItem READ nextItem)
     Q_PROPERTY(QMediaSource previousItem READ previousItem)
 public:
-    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
     QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent = 0);
     virtual ~QMediaPlaylistNavigator();
@@ -45,11 +45,9 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void activated(const QMediaSource&);
-
-    void currentItemChanged(const QMediaSource&);
     void currentPositionChanged(int);
-
     void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
+
 
 private:
     Q_DISABLE_COPY(QMediaPlaylistNavigator)

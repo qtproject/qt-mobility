@@ -62,8 +62,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {
-        case QMediaPlaylistNavigator::NoPlayback:
+    switch (playbackMode) {        
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -102,8 +101,7 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {
-        case QMediaPlaylistNavigator::NoPlayback:
+    switch (playbackMode) {        
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -145,9 +143,6 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
 
 /*!
 enum QMediaPlaylistNavigator::PlaybackMode
-
-\item
-    NoPlayback No item is playing right now.
 
 \item
     CurrentItemOnce The current item is played only once.
@@ -211,9 +206,6 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
     d->playbackMode = mode;
 
     emit playbackModeChanged(mode);
-
-    if (mode == NoPlayback)
-        emit activated(QMediaSource());
 }
 
 QMediaPlaylist *QMediaPlaylistNavigator::playlist() const
@@ -255,8 +247,7 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
     }
 
     if (!d->currentItem.isNull()) {
-        d->currentItem = QMediaSource();
-        emit currentItemChanged(d->currentItem);
+        d->currentItem = QMediaSource();        
         emit activated(d->currentItem); //stop playback
     }
 }
@@ -386,7 +377,7 @@ void QMediaPlaylistNavigator::back()
 
 /*!
   Jump to the item at position \a pos.
-  The item is activated in all the modes except of NoPlayback.
+  The item is also activated.
   */
 void QMediaPlaylistNavigator::jump(int pos)
 {
@@ -413,9 +404,7 @@ void QMediaPlaylistNavigator::jump(int pos)
     QMediaSource src = d->playlist->itemAt(pos);
     if (src != d->currentItem) {
         d->currentItem = src;
-        emit currentItemChanged(src);
-        if ( playbackMode() != QMediaPlaylistNavigator::NoPlayback )
-                emit activated(src);
+        emit activated(src);
     };
 }
 
@@ -464,9 +453,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
         QMediaSource src = playlist->itemAt(currentPos);
         if (src != currentItem) {
             currentItem = src;
-            emit q->currentItemChanged(src);
-            if ( playbackMode != QMediaPlaylistNavigator::NoPlayback )
-                emit q->activated(src);
+            emit q->activated(src);
         }
     }
 }
@@ -478,10 +465,6 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
     it's usually related to change of the current item
     in playlist.
 */
-
-/*!
-  \fn void QMediaPlaylistNavigator::currentItemChanged(const QMediaSource &playlist)
-  */
 
 /*!
   \fn void QMediaPlaylistNavigator::currentPositionChanged(int)
