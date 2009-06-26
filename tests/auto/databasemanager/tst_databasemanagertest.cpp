@@ -1016,39 +1016,39 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
     switch(perm) {
         case(QFile::ReadOwner):
             permsSet |= QFile::ReadOwner;
-#ifdef Q_OS_UNIX
             permsSet |= QFile::ReadUser;
-#endif
+            permsSet |= QFile::ReadGroup;
+            permsSet |= QFile::ReadOther;
             break;
         case(~QFile::ReadOwner):
             permsSet &= ~QFile::ReadOwner;
-#ifdef Q_OS_UNIX
             permsSet &= ~QFile::ReadUser;
-#endif
+            permsSet &= ~QFile::ReadGroup;
+            permsSet &= ~QFile::ReadOther;
             break;
         case(QFile::WriteOwner):
             permsSet |= QFile::WriteOwner;
-#ifdef Q_OS_UNIX
             permsSet |= QFile::WriteUser;
-#endif
+            permsSet |= QFile::WriteGroup;
+            permsSet |= QFile::WriteOther;
             break;
         case(~QFile::WriteOwner):
             permsSet &= ~QFile::WriteOwner;
-#ifdef Q_OS_UNIX
             permsSet &= ~QFile::WriteUser;
-#endif
+            permsSet &= ~QFile::WriteGroup;
+            permsSet &= ~QFile::WriteOther;
             break;
         case(QFile::ExeOwner):
             permsSet |= QFile::ExeOwner;
-#ifdef Q_OS_UNIX
             permsSet |= QFile::ExeUser;
-#endif
+            permsSet |= QFile::ExeGroup;
+            permsSet |= QFile::ExeOther;
             break;
         case(~QFile::ExeOwner):
             permsSet &= ~QFile::ExeOwner;
-#ifdef Q_OS_UNIX
             permsSet &= ~QFile::ExeUser;
-#endif
+            permsSet &= ~QFile::ExeGroup;
+            permsSet &= ~QFile::ExeOther;
             break;
         default:
             break;
