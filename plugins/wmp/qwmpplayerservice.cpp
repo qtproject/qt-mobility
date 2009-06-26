@@ -3,6 +3,7 @@
 #include "qevrwidget.h"
 #include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
+#include "qwmpplaylist.h"
 
 #include <QtCore/qvariant.h>
 
@@ -15,6 +16,7 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
     , m_videoOutput(0)
     , m_control(0)
     , m_metaData(0)
+    , m_playlist(0)
     , m_connectionPoint(0)
     , m_adviseCookie(0)
 {
@@ -28,6 +30,7 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
             reinterpret_cast<void **>(&m_player))) {
         m_control = new QWmpPlayerControl(m_player, this);
         m_metaData = new QWmpMetaData(this);
+        m_playlist = new QWmpPlaylist(this);
 
         IConnectionPointContainer *container = 0;
 
@@ -71,6 +74,11 @@ QMediaPlayerControl *QWmpPlayerService::control()
 QMediaMetaData *QWmpPlayerService::metaData()
 {
     return m_metaData;
+}
+
+QMediaPlaylist *QWmpPlayerService::playlist()
+{
+    return m_playlist;
 }
 
 QWidget *QWmpPlayerService::createWidget()
@@ -162,9 +170,17 @@ void QWmpPlayerService::PositionChange(double oldPosition, double newPosition)
     m_control->positionChanged(newPosition);
 }
 
-void QWmpPlayerService::CurrentItemChange(IDispatch *pdispMedia)
+void QWmpPlayerService::MediaChange(IDispatch *Item)
 {
-    Q_UNUSED(pdispMedia);
+    Q_UNUSED(Item);
+
+    IWMPPlaylist *playlist = 0;
+
+    if (m_player->get_currentPlaylist(&playlist) == S_OK) {
+        m_playlist->setPlaylist(playlist);
+
+        playlist->Release();
+    }
 
     IWMPMedia *media = 0;
 

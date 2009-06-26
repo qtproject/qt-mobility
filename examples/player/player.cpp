@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include "playlistmodel.h"
+
 #include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
 #include "qwmpplayerservice.h"
@@ -21,6 +23,12 @@ Player::Player(QWidget *parent)
 
     if (videoWidget)
         service->setVideoOutput(videoWidget);
+
+    PlaylistModel *playlistModel = new PlaylistModel(this);
+    playlistModel->setPlaylist(service->playlist());
+
+    QTableView *playlistView = new QTableView;
+    playlistView->setModel(playlistModel);
 
     slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, 0);
@@ -60,8 +68,16 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(muteButton);
 
     QBoxLayout *layout = new QVBoxLayout;
-    if (videoWidget)
-        layout->addWidget(videoWidget);
+    if (videoWidget) {
+        QSplitter *splitter = new QSplitter(Qt::Vertical);
+
+        splitter->addWidget(videoWidget);
+        splitter->addWidget(playlistView);
+
+        layout->addWidget(splitter);
+    } else {
+        layout->addWidget(playlistView);
+    }
     layout->addWidget(slider);
     layout->addLayout(controlLayout);
 
@@ -94,6 +110,5 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    qDebug(qPrintable(service->metaData()->keys().join(QLatin1String("; "))));
     setWindowTitle(service->metaData()->value(QLatin1String("Title")).toString());
 }

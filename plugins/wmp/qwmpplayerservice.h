@@ -10,6 +10,7 @@
 
 class QMediaMetaData;
 class QMediaPlayerControl;
+class QMediaPlaylist;
 
 class Q_WMP_EXPORT QMediaPlayerService : public QObject
 {
@@ -24,10 +25,12 @@ public:
 
     virtual QMediaPlayerControl *control() = 0;
     virtual QMediaMetaData *metaData() = 0;
+    virtual QMediaPlaylist *playlist() = 0;
 };
 
 class QWmpMetaData;
 class QWmpPlayerControl;
+class QWmpPlaylist;
 
 class Q_WMP_EXPORT QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
 {
@@ -38,6 +41,7 @@ public:
 
     QMediaPlayerControl *control();
     QMediaMetaData *metaData();
+    QMediaPlaylist *playlist();
 
     QWidget *createWidget();
 
@@ -53,7 +57,7 @@ public:
     void STDMETHODCALLTYPE PlayStateChange(long NewState);
     void STDMETHODCALLTYPE Buffering(VARIANT_BOOL Start);
     void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
-    void STDMETHODCALLTYPE CurrentItemChange(IDispatch *pdispMedia);
+    void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
 
 private:
     volatile LONG m_ref;
@@ -61,6 +65,7 @@ private:
     QObject *m_videoOutput;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
+    QWmpPlaylist *m_playlist;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
 

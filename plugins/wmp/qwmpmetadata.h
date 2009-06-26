@@ -17,9 +17,9 @@ public:
 
     virtual QStringList keys() const = 0;
 
-    virtual int count(const QString &key) const = 0;
+    virtual int valueCount(const QString &key) const = 0;
 
-    virtual QVariant value(const QString &key, int index = 0) const = 0;
+    virtual QVariant value(const QString &key, int value = 0) const = 0;
     virtual QVariantList values(const QString &key) const = 0;
 
 Q_SIGNALS:
@@ -36,17 +36,23 @@ public:
 
     QStringList keys() const;
 
-    int count(const QString &key) const;
+    int valueCount(const QString &key) const;
 
-    QVariant value(const QString &key, int index = 0) const;
+    QVariant value(const QString &key, int value = 0) const;
     QVariantList values(const QString &key) const;
 
     IWMPMedia *media() const;
     void setMedia(IWMPMedia *media);
 
+    static QStringList keys(IWMPMedia *media);
+
+    static int valueCount(IWMPMedia *media, const QString &key);
+    
+    static QVariant value(IWMPMedia *media, const QString &key, int value);
+    static QVariantList values(IWMPMedia *media, const QString &key);
+
 private:
     IWMPMedia *m_media;
-    IWMPMedia3 *m_media3;
 };
 
 #endif
