@@ -57,6 +57,9 @@ public:
 
     static QString tempSettingsPath(const char *path = "");
     static void removeDirectory(const QString &path);
+
+    static QString userDirectory();
+    static QString systemDirectory();
 };
 
 #endif

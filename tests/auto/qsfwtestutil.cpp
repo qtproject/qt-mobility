@@ -76,6 +76,16 @@ QString QSfwTestUtil::tempSystemDbDir()
     return tempSettingsPath("__system__");
 }
 
+QString QSfwTestUtil::userDirectory()
+{
+    return tempSettingsPath("__user__/");
+}
+
+QString QSfwTestUtil::systemDirectory()
+{
+    return tempSettingsPath("__system__/");
+}
+
 QString QSfwTestUtil::tempSettingsPath(const char *path)
 {
     // Temporary path for files that are specified explictly in the constructor.

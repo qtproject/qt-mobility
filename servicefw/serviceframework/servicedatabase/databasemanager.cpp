@@ -211,6 +211,8 @@ DatabaseManager::DatabaseManager()
 DatabaseManager::~DatabaseManager()
 {
     close();
+    delete m_fileWatcher;
+    m_fileWatcher = 0;
 }
 
 void DatabaseManager::initDbPaths()
@@ -333,17 +335,18 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         for (int i = userDescriptorCount; i < descriptors.count(); ++i) {
             descriptors[i].d->systemScope = true;
         }
-        m_lastError.setError(DBError::NoError);
+    } else {
+        if ( scope == SystemScope) {
+            //openDb() should already have handled lastError
+            descriptors.clear();
+            return descriptors;
+        } else { //scope ==UserScope
+            qWarning() << "Service Framework: search operation could not be performed on system scope database:"
+                << qPrintable(m_systemDb.databasePath());
+        }
     }
 
-    if (!m_systemDb.isOpen() && scope == SystemScope) {
-        //openDb() should already have handled lastError
-        descriptors.clear();
-        return descriptors;
-    }
-
-    //Note:if the system database could not be opened at user scope,
-    //we continue on and just use the results for the user database
+    m_lastError.setError(DBError::NoError);
     return descriptors;
 }
 
@@ -379,17 +382,18 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
                 serviceNames.append(systemServiceName);
         }
 
-        m_lastError.setError(DBError::NoError);
+    } else {
+        if ( scope == SystemScope) {
+            //openDb() should have already handled lastError
+            serviceNames.clear();
+            return serviceNames;
+        } else { //scope == UserScope
+            qWarning() << "Service Framework: search operation could not be performed on system scope database:"
+                << qPrintable(m_systemDb.databasePath());
+        }
     }
 
-    if (!m_systemDb.isOpen() && scope == SystemScope) {
-        //openDb() should have already handled lastError
-        serviceNames.clear();
-        return serviceNames;
-    }
-
-    //Note:if the system database could not be opened at user scope,
-    //we continue on and just use the results for the user database
+    m_lastError.setError(DBError::NoError);
     return serviceNames;
 }
 
@@ -424,9 +428,19 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
                 //service implementing interface doesn't exist in the system db
                 //so the user db must contain a stale entry so remove it
                 m_userDb.removeExternalDefaultServiceInterface(interfaceID);
-                QString errorText("No default service found for interface: \"%1\"");
-                m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
-                return QServiceInterfaceDescriptor();
+
+                QList<QServiceInterfaceDescriptor> descriptors;
+                descriptors = getInterfaces(interfaceName, UserScope);
+
+                if (descriptors.count() > 0 ) {
+                    descriptor = latestDescriptor(descriptors);
+                    m_lastError.setError(DBError::NoError);
+                    return descriptor;
+                } else {
+                    QString errorText("No default service found for interface: \"%1\"");
+                    m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
+                    return QServiceInterfaceDescriptor();
+                }
             } else {
                 m_lastError.setError(DBError::NoError);
                 return QServiceInterfaceDescriptor();
@@ -472,8 +486,6 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
 bool DatabaseManager::setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope)
 {
     QList<QServiceInterfaceDescriptor> descriptors;
-    int userDescriptorCount = 0;
-    bool ok;
     QServiceFilter filter;
     filter.setServiceName(serviceName);
     filter.setInterface(interfaceName);
@@ -568,14 +580,19 @@ bool DatabaseManager::openDb(DbScope scope)
 
     bool isOpen = db->open();
     if (!isOpen) {
-        QString errorText("Unable to open service framework database: %1");
-        if (scope == SystemScope)
-            m_lastError.setError(DBError::CannotOpenSystemDb,
-                                errorText.arg(db->databasePath()));
-        else
-            m_lastError.setError(DBError::CannotOpenUserDb,
-                                errorText.arg(db->databasePath()));
+        if (db->lastError().errorCode() == DBError::InvalidDatabaseFile) {
+            m_lastError = db->lastError();
+        } else {
+            DBError::ErrorCode errorType;
+            if (scope == SystemScope)
+                errorType = DBError::CannotOpenSystemDb;
+            else
+                errorType = DBError::CannotOpenUserDb;
 
+            QString errorText("Unable to open service framework database: %1");
+            m_lastError.setError(errorType,
+                        errorText.arg(db->databasePath()));
+        }
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "DatabaseManger::openDb():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -595,6 +612,21 @@ bool DatabaseManager::openDb(DbScope scope)
 
     m_lastError.setError(DBError::NoError);
     return true;
+}
+
+QServiceInterfaceDescriptor DatabaseManager::latestDescriptor(
+                                    const QList<QServiceInterfaceDescriptor> &descriptors)
+{
+    if (descriptors.count() == 0)
+        return QServiceInterfaceDescriptor();
+
+    int latestIndex = 0;
+    for (int i = 1; i < descriptors.count(); ++i) {
+        if (lessThan(descriptors[latestIndex], descriptors[i]))
+            latestIndex = i;
+    }
+
+    return descriptors[latestIndex];
 }
 
 void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
