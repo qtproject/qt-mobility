@@ -56,26 +56,14 @@ MpdDaemon::~MpdDaemon()
 bool MpdDaemon::connect()
 {
     d->socket->connectToHost(MPD_HOSTNAME, MPD_PORT);
+
+    // Immediately enter idle state
+    rawSend("idle");
 }
 
 void MpdDaemon::disconnect()
 {
     d->socket->disconnect();
-}
-
-void MpdDaemon::play()
-{
-    send("play");
-}
-
-void MpdDaemin::pause()
-{
-    send("pause");
-}
-
-void MpdDaemon::stop()
-{
-    send("stop");
 }
 
 int MpdDaemon::playerState() const
@@ -103,78 +91,118 @@ bool MpdDaemon::muted() const
     return d->muted;
 }
 
+QStringList MpdDaemon::send(QString const &command, bool *ok = 0)
+{
+    QStringList r;
+
+    rawSend("noidle");
+    r = rawSend(command.toAscii().constData(), ok);
+    rawSend("idle");
+
+    return r;
+}
+
 void MpdDaemin::readData()
 {
-    QTextStream ts(d->socket);
-    QByteArray response;
+    QStringList r = rawRecv();
 
-    switch (d->streamState) {
-    case E_OK:      // expecting ack
-        in >> response;
-        send("idle");
-        d->streamState = E_CHANGED;
-        break;
+    QStringList t = r.at(0).split(' ');
+    QString const &name = t.at(0);
+    QString const &value = t.at(1);
 
-    case E_STATUS: {  // expecting status nv pairs
-        QByteArray  name;
-        QByteArray  value;
-        while (!ts->atEnd()) {
-            ts >> name >> value;
-            if (name == "volume:")
-                d->volume = value.toInt();
-            else if (name == "repeat:")
-                d->repeat = value.toBool();
-            else if (name == "random:")
-                d->random = value.toBool();
-            else if (name == "playlist:")
-                d->>playlist = value.toUInt();
-            else if (name == "playlistlength:")
-                d->playlistlength = value.toInt();
-            else if (name == "xfade:")
-                d->xfade = value.toInt();
-            else if (name == "state:")
-                d->state = value.toInt();
-            else if (name == "song:")
-                d->song = value.toInt();
-            else if (name == "songid:")
-                d->songid = value.toInt();
-            else if (name == "time:") {
-                QList<QByteArray>  s = value.split(':');
-                d->position = s.at(0).toInt();
-                d->duration = s.at(1).toInt();
-            }
-            else if (name == "bitrate:")
-                d->bitrate = value.toInt();
-            else if (name == "audio:") {
-                QList<QByteArray>  s = value.split(':');
-                d->frequency = s.at(0).toInt();
-                d->bits = s.at(1).toInt();
-                d->channels = s.at(2).toInt();
-            }
-        }
+    checkStatus();
 
-        if (name == "OK") {
-            send("idle");
-            d->streamState == E_CHANGED;
-        }
-
-        emit notify();
-        break;
+    if (name == "changed:") {
+        if (value == "playlist")
+            emit playlistChanged();
+        else if (value == "player")
+            emit playerChanged();
+        else if (value == "mixer")
+            emit mixerChanged();
     }
+    /*
+      database: the song database has been updated
+      stored_playlist: a stored playlist has been modified, renamed, created or deleted
+      playlist: the current playlist has been modified
+      player: the player has been started, stopped or seeked
+      mixer: the volume has been changed
+      output: an audio output has been enabled or disabled
+      options: options like repeat, random, crossfade 
+    */
 
-    case E_CHANGED: // expecting idle notice
-    }
+    emit notify();
 }
 
 void MpdDaemon::checkStatus()
 {
-    send("status");
+    bool     ok = false;
+    QStringList r = send("status", &ok);
+
+    if (!ok)
+        return;
+
+    foreach (QString const &rs, r) {
+        QStringList t = rs.split(' ');
+        QString const &name = t.at(0);
+        QString const &value = t.at(1);
+
+        if (name == "volume:")
+            d->volume = value.toInt();
+        else if (name == "repeat:")
+            d->repeat = value.toBool();
+        else if (name == "random:")
+            d->random = value.toBool();
+        else if (name == "playlist:")
+            d->>playlist = value.toUInt();
+        else if (name == "playlistlength:")
+            d->playlistlength = value.toInt();
+        else if (name == "xfade:")
+            d->xfade = value.toInt();
+        else if (name == "state:")
+            d->state = value.toInt();
+        else if (name == "song:")
+            d->song = value.toInt();
+        else if (name == "songid:")
+            d->songid = value.toInt();
+        else if (name == "time:") {
+            QList<QByteArray>  s = value.split(':');
+            d->position = s.at(0).toInt();
+            d->duration = s.at(1).toInt();
+        }
+        else if (name == "bitrate:")
+            d->bitrate = value.toInt();
+        else if (name == "audio:") {
+            QList<QByteArray>  s = value.split(':');
+            d->frequency = s.at(0).toInt();
+            d->bits = s.at(1).toInt();
+            d->channels = s.at(2).toInt();
+        }
+    }
 }
 
-void MpdDaemon::send(const QByteArraty &cmd)
+QStringList MpdDaemon::rawSend(const QByteArraty &cmd, bool *ok)
 {
     QTextStream ts(d->socket);
 
-    ts << "noidle" << endl << cmd << endl;
+    ts << cmd << endl;
+
+    return rawRecv(ok);
+}
+
+QStringList MpdDaemon::rawRecv(bool *ok)
+{
+    QTextStream ts(d->socket);
+    QString s;
+    for (;;) {
+        s = ts.readLine();
+
+        if (s == "OK" || s.startsWith("ACK"))
+            break;
+
+        r << s;
+    }
+
+    if (ok != 0)
+        *ok = s == "OK";
 }
 

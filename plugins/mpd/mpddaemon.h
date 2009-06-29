@@ -17,19 +17,20 @@ public:
     bool connect();
     void disconnect();
 
-    void play();
-    void pause();
-    void stop();
-
     int playerState() const;
     qint64 duration() const;
     int volume() const;
     bool muted() const;
     qint64 position() const;
 
+    QStringList send(QString const &command, bool *ok = 0);
+
 signals:
     void disconnected();
     void notify();
+    void playlistChanged();
+    void playerChanged();
+    void mixedChanged();
 
 private slots:
     void readData();
@@ -38,7 +39,8 @@ private slots:
 private:
     MpdDaemonPrivate *d;
 
-    void send(QByteArray const &cmd);
+    QStringList rawSend(QByteArray const &cmd, bool *ok = 0);
+    QStringList rawRecv(bool *ok = 0);
 };
 
 

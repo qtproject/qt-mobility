@@ -1,6 +1,6 @@
 
 #include "mpdplayercontrol.h"
-
+#include "mpdplaylistsource.h"
 
 
 
@@ -8,47 +8,50 @@ MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd):
     QMediaPlayerControl(0),
     daemon(mpd)
 {
-    connect(daemoin, SIGNAL(notify()), SLOT(checkStatus()));
+    setMediaPlaylist(new QMediaPlaylist(new MpdPlaylistSource(daemon, this)));
 
-    idle();
+    connect(daemon, SIGNAL(notify()), SLOT(notify()));
+    connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
+    connect(daemon, SIGNAL(mixerChanged()), SLOT(mixerChanged()));
 }
 
 MpdPlayerControl::~MpdPlayerControl()
 {
 }
 
-void MpdPlayerControl::setMediaSource(QMediaSource source)
-{
-    // Map mediasource to play id
-}
-
 void MpdPlayerControl::play()
 {
-    daemon->play();
+    daemon->send("play");
 }
 
 void MpdPlayerControl::pause()
 {
-    daemon->pause();
+    daemon->send("pause");
 }
 
 void MpdPlayerControl::stop()
 {
-    daemon->stop();
+    daemon->send("stop");
 }
 
-void MpdPlayer::checkStatus()
+void MpdPlayer::notify()
 {
-    if (state() != daemon->playerState())
-        setState(daemon->playerState());
     if (duration() != daemon->duration())
         setDuration(daemon->playerDuration());
-    if (volume() != daemon->volume())
-        setVolume(daemon->volume());
-    if (muted() != (daemon->volume() == 0))
-        setMuted(daemon->volume() == 0);
     if (position() != daemon->position())
         setPosition(daemon->position());
 }
 
+void MpdPlayer::playerChanged()
+{
+    if (state() != daemon->playerState())
+        setState(daemon->playerState());
+}
 
+void MpdPlayer::mixerChanged()
+{
+    if (volume() != daemon->volume())
+        setVolume(daemon->volume());
+    if (muted() != (daemon->volume() == 0))
+        setMuted(daemon->volume() == 0);
+}

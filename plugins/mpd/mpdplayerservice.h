@@ -3,6 +3,9 @@
 #include <QMediaPlayerService>
 
 
+class MpdDaemon;
+class MpdPlayerControl;
+
 class MpdPlayerService : public QMediaPlayerService
 {
     Q_OBJECT
@@ -11,7 +14,7 @@ public:
     MpdPlayerService();
     ~MpdPlayerService();
 
-    virtual MpdPlayerService* control() const;
+    virtual MpdPlayerControl* control() const;
 
 private slots:
     void stateChanged(int state);
@@ -19,4 +22,5 @@ private slots:
 
 private:
     MpdDaemon *daemon;
+    MpdPlayerControl *control;
 };

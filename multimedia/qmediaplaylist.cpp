@@ -80,7 +80,7 @@ int QMediaPlaylist::size() const
 
 /*!
   Returns true if the playlist contains no items; otherwise returns false.
-  \sa size().
+  \sa size()
   */
 bool QMediaPlaylist::isEmpty() const
 {

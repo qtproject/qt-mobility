@@ -10,15 +10,17 @@ MpMediaPlayerService::MpdMediaPlayerService();
     connect(daemon, SIGNAL(disconnected()), SLOT(disconnected()));
 
     daemon->connect();
+
+    control = new MpdPlayerControl(daemon, this);
 }
 
 MpdPlayerService::~MpdPlayerService()
 {
 }
 
-MpdPlayerService* MpdPlayerService::control() const
+MpdPlayerControl* MpdPlayerService::control() const
 {
-    return new MpdPlayerControl(daemon);
+    return control;
 }
 
 void MpdPlayerService::disconnected()

@@ -17,7 +17,9 @@ public:
     void stop();
 
 private slots:
-    void checkStatus();
+    void notify();
+    void playerChanged();
+    void mixerChanged();
 
 private:
     MpdDaemon *daemon;

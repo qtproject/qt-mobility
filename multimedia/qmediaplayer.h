@@ -10,7 +10,7 @@ class QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QMediaSource mediaSource READ mediaSource WRITE setMediaSource NOTIFY mediaSourceChanged)
+    Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -30,7 +30,7 @@ public:
     ~QMediaPlayer();
 
     State state() const;
-    QMediaSource mediaSource() const;
+    QMediaPlaylist* mediaPlaylist() const;
 
     qint64 duration() const;
     qint64 position() const;
@@ -46,7 +46,7 @@ public:
     QMediaPlayerService* service() const;
 
 public Q_SLOTS:
-    void setMediaSource(QMediaSource mediaSource);
+    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     void play();
     void pause();
