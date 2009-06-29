@@ -1,5 +1,5 @@
 
-#include <private/qobject_p.h>
+#include <private/qwidget_p.h>
 
 #include "qmediaimageviewer.h"
 
@@ -14,33 +14,40 @@
     \sa
 */
 
-class QMediaImageViewerPrivate : public QObjectPrivate
+class QMediaImageViewerPrivate : public QWidgetPrivate
 {
 public:
 };
 
 
 QMediaImageViewer::QMediaImageViewer(QWidget* parent):
-    QWidget(*new QMediaImageViewerPrivate, parent)
+    QWidget(*new QMediaImageViewerPrivate, parent, 0)
 {
 }
 
 
-QMediaImageViewer::~QMediImageViewer()
+QMediaImageViewer::~QMediaImageViewer()
 {
 }
 
 
 int QMediaImageViewer::interval() const
 {
+    return 0;
 }
 
 QMediaImageViewer::State QMediaImageViewer::state() const
 {
+    return QMediaImageViewer::StoppedState;
+}
+
+QMediaSource QMediaImageViewer::mediaSource() const
+{
+    return QMediaSource();
 }
 
 //public Q_SLOTS:
-void QMediaImageViwewer::setMediaSource(QMediaSource mediaSource)
+void QMediaImageViewer::setMediaSource(QMediaSource mediaSource)
 {
 }
 

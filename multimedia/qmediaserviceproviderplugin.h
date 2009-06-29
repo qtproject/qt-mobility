@@ -8,6 +8,20 @@
 
 class QMediaServiceProvider;
 
+class QAudioDeviceInfo
+{
+public:
+    enum Mode
+    {
+    };
+};
+
+class QAudioFormat {};
+
+class QAbstractAudioInput;
+class QAbstractAudioOutput;
+class QAbstractAudioDeviceInfo;
+
 struct Q_MULTIMEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
 {
     virtual QList<QByteArray> deviceList(QAudioDeviceInfo::Mode) const = 0;
@@ -18,9 +32,9 @@ struct Q_MULTIMEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFacto
 
 #define QMediaServiceProviderFactoryInterface_iid \
     "com.nokia.qt.QMediaServiceProviderFactoryInterface"
-Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaProviderFactoryInterface_iid)
+Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
-class Q_MULTIMEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaProviderFactoryInterface
+class Q_MULTIMEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaServiceProviderFactoryInterface:QFactoryInterface)

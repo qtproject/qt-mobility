@@ -33,4 +33,6 @@ private:
     QSharedDataPointer<QMediaSourcePrivate> d;
 };
 
+Q_DECLARE_METATYPE(QMediaSource);
+
 #endif  // QMEDIASOURCE_H

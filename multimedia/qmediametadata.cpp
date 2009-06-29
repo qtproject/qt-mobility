@@ -21,23 +21,26 @@ public:
 };
 
 
-QMediaMetadata::QMediaMetaData(QAbstractMediaObject *mediaObject):
-    QObject(*new QMediaMetadataPrivate, mediaObject)
+QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject)
+        : QObject(*new QMediaMetadataPrivate, mediaObject)
 {
 }
 
-QMediaMetadata::~QMediaMetaData()
+QMediaMetadata::~QMediaMetadata()
 {
 }
 
 bool QMediaMetadata::metaDataAvailable() const
 {
+    return false;
 }
 
-QList<QString> QMediaMetadata::availableMetaData() const
+QList<QString> QMediaMetadata::availableMetadata() const
 {
+    return QList<QString>();
 }
 
 QVariant QMediaMetadata::valueFor(QString const &name) const
 {
+    return QVariant();
 }

@@ -1,7 +1,8 @@
 
 
-#include <QtCore/private/qobject_p.h>
-#include <QtCore/qtimer.h>
+#include <private/qobject_p.h>
+#include <qmetaobject.h>
+#include <qtimer.h>
 
 #include "qabstractmediacontrol.h"
 
@@ -30,13 +31,13 @@ int QAbstractMediaControl::notifyInterval() const
     return d_func()->notifyInterval;
 }
 
-void QAbstractMediaControl::setNofifyInterval(int milliSeconds)
+void QAbstractMediaControl::setNotifyInterval(int milliSeconds)
 {
-    Q_D(QAbstractMediaControl)
+    Q_D(QAbstractMediaControl);
 
     if (d->notifyInterval != milliSeconds) {
         d->notifyInterval = milliSeconds;
-        if (d->notifyTimer->active())
+        if (d->notifyTimer->isActive())
             d->notifyTimer->start(d->notifyInterval);
         emit notifyIntervalChanged(d->notifyInterval);
     }
@@ -44,7 +45,7 @@ void QAbstractMediaControl::setNofifyInterval(int milliSeconds)
 
 void QAbstractMediaControl::addPropertyWatch(QString const& name)
 {
-    Q_D(QAbstractMediaControl)
+    Q_D(QAbstractMediaControl);
 
     const bool beginNotify = d->notifyProperties.isEmpty();
 
@@ -67,7 +68,7 @@ void QAbstractMediaControl::removePropertyWatch(QString const& name)
 QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
     QObject(*new QAbstractMediaControlPrivate, parent)
 {
-    Q_D(QAbstractMediaControl)
+    Q_D(QAbstractMediaControl);
 
     d->notifyTimer = new QTimer(this);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(notifyCheck()));
@@ -83,7 +84,7 @@ void QAbstractMediaControl::changePropertyValue(const char *name, QVariant const
     }
 }
 
-bool QAbstractMediaControl::propertyValueChangedconst(const char *name, QVariant const &value)
+bool QAbstractMediaControl::propertyValueChanged(const char *name, QVariant const &value)
 {
     Q_UNUSED(name)
     Q_UNUSED(value)
@@ -93,15 +94,19 @@ bool QAbstractMediaControl::propertyValueChangedconst(const char *name, QVariant
 
 void QAbstractMediaControl::notifyPropertyValueChanged(const char *name, QVariant const &value)
 {
-    const QMetaObject* m = notifyObject->metaObject();
+    Q_D(QAbstractMediaControl);
+
+    const QMetaObject* m = d->notifyObject->metaObject();
 
     int pi = m->indexOfProperty(name);
     if (pi == -1)
         return;
 
     QMetaProperty p = m->property(pi);
-    if (p.hasNotifySignal())
-        p->notifySignal().invoke(notifyObject, QGenericArgument(QMetaType::typeName(p.userType), value.data()));
+    if (p.hasNotifySignal()) {
+        p.notifySignal().invoke(
+                d->notifyObject, QGenericArgument(QMetaType::typeName(p.userType()), value.data()));
+    }
 }
 
 void QAbstractMediaControl::notifyCheck()
@@ -110,8 +115,8 @@ void QAbstractMediaControl::notifyCheck()
 
     const int len = d->notifyProperties.length();
 
-    foreach (int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         const char *name = d->notifyProperties.at(i).toAscii().constData();
-        notifyPropertyValueChanged(name, propery(name));
+        notifyPropertyValueChanged(name, property(name));
     }
 }

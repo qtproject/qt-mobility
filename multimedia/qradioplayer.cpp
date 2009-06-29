@@ -1,6 +1,5 @@
 
 #include "qradioplayer.h"
-#include "qradioplayerservice.h"
 #include "qradiotuner.h"
 
 /*!
@@ -28,7 +27,7 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     Q_ASSERT(service != 0);
 
     d->service = service;
-    d->control = service->control();
+    d->control = qobject_cast<QRadioTuner *>(service->control());
     d->control->setNotifyObject(this);
 }
 
@@ -40,7 +39,7 @@ QRadioPlayer::~QRadioPlayer()
 
 QRadioPlayer::Band QRadioPlayer::band() const
 {
-    return d->control->band();
+    return QRadioPlayer::Band(d->control->band());
 }
 
 int QRadioPlayer::frequency() const
@@ -73,14 +72,14 @@ bool QRadioPlayer::isMuted() const
     return d->control->isMuted();
 }
 
-QRadioService* QRadioPlayer::service() const
+QAbstractMediaService* QRadioPlayer::service() const
 {
     return d->service;
 }
 
 void QRadioPlayer::setBand(QRadioPlayer::Band band)
 {
-    d->control->setBand(band):
+    d->control->setBand(band);
 }
 
 void QRadioPlayer::setFrequency(int frequency)

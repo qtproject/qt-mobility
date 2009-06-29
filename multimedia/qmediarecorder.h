@@ -1,18 +1,26 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <QObject>
+#include "qabstractmediacontrol.h"
+#include "qabstractmediaobject.h"
+#include "qabstractmediaservice.h"
 
-class QMediaRecorderSession;
+#include "qmediaserviceprovider.h"
+
+class QAbstractMediaObject;
+class QMediaRecorderService;
+class QMediaSink;
+
 class QMediaRecorderPrivate;
 
 
+extern QMediaRecorderService *createMediaRecorderService(QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder"));
 
 class QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int position READ positioin NOTIFY positionChanged)
+    // Q_PROPERTY(int position READ position NOTIFY positionChanged)
 
     Q_ENUMS(State)
 
@@ -26,9 +34,9 @@ public:
     void setRecordingSink(QAbstractMediaObject* sink);
 
     State state() const;
-    MediaSink sink() const;
+    QMediaSink *sink() const;
 
-    QMediaRecorderService* service() const;
+    QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void record();
@@ -36,13 +44,25 @@ public Q_SLOTS:
     void stop();
 
 Q_SIGNALS:
-    void stateChangeed(QMediaRecorder::State state);
+    void stateChanged(QMediaRecorder::State state);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaRecorder)
+    QMediaRecorderPrivate *d;
+
     Q_DISABLE_COPY(QMediaRecorder)
 };
 
-extern QMediaRecorderService* createMediaRecorderService(QMediaServiceProvider *provider = defaultProvider("mediarecorder"));
+class QMediaRecorderService : public QAbstractMediaService
+{
+    Q_OBJECT
+};
+
+class QMediaRecorderControl : public QAbstractMediaControl
+{
+    Q_OBJECT
+public:
+    int state() const;
+    QMediaSink *sink() const;
+};
 
 #endif  // QMEDIARECORDER_H

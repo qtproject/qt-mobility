@@ -2,6 +2,8 @@
 #include "qmediaplayer.h"
 #include "qmediaplayerservice.h"
 #include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediasource.h"
 
 
 /*!
@@ -26,14 +28,14 @@ public:
     Construct a QMediaPlayer to operate on the QMediaPlayerSession \a session, parented to \a parent.
 */
 
-QMediaPlayer::QMediaPlayer(QMediaPlayerService *session, QObject *parent):
+QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     QAbstractMediaObject(parent),
     d(new QMediaPlayerPrivate)
 {
-    Q_ASSERT(session != 0);
+    Q_ASSERT(service != 0);
 
     d->service = service;
-    d->control = service->control();
+    d->control = qobject_cast<QMediaPlayerControl *>(service->control());
     d->control->setNotifyObject(this);
 }
 
@@ -53,7 +55,7 @@ QMediaPlayer::~QMediaPlayer()
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
-    return d->control->state();
+    return QMediaPlayer::State(d->control->state());
 }
 
 /*!
@@ -132,9 +134,9 @@ bool QMediaPlayer::isVideoAvailable() const
     Returns the session object being controlled by this Player.
 */
 
-QMediaPlayerSession* QMediaPlayer::session() const
+QAbstractMediaService* QMediaPlayer::service() const
 {
-    return d->session;
+    return d->service;
 }
 
 //public Q_SLOTS:
@@ -192,7 +194,7 @@ void QMediaPlayer::setPosition(qint64 position)
 
 void QMediaPlayer::setVolume(int volume)
 {
-    d->control-setVolume(volume);
+    d->control->setVolume(volume);
 }
 
 /*!
@@ -208,7 +210,17 @@ void QMediaPlayer::setMuted(bool muted)
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QMediaPlayerService*>(provider->createObject("com.nokia.qt.MediaPlayer/1.0"));
+    QObject *object = provider->createObject("com.nokia.qt.MediaPlayer/1.0");
+
+    if (object) {
+        QMediaPlayerService *service = qobject_cast<QMediaPlayerService *>(object);
+
+        if (service)
+            return service;
+
+        delete service;
+    }
+    return 0;
 }
 
 /*!

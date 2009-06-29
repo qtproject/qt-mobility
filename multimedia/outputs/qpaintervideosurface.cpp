@@ -35,6 +35,8 @@ QPainterVideoSurface::~QPainterVideoSurface()
 */
 bool QPainterVideoSurface::isFormatSupported(const QVideoFormat &format, QVideoFormat *similar)
 {
+    Q_UNUSED(similar);
+
     QImage::Format imageFormat = QVideoFrame::imageFormatFromType(format.frameType());
     QSize imageSize = format.frameSize();
 
@@ -85,7 +87,7 @@ void QPainterVideoSurface::stop()
 bool QPainterVideoSurface::present(const QVideoFrame &frame)
 {
     if (!m_ready) {
-        setError(isStarted() ? NotStartedError : NotReadyError);
+        setError(isStarted() ? StoppedError : NotReadyError);
 
         return false;
     } else if (frame.type() != m_frameType || frame.size() != m_imageSize) {

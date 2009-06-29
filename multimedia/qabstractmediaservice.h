@@ -4,10 +4,11 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
-class QMediaAudioOutput {};
-class QMediaVideoOutput {};
-
 class QAbstractMediaControl;
+class QMediaAudioOutput;
+class QMediaVideoOutput;
+
+class QAbstractMediaServicePrivate;
 
 class QAbstractMediaService : public QObject
 {

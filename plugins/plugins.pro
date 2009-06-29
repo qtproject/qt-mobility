@@ -1,5 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = \
-    wmp
-    
+win32: SUBDIRS *= wmp

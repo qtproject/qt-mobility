@@ -1,10 +1,12 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
-#include <QWidget>
+#include <QtGui/qwidget.h>
+
+#include "qmediasource.h"
 
 
-class QMediaimageViewerPrivate;
+class QMediaImageViewerPrivate;
 
 class QMediaImageViewer : public QWidget
 {
@@ -21,10 +23,12 @@ public:
 
     // Should also have session so can grab custom uri schemes etc?
     QMediaImageViewer(QWidget* parent = 0);
-    ~QMediImageViewer();
+    ~QMediaImageViewer();
 
     int interval() const;
     State state() const;
+
+    QMediaSource mediaSource() const;
 
 public Q_SLOTS:
     void setMediaSource(QMediaSource mediaSource);
