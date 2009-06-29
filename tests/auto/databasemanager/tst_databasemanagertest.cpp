@@ -66,10 +66,12 @@ private slots:
         void getServiceNames();
         void defaultService();
         void unregisterService();
-        void permissions();
+#ifdef Q_OS_UNIX        
+	void permissions();
         void onlyUserDbAvailable();
         void nonWritableSystemDb();
         void defaultServiceCornerCases();
+#endif
         void cleanupTestCase();
 private:
        bool compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -479,7 +481,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     }
     return true;
 }
-
+#ifdef Q_OS_UNIX
 void DatabaseManagerUnitTest::permissions()
 {
     //try create a user scope database with no permissions
@@ -1009,6 +1011,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
 }
+#endif
 
 void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
