@@ -254,6 +254,9 @@ bool QIoctlWifiEngine::hasIdentifier(const QString &id)
                 CloseHandle(handle);
                 return true;
             }
+
+			bssIdBuffer += bssId->Length;
+			--bssIdCount;
         }
 
         CloseHandle(handle);
