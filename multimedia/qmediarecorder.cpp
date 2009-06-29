@@ -2,6 +2,8 @@
 #include "qmediarecorder.h"
 
 #include "qabstractmediaobject_p.h"
+#include "qmediarecordercontrol.h"
+#include "qmediarecorderservice.h"
 #include "qmediasink.h"
 
 /*!

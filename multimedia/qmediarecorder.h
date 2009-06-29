@@ -51,17 +51,4 @@ private:
     Q_DECLARE_PRIVATE(QMediaRecorder)
 };
 
-class QMediaRecorderService : public QAbstractMediaService
-{
-    Q_OBJECT
-};
-
-class QMediaRecorderControl : public QAbstractMediaControl
-{
-    Q_OBJECT
-public:
-    int state() const;
-    QMediaSink *sink() const;
-};
-
 #endif  // QMEDIARECORDER_H
