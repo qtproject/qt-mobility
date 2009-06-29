@@ -54,6 +54,7 @@ public slots:
 
 private slots:
     void construction();
+    void setPlaylist();
     void linearPlayback();
     void loopPlayback();
 };
@@ -77,13 +78,30 @@ void tst_QMediaPlaylistNavigator::construction()
     QCOMPARE(navigator.currentPosition(), -1);
 }
 
+void tst_QMediaPlaylistNavigator::setPlaylist()
+{
+    QMediaPlaylistNavigator navigator(0);
+    QVERIFY(navigator.playlist() != 0);
+    QVERIFY(navigator.playlist()->isEmpty());
+    QVERIFY(navigator.playlist()->isReadOnly() );
+
+    QMediaPlaylist playlist;
+    QVERIFY(playlist.isEmpty());
+    QCOMPARE(playlist.size(), 0);
+
+    navigator.setPlaylist(&playlist);
+    QCOMPARE(navigator.playlist(), &playlist);
+    QVERIFY(navigator.playlist()->isEmpty());
+    QVERIFY(!navigator.playlist()->isReadOnly() );
+}
+
 void tst_QMediaPlaylistNavigator::linearPlayback()
 {
     QMediaPlaylist playlist;
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Linear);
-    navigator.jump(0);
+    navigator.jump(0);//it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 
@@ -133,7 +151,7 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Loop);
-    navigator.jump(0);
+    navigator.jump(0); //it's ok to have warning here
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 

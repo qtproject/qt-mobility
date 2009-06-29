@@ -1,10 +1,16 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <QtCore/qobject.h>
+#include "qabstractmediaobject.h"
 
-class QMedidPlayerSession;
+#include "qmediaserviceprovider.h"
+#include "qmediasource.h"
+
+class QMediaPlayerService;
+
 class QMediaPlayerPrivate;
+
+extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
 class QMediaPlayer : public QAbstractMediaObject
 {
@@ -14,11 +20,11 @@ class QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERYY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
-    Q_PROPERYY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
+    Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
-    Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
+    // Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
     Q_ENUMS(State)
@@ -26,7 +32,9 @@ class QMediaPlayer : public QAbstractMediaObject
 public:
     enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
 
-    QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObjectl *parent = 0);
+
+
+    QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
 
     State state() const;
@@ -43,7 +51,8 @@ public:
 
     bool isVideoAvailable() const;
 
-    QMediaPlayerService* service() const;
+    QAbstractMediaService* service() const;
+
 
 public Q_SLOTS:
     void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
@@ -69,9 +78,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
-    QMediaPlayerPrivate* d;
+    Q_DECLARE_PRIVATE(QMediaPlayer)
 };
-
-extern QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
 #endif  // QMEDIAPLAYER_H

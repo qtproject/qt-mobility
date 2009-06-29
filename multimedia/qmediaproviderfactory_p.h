@@ -2,11 +2,12 @@
 #define QMEDIAPROVIDERFACTORY_H
 
 class QMediaServiceProvider;
+class QString;
 
 class QMediaProviderFactory
 {
 public:
-    QMediaServiceProvider* defaultServiceProvider(QString const &key);
+    static QMediaServiceProvider* defaultServiceProvider(QString const &key);
 };
 
 #endif  // QMEDIAPROVIDERFACTORY_H

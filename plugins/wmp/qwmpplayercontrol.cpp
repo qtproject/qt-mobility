@@ -16,8 +16,9 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
 
 QWmpPlayerControl::~QWmpPlayerControl()
 {
-    // if (m_controls) m_controls->Release(); ?
-    // if (m_settings) m_settings->Release(); ?
+    if (m_controls) m_controls->Release();
+    if (m_settings) m_settings->Release();
+    if (m_network) m_network->Release();
 }
 
 qint64 QWmpPlayerControl::position() const

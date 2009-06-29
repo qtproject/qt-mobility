@@ -1,7 +1,11 @@
 
 #include "qmediaplayer.h"
+
+#include "qabstractmediaobject_p.h"
 #include "qmediaplayerservice.h"
 #include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediasource.h"
 
 
 /*!
@@ -14,7 +18,7 @@
     \sa
 */
 
-class QMediaPlayerPrivate
+class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QMediaPlayerService* service;
@@ -26,14 +30,15 @@ public:
     Construct a QMediaPlayer to operate on the QMediaPlayerSession \a session, parented to \a parent.
 */
 
-QMediaPlayer::QMediaPlayer(QMediaPlayerService *session, QObject *parent):
-    QAbstractMediaObject(parent),
-    d(new QMediaPlayerPrivate)
+QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
+    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
 {
-    Q_ASSERT(session != 0);
+    Q_ASSERT(service != 0);
+
+    Q_D(QMediaPlayer);
 
     d->service = service;
-    d->control = service->control();
+    d->control = qobject_cast<QMediaPlayerControl *>(service->control());
     d->control->setNotifyObject(this);
 }
 
@@ -43,6 +48,8 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *session, QObject *parent):
 
 QMediaPlayer::~QMediaPlayer()
 {
+    Q_D(QMediaPlayer);
+
     delete d->control;
     delete d->service;
 }
@@ -53,7 +60,7 @@ QMediaPlayer::~QMediaPlayer()
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
-    return d->control->state();
+    return QMediaPlayer::State(d_func()->control->state());
 }
 
 /*!
@@ -62,7 +69,7 @@ QMediaPlayer::State QMediaPlayer::state() const
 
 QMediaSource QMediaPlayer::mediaSource() const
 {
-    return d->control->mediaSource();
+    return d_func()->control->mediaSource();
 }
 
 /*!
@@ -71,7 +78,7 @@ QMediaSource QMediaPlayer::mediaSource() const
 
 qint64 QMediaPlayer::duration() const
 {
-    return d->control->duration();
+    return d_func()->control->duration();
 }
 
 /*!
@@ -80,7 +87,7 @@ qint64 QMediaPlayer::duration() const
 
 qint64 QMediaPlayer::position() const
 {
-    return d->control->position();
+    return d_func()->control->position();
 }
 
 /*!
@@ -89,7 +96,7 @@ qint64 QMediaPlayer::position() const
 
 int QMediaPlayer::volume() const
 {
-    return d->control->volume();
+    return d_func()->control->volume();
 }
 
 /*!
@@ -98,7 +105,7 @@ int QMediaPlayer::volume() const
 
 bool QMediaPlayer::isMuted() const
 {
-    return d->control->isMuted();
+    return d_func()->control->isMuted();
 }
 
 /*!
@@ -107,7 +114,7 @@ bool QMediaPlayer::isMuted() const
 
 bool QMediaPlayer::isBuffering() const
 {
-    return d->control->isBuffering();
+    return d_func()->control->isBuffering();
 }
 
 /*!
@@ -116,7 +123,7 @@ bool QMediaPlayer::isBuffering() const
 
 int QMediaPlayer::bufferStatus() const
 {
-    return d->control->bufferStatus();
+    return d_func()->control->bufferStatus();
 }
 
 /*!
@@ -125,16 +132,16 @@ int QMediaPlayer::bufferStatus() const
 
 bool QMediaPlayer::isVideoAvailable() const
 {
-    return d->control->isVideoAvailable();
+    return d_func()->control->isVideoAvailable();
 }
 
 /*!
     Returns the session object being controlled by this Player.
 */
 
-QMediaPlayerSession* QMediaPlayer::session() const
+QAbstractMediaService* QMediaPlayer::service() const
 {
-    return d->session;
+    return d_func()->service;
 }
 
 //public Q_SLOTS:
@@ -145,7 +152,7 @@ QMediaPlayerSession* QMediaPlayer::session() const
 
 void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 {
-    d->control->setMediaSource(mediaSource);
+    d_func()->control->setMediaSource(mediaSource);
 }
 
 /*!
@@ -154,7 +161,7 @@ void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
 
 void QMediaPlayer::play()
 {
-    d->control->play();
+    d_func()->control->play();
 }
 
 /*!
@@ -163,7 +170,7 @@ void QMediaPlayer::play()
 
 void QMediaPlayer::pause()
 {
-    d->control->pause();
+    d_func()->control->pause();
 }
 
 /*!
@@ -172,7 +179,7 @@ void QMediaPlayer::pause()
 
 void QMediaPlayer::stop()
 {
-    d->control->stop();
+    d_func()->control->stop();
 }
 
 /*!
@@ -182,7 +189,7 @@ void QMediaPlayer::stop()
 
 void QMediaPlayer::setPosition(qint64 position)
 {
-    d->control->setPosition(position);
+    d_func()->control->setPosition(position);
 }
 
 /*!
@@ -192,7 +199,7 @@ void QMediaPlayer::setPosition(qint64 position)
 
 void QMediaPlayer::setVolume(int volume)
 {
-    d->control-setVolume(volume);
+    d_func()->control->setVolume(volume);
 }
 
 /*!
@@ -203,12 +210,22 @@ void QMediaPlayer::setVolume(int volume)
 
 void QMediaPlayer::setMuted(bool muted)
 {
-    d->control->setMuted(muted);
+    d_func()->control->setMuted(muted);
 }
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QMediaPlayerService*>(provider->createObject("com.nokia.qt.MediaPlayer/1.0"));
+    QObject *object = provider->createObject("com.nokia.qt.MediaPlayer/1.0");
+
+    if (object) {
+        QMediaPlayerService *service = qobject_cast<QMediaPlayerService *>(object);
+
+        if (service)
+            return service;
+
+        delete service;
+    }
+    return 0;
 }
 
 /*!

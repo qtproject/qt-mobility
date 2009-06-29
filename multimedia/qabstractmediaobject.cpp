@@ -1,14 +1,15 @@
 
-#include <QtCore/private/qobject_p.h>
-
-#include "qabstractmediaobject.h"
-
-class QAbstractMediaObjectPrivate : public QObjectPrivate
-{
-public:
-};
+#include "qabstractmediaobject_p.h"
 
 QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
     QObject(*new QAbstractMediaObjectPrivate, parent)
+{
+}
+
+/*!
+    \internal
+*/
+QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
+    : QObject(dd, parent)
 {
 }

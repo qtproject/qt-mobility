@@ -15,7 +15,7 @@ public:
     virtual void setBand(int b);
 
     int frequency() const;
-    virtual void setFrequency();
+    virtual void setFrequency(int frequency);
 
     bool isStereo() const;
     virtual void setStereo(bool stereo);

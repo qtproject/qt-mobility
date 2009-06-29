@@ -4,12 +4,14 @@
 #ifndef QT_NO_VIDEOSURFACE
 
 #include "qimagemediaoutput.h"
+#include "qpaintervideosurface_p.h"
 #include "qvideorenderermediaoutput.h"
 
 #include <qpainter.h>
 
 class QVideoRendererWidgetPrivate : public QWidgetMediaOutputPrivate
 {
+    Q_DECLARE_PUBLIC(QVideoRendererWidget)
 public:
     QVideoRendererWidgetPrivate()
         : imageOutput(0)
@@ -43,6 +45,8 @@ void QVideoRendererWidgetPrivate::_q_imageChanged(const QImage &)
 QVideoRendererWidget::QVideoRendererWidget(QWidget *parent)
     : QWidgetMediaOutput(*new QVideoRendererWidgetPrivate, parent)
 {
+    Q_D(QVideoRendererWidget);
+
     connect(&d->surface, SIGNAL(frameChanged()), this, SLOT(update()));
 }
 
@@ -127,7 +131,7 @@ void QVideoRendererWidget::paintEvent(QPaintEvent *)
 
         d->surface.setReady(true);
     } else if (d->imageOutput && d->imageOutput->hasImage()) {
-        painter.drawImage(d->imageOutput->image(), rect());
+        painter.drawImage(rect(), d->imageOutput->image());
     }
 }
 
@@ -138,5 +142,7 @@ void QVideoRendererWidget::resizeEvent(QResizeEvent *event)
 {
     QWidgetMediaOutput::resizeEvent(event);
 }
+
+#include "moc_qvideorendererwidget_p.cpp"
 
 #endif

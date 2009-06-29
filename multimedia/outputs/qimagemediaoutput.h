@@ -3,6 +3,7 @@
 
 #include <QtCore/qplugin.h>
 #include <QtCore/qsize.h>
+#include <QtGui/qimage.h>
 
 class QImageMediaOutputInterface
 {

@@ -3,6 +3,7 @@
 
 #include "qabstractmediaservice.h"
 
+class QMediaPlayerControl;
 
 class QMediaPlayerServicePrivate;
 
@@ -13,7 +14,7 @@ class QMediaPlayerService : public QAbstractMediaService
 public:
     ~QMediaPlayerService();
 
-    virtual QMediaPlayerControl* control() const = 0;
+    virtual QAbstractMediaControl* control() const = 0;
 
 protected:
     QMediaPlayerService(QObject *parent);

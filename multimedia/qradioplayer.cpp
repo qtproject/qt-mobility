@@ -1,7 +1,9 @@
 
 #include "qradioplayer.h"
-#include "qradioplayerservice.h"
+
+#include "qabstractmediaobject_p.h"
 #include "qradiotuner.h"
+#include "qradioservice.h"
 
 /*!
     \class QRadioPlayer
@@ -13,7 +15,7 @@
     \sa
 */
 
-class QRadioPlayerPrivate
+class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QRadioService*  service;
@@ -22,97 +24,99 @@ public:
 
 
 QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
-    QAbstractMediaObject(parent),
-    d(new QRadioPlayerPrivate)
+    QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
 {
     Q_ASSERT(service != 0);
 
+    Q_D(QRadioPlayer);
+
     d->service = service;
-    d->control = service->control();
+    d->control = qobject_cast<QRadioTuner *>(service->control());
     d->control->setNotifyObject(this);
 }
 
 QRadioPlayer::~QRadioPlayer()
 {
+    Q_D(QRadioPlayer);
+
     delete d->control;
     delete d->service;
 }
 
 QRadioPlayer::Band QRadioPlayer::band() const
 {
-    return d->control->band();
+    return QRadioPlayer::Band(d_func()->control->band());
 }
 
 int QRadioPlayer::frequency() const
 {
-    return d->control->frequency();
+    return d_func()->control->frequency();
 }
 
 bool QRadioPlayer::isStereo() const
 {
-    return d->control->isStereo();
+    return d_func()->control->isStereo();
 }
 
 int QRadioPlayer::signalStrength() const
 {
-    return d->control->signalStrength();
+    return d_func()->control->signalStrength();
 }
 
 qint64 QRadioPlayer::duration() const
 {
-    return d->control->duration();
+    return d_func()->control->duration();
 }
 
 int QRadioPlayer::volume() const
 {
-    return d->control->volume();
+    return d_func()->control->volume();
 }
 
 bool QRadioPlayer::isMuted() const
 {
-    return d->control->isMuted();
+    return d_func()->control->isMuted();
 }
 
-QRadioService* QRadioPlayer::service() const
+QAbstractMediaService* QRadioPlayer::service() const
 {
-    return d->service;
+    return d_func()->service;
 }
 
 void QRadioPlayer::setBand(QRadioPlayer::Band band)
 {
-    d->control->setBand(band):
+    d_func()->control->setBand(band);
 }
 
 void QRadioPlayer::setFrequency(int frequency)
 {
-    d->control->setFrequency(frequency);
+    d_func()->control->setFrequency(frequency);
 }
 
 void QRadioPlayer::setStereo(bool stereo)
 {
-    d->control->setStereo(stereo);
+    d_func()->control->setStereo(stereo);
 }
 
 void QRadioPlayer::setVolume(int volume)
 {
-    d->control->setVolume(volume);
+    d_func()->control->setVolume(volume);
 }
 
 void QRadioPlayer::setMuted(bool muted)
 {
-    d->control->setMuted(muted);
+    d_func()->control->setMuted(muted);
 }
 
 void QRadioPlayer::searchForward()
 {
-    d->control->searchForward();
+    d_func()->control->searchForward();
 }
 
 void QRadioPlayer::searchBackward()
 {
-    d->control->searchBackward();
+    d_func()->control->searchBackward();
 }
-
 
 QRadioService* createRadioService(QMediaServiceProvider *provider)
 {

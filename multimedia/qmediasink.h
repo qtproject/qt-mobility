@@ -4,7 +4,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QVariantl>
+#include <QVariant>
 
 
 class QMediaSinkPrivate;
@@ -23,11 +23,11 @@ public:
     QString mimeType() const;
     void setMimeType(QString const& mimeType);
 
-    QVariant dataLocation() const
+    QVariant dataLocation() const;
     void setDataLocation(QVariant const& url);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSource)
+    Q_DECLARE_PRIVATE(QMediaSink)
 };
 
 #endif  // QMEDIASINK_H

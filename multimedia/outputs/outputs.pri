@@ -15,5 +15,3 @@ SOURCES += \
     $$PWD/qvideorenderermediaoutput.cpp \
     $$PWD/qvideorendererwidget.cpp \
     $$PWD/qwidgetmediaoutput.cpp
-
-DEFINES += QT_NO_VIDEOSURFACE

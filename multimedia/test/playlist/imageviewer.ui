@@ -54,11 +54,6 @@
      <widget class="QComboBox" name="playbackMode">
       <item>
        <property name="text">
-        <string>NoPlayback</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>CurrentItemOnce</string>
        </property>
       </item>
@@ -114,14 +109,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="buttonBack">
         <property name="text">
          <string>Back</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="buttonAdvance">
         <property name="text">
          <string>Advance</string>
         </property>
@@ -188,7 +183,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_3</sender>
+   <sender>buttonBack</sender>
    <signal>clicked()</signal>
    <receiver>ImageViewer</receiver>
    <slot>back()</slot>
@@ -204,7 +199,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>buttonAdvance</sender>
    <signal>clicked()</signal>
    <receiver>ImageViewer</receiver>
    <slot>advance()</slot>

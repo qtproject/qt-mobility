@@ -49,7 +49,7 @@ int QRadioTuner::signalStrength() const
 
 qint64 QRadioTuner::duration() const
 {
-    return property("duration");
+    return qvariant_cast<qint64>(property("duration"));
 }
 
 void QRadioTuner::setDuration(qint64 duration)
@@ -59,7 +59,7 @@ void QRadioTuner::setDuration(qint64 duration)
 
 int QRadioTuner::volume() const
 {
-    return property("volume");
+    return qvariant_cast<int>(property("volume"));
 }
 
 void QRadioTuner::setVolume(int volume)

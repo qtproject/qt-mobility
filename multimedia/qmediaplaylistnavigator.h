@@ -1,26 +1,27 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include <QtCore/qobject.h>
 #include "qmediaplaylist.h"
+#include <QtCore/qobject.h>
 
 class QMediaPlaylistNavigatorPrivate;
 class QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(PlaybackMode);
+    Q_ENUMS(PlaybackMode)
     Q_PROPERTY(QMediaPlaylistNavigator::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
     Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
     Q_PROPERTY(QMediaSource nextItem READ nextItem)
     Q_PROPERTY(QMediaSource previousItem READ previousItem)
 public:
-    enum PlaybackMode { NoPlayback, CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
     QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent = 0);
     virtual ~QMediaPlaylistNavigator();
 
     QMediaPlaylist *playlist() const;
+    void setPlaylist(QMediaPlaylist *playlist);
 
     PlaybackMode playbackMode() const;
 
@@ -44,23 +45,19 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void activated(const QMediaSource&);
-
-    void currentItemChanged(const QMediaSource&);
     void currentPositionChanged(int);
-
     void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
 
-private slots:
-    void processInsertedItems(int start, int end);
-    void processRemovedItems(int start, int end);
-    void processChangedItems(int start, int end);
-    void updateCurrentItemPos();
-
-protected:
-    QMediaPlaylistNavigator(QMediaPlaylistNavigatorPrivate &dd, QObject *parent);
+    void surroundingItemsChanged();
 
 private:
+    Q_DISABLE_COPY(QMediaPlaylistNavigator)
     Q_DECLARE_PRIVATE(QMediaPlaylistNavigator)
+
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateCurrentItemPos())
 };
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H

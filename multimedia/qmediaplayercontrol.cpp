@@ -1,6 +1,6 @@
 
-#include "qabstractmediacontrol.h"
-
+#include "qmediaplayercontrol.h"
+#include "qmediasource.h"
 
 int QMediaPlayerControl::state() const
 {
@@ -19,7 +19,7 @@ QMediaSource QMediaPlayerControl::mediaSource() const
 
 void QMediaPlayerControl::setMediaSource(QMediaSource mediaSource)
 {
-    changePropertValue("mediaSource", qVariantFromValue(mediaSource));
+    changePropertyValue("mediaSource", qVariantFromValue(mediaSource));
 }
 
 qint64 QMediaPlayerControl::duration() const
@@ -87,7 +87,7 @@ bool QMediaPlayerControl::isVideoAvailable() const
     return property("videoAvailable").toBool();
 }
 
-void setVideoAvailable(bool videoAvailable)
+void QMediaPlayerControl::setVideoAvailable(bool videoAvailable)
 {
     changePropertyValue("videoAvailable", videoAvailable);
 }

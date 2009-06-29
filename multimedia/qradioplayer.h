@@ -3,23 +3,28 @@
 
 #include <QtCore/qobject.h>
 
+#include "qabstractmediaobject.h"
+#include "qabstractmediaservice.h"
+#include "qmediaserviceprovider.h"
 
 class QRadioService;
 class QRadioPlayerPrivate;
+
+extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));
 
 class QRadioPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
-    Q_PROPERTY(int frequency READ frequemcy WRITE setFrequnecy NOTIFY frequencyChanged)
+    Q_PROPERTY(int frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
     Q_PROPERTY(bool stereo READ isStereo WRITE setStereo NOTIFY stereoStatusChanged)
     Q_PROPERTY(int signalStrength READ signalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERYY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
 
-    Q_ENUM(Band)
+    Q_ENUMS(Band)
 
 public:
     enum Band { AM, FM, SW };
@@ -40,7 +45,7 @@ public:
     int volume() const;
     bool isMuted() const;
 
-    QRadioService* service() const;
+    QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void searchForward();
@@ -64,9 +69,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QRadioPlayer)
-    QRadioPlayerPrivate* d;
+    Q_DECLARE_PRIVATE(QRadioPlayer)
 };
-
-extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));
 
 #endif  // QRADIOPLAYER_H

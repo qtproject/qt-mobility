@@ -2,8 +2,6 @@
 
 #include <private/qobject_p.h>
 
-#include <qsize.h>
-
 /*!
     \class QImageMediaOutputInterface
     \preliminary
@@ -22,10 +20,7 @@ class QImageMediaOutputPrivate : public QObjectPrivate
 {
 public:
     QImageMediaOutputPrivate()
-        : maximumCount(1)
-        , count(0)
-        , currentIndex(0)
-        , maximumImages(1)
+        : state(QImageMediaOutput::NoImage)
     {
     }
 

@@ -14,11 +14,12 @@ ImageViewer::ImageViewer(QWidget *parent)
     connect(navigator, SIGNAL(activated(QMediaSource)), SLOT(display(QMediaSource)));
     connect(navigator, SIGNAL(playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode)), SLOT(updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode)));
     connect(ui->listView, SIGNAL(activated(QModelIndex)), SLOT(jump(QModelIndex)));
+    connect(navigator, SIGNAL(surroundingItemsChanged()), SLOT(updateNavigationActions()));
 
     navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
     ui->listView->setModel(model);
-
+    updateNavigationActions();
 }
 
 ImageViewer::~ImageViewer()
@@ -35,7 +36,7 @@ void ImageViewer::addImage()
             playlist->append(QMediaSource("image/png", fileName));
         }
 
-        navigator->jump(firstPos);
+        navigator->jump(firstPos);        
     }
 }
 
@@ -78,6 +79,12 @@ void ImageViewer::setPlaybackMode(int mode)
 void ImageViewer::updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
 {
     ui->playbackMode->setCurrentIndex(int(mode));    
+}
+
+void ImageViewer::updateNavigationActions()
+{
+    ui->buttonBack->setEnabled(!navigator->previousItem().isNull());
+    ui->buttonAdvance->setEnabled(!navigator->nextItem().isNull());
 }
 
 void ImageViewer::loadPlaylist()

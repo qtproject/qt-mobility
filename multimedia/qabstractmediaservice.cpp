@@ -4,6 +4,9 @@
 
 #include "qabstractmediaservice.h"
 
+class QMediaAudioOutput {};
+class QMediaVideoOutput {};
+
 
 class QAbstractMediaServicePrivate : public QObjectPrivate
 {
@@ -26,12 +29,12 @@ void QAbstractMediaService::setAudioOutput(QMediaAudioOutput const &audioOutput)
 
 QList<QMediaAudioOutput> QAbstractMediaService::availableAudioOutputs() const
 {
-    return QList<QMediaAudioOutout>();
+    return QList<QMediaAudioOutput>();
 }
 
 QMediaAudioOutput QAbstractMediaService::videoOutput() const
 {
-    return QMediaAudioOutut();
+    return QMediaAudioOutput();
 }
 
 void QAbstractMediaService::setVideoOutput(QMediaVideoOutput const &videoOutput)
@@ -40,5 +43,5 @@ void QAbstractMediaService::setVideoOutput(QMediaVideoOutput const &videoOutput)
 
 QList<QMediaVideoOutput> QAbstractMediaService::availableVideoOutputs() const
 {
-    return QList<QMediaVideoOutout>();
+    return QList<QMediaVideoOutput>();
 }

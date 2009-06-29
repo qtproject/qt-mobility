@@ -11,8 +11,8 @@ class QAbstractMediaControlPrivate;
 class QAbstractMediaControl : public QObject
 {
     Q_OBJECT
-    Q_PROPERTIES(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
-
+    Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
+    Q_DECLARE_PRIVATE(QAbstractMediaControl)
 public:
     ~QAbstractMediaControl();
 

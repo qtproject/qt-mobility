@@ -2,7 +2,8 @@
 #define QMEDIAPLAYLIST_H
 
 #include "qmediasource.h"
-#include <QObject>
+#include <QtCore/qobject.h>
+
 
 class QMediaPlaylistSource;
 
@@ -18,6 +19,7 @@ public:
 
     int size() const;
     bool isEmpty() const;
+    bool isReadOnly() const;
 
     bool append(const QMediaSource &source);
     bool append(const QList<QMediaSource> &sources);

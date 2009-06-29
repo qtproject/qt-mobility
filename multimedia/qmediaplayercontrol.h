@@ -1,10 +1,11 @@
 #ifndef QMEDIAPLAYERCONTROL_H
 #define QMEDIAPLAYERCONTROL_H
 
-
 #include "qabstractmediacontrol.h"
 
-class QMediaPlayerControl : public QAbtractMediaControl
+class QMediaSource;
+
+class QMediaPlayerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 

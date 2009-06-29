@@ -32,7 +32,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_imageChanged(const QImage &);
+    Q_PRIVATE_SLOT(d_func(), void _q_imageChanged(const QImage &));
 };
 
 #endif

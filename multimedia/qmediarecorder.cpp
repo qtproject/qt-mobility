@@ -1,7 +1,10 @@
 
-#include <private/qobject_p.h>
-
 #include "qmediarecorder.h"
+
+#include "qabstractmediaobject_p.h"
+#include "qmediarecordercontrol.h"
+#include "qmediarecorderservice.h"
+#include "qmediasink.h"
 
 /*!
     \class QMediaRecorder
@@ -13,25 +16,27 @@
     \sa
 */
 
-class QMediaRecorderPrivate : public QAbstractNediaObject
+class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    QMediaRecorderSession*  session;
-    QRecordControl* control;
-}:
+    QMediaRecorderService*  service;
+    QMediaRecorderControl* control;
+};
 
-QMediaRecorder::QMediaRecorder(QMediaRecorderSession *session, QObject *parent):
-    QAbstractMediaSession(*new QMediaRecorderPrivate, parent)
+QMediaRecorder::QMediaRecorder(QMediaRecorderService *service, QObject *parent)
+    : QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
 {
-    d_func()->session = session;
+    Q_D(QMediaRecorder);
+
+    d->service = service;
+    d->control = qobject_cast<QMediaRecorderControl *>(service->control());
 }
 
 QMediaRecorder::~QMediaRecorder()
 {
-    Q_D(QMediaRecorder)
+    Q_D(QMediaRecorder);
 
-    delete d->control;
-    delete d->service;
+    delete d_func()->service;
 }
 
 void QMediaRecorder::setRecordingSource(QAbstractMediaObject* source)
@@ -42,18 +47,19 @@ void QMediaRecorder::setRecordingSink(QAbstractMediaObject* sink)
 {
 }
 
-QMediaRecorder::State state() const
+QMediaRecorder::State QMediaRecorder::state() const
 {
-    return d_func()->control->state();
+    return QMediaRecorder::State(d_func()->control->state());
 }
 
-QMediaSink QMediaRecorder::sink() const
+QMediaSink *QMediaRecorder::sink() const
 {
     return d_func()->control->sink();
 }
 
-QMediaRecorderSession* QMediaRecorder::session() const
+QAbstractMediaService* QMediaRecorder::service() const
 {
+    return d_func()->service;
 }
 
 //public Q_SLOTS:
@@ -69,16 +75,18 @@ void QMediaRecorder::stop()
 {
 }
 
-void QMediaRecorder::setVolume(int volume)
-{
-}
-
-void QMediaRecorder::setMuted(bool muted)
-{
-}
-
 QMediaRecorderService* createMediaRecorderService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QMediaRecorderService*>(provider->createObject("com.nokia.Qt.RecorderService/1.0"));
+    QObject *object = provider->createObject("com.nokia.Qt.RecorderService/1.0");
+
+    if (object) {
+        QMediaRecorderService *service = qobject_cast<QMediaRecorderService *>(object);
+
+        if (service)
+            return service;
+
+        delete object;
+    }
+    return 0;
 }
 
