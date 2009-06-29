@@ -2,7 +2,7 @@
 #ifndef QRADIOSERVICE_H
 #define QRADIOSERVICE_H
 
-#include "abstractmediaservice.h"
+#include "qabstractmediaservice.h"
 
 class QRadioService : public QAbstractMediaService
 {
@@ -11,7 +11,7 @@ class QRadioService : public QAbstractMediaService
 public:
     ~QRadioService();
 
-    virtual QRadioTuner* control() const = 0;
+    virtual QAbstractMediaControl* control() const = 0;
 
 protected:
     QRadioService(QObject *parent = 0);

@@ -10,12 +10,6 @@
 class QRadioService;
 class QRadioPlayerPrivate;
 
-class QRadioService : public QAbstractMediaService
-{
-    Q_OBJECT
-};
-
-
 extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));
 
 class QRadioPlayer : public QAbstractMediaObject
@@ -75,7 +69,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QRadioPlayer)
-    QRadioPlayerPrivate* d;
+    Q_DECLARE_PRIVATE(QRadioPlayer)
 };
 
 #endif  // QRADIOPLAYER_H

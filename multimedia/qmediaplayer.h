@@ -78,7 +78,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
-    QMediaPlayerPrivate* d;
+    Q_DECLARE_PRIVATE(QMediaPlayer)
 };
 
 #endif  // QMEDIAPLAYER_H

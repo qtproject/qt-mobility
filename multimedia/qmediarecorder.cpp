@@ -1,9 +1,7 @@
 
 #include "qmediarecorder.h"
 
-#include <private/qobject_p.h>
-
-
+#include "qabstractmediaobject_p.h"
 #include "qmediasink.h"
 
 /*!
@@ -16,7 +14,7 @@
     \sa
 */
 
-class QMediaRecorderPrivate
+class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QMediaRecorderService*  service;
@@ -24,17 +22,19 @@ public:
 };
 
 QMediaRecorder::QMediaRecorder(QMediaRecorderService *service, QObject *parent)
-    : QAbstractMediaObject(parent)
-    , d(new QMediaRecorderPrivate)
+    : QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
 {
+    Q_D(QMediaRecorder);
+
     d->service = service;
     d->control = qobject_cast<QMediaRecorderControl *>(service->control());
 }
 
 QMediaRecorder::~QMediaRecorder()
 {
-    delete d->service;
-    delete d;
+    Q_D(QMediaRecorder);
+
+    delete d_func()->service;
 }
 
 void QMediaRecorder::setRecordingSource(QAbstractMediaObject* source)
@@ -47,17 +47,17 @@ void QMediaRecorder::setRecordingSink(QAbstractMediaObject* sink)
 
 QMediaRecorder::State QMediaRecorder::state() const
 {
-    return QMediaRecorder::State(d->control->state());
+    return QMediaRecorder::State(d_func()->control->state());
 }
 
 QMediaSink *QMediaRecorder::sink() const
 {
-    return d->control->sink();
+    return d_func()->control->sink();
 }
 
 QAbstractMediaService* QMediaRecorder::service() const
 {
-    return d->service;
+    return d_func()->service;
 }
 
 //public Q_SLOTS:

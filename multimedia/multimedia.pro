@@ -8,6 +8,7 @@ DESTDIR = $$OUT_PWD/../lib
 HEADERS = \
     qabstractmediacontrol.h \
     qabstractmediaobject.h \
+    qabstractmediaobject_p.h \
     qabstractmediaservice.h \
     qlocalmediaplaylistsource.h \
     qmediaimageviewer.h \
@@ -19,12 +20,12 @@ HEADERS = \
     qmediaplaylistsource.h \
     qmediaproviderfactory_p.h \
     qmediarecorder.h \
-    qmediaseekcontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
     qmediasource.h \
     qradioplayer.h \
+    qradioservice.h \
     qradiotuner.h \
     qsharedmediaplaylist.h
 
@@ -45,6 +46,7 @@ SOURCES = \
     qmediaserviceprovider.cpp \
     qmediasource.cpp \
     qradioplayer.cpp \
+    qradioservice.cpp \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp
 

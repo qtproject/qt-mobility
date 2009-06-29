@@ -47,9 +47,8 @@ Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
 
 private:
-    QMediaRecorderPrivate *d;
-
     Q_DISABLE_COPY(QMediaRecorder)
+    Q_DECLARE_PRIVATE(QMediaRecorder)
 };
 
 class QMediaRecorderService : public QAbstractMediaService
