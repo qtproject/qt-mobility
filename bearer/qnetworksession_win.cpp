@@ -84,22 +84,11 @@ public:
     QNetworkSessionManagerPrivate(QObject *parent = 0);
     ~QNetworkSessionManagerPrivate();
 
-    void increment(const QNetworkConfiguration &config);
-    void decrement(const QNetworkConfiguration &config);
-    void clear(const QNetworkConfiguration &config);
-
-    unsigned int referenceCount(const QNetworkConfiguration &config);
-
-private:
     void startConfiguration(const QNetworkConfiguration &config);
     void stopConfiguration(const QNetworkConfiguration &config);
 
 Q_SIGNALS:
     void forcedSessionClose(const QNetworkConfiguration &config);
-
-private:
-    QMutex lock;
-    QMap<QString, unsigned int> refCount;
 };
 
 #include "qnetworksession_win.moc"
@@ -115,75 +104,35 @@ QNetworkSessionManagerPrivate::~QNetworkSessionManagerPrivate()
 {
 }
 
-void QNetworkSessionManagerPrivate::increment(const QNetworkConfiguration &config)
-{
-    QMutexLocker locker(&lock);
-
-    ++refCount[config.identifier()];
-
-    if ((config.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active &&
-        (config.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-        startConfiguration(config);
-    }
-}
-
-void QNetworkSessionManagerPrivate::decrement(const QNetworkConfiguration &config)
-{
-    QMutexLocker locker(&lock);
-
-    if (refCount[config.identifier()] > 0) {
-        --refCount[config.identifier()];
-
-        if (refCount[config.identifier()] == 0 &&
-            (config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-            stopConfiguration(config);
-        }
-    }
-}
-
-void QNetworkSessionManagerPrivate::clear(const QNetworkConfiguration &config)
-{
-    QMutexLocker locker(&lock);
-
-    if (refCount[config.identifier()] != 0) {
-        refCount[config.identifier()] = 0;
-
-        if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active)
-            stopConfiguration(config);
-
-        emit forcedSessionClose(config);
-    }
-}
-
 void QNetworkSessionManagerPrivate::startConfiguration(const QNetworkConfiguration &config)
 {
-    QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
+    if ((config.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active &&
+        (config.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+        QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
 
-    if (!engine) {
-        qDebug() << "cannot start configuration (no engine)" << config.name();
-        return;
+        if (!engine) {
+            qDebug() << "cannot start configuration (no engine)" << config.name();
+            return;
+        }
+
+        engine->connectToId(config.identifier());
     }
-
-    engine->connectToId(config.identifier());
 }
 
 void QNetworkSessionManagerPrivate::stopConfiguration(const QNetworkConfiguration &config)
 {
-    QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
+    if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+        QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
 
-    if (!engine) {
-        qDebug() << "cannot stop configuration (no engine)" << config.name();
-        return;
+        if (!engine) {
+            qDebug() << "cannot stop configuration (no engine)" << config.name();
+            return;
+        }
+
+        engine->disconnectFromId(config.identifier());
     }
 
-    engine->disconnectFromId(config.identifier());
-}
-
-unsigned int QNetworkSessionManagerPrivate::referenceCount(const QNetworkConfiguration &config)
-{
-    QMutexLocker locker(&lock);
-
-    return refCount[config.identifier()];
+    emit forcedSessionClose(config);
 }
 
 void QNetworkSessionPrivate::syncStateWithInterface()
@@ -235,9 +184,8 @@ void QNetworkSessionPrivate::open()
             emit q->error(lastError);
             return;
         }
-        // increment session count
         opened = true;
-        sessionManager()->increment(activeConfig);
+        sessionManager()->startConfiguration(activeConfig);
         isActive = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
         if (isActive)
             emit quitPendingWaitsForOpened();
@@ -250,9 +198,6 @@ void QNetworkSessionPrivate::close()
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else if (isActive) {
-        // decrement session count
-        sessionManager()->decrement(activeConfig);
-
         opened = false;
         isActive = false;
         emit q->sessionClosed();
@@ -265,8 +210,7 @@ void QNetworkSessionPrivate::stop()
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else {
-        // force the session reference count to 0
-        sessionManager()->clear(activeConfig);
+        sessionManager()->stopConfiguration(activeConfig);
 
         opened = false;
         isActive = false;
@@ -307,12 +251,8 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return QNetworkInterface::interfaceFromName(interface);
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& key)
+QVariant QNetworkSessionPrivate::property(const QString&)
 {
-    if (key == "SessionReferenceCount") {
-        return QVariant::fromValue(sessionManager()->referenceCount(activeConfig));
-    }
-
     return QVariant();
 }
 
@@ -462,7 +402,6 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
         case QNetworkSessionEngine::OperationNotSupported:
             lastError = QNetworkSession::OperationNotSupportedError;
             opened = false;
-            sessionManager()->decrement(activeConfig);
             break;
         case QNetworkSessionEngine::InterfaceLookupError:
         case QNetworkSessionEngine::ConnectError:
