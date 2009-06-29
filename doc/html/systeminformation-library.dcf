@@ -1,23 +1,61 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="systeminformation-library.png" imagedir="../../gif" title="System Information Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="qsystemsdeviceinfo.html" title="QSystemsDeviceInfo Class Reference">
+        <keyword ref="qsystemsdeviceinfo.html">QSystemsDeviceInfo</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">BatteryLevel</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">QSystemsDeviceInfo::BatteryCritical</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">QSystemsDeviceInfo::NoBatteryLevel</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">QSystemsDeviceInfo::BatteryVeryLow</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">QSystemsDeviceInfo::BatteryLow</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#BatteryLevel-enum">QSystemsDeviceInfo::BatteryNormal</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#InputMethods-enum">InputMethods</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#InputMethods-enum">QSystemsDeviceInfo::KeysAndTouch</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#InputMethods-enum">QSystemsDeviceInfo::KeysOnly</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#InputMethods-enum">QSystemsDeviceInfo::TouchOnly</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#PowerState-enum">PowerState</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#PowerState-enum">QSystemsDeviceInfo::UnknownPower</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#PowerState-enum">QSystemsDeviceInfo::WallPower</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#PowerState-enum">QSystemsDeviceInfo::BatteryPower</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">Profile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::VibProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::LoudProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::NormalProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::PowersaveProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::OfflineProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::SilentProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::UnknownProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#Profile-enum">QSystemsDeviceInfo::CustomProfile</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#SimStatus-enum">SimStatus</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#SimStatus-enum">QSystemsDeviceInfo::SimNotAvailable</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#SimStatus-enum">QSystemsDeviceInfo::DualAvailable</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#SimStatus-enum">QSystemsDeviceInfo::Locked</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#SimStatus-enum">QSystemsDeviceInfo::SingleAvailable</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#batteryLevel">batteryLevel</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#batteryLevelCritical">batteryLevelCritical</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#getInputMethodType">getInputMethodType</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#getSimStatus">getSimStatus</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#imei">imei</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#imsi">imsi</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#manufacturer">manufacturer</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#model">model</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#powerStateChanged">powerStateChanged</keyword>
+        <keyword ref="qsystemsdeviceinfo.html#profileChanged">profileChanged</keyword>
+        <section ref="qsystemsdeviceinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsystemsdisplayinfo.html" title="QSystemsDisplayInfo Class Reference">
+        <keyword ref="qsystemsdisplayinfo.html">QSystemsDisplayInfo</keyword>
+        <keyword ref="qsystemsdisplayinfo.html#colorDepth">colorDepth</keyword>
+        <keyword ref="qsystemsdisplayinfo.html#displayBrightness">displayBrightness</keyword>
+        <keyword ref="qsystemsdisplayinfo.html#isScreenLockOn">isScreenLockOn</keyword>
+        <keyword ref="qsystemsdisplayinfo.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
+        <keyword ref="qsystemsdisplayinfo.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
+        <section ref="qsystemsdisplayinfo-members.html" title="List of all members"/>
+    </section>
     <section ref="qsystemsinfo.html" title="QSystemsInfo Class Reference">
         <keyword ref="qsystemsinfo.html">QSystemsInfo</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">BatteryLevel</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryCritical</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::NoBatteryLevel</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryVeryLow</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryLow</keyword>
-        <keyword ref="qsystemsinfo.html#BatteryLevel-enum">QSystemsInfo::BatteryNormal</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">CellNetworkStatus</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::NoNetworkAvailable</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::Roaming</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::HomeNetwork</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::Busy</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::Searching</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::UndefinedStatus</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::Denied</keyword>
-        <keyword ref="qsystemsinfo.html#CellNetworkStatus-enum">QSystemsInfo::EmergencyOnly</keyword>
         <keyword ref="qsystemsinfo.html#Feature-enum">Feature</keyword>
         <keyword ref="qsystemsinfo.html#Feature-enum">QSystemsInfo::MemcardFeature</keyword>
         <keyword ref="qsystemsinfo.html#Feature-enum">QSystemsInfo::UsbFeature</keyword>
@@ -33,35 +71,6 @@
         <keyword ref="qsystemsinfo.html#Feature-enum">QSystemsInfo::SimFeature</keyword>
         <keyword ref="qsystemsinfo.html#Feature-enum">QSystemsInfo::FmradioFeature</keyword>
         <keyword ref="qsystemsinfo.html#Feature-enum">QSystemsInfo::LedFeature</keyword>
-        <keyword ref="qsystemsinfo.html#InputMethods-enum">InputMethods</keyword>
-        <keyword ref="qsystemsinfo.html#InputMethods-enum">QSystemsInfo::KeysAndTouch</keyword>
-        <keyword ref="qsystemsinfo.html#InputMethods-enum">QSystemsInfo::KeysOnly</keyword>
-        <keyword ref="qsystemsinfo.html#InputMethods-enum">QSystemsInfo::TouchOnly</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">NetworkMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::CdmaMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::EthMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::UnknownMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::WlanMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::GsmMode</keyword>
-        <keyword ref="qsystemsinfo.html#NetworkMode-enum">QSystemsInfo::WcdmaMode</keyword>
-        <keyword ref="qsystemsinfo.html#PowerState-enum">PowerState</keyword>
-        <keyword ref="qsystemsinfo.html#PowerState-enum">QSystemsInfo::UnknownPower</keyword>
-        <keyword ref="qsystemsinfo.html#PowerState-enum">QSystemsInfo::WallPower</keyword>
-        <keyword ref="qsystemsinfo.html#PowerState-enum">QSystemsInfo::BatteryPower</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">Profile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::VibProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::LoudProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::NormalProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::PowersaveProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::OfflineProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::SilentProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::UnknownProfile</keyword>
-        <keyword ref="qsystemsinfo.html#Profile-enum">QSystemsInfo::CustomProfile</keyword>
-        <keyword ref="qsystemsinfo.html#SimStatus-enum">SimStatus</keyword>
-        <keyword ref="qsystemsinfo.html#SimStatus-enum">QSystemsInfo::SimNotAvailable</keyword>
-        <keyword ref="qsystemsinfo.html#SimStatus-enum">QSystemsInfo::DualAvailable</keyword>
-        <keyword ref="qsystemsinfo.html#SimStatus-enum">QSystemsInfo::Locked</keyword>
-        <keyword ref="qsystemsinfo.html#SimStatus-enum">QSystemsInfo::SingleAvailable</keyword>
         <keyword ref="qsystemsinfo.html#Version-enum">Version</keyword>
         <keyword ref="qsystemsinfo.html#Version-enum">QSystemsInfo::Webkit</keyword>
         <keyword ref="qsystemsinfo.html#Version-enum">QSystemsInfo::Os</keyword>
@@ -73,54 +82,61 @@
         <keyword ref="qsystemsinfo.html#Version-enum">QSystemsInfo::ServiceProvider</keyword>
         <keyword ref="qsystemsinfo.html#Version-enum">QSystemsInfo::NetscapePlugin</keyword>
         <keyword ref="qsystemsinfo.html#Version-enum">QSystemsInfo::WebApp</keyword>
-        <keyword ref="qsystemsinfo.html#VolumeType-enum">VolumeType</keyword>
-        <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::Internal</keyword>
-        <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::Removable</keyword>
-        <keyword ref="qsystemsinfo.html#VolumeType-enum">QSystemsInfo::NoVolume</keyword>
-        <keyword ref="qsystemsinfo.html#availableDiskSpace">availableDiskSpace</keyword>
         <keyword ref="qsystemsinfo.html#availableLanguages">availableLanguages</keyword>
-        <keyword ref="qsystemsinfo.html#batteryLevel">batteryLevel</keyword>
-        <keyword ref="qsystemsinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
-        <keyword ref="qsystemsinfo.html#batteryLevelCritical">batteryLevelCritical</keyword>
-        <keyword ref="qsystemsinfo.html#cellId">cellId</keyword>
-        <keyword ref="qsystemsinfo.html#colorDepth">colorDepth</keyword>
         <keyword ref="qsystemsinfo.html#countryCode">countryCode</keyword>
         <keyword ref="qsystemsinfo.html#currentLanguage">currentLanguage</keyword>
-        <keyword ref="qsystemsinfo.html#currentMCC">currentMCC</keyword>
-        <keyword ref="qsystemsinfo.html#currentMNC">currentMNC</keyword>
-        <keyword ref="qsystemsinfo.html#diskSpaceCritical">diskSpaceCritical</keyword>
-        <keyword ref="qsystemsinfo.html#displayBrightness">displayBrightness</keyword>
-        <keyword ref="qsystemsinfo.html#freeMemoryLevel">freeMemoryLevel</keyword>
-        <keyword ref="qsystemsinfo.html#getCellNetworkStatus">getCellNetworkStatus</keyword>
         <keyword ref="qsystemsinfo.html#getDetailOfFeature">getDetailOfFeature</keyword>
-        <keyword ref="qsystemsinfo.html#getInputMethodType">getInputMethodType</keyword>
-        <keyword ref="qsystemsinfo.html#getSimStatus">getSimStatus</keyword>
         <keyword ref="qsystemsinfo.html#getVersion">getVersion</keyword>
-        <keyword ref="qsystemsinfo.html#getVolumeType">getVolumeType</keyword>
         <keyword ref="qsystemsinfo.html#hasFeatureSupported">hasFeatureSupported</keyword>
-        <keyword ref="qsystemsinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</keyword>
-        <keyword ref="qsystemsinfo.html#homeMCC">homeMCC</keyword>
-        <keyword ref="qsystemsinfo.html#homeMNC">homeMNC</keyword>
-        <keyword ref="qsystemsinfo.html#imei">imei</keyword>
-        <keyword ref="qsystemsinfo.html#imsi">imsi</keyword>
-        <keyword ref="qsystemsinfo.html#isDeviceLocked">isDeviceLocked</keyword>
-        <keyword ref="qsystemsinfo.html#isLocationEnabled">isLocationEnabled</keyword>
-        <keyword ref="qsystemsinfo.html#isScreenLockOn">isScreenLockOn</keyword>
-        <keyword ref="qsystemsinfo.html#isWLANAccessible">isWLANAccessible</keyword>
-        <keyword ref="qsystemsinfo.html#listOfVolumes">listOfVolumes</keyword>
-        <keyword ref="qsystemsinfo.html#locationAreaCode">locationAreaCode</keyword>
-        <keyword ref="qsystemsinfo.html#manufacturer">manufacturer</keyword>
-        <keyword ref="qsystemsinfo.html#memoryCritical">memoryCritical</keyword>
-        <keyword ref="qsystemsinfo.html#model">model</keyword>
-        <keyword ref="qsystemsinfo.html#networkSignalStrength">networkSignalStrength</keyword>
-        <keyword ref="qsystemsinfo.html#networkStatusChanged">networkStatusChanged</keyword>
-        <keyword ref="qsystemsinfo.html#operatorName">operatorName</keyword>
-        <keyword ref="qsystemsinfo.html#powerStateChanged">powerStateChanged</keyword>
-        <keyword ref="qsystemsinfo.html#profileChanged">profileChanged</keyword>
-        <keyword ref="qsystemsinfo.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
-        <keyword ref="qsystemsinfo.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
-        <keyword ref="qsystemsinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <section ref="qsystemsinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsystemsmemoryinfo.html" title="QSystemsMemoryInfo Class Reference">
+        <keyword ref="qsystemsmemoryinfo.html">QSystemsMemoryInfo</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#VolumeType-enum">VolumeType</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#VolumeType-enum">QSystemsMemoryInfo::Internal</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#VolumeType-enum">QSystemsMemoryInfo::Removable</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#VolumeType-enum">QSystemsMemoryInfo::NoVolume</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#availableDiskSpace">availableDiskSpace</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#diskSpaceCritical">diskSpaceCritical</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#freeMemoryLevel">freeMemoryLevel</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#getVolumeType">getVolumeType</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#memoryCritical">memoryCritical</keyword>
+        <keyword ref="qsystemsmemoryinfo.html#totalDiskSpace">totalDiskSpace</keyword>
+        <section ref="qsystemsmemoryinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsystemsnetworkinfo.html" title="QSystemsNetworkInfo Class Reference">
+        <keyword ref="qsystemsnetworkinfo.html">QSystemsNetworkInfo</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">CellNetworkStatus</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::NoNetworkAvailable</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::Roaming</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::HomeNetwork</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::Busy</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::Searching</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::UndefinedStatus</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::Denied</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::EmergencyOnly</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::CdmaMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::EthMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::UnknownMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::WlanMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::GsmMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::WcdmaMode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#cellId">cellId</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#currentMCC">currentMCC</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#currentMNC">currentMNC</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#homeMCC">homeMCC</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#homeMNC">homeMNC</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#isLocationEnabled">isLocationEnabled</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#networkStatusChanged">networkStatusChanged</keyword>
+        <keyword ref="qsystemsnetworkinfo.html#operatorName">operatorName</keyword>
+        <section ref="qsystemsnetworkinfo-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">

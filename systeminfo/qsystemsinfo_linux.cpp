@@ -110,58 +110,6 @@ QString QSystemsInfoPrivate::countryCode() const
     return QString(setlocale(LC_ALL,"")).mid(3,2);
 }
 
-QSystemsInfo::CellNetworkStatus QSystemsInfoPrivate::getCellNetworkStatus()
-{
-    return QSystemsInfo::NoNetworkAvailable;
-}
-
-qint32 QSystemsInfoPrivate::networkSignalStrength()
-{
-    return -1;
-}
-
-qint32 QSystemsInfoPrivate::cellId()
-{
-    return -1;
-}
-
-qint32 QSystemsInfoPrivate::locationAreaCode()
-{
-    return -1;
-}
-
-// Mobile Country Code
-qint32 QSystemsInfoPrivate::currentMCC()
-{
-    return -1;
-}
-
-// Mobile Network Code
-qint32 QSystemsInfoPrivate::currentMNC()
-{
-    return -1;
-}
-
-qint32 QSystemsInfoPrivate::homeMCC()
-{
-    return -1;
-}
-
-qint32 QSystemsInfoPrivate::homeMNC()
-{
-    return -1;
-}
-
-bool QSystemsInfoPrivate::isLocationEnabled() const
-{
-    return false;
-}
-
-bool QSystemsInfoPrivate::isWLANAccessible() const
-{
-    return false;
-}
-
 bool QSystemsInfoPrivate::hasFeatureSupported(QSystemsInfo::Feature feature)
 {
     bool featureSupported = false;
@@ -216,32 +164,102 @@ QString QSystemsInfoPrivate::getDetailOfFeature(QSystemsInfo::Feature feature)
     return QString();
 }
 
+////////
+QSystemsNetworkInfoPrivate::QSystemsNetworkInfoPrivate(QObject *parent)
+{
+    Q_UNUSED(parent);
+}
 
-// display
-qint32 QSystemsInfoPrivate::displayBrightness()
+QSystemsNetworkInfo::CellNetworkStatus QSystemsNetworkInfoPrivate::getCellNetworkStatus()
+{
+    return QSystemsNetworkInfo::NoNetworkAvailable;
+}
+
+qint32 QSystemsNetworkInfoPrivate::networkSignalStrength()
 {
     return -1;
 }
 
-void QSystemsInfoPrivate::setScreenSaverEnabled(bool)
+qint32 QSystemsNetworkInfoPrivate::cellId()
+{
+    return -1;
+}
+
+qint32 QSystemsNetworkInfoPrivate::locationAreaCode()
+{
+    return -1;
+}
+
+// Mobile Country Code
+qint32 QSystemsNetworkInfoPrivate::currentMCC()
+{
+    return -1;
+}
+
+// Mobile Network Code
+qint32 QSystemsNetworkInfoPrivate::currentMNC()
+{
+    return -1;
+}
+
+qint32 QSystemsNetworkInfoPrivate::homeMCC()
+{
+    return -1;
+}
+
+qint32 QSystemsNetworkInfoPrivate::homeMNC()
+{
+    return -1;
+}
+
+bool QSystemsNetworkInfoPrivate::isLocationEnabled() const
+{
+    return false;
+}
+
+bool QSystemsNetworkInfoPrivate::isWLANAccessible() const
+{
+    return false;
+}
+
+
+// display
+QSystemsDisplayInfoPrivate::QSystemsDisplayInfoPrivate(QObject *parent)
+{
+    Q_UNUSED(parent);
+}
+
+qint32 QSystemsDisplayInfoPrivate::displayBrightness()
+{
+    return -1;
+}
+
+void QSystemsDisplayInfoPrivate::setScreenSaverEnabled(bool)
 {
 }
 
-void QSystemsInfoPrivate::setScreenBlankingEnabled(bool)
+void QSystemsDisplayInfoPrivate::setScreenBlankingEnabled(bool)
 {
 }
 
-qint32 QSystemsInfoPrivate::colorDepth(qint32 screen)
+qint32 QSystemsDisplayInfoPrivate::colorDepth(qint32 screen)
 {
+    Q_UNUSED(screen);
     return QPixmap::defaultDepth();
 }
 
-bool  QSystemsInfoPrivate::hasRamMemoryLevel()
+/////
+QSystemsMemoryInfoPrivate::QSystemsMemoryInfoPrivate(QObject *parent)
+{
+    Q_UNUSED(parent);
+}
+
+bool  QSystemsMemoryInfoPrivate::hasRamMemoryLevel()
 {
     return true;
 }
 
-qint64 QSystemsInfoPrivate::freeMemoryLevel() const
+qint64 QSystemsMemoryInfoPrivate::freeMemoryLevel() const
 {
     QFile file("/proc/meminfo");
     if (!file.open(QIODevice::ReadOnly)) {
@@ -258,66 +276,30 @@ qint64 QSystemsInfoPrivate::freeMemoryLevel() const
     return -1;
 }
 
-qint64 QSystemsInfoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemsMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     Q_UNUSED(driveVolume);
     return -1;
 }
 
-qint64 QSystemsInfoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemsMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     Q_UNUSED(driveVolume);
     return -1;
 }
 
-QSystemsInfo::VolumeType QSystemsInfoPrivate::getVolumeType(const QString &driveVolume)
+QSystemsMemoryInfo::VolumeType QSystemsMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
 {
-    return QSystemsInfo::NoVolume;
+    Q_UNUSED(driveVolume);
+    return QSystemsMemoryInfo::NoVolume;
 }
 
-QStringList QSystemsInfoPrivate::listOfVolumes()
+QStringList QSystemsMemoryInfoPrivate::listOfVolumes()
 {
     return QStringList();
 }
 
-// device
-QString QSystemsInfoPrivate::imei() const
-{
-    return QString();
-}
-
-QString QSystemsInfoPrivate::imsi() const
-{
-    return QString();
-}
-
-QString QSystemsInfoPrivate::manufacturer() const
-{
-    return QString();
-}
-
-QString QSystemsInfoPrivate::model() const
-{
-    return QString();
-}
-
-QSystemsInfo::BatteryLevel QSystemsInfoPrivate::batteryLevel() const
-{
-    return QSystemsInfo::NoBatteryLevel;
-}
-
-QSystemsInfo::SimStatus QSystemsInfoPrivate::getSimStatus()
-{
-    return QSystemsInfo::SimNotAvailable;
-}
-
-bool QSystemsInfoPrivate::isDeviceLocked()
-{
-    return false;
-}
-
-
-bool QSystemsInfoPrivate::isCriticalMemory() const
+bool QSystemsMemoryInfoPrivate::isCriticalMemory() const
 {
     QFile file("/proc/meminfo");
     if (!file.open(QIODevice::ReadOnly)) {
@@ -374,8 +356,48 @@ else
     return false;
 }
 
+bool QSystemsMemoryInfoPrivate::isBatteryCharging()
+{
+    return false;
+}
 
-bool QSystemsInfoPrivate::isBatteryCharging()
+// device
+QSystemsDeviceInfoPrivate::QSystemsDeviceInfoPrivate(QObject *parent)
+{
+    Q_UNUSED(parent);
+}
+
+QString QSystemsDeviceInfoPrivate::imei() const
+{
+    return QString();
+}
+
+QString QSystemsDeviceInfoPrivate::imsi() const
+{
+    return QString();
+}
+
+QString QSystemsDeviceInfoPrivate::manufacturer() const
+{
+    return QString();
+}
+
+QString QSystemsDeviceInfoPrivate::model() const
+{
+    return QString();
+}
+
+QSystemsDeviceInfo::BatteryLevel QSystemsDeviceInfoPrivate::batteryLevel() const
+{
+    return QSystemsDeviceInfo::NoBatteryLevel;
+}
+
+QSystemsDeviceInfo::SimStatus QSystemsDeviceInfoPrivate::getSimStatus()
+{
+    return QSystemsDeviceInfo::SimNotAvailable;
+}
+
+bool QSystemsDeviceInfoPrivate::isDeviceLocked()
 {
     return false;
 }

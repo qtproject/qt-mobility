@@ -50,6 +50,10 @@ QT_BEGIN_NAMESPACE
 class QStringList;
 
 class QSystemsInfoPrivate;
+class QSystemsNetworkInfoPrivate;
+class QSystemsMemoryInfoPrivate;
+class QSystemsDeviceInfoPrivate;
+class QSystemsDisplayInfoPrivate;
 
 class QSystemsInfo : public QObject
 {
@@ -82,7 +86,39 @@ public:
 
     QString countryCode() const; //2 letter ISO 3166-1
 
-	// network
+// features
+    enum Feature {
+        UnknownFeature = -1,
+        BluetoothFeature,
+        CameraFeature,
+        FmradioFeature,
+        IrFeature,
+        LedFeature,
+        MemcardFeature,
+        UsbFeature,
+        VibFeature,
+        WlanFeature,
+        SimFeature,
+        LocationFeature,
+        VideoOutFeature,
+        HapticsFeature
+	};
+	
+    bool hasFeatureSupported(QSystemsInfo::Feature feature);
+    QString getDetailOfFeature(QSystemsInfo::Feature feature);
+
+private:
+    QSystemsInfoPrivate *d;
+};
+
+class QSystemsNetworkInfo : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemsNetworkInfo(QObject *parent = 0);
+
     enum CellNetworkStatus {
         UndefinedStatus = -1,
         NoNetworkAvailable = 1,
@@ -94,7 +130,7 @@ public:
         Roaming
     };
 
-	QSystemsInfo::CellNetworkStatus getCellNetworkStatus();
+	QSystemsNetworkInfo::CellNetworkStatus getCellNetworkStatus();
 
     enum NetworkMode {
         UnknownMode = 0x00000000,
@@ -120,36 +156,40 @@ public:
 
     QString operatorName();
 
-// features
-    enum Feature {
-        UnknownFeature = -1,
-        BluetoothFeature,
-        CameraFeature,
-        FmradioFeature,
-        IrFeature,
-        LedFeature,
-        MemcardFeature,
-        UsbFeature,
-        VibFeature,
-        WlanFeature,
-        SimFeature,
-        LocationFeature,
-        VideoOutFeature,
-        HapticsFeature
-	};
-	
-    bool hasFeatureSupported(QSystemsInfo::Feature feature);
-    QString getDetailOfFeature(QSystemsInfo::Feature feature);
+Q_SIGNALS:
 
-// display
+    void networkStatusChanged(QSystemsNetworkInfo::NetworkMode netmode, QSystemsNetworkInfo::CellNetworkStatus netStatus);
+
+private:
+    QSystemsNetworkInfoPrivate *d;
+};
+
+class QSystemsDisplayInfo : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemsDisplayInfo(QObject *parent = 0);
     qint32 displayBrightness();
     qint32 colorDepth(qint32 screen);
     void setScreenSaverEnabled(bool);
     void setScreenBlankingEnabled(bool);
     bool isScreenLockOn();
 
+private:
+    QSystemsDisplayInfoPrivate *d;
+};
 
-// memory
+
+class QSystemsMemoryInfo : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemsMemoryInfo(QObject *parent = 0);
+
     enum VolumeType {
         NoVolume = 0,
         Internal,
@@ -161,10 +201,24 @@ public:
     qlonglong totalDiskSpace(const QString &driveVolume);
     qlonglong availableDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
-	QSystemsInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
+    QSystemsMemoryInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
 
+Q_SIGNALS:
+    void memoryCritical(qint32);
+    void diskSpaceCritical(QString &driveVolume, qint32);
 
-// device
+private:
+    QSystemsMemoryInfoPrivate *d;
+};
+
+class QSystemsDeviceInfo : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemsDeviceInfo(QObject *parent = 0);
+
     enum BatteryLevel {
         NoBatteryLevel = 0,
         BatteryCritical = 1,
@@ -186,14 +240,14 @@ public:
         KeysAndTouch
     };
 
-    QSystemsInfo::InputMethods getInputMethodType();
+    QSystemsDeviceInfo::InputMethods getInputMethodType();
 
     QString imei() const;
     QString imsi() const;
     QString manufacturer() const;
     QString model() const;
 
-    QSystemsInfo::BatteryLevel batteryLevel() const;
+    QSystemsDeviceInfo::BatteryLevel batteryLevel() const;
 
     enum Profile {
         UnknownProfile = -1,
@@ -212,23 +266,18 @@ public:
 		Locked
 	};
 
-    QSystemsInfo::SimStatus getSimStatus();
+    QSystemsDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
 
 Q_SIGNALS:
-    void memoryCritical(qint32);
-    void diskSpaceCritical(QString &driveVolume, qint32);
 
-    void profileChanged(QSystemsInfo::Profile);
-
-    void networkStatusChanged(QSystemsInfo::NetworkMode, QSystemsInfo::CellNetworkStatus);
- 
-    void batteryLevelChanged(QSystemsInfo::BatteryLevel);
+    void profileChanged(QSystemsDeviceInfo::Profile);
+    void batteryLevelChanged(QSystemsDeviceInfo::BatteryLevel);
     void batteryLevelCritical(qint32);
-    void powerStateChanged(QSystemsInfo::PowerState);
+    void powerStateChanged(QSystemsDeviceInfo::PowerState);
 
 private:
-    QSystemsInfoPrivate *d;
+    QSystemsDeviceInfoPrivate *d;
 };
 
 QT_END_NAMESPACE

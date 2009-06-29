@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
   /*!
     \class QSystemsInfo
 
-    \brief The QSystemsInfo class provides access to various information from the system.
+    \brief The QSystemsInfo class provides access to various general information from the system.
 
   */
 /*!
@@ -77,32 +77,6 @@ QT_BEGIN_NAMESPACE
     \value NetscapePlugin        Version of Netscap plugin.
     \value WebApp                Web Application identifier.
     \value Firmware              Version of (flashable) system as a whole.
-
-  */
-/*!
-    \enum QSystemsInfo::CellNetworkStatus
-    This enum describes the status of the network connection:
-
-    \value UndefinedStatus        There is no network device, or error.
-    \value NoNetworkAvailable     There is no network available.
-    \value EmergencyOnly          Emergency calls only.
-    \value Searching              Searching for network.
-    \value Busy                   Network is busy.
-    \value HomeNetwork            On Home Network.
-    \value Denied                 Network access denied.
-    \value Roaming                On Roaming network.
-
-  */
-/*!
-    \enum QSystemsInfo::NetworkMode
-    This enum describes the type of network:
-
-    \value UnknownMode             No network, or error.
-    \value GsmMode                 Global System for Mobile (GSM) network.
-    \value CdmaMode                Code division multiple access (CDMA) network.
-    \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
-    \value WlanMode                Wireless Local Area Network (WLAN) network.
-    \value EthMode                 Wired Local Area network.
 
   */
 /*!
@@ -124,8 +98,95 @@ QT_BEGIN_NAMESPACE
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
   */
+
+  /*!
+    \class QSystemsNetworkInfo
+
+    \brief The QSystemsNetworkInfo class provides access to network information from the system.
+
+  */
 /*!
-    \enum QSystemsInfo::BatteryLevel
+    \enum QSystemsNetworkInfo::CellNetworkStatus
+    This enum describes the status of the network connection:
+
+    \value UndefinedStatus        There is no network device, or error.
+    \value NoNetworkAvailable     There is no network available.
+    \value EmergencyOnly          Emergency calls only.
+    \value Searching              Searching for network.
+    \value Busy                   Network is busy.
+    \value HomeNetwork            On Home Network.
+    \value Denied                 Network access denied.
+    \value Roaming                On Roaming network.
+
+  */
+/*!
+    \enum QSystemsNetworkInfo::NetworkMode
+    This enum describes the type of network:
+
+    \value UnknownMode             No network, or error.
+    \value GsmMode                 Global System for Mobile (GSM) network.
+    \value CdmaMode                Code division multiple access (CDMA) network.
+    \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
+    \value WlanMode                Wireless Local Area Network (WLAN) network.
+    \value EthMode                 Wired Local Area network.
+
+  */
+/*!
+  \fn void QSystemsNetworkInfo::networkStatusChanged(QSystemsNetworkInfo::NetworkMode netMode, QSystemsNetworkInfo::CellNetworkStatus netStatus)
+
+  This signal is emitted when network status has changed.
+  \a netMode is the network mode of the changed network.
+  \a netStatus  is the new status of the changed network.
+ */
+
+/*!
+    \class QSystemsDisplayInfo
+
+    \brief The QSystemsDisplayInfo class provides access to display information from the system.
+
+  */
+
+  /*!
+    \class QSystemsMemoryInfo
+
+    \brief The QSystemsMemoryInfo class provides access to memory and disk information from the system.
+
+  */
+
+/*!
+    \enum QSystemsMemoryInfo::VolumeType
+    This enum describes the type of drive or volume
+
+    \value NoVolume                Volume type undetermined.
+    \value Internal                Is internal drive
+    \value Removable               Is removable
+*/
+
+/*!
+  \fn void QSystemsMemoryInfo::memoryCritical(qint32 percent)
+
+  This signal is emitted when memory fall below 3%.
+  \a percent of current charge.
+  */
+
+
+ /*!
+    \fn void QSystemsMemoryInfo::diskSpaceCritical(QString &driveVolume, qint32 spaceRemaining)
+
+    This signal is emitted when disk space has reached 3% of capacity.
+    \a driveVolume is the volume, drive or disk that has reached critical.
+    \a spaceRemaining is the space remaining in kilobytes,
+
+ */
+
+/*!
+    \class QSystemsDeviceInfo
+
+    \brief The QSystemsDeviceInfo class provides access to device information from the system.
+
+  */
+/*!
+    \enum QSystemsDeviceInfo::BatteryLevel
     This enum describes the level of the main battery.
 
     \value NoBatteryLevel          Battery level undetermined.
@@ -136,7 +197,7 @@ QT_BEGIN_NAMESPACE
 
   */
 /*!
-    \enum QSystemsInfo::PowerState
+    \enum QSystemsDeviceInfo::PowerState
     This enum describes the power state:
 
     \value UnknownPower            Power error.
@@ -145,7 +206,7 @@ QT_BEGIN_NAMESPACE
 
   */
 /*!
-    \enum QSystemsInfo::Profile
+    \enum QSystemsDeviceInfo::Profile
     This enum describes the current operating profile of the device or computer.
 
     \value UnknownProfile          Profile unknown or error.
@@ -159,7 +220,7 @@ QT_BEGIN_NAMESPACE
 
   */
 /*!
-    \enum QSystemsInfo::InputMethods
+    \enum QSystemsDeviceInfo::InputMethods
     This enum describes the input methods for the device or desktop.
 
     \value KeysOnly                Has only Keys or keyboard
@@ -167,17 +228,9 @@ QT_BEGIN_NAMESPACE
     \value KeysAndTouch            Has both Keys and touchscreen.
 */
 
-/*!
-    \enum QSystemsInfo::VolumeType
-    This enum describes the type of drive or volume
-
-    \value NoVolume                Volume type undetermined.
-    \value Internal                Is internal drive
-    \value Removable               Is removable
-*/
 
 /*!
-    \enum QSystemsInfo::SimStatus
+    \enum QSystemsDeviceInfo::SimStatus
     This enum describes the status is the sim card or cards.
 
     \value SimNotAvailable         SIM is not available on this device.
@@ -188,56 +241,34 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-  \fn void QSystemsInfo::memoryCritical(qint32 percent)
-
-  This signal is emitted when memory fall below 3%.
-  \a percent of current charge.
-  */
-
-/*!
-  \fn void QSystemsInfo::profileChanged(QSystemsInfo::Profile profile)
+  \fn void QSystemsDeviceInfo::profileChanged(QSystemsDeviceInfo::Profile profile)
 
   This signal is emitted when user changes the current operating profile.
 \a profile is the new profile.
  */
 
-/*!
-  \fn void QSystemsInfo::networkStatusChanged(QSystemsInfo::NetworkMode netMode, QSystemsInfo::CellNetworkStatus netStatus)
-
-  This signal is emitted when network status has changed.
-  \a netMode is the network mode of the changed network.
-  \a netStatus  is the new status of the changed network.
- */
 
 /*!
-  \fn void QSystemsInfo::batteryLevelChanged(QSystemsInfo::BatteryLevel level)
+  \fn void QSystemsDeviceInfo::batteryLevelChanged(QSystemsDeviceInfo::BatteryLevel level)
 
   This signal is emitted when battery level has changed.
   \a level is the new level.
  */
 
 /*!
-  \fn void QSystemsInfo::batteryLevelCritical(qint32 level)
+  \fn void QSystemsDeviceInfo::batteryLevelCritical(qint32 level)
 
   This signal is emitted when the level of the battery charge as become critical or 3% or less.
   \a level New battery level
  */
 
 /*!
-  \fn void QSystemsInfo::powerStateChanged(QSystemsInfo::PowerState state)
+  \fn void QSystemsDeviceInfo::powerStateChanged(QSystemsDeviceInfo::PowerState state)
 
   This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
   \a state is the new power state.
  */
 
- /*!
-    \fn void QSystemsInfo::diskSpaceCritical(QString &driveVolume, qint32 spaceRemaining)
-
-    This signal is emitted when disk space has reached 3% of capacity.
-    \a driveVolume is the volume, drive or disk that has reached critical.
-    \a spaceRemaining is the space remaining in kilobytes,
-
- */
  /*!
    Constructs a QSystemsInfo with the given \a parent.
  */
@@ -285,93 +316,6 @@ QString QSystemsInfo::countryCode() const
 }
 
 /*!
-    Returns the status of the cell network.
-*/
-QSystemsInfo::CellNetworkStatus QSystemsInfo::getCellNetworkStatus() {
-    return d->getCellNetworkStatus();
-}
-
-/*!
-    Returns the strength of the network signal, per network mode , 0 - 100 linear scaling
-*/
-qint32 QSystemsInfo::networkSignalStrength()
-{
-    return d->networkSignalStrength();
-}
-
-/*!
-    Returns the Cell ID of the connected tower or based station.
-*/
-qint32 QSystemsInfo::cellId()
-{
-    return d->cellId();
-}
-
-/*!
-    Returns the Location Area Code, in the range of 0 to 65,535.
-*/
-qint32 QSystemsInfo::locationAreaCode()
-{
-    return d->locationAreaCode();
-}
-
- /*!
-    Returns the current Mobile Country Code
-/*/
-qint32 QSystemsInfo::currentMCC()
-{
-    return d->currentMCC();
-}
-
-/*!
-    Returns the current Mobile Network Code
-*/
-qint32 QSystemsInfo::currentMNC()
-{
-    return d->currentMCC();
-}
-
-/*!
-    Returns the home Mobile Network Code
-*/
-qint32 QSystemsInfo::homeMCC()
-{
-    return d->homeMCC();
-}
-
-/*!
-    Returns the home Mobile Country Code
-*/
-qint32 QSystemsInfo::homeMNC()
-{
-    return d->homeMNC();
-}
-
-/*!
-    Returns true if the system has location services, otherwise false.
-*/
-bool QSystemsInfo::isLocationEnabled() const
-{
-    return d->isLocationEnabled();
-}
-
-/*!
-    Returns true if the system has an accessab;e WLan, otherwise false.
-*/
-bool QSystemsInfo::isWLANAccessible() const
-{
-    return d->isWLANAccessible();
-}
-
-/*!
-  Returns the name of the operator.
-*/
-QString QSystemsInfo::operatorName()
-{
-    return d->operatorName();
-}
-
-/*!
     Returns true if feature \a feature is supported, otherwise false.
 */
 
@@ -388,11 +332,113 @@ QString QSystemsInfo::getDetailOfFeature(QSystemsInfo::Feature feature)
     return d->getDetailOfFeature(feature);
 }
 
+ /*!
+   Constructs a QSystemsNetworkInfo with the given \a parent.
+ */
+QSystemsNetworkInfo::QSystemsNetworkInfo(QObject *parent)
+{
+    d = new QSystemsNetworkInfoPrivate(parent);
+}
+
+/*!
+    Returns the status of the cell network.
+*/
+QSystemsNetworkInfo::CellNetworkStatus QSystemsNetworkInfo::getCellNetworkStatus() {
+    return d->getCellNetworkStatus();
+}
+
+/*!
+    Returns the strength of the network signal, per network mode , 0 - 100 linear scaling
+*/
+qint32 QSystemsNetworkInfo::networkSignalStrength()
+{
+    return d->networkSignalStrength();
+}
+
+/*!
+    Returns the Cell ID of the connected tower or based station.
+*/
+qint32 QSystemsNetworkInfo::cellId()
+{
+    return d->cellId();
+}
+
+/*!
+    Returns the Location Area Code, in the range of 0 to 65,535.
+*/
+qint32 QSystemsNetworkInfo::locationAreaCode()
+{
+    return d->locationAreaCode();
+}
+
+ /*!
+    Returns the current Mobile Country Code
+/*/
+qint32 QSystemsNetworkInfo::currentMCC()
+{
+    return d->currentMCC();
+}
+
+/*!
+    Returns the current Mobile Network Code
+*/
+qint32 QSystemsNetworkInfo::currentMNC()
+{
+    return d->currentMCC();
+}
+
+/*!
+    Returns the home Mobile Network Code
+*/
+qint32 QSystemsNetworkInfo::homeMCC()
+{
+    return d->homeMCC();
+}
+
+/*!
+    Returns the home Mobile Country Code
+*/
+qint32 QSystemsNetworkInfo::homeMNC()
+{
+    return d->homeMNC();
+}
+
+/*!
+    Returns true if the system has location services, otherwise false.
+*/
+bool QSystemsNetworkInfo::isLocationEnabled() const
+{
+    return d->isLocationEnabled();
+}
+
+/*!
+    Returns true if the system has an accessab;e WLan, otherwise false.
+*/
+bool QSystemsNetworkInfo::isWLANAccessible() const
+{
+    return d->isWLANAccessible();
+}
+
+/*!
+  Returns the name of the operator.
+*/
+QString QSystemsNetworkInfo::operatorName()
+{
+    return d->operatorName();
+}
+
 // display
+ /*!
+   Constructs a QSystemsDisplayInfo with the given \a parent.
+ */
+QSystemsDisplayInfo::QSystemsDisplayInfo(QObject *parent)
+{
+    d = new QSystemsDisplayInfoPrivate(parent);
+}
 /*!
     Returns the display brightness in %, 1 - 100 scale
 */
-qint32 QSystemsInfo::displayBrightness()
+qint32 QSystemsDisplayInfo::displayBrightness()
 {
     return d->displayBrightness();
 }
@@ -400,7 +446,7 @@ qint32 QSystemsInfo::displayBrightness()
 /*!
     Returns the color depth of the screen \a screenNumber, in bits per pixel.
 */
-qint32 QSystemsInfo::colorDepth(qint32 screenNumber)
+qint32 QSystemsDisplayInfo::colorDepth(qint32 screenNumber)
 {
     return d->colorDepth(screenNumber);
 }
@@ -408,7 +454,7 @@ qint32 QSystemsInfo::colorDepth(qint32 screenNumber)
 /*!
     Sets the screensaver on if \a b is true, otherwise off.
 */
-void QSystemsInfo::setScreenSaverEnabled(bool b)
+void QSystemsDisplayInfo::setScreenSaverEnabled(bool b)
 {
     d->setScreenSaverEnabled(b);
 }
@@ -416,7 +462,7 @@ void QSystemsInfo::setScreenSaverEnabled(bool b)
 /*!
     Sets the screen blanking on if \a b is true, otherwise off.
 */
-void QSystemsInfo::setScreenBlankingEnabled(bool b)
+void QSystemsDisplayInfo::setScreenBlankingEnabled(bool b)
 {
     d->setScreenBlankingEnabled(b);
 }
@@ -424,16 +470,24 @@ void QSystemsInfo::setScreenBlankingEnabled(bool b)
 /*!
     Returns whether the systems screen lock is turned on.
 */
-bool QSystemsInfo::isScreenLockOn()
+bool QSystemsDisplayInfo::isScreenLockOn()
 {
     return d->isScreenLockOn();
 }
 
 
+ /*!
+   Constructs a QSystemsMemoryInfo with the given \a parent.
+ */
+QSystemsMemoryInfo::QSystemsMemoryInfo(QObject *parent)
+{
+    d = new QSystemsMemoryInfoPrivate(parent);
+}
+
 /*!
     Returns true, if the system can present RAM mempry levels, otherwise false.
 */
-bool QSystemsInfo::hasRamMemoryLevel()
+bool QSystemsMemoryInfo::hasRamMemoryLevel()
 {
     return d->hasRamMemoryLevel();
 }
@@ -441,7 +495,7 @@ bool QSystemsInfo::hasRamMemoryLevel()
 /*!
     Returns the amount of free RAM memory in kilobytes.
 */
-quint64 QSystemsInfo::freeMemoryLevel() const
+quint64 QSystemsMemoryInfo::freeMemoryLevel() const
 {
     return d->freeMemoryLevel();
 }
@@ -449,7 +503,7 @@ quint64 QSystemsInfo::freeMemoryLevel() const
 /*!
     Returns the amount of total space on the \a volumeDrive.
 */
-qlonglong QSystemsInfo::totalDiskSpace(const QString &volumeDrive)
+qlonglong QSystemsMemoryInfo::totalDiskSpace(const QString &volumeDrive)
 {
     return d->totalDiskSpace(volumeDrive);
 }
@@ -457,7 +511,7 @@ qlonglong QSystemsInfo::totalDiskSpace(const QString &volumeDrive)
 /*!
     Returns the amount of available free space on the \a volumeDrive.
 */
-qlonglong QSystemsInfo::availableDiskSpace(const QString &volumeDrive)
+qlonglong QSystemsMemoryInfo::availableDiskSpace(const QString &volumeDrive)
 {
     return d->availableDiskSpace(volumeDrive);
 }
@@ -465,7 +519,7 @@ qlonglong QSystemsInfo::availableDiskSpace(const QString &volumeDrive)
 /*!
     Returns a QStringList of volumes or partitions.
 */
-QStringList QSystemsInfo::listOfVolumes()
+QStringList QSystemsMemoryInfo::listOfVolumes()
 {
     return d->listOfVolumes();
 }
@@ -473,24 +527,31 @@ QStringList QSystemsInfo::listOfVolumes()
 /*!
   Returns the type of volume \a driveVolume
 */
-QSystemsInfo::VolumeType QSystemsInfo::getVolumeType(const QString &driveVolume)
+QSystemsMemoryInfo::VolumeType QSystemsMemoryInfo::getVolumeType(const QString &driveVolume)
 {
     return d->getVolumeType(driveVolume);
+}
+
+// device
+ /*!
+   Constructs a QSystemsDeviceInfo with the given \a parent.
+ */
+QSystemsDeviceInfo::QSystemsDeviceInfo(QObject *parent)
+{
+    d = new QSystemsDeviceInfoPrivate(parent);
 }
 
 /*!
     Returns the InputMethodType that the system uses.
 */
-QSystemsInfo::InputMethods QSystemsInfo::getInputMethodType()
+QSystemsDeviceInfo::InputMethods QSystemsDeviceInfo::getInputMethodType()
 {
  return d->getInputMethodType();
 }
-// device
-
 /*!
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
 */
-QString QSystemsInfo::imei() const
+QString QSystemsDeviceInfo::imei() const
 {
     return d->imei();
 }
@@ -498,7 +559,7 @@ QString QSystemsInfo::imei() const
 /*!
     Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.
 */
-QString QSystemsInfo::imsi() const
+QString QSystemsDeviceInfo::imsi() const
 {
     return d->imsi();
 }
@@ -506,7 +567,7 @@ QString QSystemsInfo::imsi() const
 /*!
     Returns the name of the manufacturer.
 */
-QString QSystemsInfo::manufacturer() const
+QString QSystemsDeviceInfo::manufacturer() const
 {
     return d->manufacturer();
 }
@@ -514,7 +575,7 @@ QString QSystemsInfo::manufacturer() const
 /*!
     Returns the model of the device, 0r in the case of desktops, the CPU.
 */
-QString QSystemsInfo::model() const
+QString QSystemsDeviceInfo::model() const
 {
     return d->model();
 }
@@ -522,7 +583,7 @@ QString QSystemsInfo::model() const
 /*!
     Returns the battery charge level as percentage 1 - 100 scale
 */
-QSystemsInfo::BatteryLevel QSystemsInfo::batteryLevel() const
+QSystemsDeviceInfo::BatteryLevel QSystemsDeviceInfo::batteryLevel() const
 {
     return d->batteryLevel();
 }
@@ -530,14 +591,14 @@ QSystemsInfo::BatteryLevel QSystemsInfo::batteryLevel() const
 /*!
   Returns status of SIM card.
 */
-QSystemsInfo::SimStatus QSystemsInfo::getSimStatus()
+QSystemsDeviceInfo::SimStatus QSystemsDeviceInfo::getSimStatus()
 {
     return d->getSimStatus();
 }
 /*!
   Returns true if the device is locked, otherwise false.
 */
-bool QSystemsInfo::isDeviceLocked()
+bool QSystemsDeviceInfo::isDeviceLocked()
 {
     return d->isDeviceLocked();
 }
