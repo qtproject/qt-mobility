@@ -32,40 +32,56 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEORENDERERMEDIAOUTPUT_H
-#define QVIDEORENDERERMEDIAOUTPUT_H
+#ifndef QPAINTERVIDEOSURFACE_P_H
+#define QPAINTERVIDEOSURFACE_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include <QtCore/qplugin.h>
-#include <QtGui/qwidget.h>
+#include <QtCore/qsize.h>
+#include <QtGui/qimage.h>
+#include <QtMultimedia/qabstractvideosurface.h>
+#include <QtMultimedia/qvideoframe.h>
 
-class QVideoRendererMediaOutputInterface
-{
-public:
-    virtual ~QVideoRendererMediaOutputInterface();
-};
-
-#define QVideoRendererMediaOutputInterface_iid "com.nokia.Qt.QVideoRendererMediaOutputInterface/1.0"
-
-Q_DECLARE_INTERFACE(QVideoRendererMediaOutputInterface, QVideoRendererMediaOutputInterface_iid)
-
-class QAbstractVideoSurface;
-
-class QVideoRendererMediaOutputPrivate;
-
-class QVideoRendererMediaOutput : public QObject, public QVideoRendererMediaOutputInterface
+class QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
-    Q_INTERFACES(QVideoRendererMediaOutputInterface)
-    Q_PROPERTY(QAbstractVideoSurface* surface READ surface WRITE setSurface)
-    Q_DECLARE_PRIVATE(QVideoRendererMediaOutput)
 public:
-    QVideoRendererMediaOutput(QObject *parent = 0);
-    ~QVideoRendererMediaOutput();
+    QPainterVideoSurface(QObject *parent = 0);
+    ~QPainterVideoSurface();
 
-    QAbstractVideoSurface *surface() const;
-    virtual void setSurface(QAbstractVideoSurface *surface);
+    bool isFormatSupported(const QVideoFormat &format, QVideoFormat *similar = 0);
+
+    bool start(const QVideoFormat &format);
+    void stop();
+
+    bool present(const QVideoFrame &frame);
+
+    bool isReady() const;
+    void setReady(bool ready);
+
+    void paint(QPainter *painter, const QRect &rect);
+
+Q_SIGNALS:
+    void frameChanged();
+
+private:
+    QVideoFrame m_frame;
+    QVideoFrame::Type m_frameType;
+    QImage::Format m_imageFormat;
+    QSize m_imageSize;
+    QRect m_sourceRect;
+    bool m_ready;
 };
 
 #endif

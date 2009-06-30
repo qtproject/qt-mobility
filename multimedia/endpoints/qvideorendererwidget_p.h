@@ -35,28 +35,34 @@
 #ifndef QVIDEORENDERERWIDGET_P_H
 #define QVIDEORENDERERWIDGET_P_H
 
-#include "qwidgetmediaoutput.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmediawidgetendpoint.h"
 
 #ifndef QT_NO_VIDEOSURFACE
 
-class QImageMediaOutput;
-class QVideoRendererMediaOutput;
+class QVideoRendererEndpoint;
 
 class QVideoRendererWidgetPrivate;
 
-class QVideoRendererWidget : public QWidgetMediaOutput
+class QVideoRendererWidget : public QMediaWidgetEndpoint
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QVideoRendererWidget)
 public:
-    QVideoRendererWidget(QWidget *parent = 0);
+    QVideoRendererWidget(QVideoRendererEndpoint *renderer);
     ~QVideoRendererWidget();
 
-    QVideoRendererMediaOutput *rendererOutput() const;
-    void setRendererOutput(QVideoRendererMediaOutput *output);
-
-    QImageMediaOutput *imageOutput() const;
-    void setImageOutput(QImageMediaOutput *output);
+    QVideoRendererEndpoint *rendererOutput() const;
 
 public Q_SLOTS:
     void setFullscreen(bool fullscreen);
@@ -64,9 +70,6 @@ public Q_SLOTS:
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
-
-private:
-    Q_PRIVATE_SLOT(d_func(), void _q_imageChanged(const QImage &));
 };
 
 #endif

@@ -32,41 +32,42 @@
 **
 ****************************************************************************/
 
-#ifndef QWIDGETMEDIAOUTPUT_H
-#define QWIDGETMEDIAOUTPUT_H
+#ifndef QVIDEORENDERERENDPOINT_H
+#define QVIDEORENDERERENDPOINT_H
+
+#ifndef QT_NO_VIDEOSURFACE
 
 #include <QtCore/qplugin.h>
 #include <QtGui/qwidget.h>
 
-class QWidgetMediaOutputInterface
+class QVideoRendererEndpointInterface
 {
 public:
-    virtual ~QWidgetMediaOutputInterface();
+    virtual ~QVideoRendererEndpointInterface();
 };
 
-#define QWidgetMediaOutputInterface_iid "com.nokia.Qt.QWidgetMediaOutputInterface/1.0"
+#define QVideoRendererEndpointInterface_iid "com.nokia.Qt.QVideoRendererEndpointInterface/1.0"
 
-Q_DECLARE_INTERFACE(QWidgetMediaOutputInterface, QWidgetMediaOutputInterface_iid)
+Q_DECLARE_INTERFACE(QVideoRendererEndpointInterface, QVideoRendererEndpointInterface_iid)
 
-class QWidgetMediaOutputPrivate;
+class QAbstractVideoSurface;
 
-class QWidgetMediaOutput : public QWidget, public QWidgetMediaOutputInterface
+class QVideoRendererEndpointPrivate;
+
+class QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QWidgetMediaOutputInterface)
-    Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
-    Q_DECLARE_PRIVATE(QWidgetMediaOutput)
+    Q_INTERFACES(QVideoRendererEndpointInterface)
+    Q_PROPERTY(QAbstractVideoSurface* surface READ surface WRITE setSurface)
+    Q_DECLARE_PRIVATE(QVideoRendererEndpoint)
 public:
-    QWidgetMediaOutput(QWidget *parent = 0);
-    ~QWidgetMediaOutput();
+    QVideoRendererEndpoint(QObject *parent = 0);
+    ~QVideoRendererEndpoint();
 
-    bool isFullscreen() const;
-
-public Q_SLOTS:
-    virtual void setFullscreen(bool fullscreen);
-
-protected:
-    QWidgetMediaOutput(QWidgetMediaOutputPrivate &dd, QWidget *parent);
+    QAbstractVideoSurface *surface() const;
+    virtual void setSurface(QAbstractVideoSurface *surface);
 };
+
+#endif
 
 #endif

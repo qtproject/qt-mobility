@@ -33,38 +33,27 @@
 ****************************************************************************/
 
 #include "qvideorendererwidget_p.h"
-#include "qwidgetmediaoutput_p.h"
+#include "qmediawidgetendpoint_p.h"
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include "qimagemediaoutput.h"
 #include "qpaintervideosurface_p.h"
-#include "qvideorenderermediaoutput.h"
+#include "qvideorendererendpoint.h"
 
 #include <qpainter.h>
 
-class QVideoRendererWidgetPrivate : public QWidgetMediaOutputPrivate
+class QVideoRendererWidgetPrivate : public QMediaWidgetEndpointPrivate
 {
     Q_DECLARE_PUBLIC(QVideoRendererWidget)
 public:
     QVideoRendererWidgetPrivate()
-        : imageOutput(0)
-        , rendererOutput(0)
+        : rendererOutput(0)
     {
     }
 
-    void _q_imageChanged(const QImage &image);
-
-    QImageMediaOutput *imageOutput;
-    QVideoRendererMediaOutput *rendererOutput;
+    QVideoRendererEndpoint *rendererOutput;
     QPainterVideoSurface surface;
 };
-
-void QVideoRendererWidgetPrivate::_q_imageChanged(const QImage &)
-{
-    if (surface.isStarted())
-        q_func()->update();
-}
 
 /*!
     \class QVideoRendererWidget
@@ -74,12 +63,17 @@ void QVideoRendererWidgetPrivate::_q_imageChanged(const QImage &)
 */
 
 /*!
-    Constructs a new media output widget with the given \a parent.
+    Constructs a new media widget that a \a renderer outputs to.
 */
-QVideoRendererWidget::QVideoRendererWidget(QWidget *parent)
-    : QWidgetMediaOutput(*new QVideoRendererWidgetPrivate, parent)
+QVideoRendererWidget::QVideoRendererWidget(QVideoRendererEndpoint *renderer)
+    : QMediaWidgetEndpoint(*new QVideoRendererWidgetPrivate, 0)
 {
     Q_D(QVideoRendererWidget);
+
+    d->rendererOutput = renderer;
+
+    if (d->rendererOutput)
+        d->rendererOutput->setSurface(&d->surface);
 
     connect(&d->surface, SIGNAL(frameChanged()), this, SLOT(update()));
 }
@@ -89,58 +83,17 @@ QVideoRendererWidget::QVideoRendererWidget(QWidget *parent)
 */
 QVideoRendererWidget::~QVideoRendererWidget()
 {
+    Q_D(QVideoRendererWidget);
+
+    delete d->rendererOutput;
 }
 
 /*!
     Returns the renderer that renders to a media output widget.
 */
-QVideoRendererMediaOutput *QVideoRendererWidget::rendererOutput() const
+QVideoRendererEndpoint *QVideoRendererWidget::rendererOutput() const
 {
     return d_func()->rendererOutput;
-}
-
-/*!
-    Sets the \a renderer that renders to a media output widget.
-*/
-void QVideoRendererWidget::setRendererOutput(QVideoRendererMediaOutput *output)
-{
-    Q_D(QVideoRendererWidget);
-
-    if (d->rendererOutput)
-        d->rendererOutput->setSurface(0);
-
-    d->rendererOutput = output;
-
-    if (d->rendererOutput)
-        d->rendererOutput->setSurface(&d->surface);
-}
-
-/*!
-    Returns the image output.
-*/
-QImageMediaOutput *QVideoRendererWidget::imageOutput() const
-{
-    return d_func()->imageOutput;
-}
-
-/*!
-    Sets the image \a output.
-*/
-void QVideoRendererWidget::setImageOutput(QImageMediaOutput *output)
-{
-    Q_D(QVideoRendererWidget);
-
-    if (d->imageOutput) {
-        disconnect(d->imageOutput, SIGNAL(imageChanged(QImage)),
-                this, SLOT(_q_imageChanged(QImage)));
-    }
-
-    d->imageOutput = output;
-
-    if (d->imageOutput) {
-        connect(d->imageOutput, SIGNAL(imageChanged(QImage)),
-                this, SLOT(_q_imageChanged(QImage)));
-    }
 }
 
 /*!
@@ -164,8 +117,6 @@ void QVideoRendererWidget::paintEvent(QPaintEvent *)
         d->surface.paint(&painter, rect());
 
         d->surface.setReady(true);
-    } else if (d->imageOutput && d->imageOutput->hasImage()) {
-        painter.drawImage(rect(), d->imageOutput->image());
     }
 }
 
@@ -174,9 +125,7 @@ void QVideoRendererWidget::paintEvent(QPaintEvent *)
 */
 void QVideoRendererWidget::resizeEvent(QResizeEvent *event)
 {
-    QWidgetMediaOutput::resizeEvent(event);
+    QMediaWidgetEndpoint::resizeEvent(event);
 }
-
-#include "moc_qvideorendererwidget_p.cpp"
 
 #endif

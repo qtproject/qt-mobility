@@ -61,6 +61,6 @@ SOURCES = \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp
 
-#include (outputs/outputs.pri)
+include (endpoints/endpoints.pri)
 
 

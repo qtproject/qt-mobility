@@ -32,17 +32,28 @@
 **
 ****************************************************************************/
 
-#ifndef QWIDGETMEDIAOUTPUT_P_H
-#define QWIDGETMEDIAOUTPUT_P_H
+#ifndef QMEDIAWIDGETENDPOINT_P_H
+#define QMEDIAWIDGETENDPOINT_P_H
 
-#include "qwidgetmediaoutput.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmediawidgetendpoint.h"
 
 #include <QtGui/private/qwidget_p.h>
 
-class QWidgetMediaOutputPrivate : public QWidgetPrivate
+class QMediaWidgetEndpointPrivate : public QWidgetPrivate
 {
 public:
-    QWidgetMediaOutputPrivate()
+    QMediaWidgetEndpointPrivate()
         : fullscreen(false)
     {
     }
