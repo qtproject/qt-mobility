@@ -19,7 +19,7 @@ public:
     }
 };
 
-Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource));
+Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource))
 
 class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
 {
@@ -78,6 +78,12 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
             {
                 //TODO: limit the history size
 
+                if (randomPositionsOffset == -1) {
+                    randomModePositions.clear();
+                    randomModePositions.append(currentPos);
+                    randomPositionsOffset = 0;
+                }
+
                 while (randomModePositions.size() < randomPositionsOffset+steps+1)
                     randomModePositions.append(-1);
                 int res = randomModePositions[randomPositionsOffset+steps];
@@ -121,6 +127,12 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
         case QMediaPlaylistNavigator::Random:
             {
                 //TODO: limit the history size
+
+                if (randomPositionsOffset == -1) {
+                    randomModePositions.clear();
+                    randomModePositions.append(currentPos);
+                    randomPositionsOffset = 0;
+                }
 
                 while (randomPositionsOffset-steps < 0) {
                     randomModePositions.prepend(-1);
