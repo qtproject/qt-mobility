@@ -21,7 +21,11 @@ To build the library, run \tt qmake and \tt make.
 \section2 Main classes
 
 \list
+    \o \l{QSystemsDeviceInfo}
+    \o \l{QSystemsDisplayInfo}
     \o \l{QSystemsInfo}
+    \o \l{QSystemsMemoryInfo}
+    \o \l{QSystemsNetworkInfo}
 \endlist
 
 
