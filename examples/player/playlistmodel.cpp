@@ -1,6 +1,40 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtMultimedia module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "playlistmodel.h"
 
-#include "qwmpplaylist.h"
+#include <qmediaplaylist.h>
 
 PlaylistModel::PlaylistModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -10,8 +44,7 @@ PlaylistModel::PlaylistModel(QObject *parent)
 
 int PlaylistModel::rowCount(const QModelIndex &parent) const
 {
-    return m_playlist && !parent.isValid() ? m_playlist->count() : 0;
-    
+    return m_playlist && !parent.isValid() ? m_playlist->size() : 0;
 }
 
 int PlaylistModel::columnCount(const QModelIndex &parent) const
@@ -22,7 +55,7 @@ int PlaylistModel::columnCount(const QModelIndex &parent) const
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex &parent) const
 {
     return m_playlist && !parent.isValid()
-            && row >= 0 && row < m_playlist->count()
+            && row >= 0 && row < m_playlist->size()
             && column >= 0 && column < ColumnCount
         ? createIndex(row, column)
         : QModelIndex();
@@ -40,15 +73,21 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if (index.isValid() && role == Qt::DisplayRole) {
         switch (index.column()) {
         case Track:
-            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
         case Title:
-            return m_playlist->value(index.row(), QLatin1String("Title"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("Title"));
         case Album:
-            return m_playlist->value(index.row(), QLatin1String("WM/AlbumTitle"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumTitle"));
         case AlbumArtist:
-            return m_playlist->value(index.row(), QLatin1String("WM/AlbumArtist"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumArtist"));
         case ContributingArtist:
             {
+            return m_playlist->itemAt(index.row()).mimeType();
+            /*
                 QVariantList values = m_playlist->values(
                         index.row(), QLatin1String("Author"));
 
@@ -58,7 +97,7 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
                         artists += QLatin1String("; ") + values.at(i).toString();
                     return artists;
                 };
-            }
+            */}
             break;
         case ColumnCount:
             break;
