@@ -35,7 +35,6 @@
 #ifndef QMEDIAPLAYLISTSOURCE_P_H
 #define QMEDIAPLAYLISTSOURCE_P_H
 
-
 //
 //  W A R N I N G
 //  -------------
