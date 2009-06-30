@@ -238,16 +238,17 @@ void BearerDialog::registerNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
 
-    const QString identifier = item->data(0, Qt::UserRole).toString();
+    QNetworkConfiguration configuration =
+        manager.configurationFromIdentifier(item->data(0, Qt::UserRole).toString());
 
-    QNetworkConfiguration configuration = manager.configurationFromIdentifier(identifier);
+    const QString name = configuration.name();
 
-    qDebug() << "Registering" << configuration.name() << "with system";
+    qDebug() << "Registering" << name << "with system";
 
     WSAQUERYSET networkInfo;
     memset(&networkInfo, 0, sizeof(networkInfo));
     networkInfo.dwSize = sizeof(networkInfo);
-    networkInfo.lpszServiceInstanceName = (LPWSTR)identifier.utf16();
+    networkInfo.lpszServiceInstanceName = (LPWSTR)name.utf16();
     networkInfo.dwNameSpace = NS_NLA;
 
     if (WSASetService(&networkInfo, RNRSERVICE_REGISTER, 0) == SOCKET_ERROR)
@@ -258,16 +259,17 @@ void BearerDialog::unregisterNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
 
-    const QString identifier = item->data(0, Qt::UserRole).toString();
+    QNetworkConfiguration configuration =
+        manager.configurationFromIdentifier(item->data(0, Qt::UserRole).toString());
 
-    QNetworkConfiguration configuration = manager.configurationFromIdentifier(identifier);
+    const QString name = configuration.name();
 
-    qDebug() << "Unregistering" << configuration.name() << "with system";
+    qDebug() << "Unregistering" << name << "with system";
 
     WSAQUERYSET networkInfo;
     memset(&networkInfo, 0, sizeof(networkInfo));
     networkInfo.dwSize = sizeof(networkInfo);
-    networkInfo.lpszServiceInstanceName = (LPWSTR)identifier.utf16();
+    networkInfo.lpszServiceInstanceName = (LPWSTR)name.utf16();
     networkInfo.dwNameSpace = NS_NLA;
 
     if (WSASetService(&networkInfo, RNRSERVICE_DELETE, 0) == SOCKET_ERROR)
