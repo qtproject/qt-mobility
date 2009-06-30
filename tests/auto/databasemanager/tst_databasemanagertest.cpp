@@ -532,7 +532,7 @@ void DatabaseManagerUnitTest::permissions()
     modifyPermissionSet(userPermsSet, QFile::WriteOwner);
     QVERIFY(QFile::setPermissions(userDir + "/Nokia", userPermsSet));
     QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QString userDbFilePath = m_dbm->m_userDb.databasePath();
+    QString userDbFilePath = m_dbm->m_userDb->databasePath();
 
     //try to access database without read permissions
     userPermsSet = QFile::permissions(userDbFilePath);
@@ -544,8 +544,8 @@ void DatabaseManagerUnitTest::permissions()
     m_dbm = new DatabaseManager;
     QList<QServiceInterfaceDescriptor> descriptors;
     descriptors= m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
-    QVERIFY(!m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(!m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
 
     //restore permissions
@@ -563,8 +563,8 @@ void DatabaseManagerUnitTest::permissions()
     userDbFile.close();
     acmeFile.close();
     descriptors= m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
-    QVERIFY(!m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(!m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::InvalidDatabaseFile);
 
     //recreate a valid user database
@@ -619,8 +619,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
         QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
     }
 
-    QVERIFY(m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceOmni.xml")));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
@@ -640,8 +640,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     m_dbm = new DatabaseManager;
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 8);
-    QVERIFY(m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
 
     //Use getServiceNames where the database has not already been opened
@@ -661,8 +661,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                             "LuthorCorp", 1, 2));
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
-    QVERIFY(m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
 
     //Use setDefaultService(servicename, interfacename, scope)
     delete m_dbm;
@@ -745,7 +745,7 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     }
 
     //make system database non-writable
-    QString systemDbFilePath = m_dbm->m_systemDb.databasePath();
+    QString systemDbFilePath = m_dbm->m_systemDb->databasePath();
     QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
     modifyPermissionSet(systemPermsSet, ~QFile::WriteOwner);
     QFile::setPermissions(systemDbFilePath, systemPermsSet);
@@ -971,7 +971,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                         DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                     "WayneEnt", 2, 0));
-    QString systemDbFilePath = m_dbm->m_systemDb.databasePath();
+    QString systemDbFilePath = m_dbm->m_systemDb->databasePath();
     QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
     modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
     QFile::setPermissions(systemDbFilePath, systemPermsSet);
@@ -980,8 +980,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     m_dbm = new DatabaseManager;
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                                 DatabaseManager::UserScope);
-    QVERIFY(m_dbm->m_userDb.isOpen());
-    QVERIFY(!m_dbm->m_systemDb.isOpen());
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
 
@@ -989,7 +989,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QFile::setPermissions(systemDbFilePath, systemPermsSet);
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                                 DatabaseManager::UserScope);
-    QVERIFY(m_dbm->m_systemDb.isOpen());
+    QVERIFY(m_dbm->m_systemDb->isOpen());
     QVERIFY(descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
