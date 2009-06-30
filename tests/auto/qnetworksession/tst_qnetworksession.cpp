@@ -141,6 +141,31 @@ void tst_QNetworkSession::sessionProperties()
     // QNetworkSession::interface() should return an invalid interface unless
     // session is in the connected state.
     QCOMPARE(session.state() == QNetworkSession::Connected, session.interface().isValid());
+
+    if (!configuration.isValid()) {
+        QVERIFY(configuration.state() == QNetworkConfiguration::Undefined &&
+                session.state() == QNetworkSession::Invalid);
+    } else {
+        switch (configuration.state()) {
+        case QNetworkConfiguration::Undefined:
+            QVERIFY(session.state() == QNetworkSession::NotAvailable);
+            break;
+        case QNetworkConfiguration::Defined:
+            QVERIFY(session.state() == QNetworkSession::NotAvailable);
+            break;
+        case QNetworkConfiguration::Discovered:
+            QVERIFY(session.state() == QNetworkSession::Connecting ||
+                    session.state() == QNetworkSession::Disconnected);
+            break;
+        case QNetworkConfiguration::Active:
+            QVERIFY(session.state() == QNetworkSession::Connected ||
+                    session.state() == QNetworkSession::Closing ||
+                    session.state() == QNetworkSession::Roaming);
+            break;
+        default:
+            QFAIL("Invalid configuration state");
+        };
+    }
 }
 
 void tst_QNetworkSession::userChoiceSession_data()
