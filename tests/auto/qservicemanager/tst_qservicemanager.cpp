@@ -1184,8 +1184,10 @@ void tst_QServiceManager::serviceAdded()
     QVERIFY(mgr_modify.removeService(serviceName));
     QTRY_COMPARE(spyRemove.count(), 1);
 
+#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
+#endif
 
     spyAdd.clear();
     buffer.seek(0);
@@ -1251,9 +1253,11 @@ void tst_QServiceManager::serviceRemoved()
     QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
     QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
+#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
-
+#endif
+    
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
