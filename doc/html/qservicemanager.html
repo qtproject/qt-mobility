@@ -20,7 +20,7 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qservicemanager.html#Error-enum">Error</a></b> { NoError, StoragePermissionsError, StorageReadError, InvalidServiceLocation, ..., UnknownError }</li>
+<li><div class="fn"/>enum <b><a href="qservicemanager.html#Error-enum">Error</a></b> { NoError, StorageAccessError, InvalidServiceLocation, InvalidServiceXml, ..., UnknownError }</li>
 <li><div class="fn"/>enum <b><a href="qservicemanager.html#Scope-enum">Scope</a></b> { UserScope, SystemScope }</li>
 </ul>
 <a name="public-functions"></a>
@@ -48,8 +48,8 @@
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qservicemanager.html#serviceAdded">serviceAdded</a></b> ( const QString &amp; <i>serviceName</i> )</li>
-<li><div class="fn"/>void <b><a href="qservicemanager.html#serviceRemoved">serviceRemoved</a></b> ( const QString &amp; <i>serviceName</i> )</li>
+<li><div class="fn"/>void <b><a href="qservicemanager.html#serviceAdded">serviceAdded</a></b> ( const QString &amp; <i>serviceName</i>, QServiceManager::Scope <i>scope</i> )</li>
+<li><div class="fn"/>void <b><a href="qservicemanager.html#serviceRemoved">serviceRemoved</a></b> ( const QString &amp; <i>serviceName</i>, QServiceManager::Scope <i>scope</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -66,16 +66,15 @@
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QServiceManager::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error occurred.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::StoragePermissionsError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service data storage cannot be accessed.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::StorageReadError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The service data storage is not available.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::InvalidServiceLocation</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The service was not found at its specified <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::InvalidServiceXml</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The XML defining the service metadata is invalid.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::InvalidServiceInterfaceDescriptor</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The service interface descriptor is invalid.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::ServiceAlreadyExists</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Another service has previously been registered with the same <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::ImplementationAlreadyExists</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Another service that implements the same interface version has previously been registered.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::PluginLoadingFailed</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The service plugin cannot be loaded.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::ComponentNotFound</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The service or interface implementation has not been registered.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::ServiceCapabilityDenied</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">The security session does not allow the service based on its capabilities.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::StorageAccessError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service data storage is not accessible. This could be because the caller does not have the required permissions.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::InvalidServiceLocation</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The service was not found at its specified <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::InvalidServiceXml</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The XML defining the service metadata is invalid.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::InvalidServiceInterfaceDescriptor</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The service interface descriptor is invalid.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::ServiceAlreadyExists</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Another service has previously been registered with the same <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::ImplementationAlreadyExists</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Another service that implements the same interface version has previously been registered.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::PluginLoadingFailed</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The service plugin cannot be loaded.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::ComponentNotFound</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The service or interface implementation has not been registered.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::ServiceCapabilityDenied</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The security session does not allow the service based on its capabilities.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::UnknownError</tt></td><td align="center" valign="top"><tt>100</tt></td><td valign="top">An unknown error occurred.</td></tr>
 </table></p>
 <h3 class="fn"><a name="Scope-enum"></a>enum QServiceManager::Scope</h3>
@@ -103,6 +102,7 @@
 <p>Registers the service defined by the XML data from the given <i>device</i>. Returns true if the registration succeeded, and false otherwise. If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
 <p>Registering a service also causes <a href="qserviceplugininterface.html#installService">QServicePluginInterface::installService</a>() to be called on the service. If the service plugin is not accessible (e.g&#x2e; if the plugin file is not found) and <tt>installService()</tt> cannot be invoked on the service, the registration fails and this method returns false.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
+<p>Services are always added based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
 <p>See also <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
 <h3 class="fn"><a name="defaultServiceInterface"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::defaultServiceInterface ( const QString &amp; <i>interfaceName</i> ) const</h3>
 <p>Returns the default interface for the given <i>interfaceName</i>.</p>
@@ -137,13 +137,14 @@
 <p>Unregisters the service specified by <i>serviceName</i>.</p>
 <p>Returns true if the unregistration succeeded, and false otherwise.</p>
 <p>If a default service implementation is removed and there are other implementations for the same interface, the service manager chooses the implementation with the highest version number as the new default. If there is more than one serivce with the same version number, the service manager makes a random choice with regards to the new default implementation. If this is not the desired behaviour the default selection should be updated via <a href="qservicemanager.html#setDefaultServiceForInterface">setDefaultServiceForInterface</a>().</p>
+<p>Services are always removed based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
 <h3 class="fn"><a name="scope"></a><a href="qservicemanager.html#Scope-enum">Scope</a> QServiceManager::scope () const</h3>
 <p>Returns the scope used for registering and searching of services.</p>
-<h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emited whenever a new service with the given <i>serviceName</i> has been registered with the service manager.</p>
+<h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i>, <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a> <i>scope</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emited whenever a new service with the given <i>serviceName</i> has been registered with the service manager. <i>scope</i> indicates where the service was added.</p>
 <p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
-<h3 class="fn"><a name="serviceRemoved"></a>void QServiceManager::serviceRemoved ( const QString &amp; <i>serviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emited whenever a service with the given <i>serviceName</i> has been deregistered with the service manager.</p>
+<h3 class="fn"><a name="serviceRemoved"></a>void QServiceManager::serviceRemoved ( const QString &amp; <i>serviceName</i>, <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a> <i>scope</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emited whenever a service with the given <i>serviceName</i> has been deregistered with the service manager. <i>scope</i> indicates where the service was added.</p>
 <p>See also <a href="qservicemanager.html#removeService">removeService</a>().</p>
 <h3 class="fn"><a name="setDefaultServiceForInterface"></a>bool QServiceManager::setDefaultServiceForInterface ( const QString &amp; <i>service</i>, const QString &amp; <i>interfaceName</i> )</h3>
 <p>Sets the default interface implementation for <i>interfaceName</i> to the matching interface implementation provided by <i>service</i>.</p>

@@ -25,12 +25,13 @@
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
-        <keyword ref="qservicefilter.html#customConstraint">customConstraint</keyword>
+        <keyword ref="qservicefilter.html#customKeys">customKeys</keyword>
+        <keyword ref="qservicefilter.html#customProperty">customProperty</keyword>
         <keyword ref="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
         <keyword ref="qservicefilter.html#serviceName">serviceName</keyword>
-        <keyword ref="qservicefilter.html#setCustomConstraint">setCustomConstraint</keyword>
+        <keyword ref="qservicefilter.html#setCustomProperty">setCustomProperty</keyword>
         <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
         <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
@@ -62,12 +63,11 @@
     <section ref="qservicemanager.html" title="QServiceManager Class Reference">
         <keyword ref="qservicemanager.html">QServiceManager</keyword>
         <keyword ref="qservicemanager.html#Error-enum">Error</keyword>
+        <keyword ref="qservicemanager.html#Error-enum">QServiceManager::StorageAccessError</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ServiceCapabilityDenied</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::NoError</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::UnknownError</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ServiceAlreadyExists</keyword>
-        <keyword ref="qservicemanager.html#Error-enum">QServiceManager::StorageReadError</keyword>
-        <keyword ref="qservicemanager.html#Error-enum">QServiceManager::StoragePermissionsError</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ComponentNotFound</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::ImplementationAlreadyExists</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::PluginLoadingFailed</keyword>

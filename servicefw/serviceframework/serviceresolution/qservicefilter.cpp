@@ -261,9 +261,9 @@ int QServiceFilter::interfaceMinorVersion() const
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
-    \sa customConstraint()
+    \sa customProperty()
 */
-void QServiceFilter::setCustomConstraint(const QString& key, const QString& value)
+void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
 {
     d->customProperties.insert(key, value);
 }
@@ -272,9 +272,9 @@ void QServiceFilter::setCustomConstraint(const QString& key, const QString& valu
     Returns the value for the custom property \a key; otherwise
     returns a null string.
 
-    \sa setCustomConstraint()
+    \sa setCustomProperty()
 */
-QString QServiceFilter::customConstraint(const QString& key) const
+QString QServiceFilter::customProperty(const QString& key) const
 {
     return d->customProperties[key];
 }
@@ -288,6 +288,10 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 {
     return d->matchingRule;
 }
+
+/*!
+    Returns the list of custom keys which have been added to the filter.
+*/
 QList<QString> QServiceFilter::customKeys() const
 {
     return d->customProperties.keys();

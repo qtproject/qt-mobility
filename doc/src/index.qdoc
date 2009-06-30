@@ -76,8 +76,9 @@ compatible to previous versions.
 \section2 Header lookup
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using 
-Qt's meta object system. This implies that the client does not have any knowledge of the object header. In some use cases 
-it may be more convenient to directly interact with the service object by including the service header.
+Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases 
+it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.
+The subsequent code snippet demonstrates how this may look like:
 
 \code
 #include <filestorage.h>
@@ -85,7 +86,7 @@ it may be more convenient to directly interact with the service object by includ
 QServiceManager manager;
 FileStorage* storage = 0;
 manager->setDefaultServiceForInterface("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager->getInterface("com.nokia.qt.examples.FileStorage");
+storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
 
 \endcode
 
@@ -158,6 +159,10 @@ The elements and attributes have the following meanings:
         \o "
         \o description
         \o A user readable description of the purpose of the interface.
+    \row
+        \o "
+        \o customproperty
+        \o An implementation specific key value pair which can be used for filtering or as description.
  
 \endtable
 

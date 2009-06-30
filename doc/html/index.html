@@ -64,13 +64,13 @@
     QObject* storage = manager-&gt;loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="header-lookup"></a>
 <h3>Header lookup</h3>
-<p>So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. This implies that the client does not have any knowledge of the object header. In some use cases it may be more convenient to directly interact with the service object by including the service header.</p>
+<p>So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The subsequent code snippet demonstrates how this may look like:</p>
 <pre>    #include &lt;filestorage.h&gt;
     ...
     QServiceManager manager;
     FileStorage* storage = 0;
     manager-&gt;setDefaultServiceForInterface(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
-    storage = manager-&gt;getInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+    storage = manager-&gt;getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="adding-and-removing-of-services"></a>
 <h2>Adding and removing of services</h2>
 <p>New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code to its meta description.</p>
@@ -99,6 +99,7 @@
 <tr valign="top" class="even"><td>&quot;</td><td>version</td><td>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
 </td></tr>
 <tr valign="top" class="odd"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the interface.</td></tr>
+<tr valign="top" class="even"><td>&quot;</td><td>customproperty</td><td>An implementation specific key value pair which can be used for filtering or as description.</td></tr>
 </table></p>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
 <pre>        &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
