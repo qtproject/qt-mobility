@@ -5,22 +5,24 @@
 #include <QtCore/qlist.h>
 
 class QAbstractMediaControl;
-class QMediaAudioOutput;
-class QMediaVideoOutput;
 
 class QAbstractMediaServicePrivate;
+
 class QAbstractMediaService : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(QObject* audioOutput READ audioOutput WRITE setAudioOutput)
+    Q_PROPERTY(QObject* videoOutput READ videoOutput WRITE setVideoOutput)
 public:
-    QMediaAudioOutput audioOutput() const;
-    void setAudioOutput(QMediaAudioOutput const &audioOutput);
-    QList<QMediaAudioOutput> availableAudioOutputs() const;
+    QObject *audioOutput() const;
+    virtual void setAudioOutput(QObject *object);
 
-    QMediaAudioOutput videoOutput() const;
-    void setVideoOutput(QMediaVideoOutput const &videoOutput);
-    QList<QMediaVideoOutput> availableVideoOutputs() const;
+    QObject *videoOutput() const;
+    virtual void setVideoOutput(QObject *output);
+
+    virtual QList<QByteArray> supportedEndpointInterfaces() const;
+
+    virtual QObject *createEndpoint(const char *interface);
 
     virtual QAbstractMediaControl* control() const = 0;
 
