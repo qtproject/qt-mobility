@@ -591,7 +591,15 @@ QString QNlaEngine::getInterfaceFromId(const QString &id)
 
 bool QNlaEngine::hasIdentifier(const QString &id)
 {
-    return configurationInterface.contains(id.toUInt());
+    if (configurationInterface.contains(id.toUInt()))
+        return true;
+
+    foreach (QNetworkConfigurationPrivate *cpPriv, nlaThread->getConfigurations()) {
+        if (cpPriv->id == id)
+            return true;
+    }
+
+    return false;
 }
 
 QString QNlaEngine::bearerName(const QString &id)
