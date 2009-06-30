@@ -6,12 +6,14 @@
 #include "qmediaserviceprovider.h"
 #include "qmediasource.h"
 
-class QMediaPlayerService;
 
-class QMediaPlayerPrivate;
+class QMediaPlayerService;
+class QMediaPlaylist;
 
 extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
+
+class QMediaPlayerPrivate;
 class QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
@@ -31,8 +33,6 @@ class QMediaPlayer : public QAbstractMediaObject
 
 public:
     enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
-
-
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
@@ -66,7 +66,6 @@ public Q_SLOTS:
     void setMuted(bool muted);
 
 Q_SIGNALS:
-    void mediaSourceChanged(QMediaSource mediaSource);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(State newState);

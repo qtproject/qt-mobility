@@ -8,4 +8,6 @@ QRadioService::QRadioService(QObject* parent):
 }
 
 
-
+QRadioService::~QRadioService()
+{
+}

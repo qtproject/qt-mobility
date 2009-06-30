@@ -29,7 +29,7 @@ public:
 
 QSharedMediaPlaylist::QSharedMediaPlaylist(const QString& name, QObject *parent)
     :QMediaPlaylist(*new QSharedMediaPlaylistPrivate(name), parent)
-{    
+{
 }
 
 QSharedMediaPlaylist::~QSharedMediaPlaylist()
@@ -45,4 +45,19 @@ QStringList QSharedMediaPlaylist::sharedPlaylists()
 {
     //return QSharedPlaylistSource::sharedPlaylists();
     return QStringList();
+}
+
+
+
+QSharedMediaPlaylistNotifier::QSharedMediaPlaylistNotifier(QObject *parent):
+    QObject(parent)
+{
+}
+
+QSharedMediaPlaylistNotifier::~QSharedMediaPlaylistNotifier()
+{
+}
+
+QStringList QSharedMediaPlaylistNotifier::sharedPlaylists() const
+{
 }

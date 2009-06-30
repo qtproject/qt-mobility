@@ -2,11 +2,10 @@
 #define QMEDIAPLAYERSERVICE_H
 
 #include "qabstractmediaservice.h"
+#include "qmediaplayercontrol.h"
 
-class QMediaPlayerControl;
 
 class QMediaPlayerServicePrivate;
-
 class QMediaPlayerService : public QAbstractMediaService
 {
     Q_OBJECT
@@ -14,7 +13,7 @@ class QMediaPlayerService : public QAbstractMediaService
 public:
     ~QMediaPlayerService();
 
-    virtual QAbstractMediaControl* control() const = 0;
+    virtual QMediaPlayerControl* control() const = 0;
 
 protected:
     QMediaPlayerService(QObject *parent);

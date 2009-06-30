@@ -2,6 +2,12 @@
 #include "qmediaplayercontrol.h"
 #include "qmediasource.h"
 
+Q_DECLARE_METATYPE(QMediaPlaylist*)
+
+QMediaPlayerControl::~QMediaPlayerControl()
+{
+}
+
 int QMediaPlayerControl::state() const
 {
     return property("state").toInt();
@@ -12,14 +18,14 @@ void QMediaPlayerControl::setState(int state)
     changePropertyValue("state", state);
 }
 
-QMediaSource QMediaPlayerControl::mediaSource() const
+QMediaPlaylist* QMediaPlayerControl::mediaPlaylist() const
 {
-    return property("mediaSource").value<QMediaSource>();
+    return property("mediaPlaylist").value<QMediaPlaylist*>();
 }
 
-void QMediaPlayerControl::setMediaSource(QMediaSource mediaSource)
+void QMediaPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
-    changePropertyValue("mediaSource", qVariantFromValue(mediaSource));
+    changePropertyValue("mediaPlaylist", qVariantFromValue(mediaPlaylist));
 }
 
 qint64 QMediaPlayerControl::duration() const
