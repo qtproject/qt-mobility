@@ -70,7 +70,7 @@
     QServiceManager manager;
     FileStorage* storage = 0;
     manager-&gt;setDefaultServiceForInterface(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
-    storage = manager-&gt;getInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+    storage = manager-&gt;getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="adding-and-removing-of-services"></a>
 <h2>Adding and removing of services</h2>
 <p>New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code to its meta description.</p>

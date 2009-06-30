@@ -86,7 +86,7 @@ The subsequent code snippet demonstrates how this may look like:
 QServiceManager manager;
 FileStorage* storage = 0;
 manager->setDefaultServiceForInterface("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager->getInterface("com.nokia.qt.examples.FileStorage");
+storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
 
 \endcode
 
