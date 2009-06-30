@@ -66,7 +66,7 @@ QString DatabaseFileWatcher::closestExistingParent(const QString &path)
 
 void DatabaseFileWatcher::restartDirMonitoring(const QString &dbPath, const QString &previousDirPath)
 {
-    if (m_knownServices.contains(dbPath))
+    if (m_watcher->files().contains(dbPath))
         return;
 
     QString existing = closestExistingParent(dbPath);
@@ -78,11 +78,11 @@ void DatabaseFileWatcher::restartDirMonitoring(const QString &dbPath, const QStr
     if (existing == dbPath) {
         ServiceDatabase *db = 0;
         DatabaseManager::DbScope scope;
-        if (dbPath == m_manager->m_userDb.databasePath()) {
-            db = &m_manager->m_userDb;
+        if (dbPath == m_manager->m_userDb->databasePath()) {
+            db = m_manager->m_userDb;
             scope = DatabaseManager::UserOnlyScope;
-        } else if (dbPath == m_manager->m_systemDb.databasePath()) {
-            db = &m_manager->m_systemDb;
+        } else if (dbPath == m_manager->m_systemDb->databasePath()) {
+            db = m_manager->m_systemDb;
             scope = DatabaseManager::SystemScope;
         }
 
@@ -146,10 +146,14 @@ void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
 
 void DatabaseFileWatcher::databaseChanged(const QString &path)
 {
-    if (path == m_manager->m_userDb.databasePath())
-        notifyChanges(&m_manager->m_userDb, DatabaseManager::UserScope);
-    else if (path == m_manager->m_systemDb.databasePath())
-        notifyChanges(&m_manager->m_systemDb, DatabaseManager::SystemScope);
+    if (path == m_manager->m_userDb->databasePath())
+        notifyChanges(m_manager->m_userDb, DatabaseManager::UserScope);
+    else if (path == m_manager->m_systemDb->databasePath())
+        notifyChanges(m_manager->m_systemDb, DatabaseManager::SystemScope);
+
+    // if database was deleted, the path may have been dropped
+    if (!m_watcher->files().contains(path) && QFile::exists(path))
+        m_watcher->addPath(path);
 }
 
 void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope)
@@ -164,7 +168,7 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
     bool ok = false;
     QStringList currentServices = database->getServiceNames(QString(), &ok);
     if (!ok) {
-            qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
+        qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
         return;
     }
 
@@ -203,9 +207,12 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
 }
 
 DatabaseManager::DatabaseManager()
-    : m_fileWatcher(0)
+    : m_userDb(new ServiceDatabase),
+      m_systemDb(new ServiceDatabase),
+      m_fileWatcher(0)
 {
-    initDbPaths();
+    initDbPath(UserScope);
+    initDbPath(SystemScope);
 }
 
 DatabaseManager::~DatabaseManager()
@@ -213,32 +220,37 @@ DatabaseManager::~DatabaseManager()
     close();
 }
 
-void DatabaseManager::initDbPaths()
+void DatabaseManager::initDbPath(DbScope scope)
 {
-    //setup system database path
-    QSettings systemSettings(QSettings::IniFormat, QSettings::SystemScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    QFileInfo fi(systemSettings.fileName());
-    QDir dir = fi.dir();
+    QSettings::Scope settingsScope;
+    QString dbIdentifier;
+    ServiceDatabase *db;
+    if (scope == SystemScope) {
+        settingsScope = QSettings::SystemScope;
+        dbIdentifier = "_system";
+        db = m_systemDb;
+    } else {
+        settingsScope = QSettings::UserScope;
+        dbIdentifier = "_user";
+        db = m_userDb;
+    }
 
+    QSettings settings(QSettings::IniFormat, settingsScope,
+            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFW_") + qtVersion + QLatin1String("_system.db");
-    m_systemDb.setDatabasePath(dir.path() + QDir::separator() + dbName);
-
-    //setup user database path
-    QSettings userSettings(QSettings::IniFormat, QSettings::UserScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    fi.setFile(userSettings.fileName());
-    dir = fi.dir();
-    dbName.replace(QLatin1String("system"), QLatin1String("user"));
-    m_userDb.setDatabasePath(dir.path() + QDir::separator()  + dbName);
+    QString dbName = QString("QtServiceFW_") + qtVersion + dbIdentifier + QLatin1String(".db");
+    db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 }
 
 void DatabaseManager::close()
 {
-    m_systemDb.close();
-    m_userDb.close();
+    delete m_userDb;
+    m_userDb = 0;
+    delete m_systemDb;
+    m_systemDb = 0;
 }
 
 bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
@@ -247,8 +259,8 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
         if(!openDb(DatabaseManager::SystemScope)) {
             return false;
         }  else {
-            if (!m_systemDb.registerService(service)) {
-                m_lastError = m_systemDb.lastError();
+            if (!m_systemDb->registerService(service)) {
+                m_lastError = m_systemDb->lastError();
                 return false;
             } else { //must be successful registration
                 m_lastError.setError(DBError::NoError);
@@ -259,8 +271,8 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
         if (!openDb(DatabaseManager::UserScope)) {
             return false;
         } else {
-            if (!m_userDb.registerService(service)) {
-                m_lastError = m_userDb.lastError();
+            if (!m_userDb->registerService(service)) {
+                m_lastError = m_userDb->lastError();
                 return false;
             } else { //must be successful registration
                 m_lastError.setError(DBError::NoError);
@@ -276,8 +288,8 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
         if (!openDb(DatabaseManager::SystemScope))
             return false;
    else {
-            if (!m_systemDb.unregisterService(serviceName)) {
-                m_lastError = m_systemDb.lastError();
+            if (!m_systemDb->unregisterService(serviceName)) {
+                m_lastError = m_systemDb->lastError();
                 return false;
             } else { //must be successful unregistration
                 m_lastError.setError(DBError::NoError);
@@ -288,8 +300,8 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
         if (!openDb(DatabaseManager::UserScope)) {
             return false;
         } else {
-            if (!m_userDb.unregisterService(serviceName)){
-                m_lastError = m_userDb.lastError();
+            if (!m_userDb->unregisterService(serviceName)){
+                m_lastError = m_userDb->lastError();
                 return false;
             } else { //must be successful unregistration
                 m_lastError.setError(DBError::NoError);
@@ -308,11 +320,11 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
     if (scope == UserScope) {
         if (!openDb(UserScope))
             return descriptors;
-        descriptors =  m_userDb.getInterfaces(filter, &ok);
+        descriptors =  m_userDb->getInterfaces(filter, &ok);
 
         if (ok == false) {
             descriptors.clear();
-            m_lastError = m_userDb.lastError();
+            m_lastError = m_userDb->lastError();
             return descriptors;
         }
 
@@ -323,10 +335,10 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
     }
 
     if (openDb(SystemScope)) {
-        descriptors.append(m_systemDb.getInterfaces(filter, &ok));
+        descriptors.append(m_systemDb->getInterfaces(filter, &ok));
         if (ok == false) {
             descriptors.clear();
-            m_lastError = m_systemDb.lastError();
+            m_lastError = m_systemDb->lastError();
             return descriptors;
         }
 
@@ -336,7 +348,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         m_lastError.setError(DBError::NoError);
     }
 
-    if (!m_systemDb.isOpen() && scope == SystemScope) {
+    if (!m_systemDb->isOpen() && scope == SystemScope) {
         //openDb() should already have handled lastError
         descriptors.clear();
         return descriptors;
@@ -354,10 +366,10 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
     if (scope == UserScope || scope == UserOnlyScope) {
         if(!openDb(DatabaseManager::UserScope))
             return serviceNames;
-        serviceNames = m_userDb.getServiceNames(interfaceName, &ok);
+        serviceNames = m_userDb->getServiceNames(interfaceName, &ok);
         if(!ok) {
             serviceNames.clear();
-            m_lastError = m_userDb.lastError();
+            m_lastError = m_userDb->lastError();
             return serviceNames;
         }
         if (scope == UserOnlyScope) {
@@ -368,10 +380,10 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 
     if(openDb(DatabaseManager::SystemScope)) {
         QStringList systemServiceNames;
-        systemServiceNames = m_systemDb.getServiceNames(interfaceName, &ok);
+        systemServiceNames = m_systemDb->getServiceNames(interfaceName, &ok);
         if(!ok) {
             serviceNames.clear();
-            m_lastError = m_systemDb.lastError();
+            m_lastError = m_systemDb->lastError();
             return serviceNames;
         }
         foreach(const QString &systemServiceName, systemServiceNames) {
@@ -382,7 +394,7 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
         m_lastError.setError(DBError::NoError);
     }
 
-    if (!m_systemDb.isOpen() && scope == SystemScope) {
+    if (!m_systemDb->isOpen() && scope == SystemScope) {
         //openDb() should have already handled lastError
         serviceNames.clear();
         return serviceNames;
@@ -400,12 +412,12 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
         if (!openDb(UserScope))
             return QServiceInterfaceDescriptor();
         QString interfaceID;
-        descriptor = m_userDb.defaultServiceInterface(interfaceName, &interfaceID);
+        descriptor = m_userDb->defaultServiceInterface(interfaceName, &interfaceID);
 
-        if (m_userDb.lastError().errorCode() == DBError::NoError) {
+        if (m_userDb->lastError().errorCode() == DBError::NoError) {
             descriptor.d->systemScope = false;
             return descriptor;
-        } else if (m_userDb.lastError().errorCode() == DBError::ExternalIfaceIDFound) {
+        } else if (m_userDb->lastError().errorCode() == DBError::ExternalIfaceIDFound) {
             //default hasn't been found in user db, but we have found an ID
             //that may refer to an interface implementation in the system db
             if (!openDb(SystemScope)) {
@@ -414,16 +426,16 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
                 return QServiceInterfaceDescriptor();
             }
 
-            descriptor = m_systemDb.getInterface(interfaceID);
+            descriptor = m_systemDb->getInterface(interfaceID);
             //found the service from the system database
-            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+            if (m_systemDb->lastError().errorCode() == DBError::NoError) {
                 m_lastError.setError(DBError::NoError);
                 descriptor.d->systemScope = true;
                 return descriptor;
-            } else if(m_systemDb.lastError().errorCode() == DBError::NotFound){
+            } else if(m_systemDb->lastError().errorCode() == DBError::NotFound){
                 //service implementing interface doesn't exist in the system db
                 //so the user db must contain a stale entry so remove it
-                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+                m_userDb->removeExternalDefaultServiceInterface(interfaceID);
                 QString errorText("No default service found for interface: \"%1\"");
                 m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
                 return QServiceInterfaceDescriptor();
@@ -431,11 +443,11 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
                 m_lastError.setError(DBError::NoError);
                 return QServiceInterfaceDescriptor();
             }
-        } else if (m_userDb.lastError().errorCode() == DBError::NotFound) {
+        } else if (m_userDb->lastError().errorCode() == DBError::NotFound) {
             //do nothing, the search for a default in the system db continues
             //further down
         } else { //error occurred at user db level, so return
-            m_lastError = m_userDb.lastError();
+            m_lastError = m_userDb->lastError();
             return QServiceInterfaceDescriptor();
         }
     }
@@ -444,22 +456,22 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
     //or because we're specifically only querying at system scope
     if (!openDb(SystemScope)) {
         if (scope == SystemScope) {
-            m_lastError = m_systemDb.lastError();
+            m_lastError = m_systemDb->lastError();
             return QServiceInterfaceDescriptor();
-        } else if (scope == UserScope && m_userDb.lastError().errorCode() == DBError::NotFound) {
-            m_lastError = m_userDb.lastError();
+        } else if (scope == UserScope && m_userDb->lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_userDb->lastError();
             return QServiceInterfaceDescriptor();
         }
     } else {
-        descriptor = m_systemDb.defaultServiceInterface(interfaceName);
-        if (m_systemDb.lastError().errorCode() == DBError::NoError) {
+        descriptor = m_systemDb->defaultServiceInterface(interfaceName);
+        if (m_systemDb->lastError().errorCode() == DBError::NoError) {
             descriptor.d->systemScope = true;
             return descriptor;
-        } else if (m_systemDb.lastError().errorCode() == DBError::NotFound) {
-            m_lastError = m_systemDb.lastError();
+        } else if (m_systemDb->lastError().errorCode() == DBError::NotFound) {
+            m_lastError = m_systemDb->lastError();
             return QServiceInterfaceDescriptor();
         } else {
-            m_lastError = m_systemDb.lastError();
+            m_lastError = m_systemDb->lastError();
             return QServiceInterfaceDescriptor();
         }
     }
@@ -507,11 +519,11 @@ bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descr
         if (!openDb(UserScope))
             return false;
         if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
-            if(m_userDb.setDefaultService(descriptor)) {
+            if(m_userDb->setDefaultService(descriptor)) {
                 m_lastError.setError(DBError::NoError);
                 return true;
             } else {
-                m_lastError = m_userDb.lastError();
+                m_lastError = m_userDb->lastError();
                 return false;
             }
         } else { //otherwise we need to get the interfaceID from the system db and set this
@@ -519,17 +531,17 @@ bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descr
             if (!openDb(SystemScope))
                 return false;
 
-            QString interfaceDescriptorID = m_systemDb.getInterfaceID(descriptor);
-            if (m_systemDb.lastError().errorCode() == DBError::NoError) {
-                if(m_userDb.setDefaultService(descriptor, interfaceDescriptorID)) {
+            QString interfaceDescriptorID = m_systemDb->getInterfaceID(descriptor);
+            if (m_systemDb->lastError().errorCode() == DBError::NoError) {
+                if(m_userDb->setDefaultService(descriptor, interfaceDescriptorID)) {
                     m_lastError.setError(DBError::NoError);
                     return true;
                 } else {
-                    m_lastError = m_userDb.lastError();
+                    m_lastError = m_userDb->lastError();
                     return false;
                 }
             } else {
-                m_lastError = m_systemDb.lastError();
+                m_lastError = m_systemDb->lastError();
                 return false;
             }
         }
@@ -543,11 +555,11 @@ bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descr
             if (!openDb(SystemScope)) {
                 return false;
             } else {
-                if (m_systemDb.setDefaultService(descriptor)) {
+                if (m_systemDb->setDefaultService(descriptor)) {
                     m_lastError.setError(DBError::NoError);
                     return true;
                 } else {
-                    m_lastError = m_systemDb.lastError();
+                    m_lastError = m_systemDb->lastError();
                     return false;
                 }
             }
@@ -557,14 +569,24 @@ bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descr
 
 bool DatabaseManager::openDb(DbScope scope)
 {
+    if (scope == SystemScope && m_systemDb->isOpen() && !QFile::exists(m_systemDb->databasePath())) {
+        delete m_systemDb;
+        m_systemDb = new ServiceDatabase;
+        initDbPath(SystemScope);
+    } else if (scope != SystemScope && m_userDb->isOpen() && !QFile::exists(m_userDb->databasePath())) {
+        delete m_userDb;
+        m_userDb = new ServiceDatabase;
+        initDbPath(UserScope);
+    }
+
     ServiceDatabase *db;
     if (scope == SystemScope)
-        db = &m_systemDb;
+        db = m_systemDb;
     else
-        db = &m_userDb;
+        db = m_userDb;
 
     if (db->isOpen())
-       return true;
+        return true;
 
     bool isOpen = db->open();
     if (!isOpen) {
@@ -583,13 +605,13 @@ bool DatabaseManager::openDb(DbScope scope)
         return false;
     }
 
-    if (scope == SystemScope && m_userDb.isOpen()) {
-        QStringList interfaceIDs = m_userDb.externalDefaultInterfaceIDs();
+    if (scope == SystemScope && m_userDb->isOpen()) {
+        QStringList interfaceIDs = m_userDb->externalDefaultInterfaceIDs();
         QServiceInterfaceDescriptor interface;
         foreach( const QString &interfaceID, interfaceIDs ) {
-            interface = m_userDb.getInterface(interfaceID);
-            if (m_userDb.lastError().errorCode() == DBError::NotFound)
-                m_userDb.removeExternalDefaultServiceInterface(interfaceID);
+            interface = m_userDb->getInterface(interfaceID);
+            if (m_userDb->lastError().errorCode() == DBError::NotFound)
+                m_userDb->removeExternalDefaultServiceInterface(interfaceID);
         }
     }
 
@@ -601,7 +623,7 @@ void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
 {
     if (!m_fileWatcher)
         m_fileWatcher = new DatabaseFileWatcher(this);
-    m_fileWatcher->setEnabled(scope == SystemScope ? &m_systemDb : &m_userDb, enabled);
+    m_fileWatcher->setEnabled(scope == SystemScope ? m_systemDb : m_userDb, enabled);
 }
 
 QT_END_NAMESPACE

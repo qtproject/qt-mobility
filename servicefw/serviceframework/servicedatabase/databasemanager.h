@@ -79,12 +79,12 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         void serviceRemoved(const QString &serviceName, DatabaseManager::DbScope scope);
 
     private:
-        void initDbPaths();
+        void initDbPath(DbScope scope);
         bool openDb(DbScope scope);
         void close();
 
-        ServiceDatabase m_userDb;
-        ServiceDatabase m_systemDb;
+        ServiceDatabase *m_userDb;
+        ServiceDatabase *m_systemDb;
         DBError m_lastError;
 
         friend class DatabaseFileWatcher;
