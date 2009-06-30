@@ -14,9 +14,6 @@ public:
     MpdDaemon(QObject *parent);
     ~MpdDaemon();
 
-    bool connect();
-    void disconnect();
-
     int playerState() const;
     qint64 duration() const;
     int volume() const;
@@ -30,7 +27,7 @@ signals:
     void notify();
     void playlistChanged();
     void playerChanged();
-    void mixedChanged();
+    void mixerChanged();
 
 private slots:
     void readData();

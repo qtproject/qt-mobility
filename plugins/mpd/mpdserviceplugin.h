@@ -3,7 +3,7 @@
 #define MPDSERVICEPLUGIN_H
 
 
-#include <QMediaServiceProviderPlugin>
+#include <qmediaserviceproviderplugin.h>
 
 
 class MpdServicePlugin : public QMediaServiceProviderPlugin

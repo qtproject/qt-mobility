@@ -1,15 +1,19 @@
+#include <QtCore/qstringlist.h>
 
-#include "mpdconnection.h"
+#include "mpddaemon.h"
 #include "mpdplaylistsource.h"
+#include <qmediaplaylistsource_p.h>
 
-class MpdPlaylistSourcePrivate : public QMediaPlaylistPrivate
+
+
+class MpdPlaylistSourcePrivate : public QMediaPlaylistSourcePrivate
 {
 public:
     int entries;
-    MpdDaemon* connection;
+    MpdDaemon* daemon;
 };
 
-MpdPlayListSource::MpdPlayListSource(MpdConnection *connection, QObject *parent):
+MpdPlaylistSource::MpdPlaylistSource(MpdDaemon *daemon, QObject *parent):
     QMediaPlaylistSource(*new MpdPlaylistSourcePrivate, parent)
 {
     Q_D(MpdPlaylistSource);
@@ -26,17 +30,17 @@ MpdPlaylistSource::~MpdPlaylistSource()
 {
 }
 
-bool MpdPlaylistSource::load(const QString &location, const char *format = 0)
+bool MpdPlaylistSource::load(const QString &location, const char *format)
 {
     return false;
 }
 
-bool MpdPlaylistSource::load(QIODevice * device, const char *format = 0)
+bool MpdPlaylistSource::load(QIODevice * device, const char *format)
 {
     return false;
 }
 
-bool MpdPlaylistSource::save(const QString &location, const char *format = 0)
+bool MpdPlaylistSource::save(const QString &location, const char *format)
 {
     return false;
 }
@@ -82,26 +86,30 @@ bool MpdPlaylistSource::insert(int pos, const QMediaSource &source)
 
 bool MpdPlaylistSource::remove(int pos)
 {
-    return d_func()->daemon->send(QString("delete %1").arg(pos));
+    bool    ok = false;
+    d_func()->daemon->send(QString("delete %1").arg(pos), &ok);
+    return ok;
 }
 
 bool MpdPlaylistSource::remove(int start, int end)
 {
     for (int i = start; i < end; ++i)
-        remote(i);
+        remove(i);
 
     return true;
 }
 
 bool MpdPlaylistSource::clear()
 {
-    return d_func()->daemon->send("clear");
+    bool    ok = false;
+    d_func()->daemon->send("clear", &ok);
+    return ok;
 }
 
 //public Q_SLOTS:
 void MpdPlaylistSource::shuffle()
 {
-    connection->send("shuffe");
+    d_func()->daemon->send("shuffe");
 }
 
 void MpdPlaylistSource::playlistChanged()

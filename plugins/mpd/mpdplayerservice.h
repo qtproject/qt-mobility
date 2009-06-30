@@ -1,17 +1,18 @@
 
+#ifndef MPDPLAYERSERVICE_H
+#define MPDPLAYERSERVICE_H
 
-#include <QMediaPlayerService>
-
+#include <qmediaplayerservice.h>
+#include "mpdplayercontrol.h"
 
 class MpdDaemon;
-class MpdPlayerControl;
 
 class MpdPlayerService : public QMediaPlayerService
 {
     Q_OBJECT
 
 public:
-    MpdPlayerService();
+    MpdPlayerService(QObject *parent = 0);
     ~MpdPlayerService();
 
     virtual MpdPlayerControl* control() const;
@@ -22,5 +23,7 @@ private slots:
 
 private:
     MpdDaemon *daemon;
-    MpdPlayerControl *control;
+    MpdPlayerControl *playerControl;
 };
+
+#endif  // MPDPLAYERSERVICE_H

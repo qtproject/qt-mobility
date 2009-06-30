@@ -1,17 +1,17 @@
 
-einclude "mpdmediaplayerservice.h"
-#include "mdpdeamon.h"
+#include "mpddaemon.h"
+#include "mpdplayercontrol.h"
+#include "mpdplayerservice.h"
 
-MpMediaPlayerService::MpdMediaPlayerService();
-    QMediaPlayerService(0)
+
+
+MpdPlayerService::MpdPlayerService(QObject *parent):
+    QMediaPlayerService(parent)
 {
     daemon = new MpdDaemon(this);
-    connect(daemon, SIGNAL(stateChanged(int)), SLOT(stateChanged(int)));
     connect(daemon, SIGNAL(disconnected()), SLOT(disconnected()));
 
-    daemon->connect();
-
-    control = new MpdPlayerControl(daemon, this);
+    playerControl = new MpdPlayerControl(daemon, this);
 }
 
 MpdPlayerService::~MpdPlayerService()
@@ -20,11 +20,14 @@ MpdPlayerService::~MpdPlayerService()
 
 MpdPlayerControl* MpdPlayerService::control() const
 {
-    return control;
+    return playerControl;
+}
+
+void MpdPlayerService::stateChanged(int state)
+{
 }
 
 void MpdPlayerService::disconnected()
 {
-    daemon->connect();
 }
 

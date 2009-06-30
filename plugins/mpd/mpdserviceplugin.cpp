@@ -1,5 +1,7 @@
 
-#include <QMediaServiceProvider>
+#include <QtCore/qstring.h>
+
+#include <qmediaserviceprovider.h>
 
 
 #include "mpdserviceplugin.h"
@@ -13,12 +15,14 @@ class MpdProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatingQString("com.nokia.qt.MediaPlayer/1.0"))
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
             return new MpdPlayerService;
+
+        return 0;
     }
 };
 
-QStringList MpdSerivcePlugin::keys() const
+QStringList MpdServicePlugin::keys() const
 {
     return QStringList() << "mediaplayer";
 }
@@ -32,4 +36,7 @@ QMediaServiceProvider* MpdServicePlugin::create(QString const& key)
 }
 
 #include "mpdserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(mpd_serviceplugin, MpdServicePlugin);
+
 

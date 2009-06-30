@@ -2,6 +2,9 @@
 #ifndef MPDPLAYERCONTROL_H
 #define MPDPLAYERCONTROL_H
 
+#include <qmediaplayercontrol.h>
+
+
 class MpdDaemon;
 
 class MpdPlayerControl : public QMediaPlayerControl
@@ -9,7 +12,7 @@ class MpdPlayerControl : public QMediaPlayerControl
     Q_OBJECT
 
 public:
-    MpdPlayerControl(MpdDaemon *mpd);
+    MpdPlayerControl(MpdDaemon *mpd, QObject *parent);
     ~MpdPlayerControl();
 
     void play();
