@@ -84,8 +84,7 @@ public:
     QNetworkSessionManagerPrivate(QObject *parent = 0);
     ~QNetworkSessionManagerPrivate();
 
-    void startConfiguration(const QNetworkConfiguration &config);
-    void stopConfiguration(const QNetworkConfiguration &config);
+    void forceSessionClose(const QNetworkConfiguration &config);
 
 Q_SIGNALS:
     void forcedSessionClose(const QNetworkConfiguration &config);
@@ -104,34 +103,8 @@ QNetworkSessionManagerPrivate::~QNetworkSessionManagerPrivate()
 {
 }
 
-void QNetworkSessionManagerPrivate::startConfiguration(const QNetworkConfiguration &config)
+void QNetworkSessionManagerPrivate::forceSessionClose(const QNetworkConfiguration &config)
 {
-    if ((config.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active &&
-        (config.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-        QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
-
-        if (!engine) {
-            qDebug() << "cannot start configuration (no engine)" << config.name();
-            return;
-        }
-
-        engine->connectToId(config.identifier());
-    }
-}
-
-void QNetworkSessionManagerPrivate::stopConfiguration(const QNetworkConfiguration &config)
-{
-    if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-        QNetworkSessionEngine *engine = getEngineFromId(config.identifier());
-
-        if (!engine) {
-            qDebug() << "cannot stop configuration (no engine)" << config.name();
-            return;
-        }
-
-        engine->disconnectFromId(config.identifier());
-    }
-
     emit forcedSessionClose(config);
 }
 
@@ -185,7 +158,15 @@ void QNetworkSessionPrivate::open()
             return;
         }
         opened = true;
-        sessionManager()->startConfiguration(activeConfig);
+
+        if ((activeConfig.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active &&
+            (activeConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+            state = QNetworkSession::Connecting;
+            emit q->stateChanged(state);
+
+            engine->connectToId(activeConfig.identifier());
+        }
+
         isActive = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
         if (isActive)
             emit quitPendingWaitsForOpened();
@@ -210,7 +191,14 @@ void QNetworkSessionPrivate::stop()
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
     } else {
-        sessionManager()->stopConfiguration(activeConfig);
+        if ((activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+            state = QNetworkSession::Closing;
+            emit q->stateChanged(state);
+
+            engine->disconnectFromId(activeConfig.identifier());
+
+            sessionManager()->forceSessionClose(activeConfig);
+        }
 
         opened = false;
         isActive = false;
