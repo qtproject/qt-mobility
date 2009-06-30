@@ -267,8 +267,8 @@ QNetworkConfiguration QNetworkConfigurationManager::configurationFromIdentifier(
         item.d = conPriv->accessPointConfigurations.value(identifier);
     else if (conPriv->snapConfigurations.contains(identifier))
         item.d = conPriv->snapConfigurations.value(identifier);
-    else if (conPriv->userChoiceConfiguration->id == identifier)
-        item.d = conPriv->userChoiceConfiguration;
+    else if (conPriv->userChoiceConfigurations.contains(identifier))
+        item.d = conPriv->userChoiceConfigurations.value(identifier);
     return item;
 
 }

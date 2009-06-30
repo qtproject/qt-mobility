@@ -81,7 +81,6 @@ public:
     QNetworkConfigurationManagerPrivate()
     :   QObject(0), capFlags(0), firstUpdate(true)
     {
-        userChoiceConfiguration = new QNetworkConfigurationPrivate;
         registerPlatformCapabilities();
         updateConfigurations();
     }
@@ -115,7 +114,7 @@ public:
     //the members of ServiceNetworks change
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> userChoiceConfiguration;
+    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
     bool firstUpdate;
 
 public slots:

@@ -131,6 +131,7 @@ public: // Data
     //the members of ServiceNetworks change
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
+    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
     QNetworkConfigurationManager::CapabilityFlags capFlags;
     
 private: // Data
