@@ -159,6 +159,10 @@ The elements and attributes have the following meanings:
         \o "
         \o description
         \o A user readable description of the purpose of the interface.
+    \row
+        \o "
+        \o customproperty
+        \o An implementation specific key value pair which can be used for filtering or as description.
  
 \endtable
 
