@@ -76,8 +76,9 @@ compatible to previous versions.
 \section2 Header lookup
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using 
-Qt's meta object system. This implies that the client does not have any knowledge of the object header. In some use cases 
-it may be more convenient to directly interact with the service object by including the service header.
+Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases 
+it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.
+The subsequent code snippet demonstrates how this may look like:
 
 \code
 #include <filestorage.h>

@@ -261,7 +261,7 @@ int QServiceFilter::interfaceMinorVersion() const
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
-    \sa customConstraint()
+    \sa customProperty()
 */
 void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
 {
@@ -272,7 +272,7 @@ void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
     Returns the value for the custom property \a key; otherwise
     returns a null string.
 
-    \sa setCustomConstraint()
+    \sa setCustomProperty()
 */
 QString QServiceFilter::customProperty(const QString& key) const
 {
