@@ -11,7 +11,7 @@ TEMPLATE = app
 
 INCLUDEPATH += ../..
 
-LIBS +=  ../../playlistformats/m3u/libqm3u.a ../../libqmultimedia.a
+LIBS +=  ../../playlistformats/m3u/libqm3u.a -L$$OUT_PWD/../../../lib -lQtMedia
 
 SOURCES += main.cpp\
         imageviewer.cpp
