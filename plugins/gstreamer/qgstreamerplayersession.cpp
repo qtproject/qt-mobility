@@ -190,8 +190,8 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         emit stateChanged(m_state = QGstreamerPlayerControl::Paused);
                     break;
                 case GST_STATE_PLAYING:
-                    //if (oldState == GST_STATE_PAUSED)
-                    //    getStreamsInfo();
+                    if (oldState == GST_STATE_PAUSED)
+                        getStreamsInfo();
 
                     if (m_state != QGstreamerPlayerControl::Playing)
                         emit stateChanged(m_state = QGstreamerPlayerControl::Playing);
@@ -235,16 +235,16 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
     }
 }
 
-void QGstreamerPlayerSession::getStreamInfo()
-{    // Get Length if have not before.
-    if (m_duration == -1)
-    {
-        GstFormat   format = GST_FORMAT_TIME;
-        gint64      duration = 0;
+void QGstreamerPlayerSession::getStreamsInfo()
+{
 
-        if (gst_element_query_duration(m_playbin, &format, &duration))
-        {
-            m_duration = duration / 1000000;
+    GstFormat   format = GST_FORMAT_TIME;
+    gint64      duration = 0;
+
+    if (gst_element_query_duration(m_playbin, &format, &duration)) {
+        int newDuration = duration / 1000000;
+        if (m_duration != newDuration) {
+            m_duration = newDuration;
             emit durationChanged(m_duration);
         }
     }

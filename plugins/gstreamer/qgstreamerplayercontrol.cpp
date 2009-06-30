@@ -19,6 +19,12 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
 
     connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
+    connect(m_session, SIGNAL(durationChanged(qint64)),
+            this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(mutedStateChaned(bool)),
+            this, SIGNAL(mutedStateChaned(bool)));
+    connect(m_session, SIGNAL(volumeChaned(int)),
+            this, SIGNAL(volumeChaned(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayerControl::State)),
             this, SIGNAL(stateChanged(QMediaPlayerControl::State)));
     connect(m_session,SIGNAL(bufferingChanged(bool)),

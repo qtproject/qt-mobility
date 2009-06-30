@@ -60,7 +60,7 @@ signals:
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
-    void getStreamInfo();
+    void getStreamsInfo();
 
 private:
     QUrl m_url;

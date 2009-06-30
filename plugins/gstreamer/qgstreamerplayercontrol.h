@@ -55,8 +55,11 @@ Q_SIGNALS:
     void durationChanged(qint64 duration);
     void bufferingChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
+    void mutedStateChanged(bool);
+    void volumeChanged(int);
     void currentMediaChanged(const QMediaSource &mediaSource);
     void playlistPositionChanged(int playlistPosition);
+
 
 protected:
     void setState(State state) { emit stateChanged(m_state = state); }
