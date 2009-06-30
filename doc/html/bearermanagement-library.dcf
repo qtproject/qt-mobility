@@ -16,6 +16,7 @@
         <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Active</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">Type</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::Invalid</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</keyword>
         <keyword ref="qnetworkconfiguration.html#children">children</keyword>

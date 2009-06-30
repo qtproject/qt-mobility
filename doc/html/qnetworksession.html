@@ -129,7 +129,7 @@
 <p>This function returns an empty string if this session is based on an invalid configuration.</p>
 <h3 class="fn"><a name="close"></a>void QNetworkSession::close ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Decreases the session counter on the associated network configuration. If the session counter reaches zero the active network interface is shut down. This also means that <a href="qnetworksession.html#state">state</a>() will only change from <a href="qnetworksession.html#State-enum">Connected</a> to <a href="qnetworksession.html#State-enum">Disconnected</a> if this was the last active session.</p>
-<p>If the platform does not support out-of-process sessions calling this function may stop the interface in despite of active sessions held by other processes. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
+<p>If the platform does not support out-of-process sessions calling this function does not stop the interface. In this case <a href="qnetworksession.html#stop">stop</a>() has to be used to force a shut down. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
 <p>Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired by connecting to the <a href="qnetworksession.html#stateChanged">stateChanged</a>(), <a href="qnetworksession.html#sessionOpened">sessionOpened</a>() or <a href="qnetworksession.html#error">error</a>() signals.</p>
 <p>See also <a href="qnetworksession.html#open">open</a>(), <a href="qnetworksession.html#stop">stop</a>(), and <a href="qnetworksession.html#isActive">isActive</a>().</p>
 <h3 class="fn"><a name="configuration"></a><a href="qnetworkconfiguration.html">QNetworkConfiguration</a> QNetworkSession::configuration () const</h3>
@@ -193,7 +193,8 @@
     } else if ( ap.type() == QNetworkConfiguration::InternetAccessPoint ) {
         Q_ASSERT( ap.identifier() == ident );
     }</pre>
-<p>A session that is based on an <a href="qnetworkconfiguration.html#Type-enum">InternetAccessPoint</a> configuration returns the same identifier as the identifier of the configuration returned by <a href="qnetworksession.html#configuration">configuration</a>().</p>
+</td></tr>
+<tr valign="top" class="even"><td>UserChoiceConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isActive">isActive</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfigurationIdentifier</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfigurationIdentifier</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
 </td></tr>
 </table></p>
 <h3 class="fn"><a name="receivedData"></a>quint64 QNetworkSession::receivedData () const</h3>
