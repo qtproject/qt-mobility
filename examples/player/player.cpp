@@ -2,30 +2,30 @@
 
 #include "playlistmodel.h"
 
-#include "qwmpmetadata.h"
-#include "qwmpplayercontrol.h"
-#include "qwmpplayerservice.h"
+#include <qmediaplayer.h>
+#include <qmediaplaylist.h>
+#include <qmediametadata.h>
 
 #include <QtGui>
 
 Player::Player(QWidget *parent)
     : QWidget(parent)
-    , service(0)
     , slider(0)
 {
-    service = new QWmpPlayerService;    
+    player = new QMediaPlayer;
+    metaData = new QMediaMetadata(player);
 
-    connect(service->control(), SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
-    connect(service->control(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    connect(service->metaData(), SIGNAL(changed()), this, SLOT(metaDataChanged()));
+    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    connect(metaData, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
 
-    QWidget *videoWidget = service->createWidget();
+    QWidget *videoWidget = 0; /*service->createWidget();
 
     if (videoWidget)
         service->setVideoOutput(videoWidget);
-
+    */
     PlaylistModel *playlistModel = new PlaylistModel(this);
-    playlistModel->setPlaylist(service->playlist());
+    playlistModel->setPlaylist(player->mediaPlaylist());
 
     QTableView *playlistView = new QTableView;
     playlistView->setModel(playlistModel);
@@ -37,25 +37,25 @@ Player::Player(QWidget *parent)
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
     QPushButton *playButton = new QPushButton(tr("Play"));
-    connect(playButton, SIGNAL(clicked()), service->control(), SLOT(play()));
+    connect(playButton, SIGNAL(clicked()), player, SLOT(play()));
 
     QPushButton *pauseButton = new QPushButton(tr("Pause"));
-    connect(pauseButton, SIGNAL(clicked()), service->control(), SLOT(pause()));
+    connect(pauseButton, SIGNAL(clicked()), player, SLOT(pause()));
 
     QPushButton *stopButton = new QPushButton(tr("Stop"));
-    connect(stopButton, SIGNAL(clicked()), service->control(), SLOT(stop()));
+    connect(stopButton, SIGNAL(clicked()), player, SLOT(stop()));
 
     QLabel *volumeLabel = new QLabel(tr("Volume"));
 
     QSlider *volumeSlider = new QSlider(Qt::Horizontal);
     volumeSlider->setRange(0, 100);
-    volumeSlider->setValue(service->control()->volume());
-    connect(volumeSlider, SIGNAL(valueChanged(int)), service->control(), SLOT(setVolume(int)));
+    volumeSlider->setValue(player->volume());
+    connect(volumeSlider, SIGNAL(valueChanged(int)), player, SLOT(setVolume(int)));
 
     QPushButton *muteButton = new QPushButton(tr("Mute"));
     muteButton->setCheckable(true);
-    muteButton->setChecked(service->control()->isMuted());
-    connect(muteButton, SIGNAL(clicked(bool)), service->control(), SLOT(setMuted(bool)));
+    muteButton->setChecked(player->isMuted());
+    connect(muteButton, SIGNAL(clicked(bool)), player, SLOT(setMuted(bool)));
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -86,7 +86,7 @@ Player::Player(QWidget *parent)
 
 Player::~Player()
 {
-    delete service;
+    delete player;
 }
 
 void Player::open()
@@ -94,7 +94,7 @@ void Player::open()
     QString fileName = QFileDialog::getOpenFileName();
 
     if (!fileName.isNull()) {
-        service->control()->setUrl(QLatin1String("file:///") + fileName);
+        player->mediaPlaylist()->append(QMediaSource("", QLatin1String("file:///") + fileName));
     }
 }
 
@@ -110,5 +110,5 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    setWindowTitle(service->metaData()->value(QLatin1String("Title")).toString());
+    setWindowTitle(metaData->valueFor(QLatin1String("Title")).toString());
 }

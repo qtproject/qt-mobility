@@ -3,7 +3,9 @@
 
 #include <QtGui/QWidget>
 
-class QMediaPlayerService;
+class QMediaPlayer;
+class QMediaMetadata;
+
 class QSlider;
 
 class Player : public QWidget
@@ -20,7 +22,8 @@ private slots:
     void metaDataChanged();
 
 private:
-    QMediaPlayerService *service;
+    QMediaPlayer *player;
+    QMediaMetadata *metaData;
     QSlider *slider;
 };
 

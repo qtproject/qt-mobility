@@ -1,6 +1,6 @@
 #include "playlistmodel.h"
 
-#include "qwmpplaylist.h"
+#include <qmediaplaylist.h>
 
 PlaylistModel::PlaylistModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -10,8 +10,7 @@ PlaylistModel::PlaylistModel(QObject *parent)
 
 int PlaylistModel::rowCount(const QModelIndex &parent) const
 {
-    return m_playlist && !parent.isValid() ? m_playlist->count() : 0;
-    
+    return m_playlist && !parent.isValid() ? m_playlist->size() : 0;
 }
 
 int PlaylistModel::columnCount(const QModelIndex &parent) const
@@ -22,7 +21,7 @@ int PlaylistModel::columnCount(const QModelIndex &parent) const
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex &parent) const
 {
     return m_playlist && !parent.isValid()
-            && row >= 0 && row < m_playlist->count()
+            && row >= 0 && row < m_playlist->size()
             && column >= 0 && column < ColumnCount
         ? createIndex(row, column)
         : QModelIndex();
@@ -40,15 +39,21 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if (index.isValid() && role == Qt::DisplayRole) {
         switch (index.column()) {
         case Track:
-            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
         case Title:
-            return m_playlist->value(index.row(), QLatin1String("Title"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("Title"));
         case Album:
-            return m_playlist->value(index.row(), QLatin1String("WM/AlbumTitle"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumTitle"));
         case AlbumArtist:
-            return m_playlist->value(index.row(), QLatin1String("WM/AlbumArtist"));
+            return m_playlist->itemAt(index.row()).mimeType();
+//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumArtist"));
         case ContributingArtist:
             {
+            return m_playlist->itemAt(index.row()).mimeType();
+            /*
                 QVariantList values = m_playlist->values(
                         index.row(), QLatin1String("Author"));
 
@@ -58,7 +63,7 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
                         artists += QLatin1String("; ") + values.at(i).toString();
                     return artists;
                 };
-            }
+            */}
             break;
         case ColumnCount:
             break;

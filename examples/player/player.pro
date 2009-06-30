@@ -1,10 +1,8 @@
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../plugins/wmp
+INCLUDEPATH += $$PWD/../../multimedia
 
-LIBS += -L$$OUT_PWD/../../lib -lqwmp
-
-DEPENDPATH += $$PWD/../../plugins/wmp
+LIBS += -L$$OUT_PWD/../../lib -lQtMedia
 
 HEADERS = \
     player.h \
