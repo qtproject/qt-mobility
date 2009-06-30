@@ -3,7 +3,7 @@
 
 #include "qabstractmediacontrol.h"
 
-class QMediaSource;
+class QMediaPlaylist;
 
 class QMediaPlayerControl : public QAbstractMediaControl
 {
@@ -15,8 +15,8 @@ public:
     int state() const;
     virtual void setState(int state);
 
-    QMediaSource mediaSource() const;
-    virtual void setMediaSource(QMediaSource mediaSource);
+    QMediaPlaylist* mediaPlaylist() const;
+    virtual void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     qint64 duration() const;
     virtual void setDuration(qint64 duration);

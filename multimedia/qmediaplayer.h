@@ -6,17 +6,19 @@
 #include "qmediaserviceprovider.h"
 #include "qmediasource.h"
 
-class QMediaPlayerService;
 
-class QMediaPlayerPrivate;
+class QMediaPlayerService;
+class QMediaPlaylist;
 
 extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
+
+class QMediaPlayerPrivate;
 class QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QMediaSource mediaSource READ mediaSource WRITE setMediaSource NOTIFY mediaSourceChanged)
+    Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -32,13 +34,11 @@ class QMediaPlayer : public QAbstractMediaObject
 public:
     enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
 
-
-
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
 
     State state() const;
-    QMediaSource mediaSource() const;
+    QMediaPlaylist* mediaPlaylist() const;
 
     qint64 duration() const;
     qint64 position() const;
@@ -55,7 +55,7 @@ public:
 
 
 public Q_SLOTS:
-    void setMediaSource(QMediaSource mediaSource);
+    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     void play();
     void pause();
@@ -66,7 +66,6 @@ public Q_SLOTS:
     void setMuted(bool muted);
 
 Q_SIGNALS:
-    void mediaSourceChanged(QMediaSource mediaSource);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(State newState);

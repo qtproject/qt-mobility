@@ -47,6 +47,12 @@ int QRadioTuner::signalStrength() const
     return property("signalStrength").toInt();
 }
 
+void QRadioTuner::setSignalStrength(int ss)
+{
+    changePropertyValue("signaStrength", ss);
+}
+
+
 qint64 QRadioTuner::duration() const
 {
     return qvariant_cast<qint64>(property("duration"));

@@ -9,7 +9,6 @@ class QMediaAudioOutput;
 class QMediaVideoOutput;
 
 class QAbstractMediaServicePrivate;
-
 class QAbstractMediaService : public QObject
 {
     Q_OBJECT

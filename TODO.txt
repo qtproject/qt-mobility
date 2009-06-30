@@ -9,3 +9,7 @@ Add Interfaces
 
 QMediaMetaData 
 - Potentially needs to set data
+
+
+- Some system information
+ - mimetypes etc.

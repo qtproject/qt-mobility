@@ -5,7 +5,6 @@
 #include "qmediaplayerservice.h"
 #include "qmediaplayercontrol.h"
 #include "qmediaserviceprovider.h"
-#include "qmediasource.h"
 
 
 /*!
@@ -63,13 +62,9 @@ QMediaPlayer::State QMediaPlayer::state() const
     return QMediaPlayer::State(d_func()->control->state());
 }
 
-/*!
-    Returns the current QMediaSource that is being operated on.
-*/
-
-QMediaSource QMediaPlayer::mediaSource() const
+QMediaPlaylist* QMediaPlayer::mediaPlaylist() const
 {
-    return d_func()->control->mediaSource();
+    return d_func()->control->mediaPlaylist();
 }
 
 /*!
@@ -146,13 +141,9 @@ QAbstractMediaService* QMediaPlayer::service() const
 
 //public Q_SLOTS:
 
-/*!
-    Set the Player object to operation on \a mediaSource as the current source.
-*/
-
-void QMediaPlayer::setMediaSource(QMediaSource mediaSource)
+void QMediaPlayer::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
-    d_func()->control->setMediaSource(mediaSource);
+    d_func()->control->setMediaPlaylist(mediaPlaylist);
 }
 
 /*!
@@ -245,11 +236,6 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
                             as the content has reached a natural end.
 */
 
-/*!
-    \fn void QMediaPlayer::mediaSourceChanged(QMediaSource mediaSource)
-
-    Signal that the player object has change its content to \a mediaSource.
-*/
 
 /*!
     \fn void QMediaPlayer::durationChanged(qint64 duration)

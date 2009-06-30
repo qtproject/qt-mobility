@@ -54,12 +54,13 @@ SOURCES = \
     qmediarecordercontrol.cpp \
     qmediarecorderservice.cpp \
     qmediaserviceprovider.cpp \
+    qmediasink.cpp \
     qmediasource.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp
 
-include (outputs/outputs.pri)
+#include (outputs/outputs.pri)
 
 

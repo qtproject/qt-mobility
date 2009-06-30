@@ -6,3 +6,6 @@ QMediaPlayerService::QMediaPlayerService(QObject *parent):
 {
 }
 
+QMediaPlayerService::~QMediaPlayerService()
+{
+}
