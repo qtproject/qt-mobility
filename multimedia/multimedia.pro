@@ -4,6 +4,11 @@ TEMPLATE = lib
 TARGET = QtMedia
 
 DESTDIR = $$OUT_PWD/../lib
+DLLDESTDIR = $$OUT_PWD/../bin
+
+!static:DEFINES += QT_MAKEDLL
+
+DEFINES += QT_BUILD_MEDIA_LIB
 
 HEADERS = \
     qabstractmediacontrol.h \
@@ -30,6 +35,7 @@ HEADERS = \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
     qmediasource.h \
+    qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
     qradiotuner.h \

@@ -48,7 +48,7 @@ extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *prov
 
 
 class QMediaPlayerPrivate;
-class QMediaPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 

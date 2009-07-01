@@ -39,10 +39,11 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 
+#include "qmediaendpointinterface.h"
 
 class QMediaServiceProvider;
 
-struct QMediaServiceProviderFactoryInterface : public QFactoryInterface
+struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
 {
     virtual QStringList keys() const = 0;
     virtual QMediaServiceProvider* create(QString const& key) = 0;
@@ -52,7 +53,7 @@ struct QMediaServiceProviderFactoryInterface : public QFactoryInterface
     "com.nokia.qt.QMediaServiceProviderFactoryInterface"
 Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
-class QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface
+class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaServiceProviderFactoryInterface:QFactoryInterface)

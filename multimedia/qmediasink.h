@@ -38,9 +38,10 @@
 #include <QString>
 #include <QVariant>
 
+#include "qmultimediaglobal.h"
 
 class QMediaSinkPrivate;
-class QMediaSink : public QObject
+class Q_MEDIA_EXPORT QMediaSink : public QObject
 {
 public:
     QMediaSink();

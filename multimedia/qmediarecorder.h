@@ -50,7 +50,7 @@ class QMediaRecorderPrivate;
 
 extern QMediaRecorderService *createMediaRecorderService(QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder"));
 
-class QMediaRecorder : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
 

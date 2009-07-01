@@ -37,10 +37,12 @@
 
 #include <QtCore/qobject.h>
 
+#include "qmultimediaglobal.h"
+
 class QAbstractMediaObject;
 class QMediaMetadataPrivate;
 
-class QMediaMetadata : public QObject
+class Q_MEDIA_EXPORT QMediaMetadata : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)

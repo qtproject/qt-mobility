@@ -39,9 +39,11 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qvariant.h>
 
+#include "qmultimediaglobal.h"
 
 class QAbstractMediaControlPrivate;
-class QAbstractMediaControl : public QObject
+
+class Q_MEDIA_EXPORT QAbstractMediaControl : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)

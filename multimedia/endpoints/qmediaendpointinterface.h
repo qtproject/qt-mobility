@@ -37,7 +37,9 @@
 
 #include <QtCore/qplugin.h>
 
-class QMediaEndpointInterface
+#include "qmultimediaglobal.h"
+
+class Q_MEDIA_EXPORT QMediaEndpointInterface
 {
 public:
     enum Direction

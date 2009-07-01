@@ -40,7 +40,7 @@
 
 
 class QMediaPlayerServicePrivate;
-class QMediaPlayerService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QMediaPlayerService : public QAbstractMediaService
 {
     Q_OBJECT
 

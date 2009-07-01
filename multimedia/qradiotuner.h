@@ -37,7 +37,7 @@
 
 #include "qabstractmediacontrol.h"
 
-class QRadioTuner : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
 {
     Q_OBJECT
 

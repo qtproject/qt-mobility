@@ -42,7 +42,7 @@
 class QMediaPlaylistSource;
 
 class QMediaPlaylistPrivate;
-class QMediaPlaylist : public QObject
+class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 {
     Q_OBJECT
 public:

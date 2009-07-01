@@ -44,7 +44,7 @@ class QAbstractMediaControl;
 
 class QAbstractMediaServicePrivate;
 
-class QAbstractMediaService : public QObject
+class Q_MEDIA_EXPORT QAbstractMediaService : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QObject* audioOutput READ audioOutput WRITE setAudioOutput)

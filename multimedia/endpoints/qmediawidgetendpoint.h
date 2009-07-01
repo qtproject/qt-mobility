@@ -39,7 +39,7 @@
 
 #include <QtGui/qwidget.h>
 
-class QMediaWidgetEndpointInterface : public QMediaEndpointInterface
+class Q_MEDIA_EXPORT QMediaWidgetEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QMediaWidgetEndpointInterface();
@@ -53,7 +53,7 @@ Q_DECLARE_INTERFACE(QMediaWidgetEndpointInterface, QMediaWidgetEndpointInterface
 
 class QMediaWidgetEndpointPrivate;
 
-class QMediaWidgetEndpoint : public QWidget, public QMediaWidgetEndpointInterface
+class Q_MEDIA_EXPORT QMediaWidgetEndpoint : public QWidget, public QMediaWidgetEndpointInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaWidgetEndpointInterface)

@@ -37,7 +37,7 @@
 
 #include "qmediaendpointinterface.h"
 
-class QAudioRendererEndpointInterface : public QMediaEndpointInterface
+class Q_MEDIA_EXPORT QAudioRendererEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QAudioRendererEndpointInterface();
@@ -53,7 +53,9 @@ class QIODevice;
 
 class QAudioRendererEndpointPrivate;
 
-class QAudioRendererEndpoint : public QObject,  public QAudioRendererEndpointInterface
+class Q_MEDIA_EXPORT QAudioRendererEndpoint
+        : public QObject
+        , public QAudioRendererEndpointInterface
 {
     Q_OBJECT
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency)
