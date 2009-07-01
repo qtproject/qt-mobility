@@ -66,7 +66,7 @@ class QMediaPlayer : public QAbstractMediaObject
     Q_ENUMS(State)
 
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
+    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState, ErrorState };
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
