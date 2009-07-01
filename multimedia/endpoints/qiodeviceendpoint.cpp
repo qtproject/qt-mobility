@@ -32,61 +32,78 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGEMEDIAOUTPUT_H
-#define QIMAGEMEDIAOUTPUT_H
+#include "qiodeviceendpoint.h"
 
-#include <QtCore/qplugin.h>
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
+#include <private/qobject_p.h>
 
-class QImageMediaOutputInterface
+/*!
+    \class QIODeviceEndpointInterface
+    \preliminary
+    \internal
+    \brief The QIODeviceEndpointInterface provides an interface for media endpoints that read or
+    write a QIODevice.
+
+    \sa QIODeviceEndpoint
+*/
+
+/*!
+*/
+QIODeviceEndpointInterface::~QIODeviceEndpointInterface()
+{
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QIODeviceEndpointInterface::direction() const
+{
+    return InputOutput;
+}
+
+class QIODeviceEndpointPrivate : public QObjectPrivate
 {
 public:
-    virtual ~QImageMediaOutputInterface();
-};
-
-#define QImageMediaOutputInterface_iid "com.nokia.Qt.QImageMediaOutputInterface/1.0"
-
-Q_DECLARE_INTERFACE(QImageMediaOutputInterface, QImageMediaOutputInterface_iid)
-
-class QImage;
-
-class QImageMediaOutputPrivate;
-
-class QImageMediaOutput : public QObject, public QImageMediaOutputInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QImageMediaOutputInterface)
-    Q_PROPERTY(QImage image READ image NOTIFY imageChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(bool hasImage READ hasImage)
-    Q_PROPERTY(QSize maximumSize READ maximumSize WRITE setMaximumSize)
-    Q_DECLARE_PRIVATE(QImageMediaOutput)
-public:
-    enum State
+    QIODeviceEndpointPrivate()
+        : device(0)
     {
-        NoImage,
-        PartialImage,
-        CompleteImage
-    };
+    }
 
-    QImageMediaOutput(QObject *parent = 0);
-    ~QImageMediaOutput();
-
-    QImage image() const;
-    State state() const;
-
-    bool hasImage() const;
-
-    QSize maximumSize() const;
-    virtual void setMaximumSize(const QSize &size);
-
-Q_SIGNALS:
-    void imageChanged(const QImage &image);
-    void stateChanged(QImageMediaOutput::State state);
-
-protected:
-    void setImage(const QImage &image, State state);
+    QIODevice *device;
 };
 
-#endif
+/*!
+    \class QIODeviceEndpoint
+    \preliminary
+    \brief The QIODeviceEndpoint class provides a media endpoint that reads or writes a QIODevice.
+*/
+
+/*!
+    Contructs a new I/O device media end point.
+*/
+QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
+    : QObject(*new QIODeviceEndpointPrivate, parent)
+{
+}
+
+/*!
+    Destroys an I/O device media end point.
+*/
+QIODeviceEndpoint::~QIODeviceEndpoint()
+{
+}
+
+/*!
+    Returns the I/O device.
+*/
+QIODevice *QIODeviceEndpoint::device() const
+{
+    return d_func()->device;
+}
+
+/*!
+    Sets the I/O \a device.
+*/
+void QIODeviceEndpoint::setDevice(QIODevice *device)
+{
+    d_func()->device = device;
+}

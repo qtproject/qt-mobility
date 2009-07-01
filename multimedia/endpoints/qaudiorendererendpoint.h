@@ -32,54 +32,53 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEORENDERERWIDGET_P_H
-#define QVIDEORENDERERWIDGET_P_H
+#ifndef QAUDIORENDERERENDPOINT_H
+#define QAUDIORENDERERENDPOINT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qmediaendpointinterface.h"
 
-#include "qwidgetmediaoutput.h"
-
-#ifndef QT_NO_VIDEOSURFACE
-
-class QImageMediaOutput;
-class QVideoRendererMediaOutput;
-
-class QVideoRendererWidgetPrivate;
-
-class QVideoRendererWidget : public QWidgetMediaOutput
+class QAudioRendererEndpointInterface : public QMediaEndpointInterface
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoRendererWidget)
 public:
-    QVideoRendererWidget(QWidget *parent = 0);
-    ~QVideoRendererWidget();
+    virtual ~QAudioRendererEndpointInterface();
 
-    QVideoRendererMediaOutput *rendererOutput() const;
-    void setRendererOutput(QVideoRendererMediaOutput *output);
-
-    QImageMediaOutput *imageOutput() const;
-    void setImageOutput(QImageMediaOutput *output);
-
-public Q_SLOTS:
-    void setFullscreen(bool fullscreen);
-
-protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
-
-private:
-    Q_PRIVATE_SLOT(d_func(), void _q_imageChanged(const QImage &));
+    Direction direction() const;
 };
 
-#endif
+#define QAudioRendererEndpointInterface_iid "com.nokia.Qt.QAudioRendererEndpointInterface/1.0"
+
+Q_DECLARE_INTERFACE(QAudioRendererEndpointInterface, QAudioRendererEndpointInterface_iid)
+
+class QIODevice;
+
+class QAudioRendererEndpointPrivate;
+
+class QAudioRendererEndpoint : public QObject,  public QAudioRendererEndpointInterface
+{
+    Q_OBJECT
+    Q_PROPERTY(int frequency READ frequency WRITE setFrequency)
+    Q_PROPERTY(int channels READ channels WRITE setChannels)
+    Q_PROPERTY(int sampleSize READ sampleSize WRITE setSampleSize)
+    Q_INTERFACES(QAudioRendererEndpointInterface)
+    Q_DECLARE_PRIVATE(QAudioRendererEndpoint)
+public:
+    QAudioRendererEndpoint(QObject *parent = 0);
+    ~QAudioRendererEndpoint();
+
+    int frequency() const;
+    virtual void setFrequency(int frequency);
+    virtual QList<int> supportedFrequencies() const = 0;
+
+    int channels() const;
+    virtual void setChannels(int channels);
+    virtual QList<int> supportedChannels() const = 0;
+
+    int sampleSize() const;
+    virtual void setSampleSize(int size);
+    virtual QList<int> supportedSampleSizes() const = 0;
+
+    QIODevice *device() const;
+    virtual void setDevice(QIODevice *device);
+};
 
 #endif

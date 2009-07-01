@@ -35,26 +35,47 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
+#include "qmediaendpointinterface.h"
+
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
 class QAbstractMediaControl;
-class QMediaAudioOutput;
-class QMediaVideoOutput;
 
 class QAbstractMediaServicePrivate;
+
 class QAbstractMediaService : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(QObject* audioOutput READ audioOutput WRITE setAudioOutput)
+    Q_PROPERTY(QObject* videoOutput READ videoOutput WRITE setVideoOutput)
+    Q_PROPERTY(QObject* dataOutput READ dataOutput WRITE setDataOutput)
+    Q_PROPERTY(QObject* audioInput READ audioInput WRITE setAudioInput)
+    Q_PROPERTY(QObject* videoInput READ videoInput WRITE setVideoInput)
+    Q_PROPERTY(QObject* dataInput READ dataInput WRITE setDataInput)
 public:
-    QMediaAudioOutput audioOutput() const;
-    void setAudioOutput(QMediaAudioOutput const &audioOutput);
-    QList<QMediaAudioOutput> availableAudioOutputs() const;
+    QObject *audioOutput() const;
+    virtual void setAudioOutput(QObject *output);
 
-    QMediaAudioOutput videoOutput() const;
-    void setVideoOutput(QMediaVideoOutput const &videoOutput);
-    QList<QMediaVideoOutput> availableVideoOutputs() const;
+    QObject *videoOutput() const;
+    virtual void setVideoOutput(QObject *output);
+
+    QObject *dataOutput() const;
+    virtual void setDataOutput(QObject *output);
+
+    QObject *audioInput() const;
+    virtual void setAudioInput(QObject *input);
+
+    QObject *videoInput() const;
+    virtual void setVideoInput(QObject *input);
+
+    QObject *dataInput() const;
+    virtual void setDataInput(QObject *input);
+
+    virtual QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
+
+    virtual QObject *createEndpoint(const char *interface);
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 

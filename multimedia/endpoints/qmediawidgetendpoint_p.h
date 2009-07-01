@@ -32,77 +32,33 @@
 **
 ****************************************************************************/
 
-#include "qvideorenderermediaoutput.h"
+#ifndef QMEDIAWIDGETENDPOINT_P_H
+#define QMEDIAWIDGETENDPOINT_P_H
 
-#include <private/qobject_p.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#ifndef QT_NO_VIDEOSURFACE
+#include "qmediawidgetendpoint.h"
 
-/*!
-    \class QVideoRendererMediaOutputInterface
-    \preliminary
-    \internal
-    \brief The QVideoRendererMediaOutputInterface class provides an interface for video renderer
-    media outputs.
-*/
+#include <QtGui/private/qwidget_p.h>
 
-/*!
-    Destroys a video renderer media output.
-*/
-QVideoRendererMediaOutputInterface::~QVideoRendererMediaOutputInterface()
-{
-}
-
-class QVideoRendererMediaOutputPrivate : public QObjectPrivate
+class QMediaWidgetEndpointPrivate : public QWidgetPrivate
 {
 public:
-    QVideoRendererMediaOutputPrivate()
-        : surface(0)
+    QMediaWidgetEndpointPrivate()
+        : fullscreen(false)
     {
     }
 
-    QAbstractVideoSurface *surface;
+    bool fullscreen;
 };
-
-/*!
-    \class QVideoRendererMediaOutput
-    \preliminary
-    \brief The QVideoRendererMediaOutput class provides a media output that renders to a video
-    surface.
-
-    \note QVideoRendererMediaOutput must be created by a media object and cannot be instantiated
-    directly.
-*/
-
-/*!
-    Constructs a new video renderer media output.
-*/
-QVideoRendererMediaOutput::QVideoRendererMediaOutput(QObject *parent)
-    : QObject(*new QVideoRendererMediaOutputPrivate, parent)
-{
-}
-
-/*!
-    Destroys a video renderer media output.
-*/
-QVideoRendererMediaOutput::~QVideoRendererMediaOutput()
-{
-}
-
-/*!
-    Returns the video surface a renderer renders to.
-*/
-QAbstractVideoSurface *QVideoRendererMediaOutput::surface() const
-{
-    return d_func()->surface;
-}
-
-/*!
-    Sets the video \a surface a renderer renders to.
-*/
-void QVideoRendererMediaOutput::setSurface(QAbstractVideoSurface *surface)
-{
-    d_func()->surface = surface;
-}
 
 #endif

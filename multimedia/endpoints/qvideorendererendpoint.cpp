@@ -32,67 +32,89 @@
 **
 ****************************************************************************/
 
-#include "qwidgetmediaoutput_p.h"
+#include "qvideorendererendpoint.h"
+
+#include <private/qobject_p.h>
+
+#ifndef QT_NO_VIDEOSURFACE
 
 /*!
-    \class QWidgetMediaOutputInterface
+    \class QVideoRendererEndpointInterface
     \preliminary
     \internal
-    \brief The QWidgetMediaOutputInterface class provides an interface for widget media outputs.
+    \brief The QVideoRendererEndpointInterface class provides an interface for video renderer
+    media end points.
+
+    \sa QVideoRendererEndpoint
 */
 
 /*!
+    Destroys a video renderer media output.
 */
-QWidgetMediaOutputInterface::~QWidgetMediaOutputInterface()
+QVideoRendererEndpointInterface::~QVideoRendererEndpointInterface()
 {
 }
 
 /*!
-    \class QWidgetMediaOutput
-    \preliminary
-    \brief The QWidgetMediaOutput class provides a QWidget media output.
+    \reimp
+*/
+QMediaEndpointInterface::Direction QVideoRendererEndpointInterface::direction() const
+{
+    return Output;
+}
 
-    \note QWidgetMediaOutput must be created by a media object and cannot be instantiated
+class QVideoRendererEndpointPrivate : public QObjectPrivate
+{
+public:
+    QVideoRendererEndpointPrivate()
+        : surface(0)
+    {
+    }
+
+    QAbstractVideoSurface *surface;
+};
+
+/*!
+    \class QVideoRendererEndpoint
+    \preliminary
+    \brief The QVideoRendererEndpoint class provides a media end point that renders to a video
+    surface.
+
+    \note QVideoRendererEndpoint must be created by a media service and cannot be instantiated
     directly.
+
+    \sa QAbstractVideoService::createEndpoint()
 */
 
 /*!
-    Constructs a new media output widget with the given \a parent.
+    Constructs a new video renderer media end point.
 */
-QWidgetMediaOutput::QWidgetMediaOutput(QWidget *parent)
-    : QWidget(*new QWidgetMediaOutputPrivate, parent, 0)
+QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
+    : QObject(*new QVideoRendererEndpointPrivate, parent)
 {
 }
 
 /*!
-    \internal
+    Destroys a video renderer media end point.
 */
-QWidgetMediaOutput::QWidgetMediaOutput(QWidgetMediaOutputPrivate &dd, QWidget *parent)
-    : QWidget(dd, parent, 0)
+QVideoRendererEndpoint::~QVideoRendererEndpoint()
 {
 }
 
 /*!
-    Destroys a media output widget.
+    Returns the video surface a renderer renders to.
 */
-QWidgetMediaOutput::~QWidgetMediaOutput()
+QAbstractVideoSurface *QVideoRendererEndpoint::surface() const
 {
+    return d_func()->surface;
 }
 
 /*!
-    Identifies if a media output widget is in full screen mode.
-
-    Returns true if the widget is full screen, and false otherwise.
+    Sets the video \a surface a renderer renders to.
 */
-bool QWidgetMediaOutput::isFullscreen() const
+void QVideoRendererEndpoint::setSurface(QAbstractVideoSurface *surface)
 {
-    return d_func()->fullscreen;
+    d_func()->surface = surface;
 }
 
-/*!
-    Sets the \a fullscreen mode of a media output widget.
-*/
-void QWidgetMediaOutput::setFullscreen(bool fullscreen)
-{
-    d_func()->fullscreen = fullscreen;
-}
+#endif

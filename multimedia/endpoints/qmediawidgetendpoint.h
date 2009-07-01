@@ -32,33 +32,44 @@
 **
 ****************************************************************************/
 
-#ifndef QWIDGETMEDIAOUTPUT_P_H
-#define QWIDGETMEDIAOUTPUT_P_H
+#ifndef QWIDGETMEDIAOUTPUT_H
+#define QWIDGETMEDIAOUTPUT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qmediaendpointinterface.h"
 
-#include "qwidgetmediaoutput.h"
+#include <QtGui/qwidget.h>
 
-#include <QtGui/private/qwidget_p.h>
-
-class QWidgetMediaOutputPrivate : public QWidgetPrivate
+class QMediaWidgetEndpointInterface : public QMediaEndpointInterface
 {
 public:
-    QWidgetMediaOutputPrivate()
-        : fullscreen(false)
-    {
-    }
+    virtual ~QMediaWidgetEndpointInterface();
 
-    bool fullscreen;
+    Direction direction() const;
+};
+
+#define QMediaWidgetEndpointInterface_iid "com.nokia.Qt.QMediaWidgetEndpointInterface/1.0"
+
+Q_DECLARE_INTERFACE(QMediaWidgetEndpointInterface, QMediaWidgetEndpointInterface_iid)
+
+class QMediaWidgetEndpointPrivate;
+
+class QMediaWidgetEndpoint : public QWidget, public QMediaWidgetEndpointInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(QMediaWidgetEndpointInterface)
+    Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
+    Q_DECLARE_PRIVATE(QMediaWidgetEndpoint)
+public:
+    QMediaWidgetEndpoint(QWidget *parent = 0);
+    ~QMediaWidgetEndpoint();
+
+    bool isFullscreen() const;
+
+public Q_SLOTS:
+    virtual void setFullscreen(bool fullscreen);
+
+protected:
+    QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWidget *parent);
 };
 
 #endif
