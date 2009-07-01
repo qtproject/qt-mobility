@@ -44,6 +44,8 @@
     \internal
     \brief The QVideoRendererEndpointInterface class provides an interface for video renderer
     media end points.
+
+    \sa QVideoRendererEndpoint
 */
 
 /*!
@@ -51,6 +53,14 @@
 */
 QVideoRendererEndpointInterface::~QVideoRendererEndpointInterface()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QVideoRendererEndpointInterface::direction() const
+{
+    return Output;
 }
 
 class QVideoRendererEndpointPrivate : public QObjectPrivate

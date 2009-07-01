@@ -32,22 +32,13 @@
 **
 ****************************************************************************/
 
-#include <private/qobject_p.h>
-#include <qmetaobject.h>
-#include <qtimer.h>
+#include <QtCore/qmetaobject.h>
+#include <QtCore/qtimer.h>
 
 #include "qabstractmediacontrol.h"
+#include "qabstractmediacontrol_p.h"
 
 
-
-class QAbstractMediaControlPrivate : public QObjectPrivate
-{
-public:
-    int         notifyInterval;
-    QTimer*     notifyTimer;
-    QList<QString>  notifyProperties;
-    QObject*    notifyObject;
-};
 
 QAbstractMediaControl::~QAbstractMediaControl()
 {
@@ -99,6 +90,15 @@ void QAbstractMediaControl::removePropertyWatch(QString const& name)
 
 QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
     QObject(*new QAbstractMediaControlPrivate, parent)
+{
+    Q_D(QAbstractMediaControl);
+
+    d->notifyTimer = new QTimer(this);
+    connect(d->notifyTimer, SIGNAL(timeout()), SLOT(notifyCheck()));
+}
+
+QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent):
+    QObject(dd, parent)
 {
     Q_D(QAbstractMediaControl);
 

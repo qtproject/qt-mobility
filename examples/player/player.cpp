@@ -144,5 +144,5 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    setWindowTitle(metaData->valueFor(QLatin1String("Title")).toString());
+    setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
 }

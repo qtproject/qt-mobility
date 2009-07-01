@@ -37,13 +37,13 @@
 
 #include "qabstractmediaservice.h"
 
-class QMediaRecorderService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QMediaRecorderService : public QAbstractMediaService
 {
     Q_OBJECT
 public:
     QMediaRecorderService(QObject *parent = 0);
 
-    virtual QAbstractMediaControl *control() const = 0;
+    virtual QAbstractMediaControl *control(char const *name) const = 0;
 };
 
 #endif

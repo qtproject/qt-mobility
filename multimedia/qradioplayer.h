@@ -46,7 +46,7 @@ class QRadioPlayerPrivate;
 
 extern QRadioService* createRadioService(QMediaServiceProvider *provider = defaultServiceProvider("radio"));
 
-class QRadioPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 

@@ -40,14 +40,14 @@
 
 
 class QMediaPlayerServicePrivate;
-class QMediaPlayerService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QMediaPlayerService : public QAbstractMediaService
 {
     Q_OBJECT
 
 public:
     ~QMediaPlayerService();
 
-    virtual QMediaPlayerControl* control() const = 0;
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
     QMediaPlayerService(QObject *parent);

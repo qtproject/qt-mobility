@@ -39,43 +39,48 @@
 
 class QMediaPlaylist;
 
-class QMediaPlayerControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaPlayerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
     ~QMediaPlayerControl();
 
-    int state() const;
-    virtual void setState(int state);
+    virtual int state() const = 0;
 
-    QMediaPlaylist* mediaPlaylist() const;
-    virtual void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    virtual QMediaPlaylist* mediaPlaylist() const = 0;
+    virtual void setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
 
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
+    virtual qint64 duration() const = 0;
 
-    qint64 position() const;
-    virtual void setPosition(qint64 position);
+    virtual qint64 position() const = 0;
+    virtual void setPosition(qint64 position) = 0;
 
-    int volume() const;
-    virtual void setVolume(int volume);
+    virtual int volume() const = 0;
+    virtual void setVolume(int volume) = 0;
 
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
+    virtual bool isMuted() const = 0;
+    virtual void setMuted(bool muted) = 0;
 
-    bool isBuffering() const;
-    virtual void setBuffering(bool buffering);
+    virtual bool isBuffering() const = 0;
 
-    int bufferStatus() const;
-    virtual void setBufferState(int bufferStatus);
+    virtual int bufferStatus() const = 0;
 
-    bool isVideoAvailable() const;
-    virtual void setVideoAvailable(bool videoAvailable);
+    virtual bool isVideoAvailable() const = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
+
+Q_SIGNALS:
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 position);
+    void stateChanged(int newState);
+    void volumeChanged(int volume);
+    void mutingChanged(bool muted);
+    void videoAvailabilityChanged(bool videoAvailable);
+    void bufferingChanged(bool buffering);
+    void bufferStatusChanged(int percentFilled);
 
 protected:
     QMediaPlayerControl(QObject* parent);

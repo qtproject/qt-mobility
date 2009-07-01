@@ -38,9 +38,11 @@
 #include <QAbstractListModel>
 #include <QtCore/qobject.h>
 
+#include "qmultimediaglobal.h"
+
 class QMediaPlaylist;
 
-class QMediaPlaylistModel : public QAbstractListModel
+class Q_MEDIA_EXPORT QMediaPlaylistModel : public QAbstractListModel
 {
     Q_OBJECT
 public:

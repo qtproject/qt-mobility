@@ -4,7 +4,7 @@ CONFIG += plugin
 TARGET = mpd
 QT += network
 
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
 LIBS += -L../../lib -lQtMedia
 
 HEADERS = \

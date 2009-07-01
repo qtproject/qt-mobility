@@ -32,39 +32,17 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#include "qabstractmediacontrol_p.h"
+#include "qmetadataprovider.h"
 
-#include "qmediaendpointinterface.h"
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
+
+QMetadataProvider::~QMetadataProvider()
 {
-public:
-    virtual ~QIODeviceEndpointInterface();
+}
 
-    Direction direction() const;
-};
-
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
-
-class QIODevice;
-
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
+QMetadataProvider::QMetadataProvider(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
-public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
+}
 
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
-};
-
-#endif

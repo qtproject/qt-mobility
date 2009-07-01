@@ -37,13 +37,16 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include <QtCore/qplugin.h>
-#include <QtGui/qwidget.h>
+#include "qmediaendpointinterface.h"
 
-class QVideoRendererEndpointInterface
+#include <QtCore/qobject.h>
+
+class Q_MEDIA_EXPORT QVideoRendererEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QVideoRendererEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QVideoRendererEndpointInterface_iid "com.nokia.Qt.QVideoRendererEndpointInterface/1.0"
@@ -54,7 +57,7 @@ class QAbstractVideoSurface;
 
 class QVideoRendererEndpointPrivate;
 
-class QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
+class Q_MEDIA_EXPORT QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
 {
     Q_OBJECT
     Q_INTERFACES(QVideoRendererEndpointInterface)

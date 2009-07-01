@@ -35,12 +35,14 @@
 #ifndef QAUDIODEVICEENDPOINT_H
 #define QAUDIODEVICEENDPOINT_H
 
-#include <QtCore/qplugin.h>
+#include "qmediaendpointinterface.h"
 
-class QAudioDeviceEndpointInterface
+class Q_MEDIA_EXPORT QAudioDeviceEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QAudioDeviceEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QAudioDeviceEndpointInterface_iid "com.nokia.Qt.QAudioDeviceEndpointInterface/1.0"
@@ -49,19 +51,19 @@ Q_DECLARE_INTERFACE(QAudioDeviceEndpointInterface, QAudioDeviceEndpointInterface
 
 class QAudioDeviceEndpointPrivate;
 
-class QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
+class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
 {
     Q_OBJECT
-    Q_PROPERTY(Direction directionFilter READ directionFilter WRITE setDirectionFilter)
+    Q_PROPERTY(DeviceDirection directionFilter READ directionFilter WRITE setDirectionFilter)
     Q_PROPERTY(Roles roleFilter READ roleFilter WRITE setRoleFilter)
     Q_PROPERTY(FormFactors formFactorFilter READ formFactorFilter WRITE setFormFactorFilter)
     Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)
-    Q_ENUMS(Direction Role FormFactor)
+    Q_ENUMS(DeviceDirection Role FormFactor)
     Q_FLAGS(Roles FormFactors)
     Q_INTERFACES(QAudioDeviceEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioDeviceEndpoint)
 public:
-    enum Direction
+    enum DeviceDirection
     {
         InputDevice = 0x01,
         OutputDevice = 0x02,
@@ -100,8 +102,8 @@ public:
     QAudioDeviceEndpoint(QObject *parent = 0);
     ~QAudioDeviceEndpoint();
 
-    Direction directionFilter() const;
-    virtual void setDirectionFilter(Direction direction);
+    DeviceDirection directionFilter() const;
+    virtual void setDirectionFilter(DeviceDirection direction);
 
     Roles roleFilter() const;
     virtual void setRoleFilter(Roles roles);

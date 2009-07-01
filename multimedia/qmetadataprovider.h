@@ -32,39 +32,36 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#ifndef QMETADATAPROVIDER_H
+#define QMETADATAPROVIDER_H
 
-#include "qmediaendpointinterface.h"
+#include <qabstractmediacontrol.h>
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QIODeviceEndpointInterface();
-
-    Direction direction() const;
-};
-
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
-
-class QIODevice;
-
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
+class QMetadataProviderPrivate;
+class Q_MEDIA_EXPORT QMetadataProvider : public QAbstractMediaControl
 {
     Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
-public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
 
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
+public:
+    ~QMetadataProvider();
+
+    virtual bool metadataAvailable() const = 0;
+    virtual bool isReadOnly() const = 0;
+    virtual void setReadOnly(bool readonly) = 0;
+
+    virtual QList<QString> availableMetadata() const = 0;
+    virtual QVariant metadata(QString const &name) const = 0;
+    virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+
+Q_SIGNALS:
+    void metadataAvailabilityChanged(bool metadataAvailable);
+    void readOnlyChanged(bool readOnly);
+
+protected:
+    QMetadataProvider(QObject *parent = 0);
+
+private:
+    Q_DECLARE_PRIVATE(QMetadataProvider);
 };
 
-#endif
+#endif  // QMETADATAPROVIDER_H

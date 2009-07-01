@@ -35,6 +35,8 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
+#include "qmediaendpointinterface.h"
+
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
@@ -42,23 +44,40 @@ class QAbstractMediaControl;
 
 class QAbstractMediaServicePrivate;
 
-class QAbstractMediaService : public QObject
+class Q_MEDIA_EXPORT QAbstractMediaService : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QObject* audioOutput READ audioOutput WRITE setAudioOutput)
     Q_PROPERTY(QObject* videoOutput READ videoOutput WRITE setVideoOutput)
+    Q_PROPERTY(QObject* dataOutput READ dataOutput WRITE setDataOutput)
+    Q_PROPERTY(QObject* audioInput READ audioInput WRITE setAudioInput)
+    Q_PROPERTY(QObject* videoInput READ videoInput WRITE setVideoInput)
+    Q_PROPERTY(QObject* dataInput READ dataInput WRITE setDataInput)
 public:
     QObject *audioOutput() const;
-    virtual void setAudioOutput(QObject *object);
+    virtual void setAudioOutput(QObject *output);
 
     QObject *videoOutput() const;
     virtual void setVideoOutput(QObject *output);
 
-    virtual QList<QByteArray> supportedEndpointInterfaces() const;
+    QObject *dataOutput() const;
+    virtual void setDataOutput(QObject *output);
+
+    QObject *audioInput() const;
+    virtual void setAudioInput(QObject *input);
+
+    QObject *videoInput() const;
+    virtual void setVideoInput(QObject *input);
+
+    QObject *dataInput() const;
+    virtual void setDataInput(QObject *input);
+
+    virtual QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
 
     virtual QObject *createEndpoint(const char *interface);
 
-    virtual QAbstractMediaControl* control() const = 0;
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
     QAbstractMediaService(QObject* parent);

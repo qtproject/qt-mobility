@@ -38,7 +38,7 @@
 #include "qmediaplaylist.h"
 
 class QSharedMediaPlaylistPrivate;
-class QSharedMediaPlaylist : public QMediaPlaylist
+class Q_MEDIA_EXPORT QSharedMediaPlaylist : public QMediaPlaylist
 {
     Q_OBJECT
 public:
@@ -54,7 +54,7 @@ private:
 
 
 class QSharedMediaPlaylistNotifierPrivate;
-class QSharedMediaPlaylistNotifier : public QObject
+class Q_MEDIA_EXPORT QSharedMediaPlaylistNotifier : public QObject
 {
     Q_OBJECT
 public:

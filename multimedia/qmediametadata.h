@@ -37,28 +37,35 @@
 
 #include <QtCore/qobject.h>
 
+#include "qmultimediaglobal.h"
+
 class QAbstractMediaObject;
 class QMediaMetadataPrivate;
 
-class QMediaMetadata : public QObject
+class Q_MEDIA_EXPORT QMediaMetadata : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool metaDataAvailable READ metaDataAvailable NOTIFY metaDataAvailabilityChanged)
+    Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)
+    Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged);
 
 public:
     QMediaMetadata(QAbstractMediaObject *mediaObject);
     ~QMediaMetadata();
 
-    bool metaDataAvailable() const;
+    bool metadataAvailable() const;
+    bool isReadOnly() const;
 
     QList<QString> availableMetadata() const;
-    QVariant valueFor(QString const &name) const;
+    QVariant metadata(QString const &name) const;
+    void setMetadata(QString const &name, QVariant const &value);
 
 Q_SIGNALS:
-    void metaDataAvailabilityChanged(bool metaDataAvailable);
+    void metadataAvailabilityChanged(bool metaDataAvailable);
+    void readOnlyChanged(bool readOnly);
 
 private:
     Q_DECLARE_PRIVATE(QMediaMetadata)
+    Q_DISABLE_COPY(QMediaMetadata)
 };
 
 

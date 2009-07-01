@@ -42,12 +42,22 @@
     \internal
     \brief The QAudioRendererEndpointInterface class provides an interface for audio renderer
     media end points.
+
+    \sa QAudioRendererEndpoint
 */
 
 /*!
 */
 QAudioRendererEndpointInterface::~QAudioRendererEndpointInterface()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QAudioRendererEndpointInterface::direction() const
+{
+    return Output;
 }
 
 class QAudioRendererEndpointPrivate : public QObjectPrivate

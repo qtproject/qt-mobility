@@ -32,39 +32,31 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#ifndef QABSTRACTMEDIACONTROL_P_H
+#define QABSTRACTMEDIACONTROL_P_H
 
-#include "qmediaendpointinterface.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
+#include <QtCore/private/qobject_p.h>
+#include <QtCore/qtimer.h>
+#include <QtCore/qlist.h>
+
+class QAbstractMediaControlPrivate : public QObjectPrivate
 {
 public:
-    virtual ~QIODeviceEndpointInterface();
-
-    Direction direction() const;
+    int         notifyInterval;
+    QTimer*     notifyTimer;
+    QList<QString>  notifyProperties;
+    QObject*    notifyObject;
 };
 
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
-
-class QIODevice;
-
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
-{
-    Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
-public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
-
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
-};
-
-#endif
+#endif  // QABSTRACTMEDIACONTROLP_H

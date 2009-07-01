@@ -1,8 +1,10 @@
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../multimedia
+INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
 LIBS += -L$$OUT_PWD/../../lib -lQtMedia
+
+DESTDIR = ../../bin
 
 HEADERS = \
     player.h \

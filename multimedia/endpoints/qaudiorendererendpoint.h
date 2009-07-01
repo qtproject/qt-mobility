@@ -35,12 +35,14 @@
 #ifndef QAUDIORENDERERENDPOINT_H
 #define QAUDIORENDERERENDPOINT_H
 
-#include <QtCore/qplugin.h>
+#include "qmediaendpointinterface.h"
 
-class QAudioRendererEndpointInterface
+class Q_MEDIA_EXPORT QAudioRendererEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QAudioRendererEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QAudioRendererEndpointInterface_iid "com.nokia.Qt.QAudioRendererEndpointInterface/1.0"
@@ -51,7 +53,9 @@ class QIODevice;
 
 class QAudioRendererEndpointPrivate;
 
-class QAudioRendererEndpoint : public QObject,  public QAudioRendererEndpointInterface
+class Q_MEDIA_EXPORT QAudioRendererEndpoint
+        : public QObject
+        , public QAudioRendererEndpointInterface
 {
     Q_OBJECT
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency)

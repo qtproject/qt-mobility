@@ -39,13 +39,15 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 
+#include "qmultimediaglobal.h"
+
 class QString;
 class QByteArray;
 class QIODevice;
 class QStringList;
 class QMediaSource;
 
-class QMediaPlaylistReader
+class Q_MEDIA_EXPORT QMediaPlaylistReader
 {
 public:
     virtual ~QMediaPlaylistReader();
@@ -55,7 +57,7 @@ public:
     virtual void close() = 0;
 };
 
-class QMediaPlaylistWritter
+class Q_MEDIA_EXPORT QMediaPlaylistWritter
 {
 public:
     virtual ~QMediaPlaylistWritter();
@@ -64,7 +66,7 @@ public:
     virtual void close() = 0;
 };
 
-struct QMediaPlaylistIOInterface : public QFactoryInterface
+struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
 {
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const = 0;
     virtual bool canRead(const QString& location, const QByteArray &format = QByteArray()) const = 0;
@@ -80,7 +82,7 @@ struct QMediaPlaylistIOInterface : public QFactoryInterface
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
 Q_DECLARE_INTERFACE(QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
 
-class QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
+class Q_MEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
 {
 Q_OBJECT
 Q_INTERFACES(QMediaPlaylistIOInterface:QFactoryInterface)
