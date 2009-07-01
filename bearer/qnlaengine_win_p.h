@@ -45,7 +45,7 @@
 // We mean it.
 //
 
-#include "qnetworksessionengine_win_p.h"
+#include "qnetworksessionengine_p.h"
 
 #include <QMap>
 

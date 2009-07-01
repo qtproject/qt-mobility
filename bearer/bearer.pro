@@ -50,6 +50,18 @@ symbian: {
                qnetworkconfiguration_p.h \
                qnetworksession_p.h
 
+    win32:DEFINES += BEARER_ENGINE
+
+    contains(DEFINES, BEARER_ENGINE) {
+        HEADERS += qnetworksessionengine_p.h \
+                   qgenericengine_p.h
+
+        SOURCES += qnetworkconfigmanager_p.cpp \
+                   qnetworksession_p.cpp \
+                   qnetworksessionengine.cpp \
+                   qgenericengine.cpp
+    }
+
     !mac:unix:SOURCES += qnetworkconfigmanager_unix.cpp \
                     qnetworkconfiguration_unix.cpp \
                     qnetworksession_unix.cpp
@@ -61,16 +73,12 @@ symbian: {
     }
 
     win32: {
-        HEADERS += qnetworksessionengine_win_p.h \
-                   qnlaengine_win_p.h
+        HEADERS += qnlaengine_win_p.h
 
         !wince*:HEADERS += qnativewifiengine_win_p.h \
                            qioctlwifiengine_win_p.h
 
-        SOURCES += qnetworkconfigmanager_win.cpp \
-                   qnetworksession_win.cpp \
-                   qnetworksessionengine_win.cpp \
-                   qnlaengine_win.cpp
+        SOURCES += qnlaengine_win.cpp
 
         !wince*:SOURCES += qnativewifiengine_win.cpp \
                            qioctlwifiengine_win.cpp

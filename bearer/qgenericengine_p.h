@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,14 +25,22 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-#ifndef QIOCTLWIFIENGINE_P_H
-#define QIOCTLWIFIENGINE_P_H
+#ifndef QGENERICENGINE_P_H
+#define QGENERICENGINE_P_H
 
 //
 //  W A R N I N G
@@ -46,19 +54,21 @@
 //
 
 #include "qnetworksessionengine_p.h"
-#include <QtCore/qtimer.h>
+
+#include <QMap>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 
-class QIoctlWifiEngine : public QNetworkSessionEngine
+class QGenericEngine : public QNetworkSessionEngine
 {
     Q_OBJECT
 
 public:
-    QIoctlWifiEngine(QObject *parent = 0);
-    ~QIoctlWifiEngine();
+    QGenericEngine(QObject *parent = 0);
+    ~QGenericEngine();
 
     QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
     QString getInterfaceFromId(const QString &id);
@@ -71,14 +81,14 @@ public:
 
     void requestUpdate();
 
-    static QIoctlWifiEngine *instance();
+    static QGenericEngine *instance();
 
 private:
+    QMap<uint, QString> configurationInterface;
     QTimer pollTimer;
 };
 
 QT_END_NAMESPACE
 
 #endif
-
 

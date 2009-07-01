@@ -452,54 +452,6 @@ void QNlaThread::fetchConfigurations()
 {
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
 
-    // create configuration for each interface
-
-    // Immediately after connecting with a wireless access point
-    // QNetworkInterface::allInterfaces() will sometimes return an empty list. Calling it again a
-    // second time results in a non-empty list. If we loose interfaces we will end up removing
-    // network configurations which will break current sessions.
-    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-    if (interfaces.isEmpty())
-        interfaces = QNetworkInterface::allInterfaces();
-
-    while (!interfaces.isEmpty()) {
-        QNetworkInterface interface = interfaces.takeFirst();
-
-        if (!interface.isValid())
-            continue;
-
-        // ignore loopback interface
-        if (interface.name() == QLatin1String("MS TCP Loopback interface"))
-            continue;
-
-        // ignore WLAN interface handled in seperate engine
-        if (qGetInterfaceType(interface.name()) == "WLAN")
-            continue;
-
-        QNetworkConfigurationPrivate *cpPriv = new QNetworkConfigurationPrivate;
-        const QString humanReadableName = interface.humanReadableName();
-        cpPriv->name = humanReadableName.isEmpty() ? interface.name() : humanReadableName;
-        cpPriv->isValid = true;
-
-        uint identifier;
-        if (interface.index())
-            identifier = qHash(QLatin1String("NLA:") + QString::number(interface.index()));
-        else
-            identifier = qHash(QLatin1String("NLA:") + interface.hardwareAddress());
-
-        cpPriv->id = QString::number(identifier);
-        cpPriv->state = QNetworkConfiguration::Discovered;
-        cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-        if (interface.flags() & QNetworkInterface::IsUp)
-            cpPriv->state |= QNetworkConfiguration::Active;
-
-        QNlaEngine *engine = qobject_cast<QNlaEngine *>(parent());
-        if (engine)
-            engine->configurationInterface[identifier] = interface.name();
-
-        foundConfigurations.append(cpPriv);
-    }
-
     WSAQUERYSET qsRestrictions;
     HANDLE hLookup = 0;
 

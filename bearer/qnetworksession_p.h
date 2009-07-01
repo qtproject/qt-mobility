@@ -46,21 +46,21 @@
 
 #include "qnetworkconfigmanager_p.h"
 #include "qnetworksession.h"
-#ifdef Q_OS_WIN
-#include "qnetworksessionengine_win_p.h"
+#ifdef BEARER_ENGINE
+#include "qnetworksessionengine_p.h"
 #endif
 
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
 #include <QDBusPendingCallWatcher>
 #endif
 
 QT_BEGIN_NAMESPACE
 
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
 
@@ -109,14 +109,14 @@ Q_SIGNALS:
     void quitPendingWaitsForOpened();
 
 private Q_SLOTS:
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
     void forcedSessionClose(const QNetworkConfiguration &config);
     void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
     void deviceStateChanged(quint32);
     void slotActivationFinished(QDBusPendingCallWatcher*);
 
@@ -152,7 +152,7 @@ private:
     QNetworkSession::State state;
     bool isActive;
 
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     bool opened;
 
     QNetworkSessionEngine *engine;
@@ -162,7 +162,7 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
     bool keepActive;
     qint32 triedServiceConnection;
     QDateTime startTime;

@@ -57,7 +57,7 @@ public:
         : isValid(false), type(QNetworkConfiguration::Invalid), 
           roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
     {
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
         internet = false;
 #endif
     }
@@ -76,7 +76,7 @@ public:
     bool roamingSupported;
     QNetworkConfiguration::Purpose purpose;
 
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     bool internet;
 #endif
 

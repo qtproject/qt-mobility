@@ -51,13 +51,16 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
+class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
 class QIoctlWifiEngine;
 #endif
+
 #include <QStringList>
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
 #include <qnetworkmanagerservice_p.h>
 
 #include <QDBusConnection>
@@ -119,19 +122,23 @@ Q_SIGNALS:
     void onlineStateChanged(bool isOnline);
 
 private:
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     void updateAccessPointConfiguration(QNetworkConfigurationPrivate *cpPriv, QList<QString> &knownConfigs);
+    void updateGenericConfigurations(QList<QString> &knownConfigs);
+#ifdef Q_OS_WIN
     void updateNlaConfigurations(QList<QString> &knownConfigs);
 #ifndef Q_OS_WINCE
     bool updateWlanNativeConfigurations(QList<QString> &knownConfigs);
     void updateWlanIoctlConfigurations(QList<QString> &knownConfigs);
     void updateWlanConfigurations(QList<QString> &knownConfigs);
 #endif
+#endif
     void updateInternetServiceConfiguration(QList<QString> &knownConfigs);
 
     void abort();
 #endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
 //    QNetworkManagerInterface *iface;
 
     QStringList knownSsids;
@@ -158,26 +165,33 @@ private:
 
     //    QStringList getActiveDevicesPaths(QDBusInterface &iface);
 #endif
+
+#ifdef BEARER_ENGINE
+    QGenericEngine *generic;
 #ifdef Q_OS_WIN
     QNlaEngine *nla;
+#ifndef Q_OS_WINCE
     QNativeWifiEngine *nativeWifi;
     QIoctlWifiEngine *ioctlWifi;
+#endif
+#endif
 
     uint onlineConfigurations;
 
     enum EngineUpdate {
         NotUpdating = 0x00,
         Updating = 0x01,
-        NlaUpdating = 0x02,
-        NativeWifiUpdating = 0x04,
-        IoctlWifiUpdating = 0x08,
+        GenericUpdating = 0x02,
+        NlaUpdating = 0x04,
+        NativeWifiUpdating = 0x08,
+        IoctlWifiUpdating = 0x10,
     };
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
 
     EngineUpdateState updateState;
 #endif
 private slots:
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
     void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
     void accessPointAdded(const QString &, QDBusObjectPath );
     void accessPointRemoved( const QString &, QDBusObjectPath );

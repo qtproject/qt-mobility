@@ -33,10 +33,11 @@
 
 #include "qnetworksession_p.h"
 #include "qnetworksession.h"
-#include "qnetworksessionengine_win_p.h"
+#include "qnetworksessionengine_p.h"
+#include "qgenericengine_p.h"
 #include "qnlaengine_win_p.h"
 
-#ifndef Q_OS_WINCE
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
 #include "qnativewifiengine_win_p.h"
 #include "qioctlwifiengine_win_p.h"
 #endif
@@ -51,10 +52,13 @@ QT_BEGIN_NAMESPACE
 
 static QNetworkSessionEngine *getEngineFromId(const QString &id)
 {
+#ifdef Q_OS_WIN
     QNlaEngine *nla = QNlaEngine::instance();
     if (nla && nla->hasIdentifier(id))
         return nla;
+#endif
 
+#ifdef Q_OS_WIN
 #ifndef Q_OS_WINCE
     QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
     if (nativeWifi && nativeWifi->hasIdentifier(id))
@@ -64,6 +68,11 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
     if (ioctlWifi && ioctlWifi->hasIdentifier(id))
         return ioctlWifi;
 #endif
+#endif
+
+    QGenericEngine *generic = QGenericEngine::instance();
+    if (generic && generic->hasIdentifier(id))
+        return generic;
 
     return 0;
 }
@@ -82,7 +91,7 @@ Q_SIGNALS:
     void forcedSessionClose(const QNetworkConfiguration &config);
 };
 
-#include "qnetworksession_win.moc"
+#include "qnetworksession_p.moc"
 
 Q_GLOBAL_STATIC(QNetworkSessionManagerPrivate, sessionManager);
 

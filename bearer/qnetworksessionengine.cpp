@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qnetworksessionengine_win_p.h"
+#include "qnetworksessionengine_p.h"
 
 QT_BEGIN_NAMESPACE
 

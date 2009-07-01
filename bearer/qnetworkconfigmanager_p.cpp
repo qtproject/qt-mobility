@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "qnetworkconfigmanager_p.h"
+#include "qgenericengine_p.h"
 #include "qnlaengine_win_p.h"
 
 #ifndef Q_OS_WINCE
@@ -116,6 +117,18 @@ void QNetworkConfigurationManagerPrivate::updateAccessPointConfiguration(QNetwor
     }
 }
 
+void QNetworkConfigurationManagerPrivate::updateGenericConfigurations(QList<QString> &knownConfigs)
+{
+    QList<QNetworkConfigurationPrivate *> foundConfigurations = generic->getConfigurations();
+
+    while (!foundConfigurations.isEmpty()) {
+        QNetworkConfigurationPrivate *cpPriv = foundConfigurations.takeFirst();
+
+        updateAccessPointConfiguration(cpPriv, knownConfigs);
+    }
+}
+
+#ifdef Q_OS_WIN
 void QNetworkConfigurationManagerPrivate::updateNlaConfigurations(QList<QString> &knownConfigs)
 {
     QList<QNetworkConfigurationPrivate *> foundConfigurations = nla->getConfigurations();
@@ -126,8 +139,9 @@ void QNetworkConfigurationManagerPrivate::updateNlaConfigurations(QList<QString>
         updateAccessPointConfiguration(cpPriv, knownConfigs);
     }
 }
+#endif
 
-#ifndef Q_OS_WINCE
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
 bool QNetworkConfigurationManagerPrivate::updateWlanNativeConfigurations(QList<QString> &knownConfigs)
 {
     bool ok;
@@ -180,7 +194,7 @@ void QNetworkConfigurationManagerPrivate::updateWlanIoctlConfigurations(QList<QS
 }
 #endif
 
-#ifndef Q_OS_WINCE
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
 void QNetworkConfigurationManagerPrivate::updateWlanConfigurations(QList<QString> &knownConfigs)
 {
     // try to use Native WiFi, otherwise fallback to ioctl method
@@ -248,12 +262,21 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         updateState = NotUpdating;
         onlineConfigurations = 0;
 
+        generic = QGenericEngine::instance();
+        if (generic) {
+            connect(generic, SIGNAL(configurationsChanged()),
+                    this, SLOT(updateConfigurations()));
+        }
+
+#ifdef Q_OS_WIN
         nla = QNlaEngine::instance();
         if (nla) {
             connect(nla, SIGNAL(configurationsChanged()),
                     this, SLOT(updateConfigurations()));
         }
+#endif
 
+#ifdef Q_OS_WIN
 #ifndef Q_OS_WINCE
         nativeWifi = QNativeWifiEngine::instance();
         if (nativeWifi) {
@@ -269,12 +292,16 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                     this, SLOT(updateConfigurations()));
         }
 #endif
+#endif
     }
 
     if (updateState & Updating) {
         QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
         if (engine) {
-            if (engine == nla)
+            if (engine == generic)
+                updateState &= ~GenericUpdating;
+#ifdef Q_OS_WIN
+            else if (engine == nla)
                 updateState &= ~NlaUpdating;
 #ifndef Q_OS_WINCE
             else if (engine == nativeWifi)
@@ -282,14 +309,20 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
             else if (engine == ioctlWifi)
                 updateState &= ~IoctlWifiUpdating;
 #endif
+#endif
         }
     }
 
     QList<QString> knownConfigs = accessPointConfigurations.keys();
 
+    updateGenericConfigurations(knownConfigs);
+#ifdef Q_OS_WIN
     updateNlaConfigurations(knownConfigs);
+#endif
+#ifdef Q_OS_WIN
 #ifndef Q_OS_WINCE
     updateWlanConfigurations(knownConfigs);
+#endif
 #endif
     updateInternetServiceConfiguration(knownConfigs);
 
@@ -362,11 +395,19 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
 
+    if (generic) {
+        updateState |= GenericUpdating;
+        generic->requestUpdate();
+    }
+
+#ifdef Q_OS_WIN
     if (nla) {
         updateState |= NlaUpdating;
         nla->requestUpdate();
     }
+#endif
 
+#ifdef Q_OS_WIN
 #ifndef Q_OS_WINCE
     if (nativeWifi) {
         updateState |= NativeWifiUpdating;
@@ -377,6 +418,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
         updateState |= IoctlWifiUpdating;
         ioctlWifi->requestUpdate();
     }
+#endif
 #endif
 }
 
