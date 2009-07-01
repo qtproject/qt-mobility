@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../location/draft-api.cpp -->
+<!-- ../../location/qpositionareamonitor.cpp -->
 <head>
   <title>QPositionAreaMonitor Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -20,22 +20,22 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qpositionareamonitor.html#QPositionAreaMonitor">QPositionAreaMonitor</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/>virtual <b><a href="qpositionareamonitor.html#dtor.QPositionAreaMonitor">~QPositionAreaMonitor</a></b> () = 0</li>
-<li><div class="fn"/>QCoordinate <b><a href="qpositionareamonitor.html#coordinate">coordinate</a></b> () const</li>
-<li><div class="fn"/>int <b><a href="qpositionareamonitor.html#radius">radius</a></b> () const</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a></b> ( const QCoordinate &amp; <i>coordinate</i>, int <i>radius</i> )</li>
+<li><div class="fn"></div><b><a href="qpositionareamonitor.html#QPositionAreaMonitor">QPositionAreaMonitor</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>virtual <b><a href="qpositionareamonitor.html#dtor.QPositionAreaMonitor">~QPositionAreaMonitor</a></b> () = 0</li>
+<li><div class="fn"></div>QCoordinate <b><a href="qpositionareamonitor.html#coordinate">coordinate</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qpositionareamonitor.html#radius">radius</a></b> () const</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</a></b> ( const QCoordinate &amp; <i>coordinate</i>, int <i>radius</i> )</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qpositionareamonitor.html#areaEntered">areaEntered</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
-<li><div class="fn"/>void <b><a href="qpositionareamonitor.html#areaExited">areaExited</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+<li><div class="fn"></div>void <b><a href="qpositionareamonitor.html#areaEntered">areaEntered</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+<li><div class="fn"></div>void <b><a href="qpositionareamonitor.html#areaExited">areaExited</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QPositionAreaMonitor * <b><a href="qpositionareamonitor.html#createMonitor">createMonitor</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>QPositionAreaMonitor * <b><a href="qpositionareamonitor.html#createMonitor">createMonitor</a></b> ( QObject * <i>parent</i> = 0 )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -88,9 +88,10 @@
 <h3 class="fn"><a name="setMonitoredArea"></a>void QPositionAreaMonitor::setMonitoredArea ( const <a href="qcoordinate.html">QCoordinate</a> &amp; <i>coordinate</i>, int <i>radius</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the area to be monitored to the area specified by <i>coordinate</i> with a radius of <i>radius</i>.</p>
 <p>If the current position is within the specified area, <a href="qpositionareamonitor.html#areaEntered">areaEntered</a>() is emitted immediately.</p>
+<p>Note: Subclass implementations of this method should call the base implementation to ensure <a href="qpositionareamonitor.html#coordinate">coordinate</a>() and <a href="qpositionareamonitor.html#radius">radius</a>() return the correct values.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Location API</div></td>
+<td align="right"><div align="right">Qt Location API</div></td>
 </tr></table></div></address></body>
 </html>

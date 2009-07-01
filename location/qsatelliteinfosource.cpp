@@ -65,12 +65,12 @@ QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent)
 }
 
 /*!
-    Creates and returns a source that reads from the system's default
-    source of satellite update information.
+    Creates and returns a source with the specified \a parent that reads 
+    from the system's default source of satellite update information.
 
     Returns 0 if the system has no default source.
 */
-QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject *)
+QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject *parent)
 {
     return 0;
 }

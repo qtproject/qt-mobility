@@ -1,5 +1,5 @@
 <!DOCTYPE DCF>
-<DCF ref="index.html" icon="location-library.png" imagedir="../../gif" title="Location Library Reference Documentation">
+<DCF ref="index.html" icon="qt-location-api.png" imagedir="../../gif" title="Qt Location API Reference Documentation">
 <section ref="classes.html" title="Classes">
     <section ref="qcoordinate.html" title="QCoordinate Class Reference">
         <keyword ref="qcoordinate.html">QCoordinate</keyword>
@@ -98,6 +98,9 @@
         <keyword ref="qsatelliteinfo.html#setPrnNumber">setPrnNumber</keyword>
         <keyword ref="qsatelliteinfo.html#setSignalStrength">setSignalStrength</keyword>
         <keyword ref="qsatelliteinfo.html#signalStrength">signalStrength</keyword>
+        <keyword ref="qsatelliteinfo.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qsatelliteinfo.html#operator-eq">operator=</keyword>
+        <keyword ref="qsatelliteinfo.html#operator-eq-eq">operator==</keyword>
         <section ref="qsatelliteinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsatelliteinfosource.html" title="QSatelliteInfoSource Class Reference">

@@ -53,6 +53,17 @@ public:
 };
 
 /*!
+    \class QPositionUpdate
+    \brief The QPositionUpdate class contains information gathered on one's global position, direction and velocity at a particular point in time.
+
+    A QPositionUpdate contains, at a minimum, a geographical coordinate and
+    a timestamp. It may also have heading and speed measurements as well as
+    estimates of the accuracy of the provided data.
+
+    \sa QPositionSource
+*/
+
+/*!
     \enum QPositionUpdate::Property
     Defines the properties for a position update.
 
@@ -67,7 +78,7 @@ public:
 /*!
     Creates a null update.
 
-    \sa isNull()
+    \sa isValid()
 */
 QPositionUpdate::QPositionUpdate()
     : d(new QPositionUpdatePrivate)
@@ -193,7 +204,7 @@ QCoordinate QPositionUpdate::coordinate() const
 /*!
     Sets the value for \a property to \a value.
 
-    \sa doublePropert()
+    \sa doubleProperty()
 */
 void QPositionUpdate::setDoubleProperty(Property property, qreal value)
 {

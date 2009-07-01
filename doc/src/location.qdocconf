@@ -1,21 +1,24 @@
-project = Location Library
-description = Location Library Reference Documentation
+project = Qt Location API
+description = Qt Location API Reference Documentation
 
 imagedirs = images
 
-headerdirs = ../../location
+headerdirs = ../../location \
+             .
 
 sourcedirs = ../../location \
              .
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
+exampledirs = ../../examples
+
 outputdir               = ../html
 
 extraimages.HTML        = qtlogo \
                           codeless
 
-versionsym              = "Location API 1.0"
+versionsym              = "Qt Location API 1.0"
 
 base                    = file:./doc/html
 
@@ -64,7 +67,13 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_SQL_EXPORT \
                           Q_TYPENAME \
                           Q_XML_EXPORT \
-                          QTUITEST_EXPORT
+                          QTUITEST_EXPORT \
+                          QT_SFW_RESOLUTION_EXPORT \
+                          Q_SFW_EXPORT \
+                          QT_BEGIN_HEADER \
+                          QT_END_HEADER \
+                          QT_BEGIN_NAMESPACE \
+                          QT_END_NAMESPACE
 
 Cpp.ignoredirectives    = Q_DECLARE_INTERFACE \
                           Q_DECLARE_OPERATORS_FOR_FLAGS \
@@ -99,6 +108,6 @@ HTML.postheader         = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
                           "<td align=\"left\">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \
-                          "<td align=\"right\"><div align=\"right\">Location API</div></td>\n" \
+                          "<td align=\"right\"><div align=\"right\">Qt Location API</div></td>\n" \
                           "</tr></table></div></address>"
 

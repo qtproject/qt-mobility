@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../location/draft-api.cpp -->
+<!-- ../../location/qpositionsource.cpp -->
 <head>
   <title>QPositionSource Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -20,38 +20,39 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethod</a></b> { SatellitePositioningMethods, NonSatellitePositioningMethods, AllPositioningMethods }</li>
-<li><div class="fn"/>flags <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethods</a></b></li>
+<li><div class="fn"></div>enum <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethod</a></b> { SatellitePositioningMethods, NonSatellitePositioningMethods, AllPositioningMethods }</li>
+<li><div class="fn"></div>flags <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethods</a></b></li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qpositionsource.html#QPositionSource">QPositionSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/>virtual QPositionUpdate <b><a href="qpositionsource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const = 0</li>
-<li><div class="fn"/>virtual int <b><a href="qpositionsource.html#minimumUpdateInterval">minimumUpdateInterval</a></b> () const = 0</li>
-<li><div class="fn"/>PositioningMethods <b><a href="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</a></b> () const</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a></b> ( PositioningMethods <i>methods</i> )</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#setUpdateInterval">setUpdateInterval</a></b> ( int <i>msec</i> )</li>
-<li><div class="fn"/>virtual PositioningMethods <b><a href="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</a></b> () const = 0</li>
-<li><div class="fn"/>int <b><a href="qpositionsource.html#updateInterval">updateInterval</a></b> () const</li>
+<li><div class="fn"></div><b><a href="qpositionsource.html#QPositionSource">QPositionSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>virtual <b><a href="qpositionsource.html#dtor.QPositionSource">~QPositionSource</a></b> ()</li>
+<li><div class="fn"></div>virtual QPositionUpdate <b><a href="qpositionsource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const = 0</li>
+<li><div class="fn"></div>virtual int <b><a href="qpositionsource.html#minimumUpdateInterval">minimumUpdateInterval</a></b> () const = 0</li>
+<li><div class="fn"></div>PositioningMethods <b><a href="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</a></b> () const</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a></b> ( PositioningMethods <i>methods</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionsource.html#setUpdateInterval">setUpdateInterval</a></b> ( int <i>msec</i> )</li>
+<li><div class="fn"></div>virtual PositioningMethods <b><a href="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</a></b> () const = 0</li>
+<li><div class="fn"></div>int <b><a href="qpositionsource.html#updateInterval">updateInterval</a></b> () const</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 5000 ) = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#startUpdates">startUpdates</a></b> () = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#stopUpdates">stopUpdates</a></b> () = 0</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionsource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 5000 ) = 0</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionsource.html#startUpdates">startUpdates</a></b> () = 0</li>
+<li><div class="fn"></div>virtual void <b><a href="qpositionsource.html#stopUpdates">stopUpdates</a></b> () = 0</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qpositionsource.html#positionUpdated">positionUpdated</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
-<li><div class="fn"/>void <b><a href="qpositionsource.html#requestTimeout">requestTimeout</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qpositionsource.html#positionUpdated">positionUpdated</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
+<li><div class="fn"></div>void <b><a href="qpositionsource.html#requestTimeout">requestTimeout</a></b> ()</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QPositionSource * <b><a href="qpositionsource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>QPositionSource * <b><a href="qpositionsource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -80,12 +81,14 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QPositionSource"></a>QPositionSource::QPositionSource ( QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a position source with the specified <i>parent</i>.</p>
+<h3 class="fn"><a name="dtor.QPositionSource"></a>QPositionSource::~QPositionSource ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the position source.</p>
 <h3 class="fn"><a name="createSource"></a>QPositionSource * QPositionSource::createSource ( QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a position source with the given <i>parent</i> that reads from the system's default sources of location data.</p>
 <p>Returns 0 if the system has no default position source.</p>
 <h3 class="fn"><a name="lastKnownPosition"></a><a href="qpositionupdate.html">QPositionUpdate</a> QPositionSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns an update containing the last known position, or a null update if none is available.</p>
-<p>If <i>fromSatellitePositioningMethodsOnly</i> is true, this returns the last known position received from a satellite positioning method, and if none is available, a null update is returned.</p>
+<p>If <i>fromSatellitePositioningMethodsOnly</i> is true, this returns the last known position received from a satellite positioning method; if none is available, a null update is returned.</p>
 <h3 class="fn"><a name="minimumUpdateInterval"></a>int QPositionSource::minimumUpdateInterval () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the minimum value accepted by <a href="qpositionsource.html#setUpdateInterval">setUpdateInterval</a>().</p>
 <h3 class="fn"><a name="positionUpdated"></a>void QPositionSource::positionUpdated ( const <a href="qpositionupdate.html">QPositionUpdate</a> &amp; <i>update</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -125,6 +128,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Location API</div></td>
+<td align="right"><div align="right">Qt Location API</div></td>
 </tr></table></div></address></body>
 </html>

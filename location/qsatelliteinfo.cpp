@@ -43,6 +43,7 @@
 #include <QHash>
 #include <QDebug>
 
+
 class QSatelliteInfoPrivate
 {
 public:
@@ -51,6 +52,26 @@ public:
     QHash<int, qreal> doubleProps;
 };
 
+
+/*!
+    \class QSatelliteInfo
+    \brief The QSatelliteInfo class contains basic information about a satellite.
+
+    \sa QSatelliteInfoSource
+*/
+
+/*!
+    \enum QSatelliteInfo::Property
+    Defines the properties for the satellite information.
+
+    \value Elevation The elevation of the satellite, in degrees.
+    \value Azimuth The azimuth to true north, in degrees.
+*/
+
+
+/*!
+    Creates a satellite information object.
+*/
 QSatelliteInfo::QSatelliteInfo()
     : d(new QSatelliteInfoPrivate)
 {
@@ -58,17 +79,27 @@ QSatelliteInfo::QSatelliteInfo()
     d->signal = -1;
 }
 
+/*!
+    Creates a satellite information object with the values of \a other.
+*/
+
 QSatelliteInfo::QSatelliteInfo(const QSatelliteInfo &other)
     : d(new QSatelliteInfoPrivate)
 {
     operator=(other);
 }
 
+/*!
+    Destroys a satellite information object.
+*/
 QSatelliteInfo::~QSatelliteInfo()
 {
     delete d;
 }
 
+/*!
+    Assigns the values from \a other to this object.
+*/
 QSatelliteInfo &QSatelliteInfo::operator=(const QSatelliteInfo &other)
 {
     if (this == &other)
@@ -80,6 +111,10 @@ QSatelliteInfo &QSatelliteInfo::operator=(const QSatelliteInfo &other)
     return *this;
 }
 
+/*!
+    Returns true if all the information for this satellite
+    are the same as those of \a other.
+*/
 bool QSatelliteInfo::operator==(const QSatelliteInfo &other) const
 {
     return d->prn == other.d->prn
@@ -87,31 +122,63 @@ bool QSatelliteInfo::operator==(const QSatelliteInfo &other) const
             && d->doubleProps == other.d->doubleProps;
 }
 
+/*!
+    \fn bool QSatelliteInfo::operator!=(const QSatelliteInfo &other) const;
+
+    Returns true if any of the information for this satellite
+    are not the same as those of \a other.
+*/
+
+/*!
+    Sets the PRN (Pseudo-random noise) number to \a prn.
+
+    The PRN number can be used to identify a satellite.
+*/
 void QSatelliteInfo::setPrnNumber(int prn)
 {
     d->prn = prn;
 }
+
+/*!
+    Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.
+*/
 
 int QSatelliteInfo::prnNumber() const
 {
     return d->prn;
 }
 
+/*!
+    Sets the signal strength to \a signalStrength, in decibels.
+*/
 void QSatelliteInfo::setSignalStrength(int signalStrength)
 {
     d->signal = signalStrength;
 }
 
+/*!
+    Returns the signal strength, or -1 if the value has not been set.
+*/
 int QSatelliteInfo::signalStrength() const
 {
     return d->signal;
 }
 
+/*!
+    Sets the value for \a property to \a value.
+*/
 void QSatelliteInfo::setDoubleProperty(Property property, qreal value)
 {
     d->doubleProps[int(property)] = value;
 }
 
+/*!
+    Returns the value of the specified \a property as a qreal value.
+
+    Returns -1 if the value has not been set.
+
+    \sa hasProperty(), setDoubleProperty()
+*/
 qreal QSatelliteInfo::doubleProperty(Property property) const
 {
     if (d->doubleProps.contains(int(property)))
@@ -119,11 +186,17 @@ qreal QSatelliteInfo::doubleProperty(Property property) const
     return -1;
 }
 
+/*!
+    Removes the specified \a property and its value.
+*/
 void QSatelliteInfo::removeProperty(Property property)
 {
     d->doubleProps.remove(int(property));
 }
 
+/*!
+    Returns true if the specified \a property is present in this update.
+*/
 bool QSatelliteInfo::hasProperty(Property property) const
 {
     return d->doubleProps.contains(int(property));
