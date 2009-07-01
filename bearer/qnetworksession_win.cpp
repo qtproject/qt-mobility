@@ -317,8 +317,11 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
         return;
     }
 
-    // No active configurations found, must be disconnected.
-    state = QNetworkSession::Disconnected;
+    if (serviceConfig.children().isEmpty())
+        state = QNetworkSession::NotAvailable;
+    else
+        state = QNetworkSession::Disconnected;
+
     if (state != oldState)
         emit q->stateChanged(state);
 }
