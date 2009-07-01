@@ -35,13 +35,16 @@
 #ifndef QWIDGETMEDIAOUTPUT_H
 #define QWIDGETMEDIAOUTPUT_H
 
-#include <QtCore/qplugin.h>
+#include "qmediaendpointinterface.h"
+
 #include <QtGui/qwidget.h>
 
-class QMediaWidgetEndpointInterface
+class QMediaWidgetEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QMediaWidgetEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QMediaWidgetEndpointInterface_iid "com.nokia.Qt.QMediaWidgetEndpointInterface/1.0"

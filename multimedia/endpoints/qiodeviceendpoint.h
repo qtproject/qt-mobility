@@ -35,12 +35,14 @@
 #ifndef QIODEVICEENDPOINT_H
 #define QIODEVICEENDPOINT_H
 
-#include <QtCore/qplugin.h>
+#include "qmediaendpointinterface.h"
 
-class QIODeviceEndpointInterface
+class QIODeviceEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QIODeviceEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"

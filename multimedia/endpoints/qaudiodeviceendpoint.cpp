@@ -50,6 +50,14 @@ QAudioDeviceEndpointInterface::~QAudioDeviceEndpointInterface()
 {
 }
 
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QAudioDeviceEndpointInterface::direction() const
+{
+    return InputOutput;
+}
+
 class QAudioDeviceEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -61,7 +69,7 @@ public:
     {
     }
 
-    QAudioDeviceEndpoint::Direction directionFilter;
+    QAudioDeviceEndpoint::DeviceDirection directionFilter;
     QAudioDeviceEndpoint::Roles roleFilter;
     QAudioDeviceEndpoint::FormFactors formFactorsFilter;
     int selectedDevice;
@@ -123,7 +131,7 @@ QAudioDeviceEndpoint::~QAudioDeviceEndpoint()
 /*!
     Returns the direction selectable devices are filtered on.
 */
-QAudioDeviceEndpoint::Direction QAudioDeviceEndpoint::directionFilter() const
+QAudioDeviceEndpoint::DeviceDirection QAudioDeviceEndpoint::directionFilter() const
 {
     return d_func()->directionFilter;
 }
@@ -131,7 +139,7 @@ QAudioDeviceEndpoint::Direction QAudioDeviceEndpoint::directionFilter() const
 /*!
     Sets the \a direction selectable devices are filtered on.
 */
-void QAudioDeviceEndpoint::setDirectionFilter(Direction direction)
+void QAudioDeviceEndpoint::setDirectionFilter(DeviceDirection direction)
 {
     d_func()->directionFilter = direction;
 }

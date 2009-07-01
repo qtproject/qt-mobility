@@ -32,45 +32,24 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEORENDERERENDPOINT_H
-#define QVIDEORENDERERENDPOINT_H
+#ifndef QMEDIAENDPOINTINTERFACE_H
+#define QMEDIAENDPOINTINTERFACE_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#include <QtCore/qplugin.h>
 
-#include "qmediaendpointinterface.h"
-
-#include <QtCore/qobject.h>
-
-class QVideoRendererEndpointInterface : public QMediaEndpointInterface
+class QMediaEndpointInterface
 {
 public:
-    virtual ~QVideoRendererEndpointInterface();
+    enum Direction
+    {
+        Input = 0x01,
+        Output = 0x02,
+        InputOutput = Input | Output
+    };
 
-    Direction direction() const;
+    virtual ~QMediaEndpointInterface();
+
+    virtual Direction direction() const = 0;
 };
-
-#define QVideoRendererEndpointInterface_iid "com.nokia.Qt.QVideoRendererEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QVideoRendererEndpointInterface, QVideoRendererEndpointInterface_iid)
-
-class QAbstractVideoSurface;
-
-class QVideoRendererEndpointPrivate;
-
-class QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QVideoRendererEndpointInterface)
-    Q_PROPERTY(QAbstractVideoSurface* surface READ surface WRITE setSurface)
-    Q_DECLARE_PRIVATE(QVideoRendererEndpoint)
-public:
-    QVideoRendererEndpoint(QObject *parent = 0);
-    ~QVideoRendererEndpoint();
-
-    QAbstractVideoSurface *surface() const;
-    virtual void setSurface(QAbstractVideoSurface *surface);
-};
-
-#endif
 
 #endif

@@ -39,12 +39,22 @@
     \preliminary
     \internal
     \brief The QMediaWidgetEndpointInterface class provides an interface for widget media outputs.
+
+    \sa QMediaWidgetEndpoint
 */
 
 /*!
 */
 QMediaWidgetEndpointInterface::~QMediaWidgetEndpointInterface()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QMediaWidgetEndpointInterface::direction() const
+{
+    return Output;
 }
 
 /*!

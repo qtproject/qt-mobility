@@ -35,12 +35,14 @@
 #ifndef QAUDIORENDERERENDPOINT_H
 #define QAUDIORENDERERENDPOINT_H
 
-#include <QtCore/qplugin.h>
+#include "qmediaendpointinterface.h"
 
-class QAudioRendererEndpointInterface
+class QAudioRendererEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QAudioRendererEndpointInterface();
+
+    Direction direction() const;
 };
 
 #define QAudioRendererEndpointInterface_iid "com.nokia.Qt.QAudioRendererEndpointInterface/1.0"
