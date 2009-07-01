@@ -139,11 +139,17 @@ private:
     QNetworkConfiguration activeConfiguration(TUint32 iapId = 0) const;
 
 private: // data
-    //the config set on QNetworkSession
+    // The config set on QNetworkSession
     mutable QNetworkConfiguration publicConfig;
 
-    //in case SNAP this one may be different to publicConfig
-    mutable QNetworkConfiguration actualConfig;
+    // If publicConfig is a ServiceNetwork this is a copy of publicConfig.
+    // If publicConfig is an UserChoice that is resolved to a ServiceNetwork this is the actual
+    // ServiceNetwork configuration.
+    mutable QNetworkConfiguration serviceConfig;
+
+    // This is the actual active configuration currently in use by the session.
+    // Either a copy of publicConfig or one of serviceConfig.children().
+    mutable QNetworkConfiguration activeConfig;
 
     QNetworkSession::State state;
     bool isActive;

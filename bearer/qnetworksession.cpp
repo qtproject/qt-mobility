@@ -299,8 +299,8 @@ bool QNetworkSession::waitForOpened(int msecs)
     the active network interface is shut down. This also means that state() will only change from \l Connected to
     \l Disconnected if this was the last active session.
 
-    If the platform does not support out-of-process sessions calling this function may stop the
-    interface in despite of active sessions held by other processes.
+    If the platform does not support out-of-process sessions calling this function does not stop the
+    interface. In this case \l{stop()} has to be used to force a shut down. 
     The platform capabilities can be detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
@@ -485,11 +485,11 @@ QString QNetworkSession::errorString() const
             configuration resolved to when \l open() was called; otherwise an empty string.
 
             The purpose of this key is to determine the real QNetworkConfiguration that the
-            session is using. This key is different to \l ActiveConfigurationIdentifier in that
+            session is using. This key is different to \i ActiveConfigurationIdentifier in that
             this key may return an identifier for either a
             \l {QNetworkConfiguration::ServiceNetwork}{service network} or a
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations
-            whereas \l ActiveConfigurationIdentifier always returns identifiers for
+            whereas \i ActiveConfigurationIdentifier always returns identifiers for
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations.
     \endtable
 */

@@ -21,7 +21,8 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QNetworkConfiguration::Type" href="qnetworkconfiguration.html#Type-enum" location="qnetworkconfiguration.h">
                 <value name="InternetAccessPoint" value="0"></value>
                 <value name="ServiceNetwork" value="1"></value>
-                <value name="Invalid" value="2"></value>
+                <value name="UserChoice" value="2"></value>
+                <value name="Invalid" value="3"></value>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Purpose" fullname="QNetworkConfiguration::Purpose" href="qnetworkconfiguration.html#Purpose-enum" location="qnetworkconfiguration.h">
                 <value name="Unknown" value="0"></value>
@@ -144,6 +145,12 @@
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Bearer Management Library Developer Resources" fulltitle="Bearer Management Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="introduction" title="Introduction" level="1"></contents>
+            <contents name="the-api-in-details" title="The API in details" level="1"></contents>
+            <contents name="service-networks" title="Service networks" level="2"></contents>
+            <contents name="managing-network-sessions" title="Managing network sessions" level="2"></contents>
+            <contents name="roaming" title="Roaming" level="2"></contents>
+            <contents name="platform-capabilities" title="Platform capabilities" level="2"></contents>
+            <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
         </page>

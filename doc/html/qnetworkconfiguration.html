@@ -24,7 +24,7 @@
 <li><div class="fn"/>enum <b><a href="qnetworkconfiguration.html#Purpose-enum">Purpose</a></b> { Unknown, Public, Private, ServiceSpecific }</li>
 <li><div class="fn"/>enum <b><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlag</a></b> { Undefined, Defined, Discovered, Active }</li>
 <li><div class="fn"/>flags <b><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlags</a></b></li>
-<li><div class="fn"/>enum <b><a href="qnetworkconfiguration.html#Type-enum">Type</a></b> { InternetAccessPoint, ServiceNetwork, Invalid }</li>
+<li><div class="fn"/>enum <b><a href="qnetworkconfiguration.html#Type-enum">Type</a></b> { InternetAccessPoint, ServiceNetwork, UserChoice, Invalid }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
@@ -50,6 +50,7 @@
 <p>The QNetworkConfiguration class provides an abstraction of one or more access point configurations.</p>
 <p>QNetworkConfiguration encapsulates a single access point or service network. In most cases a single access point configuration can be mapped to one network interface. However a single network interface may not always map to only one access point configuration. Multiple configurations for the same network device may enable multiple access points. An example device that could exhibit such a configuration might be a Smartphone which allows the user to manage multiple WLAN configurations while the device itself has only one WLAN network device.</p>
 <p>The QNetworkConfiguration also supports the concept of service networks. This concept allows the grouping of multiple access point configurations into one entity. Such a group is called service network and can be beneficial in cases whereby a network session to a particular destination network is required (e.g&#x2e; a company network). When using a service network the user doesn't usually care which one of the connectivity options is chosen (e.g&#x2e; corporate WLAN or VPN via GPRS) as long as he can reach the company's target server. Depending on the current position and time some of the access points that make up the service network may not even be available. Furthermore automated access point roaming can be enabled which enables the device to change the network interface configuration dynamically while maintaining the applications connection to the target network. It allows adaption to the changing environment and may enable optimization with regards to cost, speed or other network parameters.</p>
+<p>Special configurations of type <a href="qnetworkconfiguration.html#Type-enum">UserChoice</a> provide a placeholder configuration which is resolved to an actual network configuration by the platform when a <a href="qnetworksession.html">session</a> is <a href="qnetworksession.html#open">opened</a>. Not all platforms support the concept of a user choice configuration.</p>
 <a name="configuration-states"></a>
 <h3>Configuration states</h3>
 <p>The list of available configurations can be obtained via <a href="qnetworkconfigurationmanager.html#allConfigurations">QNetworkConfigurationManager::allConfigurations</a>(). A configuration can have multiple states. The <a href="qnetworkconfiguration.html#StateFlag-enum">Defined</a> configuration state indicates that the configuration is stored on the device. However the configuration is not yet ready to be activated as e.g&#x2e; a WLAN may not be available at the current time.</p>
@@ -85,7 +86,8 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::InternetAccessPoint</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The configuration specifies the details for a single access point. Note that configurations of type InternetAccessPoint may be part of other QNetworkConfigurations of type ServiceNetwork.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::ServiceNetwork</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The configuration is based on a group of QNetworkConfigurations of type InternetAccessPoint. All group members can reach the same target network. This type of configuration is a mandatory requirement for roaming enabled network sessions. On some platforms this form of configuration may also be called Service Network Access Point (SNAP).</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::Invalid</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is invalid.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::UserChoice</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is a placeholder which will be resolved to an actual configuration by the platform when a session is opened.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::Invalid</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration is invalid.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>

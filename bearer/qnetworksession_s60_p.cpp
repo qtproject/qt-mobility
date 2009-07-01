@@ -281,7 +281,7 @@ void QNetworkSessionPrivate::accept()
     iMobility->NewCarrierAccepted();
     if (iDynamicSetdefaultif) {
         // Use name of the IAP to set default IAP
-        QByteArray nameAsByteArray = actualConfig.name().toUtf8();
+        QByteArray nameAsByteArray = activeConfig.name().toUtf8();
         ifreq ifr;
         strcpy(ifr.ifr_name, nameAsByteArray.constData());
 
@@ -382,8 +382,8 @@ QString QNetworkSessionPrivate::bearerName() const
     if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
         config = publicConfig;
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-        if (actualConfig.isValid()) {
-            config = actualConfig;
+        if (activeConfig.isValid()) {
+            config = activeConfig;
         } else {
             config = bestConfigFromSNAP(publicConfig);
         }
@@ -501,12 +501,12 @@ void QNetworkSessionPrivate::RunL()
 
     switch (statusCode) {
         case KErrNone: // Connection created succesfully
-            actualConfig = activeConfiguration();
+            activeConfig = activeConfiguration();
             startTime = QDateTime::currentDateTime();
 
             if (iDynamicSetdefaultif) {
                 // Use name of the IAP to set default IAP
-                QByteArray nameAsByteArray = actualConfig.name().toUtf8();
+                QByteArray nameAsByteArray = activeConfig.name().toUtf8();
                 ifreq ifr;
                 strcpy(ifr.ifr_name, nameAsByteArray.constData());
 
@@ -554,11 +554,11 @@ void QNetworkSessionPrivate::DoCancel()
 
 bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint accessPointId)
 {
-    // Make sure that actualConfig is always updated when SNAP is signaled to be
+    // Make sure that activeConfig is always updated when SNAP is signaled to be
     // connected.
     if (isActive && publicConfig.type() == QNetworkConfiguration::ServiceNetwork &&
         newState == QNetworkSession::Connected) {
-        actualConfig = activeConfiguration(accessPointId);
+        activeConfig = activeConfiguration(accessPointId);
     }
 
     // Make sure that same state is not signaled twice in a row.
