@@ -94,3 +94,8 @@ bool QAudioEncoder::setFormat(const QAudioFormat &format)
     return d->control->setFormat(format);
 }
 #endif
+
+QAbstractMediaService *QAudioEncoder::service() const
+{
+    return d_func()->service;
+}
