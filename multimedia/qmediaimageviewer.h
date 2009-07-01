@@ -42,7 +42,7 @@
 
 class QMediaImageViewerPrivate;
 
-class QMediaImageViewer : public QWidget
+class Q_MEDIA_EXPORT QMediaImageViewer : public QWidget
 {
     Q_OBJECT
 

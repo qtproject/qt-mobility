@@ -32,39 +32,32 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#ifndef QAUDIOENCODERCONTROL_H
+#define QAUDIOENCODERCONTROL_H
 
-#include "qmediaendpointinterface.h"
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#endif
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QIODeviceEndpointInterface();
+#include "qabstractmediacontrol.h"
 
-    Direction direction() const;
-};
-
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
-
-class QIODevice;
-
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
+class QAudioEncoderControl : public QAbstractMediaControl
 {
     Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
-public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
 
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
+public:
+    ~QAudioEncoderControl();
+
+    virtual void reset() = 0;
+#ifdef AUDIOSERVICES
+    virtual QAudioFormat sourceFormat() = 0;
+    virtual QAudioFormat sinkFormat() = 0;
+
+    virtual bool setFormat(const QAudioFormat &format) = 0;
+#endif
+protected:
+    QAudioEncoderControl(QObject* parent);
 };
 
-#endif
+#endif  // QAUDIOENCODERCONTROL_H
+

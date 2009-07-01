@@ -37,12 +37,14 @@
 
 #include <QtCore/qobject.h>
 
+#include "qmultimediaglobal.h"
+
 class QAbstractMediaService;
 
 
 class QAbstractMediaObjectPrivate;
 
-class QAbstractMediaObject : public QObject
+class Q_MEDIA_EXPORT QAbstractMediaObject : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QAbstractMediaObject)

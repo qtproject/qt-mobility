@@ -32,39 +32,45 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#ifndef QAUDIOENCODER_H
+#define QAUDIOENCODER_H
 
-#include "qmediaendpointinterface.h"
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#endif
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QIODeviceEndpointInterface();
+#include "qabstractmediacontrol.h"
+#include "qabstractmediaobject.h"
+#include "qabstractmediaservice.h"
 
-    Direction direction() const;
-};
+#include "qmediaserviceprovider.h"
 
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
+class QAudioEncoderService;
+class QAudioEncoderControl;
 
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
+extern QAudioEncoderService *createAudioEncoderService(QMediaServiceProvider *provider = defaultServiceProvider("audioencoder"));
 
-class QIODevice;
+class QAudioEncoderPrivate;
 
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
+class QAudioEncoder : public QAbstractMediaObject
 {
     Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
 public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
+    QAudioEncoder(QAudioEncoderService *service = createAudioEncoderService(), QObject *parent = 0);
+    ~QAudioEncoder();
 
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
+    void reset();
+#ifdef AUDIOSERVICES
+    QAudioFormat sourceFormat();
+    QAudioFormat sinkFormat();
+
+    bool setFormat(const QAudioFormat &format);
+#endif
+    QAbstractMediaService* service() const;
+
+private:
+    Q_DISABLE_COPY(QAudioEncoder)
+    Q_DECLARE_PRIVATE(QAudioEncoder)
 };
 
-#endif
+#endif  // QAUDIOENCODER_H

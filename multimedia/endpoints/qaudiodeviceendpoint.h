@@ -37,7 +37,7 @@
 
 #include "qmediaendpointinterface.h"
 
-class QAudioDeviceEndpointInterface : public QMediaEndpointInterface
+class Q_MEDIA_EXPORT QAudioDeviceEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QAudioDeviceEndpointInterface();
@@ -51,7 +51,7 @@ Q_DECLARE_INTERFACE(QAudioDeviceEndpointInterface, QAudioDeviceEndpointInterface
 
 class QAudioDeviceEndpointPrivate;
 
-class QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
+class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
 {
     Q_OBJECT
     Q_PROPERTY(DeviceDirection directionFilter READ directionFilter WRITE setDirectionFilter)

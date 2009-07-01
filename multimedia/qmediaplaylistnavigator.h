@@ -39,7 +39,7 @@
 #include <QtCore/qobject.h>
 
 class QMediaPlaylistNavigatorPrivate;
-class QMediaPlaylistNavigator : public QObject
+class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
     Q_ENUMS(PlaybackMode)

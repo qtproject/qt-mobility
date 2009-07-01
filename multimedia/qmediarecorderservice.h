@@ -37,7 +37,7 @@
 
 #include "qabstractmediaservice.h"
 
-class QMediaRecorderService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QMediaRecorderService : public QAbstractMediaService
 {
     Q_OBJECT
 public:

@@ -32,39 +32,70 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICEENDPOINT_H
-#define QIODEVICEENDPOINT_H
+#include "qaudioencoder.h"
 
-#include "qmediaendpointinterface.h"
+#include "qabstractmediaobject_p.h"
+#include "qaudioencodercontrol.h"
+#include "qaudioencoderservice.h"
 
-class Q_MEDIA_EXPORT QIODeviceEndpointInterface : public QMediaEndpointInterface
+/*!
+    \class QAudioEncoder
+    \ingroup multimedia
+
+    \preliminary
+    \brief
+
+    \sa
+*/
+
+class QAudioEncoderPrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    virtual ~QIODeviceEndpointInterface();
-
-    Direction direction() const;
+    QAudioEncoderService* service;
+    QAudioEncoderControl* control;
 };
 
-#define QIODeviceEndpointInterface_iid "com.nokia.Qt.QIODeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QIODeviceEndpointInterface, QIODeviceEndpointInterface_iid)
-
-class QIODevice;
-
-class QIODeviceEndpointPrivate;
-
-class Q_MEDIA_EXPORT QIODeviceEndpoint : public QObject, public QIODeviceEndpointInterface
+QAudioEncoder::QAudioEncoder(QAudioEncoderService *service, QObject *parent)
+    : QAbstractMediaObject(*new QAudioEncoderPrivate, parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(QIODevice* device READ device WRITE setDevice)
-    Q_INTERFACES(QIODeviceEndpointInterface)
-    Q_DECLARE_PRIVATE(QIODeviceEndpoint)
-public:
-    QIODeviceEndpoint(QObject *parent = 0);
-    ~QIODeviceEndpoint();
+    Q_D(QAudioEncoder);
 
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
-};
+    d->service = service;
+    d->control = qobject_cast<QAudioEncoderControl *>(service->control());
+}
 
+QAudioEncoder::~QAudioEncoder()
+{
+}
+
+void QAudioEncoder::reset()
+{
+    // Drop all buffered data if any.
+}
+#ifdef AUDIOSERVICES
+QAudioFormat QAudioEncoder::sourceFormat()
+{
+    Q_D(QAudioEncoder);
+
+    return d->control->sourceFormat();
+}
+
+QAudioFormat QAudioEncoder::sinkFormat()
+{
+    Q_D(QAudioEncoder);
+
+    return d->control->sinkFormat();
+}
+
+bool QAudioEncoder::setFormat(const QAudioFormat &format)
+{
+    Q_D(QAudioEncoder);
+
+    return d->control->setFormat(format);
+}
 #endif
+
+QAbstractMediaService *QAudioEncoder::service() const
+{
+    return d_func()->service;
+}

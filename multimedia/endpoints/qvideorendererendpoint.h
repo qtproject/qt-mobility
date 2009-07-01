@@ -41,7 +41,7 @@
 
 #include <QtCore/qobject.h>
 
-class QVideoRendererEndpointInterface : public QMediaEndpointInterface
+class Q_MEDIA_EXPORT QVideoRendererEndpointInterface : public QMediaEndpointInterface
 {
 public:
     virtual ~QVideoRendererEndpointInterface();
@@ -57,7 +57,7 @@ class QAbstractVideoSurface;
 
 class QVideoRendererEndpointPrivate;
 
-class QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
+class Q_MEDIA_EXPORT QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
 {
     Q_OBJECT
     Q_INTERFACES(QVideoRendererEndpointInterface)

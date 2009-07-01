@@ -38,7 +38,7 @@
 #include <qabstractmediacontrol.h>
 
 class QMetadataProviderPrivate;
-class QMetadataProvider : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMetadataProvider : public QAbstractMediaControl
 {
     Q_OBJECT
 

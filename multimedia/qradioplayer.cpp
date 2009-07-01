@@ -153,5 +153,15 @@ void QRadioPlayer::searchBackward()
 
 QRadioService* createRadioService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QRadioService*>(provider->createObject("com.nokia.qt.RadioService/1.0"));
+    QObject *object = provider ? provider->createObject("com.nokia.qt.RadioService/1.0") : 0;
+
+    if (object) {
+        QRadioService *service = qobject_cast<QRadioService *>(object);
+
+        if (service)
+            return service;
+
+        delete object;
+    }
+    return 0;
 }

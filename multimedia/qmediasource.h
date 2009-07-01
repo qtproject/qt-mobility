@@ -39,8 +39,10 @@
 #include <QVariant>
 #include <QSharedDataPointer>
 
+#include "qmultimediaglobal.h"
+
 class QMediaSourcePrivate;
-class QMediaSource
+class Q_MEDIA_EXPORT QMediaSource
 {
 public:
     QMediaSource();

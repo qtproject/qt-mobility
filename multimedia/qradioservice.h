@@ -37,7 +37,7 @@
 
 #include "qabstractmediaservice.h"
 
-class QRadioService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QRadioService : public QAbstractMediaService
 {
     Q_OBJECT
 

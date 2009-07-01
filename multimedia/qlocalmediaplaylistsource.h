@@ -38,7 +38,7 @@
 #include "qmediaplaylistsource.h"
 
 class QLocalMediaPlaylistSourcePrivate;
-class QLocalMediaPlaylistSource : public QMediaPlaylistSource
+class Q_MEDIA_EXPORT QLocalMediaPlaylistSource : public QMediaPlaylistSource
 {
     Q_OBJECT
 public:

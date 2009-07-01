@@ -40,7 +40,7 @@
 class QMediaPlaylist;
 class QMediaSource;
 
-class QMediaPlayerControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaPlayerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
