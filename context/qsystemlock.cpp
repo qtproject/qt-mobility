@@ -1,16 +1,37 @@
 /****************************************************************************
 **
-** This file is part of the $PACKAGE_NAME$.
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact:  Nokia Corporation (qt-info@nokia.com)**
 **
-** Copyright (C) $THISYEAR$ $COMPANY_NAME$.
+** This file is part of the Qt Mobility Components.
 **
-** $QT_EXTENDED_DUAL_LICENSE$
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.  
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qsystemlock.h"
 #include <QDebug>
-#include <qtopialog.h>
 #include <QMutex>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -52,7 +73,6 @@ public:
 
 /*!
    \class QSystemReadWriteLock
-    \inpublicgroup QtBaseModule
 
    \brief The QSystemReadWriteLock class provides read-write locking between
    processes.
@@ -133,10 +153,6 @@ public:
    \endtable
 
    \sa QSystemMutex
-
-   \ingroup thread
-   \ingroup environment
-   \ingroup ipc
 */
 
 /*!
@@ -149,7 +165,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(unsigned int id, bool owner)
 {
     d->semId = ::semget(d->id, 2, owner?IPC_CREAT|00644:0);
     if(-1 == d->semId) {
-        qLog(ILFramework) << "QSystemReadWriteLock: Unable to access semaphore"
+        qDebug() << "QSystemReadWriteLock: Unable to access semaphore"
                           << d->id << "(" << ::strerror(errno) << ")";
     } else if(owner) {
         union semun  {
@@ -162,7 +178,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(unsigned int id, bool owner)
                           SETVAL, arg) ||
            -1 == ::semctl(d->semId, QSystemReadWriteLockPrivate::WriteSem,
                           SETVAL, arg)) {
-            qLog(ILFramework) << "QSystemReadWriteLock: Unable to reset semaphore"
+            qDebug() << "QSystemReadWriteLock: Unable to reset semaphore"
                               << d->id << "(" << ::strerror(errno) << ")";
             ::semctl(d->semId, 0, IPC_RMID);
             d->semId = -1;
@@ -366,7 +382,6 @@ public:
 
 /*!
     \class QSystemMutex
-    \inpublicgroup QtBaseModule
 
     \brief The QSystemMutex class provides mutual exclusion between processes.
 
@@ -413,9 +428,6 @@ public:
     non-owner use the same id and thus refer to the same system-global mutex.
 
     \sa QSystemReadWriteLock
-
-    \ingroup ipc
-    \ingroup environment
  */
 
 /*!
@@ -428,7 +440,7 @@ QSystemMutex::QSystemMutex(unsigned int id, bool owner)
 {
     m_data->semId = ::semget(m_data->id, 1, owner?IPC_CREAT | IPC_EXCL | S_IRWXU:0);
     if(-1 == m_data->semId)
-        qLog(ILFramework) << "QSystemMutex: Unable to access semaphore"
+        qDebug() << "QSystemMutex: Unable to access semaphore"
                           << m_data->id << "(" << ::strerror(errno) << ")";
 
     if (owner) {
@@ -437,7 +449,7 @@ QSystemMutex::QSystemMutex(unsigned int id, bool owner)
         int status = ::semctl(m_data->semId, 0, SETVAL, arg);
         if (status == -1) {
             m_data->semId = -1;   // isNull() now return true
-            qLog(ILFramework) << "QSystemMutex: Unable to initialize the semaphore"
+            qDebug() << "QSystemMutex: Unable to initialize the semaphore"
                               << m_data->id << "(" << ::strerror(errno) << ")";
         }
     }

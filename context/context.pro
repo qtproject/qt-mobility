@@ -1,10 +1,10 @@
 TEMPLATE = lib
 TARGET = QtContextFramework
-QT = core
+QT = core network gui
 
 include(../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
-HEADERS += qpacketprotocol.h qmallocpool.h qvaluespace.h
-SOURCES += qpacketprotocol.cpp qmallocpool.cpp qvaluespace.cpp
+HEADERS += applayer.h qcontextglobal.h qpacketprotocol.h qmallocpool.h qsystemlock.h qvaluespace.h
+SOURCES += applayer.cpp qpacketprotocol.cpp qmallocpool.cpp qsystemlock.cpp qvaluespace.cpp

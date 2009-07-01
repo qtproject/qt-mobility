@@ -1,10 +1,33 @@
 /****************************************************************************
 **
-** This file is part of the $PACKAGE_NAME$.
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact:  Nokia Corporation (qt-info@nokia.com)**
 **
-** Copyright (C) $THISYEAR$ $COMPANY_NAME$.
+** This file is part of the Qt Mobility Components.
 **
-** $QT_EXTENDED_DUAL_LICENSE$
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.  
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
@@ -23,25 +46,13 @@
 #include <unistd.h>
 #include <QCoreApplication>
 #include <QThread>
-#include <private/qunixsocketserver_p.h>
-#include <private/qunixsocket_p.h>
-
-#ifndef QT_NO_SXE
-// TODO: Enabling SXE support breaks change notifications.  Force disable until this
-// has been fixed.
-#define QT_NO_SXE
-#endif
-
-#ifndef QT_NO_SXE
-#include <qtransportauth_qws.h>
-#include <qtransportauthdefs_qws.h>
-#include <qwsutils_qws.h>
-#endif
+#include <QLocalSocket>
+#include <QLocalServer>
+#include <QDir>
 
 #include "qpacketprotocol.h"
 #include <QMutex>
 #include <QWaitCondition>
-#include <qtopialog.h>
 
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
@@ -131,7 +142,7 @@ struct NodeOwner {
  */
 struct NodeDatum {
     NodeOwner owner;
-    enum Type { Bool = QVariant::Bool,
+    enum Type { Boolean = QVariant::Bool,
                 Int = QVariant::Int,
                 UInt = QVariant::UInt,
                 LongLong = QVariant::LongLong,
@@ -141,6 +152,7 @@ struct NodeDatum {
                 String = QVariant::String,
                 ByteArray = QVariant::ByteArray,
                 SerializedType /* Catch all for everything else */ };
+    //Type type;
     unsigned short type;
     unsigned short len;
     char data[0];
@@ -1628,14 +1640,14 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
 
 // Use aggregation/composition - the ApplicationLayer "has a" server socket
 // rather than "is a" server socket - also gets around multiple inheritance
-// issues with QObject since the QUnixSocketServer in Qt is a QObject
-class ALServerImpl : public QUnixSocketServer
+// issues with QObject since the QLocalServer in Qt is a QObject
+class ALServerImpl : public QLocalServer
 {
 public:
-    ALServerImpl( QObject *p ) : QUnixSocketServer( p ) {}
+    ALServerImpl( QObject *p ) : QLocalServer( p ) {}
     virtual ~ALServerImpl();
 protected:
-    virtual void incomingConnection(int socketDescriptor);
+    virtual void incomingConnection(quintptr socketDescriptor);
 };
 
 ALServerImpl::~ALServerImpl()
@@ -1692,7 +1704,7 @@ public:
     bool doRemWatch(NodeWatch watch,
                     const QByteArray &path);
 
-    QByteArray socket() const;
+    QString socket() const;
     void sync();
 
     static QVariant fromDatum(const NodeDatum * data);
@@ -1756,7 +1768,7 @@ private:
     bool refreshHandle(ReadHandle *);
     void clearHandle(ReadHandle *);
 
-    QUnixSocketServer *sserver;
+    QLocalServer *sserver;
 
     Type type;
     FixedMemoryTree * layer;
@@ -1860,12 +1872,13 @@ bool ApplicationLayer::startup(Type type)
     Q_ASSERT(!layer);
     if(Server == type) {
         if(!sserver->listen(socket())) {
-            qWarning("ApplicationLayer: Unable to create server socket.  Only "
-                     "local connections will be allowed.");
+            qWarning() << "ApplicationLayer: Unable to create server socket.  Only "
+                     "local connections will be allowed." << sserver->errorString();
         }
     } else {
-        QUnixSocket * sock = new QUnixSocket;
-        if(!sock->connect(socket())) {
+        QLocalSocket * sock = new QLocalSocket;
+        sock->connectToServer(socket());
+        if(!sock->waitForConnected(1000)) {
             qWarning("ApplicationLayer: Unable to connect to server, "
                      "application layer will be disabled.");
             delete sock;
@@ -1873,22 +1886,10 @@ bool ApplicationLayer::startup(Type type)
         }
 
         QPacketProtocol * protocol;
-#ifndef QT_NO_SXE
-        QTransportAuth * a = QTransportAuth::getInstance();
-        QTransportAuth::Data * d = a->connectTransport(
-                QTransportAuth::UnixStreamSock |
-                QTransportAuth::Trusted,
-                sock->socketDescriptor());
-        QAuthDevice * ad = a->authBuf( d, sock );
-        ad->setClient( reinterpret_cast<void*>(sock) );
-        protocol = new QPacketProtocol(ad, this);
-#else
         protocol = new QPacketProtocol(sock, this);
-#endif
-
         sock->setParent(protocol);
 
-        QObject::connect(sock, SIGNAL(stateChanged(SocketState)),
+        QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
                          protocol, SIGNAL(invalidPacket()));
         QObject::connect(protocol, SIGNAL(invalidPacket()),
                          this, SLOT(disconnected()));
@@ -1898,7 +1899,7 @@ bool ApplicationLayer::startup(Type type)
         connections.insert(protocol);
     }
 
-    key_t key = ::ftok(socket().constData(), 0x9b);
+    key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
 
     if(Server == type) {
         shmId = ::shmget(key, APPLAYER_SIZE, IPC_CREAT | 00644);
@@ -1964,8 +1965,9 @@ bool ApplicationLayer::restart()
                      "local connections will be allowed.");
         }
     } else {
-        QUnixSocket * sock = new QUnixSocket;
-        if(!sock->connect(socket())) {
+        QLocalSocket * sock = new QLocalSocket;
+        sock->connectToServer(socket());
+        if(!sock->waitForConnected(1000)) {
             qWarning("ApplicationLayer: Unable to connect to server, "
                      "application layer will be disabled.");
             delete sock;
@@ -1973,22 +1975,10 @@ bool ApplicationLayer::restart()
         }
 
         QPacketProtocol * protocol;
-#ifndef QT_NO_SXE
-        QTransportAuth * a = QTransportAuth::getInstance();
-        QTransportAuth::Data * d = a->connectTransport(
-                QTransportAuth::UnixStreamSock |
-                QTransportAuth::Trusted,
-                sock->socketDescriptor());
-        QAuthDevice * ad = a->authBuf( d, sock );
-        ad->setClient( reinterpret_cast<void*>(sock) );
-        protocol = new QPacketProtocol(ad, this);
-#else
         protocol = new QPacketProtocol(sock, this);
-#endif
-
         sock->setParent(protocol);
 
-        QObject::connect(sock, SIGNAL(stateChanged(SocketState)),
+        QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
                          protocol, SIGNAL(invalidPacket()));
         QObject::connect(protocol, SIGNAL(invalidPacket()),
                          this, SLOT(disconnected()));
@@ -1998,7 +1988,7 @@ bool ApplicationLayer::restart()
         connections.insert(protocol);
     }
 
-    key_t key = ::ftok(socket().constData(), 0x9b);
+    key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
 
     int shmId = 0;
     void * shmptr = 0;
@@ -2029,173 +2019,26 @@ bool ApplicationLayer::restart()
     return true;
 }
 
-#ifndef QT_NO_SXE
 
-class ALRequestAnalyzer : public RequestAnalyzer
+void ALServerImpl::incomingConnection(quintptr socketDescriptor)
 {
-public:
-    ALRequestAnalyzer() : RequestAnalyzer() {}
-
-protected:
-    QString analyze( QByteArray * );
-};
-
-// Read an integer value in network byte order.
-static int read_int( QIODevice *dev )
-{
-    char ch1, ch2, ch3, ch4;
-    dev->getChar( &ch1 );
-    dev->getChar( &ch2 );
-    dev->getChar( &ch3 );
-    dev->getChar( &ch4 );
-    return ( (ch1 & 0xFF) << 24 ) |
-           ( (ch2 & 0xFF) << 16 ) |
-           ( (ch3 & 0xFF) << 8 ) |
-             (ch4 & 0xFF);
-}
-
-// Analyse an incoming message so that it can be checked against SXE policies.
-QString ALRequestAnalyzer::analyze( QByteArray *msgQueue )
-{
-    dataSize = 0;
-    moreData = false;
-
-    QBuffer cmdBuf( msgQueue );
-    cmdBuf.open( QIODevice::ReadOnly | QIODevice::Unbuffered );
-
-    // Bail out if we don't have enough bytes for a complete packet.
-    int size = qws_read_uint( &cmdBuf );
-    if ( size < (int)sizeof(qint32) ) {
-        moreData = true;
-        return QString();
-    }
-    size -= sizeof(qint32);
-    if ( size > ( msgQueue->size() - cmdBuf.pos() ) ) {
-        moreData = true;
-        return QString();
-    }
-
-    // Read the operation code and map it to a string.  We divide the
-    // operations into several groups: "Set" for operations that will
-    // set a value based on a request from a QValueSpaceObject instance;
-    // "SetRequest" for operations that request that a value be set
-    // based on a request from a QValueSpaceItem instance; "Watch"
-    // for QValueSpaceObject instances that are watching for set requests;
-    // and "Sync" for synchronisation messages that everyone can use.
-    char op;
-    if ( size >= (int)( sizeof(qint32) + 1 ) ) {   // packet id plus op code
-        qws_read_uint( &cmdBuf );
-        cmdBuf.getChar( &op );
-    } else {
-        op = (char)0xFF;
-    }
-    QString request = "ValueSpace/";
-    switch ( op ) {
-
-        case APPLAYER_ADD:
-        case APPLAYER_REM:
-        case APPLAYER_REMOVE:       request += "Set"; break;
-
-        case APPLAYER_WRITE:        request += "SetRequest"; break;
-
-        case APPLAYER_ADDWATCH:
-        case APPLAYER_REMWATCH:     request += "Watch"; break;
-
-        case APPLAYER_DONE:
-        case APPLAYER_SYNC:         request += "Sync"; break;
-
-        default:                    op = (char)0xFF; break;
-    }
-
-    // Skip the owner code, if present for this operation type.
-    switch ( op ) {
-
-        case APPLAYER_ADD:
-        case APPLAYER_REM:
-        case APPLAYER_ADDWATCH:
-        case APPLAYER_REMWATCH:
-            {
-                if ( size >= (int)(1 + sizeof(qint32) * 2) ) {
-                    qws_read_uint( &cmdBuf );
-                } else {
-                    op = (char)0xFF;
-                }
-            }
-            break;
-
-        default: break;
-    }
-
-    // Read off the pathname.
-    switch ( op ) {
-
-        case APPLAYER_ADD:
-        case APPLAYER_REM:
-        case APPLAYER_WRITE:
-        case APPLAYER_REMOVE:
-        case APPLAYER_ADDWATCH:
-        case APPLAYER_REMWATCH:
-            {
-                if ( ( cmdBuf.pos() + sizeof(qint32) * 2 )
-                            > msgQueue->size() ) {
-                    op = (char)0xFF;
-                } else {
-                    int nameSize = read_int( &cmdBuf );
-                    if ( ( cmdBuf.pos() + nameSize ) > msgQueue->size() ) {
-                        op = (char)0xFF;
-                    } else {
-                        request += QString::fromUtf8
-                            ( msgQueue->constData() + (int)(cmdBuf.pos()),
-                              nameSize );
-                    }
-                }
-            }
-            break;
-
-        default: break;
-    }
-
-    // Remove the packet we just processed from the queue.
-    dataSize = size + sizeof(qint32);
-
-    // Return the policy string to the caller.
-    if ( op == (char)0xFF )
-        return QString();       // Packet is corrupt.
-    return request;
-}
-
-#endif // !QT_NO_SXE
-
-void ALServerImpl::incomingConnection(int socketDescriptor)
-{
-    QUnixSocket * sock = new QUnixSocket;
+    QLocalSocket * sock = new QLocalSocket;
     sock->setSocketDescriptor(socketDescriptor);
 
     QPacketProtocol * protocol;
-#ifndef QT_NO_SXE
-    QTransportAuth *a = QTransportAuth::getInstance();
-    QTransportAuth::Data *d = a->connectTransport(
-            QTransportAuth::UnixStreamSock |
-            QTransportAuth::Trusted, sock->socketDescriptor() );
-    QAuthDevice *ad = a->recvBuf( d, sock );
-    ad->setRequestAnalyzer( new ALRequestAnalyzer() );
-    ad->setClient(sock);
-    protocol = new ApplicationLayerClient(ad, this);
-#else
     protocol = new ApplicationLayerClient(sock, this);
-#endif
     sock->setParent(protocol);
 
     ApplicationLayer *al = static_cast<ApplicationLayer*>( QObject::parent() );
 
-    QObject::connect(sock, SIGNAL(stateChanged(SocketState)),
+    QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
                      protocol, SIGNAL(invalidPacket()));
     QObject::connect(protocol, SIGNAL(invalidPacket()),
                      al, SLOT(disconnected()));
     QObject::connect(protocol, SIGNAL(readyRead()),
                      al, SLOT(readyRead()));
 
-    qLog(ApplicationLayer) << "New client" << protocol << "connected";
+    qDebug() << "New client" << protocol << "connected";
 
     al->connections.insert(protocol);
 }
@@ -2271,7 +2114,7 @@ void ApplicationLayer::disconnected()
         qFatal("ApplicationLayer:  Application layer server unexpectedly "
                "terminated.");
     } else {
-        qLog(ApplicationLayer) << "Removing" << protocol << "from space";
+        qDebug() << "Removing" << protocol << "from space";
 
         NodeOwner owner;
         owner.data1 = (unsigned long)protocol;
@@ -2309,7 +2152,7 @@ void ApplicationLayer::readyRead()
 
     QPacket pack = protocol->read();
     if(Client == type) {
-        qLog(ApplicationLayer) << "Client" << protocol << "woken";
+        qDebug() << "Client" << protocol << "woken";
         if(pack.isEmpty())
             return;
 
@@ -2899,7 +2742,7 @@ void ApplicationLayer::triggerTodo()
 {
     if(todoTimer || !valid)
         return;
-    qLog(ApplicationLayer) << "Trigger todo";
+    qDebug() << "Trigger todo";
     todoTimer = startTimer(0);
 }
 
@@ -3162,7 +3005,7 @@ bool ApplicationLayer::doSetItem(NodeOwner owner, const QByteArray &path,
         case QVariant::Bool:
             {
                 unsigned int v = val.toBool()?1:0;
-                rv = layer->insert(path.constData(), NodeDatum::Bool, (const char *)&v,
+                rv = layer->insert(path.constData(), NodeDatum::Boolean, (const char *)&v,
                               sizeof(unsigned int), owner);
             }
             break;
@@ -3283,22 +3126,61 @@ bool ApplicationLayer::doRemItems(NodeOwner owner, const QByteArray &path)
     return rv;
 }
 
-extern int qtopia_display_id(); // from qtopianamespace.cpp
+#ifdef Q_WS_X11
+#include <QX11Info>
+#include <X11/Xlib.h>
+#undef Unsorted
+#endif
 
-static QString qtopiaTempDir()
+int display_id()
+{
+#if defined(Q_WS_QWS)
+    extern int qws_display_id;
+    return qws_display_id;
+#elif defined(Q_WS_X11)
+    Display *dpy = QX11Info::display();
+    QString name;
+    if ( dpy ) {
+        name = QString( DisplayString( dpy ) );
+    } else {
+        const char *d = getenv("DISPLAY");
+        if ( !d )
+            return 0;
+        name = QString( d );
+    }
+    int index = name.indexOf(QChar(':'));
+    if ( index >= 0 )
+        return name.mid(index + 1).toInt();
+    else
+        return 0;
+#else
+    return 0;
+#endif
+}
+#
+
+static QString qtTempDir()
 {
     QString result;
 
-    result = QString("/tmp/qtopia-%1/").arg(QString::number(qtopia_display_id()));
+    result = QString("/tmp/qt-%1/").arg(QString::number(display_id()));
 
+    //works for unix only
+    static bool pipePathExists = false;
+    if (!pipePathExists) {
+        QDir dir;
+        if (dir.mkpath(result)) {
+            pipePathExists = true;
+        }
+    }
     return result;
 }
 
-QByteArray ApplicationLayer::socket() const
+QString ApplicationLayer::socket() const
 {
-    QString socketPath = qtopiaTempDir() + QLatin1String("valuespace_applayer");
+    const QString socketPath = qtTempDir() + QLatin1String("valuespace_applayer");
 
-    return socketPath.toLocal8Bit();
+    return socketPath;
 }
 
 void ApplicationLayer::sync()
@@ -3315,12 +3197,12 @@ void ApplicationLayer::sync()
         doClientTransmit();
 
         // Get transmission socket
-        QUnixSocket * socket =
-            static_cast<QUnixSocket *>((*connections.begin())->device());
+        QLocalSocket * socket =
+            static_cast<QLocalSocket *>((*connections.begin())->device());
         socket->flush();
 
         // Wait
-        while(QUnixSocket::UnconnectedState != socket->state() &&
+        while(QLocalSocket::UnconnectedState != socket->state() &&
               waitId > lastRecvId)
             socket->waitForReadyRead(-1);
     } else {
@@ -3331,7 +3213,7 @@ void ApplicationLayer::sync()
 QVariant ApplicationLayer::fromDatum(const NodeDatum * data)
 {
     switch(data->type) {
-        case NodeDatum::Bool:
+        case NodeDatum::Boolean:
             Q_ASSERT(4 == data->len);
             return QVariant(0 != (*(unsigned int *)data->data));
         case NodeDatum::Int:
@@ -3368,7 +3250,7 @@ QVariant ApplicationLayer::fromDatum(const NodeDatum * data)
         default:
             qFatal("ApplicationLayer: Unknown datum type.");
             return QVariant();
-    };
+    }
 }
 
 void ApplicationLayer::incNode(unsigned short node)
@@ -3482,11 +3364,9 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
 
 /*!
   \class QValueSpaceObject
-    \inpublicgroup QtBaseModule
 
   \brief The QValueSpaceObject class allows applications to add entries to the
          Value Space.
-  \ingroup ipc
 
   For an overview of the Qt Extended Value Space, please see the QValueSpaceItem
   documentation.
