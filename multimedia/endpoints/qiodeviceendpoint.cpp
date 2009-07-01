@@ -32,51 +32,68 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIORENDERERENDPOINT_H
-#define QAUDIORENDERERENDPOINT_H
+#include "qiodeviceendpoint.h"
 
-#include <QtCore/qplugin.h>
+#include <private/qobject_p.h>
 
-class QAudioRendererEndpointInterface
+/*!
+    \class QIODeviceEndpointInterface
+    \preliminary
+    \internal
+    \brief The QIODeviceEndpointInterface provides an interface for media endpoints that read or
+    write a QIODevice.
+*/
+
+/*!
+*/
+QIODeviceEndpointInterface::~QIODeviceEndpointInterface()
+{
+}
+
+class QIODeviceEndpointPrivate : public QObjectPrivate
 {
 public:
-    virtual ~QAudioRendererEndpointInterface();
+    QIODeviceEndpointPrivate()
+        : device(0)
+    {
+    }
+
+    QIODevice *device;
 };
 
-#define QAudioRendererEndpointInterface_iid "com.nokia.Qt.QAudioRendererEndpointInterface/1.0"
+/*!
+    \class QIODeviceEndpoint
+    \preliminary
+    \brief The QIODeviceEndpoint class provides a media endpoint that reads or writes a QIODevice.
+*/
 
-Q_DECLARE_INTERFACE(QAudioRendererEndpointInterface, QAudioRendererEndpointInterface_iid)
-
-class QIODevice;
-
-class QAudioRendererEndpointPrivate;
-
-class QAudioRendererEndpoint : public QObject,  public QAudioRendererEndpointInterface
+/*!
+    Contructs a new I/O device media end point.
+*/
+QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
+    : QObject(*new QIODeviceEndpointPrivate, parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(int frequency READ frequency WRITE setFrequency)
-    Q_PROPERTY(int channels READ channels WRITE setChannels)
-    Q_PROPERTY(int sampleSize READ sampleSize WRITE setSampleSize)
-    Q_INTERFACES(QAudioRendererEndpointInterface)
-    Q_DECLARE_PRIVATE(QAudioRendererEndpoint)
-public:
-    QAudioRendererEndpoint(QObject *parent = 0);
-    ~QAudioRendererEndpoint();
+}
 
-    int frequency() const;
-    virtual void setFrequency(int frequency);
-    virtual QList<int> supportedFrequencies() const = 0;
+/*!
+    Destroys an I/O device media end point.
+*/
+QIODeviceEndpoint::~QIODeviceEndpoint()
+{
+}
 
-    int channels() const;
-    virtual void setChannels(int channels);
-    virtual QList<int> supportedChannels() const = 0;
+/*!
+    Returns the I/O device.
+*/
+QIODevice *QIODeviceEndpoint::device() const
+{
+    return d_func()->device;
+}
 
-    int sampleSize() const;
-    virtual void setSampleSize(int size);
-    virtual QList<int> supportedSampleSizes() const = 0;
-
-    QIODevice *device() const;
-    virtual void setDevice(QIODevice *device);
-};
-
-#endif
+/*!
+    Sets the I/O \a device.
+*/
+void QIODeviceEndpoint::setDevice(QIODevice *device)
+{
+    d_func()->device = device;
+}
