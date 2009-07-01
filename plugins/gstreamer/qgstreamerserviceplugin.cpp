@@ -61,13 +61,10 @@ QStringList QGstreamerServicePlugin::keys() const
 
 QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
 {
-    qDebug() << "create" << key;
-
     if (key == "mediaplayer")
         return new QGstreamerProvider;
 
     qDebug() << "unsupported key:" << key;
-
     return 0;
 }
 
