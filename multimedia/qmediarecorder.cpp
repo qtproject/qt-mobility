@@ -69,7 +69,7 @@ QMediaRecorder::~QMediaRecorder()
 {
     Q_D(QMediaRecorder);
 
-    delete d_func()->service;
+    delete d->service;
 }
 
 void QMediaRecorder::setRecordingSource(QAbstractMediaObject* source)

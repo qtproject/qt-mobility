@@ -49,7 +49,7 @@ Q_DECLARE_INTERFACE(QAudioDeviceEndpointInterface, QAudioDeviceEndpointInterface
 
 class QAudioDeviceEndpointPrivate;
 
-class QAudioDeviceEndpoint : public QObject
+class QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
 {
     Q_OBJECT
     Q_PROPERTY(Direction directionFilter READ directionFilter WRITE setDirectionFilter)
@@ -58,6 +58,7 @@ class QAudioDeviceEndpoint : public QObject
     Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)
     Q_ENUMS(Direction Role FormFactor)
     Q_FLAGS(Roles FormFactors)
+    Q_INTERFACES(QAudioDeviceEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioDeviceEndpoint)
 public:
     enum Direction
