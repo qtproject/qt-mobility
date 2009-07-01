@@ -1,5 +1,7 @@
 TEMPLATE = lib
 
+#DEFINES += AUDIOSERVICES
+
 # distinct from QtMultimedia
 TARGET = QtMedia
 
@@ -32,7 +34,10 @@ HEADERS = \
     qradioplayer.h \
     qradioservice.h \
     qradiotuner.h \
-    qsharedmediaplaylist.h
+    qsharedmediaplaylist.h \
+    qaudioencodercontrol.h \
+    qaudioencoderservice.h \
+    qaudioencoder.h
 
 SOURCES = \
     qabstractmediacontrol.cpp \
@@ -59,7 +64,10 @@ SOURCES = \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradiotuner.cpp \
-    qsharedmediaplaylist.cpp
+    qsharedmediaplaylist.cpp \
+    qaudioencodercontrol.cpp \
+    qaudioencoderservice.cpp \
+    qaudioencoder.cpp
 
 include (endpoints/endpoints.pri)
 
