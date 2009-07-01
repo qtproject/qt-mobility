@@ -38,6 +38,7 @@
 #include "qabstractmediacontrol.h"
 
 class QMediaPlaylist;
+class QMediaSource;
 
 class QMediaPlayerControl : public QAbstractMediaControl
 {
@@ -49,12 +50,15 @@ public:
     virtual int state() const = 0;
 
     virtual QMediaPlaylist* mediaPlaylist() const = 0;
-    virtual void setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
+    virtual bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
 
     virtual qint64 duration() const = 0;
 
     virtual qint64 position() const = 0;
     virtual void setPosition(qint64 position) = 0;
+
+    virtual int playlistPosition() const = 0;
+    virtual void setPlaylistPosition(int position) = 0;
 
     virtual int volume() const = 0;
     virtual void setVolume(int volume) = 0;
@@ -72,15 +76,22 @@ public:
     virtual void pause() = 0;
     virtual void stop() = 0;
 
+    //playlist navigation
+    virtual void advance() = 0;
+    virtual void back() = 0;
+
 Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
+    void playlistPositionChanged(int position);
+    void currentMediaChanged(const QMediaSource&);
     void stateChanged(int newState);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
+
 
 protected:
     QMediaPlayerControl(QObject* parent);
