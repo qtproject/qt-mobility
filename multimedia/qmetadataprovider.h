@@ -32,18 +32,36 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIARECORDERSERVICE_H
-#define QMEDIARECORDERSERVICE_H
+#ifndef QMETADATAPROVIDER_H
+#define QMETADATAPROVIDER_H
 
-#include "qabstractmediaservice.h"
+#include <qabstractmediacontrol.h>
 
-class QMediaRecorderService : public QAbstractMediaService
+class QMetadataProviderPrivate;
+class QMetadataProvider : public QAbstractMediaControl
 {
     Q_OBJECT
-public:
-    QMediaRecorderService(QObject *parent = 0);
 
-    virtual QAbstractMediaControl *control(char const *name) const = 0;
+public:
+    ~QMetadataProvider();
+
+    virtual bool metadataAvailable() const = 0;
+    virtual bool isReadOnly() const = 0;
+    virtual void setReadOnly(bool readonly) = 0;
+
+    virtual QList<QString> availableMetadata() const = 0;
+    virtual QVariant metadata(QString const &name) const = 0;
+    virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+
+Q_SIGNALS:
+    void metadataAvailabilityChanged(bool metadataAvailable);
+    void readOnlyChanged(bool readOnly);
+
+protected:
+    QMetadataProvider(QObject *parent = 0);
+
+private:
+    Q_DECLARE_PRIVATE(QMetadataProvider);
 };
 
-#endif
+#endif  // QMETADATAPROVIDER_H

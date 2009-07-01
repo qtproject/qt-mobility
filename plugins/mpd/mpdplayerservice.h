@@ -48,7 +48,7 @@ public:
     MpdPlayerService(QObject *parent = 0);
     ~MpdPlayerService();
 
-    virtual MpdPlayerControl* control() const;
+    virtual MpdPlayerControl* control(const char *name) const;
 
 private slots:
     void stateChanged(int state);

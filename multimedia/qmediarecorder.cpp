@@ -62,7 +62,7 @@ QMediaRecorder::QMediaRecorder(QMediaRecorderService *service, QObject *parent)
     Q_D(QMediaRecorder);
 
     d->service = service;
-    d->control = qobject_cast<QMediaRecorderControl *>(service->control());
+    d->control = qobject_cast<QMediaRecorderControl *>(service->control("com.nokia.qt.MediaRecorderControl"));
 }
 
 QMediaRecorder::~QMediaRecorder()

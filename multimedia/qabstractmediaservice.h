@@ -56,7 +56,7 @@ public:
     void setVideoOutput(QMediaVideoOutput const &videoOutput);
     QList<QMediaVideoOutput> availableVideoOutputs() const;
 
-    virtual QAbstractMediaControl* control() const = 0;
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
     QAbstractMediaService(QObject* parent);

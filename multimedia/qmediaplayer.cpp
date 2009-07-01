@@ -70,7 +70,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     Q_D(QMediaPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QMediaPlayerControl *>(service->control());
+    d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
     d->control->setNotifyObject(this);
 }
 
