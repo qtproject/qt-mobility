@@ -35,7 +35,9 @@
 #include <QtCore/private/qobject_p.h>
 
 #include "qmediametadata.h"
+#include "qmetadataprovider.h"
 #include "qabstractmediaobject.h"
+#include "qabstractmediaservice.h"
 
 
 /*!
@@ -51,29 +53,51 @@
 class QMediaMetadataPrivate : public QObjectPrivate
 {
 public:
+    QAbstractMediaService   *service;
+    QMetadataProvider       *provider;
 };
 
 
-QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject)
-        : QObject(*new QMediaMetadataPrivate, mediaObject)
+QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
+    QObject(*new QMediaMetadataPrivate, mediaObject)
 {
+    Q_D(QMediaMetadata);
+
+    d->service = mediaObject->service();
+    d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetaData/1.0"));
+    connect(d->provider, SIGNAL(metadataAvailablityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
+    connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
 }
 
 QMediaMetadata::~QMediaMetadata()
 {
 }
 
-bool QMediaMetadata::metaDataAvailable() const
+bool QMediaMetadata::metadataAvailable() const
 {
-    return false;
+    return d_func()->provider->metadataAvailable();
+}
+
+bool QMediaMetadata::isReadOnly() const
+{
+    return d_func()->provider->isReadOnly();
 }
 
 QList<QString> QMediaMetadata::availableMetadata() const
 {
-    return QList<QString>();
+    return d_func()->provider->availableMetadata();
 }
 
-QVariant QMediaMetadata::valueFor(QString const &name) const
+QVariant QMediaMetadata::metadata(QString const &name) const
 {
-    return QVariant();
+    return d_func()->provider->metadata(name);
 }
+
+void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
+{
+    Q_D(QMediaMetadata);
+
+    if (!d->provider->isReadOnly())
+        d_func()->provider->setMetadata(name, value);
+}
+

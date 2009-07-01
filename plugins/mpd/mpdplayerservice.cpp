@@ -51,8 +51,9 @@ MpdPlayerService::~MpdPlayerService()
 {
 }
 
-MpdPlayerControl* MpdPlayerService::control() const
+MpdPlayerControl* MpdPlayerService::control(const char *name) const
 {
+    Q_UNUSED(name);
     return playerControl;
 }
 

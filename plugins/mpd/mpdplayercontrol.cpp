@@ -54,6 +54,70 @@ MpdPlayerControl::~MpdPlayerControl()
 {
 }
 
+int MpdPlayerControl::state() const
+{
+    return 0;
+}
+
+QMediaPlaylist* MpdPlayerControl::mediaPlaylist() const
+{
+    return playlist;
+}
+
+void MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
+{
+}
+
+
+qint64 MpdPlayerControl::duration() const
+{
+    return 0;
+}
+
+qint64 MpdPlayerControl::position() const
+{
+    return 0;
+}
+
+void MpdPlayerControl::setPosition(qint64 position)
+{
+}
+
+int MpdPlayerControl::volume() const
+{
+    return 100;
+}
+
+void MpdPlayerControl::setVolume(int volume)
+{
+}
+
+bool MpdPlayerControl::isMuted() const
+{
+    return false;
+}
+
+
+void MpdPlayerControl::setMuted(bool muted)
+{
+}
+
+bool MpdPlayerControl::isBuffering() const
+{
+    return false;
+}
+
+int MpdPlayerControl::bufferStatus() const
+{
+    return 0;
+}
+
+bool MpdPlayerControl::isVideoAvailable() const
+{
+    return false;
+}
+
+
 void MpdPlayerControl::play()
 {
     daemon->send("play");

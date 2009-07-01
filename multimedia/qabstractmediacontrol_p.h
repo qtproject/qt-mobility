@@ -32,18 +32,31 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIARECORDERSERVICE_H
-#define QMEDIARECORDERSERVICE_H
+#ifndef QABSTRACTMEDIACONTROL_P_H
+#define QABSTRACTMEDIACONTROL_P_H
 
-#include "qabstractmediaservice.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QMediaRecorderService : public QAbstractMediaService
+#include <QtCore/private/qobject_p.h>
+#include <QtCore/qtimer.h>
+#include <QtCore/qlist.h>
+
+class QAbstractMediaControlPrivate : public QObjectPrivate
 {
-    Q_OBJECT
 public:
-    QMediaRecorderService(QObject *parent = 0);
-
-    virtual QAbstractMediaControl *control(char const *name) const = 0;
+    int         notifyInterval;
+    QTimer*     notifyTimer;
+    QList<QString>  notifyProperties;
+    QObject*    notifyObject;
 };
 
-#endif
+#endif  // QABSTRACTMEDIACONTROLP_H

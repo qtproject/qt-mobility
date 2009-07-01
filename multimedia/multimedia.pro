@@ -13,6 +13,7 @@ HEADERS = \
     qlocalmediaplaylistsource.h \
     qmediaimageviewer.h \
     qmediametadata.h \
+    qmetadataprovider.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
     qmediaplayerservice.h \
@@ -41,6 +42,7 @@ SOURCES = \
     qlocalmediaplaylistsource.cpp \
     qmediaimageviewer.cpp \
     qmediametadata.cpp \
+    qmetadataprovider.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
     qmediaplayerservice.cpp \

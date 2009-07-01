@@ -32,18 +32,17 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIARECORDERSERVICE_H
-#define QMEDIARECORDERSERVICE_H
+#include "qabstractmediacontrol_p.h"
+#include "qmetadataprovider.h"
 
-#include "qabstractmediaservice.h"
 
-class QMediaRecorderService : public QAbstractMediaService
+
+QMetadataProvider::~QMetadataProvider()
 {
-    Q_OBJECT
-public:
-    QMediaRecorderService(QObject *parent = 0);
+}
 
-    virtual QAbstractMediaControl *control(char const *name) const = 0;
-};
+QMetadataProvider::QMetadataProvider(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+{
+}
 
-#endif

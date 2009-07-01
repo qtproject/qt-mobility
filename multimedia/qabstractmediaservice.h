@@ -77,7 +77,7 @@ public:
 
     virtual QObject *createEndpoint(const char *interface);
 
-    virtual QAbstractMediaControl* control() const = 0;
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
     QAbstractMediaService(QObject* parent);
