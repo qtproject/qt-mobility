@@ -165,9 +165,8 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
         return;
     }
 
-    bool ok = false;
-    QStringList currentServices = database->getServiceNames(QString(), &ok);
-    if (!ok) {
+    QStringList currentServices = database->getServiceNames(QString());
+    if (database->lastError().errorCode() !=DBError::NoError) {
         qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
         return;
     }
@@ -317,14 +316,13 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 {
     QList<QServiceInterfaceDescriptor> descriptors;
 
-    bool ok = false;
     int userDescriptorCount = 0;
     if (scope == UserScope) {
         if (!openDb(UserScope))
             return descriptors;
-        descriptors =  m_userDb->getInterfaces(filter, &ok);
 
-        if (ok == false) {
+        descriptors =  m_userDb->getInterfaces(filter);
+        if (m_userDb->lastError().errorCode() != DBError::NoError ) {
             descriptors.clear();
             m_lastError = m_userDb->lastError();
             return descriptors;
@@ -337,8 +335,8 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
     }
 
     if (openDb(SystemScope)) {
-        descriptors.append(m_systemDb->getInterfaces(filter, &ok));
-        if (ok == false) {
+        descriptors.append(m_systemDb->getInterfaces(filter));
+        if (m_systemDb->lastError().errorCode() != DBError::NoError) {
             descriptors.clear();
             m_lastError = m_systemDb->lastError();
             return descriptors;
@@ -365,12 +363,11 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DatabaseManager::DbScope scope)
 {
     QStringList serviceNames;
-    bool ok = false;
     if (scope == UserScope || scope == UserOnlyScope) {
         if(!openDb(DatabaseManager::UserScope))
             return serviceNames;
-        serviceNames = m_userDb->getServiceNames(interfaceName, &ok);
-        if(!ok) {
+        serviceNames = m_userDb->getServiceNames(interfaceName);
+        if(m_userDb->lastError().errorCode() != DBError::NoError) {
             serviceNames.clear();
             m_lastError = m_userDb->lastError();
             return serviceNames;
@@ -383,8 +380,8 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 
     if(openDb(DatabaseManager::SystemScope)) {
         QStringList systemServiceNames;
-        systemServiceNames = m_systemDb->getServiceNames(interfaceName, &ok);
-        if(!ok) {
+        systemServiceNames = m_systemDb->getServiceNames(interfaceName);
+        if(m_systemDb->lastError().errorCode() != DBError::NoError) {
             serviceNames.clear();
             m_lastError = m_systemDb->lastError();
             return serviceNames;
