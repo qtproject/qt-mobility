@@ -35,6 +35,8 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
+#include "qmediaendpointinterface.h"
+
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
@@ -70,7 +72,8 @@ public:
     QObject *dataInput() const;
     virtual void setDataInput(QObject *input);
 
-    virtual QList<QByteArray> supportedEndpointInterfaces() const;
+    virtual QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
 
     virtual QObject *createEndpoint(const char *interface);
 

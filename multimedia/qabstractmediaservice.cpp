@@ -201,12 +201,16 @@ void QAbstractMediaService::setDataInput(QObject *input)
 }
 
 /*!
-    Returns a list of interfaces for media end point objects that can be created by a media service.
+    Returns a list of interfaces for \a direction media end point objects that can be created by a
+    media service.
 
     \sa createEndpoint()
 */
-QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces() const
+QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
+        QMediaEndpointInterface::Direction direction) const
 {
+    Q_UNUSED(direction);
+
     return QList<QByteArray>();
 }
 
