@@ -917,11 +917,11 @@ void tst_QServiceManager::addService()
     QByteArray xmlB = createServiceXml("ServiceB", createInterfaceXml(commonInterface), VALID_PLUGIN_FILES[1]);
 
     QTemporaryFile *tempFileA = new QTemporaryFile(this);
-    tempFileA->open();
+    QVERIFY2(tempFileA->open(), "Can't open temp file A");
     tempFileA->write(xmlA);
     tempFileA->seek(0);
     QTemporaryFile *tempFileB = new QTemporaryFile(this);
-    tempFileB->open();
+    QVERIFY2(tempFileB->open(), "Can't open temp file B");
     tempFileB->write(xmlB);
     tempFileB->seek(0);
 
@@ -1180,10 +1180,14 @@ void tst_QServiceManager::serviceAdded()
     QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
     QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
-    // try it again
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
     QTRY_COMPARE(spyRemove.count(), 1);
+
+#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
+    // try it again after deleting the database
+    deleteTestDatabasesAndWaitUntilDone();
+#endif
 
     spyAdd.clear();
     buffer.seek(0);
@@ -1249,7 +1253,11 @@ void tst_QServiceManager::serviceRemoved()
     QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
     QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
 
-    // try it again
+#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
+    // try it again after deleting the database
+    deleteTestDatabasesAndWaitUntilDone();
+#endif
+    
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));

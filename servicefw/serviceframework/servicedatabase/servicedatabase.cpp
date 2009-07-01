@@ -104,15 +104,12 @@ void DBError::setError(ErrorCode error, const QString &text)
         case(InvalidDatabaseConnection):
             m_text = "Invalid database connection";
             break;
-        case(CannotCloseDatabase):
-            m_text= "Cannot close database";
-            break;
         case(ExternalIfaceIDFound):
             m_text = "External InterfaceID found";
             break;
         case(SqlError):
         case(NotFound):
-        case(ComponentAlreadyRegistered):
+        case(LocationAlreadyRegistered):
         case(IfaceImplAlreadyRegistered):
         case(InvalidSearchCriteria):
         case(CannotCreateDbDir):
@@ -132,25 +129,25 @@ void DBError::setError(ErrorCode error, const QString &text)
     }
 }
 
-/*!
-    \class ServiceDatabase
-    Utility class (used by service resolver) that offers support for resolver database management. \n
-    A Sqlite database is used to store metadata for each registered service. \n
-    The supported operations are: 
-     - open/close database(create database tables)
-     - register service(populate database tables)
-     - query service metadata(retrieve data from database tables) 
+/*
+   \class ServiceDatabase
+   The ServiceDatabase is responsible for the management of a single
+   service database.  It provides operations for:
+   - opening and closing a connection with the database,
+   - registering and unregistering services
+   - querying for services and interfaces
+   - setting and getting default interface implementations.
 */
 
-/*!
+/*
     Constructor
 */
 ServiceDatabase::ServiceDatabase(void)
-:iDatabaseOpen(false)
+:m_isDatabaseOpen(false),m_inTransaction(false)
 {
 }
 
-/*!
+/*
     Destructor
 */
 ServiceDatabase::~ServiceDatabase()
@@ -158,25 +155,25 @@ ServiceDatabase::~ServiceDatabase()
     close();
 }
 
-/*!
-    Opens the service resolver database \n
-    The method creates or opens the resolver database and creates tables if they are not present
-    @return 0 if operation was successfull(database and tables are available), error code otherwise
+/*
+    Opens the service database
+    The method creates or opens database and creates tables if they are not present
+    Returns true if the operation was successful, false if not.
 */
 bool ServiceDatabase::open()
 {
-    if (iDatabaseOpen)
+    if (m_isDatabaseOpen)
         return true;
 
     QString path;
 
     //Create full path to database
-    if(iDatabasePath.isEmpty ())
-        iDatabasePath = databasePath();
+    if(m_databasePath.isEmpty ())
+        m_databasePath = databasePath();
 
-    path = iDatabasePath;
-   QFileInfo dbFileInfo(path);
-   if (!dbFileInfo.dir().exists()) {
+    path = m_databasePath;
+    QFileInfo dbFileInfo(path);
+    if (!dbFileInfo.dir().exists()) {
        if(!QDir::root().mkpath(dbFileInfo.path())) {
            QString errorText("Could not create database directory: %1");
            m_lastError.setError(DBError::CannotCreateDbDir, errorText.arg(dbFileInfo.path()));
@@ -187,10 +184,9 @@ bool ServiceDatabase::open()
            close();
            return false;
         }
-   }
+    }
 
-   m_connectionName = dbFileInfo.completeBaseName();
-    //Create and/or open database and create tables if neccessary
+    m_connectionName = dbFileInfo.completeBaseName();
     QSqlDatabase  database;
     if(QSqlDatabase::contains(m_connectionName)) {
         database = QSqlDatabase::database(m_connectionName);
@@ -205,7 +201,7 @@ bool ServiceDatabase::open()
         return false;
     }
 
-    //Create or open resolver database
+    //Create or open database
     if (!database.isOpen()) {
         if(!database.open()) {
             m_lastError.setError(DBError::SqlError, database.lastError().text());
@@ -218,7 +214,7 @@ bool ServiceDatabase::open()
             return false;
         }
     }
-    iDatabaseOpen = true;
+    m_isDatabaseOpen = true;
 
     //Check database structure (tables) and recreate tables if neccessary
     //If one of tables is missing remove all tables and recreate them
@@ -247,6 +243,19 @@ bool ServiceDatabase::open()
     return true;
 }
 
+/*
+   Adds a \a service into the database.
+
+   May set the following error codes
+   DBError::NoError
+   DBError::LocationAlreadyRegistered
+   DBError::IfaceImplAlreadyRegistered
+   DBError::SqlError
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
 bool ServiceDatabase::registerService(ServiceMetaData &service)
 {
     if(!checkConnection()) {
@@ -260,9 +269,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
-    //Begin Transaction
-    if (!database.transaction()) {
-        m_lastError.setSQLError(database.lastError().text());
+    if (!beginTransaction(&query, Write)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << "Unable to begin transaction"
@@ -270,12 +277,12 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 #endif
         return false;
     }
-
-    QString statement("SELECT Name from Service WHERE FilePath=? COLLATE NOCASE");
+    //See if the service's location has already been previously registered
+    QString statement("SELECT Name from Service WHERE Location=? COLLATE NOCASE");
     QList<QVariant> bindValues;
     bindValues.append(service.location());
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
@@ -285,16 +292,16 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
     if (query.next()) {
         QString alreadyRegisteredService = query.value(EBindIndex).toString();
-        const QString errorText = "Cannot register service \"%1\". Service component \"%2\" already "
+        const QString errorText = "Cannot register service \"%1\". Service location \"%2\" is already "
                     "registered to service \"%3\".  \"%3\" must first be deregistered "
                     "for new registration to take place.";
 
-        m_lastError.setError(DBError::ComponentAlreadyRegistered,
+        m_lastError.setError(DBError::LocationAlreadyRegistered,
                 errorText.arg(service.name())
                         .arg(service.location())
                         .arg(alreadyRegisteredService));
 
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -302,7 +309,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    statement = "INSERT INTO Service(ID,Name,FilePath) VALUES(?,?,?)";
+    statement = "INSERT INTO Service(ID,Name,Location) VALUES(?,?,?)";
     QString serviceID = QUuid::createUuid().toString();
 
     bindValues.clear();
@@ -311,7 +318,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     bindValues.append(service.location());
 
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
@@ -329,7 +336,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         bindValues.append(service.description());
 
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
@@ -339,11 +346,36 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
     QList <QServiceInterfaceDescriptor> interfaces = service.getInterfaces();
     QString interfaceID;;
-    bool ok = false;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
-        interfaceID = getInterfaceID(&query, interface, &ok);
-        if (!ok) {
-            databaseRollback(&query, &database);
+        interfaceID = getInterfaceID(&query, interface);
+        if (m_lastError.errorCode() == DBError::NoError) {
+            QString errorText;
+            errorText = "Cannot register service \"%1\". \"%1\" is already registered "
+                        "and implements interface \"%2\", Version \"%3.%4.\"  \"%1\" must "
+                        "first be deregistered for new registration to take place.";
+            m_lastError.setError(DBError::IfaceImplAlreadyRegistered,
+                                errorText.arg(interface.serviceName())
+                                            .arg(interface.interfaceName())
+                                            .arg(interface.majorVersion())
+                                            .arg(interface.minorVersion()));
+
+            rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+            qWarning() << "ServiceDatabase::registerService():-"
+                        << "Problem:" << qPrintable(m_lastError.text());
+#endif
+            return false;
+        } else if (m_lastError.errorCode() == DBError::NotFound){
+            //No interface implementation already exists for the service
+            //so add it
+            if(!insertInterfaceData(&query, interface, serviceID)) {
+                rollbackTransaction(&query);
+                return false;
+            } else {
+                continue;
+            }
+        } else {
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::registerService():-"
                         << "Unable to confirm if implementation version"
@@ -356,45 +388,20 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 #endif
             return false;
         }
-
-        if (!interfaceID.isEmpty()) {
-            QString errorText;
-            errorText = "Cannot register service \"%1\". \"%1\" is already registered "
-                        "and implements interface \"%2\", Version \"%3.%4.\"  \"%1\" must "
-                        "first be deregistered for new registration to take place.";
-            m_lastError.setError(DBError::IfaceImplAlreadyRegistered,
-                                errorText.arg(interface.serviceName())
-                                            .arg(interface.interfaceName())
-                                            .arg(interface.majorVersion())
-                                            .arg(interface.minorVersion()));
-
-            databaseRollback(&query, &database);
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-            qWarning() << "ServiceDatabase::registerService():-"
-                        << "Problem:" << qPrintable(m_lastError.text());
-#endif
-            return false;
-        } else {
-            //No interface implementation already exists for the service
-            //so add it
-            if(!insertInterfaceData(&query, interface, serviceID)) {
-                databaseRollback(&query, &database);
-                return false;
-            }
-        }
     }
+
     interfaces = service.latestInterfaces();
     QServiceInterfaceDescriptor defaultInterface;
     foreach(const QServiceInterfaceDescriptor &interface, interfaces) {
-        defaultInterface = defaultServiceInterface(interface.interfaceName());
+        defaultInterface = defaultServiceInterface(interface.interfaceName(), NULL, true);
         if (m_lastError.errorCode() == DBError::NoError
                 || m_lastError.errorCode() == DBError::ExternalIfaceIDFound) {
-            continue;
+            continue; //default already exists so don't do anything
         } else if (m_lastError.errorCode() == DBError::NotFound) {
             //default does not already exist so create one
-            interfaceID = getInterfaceID(&query, interface, &ok);
-            if (!ok) {
-                databaseRollback(&query, &database);
+            interfaceID = getInterfaceID(&query, interface);
+            if (m_lastError.errorCode() != DBError::NoError) {
+                rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::registerService():-"
                     << "Unable to retrieve interfaceID for "
@@ -409,7 +416,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
             bindValues.append(interface.interfaceName());
             bindValues.append(interfaceID);
             if (!executeQuery(&query, statement, bindValues)) {
-                databaseRollback(&query, &database);
+                rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
@@ -417,7 +424,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
                 return false;
             }
         } else {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::registerService()"
                         << "Problem: Unable to confirm if interface"
@@ -428,12 +435,24 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         }
     }
 
-    //End Transaction
-    databaseCommit(&query, &database);
+    if(!commitTransaction(&query)) {
+        rollbackTransaction(&query);
+        return false;
+    }
     m_lastError.setError(DBError::NoError);
     return true;
 }
 
+/*
+    Obtains an interface ID corresponding to a given interface \a descriptor
+
+    May set the following error codes:
+    DBError::NoError
+    DBError::NotFound
+    DBError::SqlError
+    DBError::DatabaseNotOpen
+    DBError::InvalidDatabaseConnection
+*/
 QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descriptor) {
     QString interfaceID;
     if (!checkConnection()) {
@@ -447,30 +466,22 @@ QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descr
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
-    bool ok;
-    interfaceID = getInterfaceID(&query, descriptor, &ok);
-    if (!ok)
-        interfaceID.clear();
-    if (interfaceID.isEmpty()) {
-        QString errorText("No Interface Descriptor found with "
-                            "\nService name: %1 "
-                            "\nInterface name: %2 "
-                            "\nVersion: %3.%4");
-        m_lastError.setError(DBError::NotFound, errorText.arg(descriptor.serviceName())
-                                                        .arg(descriptor.interfaceName())
-                                                        .arg(descriptor.majorVersion())
-                                                        .arg(descriptor.minorVersion()));
-    } else {
-        m_lastError.setError(DBError::NoError);
-    }
-    return interfaceID;
+    return getInterfaceID(&query, descriptor);
 }
 
 /*
-   This function should only ever be called on a user scope database
-   It returns a list of Interface IDs in the Defaults table
-   that do not refer any of the interface implementations
-   in this database.
+    This function should only ever be called on a user scope database
+    It returns a list of Interface IDs in the Defaults table
+    that refer to interface implementations in the system scope database
+
+    May set the last error to:
+    DBError::NoError
+    DBError::SqlError
+    DBError::DatabaseNotOpen
+    DBError::InvalidDatabaseConnection
+
+    Aside:  There is only one query which implicitly gets
+    wrapped in it's own transaction.
 */
 QStringList ServiceDatabase::externalDefaultInterfaceIDs()
 {
@@ -491,9 +502,8 @@ QStringList ServiceDatabase::externalDefaultInterfaceIDs()
     QString fromComponent = "FROM Defaults ";
     QString whereComponent = "WHERE InterfaceID NOT IN (SELECT Interface.ID FROM Interface) ";
 
-    QList<QVariant> bindValues;
-
-    if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
+    //Aside: this individual query is implicitly wrapped in a transaction
+    if (!executeQuery(&query, selectComponent + fromComponent + whereComponent)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getInterfaces():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -508,7 +518,19 @@ QStringList ServiceDatabase::externalDefaultInterfaceIDs()
     return interfaceIDs;
 }
 
-QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok)
+/*
+    Helper function that obtains an interfaceID for a given \a descriptor.
+
+    May set last error to one of the following error codes:
+    DBError::NoError
+    DBError::NotFound
+    DBError::SqlError
+
+    Aside: This function may be safely called standalone or within an explicit
+    transaction.  If called standalone, it's single query is implicitly
+    wrapped in it's own transaction.
+*/
+QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface)
 {
     QString statement = "SELECT Interface.ID "
                         "FROM Interface, Service "
@@ -523,26 +545,37 @@ QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfac
     bindValues.append(interface.minorVersion());
 
     if (!executeQuery(query, statement, bindValues)) {
-        if (ok != NULL)
-            *ok = false;
         return QString();
     }
+
     if (!query->next()) {
-        if (ok != NULL)
-            *ok = true;
+         QString errorText("No Interface Descriptor found with "
+                            "\nService name: %1 "
+                            "\nInterface name: %2 "
+                            "\nVersion: %3.%4");
+        m_lastError.setError(DBError::NotFound, errorText.arg(interface.serviceName())
+                                                        .arg(interface.interfaceName())
+                                                        .arg(interface.majorVersion())
+                                                        .arg(interface.minorVersion()));
         return QString();
     }
-    if (ok != NULL)
-        *ok = true;
+
+    m_lastError.setError(DBError::NoError);
     return query->value(EBindIndex).toString();
 }
 
 /*!
-    Helper method that saves interface related data in the Interface table
-    @param aQuery database query
-    @param anInterface interface metadata
-    @param aServiceID service identifier 
-    @return 0 if operation was successfull, error code otherwise
+    Helper functions that saves \a interface related data in the Interface table
+    The \a interface data is recorded as belonging to the service assocciated
+    with \a serviceID.
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+
+    Aside: It is already assumed that a write transaction has been started by the
+    time this function is called; and this function will not rollback/commit
+    the transaction.
 */
 bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfaceDescriptor &interface, const QString &serviceID)
 {
@@ -567,11 +600,11 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
 
     statement = "INSERT INTO InterfaceProperty(InterfaceID, Key, Value) VALUES(?,?,?)";
     QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant>::const_iterator iter = interface.d->properties.constBegin();
-    bool isValidProperty;
+    bool isValidInterfaceProperty;
     QString capabilities;
     QString interfaceDescription;
     while (iter != interface.d->properties.constEnd()) {
-        isValidProperty = true;
+        isValidInterfaceProperty = true;
 
         bindValues.clear();
         bindValues.append(interfaceID);
@@ -584,10 +617,10 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
                 bindValues.append(capabilities);
                 break;
             case(QServiceInterfaceDescriptor::Location):
-                isValidProperty = false;
+                isValidInterfaceProperty = false;
                 break;
             case(QServiceInterfaceDescriptor::ServiceDescription):
-                isValidProperty = false;
+                isValidInterfaceProperty = false;
                 break;
             case(QServiceInterfaceDescriptor::InterfaceDescription):
                 bindValues.append(INTERFACE_DESCRIPTION_KEY);
@@ -597,11 +630,11 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
                 bindValues.append(interfaceDescription);
                 break;
             default:
-                isValidProperty = false;
+                isValidInterfaceProperty = false;
                 break;
         }
 
-        if (isValidProperty) {
+        if (isValidInterfaceProperty) {
               if (!executeQuery(query, statement, bindValues)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                   qWarning() << "ServiceDatabase::insertInterfaceData():-"
@@ -630,10 +663,25 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         }
         ++customIter;
     }
-
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
+/*
+    Helper function that executes the sql query specified in \a statement.
+    It is assumed that the \a statement uses positional placeholders and
+    corresponding parameters are placed in the list of \a bindValues.
+
+    Aside: This function may be safely called standalone or within an explicit
+    transaction.  If called standalone, it's single query is implicitly
+    wrapped in it's own transaction.
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+    DBError::NoWritePermissions
+    DBError::InvalidDatabaseFile
+*/
 bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues)
 {
     Q_ASSERT(query != NULL);
@@ -688,12 +736,15 @@ bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, c
         }
 
         DBError::ErrorCode errorType;
-        if (query->lastError().number() == 8) //SQLITE_READONLY
+        int result = query->lastError().number();
+        if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
+            errorType = DBError::InvalidDatabaseFile;
+        else if ( result == 8) //SQLITE_READONLY
             errorType = DBError::NoWritePermissions;
-         else
+        else
             errorType = DBError::SqlError;
 
-         m_lastError.setError(errorType,
+        m_lastError.setError(errorType,
                  errorText.arg(statement)
                           .arg(query->lastError().text())
                           .arg(parameters));
@@ -701,15 +752,26 @@ bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, c
         query->clear();
         return false;
     }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
-QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QServiceFilter &filter, bool *ok)
+/*
+   Obtains a list of QServiceInterfaceDescriptors that match the constraints supplied
+   by \a filter.
+
+   May set last error to one of the following error codes:
+   DBError::NoError
+   DBError::SqlError
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
+QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QServiceFilter &filter)
 {
     QList<QServiceInterfaceDescriptor> interfaces;
     if (!checkConnection()) {
-        if (ok != NULL)
-            *ok =false;
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getInterfaces():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -720,18 +782,29 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
-    //Prepare search query, bind criteria values and execute search
+    //multiple read queries are performed so wrap them
+    //in a read only transaction
+    if (!beginTransaction(&query, Read)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getInterfaces():-"
+                    << "Unable to begin transaction:"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+#endif
+        return interfaces;
+    }
+
+    //Prepare search query, bind criteria values
     QString selectComponent = "SELECT Interface.Name, "
                                 "Service.Name, Interface.VerMaj, "
                                 "Interface.VerMin, "
-                                "Service.FilePath, "
+                                "Service.Location, "
                                 "Service.ID, "
                                 "Interface.ID ";
     QString fromComponent = "FROM Interface, Service ";
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
     QList<QVariant> bindValues;
 
-    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty() 
+    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()
                 && filter.customKeys().size() == 0) {
         //do nothing, (don't add any extra constraints to the query
     } else {
@@ -764,12 +837,11 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     }
 
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
-        if (ok != NULL)
-            *ok = false;
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getInterfaces():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
+        rollbackTransaction(&query);
         return interfaces;
     }
 
@@ -792,21 +864,19 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
 
         serviceID = query.value(EBindIndex5).toString();
         if (!populateServiceProperties(&interface, serviceID)) {
-            if (ok != NULL)
-                *ok = false;
             //populateServiceProperties should already give a warning message
             //and set the last error
             interfaces.clear();
+            rollbackTransaction(&query);
             return interfaces;
         }
 
         interfaceID = query.value(EBindIndex6).toString();
         if (!populateInterfaceProperties(&interface, interfaceID)) {
-            if (ok != NULL)
-                *ok = false;
             //populateInterfaceProperties should already give a warning message
             //and set the last error
             interfaces.clear();
+            rollbackTransaction(&query);
             return interfaces;
         }
 
@@ -823,7 +893,6 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
                         isMatch = false;
                         break;
                     }
-                        
                 }
                 if (isMatch)
                     interfaces.append(interface);
@@ -833,13 +902,24 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         }
     }
 
-    query.finish();
-    query.clear();
-    if (ok != NULL)
-        *ok = true;
+    rollbackTransaction(&query);//read-only operation so just rollback
+    m_lastError.setError(DBError::NoError);
     return interfaces;
 }
 
+/*
+   Obtains a QServiceInterfaceDescriptor that
+   corresponds to a given \a interfaceID
+
+   May set last error to one of the following error codes:
+   DBError::NoError
+   DBError::NotFound
+   DBError::SqlError
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
 QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfaceID)
 {
     QServiceInterfaceDescriptor interface;
@@ -854,10 +934,19 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
+    if (!beginTransaction(&query, Read)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getInterface():-"
+                    << "Unable to begin transaction"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+#endif
+        return interface;
+    }
+
     QString selectComponent = "SELECT Interface.Name, "
                                 "Service.Name, Interface.VerMaj, "
                                 "Interface.VerMin, "
-                                "Service.FilePath, "
+                                "Service.Location, "
                                 "Service.ID ";
     QString fromComponent = "FROM Interface, Service ";
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID "
@@ -866,6 +955,7 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     bindValues.append(interfaceID);
 
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getInterfaces():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -874,6 +964,7 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     }
 
     if (!query.next()) {
+        rollbackTransaction(&query);
         QString errorText("Interface implementation not found for Interface ID: %1");
         m_lastError.setError(DBError::NotFound, errorText.arg(interfaceID));
         return interface;
@@ -891,26 +982,43 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     if (!populateServiceProperties(&interface, serviceID)) {
         //populateServiceProperties should already give a warning message
         //and set the last error
+        rollbackTransaction(&query);
         return QServiceInterfaceDescriptor();
     }
 
     if (!populateInterfaceProperties(&interface, interfaceID)) {
         //populateInterfaceProperties should already give a warning message
         //and set the last error
+        rollbackTransaction(&query);
         return QServiceInterfaceDescriptor();
     }
 
+    rollbackTransaction(&query);//read only operation so just rollback
     m_lastError.setError(DBError::NoError);
     return interface;
 }
 
-QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool *ok)
+/*
+    Obtains a list of services names.  If \a interfaceName is empty,
+    then all service names are returned.  If \a interfaceName specifies
+    an interface then the names of all services implementing that interface
+    are returned
+
+    May set last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+    DBError::DatabaseNotOpen
+    DBError::InvalidDatabaseConnection
+    DBError::NoWritePermissions
+    DBError::InvalidDatabaseFile
+
+    Aside:  There is only one query which implicitly gets
+    wrapped in it's own transaction.
+*/
+QStringList ServiceDatabase::getServiceNames(const QString &interfaceName)
 {
     QStringList services;
     if (!checkConnection()) {
-        if (ok != NULL) {
-            *ok = false;
-        }
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getServiceNames():-"
                     << "Problem:" << qPrintable(m_lastError.text());
@@ -932,8 +1040,6 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool 
     }
 
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
-        if (ok != NULL)
-            *ok = false;
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::getServiceNames():-"
                     << qPrintable(m_lastError.text());
@@ -944,14 +1050,37 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName, bool 
     while( query.next()) {
         services.append(query.value(EBindIndex).toString());
     }
-    if (ok != NULL)
-        *ok = true;
     query.finish();
     query.clear();
+    m_lastError.setError(DBError::NoError);
     return services;
 }
 
-QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QString &interfaceName, QString *defaultInterfaceID)
+/*
+    Returns a descriptor for the default interface implementation of
+    \a interfaceName.
+
+    For user scope databases only, \a defaultInterfaceID is set if the default
+    in the user scope database refers to a interface implementation in the
+    system scope database.  In this case the descriptor will be invalid and
+    the \a defaultInterfaceID must be used to query the system scope database,
+    The last error set to DBError::ExternalIfaceIDFound
+
+    If this function is called within a transaction, \a inTransaction
+    must be set to true.  If \a inTransaction is false, this fuction
+    will begin and end its own transaction.
+
+    The last error may be set to one of the following error codes:
+    DBError::NoError
+    DBError::ExternalIfaceIDFound
+    DBError::SqlError
+    DBError::DatabaseNotOpen
+    DBError::InvalidDatabaseConnection
+    DBError::NoWritePermissions
+    DBError::InvalidDatabaseFile
+*/
+QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QString &interfaceName, QString *defaultInterfaceID,
+                                                                    bool inTransaction)
 {
     QServiceInterfaceDescriptor interface;
     if (!checkConnection())
@@ -965,10 +1094,22 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
 
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
+
+    if (!inTransaction && !beginTransaction(&query, Read)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::defaultServiceInterface(QString, QString):-"
+                    << "Unable to begin transaction"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+#endif
+        return interface;
+    }
+
     QString statement("SELECT InterfaceID FROM Defaults WHERE InterfaceName = ? COLLATE NOCASE");
     QList<QVariant> bindValues;
     bindValues.append(interfaceName);
     if(!executeQuery(&query, statement, bindValues)) {
+        if (!inTransaction)
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::defaultServiceInterface():-"
                     << qPrintable(m_lastError.text());
@@ -979,6 +1120,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     QString interfaceID;
     if (!query.next())
     {
+        if (!inTransaction)
+            rollbackTransaction(&query);
         QString errorText("No default service found for interface: \"%1\"");
         m_lastError.setError(DBError::NotFound, errorText.arg(interfaceName));
         return interface;
@@ -990,7 +1133,7 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     statement = "SELECT Interface.Name, "
                         "Service.Name, Interface.VerMaj, "
                         "Interface.VerMin, "
-                        "Service.FilePath, "
+                        "Service.Location, "
                         "Service.ID "
                     "FROM Service, Interface "
                     "WHERE Service.ID = Interface.ServiceID AND Interface.ID = ?";
@@ -998,6 +1141,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     bindValues.append(interfaceID);
     if(!executeQuery(&query, statement, bindValues))
     {
+        if (!inTransaction)
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::defaultServiceInterface():-"
                     << qPrintable(m_lastError.text());
@@ -1006,6 +1151,8 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     }
 
     if(!query.next()) {
+        if (!inTransaction)
+            rollbackTransaction(&query);
         if (defaultInterfaceID != NULL )
             *defaultInterfaceID = interfaceID;
         m_lastError.setError(DBError::ExternalIfaceIDFound);
@@ -1025,101 +1172,43 @@ QServiceInterfaceDescriptor ServiceDatabase::defaultServiceInterface(const QStri
     if (!populateServiceProperties(&interface, serviceID)) {
         //populateServiceProperties should already give a warning
         //and set the last error
+        if (!inTransaction)
+            rollbackTransaction(&query);
         return QServiceInterfaceDescriptor();
     }
 
     if (!populateInterfaceProperties(&interface, interfaceID)) {
         //populateInterfaceProperties should already give a warning
         //and set the last error
+        if (!inTransaction)
+            rollbackTransaction(&query);
         return QServiceInterfaceDescriptor();
     }
 
+    if (!inTransaction)
+        rollbackTransaction(&query); //Read only operation so just rollback
     m_lastError.setError(DBError::NoError);
     return interface;
 }
 
-bool ServiceDatabase::setDefaultService(const QString &serviceName, const QString &interfaceName)
-{
-    if(!checkConnection()) {
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::setDefaultService(QString,QString):-"
-                    << "Problem:" << qPrintable(m_lastError.text());
-#endif
-        return false;
-    }
+/*
+   Sets a particular service's \a interface implementation as a the default
+   implementation to look up when using the interface's name in
+   defaultServiceInterface().
 
-    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
-    QSqlQuery query(database);
+   For a user scope database an \a externalInterfaceID can be provided
+   so that the Defaults table will contain a "link" to an interface
+   implmentation provided in the system scope database.
 
-    //Begin Transaction
-    if (!database.transaction()) {
-        m_lastError.setSQLError(database.lastError().text());
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::setDefaultService(QString,Qtring):-"
-                    << "Problem: Unable to begin transaction"
-                    << "\nReason:" << qPrintable(m_lastError.text());
-#endif
-        return false;
-    }
-
-    //Get the interface id to be placed in the Defaults table
-    QString statement("SELECT Interface.ID from Interface, Service "
-                        "WHERE Service.ID = Interface.ServiceID "
-                            "AND Service.Name = ? COLLATE NOCASE "
-                            "AND Interface.Name = ? COLLATE NOCASE "
-                        "ORDER BY Interface.VerMaj DESC, Interface.VerMin DESC");
-    QList<QVariant> bindValues;
-    bindValues.append(serviceName);
-    bindValues.append(interfaceName);
-
-    if(!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::setDefaultService(QString,QString):-"
-                    << qPrintable(m_lastError.text());
-#endif
-        return false;
-    }
-
-    if (!query.next()) {
-        QString errorText;
-        errorText = "No implementation for interface \"%1\" found for service \"%2\"";
-        m_lastError.setNotFoundError(errorText.arg(interfaceName).arg(serviceName));
-
-        databaseRollback(&query, &database);
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::setDefaultService(QString,QString):-"
-                    << "Problem: Unable to set default service"
-                    << "\nReason:" << qPrintable(m_lastError.text());
-#endif
-        return false;
-    }
-
-    QString interfaceID = query.value(EBindIndex).toString();
-    Q_ASSERT(!interfaceID.isEmpty());
-
-    statement = "UPDATE Defaults "
-                "SET InterfaceID = ? "
-                "WHERE InterfaceName = ? COLLATE NOCASE";
-
-    bindValues.clear();
-    bindValues.append(interfaceID);
-    bindValues.append(interfaceName);
-    if(!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::setDefaultService(QString,QString):-"
-                    << qPrintable(m_lastError.text());
-#endif
-        return false;
-    }
-
-    //End Transaction
-    databaseCommit(&query, &database);
-    m_lastError.setError(DBError::NoError);
-    return true;
-}
-
+   May set the last error to one of the following error codes:
+   DBError::NoError
+   DBerror::NotFound
+   DBError::SqlError
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
 bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &interface, const QString &externalInterfaceID)
 {
     if(!checkConnection()) {
@@ -1134,8 +1223,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
     QSqlQuery query(database);
 
     //Begin Transaction
-    if(!database.transaction()) {
-        m_lastError.setSQLError(database.lastError().text());
+    if(!beginTransaction(&query, Write)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::setDefaultService(QServiceInterfaceDescriptor):-"
             << "Problem: Unable to begin transaction"
@@ -1160,7 +1248,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         bindValues.append(interface.minorVersion());
 
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::setDefaultService(QServiceInterfaceDescriptor):-"
                 << qPrintable(m_lastError.text());
@@ -1177,7 +1265,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
                     .arg(interface.minorVersion())
                     .arg(interface.serviceName()));
 
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatbase::setDefaultService(QServiceInterfaceDescriptor):-"
                 << "Problem: Unable to set default service"
@@ -1194,7 +1282,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
     bindValues.clear();
     bindValues.append(interface.interfaceName());
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::setDefaultService(QServiceInterfaceDescriptor):-"
                     << qPrintable(m_lastError.text());
@@ -1211,7 +1299,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         bindValues.append(interface.interfaceName());
 
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::setDefaultService(QServiceInterfaceDescriptor):-"
                 << qPrintable(m_lastError.text());
@@ -1225,7 +1313,7 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
         bindValues.append(interfaceID);
 
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::setDefaultService(QServiceInterfaceDescriptor):-"
                 << qPrintable(m_lastError.text());
@@ -1235,11 +1323,31 @@ bool ServiceDatabase::setDefaultService(const QServiceInterfaceDescriptor &inter
     }
 
     //End Transaction
-    databaseCommit(&query, &database);
+    if (!commitTransaction(&query)) {
+        rollbackTransaction(&query);
+        return false;
+    }
     m_lastError.setError(DBError::NoError);
     return true;
 }
 
+/*
+   Removes the service with name \a serviceName.
+   If the service provides a default interface implementation, then
+   another service implementing the highest interface implementation
+   version becomes the new default(if any).  If more than one service
+   provides same the highest version number, an arbitrary choice is made
+   between them.
+
+   May set the last error to the folowing error codes:
+   DBError::NoError
+   DBError::NotFound
+   DBError::SqlError
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
 bool ServiceDatabase::unregisterService(const QString &serviceName)
 {
     if (!checkConnection()) {
@@ -1253,9 +1361,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
-    //Begin Transaction
-    if(!database.transaction()) {
-        m_lastError.setSQLError(database.lastError().text());
+    if(!beginTransaction(&query, Write)) {
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << "Problem: Unable to begin transaction"
                     << "\nReason:" << qPrintable(m_lastError.text());
@@ -1266,7 +1372,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     QList<QVariant> bindValues;
     bindValues.append(serviceName);
     if(!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << qPrintable(m_lastError.text());
@@ -1285,7 +1391,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     bindValues.clear();
     bindValues.append(serviceName);
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << qPrintable(m_lastError.text());
@@ -1301,7 +1407,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     if (serviceIDs.count() == 0) {
         QString errorText("Service not found: \"%1\"");
         m_lastError.setError(DBError::NotFound, errorText.arg(serviceName));
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << "Problem: Unable to unregister service"
@@ -1318,7 +1424,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     bindValues.clear();
     bindValues.append(serviceName);
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase:unregisterService():-"
                     << qPrintable(m_lastError.text());
@@ -1335,7 +1441,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     bindValues.clear();
     bindValues.append(serviceName);
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << qPrintable(m_lastError.text());
@@ -1348,7 +1454,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         bindValues.clear();
         bindValues.append(serviceID);
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::unregisterService():-"
                         << qPrintable(m_lastError.text());
@@ -1362,7 +1468,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         bindValues.clear();
         bindValues.append(serviceID);
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
             qWarning() << "ServiceDatabase::unregisterService():-"
                         << qPrintable(m_lastError.text());
             return false;
@@ -1374,7 +1480,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         bindValues.clear();
         bindValues.append(interfaceID);
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::unregisterService():-"
                         << qPrintable(m_lastError.text());
@@ -1389,7 +1495,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         bindValues.clear();
         bindValues.append(interfaceName);
         if (!executeQuery(&query, statement, bindValues)) {
-            databaseRollback(&query, &database);
+            rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::unregisterService():-"
                         << qPrintable(m_lastError.text());
@@ -1404,7 +1510,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
             bindValues.append(newDefaultID);
             bindValues.append(interfaceName);
             if (!executeQuery(&query, statement, bindValues)) {
-                databaseRollback(&query, &database);
+                rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::unregisterService():-"
                             << qPrintable(m_lastError.text());
@@ -1416,7 +1522,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
             bindValues.clear();
             bindValues.append(interfaceName);
             if (!executeQuery(&query, statement, bindValues)) {
-                databaseRollback(&query, &database);
+                rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::unregisterService():-"
                             << qPrintable(m_lastError.text());
@@ -1427,28 +1533,30 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     }
 
     //databaseCommit
-    databaseCommit(&query, &database);
+    if (!commitTransaction(&query)) {
+        rollbackTransaction(&query);
+        return false;
+    }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
+/*
+    Closes the database
+
+    May set the following error codes:
+    DBError::NoError
+    DBError::InvalidDatabaseConnection
+*/
 bool ServiceDatabase::close()
 {
-    if(iDatabaseOpen) {
+    if(m_isDatabaseOpen) {
         QSqlDatabase database = QSqlDatabase::database(m_connectionName);
         if (database.isValid()){
             if(database.isOpen()) {
                 database.close();
-                iDatabaseOpen = database.isOpen();
-                if (iDatabaseOpen) {
-                    m_lastError.setError(DBError::CannotCloseDatabase);
-#ifdef QT_SFW_SERVICEDATABASE_DEBUG
-                    qWarning() << "ServiceDatabase::close():-"
-                                << "Problem:" << qPrintable(m_lastError.text());
-#endif
-                    return false;
-                } else {
-                    return true;
-                }
+                m_isDatabaseOpen = false;
+                return true;
             }
         } else {
             m_lastError.setError(DBError::InvalidDatabaseConnection);
@@ -1459,26 +1567,25 @@ bool ServiceDatabase::close()
             return false;
         }
     }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
-/*!
-    Sets the path of the service database
-    @return void
+/*
+    Sets the path of the service database to \a databasePath
 */
-void ServiceDatabase::setDatabasePath(const QString &aDatabasePath)
+void ServiceDatabase::setDatabasePath(const QString &databasePath)
 {
-    iDatabasePath = QDir::toNativeSeparators(aDatabasePath); 
+    m_databasePath = QDir::toNativeSeparators(databasePath);
 }
 
-/*!
-    returns the path of the service database
-    @return QString
+/*
+    Returns the path of the service database
 */
 QString ServiceDatabase::databasePath() const
 {
     QString path;
-    if(iDatabasePath.isEmpty()) {
+    if(m_databasePath.isEmpty()) {
         QSettings settings(QSettings::SystemScope, "Nokia", "Services");
         path = settings.value("ServicesDB/Path").toString();
         if (path.isEmpty()) {
@@ -1490,15 +1597,21 @@ QString ServiceDatabase::databasePath() const
         }
         path = QDir::toNativeSeparators(path);
     } else {
-        path = iDatabasePath;
+        path = m_databasePath;
     }
 
     return path;
 }
 
 /*!
-    Creates the database tables: Service, Interface, Defaults, Properties
-    Sets the last error when error condition occurs.
+    Helper method that creates the database tables: Service, Interface,
+    Defaults, ServiceProperty and InterfaceProperty
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+    DBError::NoWritePermissions
+    DBError::InvalidDatabaseFile
 */
 bool ServiceDatabase::createTables()
 {
@@ -1506,8 +1619,7 @@ bool ServiceDatabase::createTables()
     QSqlQuery query(database);
 
     //Begin Transaction
-    if (!database.transaction()) {
-        m_lastError.setError(DBError::SqlError, database.lastError().text());
+    if (!beginTransaction(&query, Write)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << "Unable to begin transaction"
@@ -1519,9 +1631,9 @@ bool ServiceDatabase::createTables()
     QString statement("CREATE TABLE Service("
                         "ID TEXT NOT NULL PRIMARY KEY UNIQUE,"
                         "Name TEXT NOT NULL, "
-                        "FilePath TEXT NOT NULL)");
+                        "Location TEXT NOT NULL)");
     if (!executeQuery(&query, statement)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1536,7 +1648,7 @@ bool ServiceDatabase::createTables()
                 "VerMaj INTEGER NOT NULL, "
                 "VerMin INTEGER NOT NULL)";
     if (!executeQuery(&query, statement)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1548,6 +1660,7 @@ bool ServiceDatabase::createTables()
                 "InterfaceName TEXT PRIMARY KEY UNIQUE NOT NULL,"
                 "InterfaceID TEXT NOT NULL)";
     if (!executeQuery(&query, statement)) {
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1560,8 +1673,11 @@ bool ServiceDatabase::createTables()
                 "Key TEXT NOT NULL,"
                 "Value TEXT NOT NULL)";
     if (!executeQuery(&query, statement)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
+#endif
         return false;
     }
 
@@ -1571,6 +1687,7 @@ bool ServiceDatabase::createTables()
                 "Value TEXT NOT NULL)";
 
     if (!executeQuery(&query, statement)) {
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::createTables():-"
                     << qPrintable(m_lastError.text());
@@ -1578,14 +1695,17 @@ bool ServiceDatabase::createTables()
         return false;
     }
 
-    //End Transaction
-    databaseCommit(&query, &database);
+    if(!commitTransaction(&query)) {
+        rollbackTransaction(&query);
+        return false;
+    }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
 /*!
-    Checks if the service related tables exist in the database
-    @return true if tables are present, false otherwise
+    Helper method that checks if the all expected tables exist in the database
+    Returns true if they all exist and false if any of them don't
 */
 bool ServiceDatabase::checkTables()
 {
@@ -1604,7 +1724,16 @@ bool ServiceDatabase::checkTables()
 /*
    This function should only ever be used on a user scope database
    It removes an entry from the Defaults table where the default
-   refers to an interface implementation in the system scope database
+   refers to an interface implementation in the system scope database.
+   The particular default that is removed is specified by
+   \a interfaceID.
+
+   May set the last error to one of the following error codes:
+   DBError::NoError
+   DBError::IfaceIDNotExternal
+   DBError::SqlError
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
 */
 bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &interfaceID)
 {
@@ -1612,11 +1741,9 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
     QSqlQuery query(database);
 
     //begin transaction
-    if (!database.transaction()) {
-        m_lastError.setSQLError(database.lastError().text());
-
+    if (!beginTransaction(&query, Write)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::removeDefaultServiceInterface():-"
+        qWarning() << "ServiceDatabase::removeExternalDefaultServiceInterface():-"
                     << "Problem: Unable to begin transaction"
                     << "\nReason:" << qPrintable(m_lastError.text());
 #endif
@@ -1627,7 +1754,7 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
     QList<QVariant> bindValues;
     bindValues.append(interfaceID);
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::removeDefaultServiceInterface():-"
                     << qPrintable(m_lastError.text());
@@ -1640,7 +1767,7 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
                            "with interfaceID: \"%2\"");
         m_lastError.setError(DBError::IfaceIDNotExternal,
                 errorText.arg(interfaceName).arg(interfaceID));
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
         return false;
     }
 
@@ -1648,7 +1775,7 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
     bindValues.clear();
     bindValues.append(interfaceID);
     if (!executeQuery(&query, statement, bindValues)) {
-        databaseRollback(&query, &database);
+        rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::removeDefaultServiceInterface():-"
                     << qPrintable(m_lastError.text());
@@ -1657,19 +1784,30 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
     }
 
     //end transaction
-    databaseCommit(&query, &database);
+    if (!commitTransaction(&query)){
+        rollbackTransaction(&query);
+        return false;
+    }
     m_lastError.setError(DBError::NoError);
     return true;
 }
 
 /*!
-    Removes service related tables from database
-    @return 0 if was sucessful, error code otherwise
+    Removes all tables from the database
+
+    In future this function may be deprecated or removed.
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+    DBError::NoWritePermissions
+    DBError::InvalidDatabaseFile
 */
 bool ServiceDatabase::dropTables()
 {
     //Execute transaction for deleting the database tables
-    QSqlDatabase database = QSqlDatabase::database();
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+    QSqlQuery query(database);
     QStringList expectedTables;
     expectedTables << SERVICE_TABLE
                 << INTERFACE_TABLE
@@ -1678,8 +1816,7 @@ bool ServiceDatabase::dropTables()
                 << INTERFACE_PROPERTY_TABLE;
 
     if (database.tables().count() > 0) {
-        if (!database.transaction()) {
-            m_lastError.setError(DBError::SqlError, database.lastError().text());
+        if (!beginTransaction(&query, Write)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::dropTables():-"
                         << "Unable to begin transaction"
@@ -1688,13 +1825,11 @@ bool ServiceDatabase::dropTables()
             return false;
         }
         QStringList actualTables = database.tables();
-        QSqlQuery query(database);
-
 
         foreach(QString expectedTable, expectedTables) {
             if ((actualTables.contains(expectedTable))
                 && (!executeQuery(&query, QString("DROP TABLE ") + expectedTable))) {
-                databaseRollback(&query, &database);
+                rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::dropTables():-"
                            << qPrintable(m_lastError.text());
@@ -1702,23 +1837,33 @@ bool ServiceDatabase::dropTables()
                 return false;
             }
         }
-        databaseCommit(&query, &database);
+        if (!commitTransaction(&query)) {
+            rollbackTransaction(&query);
+            return false;
+        }
     }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
-/*!
-    Checks if the resolver database is open
-    @return true if database is open, false otherwise
+/*
+    Checks if the database is open
 */
 bool ServiceDatabase::isOpen() const
 {
-  return iDatabaseOpen;
+  return m_isDatabaseOpen;
 }
 
+/*
+   Checks the database connection.
+
+   May set the last error to one of the following error codes:
+   DBError::DatabaseNotOpen
+   DBError::InvalidDatabaseConnection
+*/
 bool ServiceDatabase::checkConnection()
 {
-    if(!iDatabaseOpen)
+    if(!m_isDatabaseOpen)
     {
         m_lastError.setError(DBError::DatabaseNotOpen);
         return false;
@@ -1733,24 +1878,97 @@ bool ServiceDatabase::checkConnection()
     return true;
 }
 
-void ServiceDatabase::databaseCommit(QSqlQuery *query, QSqlDatabase *database)
+/*
+   Begins a transcaction based on the \a type which can be Read or Write.
+
+   May set the last error to one of the following error codes:
+   DBError::NoError
+   DBError::SqlError
+   DBError::NoWritePermissions
+   DBError::InvalidDatabaseFile
+*/
+bool ServiceDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
+{
+    if (type == Read) {
+         if (!query->exec(QLatin1String("BEGIN"))) {
+             int result = query->lastError().number();
+             if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
+                 m_lastError.setError(DBError::InvalidDatabaseFile, query->lastError().text());
+             else
+                 m_lastError.setError(DBError::SqlError, query->lastError().text());
+             return false;
+         }
+         m_lastError.setError(DBError::NoError);
+         return true;
+    } else { //type == Write
+        if (!query->exec(QLatin1String("BEGIN IMMEDIATE"))) {
+            int result = query->lastError().number();
+            if (result == 26 || result == 11)//SQLITE_NOTADB || SQLITE_CORRUPT
+                m_lastError.setError(DBError::InvalidDatabaseFile, query->lastError().text());
+            else if (result == 8) //SQLITE_READONLY
+                m_lastError.setError(DBError::NoWritePermissions, query->lastError().text());
+            else
+                m_lastError.setError(DBError::SqlError, query->lastError().text());
+            return false;
+        }
+        m_lastError.setError(DBError::NoError);
+        return true;
+    }
+}
+
+/*
+    Commits a transaction
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+*/
+bool ServiceDatabase::commitTransaction(QSqlQuery *query)
 {
     Q_ASSERT(query != NULL);
-    Q_ASSERT(database != NULL);
     query->finish();
     query->clear();
-    database->commit();
+    if (!query->exec(QLatin1String("COMMIT"))) {
+        m_lastError.setError(DBError::SqlError, query->lastError().text());
+        return false;
+    }
+    m_lastError.setError(DBError::NoError);
+    return true;
 }
 
-void ServiceDatabase::databaseRollback(QSqlQuery *query, QSqlDatabase *database)
+/*
+    Rolls back a transaction
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+*/
+bool ServiceDatabase::rollbackTransaction(QSqlQuery *query)
 {
     Q_ASSERT(query !=NULL);
-    Q_ASSERT(database != NULL);
     query->finish();
     query->clear();
-    database->rollback();
+
+    if (!query->exec(QLatin1String("ROLLBACK"))) {
+        m_lastError.setError(DBError::SqlError, query->lastError().text());
+        return false;
+    }
+    return true;
 }
 
+/*
+    Helper function that populates a service \a interface descriptor
+    with interface related properties corresponding to the interface
+    represented by \a interfaceID
+
+    It is already assumed that a transaction has been started by the time
+    this function is called.  This function will not rollback/commit the
+    transaction.
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+*/
 bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *interface, const QString &interfaceID)
 {
     QSqlQuery query(QSqlDatabase::database(m_connectionName));
@@ -1797,10 +2015,23 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
 #endif
         return false;
     }
-
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
+/*
+    Helper function that populates a service \a interface descriptor
+    with service related properties corresponding to the service
+    represented by \a serviceID
+
+    It is already assumed that a transaction has been started by the time
+    this function is called.  This function will not rollback/commit the
+    transaction.
+
+    May set the last error to one of the following error codes:
+    DBError::NoError
+    DBError::SqlError
+*/
 bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *interface, const QString &serviceID)
 {
     QSqlQuery query(QSqlDatabase::database(m_connectionName));
@@ -1835,6 +2066,7 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
 #endif
         return false;
     }
+    m_lastError.setError(DBError::NoError);
     return true;
 }
 
