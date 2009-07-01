@@ -16,9 +16,15 @@ DEPENDPATH += .
 HEADERS +=  qlocationglobal.h \
             qcoordinate.h \
             qpositionupdate.h \
-            qsatelliteinfo.h
+            qsatelliteinfo.h \
+            qsatelliteinfosource.h \
+            qpositionsource.h \
+            qpositionareamonitor.h
 
 SOURCES +=  qcoordinate.cpp \
             qpositionupdate.cpp \
-            qsatelliteinfo.cpp
+            qsatelliteinfo.cpp \
+            qsatelliteinfosource.cpp \
+            qpositionsource.cpp \
+            qpositionareamonitor.cpp
 

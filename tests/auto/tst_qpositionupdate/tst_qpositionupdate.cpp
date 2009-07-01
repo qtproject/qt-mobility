@@ -61,7 +61,7 @@ private:
         return u;
     }
 
-    void addtestdata_update()
+    void addTestData_update()
     {
         QTest::addColumn<QPositionUpdate>("u");
 
@@ -118,7 +118,7 @@ private slots:
 
     void constructor_copy_data()
     {
-        addtestdata_update();
+        addTestData_update();
     }
 
     void operator_comparison()
@@ -135,7 +135,7 @@ private slots:
 
     void operator_comparison_data()
     {
-        addtestdata_update();
+        addTestData_update();
     }
 
     void setUpdateTime()
@@ -236,7 +236,7 @@ private slots:
 
     void datastream_data()
     {
-        addtestdata_update();
+        addTestData_update();
     }
 };
 

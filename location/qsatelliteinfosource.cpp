@@ -1,0 +1,136 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+#include "qsatelliteinfosource.h"
+
+
+/*!
+    \class QSatelliteInfoSource
+    \brief The QSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
+
+    The static function QSatelliteInfoSource::createSource() creates a default
+    satellite data source that is appropriate for the platform, if one is 
+    available. Otherwise, QSatelliteInfoSource can be subclassed to create an 
+    appropriate custom source of satellite data.
+
+    Call startUpdates() and stopUpdates() to start and stop regular updates,
+    or requestUpdate() to request a single update.
+    When an update is available, satellitesInViewUpdated() and/or
+    satellitesInUseUpdated() will be emitted.
+*/
+
+/*!
+    Creates a source with the specified \a parent.
+*/
+QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent)
+    : QObject(parent)
+{
+}
+
+/*!
+    Creates and returns a source that reads from the system's default
+    source of satellite update information.
+
+    Returns 0 if the system has no default source.
+*/
+QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject *)
+{
+    return 0;
+}
+
+/*!
+    \fn void QSatelliteInfoSource::satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
+
+    If startUpdates() or requestUpdate() is called, this signal is emitted
+    when an update is available on the satellites that are
+    currently in view.
+
+    The \a satellites parameter holds the satellites currently in view.
+*/
+
+/*!
+    \fn void QSatelliteInfoSource::satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
+
+    If startUpdates() or requestUpdate() is called, this signal is emitted
+    when an update is available on the number of satellites that are
+    currently in use.
+
+    These are the satellites that are used to get a "fix" - that
+    is, those used to determine the current position.
+
+    The \a satellites parameter holds the satellites currently in use.
+*/
+
+/*!
+    \fn virtual void QSatelliteInfoSource::startUpdates() = 0;
+
+    Starts emitting updates at regular intervals. The updates will be 
+    provided whenever new satellite information becomes available.
+
+    \sa satellitesInViewUpdated(), satellitesInUseUpdated()
+*/
+
+/*!
+    \fn virtual void QSatelliteInfoSource::stopUpdates() = 0;
+
+    Stops emitting updates at regular intervals.
+*/
+
+/*!
+    \fn virtual void QSatelliteInfoSource::requestUpdate(int timeout = 5000);
+
+    Attempts to get the current satellite information and emit
+    satellitesInViewUpdated() and satellitesInUseUpdated() with this
+    information. This is useful if you do not need the regular updates
+    provided by startUpdates(). If the current position cannot be found
+    within the given \a timeout (in milliseconds), requestTimeout() is
+    emitted.
+
+    This does nothing if another update request is in progress. However
+    it can be called even if startUpdates() has already been called and
+    regular updates are in progress.
+*/
+
+/*!
+    \fn void QSatelliteInfoSource::requestTimeout();
+
+    Emitted if requestUpdate() was called and the current satellite
+    information could not be retrieved within the specified timeout.
+*/
