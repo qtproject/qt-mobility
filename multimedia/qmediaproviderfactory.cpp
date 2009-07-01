@@ -39,6 +39,7 @@
 #include "qmediaserviceprovider.h"
 
 #include <private/qfactoryloader_p.h>
+#include <QDebug>
 
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))
@@ -46,6 +47,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 
 QMediaServiceProvider* QMediaProviderFactory::defaultServiceProvider(QString const &key)
 {
-    return qobject_cast<QMediaServiceProvider*>(loader()->instance(key));
+    QMediaServiceProviderPlugin *plugin = qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
+    //qDebug() << "plugin" << plugin << "of" << key;
+    return plugin->create(key);
 }
 
