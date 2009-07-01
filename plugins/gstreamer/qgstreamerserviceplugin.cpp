@@ -32,41 +32,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERPLAYERSERVICE_H
-#define QGSTREAMERPLAYERSERVICE_H
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#include <QtCore/qobject.h>
+#include "qgstreamerserviceplugin.h"
+#include "qgstreamerplayerservice.h"
 
-#include "qmediaplayerservice.h"
+#include <qmediaserviceprovider.h>
 
 
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-
-class QGstreamerMetaData;
-class QGstreamerPlayerControl;
-class QGstreamerPlayerSession;
-
-class QMediaPlaylistNavigator;
-
-class QGstreamerPlayerService : public QMediaPlayerService
+class QGstreamerProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    QGstreamerPlayerService(QObject *parent = 0);
-    ~QGstreamerPlayerService();
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+            return new QGstreamerPlayerService;
 
-    void setVideoOutput(QObject *output);
-
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *interface);
-
-    QAbstractMediaControl *control(const char *name) const;
-private:
-    QGstreamerPlayerControl *m_control;
+        return 0;
+    }
 };
 
-#endif
+QStringList QGstreamerServicePlugin::keys() const
+{
+    return QStringList() << "mediaplayer";
+}
+
+QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
+{
+    qDebug() << "create" << key;
+
+    if (key == "mediaplayer")
+        return new QGstreamerProvider;
+
+    qDebug() << "unsupported key:" << key;
+
+    return 0;
+}
+
+#include "qgstreamerserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
+

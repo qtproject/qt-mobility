@@ -32,41 +32,18 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERPLAYERSERVICE_H
-#define QGSTREAMERPLAYERSERVICE_H
 
-#include <QtCore/qobject.h>
+#ifndef QGSTREAMERSERVICEPLUGIN_H
+#define QGSTREAMERSERVICEPLUGIN_H
 
-#include "qmediaplayerservice.h"
+#include <qmediaserviceproviderplugin.h>
 
-
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-
-class QGstreamerMetaData;
-class QGstreamerPlayerControl;
-class QGstreamerPlayerSession;
-
-class QMediaPlaylistNavigator;
-
-class QGstreamerPlayerService : public QMediaPlayerService
+class QGstreamerServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
-    QGstreamerPlayerService(QObject *parent = 0);
-    ~QGstreamerPlayerService();
-
-    void setVideoOutput(QObject *output);
-
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *interface);
-
-    QAbstractMediaControl *control(const char *name) const;
-private:
-    QGstreamerPlayerControl *m_control;
+    QStringList keys() const;
+    QMediaServiceProvider* create(QString const& key);
 };
 
-#endif
+#endif // QGSTREAMERSERVICEPLUGIN_H
