@@ -137,7 +137,7 @@ public:
             case DBError::CannotOpenUserDb:
                 error = QServiceManager::StorageAccessError;
                 break;
-            case DBError::ComponentAlreadyRegistered:
+            case DBError::LocationAlreadyRegistered:
                 error = QServiceManager::ServiceAlreadyExists;
                 break;
             case DBError::IfaceImplAlreadyRegistered:
@@ -148,7 +148,6 @@ public:
                 break;
             case DBError::SqlError:
             case DBError::InvalidSearchCriteria:
-            case DBError::CannotCloseDatabase:
             case DBError::InvalidDescriptorScope:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;

@@ -60,13 +60,12 @@ class DBError
             NoError,
             DatabaseNotOpen = -2000,
             InvalidDatabaseConnection,
-            ComponentAlreadyRegistered,
+            LocationAlreadyRegistered,
             IfaceImplAlreadyRegistered,
             NotFound,
             SqlError,
             InvalidSearchCriteria,
             IfaceIDNotExternal,
-            CannotCloseDatabase,
             CannotCreateDbDir,
             CannotOpenSystemDb,
             CannotOpenUserDb,
@@ -108,20 +107,19 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         bool close();
 
         bool isOpen() const;
-        void setDatabasePath(const QString &aDatabasePath);
+        void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
         bool registerService(ServiceMetaData &service);
         bool unregisterService(const QString &serviceName);
 
-        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
+        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);
         QServiceInterfaceDescriptor getInterface(const QString &interfaceID);
         QString getInterfaceID(const QServiceInterfaceDescriptor &interface);
-        QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
+        QStringList getServiceNames(const QString &interfaceName);
 
         QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName,
-                                                            QString *interfaceID = 0);
-        bool setDefaultService(const QString &serviceName, const QString &interfaceName);
+                                    QString *interfaceID = 0, bool inTransaction = false);
         bool setDefaultService(const QServiceInterfaceDescriptor &interface,
                                 const QString &externalInterfaceID = QString());
         QStringList externalDefaultInterfaceIDs();
@@ -134,6 +132,8 @@ Q_SIGNALS:
         void serviceRemoved(const QString& serviceName);
 
     private:
+        enum TransactionType{Read, Write};
+
         bool createTables();
         bool dropTables();
         bool checkTables();
@@ -141,18 +141,20 @@ Q_SIGNALS:
         bool checkConnection();
 
         bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
-        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
+        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface);
         bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
 
-        void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
-        void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
+        bool beginTransaction(QSqlQuery *query, TransactionType);
+        bool commitTransaction(QSqlQuery *query);
+        bool rollbackTransaction(QSqlQuery *query);
 
         bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
         bool populateServiceProperties(QServiceInterfaceDescriptor *descriptor, const QString &serviceID);
 
-        QString iDatabasePath;
+        QString m_databasePath;
         QString m_connectionName;
-        bool iDatabaseOpen;
+        bool m_isDatabaseOpen;
+        bool m_inTransaction;
         DBError m_lastError;
 };
 
