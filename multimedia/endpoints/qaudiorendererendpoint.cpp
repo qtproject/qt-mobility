@@ -36,30 +36,6 @@
 
 #include <private/qobject_p.h>
 
-/*!
-    \class QAudioRendererEndpointInterface
-    \preliminary
-    \internal
-    \brief The QAudioRendererEndpointInterface class provides an interface for audio renderer
-    media end points.
-
-    \sa QAudioRendererEndpoint
-*/
-
-/*!
-*/
-QAudioRendererEndpointInterface::~QAudioRendererEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QAudioRendererEndpointInterface::direction() const
-{
-    return Output;
-}
-
 class QAudioRendererEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -97,6 +73,14 @@ QAudioRendererEndpoint::QAudioRendererEndpoint(QObject *parent)
 */
 QAudioRendererEndpoint::~QAudioRendererEndpoint()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QAudioRendererEndpoint::direction() const
+{
+    return Output;
 }
 
 /*!

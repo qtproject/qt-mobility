@@ -37,21 +37,9 @@
 
 #include "qmediaendpointinterface.h"
 
-class Q_MEDIA_EXPORT QAudioDeviceEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QAudioDeviceEndpointInterface();
-
-    Direction direction() const;
-};
-
-#define QAudioDeviceEndpointInterface_iid "com.nokia.Qt.QAudioDeviceEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QAudioDeviceEndpointInterface, QAudioDeviceEndpointInterface_iid)
-
 class QAudioDeviceEndpointPrivate;
 
-class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QAudioDeviceEndpointInterface
+class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QMediaEndpointInterface
 {
     Q_OBJECT
     Q_PROPERTY(DeviceDirection directionFilter READ directionFilter WRITE setDirectionFilter)
@@ -60,7 +48,7 @@ class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QAudioDeviceE
     Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)
     Q_ENUMS(DeviceDirection Role FormFactor)
     Q_FLAGS(Roles FormFactors)
-    Q_INTERFACES(QAudioDeviceEndpointInterface)
+    Q_INTERFACES(QMediaEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioDeviceEndpoint)
 public:
     enum DeviceDirection
@@ -102,6 +90,8 @@ public:
     QAudioDeviceEndpoint(QObject *parent = 0);
     ~QAudioDeviceEndpoint();
 
+    Direction direction() const;
+
     DeviceDirection directionFilter() const;
     virtual void setDirectionFilter(DeviceDirection direction);
 
@@ -131,5 +121,9 @@ Q_SIGNALS:
     void devicesRemoved(int index, int count);
     void devicesChanged(int index, int count);
 };
+
+#define QAudioDeviceEndpoint_iid "com.nokia.Qt.QAudioDeviceEndpoint/1.0"
+
+Q_MEDIA_DECLARE_ENDPOINT(QAudioDeviceEndpoint, QAudioDeviceEndpoint_iid)
 
 #endif

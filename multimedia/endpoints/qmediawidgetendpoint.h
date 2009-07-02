@@ -39,29 +39,19 @@
 
 #include <QtGui/qwidget.h>
 
-class Q_MEDIA_EXPORT QMediaWidgetEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QMediaWidgetEndpointInterface();
-
-    Direction direction() const;
-};
-
-#define QMediaWidgetEndpointInterface_iid "com.nokia.Qt.QMediaWidgetEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QMediaWidgetEndpointInterface, QMediaWidgetEndpointInterface_iid)
-
 class QMediaWidgetEndpointPrivate;
 
-class Q_MEDIA_EXPORT QMediaWidgetEndpoint : public QWidget, public QMediaWidgetEndpointInterface
+class Q_MEDIA_EXPORT QMediaWidgetEndpoint : public QWidget, public QMediaEndpointInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaWidgetEndpointInterface)
+    Q_INTERFACES(QMediaEndpointInterface)
     Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
     Q_DECLARE_PRIVATE(QMediaWidgetEndpoint)
 public:
     QMediaWidgetEndpoint(QWidget *parent = 0);
     ~QMediaWidgetEndpoint();
+
+    Direction direction() const;
 
     bool isFullscreen() const;
 
@@ -71,5 +61,9 @@ public Q_SLOTS:
 protected:
     QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWidget *parent);
 };
+
+#define QMediaWidgetEndpoint_iid "com.nokia.Qt.QMediaWidgetEndpoint/1.0"
+
+Q_MEDIA_DECLARE_ENDPOINT(QMediaWidgetEndpoint, QMediaWidgetEndpoint_iid)
 
 #endif
