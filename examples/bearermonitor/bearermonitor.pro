@@ -21,3 +21,6 @@ win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2
 
 CONFIG += console
+
+include(../examples.pri)
+

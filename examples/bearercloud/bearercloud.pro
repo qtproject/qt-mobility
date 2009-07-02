@@ -18,3 +18,6 @@ include(../../common.pri)
 LIBS += -lbearer
 
 CONFIG += console
+
+include(../examples.pri)
+
