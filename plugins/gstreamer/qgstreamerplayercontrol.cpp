@@ -67,16 +67,16 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerService *servic
             this, SIGNAL(positionChanged(qint64)));
     connect(m_session, SIGNAL(durationChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(mutedStateChanged(bool)),
-            this, SIGNAL(mutedStateChanged(bool)));
-    connect(m_session, SIGNAL(volumeChaned(int)),
-            this, SIGNAL(volumeChaned(int)));
-    connect(m_session, SIGNAL(stateChanged(QMediaPlayerControl::State)),
-            this, SIGNAL(stateChanged(QMediaPlayerControl::State)));
+    connect(m_session, SIGNAL(mutedStateChaned(bool)),
+            this, SIGNAL(mutingChanged(bool)));
+    connect(m_session, SIGNAL(volumeChanged(int)),
+            this, SIGNAL(volumeChanged(int)));
+    connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SLOT(updateState(QMediaPlayer::State)));
     connect(m_session,SIGNAL(bufferingChanged(bool)),
             this, SIGNAL(bufferingChanged(bool)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
-            this, SIGNAL(bufferingProgressChanged(int)));
+            this, SIGNAL(bufferStatusChanged(int)));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -215,4 +215,9 @@ void QGstreamerPlayerControl::setVideoOutput(QObject *output)
 bool QGstreamerPlayerControl::isVideoAvailable() const
 {
     return m_session->isVideoAvailable();
+}
+
+void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
+{
+    emit stateChanged(int(state));
 }
