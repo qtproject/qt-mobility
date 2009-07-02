@@ -12,11 +12,13 @@ HEADERS = \
     mpdplayercontrol.h \
     mpdplayerservice.h \
     mpdserviceplugin.h \
-    mpdplaylistsource.h
+    mpdplaylistsource.h \
+    mpdmetadata.h
 
 SOURCES = \
     mpddaemon.cpp \
     mpdplayercontrol.cpp \
     mpdplayerservice.cpp \
     mpdserviceplugin.cpp \
-    mpdplaylistsource.cpp
+    mpdplaylistsource.cpp \
+    mpdmetadata.cpp

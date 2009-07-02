@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include "mpddaemon.h"
+#include "mpdmetadata.h"
 #include "mpdplayercontrol.h"
 #include "mpdplayerservice.h"
 
@@ -45,16 +46,21 @@ MpdPlayerService::MpdPlayerService(QObject *parent):
     connect(daemon, SIGNAL(disconnected()), SLOT(disconnected()));
 
     playerControl = new MpdPlayerControl(daemon, this);
+    metadataControl = new MpdMetadata(daemon, this);
 }
 
 MpdPlayerService::~MpdPlayerService()
 {
 }
 
-MpdPlayerControl* MpdPlayerService::control(const char *name) const
+QAbstractMediaControl* MpdPlayerService::control(const char *name) const
 {
-    Q_UNUSED(name);
-    return playerControl;
+    if (name == "com.nokia.qt.MediaPlayer")
+        return playerControl;
+    else if (name == "com.nokia.qt.Metadata")
+        return metadataControl;
+
+    return 0;
 }
 
 void MpdPlayerService::stateChanged(int state)

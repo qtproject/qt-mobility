@@ -43,7 +43,7 @@ MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd, QObject *parent):
     QMediaPlayerControl(parent),
     daemon(mpd)
 {
-    setMediaPlaylist(new QMediaPlaylist(new MpdPlaylistSource(daemon, this)));
+    playlist = new QMediaPlaylist(new MpdPlaylistSource(daemon, this));
 
     connect(daemon, SIGNAL(notify()), SLOT(notify()));
     connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
@@ -66,6 +66,7 @@ QMediaPlaylist* MpdPlayerControl::mediaPlaylist() const
 
 void MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
+    Q_UNUSED(mediaPlaylist);
 }
 
 
@@ -135,22 +136,17 @@ void MpdPlayerControl::stop()
 
 void MpdPlayerControl::notify()
 {
-    if (duration() != daemon->duration())
-        setDuration(daemon->duration());
-    if (position() != daemon->position())
-        setPosition(daemon->position());
+    emit durationChanged(daemon->duration());
+    emit positionChanged(daemon->position());
 }
 
 void MpdPlayerControl::playerChanged()
 {
-    if (state() != daemon->playerState())
-        setState(daemon->playerState());
+    emit stateChanged(daemon->playerState());
 }
 
 void MpdPlayerControl::mixerChanged()
 {
-    if (volume() != daemon->volume())
-        setVolume(daemon->volume());
-    if (isMuted() != (daemon->volume() == 0))
-        setMuted(daemon->volume() == 0);
+    emit volumeChanged(daemon->volume());
+    emit mutingChanged(daemon->volume() == 0);
 }

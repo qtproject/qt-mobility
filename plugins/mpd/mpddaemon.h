@@ -52,6 +52,7 @@ public:
     int volume() const;
     bool muted() const;
     qint64 position() const;
+    int currentSongPos() const;
 
     QStringList send(QString const &command, bool *ok = 0);
 

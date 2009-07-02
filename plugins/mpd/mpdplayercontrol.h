@@ -49,16 +49,14 @@ public:
     ~MpdPlayerControl();
 
     int state() const;
-    void setState(int state);
 
     QMediaPlaylist* mediaPlaylist() const;
     void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     qint64 duration() const;
-    void setDuration(qint64 duration);
 
     qint64 position() const;
-    void setPosition(qint64 position);
+    void setPosition(qint64);
 
     int volume() const;
     void setVolume(int volume);
@@ -67,13 +65,10 @@ public:
     void setMuted(bool muted);
 
     bool isBuffering() const;
-    void setBuffering(bool buffering);
 
     int bufferStatus() const;
-    void setBufferState(int bufferStatus);
 
     bool isVideoAvailable() const;
-    void setVideoAvailable(bool videoAvailable);
 
     void play();
     void pause();

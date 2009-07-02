@@ -36,9 +36,10 @@
 #define MPDPLAYERSERVICE_H
 
 #include <qmediaplayerservice.h>
-#include "mpdplayercontrol.h"
 
 class MpdDaemon;
+class MpdPlayerControl;
+class MpdMetadata;
 
 class MpdPlayerService : public QMediaPlayerService
 {
@@ -48,7 +49,7 @@ public:
     MpdPlayerService(QObject *parent = 0);
     ~MpdPlayerService();
 
-    virtual MpdPlayerControl* control(const char *name) const;
+    virtual QAbstractMediaControl* control(const char *name) const;
 
 private slots:
     void stateChanged(int state);
@@ -57,6 +58,7 @@ private slots:
 private:
     MpdDaemon *daemon;
     MpdPlayerControl *playerControl;
+    MpdMetadata *metadataControl;
 };
 
 #endif  // MPDPLAYERSERVICE_H

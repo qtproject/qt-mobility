@@ -105,6 +105,11 @@ qint64 MpdDaemon::position() const
     return d->position;
 }
 
+int MpdDaemon::currentSongPos() const
+{
+    return d->song;
+}
+
 int MpdDaemon::volume() const
 {
     return d->volume;

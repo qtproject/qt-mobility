@@ -32,35 +32,39 @@
 **
 ****************************************************************************/
 
-#ifndef QMETADATAPROVIDER_H
-#define QMETADATAPROVIDER_H
+#ifndef MPDMETADATA_H
+#define MPDMETADATA_H
 
-#include <qabstractmediacontrol.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qmap.h>
 
-class QMetadataProviderPrivate;
-class Q_MEDIA_EXPORT QMetadataProvider : public QAbstractMediaControl
+#include <qmetadataprovider.h>
+
+class MpdDaemon;
+
+class MpdMetadata : public QMetadataProvider
 {
     Q_OBJECT
 
 public:
-    ~QMetadataProvider();
+    MpdMetadata(MpdDaemon *daemon, QObject *parent = 0);
+    ~MpdMetadata();
 
-    virtual bool metadataAvailable() const = 0;
-    virtual bool isReadOnly() const = 0;
+    bool metadataAvailable() const;
+    bool isReadOnly() const;
+    void setReadOnly(bool readonly);
 
-    virtual QList<QString> availableMetadata() const = 0;
-    virtual QVariant metadata(QString const &name) const = 0;
-    virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+    QList<QString> availableMetadata() const;
+    QVariant metadata(QString const &name) const;
+    void setMetadata(QString const &name, QVariant const &value);
 
-Q_SIGNALS:
-    void metadataAvailabilityChanged(bool metadataAvailable);
-    void readOnlyChanged(bool readOnly);
-
-protected:
-    QMetadataProvider(QObject *parent = 0);
+private slots:
+    void playerChanged();
 
 private:
-    Q_DECLARE_PRIVATE(QMetadataProvider);
+    MpdDaemon   *daemon;
+    QMap<QString, QVariant> saved;
 };
 
-#endif  // QMETADATAPROVIDER_H
+#endif  // MPDMETADATA_H

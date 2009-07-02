@@ -32,35 +32,63 @@
 **
 ****************************************************************************/
 
-#ifndef QMETADATAPROVIDER_H
-#define QMETADATAPROVIDER_H
+#include <QtCore/qstringlist.h>
 
-#include <qabstractmediacontrol.h>
+#include "mpddaemon.h"
+#include "mpdmetadata.h"
 
-class QMetadataProviderPrivate;
-class Q_MEDIA_EXPORT QMetadataProvider : public QAbstractMediaControl
+
+
+MpdMetadata::MpdMetadata(MpdDaemon *mpd, QObject *parent):
+    QMetadataProvider(parent)
 {
-    Q_OBJECT
+    daemon = mpd;
+    connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
+}
 
-public:
-    ~QMetadataProvider();
+MpdMetadata::~MpdMetadata()
+{
+}
 
-    virtual bool metadataAvailable() const = 0;
-    virtual bool isReadOnly() const = 0;
+bool MpdMetadata::metadataAvailable() const
+{
+    return !saved.isEmpty();
+}
 
-    virtual QList<QString> availableMetadata() const = 0;
-    virtual QVariant metadata(QString const &name) const = 0;
-    virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+bool MpdMetadata::isReadOnly() const
+{
+    return true;
+}
 
-Q_SIGNALS:
-    void metadataAvailabilityChanged(bool metadataAvailable);
-    void readOnlyChanged(bool readOnly);
+QList<QString> MpdMetadata::availableMetadata() const
+{
+    return saved.keys();
+}
 
-protected:
-    QMetadataProvider(QObject *parent = 0);
+QVariant MpdMetadata::metadata(QString const &name) const
+{
+    return saved[name];
+}
 
-private:
-    Q_DECLARE_PRIVATE(QMetadataProvider);
-};
+void MpdMetadata::setMetadata(QString const &name, QVariant const &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
 
-#endif  // QMETADATAPROVIDER_H
+void MpdMetadata::playerChanged()
+{
+    saved.clear();
+
+    bool ok = false;
+    QStringList r = daemon->send(QString("playlistinfo %1").arg(daemon->currentSongPos()), &ok);
+
+    if (ok) {
+        foreach (QString const &line, r) {
+            QString name = line.section(':', 0, 0);
+            QString value = line.section(':', 1);
+
+            saved.insert(name, value);
+        }
+    }
+}
