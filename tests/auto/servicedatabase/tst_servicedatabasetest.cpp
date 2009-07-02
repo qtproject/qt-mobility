@@ -1290,8 +1290,8 @@ bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 
 void ServiceDatabaseUnitTest::cleanupTestCase()
 {
-    QFile file(database.databasePath());
-    file.remove();
+    database.close();
+    QFile::remove(database.databasePath());
 }
 QTEST_MAIN(ServiceDatabaseUnitTest)
 #include "tst_servicedatabasetest.moc"
