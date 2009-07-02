@@ -110,7 +110,7 @@ void QMediaRecorder::stop()
 
 QMediaRecorderService* createMediaRecorderService(QMediaServiceProvider *provider)
 {
-    QObject *object = provider->createObject("com.nokia.Qt.RecorderService/1.0");
+    QObject *object = provider ? provider->createObject("com.nokia.Qt.RecorderService/1.0") : 0;
 
     if (object) {
         QMediaRecorderService *service = qobject_cast<QMediaRecorderService *>(object);
@@ -122,4 +122,3 @@ QMediaRecorderService* createMediaRecorderService(QMediaServiceProvider *provide
     }
     return 0;
 }
-

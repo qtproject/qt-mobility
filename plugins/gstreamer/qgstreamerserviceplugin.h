@@ -32,37 +32,18 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
 
-#include <QtGui/QWidget>
+#ifndef QGSTREAMERSERVICEPLUGIN_H
+#define QGSTREAMERSERVICEPLUGIN_H
 
-class QMediaPlayerService;
-class QSlider;
-class QModelIndex;
-class QListView;
-class QMediaPlaylistModel;
+#include <qmediaserviceproviderplugin.h>
 
-class Player : public QWidget
+class QGstreamerServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
-    Player(QWidget *parent = 0);
-    ~Player();
-
-private slots:
-    void open();
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 progress);
-
-    void jump(const QModelIndex &index);
-    void setCurrentItem(int);
-
-private:
-    QMediaPlayerService *service;
-    QSlider *slider;
-    QListView *playlistView;
-    QMediaPlaylistModel *playlistModel;
+    QStringList keys() const;
+    QMediaServiceProvider* create(QString const& key);
 };
 
-#endif
+#endif // QGSTREAMERSERVICEPLUGIN_H

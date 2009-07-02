@@ -39,7 +39,9 @@
 
 class QMediaPlayer;
 class QMediaMetadata;
-
+class QModelIndex;
+class PlaylistModel;
+class QTableView;
 class QSlider;
 
 class Player : public QWidget
@@ -55,10 +57,16 @@ private slots:
     void positionChanged(qint64 progress);
     void metaDataChanged();
 
+    void seek(int seconds);
+    void jump(const QModelIndex &index);
+    void playlistPositionChanged(int);
+
 private:
     QMediaPlayer *player;
     QMediaMetadata *metaData;
     QSlider *slider;
+    PlaylistModel *playlistModel;
+    QTableView *playlistView;
 };
 
 #endif

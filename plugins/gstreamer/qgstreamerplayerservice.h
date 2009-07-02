@@ -37,28 +37,12 @@
 
 #include <QtCore/qobject.h>
 
+#include "qmediaplayerservice.h"
+
+
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
-
-
-class QMediaPlayerService : public QObject
-{
-    Q_OBJECT
-public:
-    QMediaPlayerService(QObject *parent = 0) : QObject(parent) {}
-
-    virtual QWidget *createVideoWidget() = 0;
-
-    virtual QObject *videoOutput() const = 0;
-    virtual bool setVideoOutput(QObject *output) = 0;
-
-    virtual QMediaPlayerControl *control() = 0;
-    virtual QMediaMetaData *metaData() = 0;
-
-    virtual QMediaPlaylist *playlist() = 0;
-    virtual bool setPlaylist(QMediaPlaylist *) = 0;
-};
 
 class QGstreamerMetaData;
 class QGstreamerPlayerControl;
@@ -73,21 +57,16 @@ public:
     QGstreamerPlayerService(QObject *parent = 0);
     ~QGstreamerPlayerService();
 
-    QMediaPlayerControl *control();
-    QMediaMetaData *metaData();
+    void setVideoOutput(QObject *output);
 
-    QWidget *createVideoWidget();
+    QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
 
-    QObject *videoOutput() const;
-    bool setVideoOutput(QObject *output);
+    QObject *createEndpoint(const char *interface);
 
-    QMediaPlaylist *playlist();
-    bool setPlaylist(QMediaPlaylist *);
-
+    QAbstractMediaControl *control(const char *name) const;    
 private:
-    QGstreamerPlayerControl *m_control;    
-    QMediaPlaylistNavigator *m_navigator;
-    QGstreamerPlayerSession *m_session;    
+    QGstreamerPlayerControl *m_control;
 };
 
 #endif

@@ -33,65 +33,59 @@
 ****************************************************************************/
 
 #include <QtCore/qvariant.h>
+#include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
 #include "qgstreamerplayerservice.h"
 #include "qgstreamerplayercontrol.h"
-#include "qgstreamerplayersession.h"
+//#include "qgstreamerplayersession.h"
+
+//#include "qmediawidgetendpoint.h"
+#include "qgstreamervideowidget.h"
 
 #include "qmediaplaylistnavigator.h"
 #include "qmediaplaylist.h"
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
-    : QMediaPlayerService(parent)    
-    , m_control(0)    
-    , m_navigator(0)
-    , m_session(0)
-{
-    QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);
-    m_session = new QGstreamerPlayerSession(this);
-    m_control = new QGstreamerPlayerControl(m_session, m_navigator, this);
-    m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
+    : QMediaPlayerService(parent)
+{    
+    m_control = new QGstreamerPlayerControl(this, this);
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
 {
 }
 
-QMediaPlayerControl *QGstreamerPlayerService::control()
+QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 {
+    Q_UNUSED(name);
     return m_control;
 }
 
-QMediaMetaData *QGstreamerPlayerService::metaData()
+void QGstreamerPlayerService::setVideoOutput(QObject *output)
 {
-    return 0;// m_metaData;
+    m_control->setVideoOutput(output);
+    QAbstractMediaService::setVideoOutput(output);    
 }
 
-QMediaPlaylist *QGstreamerPlayerService::playlist()
+QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const
 {
-    return m_navigator->playlist();
+    QList<QByteArray> res;
+    
+    if (direction == QMediaEndpointInterface::Output)
+        res << QMediaWidgetEndpointInterface_iid;
+
+    return res;
 }
 
-bool QGstreamerPlayerService::setPlaylist(QMediaPlaylist *playlist)
+QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
 {
-    m_navigator->setPlaylist(playlist);
-    return true;
-}
+    qDebug() << "request for endpoint" << interface;
 
-QWidget *QGstreamerPlayerService::createVideoWidget()
-{
-    return new QWidget;
-}
+    if (qstrcmp(interface,QMediaWidgetEndpointInterface_iid) == 0) {        
+        return new QGstreamerVideoWidget;
+    }
 
-QObject *QGstreamerPlayerService::videoOutput() const
-{
-    return m_session->videoOutput();
+    return 0;
 }
-
-bool QGstreamerPlayerService::setVideoOutput(QObject *output)
-{
-    return m_session->setVideoOutput(output);
-}
-

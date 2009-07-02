@@ -38,6 +38,7 @@
 #include "qmediaplayerservice.h"
 #include "qmediaplayercontrol.h"
 #include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
 
 
 /*!
@@ -237,9 +238,48 @@ void QMediaPlayer::setMuted(bool muted)
     d_func()->control->setMuted(muted);
 }
 
+/*!
+  Advance to the next media source in playlist.
+*/
+void QMediaPlayer::advance()
+{
+    d_func()->control->advance();
+}
+
+/*!
+  Return to the previous media source in playlist.
+*/
+void QMediaPlayer::back()
+{
+    d_func()->control->back();
+}
+
+/*!
+  Activate media source from playlist at position \a playlistPosition.
+*/
+void QMediaPlayer::setPlaylistPosition(int playlistPosition)
+{
+    d_func()->control->setPlaylistPosition(playlistPosition);
+}
+
+int QMediaPlayer::playlistPosition() const
+{
+    return d_func()->control->playlistPosition();
+}
+
+/*!
+  Returns the current active media source.
+
+  \sa playlist() playlistPosition()
+*/
+QMediaSource QMediaPlayer::currentMediaSource() const
+{
+    return mediaPlaylist()->itemAt(playlistPosition());
+}
+
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
-    QObject *object = provider->createObject("com.nokia.qt.MediaPlayer/1.0");
+    QObject *object = provider ? provider->createObject("com.nokia.qt.MediaPlayer/1.0") : 0;
 
     if (object) {
         QMediaPlayerService *service = qobject_cast<QMediaPlayerService *>(object);

@@ -43,7 +43,7 @@ QMediaPlaylistModel::QMediaPlaylistModel(QMediaPlaylist *playlist, QObject *pare
     connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
     connect(playlist, SIGNAL(itemsInserted()), this, SLOT(endInsertItems()));
     connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
-    connect(playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));    
+    connect(playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));
     connect(playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
 }
 

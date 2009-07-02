@@ -32,16 +32,43 @@
 **
 ****************************************************************************/
 
-#include "player.h"
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#include <QtGui>
+#include "qgstreamerserviceplugin.h"
+#include "qgstreamerplayerservice.h"
 
-int main(int argc, char *argv[])
+#include <qmediaserviceprovider.h>
+
+
+class QGstreamerProvider : public QMediaServiceProvider
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+            return new QGstreamerPlayerService;
 
-    Player player;
-    player.show();
-
-    return app.exec();
+        return 0;
+    }
 };
+
+QStringList QGstreamerServicePlugin::keys() const
+{
+    return QStringList() << "mediaplayer";
+}
+
+QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
+{
+    if (key == "mediaplayer")
+        return new QGstreamerProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
+}
+
+#include "qgstreamerserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
+

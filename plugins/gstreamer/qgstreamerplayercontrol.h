@@ -37,11 +37,41 @@
 
 #include <QtCore/qobject.h>
 
-class QMediaSource;
+#include "qmediasource.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaplayer.h"
 
-class  QMediaPlayerControl : public QObject
+
+class QMediaPlaylist;
+
+/*
+class QAbstractMediaControl : public QObject
 {
     Q_OBJECT
+    public:
+    QAbstractMediaControl(QObject *parent = 0)
+        :QObject(parent)
+    {
+    }
+
+    virtual ~QAbstractMediaControl() {}
+};
+
+class  QMediaPlayerControl : public QAbstractMediaControl
+{
+    Q_OBJECT
+
+
+    Q_PROPERTY(QMediaPlayerControl::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(qint64 position READ position WRITE seek NOTIFY positionChanged)
+    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedStateChanged)
+    Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingStateChanged)
+    Q_PROPERTY(int bufferingProgress READ bufferingProgress NOTIFY bufferingProgressChanged)
+    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaChanged)
+    Q_PROPERTY(int playlistPosition READ playlistPosition WRITE jump NOTIFY playlistPositionChanged)
+    Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
 public:
     enum State
     {
@@ -52,22 +82,26 @@ public:
         Error
     };
 
-    QMediaPlayerControl(QObject *parent = 0) : QObject(parent) {}
+    QMediaPlayerControl(QObject *parent = 0);
     
-    State state() const { return m_state; }
+    virtual State state() const = 0;
 
-    qint64 duration() const { return m_duration; }
+    virtual qint64 duration() const = 0;
     virtual qint64 position() const = 0;
+
+    virtual QMediaPlaylist *playlist() const = 0;
+    virtual bool setPlaylist(QMediaPlaylist *) = 0;
     
     virtual int playlistPosition() const = 0;
     virtual QMediaSource currentMediaSource() const = 0;
 
-    bool isBuffering() const { return m_buffering; }
-
+    virtual bool isBuffering() const = 0;
     virtual int bufferingProgress() const = 0;
 
     virtual int volume() const = 0;
     virtual bool isMuted() const = 0;
+
+    virtual bool isVideoAvailable() const = 0;
 
 public Q_SLOTS:
     virtual void jump(int playlistPosition) = 0;
@@ -85,38 +119,40 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged(QMediaPlayerControl::State state);
+    void videoAvailablityChanged(bool available);
+
     void positionChanged(qint64 position);
     void durationChanged(qint64 duration);
-    void bufferingChanged(bool buffering);
+
+    void bufferingStateChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
+
+    void mutedStateChanged(bool);
+    void volumeChanged(int);
+
     void currentMediaChanged(const QMediaSource &mediaSource);
     void playlistPositionChanged(int playlistPosition);
-
-protected:
-    void setState(State state) { emit stateChanged(m_state = state); }
-    void setDuration(qint64 duration) { emit durationChanged(m_duration = duration); }
-    void setBuffering(bool buffering) { emit bufferingChanged(m_buffering = buffering); }
-
-private:
-    State m_state;
-    qint64 m_duration;
-    bool m_buffering;
 };
-
+*/
 
 class QGstreamerPlayerSession;
+class QGstreamerPlayerService;
 class QMediaPlaylistNavigator;
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
 public:
-    QGstreamerPlayerControl(QGstreamerPlayerSession *session, QMediaPlaylistNavigator *navigator, QObject *parent = 0);
+    QGstreamerPlayerControl(QGstreamerPlayerService *service, QObject *parent = 0);
     ~QGstreamerPlayerControl();
 
-    qint64 position() const;
+    int state() const;
 
-    int bufferingProgress() const;
+    qint64 position() const;
+    qint64 duration() const;
+
+    bool isBuffering() const;
+    int bufferStatus() const;
 
     int volume() const;
     bool isMuted() const;
@@ -124,12 +160,18 @@ public:
     int playlistPosition() const;
     QMediaSource currentMediaSource() const;
 
+    QMediaPlaylist *mediaPlaylist() const;
+    bool setMediaPlaylist(QMediaPlaylist *);
+
+    bool isVideoAvailable() const;
+    void setVideoOutput(QObject *output);
+
 public Q_SLOTS:
-    void jump(int playlistPosition);
+    void setPlaylistPosition(int playlistPosition);
     void advance();
     void back();
 
-    void seek(qint64 pos);
+    void setPosition(qint64 pos);
 
     void play();
     void pause();
@@ -138,10 +180,24 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
+signals:
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 position);
+    void playlistPositionChanged(int position);
+    void currentMediaChanged(const QMediaSource&);
+    void stateChanged(int newState);
+    void volumeChanged(int volume);
+    void mutingChanged(bool muted);
+    void videoAvailabilityChanged(bool videoAvailable);
+    void bufferingChanged(bool buffering);
+    void bufferStatusChanged(int percentFilled);
+
 private slots:
     void play(const QMediaSource&);
+    void updateState(QMediaPlayer::State state);
 
 private:
+    QGstreamerPlayerService *m_service;
     QGstreamerPlayerSession *m_session;
     QMediaPlaylistNavigator *m_navigator;
 };

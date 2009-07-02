@@ -40,9 +40,21 @@
 
 #include <QtCore/qurl.h>
 
-QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session,QMediaPlaylistNavigator *navigator,QObject *parent)
-   :QMediaPlayerControl(parent), m_session(session), m_navigator(navigator)
+
+QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
+    :QAbstractMediaControl(parent)
 {
+}
+
+
+QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerService *service, QObject *parent)
+   :QMediaPlayerControl(parent), m_service(service)
+{
+    QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
+    m_navigator = new QMediaPlaylistNavigator(playlist,this);
+    m_session = new QGstreamerPlayerSession(this);
+    m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
+
     connect(m_navigator, SIGNAL(activated(QMediaSource)),
             this, SLOT(play(QMediaSource)));
     connect(m_navigator, SIGNAL(currentPositionChanged(int)),
@@ -53,12 +65,18 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
 
     connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
-    connect(m_session, SIGNAL(stateChanged(QMediaPlayerControl::State)),
-            this, SIGNAL(stateChanged(QMediaPlayerControl::State)));
+    connect(m_session, SIGNAL(durationChanged(qint64)),
+            this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(mutedStateChaned(bool)),
+            this, SIGNAL(mutingChanged(bool)));
+    connect(m_session, SIGNAL(volumeChanged(int)),
+            this, SIGNAL(volumeChanged(int)));
+    connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SLOT(updateState(QMediaPlayer::State)));
     connect(m_session,SIGNAL(bufferingChanged(bool)),
             this, SIGNAL(bufferingChanged(bool)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
-            this, SIGNAL(bufferingProgressChanged(int)));
+            this, SIGNAL(bufferStatusChanged(int)));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -77,18 +95,33 @@ QMediaSource QGstreamerPlayerControl::currentMediaSource() const
 
 qint64 QGstreamerPlayerControl::position() const
 {
-    return m_session ? m_session->position() : 0;
+    return m_session->position();
 }
 
-int QGstreamerPlayerControl::bufferingProgress() const
+qint64 QGstreamerPlayerControl::duration() const
 {
-    long progress = 0;
-    return progress;
+    return m_session->duration();
+}
+
+int QGstreamerPlayerControl::state() const
+{
+    return int(m_session->state());
+}
+
+bool QGstreamerPlayerControl::isBuffering() const
+{
+    return false;
+}
+
+
+int QGstreamerPlayerControl::bufferStatus() const
+{
+    return 100;
 }
 
 int QGstreamerPlayerControl::volume() const
 {
-    return m_session->volume()*100;
+    return m_session->volume();
 }
 
 bool QGstreamerPlayerControl::isMuted() const
@@ -96,7 +129,7 @@ bool QGstreamerPlayerControl::isMuted() const
     return m_session->isMuted();
 }
 
-void QGstreamerPlayerControl::jump(int playlistPosition)
+void QGstreamerPlayerControl::setPlaylistPosition(int playlistPosition)
 {
     m_navigator->jump(playlistPosition);
 }
@@ -111,7 +144,7 @@ void QGstreamerPlayerControl::back()
     m_navigator->back();
 }
 
-void QGstreamerPlayerControl::seek(qint64 pos)
+void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
     m_session->seek(pos);
 }
@@ -133,12 +166,12 @@ void QGstreamerPlayerControl::stop()
 
 void QGstreamerPlayerControl::setVolume(int volume)
 {
-    m_session->setVolume(volume/100.0);
+    m_session->setVolume(volume);
 }
 
 void QGstreamerPlayerControl::setMuted(bool muted)
 {
-    m_session->setMuted(muted);
+    m_session->setMuted(muted);    
 }
 
 void QGstreamerPlayerControl::play(const QMediaSource &src)
@@ -161,4 +194,30 @@ void QGstreamerPlayerControl::play(const QMediaSource &src)
     } else {
         m_navigator->advance();
     }
+}
+
+QMediaPlaylist *QGstreamerPlayerControl::mediaPlaylist() const
+{
+    return m_navigator->playlist();
+}
+
+bool QGstreamerPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
+{
+    m_navigator->setPlaylist(playlist);
+    return true;
+}
+
+void QGstreamerPlayerControl::setVideoOutput(QObject *output)
+{
+    m_session->setVideoRenderer(output);
+}
+
+bool QGstreamerPlayerControl::isVideoAvailable() const
+{
+    return m_session->isVideoAvailable();
+}
+
+void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
+{
+    emit stateChanged(int(state));
 }

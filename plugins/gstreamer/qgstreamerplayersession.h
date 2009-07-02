@@ -38,22 +38,38 @@
 #include <QObject>
 #include <QUrl>
 #include "qgstreamerplayercontrol.h"
+#include "qmediaplayer.h"
 
 #include <gst/gst.h>
 
 class QGstreamerBusHelper;
 class QGstreamerMessage;
 
+class QGstreamerVideoRendererInterface
+{
+public:
+    virtual ~QGstreamerVideoRendererInterface();
+    virtual GstElement *videoSink() = 0;
+    virtual void precessNewStream() {}
+};
+
+#define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"
+
+Q_DECLARE_INTERFACE(QGstreamerVideoRendererInterface, QGstreamerVideoRendererInterface_iid)
+
+
+
 class QGstreamerPlayerSession : public QObject
 {
 Q_OBJECT
+
 public:
     QGstreamerPlayerSession(QObject *parent);
     virtual ~QGstreamerPlayerSession();
 
     QUrl url() const;
 
-    QGstreamerPlayerControl::State state() const { return m_state; }
+    QMediaPlayer::State state() const { return m_state; }
 
     qint64 duration() const;
     qint64 position() const;
@@ -62,11 +78,10 @@ public:
 
     int bufferingProgress() const;
 
-    double volume() const;
+    int volume() const;
     bool isMuted() const;
 
-    QObject *videoOutput() const;
-    bool setVideoOutput(QObject *videoOutput);
+    void setVideoRenderer(QObject *renderer);
     bool isVideoAvailable() const;
 
 public slots:
@@ -78,14 +93,14 @@ public slots:
 
     void seek(qint64 pos);
 
-    void setVolume(double volume);
+    void setVolume(int volume);
     void setMuted(bool muted);
 
 signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void stateChanged(QMediaPlayerControl::State state);
-    void volumeChanged(double volume);
+    void stateChanged(QMediaPlayer::State state);
+    void volumeChanged(int volume);
     void mutedStateChaned(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
@@ -94,18 +109,19 @@ signals:
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
-    void getStreamInfo();
+    void getStreamsInfo();
 
 private:
     QUrl m_url;
-    QGstreamerPlayerControl::State m_state;
+    QMediaPlayer::State m_state;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
     GstBus* m_bus;
-    QObject *m_videoOutput;
+    QGstreamerVideoRendererInterface *m_renderer;
 
-    double m_volume;
+    int m_volume;
     bool m_muted;
+    bool m_videoAvailable;
 
     qint64 m_lastPosition;
     qint64 m_duration;

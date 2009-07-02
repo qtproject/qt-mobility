@@ -53,6 +53,8 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_OBJECT
 
     Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
+    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaChanged)
+    Q_PROPERTY(int playlistPosition READ playlistPosition WRITE setPlaylistPosition NOTIFY playlistPositionChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -66,13 +68,15 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_ENUMS(State)
 
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
+    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState, ErrorState };
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
 
     State state() const;
     QMediaPlaylist* mediaPlaylist() const;
+    int playlistPosition() const;
+    QMediaSource currentMediaSource() const;
 
     qint64 duration() const;
     qint64 position() const;
@@ -93,15 +97,22 @@ public Q_SLOTS:
 
     void play();
     void pause();
-    void stop();
+    void stop();    
 
     void setPosition(qint64 position);
     void setVolume(int volume);
     void setMuted(bool muted);
 
+    //playlist navigation
+    void advance();
+    void back();
+    void setPlaylistPosition(int playListPosition);
+
 Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
+    void playlistPositionChanged(int playlistPosition);
+    void currentMediaSourceChanged(const QMediaSource &currentSource);
     void stateChanged(State newState);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
