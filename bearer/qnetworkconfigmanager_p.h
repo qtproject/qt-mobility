@@ -65,7 +65,7 @@ class QNativeWifiEngine;
 class QIoctlWifiEngine;
 #endif
 #include <QStringList>
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
 #include <qnetworkmanagerservice_p.h>
 
 #include <QDBusConnection>
@@ -139,7 +139,7 @@ private:
 
     void abort();
 #endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
 //    QNetworkManagerInterface *iface;
 
     QStringList knownSsids;
@@ -185,7 +185,7 @@ private:
     EngineUpdateState updateState;
 #endif
 private slots:
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
     void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
     void accessPointAdded(const QString &, QDBusObjectPath );
     void accessPointRemoved( const QString &, QDBusObjectPath );

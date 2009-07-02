@@ -82,5 +82,38 @@ symbian: {
 
 QT += network
 
+maemo {
+	QT += dbus
+	CONFIG += link_pkgconfig
+
+	target.path = $$[QT_INSTALL_PREFIX]/lib
+	headers.files = $$HEADERS 
+	headers.path = $$[QT_INSTALL_PREFIX]/include
+
+	documentation.path = $$[QT_INSTALL_PREFIX]/share/doc/libbearer
+ 	documentation.files = doc/html
+
+	INSTALLS += target headers documentation
+
+	SOURCES += qnetworkconfigmanager_maemo.cpp \
+		   qnetworksession_maemo.cpp
+
+	SOURCES -= qnetworkconfigmanager_unix.cpp
+	SOURCES -= qnetworkconfiguration_unix.cpp
+	SOURCES -= qnetworksession_unix.cpp
+	SOURCES -= qnmdbushelper.cpp
+	SOURCES -= qnetworkmanagerservice_p.cpp
+	OBJECTS -= qnetworkconfigmanager_unix.o
+	OBJECTS -= qnetworkconfiguration_unix.o
+	OBJECTS -= qnetworksession_unix.o
+	OBJECTS -= qnmdbushelper.o
+	OBJECTS -= qnetworkmanagerservice_p.o
+	HEADERS -= qnmdbushelper_p.h
+	HEADERS -= qnetworkmanagerservice_p.h
+
+	PKGCONFIG += glib-2.0 dbus-glib-1 duivaluespace-1.0 osso-ic conninet
+	DEFINES += MAEMO
+}
+
 include (../common.pri)
 

@@ -91,6 +91,11 @@ public:
     QList<QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > serviceNetworkMembers;
     QNetworkInterface serviceInterface;
 
+#ifdef MAEMO
+    /* In Maemo the id field (defined above) is the IAP id (which typically is UUID) */
+    QString network_id; /* typically WLAN ssid or similar (TODO: should this be byte array?) */
+#endif
+
 private:
 
     // disallow detaching

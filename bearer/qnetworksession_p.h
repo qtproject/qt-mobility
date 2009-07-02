@@ -62,7 +62,7 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
 #include <QDBusPendingCallWatcher>
 #endif
 
@@ -81,7 +81,12 @@ public:
     {
     }
 
-    ~QNetworkSessionPrivate() {}
+    ~QNetworkSessionPrivate()
+    {
+#ifdef MAEMO
+	    cleanupSession();
+#endif
+    }
 
     //called by QNetworkSession constructor and ensures
     //that the state is immediately updated (w/o actually opening
@@ -124,7 +129,7 @@ private Q_SLOTS:
     void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
     void deviceStateChanged(quint32);
     void slotActivationFinished(QDBusPendingCallWatcher*);
 
@@ -170,7 +175,7 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
     bool keepActive;
     qint32 triedServiceConnection;
     QDateTime startTime;
@@ -189,6 +194,16 @@ private:
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
     QNetworkManagerInterfaceDeviceWired * devWiredIface;
 
+#endif
+
+#ifdef MAEMO
+    QDateTime startTime;
+    QString currentBearerName;
+    QString currentNetworkInterface;
+    friend class IcdListener;
+    void updateState(QNetworkSession::State);
+    QString updateIdentifier(QString &newId);
+    void cleanupSession(void);
 #endif
 };
 
