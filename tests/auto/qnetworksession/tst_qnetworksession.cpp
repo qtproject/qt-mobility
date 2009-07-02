@@ -141,6 +141,31 @@ void tst_QNetworkSession::sessionProperties()
     // QNetworkSession::interface() should return an invalid interface unless
     // session is in the connected state.
     QCOMPARE(session.state() == QNetworkSession::Connected, session.interface().isValid());
+
+    if (!configuration.isValid()) {
+        QVERIFY(configuration.state() == QNetworkConfiguration::Undefined &&
+                session.state() == QNetworkSession::Invalid);
+    } else {
+        switch (configuration.state()) {
+        case QNetworkConfiguration::Undefined:
+            QVERIFY(session.state() == QNetworkSession::NotAvailable);
+            break;
+        case QNetworkConfiguration::Defined:
+            QVERIFY(session.state() == QNetworkSession::NotAvailable);
+            break;
+        case QNetworkConfiguration::Discovered:
+            QVERIFY(session.state() == QNetworkSession::Connecting ||
+                    session.state() == QNetworkSession::Disconnected);
+            break;
+        case QNetworkConfiguration::Active:
+            QVERIFY(session.state() == QNetworkSession::Connected ||
+                    session.state() == QNetworkSession::Closing ||
+                    session.state() == QNetworkSession::Roaming);
+            break;
+        default:
+            QFAIL("Invalid configuration state");
+        };
+    }
 }
 
 void tst_QNetworkSession::userChoiceSession_data()
@@ -319,8 +344,16 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QVERIFY(sessionClosedSpy.isEmpty());
             QVERIFY(errorSpy.isEmpty());
 
-            if (expectStateChange)
-                QTRY_VERIFY(!stateChangedSpy.isEmpty());
+            if (expectStateChange) {
+                QTRY_VERIFY(stateChangedSpy.count() >= 2);
+
+                QNetworkSession::State state =
+                    qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(0).at(0));
+                QVERIFY(state == QNetworkSession::Connecting);
+
+                state = qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(1).at(0));
+                QVERIFY(state == QNetworkSession::Connected);
+            }
 
             QVERIFY(session.state() == QNetworkSession::Connected);
         } else {
@@ -390,7 +423,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(errorSpy2.isEmpty());
 
         if (expectStateChange)
-            QTRY_VERIFY(!stateChangedSpy2.isEmpty() || !errorSpy2.isEmpty());
+            QTRY_VERIFY(stateChangedSpy2.count() >= 2 || !errorSpy2.isEmpty());
 
         if (!errorSpy2.isEmpty()) {
             QNetworkSession::SessionError error =
@@ -412,8 +445,19 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QFAIL("Error opening session.");
             }
         } else if (!sessionClosedSpy2.isEmpty()) {
-            QVERIFY(session.state() == QNetworkSession::Disconnected);
-            QVERIFY(session2.state() == QNetworkSession::Disconnected);
+            if (expectStateChange) {
+                QCOMPARE(stateChangedSpy2.count(), 2);
+
+                QNetworkSession::State state =
+                    qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(0).at(0));
+                QVERIFY(state == QNetworkSession::Closing);
+
+                state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(1).at(0));
+                QVERIFY(state == QNetworkSession::Disconnected);
+
+                QVERIFY(session.state() == QNetworkSession::Disconnected);
+                QVERIFY(session2.state() == QNetworkSession::Disconnected);
+            }
 
             QVERIFY(errorSpy.isEmpty());
             QVERIFY(errorSpy2.isEmpty());
