@@ -50,6 +50,7 @@ class QGstreamerVideoRendererInterface
 public:
     virtual ~QGstreamerVideoRendererInterface();
     virtual GstElement *videoSink() = 0;
+    virtual void precessNewStream() {}
 };
 
 #define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"
@@ -116,7 +117,7 @@ private:
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
     GstBus* m_bus;
-    QObject *m_videoOutput;
+    QGstreamerVideoRendererInterface *m_renderer;
 
     int m_volume;
     bool m_muted;

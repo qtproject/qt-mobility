@@ -64,7 +64,7 @@ public:
 
     QObject *createEndpoint(const char *interface);
 
-    QAbstractMediaControl *control(const char *name) const;
+    QAbstractMediaControl *control(const char *name) const;    
 private:
     QGstreamerPlayerControl *m_control;
 };

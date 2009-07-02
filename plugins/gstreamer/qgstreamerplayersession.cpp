@@ -47,7 +47,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_busHelper(0),
      m_playbin(0),
      m_bus(0),
-     m_videoOutput(0),
+     m_renderer(0),
      m_volume(100),
      m_muted(false),
      m_videoAvailable(false),
@@ -91,6 +91,9 @@ void QGstreamerPlayerSession::load(const QUrl &url)
     m_url = url;
     if (m_playbin) {
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
+
+        if (m_renderer)
+            m_renderer->precessNewStream();
     }
 }
 
@@ -130,11 +133,11 @@ bool QGstreamerPlayerSession::isMuted() const
     return m_muted;
 }
 
-void QGstreamerPlayerSession::setVideoRenderer(QObject *renderer)
-{    
-    QGstreamerVideoRendererInterface *rendererInterface = qobject_cast<QGstreamerVideoRendererInterface*>(renderer);
-    if (rendererInterface)
-        g_object_set(G_OBJECT(m_playbin), "video-sink", rendererInterface->videoSink(), NULL);
+void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
+{
+    m_renderer = qobject_cast<QGstreamerVideoRendererInterface*>(videoOutput);
+    if (m_renderer)
+        g_object_set(G_OBJECT(m_playbin), "video-sink", m_renderer->videoSink(), NULL);
 }
 
 bool QGstreamerPlayerSession::isVideoAvailable() const

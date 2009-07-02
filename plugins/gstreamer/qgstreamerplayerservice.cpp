@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/qvariant.h>
+#include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
 #include "qgstreamerplayerservice.h"
@@ -80,7 +81,9 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
 
 QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
 {
-    if (qstrcmp(interface,QMediaWidgetEndpointInterface_iid)) {
+    qDebug() << "request for endpoint" << interface;
+
+    if (qstrcmp(interface,QMediaWidgetEndpointInterface_iid) == 0) {        
         return new QGstreamerVideoWidget;
     }
 

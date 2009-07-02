@@ -14,6 +14,7 @@ public:
     virtual ~QGstreamerVideoWidget();
 
     GstElement *videoSink();
+    void precessNewStream() { setOverlay(); }
 
 protected:
     virtual bool event(QEvent*);

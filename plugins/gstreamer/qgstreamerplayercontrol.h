@@ -61,7 +61,7 @@ class  QMediaPlayerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
-    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaChanged)
+
     Q_PROPERTY(QMediaPlayerControl::State state READ state NOTIFY stateChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE seek NOTIFY positionChanged)
@@ -69,6 +69,7 @@ class  QMediaPlayerControl : public QAbstractMediaControl
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedStateChanged)
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingStateChanged)
     Q_PROPERTY(int bufferingProgress READ bufferingProgress NOTIFY bufferingProgressChanged)
+    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaChanged)
     Q_PROPERTY(int playlistPosition READ playlistPosition WRITE jump NOTIFY playlistPositionChanged)
     Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
 public:
