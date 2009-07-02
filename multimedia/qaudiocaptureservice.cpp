@@ -32,32 +32,13 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOENCODERCONTROL_H
-#define QAUDIOENCODERCONTROL_H
+#include "qaudiocaptureservice.h"
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudioformat.h>
-#endif
-
-#include "qabstractmediacontrol.h"
-
-class QAudioEncoderControl : public QAbstractMediaControl
+QAudioCaptureService::QAudioCaptureService(QObject *parent):
+    QAbstractMediaService(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    ~QAudioEncoderControl();
-
-    virtual void reset() = 0;
-#ifdef AUDIOSERVICES
-    virtual QAudioFormat sourceFormat() = 0;
-    virtual QAudioFormat sinkFormat() = 0;
-
-    virtual bool setFormat(const QAudioFormat &format) = 0;
-#endif
-protected:
-    QAudioEncoderControl(QObject* parent);
-};
-
-#endif  // QAUDIOENCODERCONTROL_H
-
+QAudioCaptureService::~QAudioCaptureService()
+{
+}

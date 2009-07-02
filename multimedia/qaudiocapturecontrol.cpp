@@ -32,70 +32,9 @@
 **
 ****************************************************************************/
 
-#include "qaudioencoder.h"
+#include "qaudiocapturecontrol.h"
 
-#include "qabstractmediaobject_p.h"
-#include "qaudioencodercontrol.h"
-#include "qaudioencoderservice.h"
-
-/*!
-    \class QAudioEncoder
-    \ingroup multimedia
-
-    \preliminary
-    \brief
-
-    \sa
-*/
-
-class QAudioEncoderPrivate : public QAbstractMediaObjectPrivate
-{
-public:
-    QAudioEncoderService* service;
-    QAudioEncoderControl* control;
-};
-
-QAudioEncoder::QAudioEncoder(QAudioEncoderService *service, QObject *parent)
-    : QAbstractMediaObject(*new QAudioEncoderPrivate, parent)
-{
-    Q_D(QAudioEncoder);
-
-    d->service = service;
-    d->control = qobject_cast<QAudioEncoderControl *>(service->control());
-}
-
-QAudioEncoder::~QAudioEncoder()
+QAudioCaptureControl::~QAudioCaptureControl()
 {
 }
 
-void QAudioEncoder::reset()
-{
-    // Drop all buffered data if any.
-}
-#ifdef AUDIOSERVICES
-QAudioFormat QAudioEncoder::sourceFormat()
-{
-    Q_D(QAudioEncoder);
-
-    return d->control->sourceFormat();
-}
-
-QAudioFormat QAudioEncoder::sinkFormat()
-{
-    Q_D(QAudioEncoder);
-
-    return d->control->sinkFormat();
-}
-
-bool QAudioEncoder::setFormat(const QAudioFormat &format)
-{
-    Q_D(QAudioEncoder);
-
-    return d->control->setFormat(format);
-}
-#endif
-
-QAbstractMediaService *QAudioEncoder::service() const
-{
-    return d_func()->service;
-}
