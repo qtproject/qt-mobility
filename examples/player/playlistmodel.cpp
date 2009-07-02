@@ -34,6 +34,8 @@
 
 #include "playlistmodel.h"
 
+#include <QtCore/qfileinfo.h>
+
 #include <qmediaplaylist.h>
 
 PlaylistModel::PlaylistModel(QObject *parent)
@@ -76,7 +78,11 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
             return m_playlist->itemAt(index.row()).mimeType();
 //            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
         case Title:
-            return m_playlist->itemAt(index.row()).mimeType();
+            {
+                QVariant location = m_playlist->itemAt(index.row()).dataLocation();
+                return QFileInfo(location.toString()).fileName();
+            }
+            //return m_playlist->itemAt(index.row()).mimeType();
 //            return m_playlist->value(index.row(), QLatin1String("Title"));
         case Album:
             return m_playlist->itemAt(index.row()).mimeType();
@@ -134,18 +140,50 @@ QMediaPlaylist *PlaylistModel::playlist() const
 
 void PlaylistModel::setPlaylist(QMediaPlaylist *playlist)
 {
-    if (m_playlist)
-        disconnect(m_playlist, SIGNAL(changed()), this, SLOT(playlistChanged()));
+    if (m_playlist) {
+        disconnect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        disconnect(m_playlist, SIGNAL(itemsInserted()), this, SLOT(endInsertItems()));
+        disconnect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        disconnect(m_playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));
+        disconnect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+    }
 
     m_playlist = playlist;
 
-    if (m_playlist)
-        connect(m_playlist, SIGNAL(changed()), this, SLOT(playlistChanged()));
+    if (m_playlist) {
+        connect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        connect(m_playlist, SIGNAL(itemsInserted()), this, SLOT(endInsertItems()));
+        connect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        connect(m_playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));
+        connect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+    }
+
 
     reset();
 }
 
-void PlaylistModel::playlistChanged()
+void PlaylistModel::beginInsertItems(int start, int end)
 {
-    reset();
+    beginInsertRows(QModelIndex(), start, end);
 }
+
+void PlaylistModel::endInsertItems()
+{
+    endInsertRows();
+}
+
+void PlaylistModel::beginRemoveItems(int start, int end)
+{
+    beginRemoveRows(QModelIndex(), start, end);
+}
+
+void PlaylistModel::endRemoveItems()
+{
+    endInsertRows();
+}
+
+void PlaylistModel::changeItems(int start, int end)
+{
+    emit dataChanged(index(start,0), index(end,ColumnCount));
+}
+
