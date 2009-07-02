@@ -81,7 +81,7 @@ public:
 
 #ifndef QT_NO_MEMBER_TEMPLATES
     template <typename T> inline T createEndpoint() {
-        if (QObject *object = createEndpoint(qmediaendpoint_iid<T *>())) {
+        if (QObject *object = createEndpoint(qmediaendpoint_iid<T>())) {
             if (T endpoint = qobject_cast<T>(object))
                 return endpoint;
             delete object;
