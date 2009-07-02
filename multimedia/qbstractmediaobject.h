@@ -43,7 +43,8 @@ public:
     virtual QAbstractMediaService* service() const = 0;
 
 protected:
-    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
+    QAbstractMediaObject(QObject *parent = 0);
+    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent = 0);
 };
 
 

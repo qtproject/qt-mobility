@@ -34,11 +34,12 @@
 
 #include "qmediaplayerservice.h"
 
-QMediaPlayerService::QMediaPlayerService(QObject *parent):
-    QAbstractMediaService(parent)
+
+QMediaPlayerService::~QMediaPlayerService()
 {
 }
 
-QMediaPlayerService::~QMediaPlayerService()
+QMediaPlayerService::QMediaPlayerService(QObject *parent):
+    QAbstractMediaService(parent)
 {
 }
