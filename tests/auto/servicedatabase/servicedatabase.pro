@@ -1,9 +1,6 @@
 TARGET=tst_servicedatabase
 QT = core sql
-INCLUDEPATH += ../../../servicefw/serviceframework/servicemetadata \
-               ../../../servicefw/serviceframework/serviceresolution \
-               ../../../servicefw/serviceframework/servicedatabase \
-               ../../../servicefw/serviceframework
+INCLUDEPATH += ../../../serviceframework
 
 wince*|symbian*: {
     addFiles.sources = testdata/*

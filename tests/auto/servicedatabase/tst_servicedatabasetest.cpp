@@ -35,10 +35,10 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
+#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
 #include <servicedatabase.h>
-#include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
-#include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
+#include "../../../serviceframework/servicemetadata.cpp"
+#include "../../../serviceframework/servicedatabase.cpp"
 #include <qservicefilter.h>
 
 #define RESOLVERDATABASE "services.db"

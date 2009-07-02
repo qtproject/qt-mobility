@@ -1,7 +1,7 @@
 TARGET=tst_qservicefilter
 SOURCES += tst_qservicefilter.cpp
-INCLUDEPATH += ../../../servicefw/serviceframework/serviceresolution \
-               ../../../servicefw/serviceframework
+INCLUDEPATH += ../../../serviceframework
+
 CONFIG+=testcase
 
 QT = core

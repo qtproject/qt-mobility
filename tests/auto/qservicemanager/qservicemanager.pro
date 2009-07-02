@@ -1,7 +1,5 @@
 TARGET = tst_qservicemanager
-INCLUDEPATH += ../../../servicefw/serviceframework/servicehandler \
-               ../../../servicefw/serviceframework/serviceresolution \
-               ../../../servicefw/serviceframework
+INCLUDEPATH += ../../../serviceframework
 
 CONFIG+=testcase
 

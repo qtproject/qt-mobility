@@ -2,9 +2,7 @@ TEMPLATE=app
 TARGET=servicefw
 CONFIG+=console
 
-INCLUDEPATH += ../../servicefw/serviceframework/servicehandler \
-               ../../servicefw/serviceframework/serviceresolution \
-               ../../servicefw/serviceframework/
+INCLUDEPATH += ../../serviceframework
 
 SOURCES=servicefw.cpp
 

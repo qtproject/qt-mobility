@@ -35,9 +35,9 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
+#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
 #include "servicemetadata_p.h"
-#include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
+#include "../../../serviceframework/servicemetadata.cpp"
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "."

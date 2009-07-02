@@ -1,8 +1,6 @@
 TEMPLATE      = lib
 CONFIG       += plugin
-INCLUDEPATH  += ../../servicefw/serviceframework/serviceresolution \
-                ../../servicefw/serviceframework/servicehandler \
-                ../../servicefw/serviceframework
+INCLUDEPATH  += ../../serviceframework
 HEADERS       = sampleserviceplugin.h
 SOURCES       = sampleserviceplugin.cpp
 TARGET        = tst_sfw_sampleserviceplugin

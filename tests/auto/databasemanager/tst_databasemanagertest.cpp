@@ -35,13 +35,13 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
+#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
 #include <servicedatabase.h>
-#include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
-#include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
+#include "../../../serviceframework/servicemetadata.cpp"
+#include "../../../serviceframework/servicedatabase.cpp"
 #include <qservicefilter.h>
 #include <databasemanager.h>
-#include "../../../servicefw/serviceframework/servicedatabase/databasemanager.cpp"
+#include "../../../serviceframework/databasemanager.cpp"
 #include "../qsfwtestutil.h"
 
 #if defined(Q_OS_SYMBIAN)

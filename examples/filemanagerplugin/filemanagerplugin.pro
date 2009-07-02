@@ -1,8 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../servicefw/serviceframework/servicehandler \
-               ../../servicefw/serviceframework/serviceresolution \
-               ../../servicefw/serviceframework
+INCLUDEPATH += ../../serviceframework
 HEADERS += filemanagerplugin.h \
            filemanagerstorage.h \
            filemanagertransfer.h
