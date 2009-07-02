@@ -57,16 +57,12 @@ Player::Player(QWidget *parent)
     connect(metaData, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(player, SIGNAL(playlistPositionChanged(int)), this, SLOT(playlistPositionChanged(int)));
 
-    QObject *videoOutput = player->service()->createEndpoint(QMediaWidgetEndpointInterface_iid);
-    qDebug() << "video output:" << videoOutput;
-
-    QWidget *videoWidget = qobject_cast<QWidget*>(videoOutput);
+    QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
         player->service()->setVideoOutput(videoWidget);        
     }
-
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(player->mediaPlaylist());

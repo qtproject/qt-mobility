@@ -32,45 +32,25 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOENCODER_H
-#define QAUDIOENCODER_H
+#ifndef QAUDIOCAPTURESERVICE_H
+#define QAUDIOCAPTURESERVICE_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudioformat.h>
-#endif
-
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
+#include "qaudiocapturecontrol.h"
 
-#include "qmediaserviceprovider.h"
 
-class QAudioEncoderService;
-class QAudioEncoderControl;
-
-extern QAudioEncoderService *createAudioEncoderService(QMediaServiceProvider *provider = defaultServiceProvider("audioencoder"));
-
-class QAudioEncoderPrivate;
-
-class QAudioEncoder : public QAbstractMediaObject
+class QAudioCaptureServicePrivate;
+class QAudioCaptureService : public QAbstractMediaService
 {
     Q_OBJECT
+
 public:
-    QAudioEncoder(QAudioEncoderService *service = createAudioEncoderService(), QObject *parent = 0);
-    ~QAudioEncoder();
+    ~QAudioCaptureService();
 
-    void reset();
-#ifdef AUDIOSERVICES
-    QAudioFormat sourceFormat();
-    QAudioFormat sinkFormat();
+    virtual QAudioCaptureControl* control() const = 0;
 
-    bool setFormat(const QAudioFormat &format);
-#endif
-    QAbstractMediaService* service() const;
-
-private:
-    Q_DISABLE_COPY(QAudioEncoder)
-    Q_DECLARE_PRIVATE(QAudioEncoder)
+protected:
+    QAudioCaptureService(QObject *parent);
 };
 
-#endif  // QAUDIOENCODER_H
+#endif  // QAUDIOCAPTURESERVICE_H

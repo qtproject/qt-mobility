@@ -35,29 +35,6 @@
 #include "qmediawidgetendpoint_p.h"
 
 /*!
-    \class QMediaWidgetEndpointInterface
-    \preliminary
-    \internal
-    \brief The QMediaWidgetEndpointInterface class provides an interface for widget media outputs.
-
-    \sa QMediaWidgetEndpoint
-*/
-
-/*!
-*/
-QMediaWidgetEndpointInterface::~QMediaWidgetEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QMediaWidgetEndpointInterface::direction() const
-{
-    return Output;
-}
-
-/*!
     \class QMediaWidgetEndpoint
     \preliminary
     \brief The QMediaWidgetEndpoint class provides a QWidget media output.
@@ -91,6 +68,13 @@ QMediaWidgetEndpoint::~QMediaWidgetEndpoint()
 {
 }
 
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QMediaWidgetEndpoint::direction() const
+{
+    return Output;
+}
 /*!
     Identifies if a media output widget is in full screen mode.
 

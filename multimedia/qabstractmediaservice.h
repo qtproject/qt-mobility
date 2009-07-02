@@ -79,13 +79,23 @@ public:
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
+#ifndef QT_NO_MEMBER_TEMPLATES
+    template <typename T> inline T createEndpoint() {
+        if (QObject *object = createEndpoint(qmediaendpoint_iid<T *>())) {
+            if (T endpoint = qobject_cast<T>(object))
+                return endpoint;
+            delete object;
+        }
+        return 0;
+    }
+#endif
+
 protected:
     QAbstractMediaService(QObject* parent);
 
 private:
     Q_DECLARE_PRIVATE(QAbstractMediaService)
 };
-
 
 #endif  // QABSTRACTMEDIASERVICE_H
 

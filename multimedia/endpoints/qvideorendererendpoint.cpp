@@ -38,31 +38,6 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
-/*!
-    \class QVideoRendererEndpointInterface
-    \preliminary
-    \internal
-    \brief The QVideoRendererEndpointInterface class provides an interface for video renderer
-    media end points.
-
-    \sa QVideoRendererEndpoint
-*/
-
-/*!
-    Destroys a video renderer media output.
-*/
-QVideoRendererEndpointInterface::~QVideoRendererEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QVideoRendererEndpointInterface::direction() const
-{
-    return Output;
-}
-
 class QVideoRendererEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -99,6 +74,14 @@ QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
 */
 QVideoRendererEndpoint::~QVideoRendererEndpoint()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QVideoRendererEndpoint::direction() const
+{
+    return Output;
 }
 
 /*!

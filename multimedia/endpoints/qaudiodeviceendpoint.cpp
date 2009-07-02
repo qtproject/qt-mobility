@@ -36,28 +36,6 @@
 
 #include <private/qobject_p.h>
 
-/*!
-    \class QAudioDeviceEndpointInterface
-    \preliminary
-    \internal
-    \brief The QAudioDeviceEndpointInterface class provides an interface for audio device selector
-    media end points.
-*/
-
-/*!
-*/
-QAudioDeviceEndpointInterface::~QAudioDeviceEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QAudioDeviceEndpointInterface::direction() const
-{
-    return InputOutput;
-}
-
 class QAudioDeviceEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -126,6 +104,14 @@ QAudioDeviceEndpoint::QAudioDeviceEndpoint(QObject *parent)
 */
 QAudioDeviceEndpoint::~QAudioDeviceEndpoint()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QAudioDeviceEndpoint::direction() const
+{
+    return InputOutput;
 }
 
 /*!
