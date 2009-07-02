@@ -55,6 +55,36 @@ QWmpPlayerControl::~QWmpPlayerControl()
     if (m_network) m_network->Release();
 }
 
+int QWmpPlayerControl::state() const
+{
+    return m_state;
+}
+
+void QWmpPlayerControl::setState(int state)
+{
+    emit stateChanged(m_state = state);
+}
+
+QMediaPlaylist *QWmpPlayerControl::mediaPlaylist() const
+{
+    return m_playlist;
+}
+
+bool QWmpPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
+{
+    m_playlist = playlist;
+}
+
+qint64 QWmpPlayerControl::duration() const
+{
+    return m_duration;
+}
+
+void QWmpPlayerControl::setDuration(qint64 duration)
+{
+    emit durationChanged(m_duration = duration);
+}
+
 qint64 QWmpPlayerControl::position() const
 {
     double position;
@@ -65,16 +95,21 @@ qint64 QWmpPlayerControl::position() const
     return position;
 }
 
-int QWmpPlayerControl::bufferingProgress() const
+void QWmpPlayerControl::setPosition(qint64 position)
 {
-    long progress = 0;
-
-    if (m_network)
-        m_network->get_bufferingProgress(&progress);
-
-    return progress;
+    if (m_controls)
+        m_controls->put_currentPosition(position);
 }
 
+int QWmpPlayerControl::playlistPosition() const
+{
+    return 0;
+}
+
+void QWmpPlayerControl::setPlaylistPosition(int position)
+{
+    Q_UNUSED(position);
+}
 
 int QWmpPlayerControl::volume() const
 {
@@ -86,6 +121,12 @@ int QWmpPlayerControl::volume() const
     return volume;
 }
 
+void QWmpPlayerControl::setVolume(int volume)
+{
+    if (m_settings)
+        m_settings->put_volume(volume);
+}
+
 bool QWmpPlayerControl::isMuted() const
 {
     VARIANT_BOOL mute = FALSE;
@@ -94,6 +135,69 @@ bool QWmpPlayerControl::isMuted() const
         m_settings->get_mute(&mute);
 
     return mute;
+}
+
+void QWmpPlayerControl::setMuted(bool muted)
+{
+    if (m_settings)
+        m_settings->put_mute(muted ? TRUE : FALSE);
+}
+
+bool QWmpPlayerControl::isBuffering() const
+{
+    return m_buffering;
+}
+
+void QWmpPlayerControl::setBuffering(bool buffering)
+{
+    emit bu
+}
+
+int QWmpPlayerControl::bufferStatus() const
+{
+    long progress = 0;
+
+    if (m_network)
+        m_network->get_bufferingProgress(&progress);
+
+    return progress;
+}
+
+bool QWmpPlayerControl::isVideoAvailable() const
+{
+    return m_videoAvailable;
+}
+
+void QWmpPlayerControl::setVideoAvailable(bool available)
+{
+    if (m_videoAvailable != available)
+        emit videoAvailablilityChanged(m_videoAvailable = available);
+}
+
+void QWmpPlayerControl::play()
+{
+    if (m_controls)
+        m_controls->play();
+}
+
+void QWmpPlayerControl::pause()
+{
+    if (m_controls)
+        m_controls->pause();
+}
+
+void QWmpPlayerControl::stop()
+{
+    if (m_controls)
+        m_controls->stop();
+}
+
+void QWmpPlayerControl::advance()
+{
+}
+
+void QWmpPlayerControl::back()
+{
 }
 
 QUrl QWmpPlayerControl::url() const
@@ -121,33 +225,4 @@ void QWmpPlayerControl::setUrl(const QUrl &url)
     }
 }
 
-void QWmpPlayerControl::play()
-{
-    if (m_controls)
-        m_controls->play();
-}
 
-void QWmpPlayerControl::pause()
-{
-    if (m_controls)
-        m_controls->pause();
-}
-
-void QWmpPlayerControl::stop()
-{
-    if (m_controls)
-        m_controls->stop();
-}
-
-
-void QWmpPlayerControl::setVolume(int volume)
-{
-    if (m_settings)
-        m_settings->put_volume(volume);
-}
-
-void QWmpPlayerControl::setMuted(bool muted)
-{
-    if (m_settings)
-        m_settings->put_mute(muted ? TRUE : FALSE);
-}

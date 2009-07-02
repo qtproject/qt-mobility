@@ -35,45 +35,24 @@
 #ifndef QWMPMETADATA_H
 #define QWMPMETADATA_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qvariant.h>
+#include "qmetadataprovider.h"
 
 #include <wmp.h>
 
-#include "qwmpglobal.h"
-
-class Q_WMP_EXPORT QMediaMetaData : public QObject
-{
-    Q_OBJECT
-public:
-    QMediaMetaData(QObject *parent = 0) : QObject(parent) {}
-    ~QMediaMetaData() {}
-
-    virtual QStringList keys() const = 0;
-
-    virtual int valueCount(const QString &key) const = 0;
-
-    virtual QVariant value(const QString &key, int value = 0) const = 0;
-    virtual QVariantList values(const QString &key) const = 0;
-
-Q_SIGNALS:
-    void changed();
-};
-
-
-class QWmpMetaData : public QMediaMetaData
+class QWmpMetaData : public QMetadataProvider
 {
     Q_OBJECT
 public:
     QWmpMetaData(QObject *parent = 0);
     ~QWmpMetaData();
 
-    QStringList keys() const;
+    bool metadataAvailable() const;
+    bool isReadOnly() const;
+    void setReadOnly(bool readonly);
 
-    int valueCount(const QString &key) const;
-
-    QVariant value(const QString &key, int value = 0) const;
-    QVariantList values(const QString &key) const;
+    QList<QString> availableMetadata() const;
+    QVariant metadata(QString const &name) const;
+    void setMetadata(QString const &name, QVariant const &value);
 
     IWMPMedia *media() const;
     void setMedia(IWMPMedia *media);
