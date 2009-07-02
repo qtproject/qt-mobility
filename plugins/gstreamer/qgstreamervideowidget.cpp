@@ -51,7 +51,7 @@ bool QGstreamerVideoWidget::event(QEvent *e)
     if (e->type() == QEvent::Show) {
         // Setting these values ensures smooth resizing since it
         // will prevent the system from clearing the background
-        setAttribute(Qt::WA_NoSystemBackground, true);
+        //setAttribute(Qt::WA_NoSystemBackground, true);
         setAttribute(Qt::WA_PaintOnScreen, true);
         setOverlay();
     } else if (e->type() == QEvent::Resize) {
