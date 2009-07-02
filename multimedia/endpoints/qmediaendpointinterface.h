@@ -61,6 +61,6 @@ Q_DECLARE_INTERFACE(QMediaEndpointInterface, QMediaEndpointInterface_iid);
 template <typename T> const char *qmediaendpoint_iid() { return 0; }
 
 #define Q_MEDIA_DECLARE_ENDPOINT(IFace, IId) \
-    template <> inline const char *qmediaendpoint_iid<IFace>() { return IId; }
+    template <> inline const char *qmediaendpoint_iid<IFace *>() { return IId; }
 
 #endif
