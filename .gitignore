@@ -2,6 +2,7 @@
 .obj
 *.moc
 Makefile*
+*.dylib
 *.so.*
 *.so
 *.so.debug
