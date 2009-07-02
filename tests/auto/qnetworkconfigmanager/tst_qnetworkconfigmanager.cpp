@@ -57,6 +57,11 @@ private slots:
     void allConfigurations();
     void defaultConfiguration();
     void configurationFromIdentifier();
+
+private:
+#ifdef MAEMO
+    QProcess *icd_stub;
+#endif
 };
 
 void tst_QNetworkConfigurationManager::initTestCase()
@@ -70,10 +75,53 @@ void tst_QNetworkConfigurationManager::cleanupTestCase()
 
 void tst_QNetworkConfigurationManager::init()
 {
+#ifdef MAEMO
+    // Add IAP to setup
+    QProcess gconftool;
+    gconftool.start("gconftool-2 --recursive-unset "
+                    "/system/osso/connectivity/IAP/007");
+    gconftool.waitForFinished();
+
+    gconftool.start("gconftool-2 --set --type string "
+                    "/system/osso/connectivity/IAP/007/type WLAN_INFRA");
+    gconftool.waitForFinished();
+    gconftool.start("gconftool-2 --set --type string "
+                    "/system/osso/connectivity/IAP/007/wlan_ssid JamesBond");
+    gconftool.waitForFinished();
+    gconftool.start("gconftool-2 --set --type string "
+                    "/system/osso/connectivity/IAP/007/name James_Bond");
+    gconftool.waitForFinished();
+
+
+    // Start icd2 stub
+    icd_stub = new QProcess(this);
+    icd_stub->start("/usr/bin/icd2_stub.py");
+    QTest::qWait(1000);
+
+    // Add a known network to scan list that icd2 stub returns
+    QProcess dbus_send;
+    dbus_send.start("dbus-send --type=method_call --system "
+		    "--dest=com.nokia.icd2 /com/nokia/icd2 "
+		    "com.nokia.icd2.testing.add_available_network "
+		    "string:'' uint32:0 string:'' "
+		    "string:WLAN_INFRA uint32:5000011 array:byte:48,48,55");
+    dbus_send.waitForFinished();
+#endif
 }
 
 void tst_QNetworkConfigurationManager::cleanup()
 {
+#ifdef MAEMO
+    // Remove IAP we just added
+    QProcess gconftool;
+    gconftool.start("gconftool-2 --recursive-unset "
+                    "/system/osso/connectivity/IAP/007");
+    gconftool.waitForFinished();
+
+    // Terminate icd2 stub
+    icd_stub->terminate();
+    icd_stub->waitForFinished();
+#endif
 }
 
 void printConfigurationDetails(const QNetworkConfiguration& p)
@@ -163,6 +211,9 @@ void tst_QNetworkConfigurationManager::defaultConfiguration()
     QNetworkConfiguration defaultConfig = manager.defaultConfiguration();
 
     bool confirm = configs.contains(defaultConfig);
+#ifdef MAEMO
+    confirm = !confirm; // In maemo the default configuration will never be in allConfiguration because it is a pseudo config
+#endif
     QVERIFY(confirm || !defaultConfig.isValid());
     QVERIFY(!(confirm && !defaultConfig.isValid()));
 }

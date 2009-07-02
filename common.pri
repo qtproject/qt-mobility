@@ -44,6 +44,9 @@ SOURCE_DIR = $$PWD
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
+
+    # special rules for maemo
+    maemo:include(tests/maemo-tests.pri)
 }
 
 wince* {
