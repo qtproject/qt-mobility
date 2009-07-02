@@ -39,6 +39,7 @@
 #include "qmediasource.h"
 
 #include <QtCore/qurl.h>
+#include <QtCore/qdebug.h>
 
 
 QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
@@ -77,6 +78,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerService *servic
             this, SIGNAL(bufferingChanged(bool)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
+    connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
+            this, SIGNAL(videoAvailabilityChanged(bool)));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
