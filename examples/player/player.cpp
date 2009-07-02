@@ -39,6 +39,9 @@
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
+#include <qabstractmediaservice.h>
+
+#include "qmediawidgetendpoint.h"
 
 #include <QtGui>
 
@@ -52,17 +55,26 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     connect(metaData, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    connect(player, SIGNAL(playlistPositionChanged(int)), this, SLOT(playlistPositionChanged(int)));
 
-    QWidget *videoWidget = 0; /*service->createWidget();
+    QObject *videoOutput = player->service()->createEndpoint(QMediaWidgetEndpointInterface_iid);
+    qDebug() << "video output:" << videoOutput;
 
-    if (videoWidget)
-        service->setVideoOutput(videoWidget);
-    */
-    PlaylistModel *playlistModel = new PlaylistModel(this);
+    QWidget *videoWidget = qobject_cast<QWidget*>(videoOutput);
+
+    if (videoWidget) {
+        qDebug() << "service supports video widgets, nice";
+        player->service()->setVideoOutput(videoWidget);
+    }
+
+
+    playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(player->mediaPlaylist());
 
-    QTableView *playlistView = new QTableView;
+    playlistView = new QTableView;
     playlistView->setModel(playlistModel);
+
+    connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
     slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, 0);
@@ -78,6 +90,12 @@ Player::Player(QWidget *parent)
 
     QPushButton *stopButton = new QPushButton(tr("Stop"));
     connect(stopButton, SIGNAL(clicked()), player, SLOT(stop()));
+
+    QPushButton *advanceButton = new QPushButton(tr("Advance"));
+    connect(advanceButton, SIGNAL(clicked()), player, SLOT(advance()));
+
+    QPushButton *backButton = new QPushButton(tr("Back"));
+    connect(backButton, SIGNAL(clicked()), player, SLOT(back()));
 
     QLabel *volumeLabel = new QLabel(tr("Volume"));
 
@@ -100,6 +118,8 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(volumeLabel);
     controlLayout->addWidget(volumeSlider);
     controlLayout->addWidget(muteButton);
+    controlLayout->addWidget(backButton);
+    controlLayout->addWidget(advanceButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     if (videoWidget) {
@@ -145,4 +165,21 @@ void Player::positionChanged(qint64 progress)
 void Player::metaDataChanged()
 {
     setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
+}
+
+void Player::jump(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        player->setPlaylistPosition(index.row());
+    }
+}
+
+void Player::playlistPositionChanged(int currentItem)
+{
+    playlistView->setCurrentIndex(playlistModel->index(currentItem,0));
+}
+
+void Player::seek(int seconds)
+{
+    player->setPosition(seconds*1000);
 }
