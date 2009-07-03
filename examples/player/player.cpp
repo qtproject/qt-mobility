@@ -54,8 +54,8 @@ Player::Player(QWidget *parent)
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
-    connect(metaData, SIGNAL(metadataAvailabilityChanged(bool)), SLOT(metadataAvailabilityChanged(bool)));
     connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
+    connect(metaData, SIGNAL(metadataAvailabilityChanged(bool)), SLOT(metadataAvailabilityChanged(bool)));
 
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
@@ -168,7 +168,8 @@ void Player::positionChanged(qint64 progress)
 void Player::metadataAvailabilityChanged(bool available)
 {
 	if (available)
-		setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
+		setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
+                                          arg(metaData->metadata(QLatin1String("Title")).toString()));
 }
 
 void Player::jump(const QModelIndex &index)
