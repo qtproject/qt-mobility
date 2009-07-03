@@ -94,4 +94,5 @@ QSharedMediaPlaylistNotifier::~QSharedMediaPlaylistNotifier()
 
 QStringList QSharedMediaPlaylistNotifier::sharedPlaylists() const
 {
+    return QStringList();
 }
