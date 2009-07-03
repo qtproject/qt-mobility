@@ -64,9 +64,11 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     Q_D(QMediaMetadata);
 
     d->service = mediaObject->service();
-    d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetaData/1.0"));
-    connect(d->provider, SIGNAL(metadataAvailablityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
-    connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
+    d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetadataControl"));
+    if (d->provider != 0) {
+        connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
+        connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
+    }
 }
 
 QMediaMetadata::~QMediaMetadata()
@@ -75,29 +77,49 @@ QMediaMetadata::~QMediaMetadata()
 
 bool QMediaMetadata::metadataAvailable() const
 {
-    return d_func()->provider->metadataAvailable();
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return false;
+
+    return d->provider->metadataAvailable();
 }
 
 bool QMediaMetadata::isReadOnly() const
 {
-    return d_func()->provider->isReadOnly();
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return true;
+
+    return d->provider->isReadOnly();
 }
 
 QList<QString> QMediaMetadata::availableMetadata() const
 {
-    return d_func()->provider->availableMetadata();
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return QList<QString>();
+
+    return d->provider->availableMetadata();
 }
 
 QVariant QMediaMetadata::metadata(QString const &name) const
 {
-    return d_func()->provider->metadata(name);
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return QVariant();
+
+    return d->provider->metadata(name);
 }
 
 void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
 {
     Q_D(QMediaMetadata);
 
-    if (!d->provider->isReadOnly())
-        d_func()->provider->setMetadata(name, value);
+    if (d->provider != 0 && !d->provider->isReadOnly())
+        d->provider->setMetadata(name, value);
 }
 

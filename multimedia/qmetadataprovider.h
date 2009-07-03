@@ -58,9 +58,6 @@ Q_SIGNALS:
 
 protected:
     QMetadataProvider(QObject *parent = 0);
-
-private:
-    Q_DECLARE_PRIVATE(QMetadataProvider);
 };
 
 #endif  // QMETADATAPROVIDER_H
