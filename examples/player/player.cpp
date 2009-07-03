@@ -52,10 +52,10 @@ Player::Player(QWidget *parent)
     player = new QMediaPlayer;
     metaData = new QMediaMetadata(player);
 
-    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
-    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    connect(metaData, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
-    connect(player, SIGNAL(playlistPositionChanged(int)), this, SLOT(playlistPositionChanged(int)));
+    connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
+    connect(metaData, SIGNAL(metadataAvailabilityChanged(bool)), SLOT(metadataAvailabilityChanged(bool)));
+    connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
 
     QObject *videoOutput = player->service()->createEndpoint(QMediaWidgetEndpointInterface_iid);
     qDebug() << "video output:" << videoOutput;
@@ -162,9 +162,10 @@ void Player::positionChanged(qint64 progress)
     slider->setValue(progress / 1000);
 }
 
-void Player::metaDataChanged()
+void Player::metadataAvailabilityChanged(bool available)
 {
-    setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
+	if (available)
+		setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
 }
 
 void Player::jump(const QModelIndex &index)
