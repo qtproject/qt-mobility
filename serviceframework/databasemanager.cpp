@@ -592,13 +592,17 @@ bool DatabaseManager::openDb(DbScope scope)
     bool isOpen = db->open();
     if (!isOpen) {
         if (db->lastError().errorCode() == DBError::InvalidDatabaseFile) {
+            qWarning() << "Service Framework:- Database file is corrupt or invalid:" << db->databasePath();
             m_lastError = db->lastError();
         } else {
             DBError::ErrorCode errorType;
             if (scope == SystemScope)
                 errorType = DBError::CannotOpenSystemDb;
-            else
+            else {
+                qWarning() << "Service Framework:- Unable to open or create user scope database at: "
+                    << db->databasePath() << ".  The problem is most likely a permissions issue.";
                 errorType = DBError::CannotOpenUserDb;
+            }
 
             QString errorText("Unable to open service framework database: %1");
             m_lastError.setError(errorType,

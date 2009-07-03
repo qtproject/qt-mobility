@@ -50,23 +50,25 @@ class DBError
     public:
         enum ErrorCode {
             NoError,
-            DatabaseNotOpen = -2000,
-            InvalidDatabaseConnection,
-            LocationAlreadyRegistered,
-            IfaceImplAlreadyRegistered,
-            NotFound,
-            SqlError,
-            InvalidSearchCriteria,
-            IfaceIDNotExternal,
-            CannotCreateDbDir,
-            CannotOpenSystemDb,
-            CannotOpenUserDb,
-            CannotCreateSystemDbDir,
-            CannotCreateUserDbDir,
-            ExternalIfaceIDFound,
-            InvalidDescriptorScope,
-            InvalidDatabaseFile,
-            NoWritePermissions,
+            DatabaseNotOpen = -2000,    //A connection with the database has not been opened
+                                        //  database needs to be opened before any operations take place
+            InvalidDatabaseConnection,  //The database connection does not have a valid driver
+            LocationAlreadyRegistered,  //A service location has already been registered.
+            IfaceImplAlreadyRegistered, //An interface implementation by a given service is already registered to that service
+            NotFound,       
+            SqlError,               //An Sql error occurred.
+            IfaceIDNotExternal,     //InterfaceID does not refer to an external interface implementation
+            CannotCreateDbDir,      //Directory to contain database could not be created(usu a permissions issue)
+            CannotOpenSystemDb,     //system database cannot be opened(usually a permissions issue)
+            CannotOpenUserDb,       //user database cannot be opened (usually a permissions issue)
+            ExternalIfaceIDFound,   //Notification for defaultServiceInterface() on a user scope database
+                                    //  to indicate that a default refers to an interface implementation in the
+                                    //  system scope database
+            InvalidDescriptorScope, //Notification for setDefaultService() on a system scope database
+                                    //  to indicate that a user scope descriptor cannot be used
+                                    //  with a system scope database.
+            InvalidDatabaseFile,    //database file is corrupted or not a valid database
+            NoWritePermissions,     //trying to perform a write operation without sufficient permissions
             UnknownError
         };
         DBError();

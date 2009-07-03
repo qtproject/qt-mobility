@@ -127,6 +127,8 @@ public:
             case DBError::CannotCreateDbDir:
             case DBError::CannotOpenSystemDb:
             case DBError::CannotOpenUserDb:
+            case DBError::NoWritePermissions:
+            case DBError::InvalidDatabaseFile:
                 error = QServiceManager::StorageAccessError;
                 break;
             case DBError::LocationAlreadyRegistered:
@@ -139,7 +141,6 @@ public:
                 error = QServiceManager::ComponentNotFound;
                 break;
             case DBError::SqlError:
-            case DBError::InvalidSearchCriteria:
             case DBError::InvalidDescriptorScope:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
