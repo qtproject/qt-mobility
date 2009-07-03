@@ -119,9 +119,11 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     case QNetworkConfiguration::InternetAccessPoint:
         activeConfig = publicConfig;
         engine = getEngineFromId(activeConfig.identifier());
-        connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                Qt::QueuedConnection);
+        if (engine) {
+            connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                    this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                    Qt::QueuedConnection);
+        }
         break;
     case QNetworkConfiguration::ServiceNetwork:
         serviceConfig = publicConfig;
@@ -296,9 +298,11 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
 
             activeConfig = config;
             engine = getEngineFromId(activeConfig.identifier());
-            connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                    this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
-                    Qt::QueuedConnection);
+            if (engine) {
+                connect(engine, SIGNAL(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                        this, SLOT(connectionError(QString,QNetworkSessionEngine::ConnectionError)),
+                        Qt::QueuedConnection);
+            }
             emit q->newConfigurationActivated();
         }
 
