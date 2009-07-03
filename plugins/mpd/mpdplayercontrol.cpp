@@ -46,8 +46,9 @@ MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd, QObject *parent):
     playlist = new QMediaPlaylist(new MpdPlaylistSource(daemon, this));
 
     connect(daemon, SIGNAL(notify()), SLOT(notify()));
-    connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
+    connect(daemon, SIGNAL(playerStateChanged(int)), SIGNAL(stateChanged(int)));
     connect(daemon, SIGNAL(mixerChanged()), SLOT(mixerChanged()));
+    connect(daemon, SIGNAL(playlistItemChanged(int)), SLOT(playlistItemChanged(int)));
 }
 
 MpdPlayerControl::~MpdPlayerControl()
@@ -64,9 +65,10 @@ QMediaPlaylist* MpdPlayerControl::mediaPlaylist() const
     return playlist;
 }
 
-void MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
+bool MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
     Q_UNUSED(mediaPlaylist);
+    return false;
 }
 
 
@@ -81,6 +83,15 @@ qint64 MpdPlayerControl::position() const
 }
 
 void MpdPlayerControl::setPosition(qint64 position)
+{
+}
+
+int MpdPlayerControl::playlistPosition() const
+{
+    return playlistPos;
+}
+
+void MpdPlayerControl::setPlaylistPosition(int position)
 {
 }
 
@@ -118,7 +129,6 @@ bool MpdPlayerControl::isVideoAvailable() const
     return false;
 }
 
-
 void MpdPlayerControl::play()
 {
     daemon->send("play");
@@ -134,15 +144,30 @@ void MpdPlayerControl::stop()
     daemon->send("stop");
 }
 
+void MpdPlayerControl::advance()
+{
+    const int currentSongPos = daemon->currentSongPos();
+
+    if (currentSongPos + 1 == playlist->size())
+        return;
+
+    daemon->send(QString("play %1").arg(currentSongPos + 1));
+}
+
+void MpdPlayerControl::back()
+{
+    const int currentSongPos = daemon->currentSongPos();
+
+    if (currentSongPos == 0)
+        return;
+
+    daemon->send(QString("play %1").arg(currentSongPos - 1));
+}
+
 void MpdPlayerControl::notify()
 {
     emit durationChanged(daemon->duration());
     emit positionChanged(daemon->position());
-}
-
-void MpdPlayerControl::playerChanged()
-{
-    emit stateChanged(daemon->playerState());
 }
 
 void MpdPlayerControl::mixerChanged()
@@ -150,3 +175,9 @@ void MpdPlayerControl::mixerChanged()
     emit volumeChanged(daemon->volume());
     emit mutingChanged(daemon->volume() == 0);
 }
+
+void MpdPlayerControl::playlistItemChanged(int position)
+{
+    emit playlistPositionChanged(playlistPos = position);
+}
+

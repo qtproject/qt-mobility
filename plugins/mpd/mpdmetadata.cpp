@@ -43,7 +43,7 @@ MpdMetadata::MpdMetadata(MpdDaemon *mpd, QObject *parent):
     QMetadataProvider(parent)
 {
     daemon = mpd;
-    connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
+    connect(daemon, SIGNAL(playlistItemChanged(int)), SLOT(playlistItemChanged(int)));
 }
 
 MpdMetadata::~MpdMetadata()
@@ -76,19 +76,21 @@ void MpdMetadata::setMetadata(QString const &name, QVariant const &value)
     Q_UNUSED(value);
 }
 
-void MpdMetadata::playerChanged()
+void MpdMetadata::playlistItemChanged(int position)
 {
     saved.clear();
 
     bool ok = false;
-    QStringList r = daemon->send(QString("playlistinfo %1").arg(daemon->currentSongPos()), &ok);
+    QStringList r = daemon->send(QString("playlistinfo %1").arg(position), &ok);
 
     if (ok) {
         foreach (QString const &line, r) {
             QString name = line.section(':', 0, 0);
-            QString value = line.section(':', 1);
+            QString value = line.trimmed().section(':', 1);
 
             saved.insert(name, value);
         }
     }
+
+    emit metadataAvailabilityChanged(!saved.isEmpty());
 }

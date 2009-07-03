@@ -71,10 +71,9 @@ public:
 
 private slots:
     void playlistChanged();
-
-private:
     void loadPlaylist();
 
+private:
     Q_DECLARE_PRIVATE(MpdPlaylistSource);
 };
 #endif  // MPDPLAYLISTSOURCE_H

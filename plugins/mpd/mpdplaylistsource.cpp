@@ -55,9 +55,8 @@ MpdPlaylistSource::MpdPlaylistSource(MpdDaemon *daemon, QObject *parent):
     d->entries = 0;
     d->daemon = daemon;
 
+    connect(d->daemon, SIGNAL(connected()), SLOT(loadPlaylist()));
     connect(d->daemon, SIGNAL(playlistChanged()), SLOT(playlistChanged()));
-
-    loadPlaylist();
 }
 
 MpdPlaylistSource::~MpdPlaylistSource()

@@ -51,12 +51,15 @@ public:
     int state() const;
 
     QMediaPlaylist* mediaPlaylist() const;
-    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     qint64 duration() const;
 
     qint64 position() const;
     void setPosition(qint64);
+
+    int playlistPosition() const;
+    void setPlaylistPosition(int position);
 
     int volume() const;
     void setVolume(int volume);
@@ -74,14 +77,19 @@ public:
     void pause();
     void stop();
 
+    void advance();
+    void back();
+
 private slots:
     void notify();
-    void playerChanged();
+//    void playerStateChanged();
+    void playlistItemChanged(int position);
     void mixerChanged();
 
 private:
     MpdDaemon *daemon;
     QMediaPlaylist *playlist;
+    int playlistPos;
 };
 
 #endif  // MPDPLAYERCONTROL_H

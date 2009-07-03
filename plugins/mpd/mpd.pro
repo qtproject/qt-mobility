@@ -6,6 +6,7 @@ QT += network
 
 INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
 LIBS += -L../../lib -lQtMedia
+DESTDIR = ../../lib/mediaservice
 
 HEADERS = \
     mpddaemon.h \

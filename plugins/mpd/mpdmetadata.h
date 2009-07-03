@@ -60,7 +60,7 @@ public:
     void setMetadata(QString const &name, QVariant const &value);
 
 private slots:
-    void playerChanged();
+    void playlistItemChanged(int pos);
 
 private:
     MpdDaemon   *daemon;
