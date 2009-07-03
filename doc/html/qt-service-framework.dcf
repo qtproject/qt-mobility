@@ -1,6 +1,32 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-service-framework.png" imagedir="../../gif" title="Qt Context Framework Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="ivaluespacelayer.html" title="IValueSpaceLayer Class Reference">
+        <keyword ref="ivaluespacelayer.html">IValueSpaceLayer</keyword>
+        <keyword ref="ivaluespacelayer.html#HANDLE-typedef">HANDLE</keyword>
+        <keyword ref="ivaluespacelayer.html#Properties-enum">Properties</keyword>
+        <keyword ref="ivaluespacelayer.html#Properties-enum">IValueSpaceLayer::Publish</keyword>
+        <keyword ref="ivaluespacelayer.html#Type-enum">Type</keyword>
+        <keyword ref="ivaluespacelayer.html#Type-enum">IValueSpaceLayer::Server</keyword>
+        <keyword ref="ivaluespacelayer.html#Type-enum">IValueSpaceLayer::Client</keyword>
+        <keyword ref="ivaluespacelayer.html#children">children</keyword>
+        <keyword ref="ivaluespacelayer.html#handleChanged">handleChanged</keyword>
+        <keyword ref="ivaluespacelayer.html#id">id</keyword>
+        <keyword ref="ivaluespacelayer.html#item">item</keyword>
+        <keyword ref="ivaluespacelayer.html#name">name</keyword>
+        <keyword ref="ivaluespacelayer.html#order">order</keyword>
+        <keyword ref="ivaluespacelayer.html#remHandle">remHandle</keyword>
+        <keyword ref="ivaluespacelayer.html#remove">remove</keyword>
+        <keyword ref="ivaluespacelayer.html#restart">restart</keyword>
+        <keyword ref="ivaluespacelayer.html#setProperty">setProperty</keyword>
+        <keyword ref="ivaluespacelayer.html#setValue">setValue</keyword>
+        <keyword ref="ivaluespacelayer.html#shutdown">shutdown</keyword>
+        <keyword ref="ivaluespacelayer.html#startup">startup</keyword>
+        <keyword ref="ivaluespacelayer.html#syncChanges">syncChanges</keyword>
+        <keyword ref="ivaluespacelayer.html#value">value</keyword>
+        <keyword ref="ivaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
+        <section ref="ivaluespacelayer-members.html" title="List of all members"/>
+    </section>
     <section ref="qmallocpool-memorystats.html" title="MemoryStats Class Reference">
         <keyword ref="qmallocpool-memorystats.html">MemoryStats</keyword>
         <section ref="qmallocpool-memorystats-members.html" title="List of all members"/>

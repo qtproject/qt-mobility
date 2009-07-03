@@ -52,13 +52,19 @@
 
 /*!
   \class IValueSpaceLayer
-  \internal
   \brief The IValueSpaceLayer class provides support for adding new logical data
-  layers to the Qt Extended Value Space.
-  
-  For an overview of the Qt Extended Value Space, please see the \l ValueSpace 
-  documentation.
+  layers to the Qt Value Space.
   */
+
+/*!
+    \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
+
+    \relates IValueSpaceLayer
+
+    This macro installs new value space layer. \a className is the name of the class implementing
+    the new layer.
+
+*/
 
 /*!
   \typedef IValueSpaceLayer::HANDLE
@@ -643,7 +649,7 @@ struct QValueSpaceItemPrivateWrite : public QValueSpaceItemPrivate
   /Device/Buttons/3/Usable = true
   \endcode
 
-  Any application in Qt Extended can read values from the Value Space, or be notified
+  Any application in Qt can read values from the Value Space, or be notified
   asynchronously when they change using the QValueSpaceItem class.  
 
   Items in the Value Space can be thought of as representing "objects" adhering

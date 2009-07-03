@@ -108,6 +108,67 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemMutex::unlock" href="qsystemmutex.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"></function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="IValueSpaceLayer" href="ivaluespacelayer.html" location="qvaluespace.h" bases="" module="">
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="HANDLE" fullname="IValueSpaceLayer::HANDLE" href="ivaluespacelayer.html#HANDLE-typedef" location="qvaluespace.h"></typedef>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="IValueSpaceLayer::name" href="ivaluespacelayer.html#name" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QString" signature="name()"></function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="IValueSpaceLayer::Type" href="ivaluespacelayer.html#Type-enum" location="qvaluespace.h">
+                <value name="Server" value="0"></value>
+                <value name="Client" value="1"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startup" fullname="IValueSpaceLayer::startup" href="ivaluespacelayer.html#startup" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="startup(Type type)">
+                <parameter left="Type" right="" name="type" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="restart" fullname="IValueSpaceLayer::restart" href="ivaluespacelayer.html#restart" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="restart()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="shutdown" fullname="IValueSpaceLayer::shutdown" href="ivaluespacelayer.html#shutdown" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="shutdown()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="IValueSpaceLayer::id" href="ivaluespacelayer.html#id" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QUuid" signature="id()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="order" fullname="IValueSpaceLayer::order" href="ivaluespacelayer.html#order" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="unsigned int" signature="order()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="IValueSpaceLayer::value" href="ivaluespacelayer.html#value" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="value(HANDLE handle, QVariant * data)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="QVariant *" right="" name="data" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="IValueSpaceLayer::value" href="ivaluespacelayer.html#value-2" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="value(HANDLE handle, const QByteArray &amp; subPath, QVariant * data)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="QVariant *" right="" name="data" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="IValueSpaceLayer::remove" href="ivaluespacelayer.html#remove" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="remove(HANDLE handle)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="IValueSpaceLayer::remove" href="ivaluespacelayer.html#remove-2" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="remove(HANDLE handle, const QByteArray &amp; subPath)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="IValueSpaceLayer::setValue" href="ivaluespacelayer.html#setValue" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setValue(HANDLE handle, const QVariant &amp; value)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="IValueSpaceLayer::setValue" href="ivaluespacelayer.html#setValue-2" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setValue(HANDLE handle, const QByteArray &amp; subPath, const QVariant &amp; value)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="syncChanges" fullname="IValueSpaceLayer::syncChanges" href="ivaluespacelayer.html#syncChanges" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="syncChanges()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="IValueSpaceLayer::children" href="ivaluespacelayer.html#children" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QByteArray&gt;" signature="children(HANDLE handle)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="item" fullname="IValueSpaceLayer::item" href="ivaluespacelayer.html#item" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="HANDLE" signature="item(HANDLE parent, const QByteArray &amp; subPath)">
+                <parameter left="HANDLE" right="" name="parent" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+            </function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Properties" fullname="IValueSpaceLayer::Properties" href="ivaluespacelayer.html#Properties-enum" location="qvaluespace.h">
+                <value name="Publish" value="0x00000001"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="IValueSpaceLayer::setProperty" href="ivaluespacelayer.html#setProperty" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(HANDLE handle, Properties property)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+                <parameter left="Properties" right="" name="property" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remHandle" fullname="IValueSpaceLayer::remHandle" href="ivaluespacelayer.html#remHandle" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="remHandle(HANDLE handle)">
+                <parameter left="HANDLE" right="" name="handle" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="handleChanged" fullname="IValueSpaceLayer::handleChanged" href="ivaluespacelayer.html#handleChanged" location="qvaluespace.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="handleChanged(unsigned int handle)">
+                <parameter left="unsigned int" right="" name="handle" default=""></parameter>
+            </function>
+        </class>
         <namespace access="public" threadsafety="unspecified" status="commendable" name="QValueSpace" href="qvaluespace.html" location="qvaluespace.h" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="initValuespaceManager" fullname="QValueSpace::initValuespaceManager" href="qvaluespace.html#initValuespaceManager" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespaceManager()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="initValuespace" fullname="QValueSpace::initValuespace" href="qvaluespace.html#initValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespace()"></function>
@@ -246,10 +307,12 @@
             <contents name="qt-value-space" title="Qt Value Space" level="1"></contents>
             <contents name="architecture" title="Architecture" level="2"></contents>
             <contents name="application-object-layer" title="Application Object layer" level="3"></contents>
-            <contents name="ini-layer" title="INI layer" level="3"></contents>
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
         </page>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_AUTO_INSTALL_LAYER" href="ivaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER" location="applayer.cpp" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="IValueSpaceLayer" type="" signature="QVALUESPACE_AUTO_INSTALL_LAYER( className)">
+            <parameter left="" right="" name="className" default=""></parameter>
+        </function>
     </namespace>
 </INDEX>

@@ -3350,7 +3350,7 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
             if(path.startsWith(path) &&
                path.at(obj->d->path.length()) == '/') {
                 emit obj->itemSetValue(path.mid(obj->d->path.length()), newData);
-            }
+            } 
         } else if(obj->d->path == path) {
             emit obj->itemSetValue(QByteArray(), newData);
         }
@@ -3368,7 +3368,7 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
   \brief The QValueSpaceObject class allows applications to add entries to the
          Value Space.
 
-  For an overview of the Qt Extended Value Space, please see the QValueSpaceItem
+  For an overview of the Qt Value Space, please see the QValueSpaceItem
   documentation.
 
   The QValueSpaceObject class allows applications to write entries into the
@@ -3398,7 +3398,7 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
   \endcode
 
   it can be thought of as describing two Value Space objects,
-  \c { { /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 } },
+  \c { { /Device/Network/Interfaces /eth0, /Device/Network/Interfaces/ppp0 } },
   each with the six attributes \c { {Name, Type, Status, BytesSent,
   BytesReceived, Time} }.  The QValueSpaceObject class encapsulates this
   abstraction.

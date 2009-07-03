@@ -51,7 +51,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpaceObject class allows applications to add entries to the Value Space.</p>
-<p>For an overview of the Qt Extended Value Space, please see the <a href="qvaluespaceitem.html">QValueSpaceItem</a> documentation.</p>
+<p>For an overview of the Qt Value Space, please see the <a href="qvaluespaceitem.html">QValueSpaceItem</a> documentation.</p>
 <p>The QValueSpaceObject class allows applications to write entries into the Value Space that are automatically removed when the QValueSpaceObject is destroyed, or the application exits either cleanly or abnormally. All applications in the system will have access to the data set through QValueSpaceObject and, if desired, can be notified when the data changes.</p>
 <p>Although, logically, the Value Space is a simple collection of hierarchical paths, these paths can conceptually be visualized as a set of objects with attributes. For example, rather than viewing the following list as 12 distinct Value Space paths:</p>
 <pre>    /Device/Network/Interfaces/eth0/Name
@@ -66,7 +66,7 @@
     /Device/Network/Interfaces/ppp0/BytesSent
     /Device/Network/Interfaces/ppp0/BytesReceived
     /Device/Network/Interfaces/ppp0/Time</pre>
-<p>it can be thought of as describing two Value Space objects, <tt>{ /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 }</tt>, each with the six attributes <tt>{Name, Type, Status, BytesSent, BytesReceived, Time}</tt>. The QValueSpaceObject class encapsulates this abstraction.</p>
+<p>it can be thought of as describing two Value Space objects, <tt>{ /Device/Network/Interfaces /eth0, /Device/Network/Interfaces/ppp0 }</tt>, each with the six attributes <tt>{Name, Type, Status, BytesSent, BytesReceived, Time}</tt>. The QValueSpaceObject class encapsulates this abstraction.</p>
 <p>In the case of two or more applications creating an application object with overlapping attributes, only the first is visible to observers in the system. The other attributes are not discarded, but are buffered until the first releases its hold on the attribute, either by manually removing it, destroying the QValueSpaceObject or by terminating. For example:</p>
 <pre>    QValueSpaceObject * object1 = new QValueSpaceObject(&quot;/Device&quot;);
     object1-&gt;setAttribute(&quot;Buttons&quot;, 2);

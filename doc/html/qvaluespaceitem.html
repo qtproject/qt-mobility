@@ -63,7 +63,7 @@
     /Device/Buttons/2/Usable = false
     /Device/Buttons/3/Name = Back
     /Device/Buttons/3/Usable = true</pre>
-<p>Any application in Qt Extended can read values from the Value Space, or be notified asynchronously when they change using the QValueSpaceItem class.</p>
+<p>Any application in Qt can read values from the Value Space, or be notified asynchronously when they change using the QValueSpaceItem class.</p>
 <p>Items in the Value Space can be thought of as representing &quot;objects&quot; adhering to a well known schema. This is a conceptual differentiation, not a physical one, as internally the Value Space is treated as one large tree. In the sample above, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each. Likewise, the sub-item object schema contains two attributes - <tt>Name</tt> and <tt>Usable</tt>.</p>
 <p>Applications may use the <a href="qvaluespaceobject.html">QValueSpaceObject</a> class to create a schema object within the Value Space. Objects remain in the Value Space as long as the <a href="qvaluespaceobject.html">QValueSpaceObject</a> instance exists - that is, they are not persistant. If the object is destroyed, or the application containing it exits (or crashes) the items are removed.</p>
 <p>Change notification is modelled in a similar way. Applications subscribe to notifications at a particular object (ie. item) in the tree. If anything in that object (ie. under that item) changes, the application is notified. This allows, for example, subscription to just the <tt>/Device/Buttons</tt> item to receive notification when anything &quot;button&quot; related changes.</p>
@@ -138,20 +138,20 @@
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
 <h3 class="fn"><a name="subPaths"></a>QList&lt;QString&gt; QValueSpaceItem::subPaths () const</h3>
 <p>Returns a list of sub-paths for this item. For example, given a Value Space tree containing:</p>
-<pre>    /Settings/Trolltech/IniValueSpace
-    /Settings/Trolltech/Other
-    /Settings/Qtopia
+<pre>    /Settings/Nokia/IniValueSpace
+    /Settings/Nokia/Other
+    /Settings/Qt
     /Device/Buttons</pre>
-<p><tt>QValueSpaceItem(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Trolltech, Qtopia }</tt> in no particular order.</p>
+<p><tt>QValueSpaceItem(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Nokia, Qt }</tt> in no particular order.</p>
 <h3 class="fn"><a name="sync"></a>bool QValueSpaceItem::sync ()</h3>
 <p>Commit all changes made by calls to <a href="qvaluespaceitem.html#setValue">setValue</a>() or <a href="qvaluespaceitem.html#remove">remove</a>(). The return value is reserved for future use.</p>
 <h3 class="fn"><a name="value"></a>QVariant QValueSpaceItem::value ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
 <p>Returns the value of sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. The following code shows how the item and <i>subPath</i> relate.</p>
 <pre>    QValueSpaceItem base(&quot;/Settings&quot;);
-    QValueSpaceItem equiv(&quot;/Settings/Trolltech/IniValueSpace/General/Mappings);
+    QValueSpaceItem equiv(&quot;/Settings/Nokia/IniValueSpace/General/Mappings);
 
 <span class="comment">    // Is true</span>
-    equiv.value() == base.value(&quot;Trolltech/IniValueSpace/General/Mapping&quot;);</pre>
+    equiv.value() == base.value(&quot;Nokia/IniValueSpace/General/Mapping&quot;);</pre>
 <p>If the item does not exist, <i>def</i> is returned.</p>
 <p>See also <a href="qvaluespaceitem.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a>QVariant QValueSpaceItem::value ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
