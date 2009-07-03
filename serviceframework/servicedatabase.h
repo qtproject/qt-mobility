@@ -116,7 +116,7 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
                                     QString *interfaceID = 0, bool inTransaction = false);
         bool setDefaultService(const QServiceInterfaceDescriptor &interface,
                                 const QString &externalInterfaceID = QString());
-        QStringList externalDefaultInterfaceIDs();
+        QList<QPair<QString,QString> > externalDefaultsInfo();
         bool removeExternalDefaultServiceInterface(const QString &interfaceID);
 
         DBError lastError() const { return m_lastError; }

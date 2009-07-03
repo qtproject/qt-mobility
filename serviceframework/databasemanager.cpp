@@ -435,6 +435,7 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
+                    setDefaultService(descriptor, UserScope);
                     m_lastError.setError(DBError::NoError);
                     return descriptor;
                 } else {
@@ -616,12 +617,24 @@ bool DatabaseManager::openDb(DbScope scope)
     }
 
     if (scope == SystemScope && m_userDb->isOpen()) {
-        QStringList interfaceIDs = m_userDb->externalDefaultInterfaceIDs();
-        QServiceInterfaceDescriptor interface;
-        foreach( const QString &interfaceID, interfaceIDs ) {
-            interface = m_userDb->getInterface(interfaceID);
-            if (m_userDb->lastError().errorCode() == DBError::NotFound)
-                m_userDb->removeExternalDefaultServiceInterface(interfaceID);
+        QList<QPair<QString,QString> > externalDefaultsInfo;
+        externalDefaultsInfo = m_userDb->externalDefaultsInfo();
+        QServiceInterfaceDescriptor descriptor;
+        QPair<QString,QString> defaultInfo;
+
+        for (int i = 0; i < externalDefaultsInfo.count(); ++i) {
+            defaultInfo = externalDefaultsInfo[i];
+            descriptor = m_userDb->getInterface(defaultInfo.second);
+            if (m_userDb->lastError().errorCode() == DBError::NotFound) {
+                m_userDb->removeExternalDefaultServiceInterface(defaultInfo.second);
+                QList<QServiceInterfaceDescriptor> descriptors;
+                descriptors = getInterfaces(defaultInfo.first, UserScope);
+
+                if (descriptors.count() > 0 ) {
+                    descriptor = latestDescriptor(descriptors);
+                    setDefaultService(descriptor, UserScope);
+                }
+            }
         }
     }
 

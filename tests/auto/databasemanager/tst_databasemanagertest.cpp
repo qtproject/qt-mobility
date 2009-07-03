@@ -757,6 +757,13 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                                 DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 16, 0));
+    //  check again because there was a bug where the default service
+    //  was correctly returned the first time but not the second
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                                DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
+                                "DharmaInitiative", 16, 0));
+
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
 
     // == set a system service interface as a default at user scope,
@@ -806,6 +813,71 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(m_dbm->unregisterService("omni", DatabaseManager::SystemScope));
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
                                             DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    clean();
+    //Reinitialise the database
+    m_dbm = new DatabaseManager;
+
+    userServiceFiles.clear();
+    userServiceFiles << "ServiceAcme.xml" << "ServiceLuthorCorp.xml"
+                    << "ServicePrimatech.xml"
+                    << "ServiceDharma_Swan.xml"
+                    << "ServiceDecepticon.xml";
+
+    foreach (const QString &serviceFile, userServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    }
+    systemServiceFiles.clear();
+    systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
+                        << "ServiceDharma_Hydra.xml"
+                        << "ServiceDharma_Orchid.xml"
+                        << "ServiceAutobot.xml";
+    foreach (const QString &serviceFile, systemServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    }
+
+    //== Set a couple of external defaults in the user scope database,
+    //   -remove the service that provides these defaults at the system scope.
+    //    this will leave "hanging" default links in the user scope database
+    //   -recreate the database manager and run getServiceNames so it will
+    //    connect to both system and user scope databases.
+    //   -verify that the hanging defaults links have been appropriately removed
+    //    or reset to a new default interface implementation ==
+    QServiceFilter filter;
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("com.dharma.electro.discharge");
+    QList<QServiceInterfaceDescriptor> descriptors;
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QVERIFY(descriptors.count() > 0);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("com.dharma.wheel");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QVERIFY(descriptors.count() > 0);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
+    QList<QPair<QString, QString> > externalDefaultsInfo = m_dbm->m_userDb->externalDefaultsInfo();
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(externalDefaultsInfo.length(), 2);
+
+    delete m_dbm;
+
+    m_dbm = new DatabaseManager;
+    m_dbm->getServiceNames("", DatabaseManager::UserScope);
+    QCOMPARE(m_dbm->m_userDb->externalDefaultsInfo().count(), 0);
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                        DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor,"com.dharma.electro.discharge",
+                            "DharmaInitiative", 4,0));
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.wheel",
+                                        DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
     clean();

@@ -456,9 +456,10 @@ QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descr
 }
 
 /*
-    This function should only ever be called on a user scope database
-    It returns a list of Interface IDs in the Defaults table
-    that refer to interface implementations in the system scope database
+    This function should only ever be called on a user scope database.
+    It returns a list of Interface Name and Interface ID pairs, where
+    the Interface ID refers to an external interface implementation
+    in the system scope database.
 
     May set the last error to:
     DBError::NoError
@@ -469,39 +470,41 @@ QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descr
     Aside:  There is only one query which implicitly gets
     wrapped in it's own transaction.
 */
-QStringList ServiceDatabase::externalDefaultInterfaceIDs()
+QList<QPair<QString,QString> > ServiceDatabase::externalDefaultsInfo()
 {
-    QStringList interfaceIDs;
+    QList<QPair<QString,QString> > ret;
     if (!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::externalDefaultInterfaceIDs():-"
+        qWarning() << "ServiceDatabase::externalDefaultsInfo():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
-        return interfaceIDs;
+        return ret;
     }
 
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Prepare search query, bind criteria values and execute search
-    QString selectComponent = "SELECT InterfaceID ";
+    QString selectComponent = "SELECT InterfaceName, InterfaceID ";
     QString fromComponent = "FROM Defaults ";
     QString whereComponent = "WHERE InterfaceID NOT IN (SELECT Interface.ID FROM Interface) ";
 
     //Aside: this individual query is implicitly wrapped in a transaction
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::getInterfaces():-"
+        qWarning() << "ServiceDatabase::externalDefaultsInfo():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
-        return interfaceIDs;
+        return ret;
     }
 
-    while (query.next())
-        interfaceIDs.append(query.value(EBindIndex).toString());
+    while (query.next()) {
+        ret.append(qMakePair(query.value(EBindIndex).toString(),
+                    query.value(EBindIndex1).toString()));
+    }
 
     m_lastError.setError(DBError::NoError);
-    return interfaceIDs;
+    return ret;
 }
 
 /*

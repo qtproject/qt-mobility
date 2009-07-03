@@ -820,9 +820,9 @@ void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
 
     interface.d->interfaceName = "gov.ru.stargate";
     QVERIFY(database.setDefaultService(interface, "FAKE-INTERFACE-ID2"));
-    QStringList interfaceIDs = database.externalDefaultInterfaceIDs();
-    QCOMPARE(interfaceIDs[0], QString("FAKE-INTERFACE-ID"));
-    QCOMPARE(interfaceIDs[1], QString("FAKE-INTERFACE-ID2"));
+    QList<QPair<QString,QString> > externalDefaultsInfo = database.externalDefaultsInfo();
+    QCOMPARE(externalDefaultsInfo[0].second, QString("FAKE-INTERFACE-ID"));
+    QCOMPARE(externalDefaultsInfo[1].second, QString("FAKE-INTERFACE-ID2"));
 
     //see if we can remove the "cross-reference" default interface
     QVERIFY(database.removeExternalDefaultServiceInterface("FAKE-INTERFACE-ID"));
