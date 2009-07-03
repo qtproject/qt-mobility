@@ -57,16 +57,12 @@ Player::Player(QWidget *parent)
     connect(metaData, SIGNAL(metadataAvailabilityChanged(bool)), SLOT(metadataAvailabilityChanged(bool)));
     connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
 
-    QObject *videoOutput = player->service()->createEndpoint(QMediaWidgetEndpointInterface_iid);
-    qDebug() << "video output:" << videoOutput;
-
-    QWidget *videoWidget = qobject_cast<QWidget*>(videoOutput);
+    QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
-        player->service()->setVideoOutput(videoWidget);
+        player->service()->setVideoOutput(videoWidget);        
     }
-
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(player->mediaPlaylist());
@@ -78,6 +74,8 @@ Player::Player(QWidget *parent)
 
     slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, 0);
+
+    connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
     QPushButton *openButton = new QPushButton(tr("Open"));
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
@@ -127,6 +125,11 @@ Player::Player(QWidget *parent)
 
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
+
+        /*        
+        connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
+        videoWidget->setMinimumSize(64,64);
+        videoWidget->setVisible(false);*/
 
         layout->addWidget(splitter);
     } else {

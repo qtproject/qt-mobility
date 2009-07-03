@@ -74,7 +74,7 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
     QList<QByteArray> res;
     
     if (direction == QMediaEndpointInterface::Output)
-        res << QMediaWidgetEndpointInterface_iid;
+        res << QMediaWidgetEndpoint_iid;
 
     return res;
 }
@@ -83,7 +83,7 @@ QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
 {
     qDebug() << "request for endpoint" << interface;
 
-    if (qstrcmp(interface,QMediaWidgetEndpointInterface_iid) == 0) {        
+    if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
         return new QGstreamerVideoWidget;
     }
 

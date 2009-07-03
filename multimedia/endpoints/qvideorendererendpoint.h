@@ -41,35 +41,29 @@
 
 #include <QtCore/qobject.h>
 
-class Q_MEDIA_EXPORT QVideoRendererEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QVideoRendererEndpointInterface();
-
-    Direction direction() const;
-};
-
-#define QVideoRendererEndpointInterface_iid "com.nokia.Qt.QVideoRendererEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QVideoRendererEndpointInterface, QVideoRendererEndpointInterface_iid)
-
 class QAbstractVideoSurface;
 
 class QVideoRendererEndpointPrivate;
 
-class Q_MEDIA_EXPORT QVideoRendererEndpoint : public QObject, public QVideoRendererEndpointInterface
+class Q_MEDIA_EXPORT QVideoRendererEndpoint : public QObject, public QMediaEndpointInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QVideoRendererEndpointInterface)
+    Q_INTERFACES(QMediaEndpointInterface)
     Q_PROPERTY(QAbstractVideoSurface* surface READ surface WRITE setSurface)
     Q_DECLARE_PRIVATE(QVideoRendererEndpoint)
 public:
     QVideoRendererEndpoint(QObject *parent = 0);
     ~QVideoRendererEndpoint();
 
+    Direction direction() const;
+
     QAbstractVideoSurface *surface() const;
     virtual void setSurface(QAbstractVideoSurface *surface);
 };
+
+#define QVideoRendererEndpoint_iid "com.nokia.Qt.QVideoRendererEndpoint/1.0"
+
+Q_MEDIA_DECLARE_ENDPOINT(QVideoRendererEndpoint, QVideoRendererEndpoint_iid)
 
 #endif
 

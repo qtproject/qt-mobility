@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOENCODER_H
-#define QAUDIOENCODER_H
+#ifndef QAUDIOCAPTURECONTROL_H
+#define QAUDIOCAPTURECONTROL_H
 
 #ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudioformat.h>
@@ -41,36 +41,36 @@
 
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
 
-#include "qmediaserviceprovider.h"
-
-class QAudioEncoderService;
-class QAudioEncoderControl;
-
-extern QAudioEncoderService *createAudioEncoderService(QMediaServiceProvider *provider = defaultServiceProvider("audioencoder"));
-
-class QAudioEncoderPrivate;
-
-class QAudioEncoder : public QAbstractMediaObject
+class QAudioCaptureControl : public QAbstractMediaControl
 {
     Q_OBJECT
+
 public:
-    QAudioEncoder(QAudioEncoderService *service = createAudioEncoderService(), QObject *parent = 0);
-    ~QAudioEncoder();
+    ~QAudioCaptureControl();
 
-    void reset();
+    virtual void start() = 0;
+    virtual void stop() = 0;
+
+    virtual QByteArray defaultDevice() = 0;
+    virtual QList<QByteArray> deviceList() = 0;
+
+    virtual QStringList supportedCodecs() = 0;
+    virtual QList<int> supportedFrequencies() = 0;
+    virtual QList<int> supportedChannels() = 0;
+    virtual QList<int> supportedSampleSizes() =0;
 #ifdef AUDIOSERVICES
-    QAudioFormat sourceFormat();
-    QAudioFormat sinkFormat();
+    virtual QList<QAudioFormat::Endian> supportedByteOrders() = 0;
+    virtual QList<QAudioFormat::SampleType> supportedSampleTypes() = 0;
 
-    bool setFormat(const QAudioFormat &format);
+    virtual QAudioFormat format() = 0;
+    virtual bool setFormat(const QAudioFormat &format) = 0;
 #endif
-    QAbstractMediaService* service() const;
 
-private:
-    Q_DISABLE_COPY(QAudioEncoder)
-    Q_DECLARE_PRIVATE(QAudioEncoder)
+    virtual void setSink(QAbstractMediaObject* sink) = 0;
+protected:
+    QAudioCaptureControl(QObject* parent);
 };
 
-#endif  // QAUDIOENCODER_H
+#endif  // QAUDIOCAPTURECONTROL_H
+

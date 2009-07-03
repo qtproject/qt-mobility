@@ -32,26 +32,25 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPGLOBAL_H
-#define QWMPGLOBAL_H
+#ifndef QAUDIOCAPTURESERVICE_H
+#define QAUDIOCAPTURESERVICE_H
 
-#include <QtCore/qglobal.h>
+#include "qabstractmediaservice.h"
+#include "qaudiocapturecontrol.h"
 
-#if defined(Q_OS_WIN) && defined(QT_MAKEDLL)
-#   if defined(QT_BUILD_WMP_LIB)
-#       define Q_WMP_EXPORT Q_DECL_EXPORT
-#   else
-#       define Q_WMP_EXPORT Q_DECL_IMPORT
-#   endif
-#elif defined(Q_OS_WIN) && defined(QT_DLL)
-#   define Q_WMP_EXPORT Q_DECL_IMPORT
-#endif
-#if !defined(Q_WMP_EXPORT)
-#   if defined(QT_SHARED)
-#       define Q_WMP_EXPORT Q_DECL_EXPORT
-#   else
-#       define Q_WMP_EXPORT
-#   endif
-#endif
 
-#endif
+class QAudioCaptureServicePrivate;
+class QAudioCaptureService : public QAbstractMediaService
+{
+    Q_OBJECT
+
+public:
+    ~QAudioCaptureService();
+
+    virtual QAudioCaptureControl* control() const = 0;
+
+protected:
+    QAudioCaptureService(QObject *parent);
+};
+
+#endif  // QAUDIOCAPTURESERVICE_H

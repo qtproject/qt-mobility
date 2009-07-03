@@ -42,9 +42,9 @@ HEADERS = \
     qradioservice.h \
     qradiotuner.h \
     qsharedmediaplaylist.h \
-    qaudioencodercontrol.h \
-    qaudioencoderservice.h \
-    qaudioencoder.h
+    qaudiocapturecontrol.h \
+    qaudiocaptureservice.h \
+    qaudiocapture.h
 
 SOURCES = \
     qabstractmediacontrol.cpp \
@@ -73,9 +73,9 @@ SOURCES = \
     qradioservice.cpp \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp \
-    qaudioencodercontrol.cpp \
-    qaudioencoderservice.cpp \
-    qaudioencoder.cpp
+    qaudiocapturecontrol.cpp \
+    qaudiocaptureservice.cpp \
+    qaudiocapture.cpp
 
 include (endpoints/endpoints.pri)
 

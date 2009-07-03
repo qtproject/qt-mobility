@@ -35,11 +35,9 @@
 #ifndef QWMPEVENTS_H
 #define QWMPEVENTS_H
 
-#include "qwmpglobal.h"
-
 #include <wmp.h>
 
-class Q_WMP_EXPORT QWmpEvents : public IWMPEvents3
+class QWmpEvents : public IWMPEvents3
 {
 public:
     // IWMPEvents

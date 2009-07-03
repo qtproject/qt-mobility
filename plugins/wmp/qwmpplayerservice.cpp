@@ -100,19 +100,12 @@ QWmpPlayerService::~QWmpPlayerService()
     Q_ASSERT(m_ref == 1);
 }
 
-QMediaPlayerControl *QWmpPlayerService::control()
+QAbstractMediaControl *QWmpPlayerService::control(const char *name)
 {
-    return m_control;
-}
-
-QMediaMetaData *QWmpPlayerService::metaData()
-{
-    return m_metaData;
-}
-
-QMediaPlaylist *QWmpPlayerService::playlist()
-{
-    return m_playlist;
+    if (qstrcmp(name, "com.nokia.qt.MediaPlayerControl") == 0)
+        return m_control;
+    else
+        return 0;
 }
 
 QWidget *QWmpPlayerService::createWidget()
@@ -141,6 +134,25 @@ void QWmpPlayerService::setVideoOutput(QObject *output)
         config->put_presenterActivate(activate);
         config->Release();
     }
+}
+
+QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
+        QMediaEndpointInterface::Direction direction) const
+{
+    QList<QByteArray> interfaces;
+
+    if (direction == Output)
+        interfaces << QMediaWidgetEndpoint_iid;
+
+    return interfaces;
+}
+
+QObject *QWmpPlayerService::createEndpoint(const char *interface)
+{
+    if (strcmp(interface, QMediaWidgetEndpoint_iid) == 0)
+        return new EvrWidget;
+    else
+        return 0;
 }
 
 // IUnknown

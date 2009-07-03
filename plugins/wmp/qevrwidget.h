@@ -35,8 +35,9 @@
 #ifndef QEVRWIDGET_H
 #define QEVRWIDGET_H
 
+#include "qmediawidgetendpoint.h"
+
 #include <QtCore/qmetatype.h>
-#include <QtGui/qwidget.h>
 
 #include <evr.h>
 
@@ -44,7 +45,7 @@ class QEvrWidgetActivate;
 
 Q_DECLARE_METATYPE(IMFActivate*)
 
-class QEvrWidget : public QWidget
+class QEvrWidget : public QMediaWidgetEndpoint
 {
     Q_OBJECT
     Q_PROPERTY(IMFActivate* activate READ activate)
@@ -53,8 +54,6 @@ public:
     ~QEvrWidget();
 
     IMFActivate *activate() const;
-
-    bool isFullscreen() const { return m_fullscreen; }
 
     QSize sizeHint() const;
 
@@ -72,8 +71,6 @@ private:
 
     IMFVideoDisplayControl *m_display;
     QEvrWidgetActivate *m_activate;
-
-    bool m_fullscreen;
 
     friend class QEvrWidgetActivate;
 };

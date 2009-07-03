@@ -73,6 +73,23 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
     d->control->setNotifyObject(this);
+    d->control->setNotifyInterval(250);
+    d->control->addPropertyWatch("position");
+
+    connect(d->control, SIGNAL(bufferingChanged(bool)),
+            this, SIGNAL(bufferingChanged(bool)));
+
+    connect(d->control, SIGNAL(playlistPositionChanged(int)),
+            this, SIGNAL(playlistPositionChanged(int)));
+
+    connect(d->control, SIGNAL(positionChanged(qint64)),
+            this, SIGNAL(positionChanged(qint64)));
+
+    connect(d->control, SIGNAL(durationChanged(qint64)),
+            this, SIGNAL(durationChanged(qint64)));
+
+    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)),
+            this, SIGNAL(videoAvailabilityChanged(bool)));
 }
 
 /*!
@@ -173,13 +190,16 @@ QAbstractMediaService* QMediaPlayer::service() const
     return d_func()->service;
 }
 
-//public Q_SLOTS:
-
-void QMediaPlayer::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
+/*!
+    Set the media \a playlist.
+    Returns true if player can play this playlist, otherwise false.
+*/
+bool QMediaPlayer::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
-    d_func()->control->setMediaPlaylist(mediaPlaylist);
+    return d_func()->control->setMediaPlaylist(mediaPlaylist);
 }
 
+//public Q_SLOTS:
 /*!
     Start or resume playing the current source.
 */

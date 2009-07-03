@@ -75,6 +75,8 @@ public:
 
     State state() const;
     QMediaPlaylist* mediaPlaylist() const;
+    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+
     int playlistPosition() const;
     QMediaSource currentMediaSource() const;
 
@@ -91,10 +93,7 @@ public:
 
     QAbstractMediaService* service() const;
 
-
 public Q_SLOTS:
-    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
-
     void play();
     void pause();
     void stop();    
@@ -103,7 +102,6 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
-    //playlist navigation
     void advance();
     void back();
     void setPlaylistPosition(int playListPosition);

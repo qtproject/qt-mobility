@@ -54,4 +54,13 @@ public:
     virtual Direction direction() const = 0;
 };
 
+#define QMediaEndpointInterface_iid "com.nokia.Qt.QMediaEndpointInterface/1.0"
+
+Q_DECLARE_INTERFACE(QMediaEndpointInterface, QMediaEndpointInterface_iid);
+
+template <typename T> const char *qmediaendpoint_iid() { return 0; }
+
+#define Q_MEDIA_DECLARE_ENDPOINT(IFace, IId) \
+    template <> inline const char *qmediaendpoint_iid<IFace *>() { return IId; }
+
 #endif

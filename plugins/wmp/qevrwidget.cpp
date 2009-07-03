@@ -138,7 +138,7 @@ HRESULT QEvrWidgetActivate::DetachObject()
 }
 
 QEvrWidget::QEvrWidget(QWidget *parent)
-    : QWidget(parent)
+    : QMediaWidgetEndpoint(parent)
     , m_display(0)
     , m_activate(0)
     , m_fullscreen(false)
@@ -166,6 +166,8 @@ void QEvrWidget::setFullscreen(bool fullscreen)
         
         // Little more involved than that, but anyway.
     }
+
+    QMediaWidgetEndpoint::setFullscreen(fullscreen);
 }
 
 QSize QEvrWidget::sizeHint() const

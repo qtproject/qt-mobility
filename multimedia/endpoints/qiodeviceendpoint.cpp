@@ -36,30 +36,6 @@
 
 #include <private/qobject_p.h>
 
-/*!
-    \class QIODeviceEndpointInterface
-    \preliminary
-    \internal
-    \brief The QIODeviceEndpointInterface provides an interface for media endpoints that read or
-    write a QIODevice.
-
-    \sa QIODeviceEndpoint
-*/
-
-/*!
-*/
-QIODeviceEndpointInterface::~QIODeviceEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QIODeviceEndpointInterface::direction() const
-{
-    return InputOutput;
-}
-
 class QIODeviceEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -90,6 +66,14 @@ QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
 */
 QIODeviceEndpoint::~QIODeviceEndpoint()
 {
+}
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QIODeviceEndpoint::direction() const
+{
+    return InputOutput;
 }
 
 /*!

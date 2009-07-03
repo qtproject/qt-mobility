@@ -32,9 +32,9 @@
 **
 ****************************************************************************/
 
-#include "qaudioencodercontrol.h"
+#include "qaudiocapturecontrol.h"
 
-QAudioEncoderControl::~QAudioEncoderControl()
+QAudioCaptureControl::~QAudioCaptureControl()
 {
 }
 

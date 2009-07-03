@@ -7,7 +7,7 @@
 class QGstreamerVideoWidget : public QMediaWidgetEndpoint, public QGstreamerVideoRendererInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaWidgetEndpointInterface QGstreamerVideoRendererInterface)
+    Q_INTERFACES(QGstreamerVideoRendererInterface)
     Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
 public:
     QGstreamerVideoWidget(QWidget *parent = 0);

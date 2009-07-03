@@ -32,25 +32,66 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOENCODERSERVICE_H
-#define QAUDIOENCODERSERVICE_H
+#ifndef QAUDIOCAPTURE_H
+#define QAUDIOCAPTURE_H
 
+#include <QList>
+#include <QStringList>
+
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#include <QtMultimedia/qaudio.h>
+#endif
+
+#include "qabstractmediacontrol.h"
+#include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
-#include "qaudioencodercontrol.h"
 
+#include "qmediaserviceprovider.h"
 
-class QAudioEncoderServicePrivate;
-class QAudioEncoderService : public QAbstractMediaService
+class QAudioCaptureService;
+class QAudioCaptureControl;
+
+extern QAudioCaptureService *createAudioCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiocapture"));
+
+class QAudioCapturePrivate;
+
+class QAudioCapture : public QAbstractMediaObject
 {
     Q_OBJECT
-
 public:
-    ~QAudioEncoderService();
+    QAudioCapture(QAudioCaptureService *service = createAudioCaptureService(), QObject *parent = 0);
+    ~QAudioCapture();
 
-    virtual QAudioEncoderControl* control() const = 0;
+    QByteArray defaultDevice();
+    QList<QByteArray> deviceList();
+    QStringList supportedCodecs();
+    QList<int> supportedFrequencies();
+    QList<int> supportedChannels();
+    QList<int> supportedSampleSizes();
 
-protected:
-    QAudioEncoderService(QObject *parent);
+#ifdef AUDIOSERVICES
+    QList<QAudioFormat::Endian> supportedByteOrders();
+    QList<QAudioFormat::SampleType> supportedSampleTypes();
+
+    QAudioFormat format();
+    bool setFormat(const QAudioFormat &format);
+#endif
+    void setSink(QAbstractMediaObject* sink);
+    QAbstractMediaService* service() const;
+
+public Q_SLOTS:
+    void start();
+    void stop();
+
+#ifdef AUDIOSERVICES
+Q_SIGNALS:
+    void stateChanged(QAudio::State newState);
+#endif
+
+private:
+    Q_DISABLE_COPY(QAudioCapture)
+    Q_DECLARE_PRIVATE(QAudioCapture)
 };
 
-#endif  // QAUDIOENCODERSERVICE_H
+#endif  // QAUDIOCAPTURE_H

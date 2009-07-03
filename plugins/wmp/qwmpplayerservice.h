@@ -38,7 +38,6 @@
 #include <QtCore/qobject.h>
 
 #include "qwmpevents.h"
-#include "qwmpglobal.h"
 
 #include <wmp.h>
 
@@ -46,41 +45,26 @@ class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
 
-class Q_WMP_EXPORT QMediaPlayerService : public QObject
-{
-    Q_OBJECT
-public:
-    QMediaPlayerService(QObject *parent = 0) : QObject(parent) {}
-
-    virtual QWidget *createWidget() = 0;
-
-    virtual QObject *videoOutput() const = 0;
-    virtual void setVideoOutput(QObject *output) = 0;
-
-    virtual QMediaPlayerControl *control() = 0;
-    virtual QMediaMetaData *metaData() = 0;
-    virtual QMediaPlaylist *playlist() = 0;
-};
-
 class QWmpMetaData;
 class QWmpPlayerControl;
 class QWmpPlaylist;
 
-class Q_WMP_EXPORT QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
+class QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
 {
     Q_OBJECT
 public:
     QWmpPlayerService(QObject *parent = 0);
     ~QWmpPlayerService();
 
-    QMediaPlayerControl *control();
-    QMediaMetaData *metaData();
-    QMediaPlaylist *playlist();
-
-    QWidget *createWidget();
+    QAbstractMediaControl *control(const char *name);
 
     QObject *videoOutput() const;
     void setVideoOutput(QObject *output);
+
+    QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
+
+    QObject *createEndpoint(const char *interface);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -102,8 +86,6 @@ private:
     QWmpPlaylist *m_playlist;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
-
-
 };
 
 #endif

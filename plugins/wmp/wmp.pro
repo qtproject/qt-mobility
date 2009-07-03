@@ -9,13 +9,14 @@ DEFINES += QT_BUILD_WMP_LIB
 
 DESTDIR = $$OUT_PWD/../../lib
 
-LIBS += -levr -lstrmiids
+LIBS += -levr -lstrmiids -lQtMedia
+
+INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
 HEADERS = \
     qevrwidget.h \
     qmfactivate.h \
     qwmpevents.h \
-    qwmpglobal.h \
     qwmpmetadata.h \
     qwmpplayercontrol.h \
     qwmpplayerservice.h

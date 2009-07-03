@@ -67,24 +67,34 @@ QWmpMetaData::~QWmpMetaData()
         m_media->Release();
 }
 
-QStringList QWmpMetaData::keys() const
+bool QWmpMetaData::metadataAvailable() const
+{
+}
+
+bool QWmpMetaData::isReadOnly() const
+{
+    return true;
+}
+
+void QWmpMetaData::setReadOnly(bool readonly)
+{
+    Q_UNUSED(readonly);
+}
+
+QList<QString> QWmpMetaData::availableMetadata() const
 {
     return keys(m_media);
 }
 
-int QWmpMetaData::valueCount(const QString &key) const
+QVariant QWmpMetaData::metadata(const QString &name) const
 {
-    return valueCount(m_media, key);
+    return value(m_media, name, 0);
 }
 
-QVariant QWmpMetaData::value(const QString &key, int value) const
+void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
 {
-    return QWmpMetaData::value(m_media, key, value);
-}
-
-QVariantList QWmpMetaData::values(const QString &key) const
-{
-    return values(m_media, key);
+    Q_UNUSED(name);
+    Q_UNUSED(value);
 }
 
 IWMPMedia *QWmpMetaData::media() const
