@@ -389,6 +389,7 @@ void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &con
 void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error)
 {
     if (activeConfig.identifier() == id) {
+        networkConfigurationsChanged();
         switch (error) {
         case QNetworkSessionEngine::OperationNotSupported:
             lastError = QNetworkSession::OperationNotSupportedError;

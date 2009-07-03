@@ -315,7 +315,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
     // Test opening the session.
     {
-        bool expectStateChange = session.state() != QNetworkSession::Connected;
+        QNetworkSession::State previousState = session.state();
+        bool expectStateChange = previousState != QNetworkSession::Connected;
 
         session.open();
 
@@ -323,6 +324,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
+
+            QVERIFY(session.state() == previousState);
+
             if (error == QNetworkSession::OperationNotSupportedError) {
                 // The session needed to bring up the interface,
                 // but the operation is not supported.
@@ -394,7 +398,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
     if (forceSessionStop) {
         // Test forcing the second session to stop the interface.
-        bool expectStateChange = session.state() != QNetworkSession::Disconnected;
+        QNetworkSession::State previousState = session.state();
+        bool expectStateChange = previousState != QNetworkSession::Disconnected;
 
         session2.stop();
 
@@ -426,23 +431,26 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QTRY_VERIFY(stateChangedSpy2.count() >= 2 || !errorSpy2.isEmpty());
 
         if (!errorSpy2.isEmpty()) {
+            QVERIFY(session2.state() == previousState);
+            QVERIFY(session.state() == previousState);
+
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy2.first().at(0));
             if (error == QNetworkSession::OperationNotSupportedError) {
                 // The session needed to bring down the interface,
                 // but the operation is not supported.
-                QSKIP("Configuration does not support close().", SkipSingle);
+                QSKIP("Configuration does not support stop().", SkipSingle);
             } else if (error == QNetworkSession::InvalidConfigurationError) {
                 // The session needed to bring down the interface, but it is not possible for the
                 // specified configuration.
                 if ((session.configuration().state() & QNetworkConfiguration::Discovered) ==
                     QNetworkConfiguration::Discovered) {
-                    QFAIL("Failed to open session for Discovered configuration.");
+                    QFAIL("Failed to stop session for Discovered configuration.");
                 } else {
                     QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
                 }
             } else {
-                QFAIL("Error opening session.");
+                QFAIL("Error stopping session.");
             }
         } else if (!sessionClosedSpy2.isEmpty()) {
             if (expectStateChange) {
@@ -515,12 +523,12 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                     // specified configuration.
                     if ((session.configuration().state() & QNetworkConfiguration::Discovered) ==
                         QNetworkConfiguration::Discovered) {
-                        QFAIL("Failed to open session for Discovered configuration.");
+                        QFAIL("Failed to close session for Discovered configuration.");
                     } else {
                         QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
                     }
                 } else {
-                    QFAIL("Error opening session.");
+                    QFAIL("Error closing session.");
                 }
             } else if (!sessionClosedSpy.isEmpty()) {
                 QVERIFY(sessionOpenedSpy.isEmpty());
