@@ -41,7 +41,7 @@
 
 #include "qcontextglobal.h"
 
-class Q_CFW_EXPORT IValueSpaceLayer : public QObject
+class Q_CFW_EXPORT QAbstractValueSpaceLayer : public QObject
 {
 Q_OBJECT
 public:
@@ -109,9 +109,9 @@ namespace QValueSpace {
     void initValuespace();
     Q_CFW_EXPORT void reinitValuespace();
 
-    typedef IValueSpaceLayer *(*LayerCreateFunc)();
+    typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
     void installLayer(LayerCreateFunc func);
-    void installLayer(IValueSpaceLayer * layer);
+    void installLayer(QAbstractValueSpaceLayer * layer);
 
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }
@@ -119,7 +119,7 @@ namespace QValueSpace {
 };
 
 #define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
-    IValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
+    QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
     { \
         return name::instance(); \
     } \

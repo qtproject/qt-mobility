@@ -59,7 +59,7 @@ items in the layers below it.  The most important Value Space layers is:
 \endlist
 
 Consider the Value Space item \c {/Device/Buttons}.  If two layer contained
-this item, the value in the layer with the higher layer order (see \l {IValueSpaceLayer::order()}) 
+this item, the value in the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) 
 would shadow that with the lower layer order.  However, if
 only the  layer with the lower order contained this item, it would be visible through the
 QValueSpaceItem class, even if the higher order layer contained
@@ -69,7 +69,7 @@ value not by path.
 \section2 Architecture
 
 Layers in the Qt Value Space are provided by objects implementing the
-IValueSpaceLayer interface.  The two internal layers, the Application Object
+QAbstractValueSpaceLayer interface.  The two internal layers, the Application Object
 layer and the INI layer, are implemented in this fashion.  The Value Space
 supports adding new, 3rd party layers through calls to the
 QValueSpace::installLayer() method.  All layers must be installed prior to the
@@ -131,6 +131,6 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QValueSpaceItem}
     \o \l{QValueSpaceObject}
     \o \l{QValueSpace}
-    \o \l{IValueSpaceLayer}
+    \o \l{QAbstractValueSpaceLayer}
 \endlist
 */

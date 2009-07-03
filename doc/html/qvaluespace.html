@@ -21,21 +21,21 @@
 <ul>
 <li><div class="fn"/>void <b><a href="qvaluespace.html#initValuespace">initValuespace</a></b> ()</li>
 <li><div class="fn"/>void <b><a href="qvaluespace.html#initValuespaceManager">initValuespaceManager</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qvaluespace.html#installLayer">installLayer</a></b> ( IValueSpaceLayer * <i>layer</i> )</li>
+<li><div class="fn"/>void <b><a href="qvaluespace.html#installLayer">installLayer</a></b> ( QAbstractValueSpaceLayer * <i>layer</i> )</li>
 <li><div class="fn"/>void <b><a href="qvaluespace.html#reinitValuespace">reinitValuespace</a></b> ()</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpace namespace provides methods that are useful to Value Space layer implementors.</p>
-<p>Value Space layers that are available at link time can be automatically installed using <tt>QVALUESPACE_AUTO_INSTALL_LAYER(name)</tt> macro. The method <tt>IValueSpaceLayer * name::instance()</tt> must exist and return a pointer to the layer to install. The <tt>QVALUESPACE_AUTO_INSTALL_LAYER(name)</tt> macro will only invoke this method <i>after</i> QApplication has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
+<p>Value Space layers that are available at link time can be automatically installed using <tt>QVALUESPACE_AUTO_INSTALL_LAYER(name)</tt> macro. The method <tt>QAbstractValueSpaceLayer * name::instance()</tt> must exist and return a pointer to the layer to install. The <tt>QVALUESPACE_AUTO_INSTALL_LAYER(name)</tt> macro will only invoke this method <i>after</i> QApplication has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
 <hr />
 <h2>Function Documentation</h2>
 <h3 class="fn"><a name="initValuespace"></a>void QValueSpace::initValuespace ()</h3>
 <p>Initialize the value space. This method only needs to be called by layer implementers to force initialization of the value space.</p>
 <h3 class="fn"><a name="initValuespaceManager"></a>void QValueSpace::initValuespaceManager ()</h3>
 <p>Initialize the value space. This method only needs to be called by the value space manager process, and should be called before any process in the system uses a value space class.</p>
-<h3 class="fn"><a name="installLayer"></a>void QValueSpace::installLayer ( <a href="ivaluespacelayer.html">IValueSpaceLayer</a> * <i>layer</i> )</h3>
+<h3 class="fn"><a name="installLayer"></a>void QValueSpace::installLayer ( <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> * <i>layer</i> )</h3>
 <p>Used by value space layer implementations to install themselves into the system. <i>layer</i> should be a pointer to the layer to install.</p>
 <h3 class="fn"><a name="reinitValuespace"></a>void QValueSpace::reinitValuespace ()</h3>
 <p>Re-initialize the value space. This method only needs to be called by layer implementers to force re-initialization of the value space.</p>

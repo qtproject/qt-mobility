@@ -51,15 +51,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /*!
-  \class IValueSpaceLayer
-  \brief The IValueSpaceLayer class provides support for adding new logical data
+  \class QAbstractValueSpaceLayer
+  \brief The QAbstractValueSpaceLayer class provides support for adding new logical data
   layers to the Qt Value Space.
   */
 
 /*!
     \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
 
-    \relates IValueSpaceLayer
+    \relates QAbstractValueSpaceLayer
 
     This macro installs new value space layer. \a className is the name of the class implementing
     the new layer.
@@ -67,17 +67,17 @@
 */
 
 /*!
-  \typedef IValueSpaceLayer::HANDLE
+  \typedef QAbstractValueSpaceLayer::HANDLE
 
   The HANDLE type is an opaque, pointer sized contextual handle used to
   represent paths within value space layers.  HANDLES are only ever created by
-  IValueSpaceLayer::item() and are always released by calls to
-  IValueSpaceLayer::remHandle().  The special, \c {InvalidHandle} is reserved to
+  QAbstractValueSpaceLayer::item() and are always released by calls to
+  QAbstractValueSpaceLayer::remHandle().  The special, \c {InvalidHandle} is reserved to
   represent an invalid handle.
  */
 
 /*!
-  \enum IValueSpaceLayer::Properties
+  \enum QAbstractValueSpaceLayer::Properties
 
   To allow for efficient layer implementations, expensive handle operations,
   currently only monitoring for changes, are enabled and disabled as needed on
@@ -85,12 +85,12 @@
   the different properties that can exist on a handle.
 
   \value Publish Enable change notification for the handle.  When set, the layer
-         should emit IValueSpaceLayer::handleChanged() signals when appropriate
+         should emit QAbstractValueSpaceLayer::handleChanged() signals when appropriate
          for the handle.
  */
 
 /*!
-  \enum IValueSpaceLayer::Type
+  \enum QAbstractValueSpaceLayer::Type
 
   Value Space layers are initialized in either a "Server" or a "Client"
   context.  There is only a single server in the value space architecture, and
@@ -103,14 +103,14 @@
  */
 
 /*!
-  \fn QString IValueSpaceLayer::name()
+  \fn QString QAbstractValueSpaceLayer::name()
 
   Returns the name of the Value Space layer.  This name is only used for
   diagnostics purposes.
  */
 
 /*!
-  \fn bool IValueSpaceLayer::startup(Type type)
+  \fn bool QAbstractValueSpaceLayer::startup(Type type)
 
   Called by the Value Space system to initialize each layer.  The \a type
   parameter will be set accordingly, and layer implementors can use this to
@@ -119,37 +119,37 @@
  */
 
 /*!
-  \fn bool IValueSpaceLayer::restart()
+  \fn bool QAbstractValueSpaceLayer::restart()
 
   Called by the Value Space system to restart each layer.
   Returns true upon success; otherwise returns false.
  */
 
 /*!
-  \fn void IValueSpaceLayer::shutdown()
+  \fn void QAbstractValueSpaceLayer::shutdown()
 
   Called by the Value Space system to uninitialize each layer.  The shutdown
   call can be used to release any resources in use by the layer.
  */
 
 /*!
-  \fn QUuid IValueSpaceLayer::id()
+  \fn QUuid QAbstractValueSpaceLayer::id()
 
   Return a globally unique id for the layer.  This id is used to break ordering
   ties.
  */
 
 /*!
-  \fn unsigned int IValueSpaceLayer::order()
+  \fn unsigned int QAbstractValueSpaceLayer::order()
 
   Return the position in the Value Space layer stack that this layer should
   reside.  Higher numbers mean the layer has a higher precedence and its values
   will "shadow" those below it.  If two layers specify the same ordering, the
-  IValueSpaceLayer::id() value is used to break the tie.
+  QAbstractValueSpaceLayer::id() value is used to break the tie.
  */
 
 /*!
-  \fn bool IValueSpaceLayer::value(HANDLE handle, QVariant *data)
+  \fn bool QAbstractValueSpaceLayer::value(HANDLE handle, QVariant *data)
 
   Returns the value for a particular \a handle.  If a value is available, the
   layer will set \a data and return true.  If no value is available, false is
@@ -157,7 +157,7 @@
   */
 
 /*!
-  \fn bool IValueSpaceLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *data)
+  \fn bool QAbstractValueSpaceLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *data)
 
   Returns the value for a particular \a subPath of \a handle.  If a value is
   available, the layer will set \a data and return true.  If no value is
@@ -165,28 +165,28 @@
   */
 
 /*!
-  \fn bool IValueSpaceLayer::remove(HANDLE handle)
+  \fn bool QAbstractValueSpaceLayer::remove(HANDLE handle)
 
   Process a client side QValueSpaceItem::remove() for the specified \a handle.
   Return true on success and false on failure.
  */
 
 /*!
-  \fn bool IValueSpaceLayer::remove(HANDLE handle, const QByteArray &subPath)
+  \fn bool QAbstractValueSpaceLayer::remove(HANDLE handle, const QByteArray &subPath)
 
   Process a client side QValueSpaceItem::remove() for the specified \a subPath
   of \a handle.  Return true on success and false on failure.
  */
 
 /*!
-  \fn bool IValueSpaceLayer::setValue(HANDLE handle, const QVariant &value)
+  \fn bool QAbstractValueSpaceLayer::setValue(HANDLE handle, const QVariant &value)
 
   Process a client side QValueSpaceItem::setValue() for the specified \a handle
   and \a value.  Return true on success and false on failure.
   */
 
 /*!
-  \fn bool IValueSpaceLayer::setValue(HANDLE handle, const QByteArray &subPath, const QVariant &value)
+  \fn bool QAbstractValueSpaceLayer::setValue(HANDLE handle, const QByteArray &subPath, const QVariant &value)
 
   Process a client side QValueSpaceItem::setValue() for the specified \a subPath
   of \a handle and the provided \a value.  Return true on success and false on
@@ -194,14 +194,14 @@
   */
 
 /*!
-  \fn bool IValueSpaceLayer::syncChanges()
+  \fn bool QAbstractValueSpaceLayer::syncChanges()
 
   Commit any changes made through setValue().  Return true on success and false
   on failure.
   */
 
 /*!
-  \fn QSet<QByteArray> IValueSpaceLayer::children(HANDLE handle)
+  \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(HANDLE handle)
 
   Returns the set of children of \a handle.  For example, in a layer providing
   the following items:
@@ -217,26 +217,26 @@
  */
 
 /*!
-  \fn HANDLE IValueSpaceLayer::item(HANDLE parent, const QByteArray &subPath)
+  \fn HANDLE QAbstractValueSpaceLayer::item(HANDLE parent, const QByteArray &subPath)
 
   Returns a new opaque handle for the requested \a subPath of \a parent.  If
   \a parent is an InvalidHandle, \a subPath is an absolute path.
   */
 
 /*!
-  \fn void IValueSpaceLayer::setProperty(HANDLE handle, Properties property)
+  \fn void QAbstractValueSpaceLayer::setProperty(HANDLE handle, Properties property)
 
   Apply the specified \a property mask to \a handle.
  */
 
 /*!
-  \fn void IValueSpaceLayer::remHandle(HANDLE handle)
+  \fn void QAbstractValueSpaceLayer::remHandle(HANDLE handle)
 
-  Releases a \a handle previously returned from IValueSpaceLayer::item().
+  Releases a \a handle previously returned from QAbstractValueSpaceLayer::item().
  */
 
 /*!
-  \fn void IValueSpaceLayer::handleChanged(unsigned int handle)
+  \fn void QAbstractValueSpaceLayer::handleChanged(unsigned int handle)
 
   Emitted whenever the \a handle's value, or any sub value, changes.
   */
@@ -254,18 +254,18 @@ public:
     void reinit();
     bool isServer() const;
 
-    void install(IValueSpaceLayer * layer);
+    void install(QAbstractValueSpaceLayer * layer);
     void install(QValueSpace::LayerCreateFunc func);
-    QList<IValueSpaceLayer *> const & getLayers();
+    QList<QAbstractValueSpaceLayer *> const & getLayers();
 
 private:
-    void commonInit(IValueSpaceLayer::Type);
+    void commonInit(QAbstractValueSpaceLayer::Type);
     void commonReinit();
-    bool initLayer(IValueSpaceLayer* layer);
-    bool reinitLayer(IValueSpaceLayer* layer);
+    bool initLayer(QAbstractValueSpaceLayer* layer);
+    bool reinitLayer(QAbstractValueSpaceLayer* layer);
 
     enum { Uninit, Server, Client } type;
-    QList<IValueSpaceLayer *> layers;
+    QList<QAbstractValueSpaceLayer *> layers;
     QList<QValueSpace::LayerCreateFunc> funcs;
 };
 
@@ -282,7 +282,7 @@ Q_GLOBAL_STATIC(QValueSpaceManager, valueSpaceManager);
 
   Value Space layers that are available at link time can be automatically
   installed using \c {QVALUESPACE_AUTO_INSTALL_LAYER(name)} macro.  The method
-  \c {IValueSpaceLayer * name::instance()} must exist and return a pointer to
+  \c {QAbstractValueSpaceLayer * name::instance()} must exist and return a pointer to
   the layer to install.  The \c {QVALUESPACE_AUTO_INSTALL_LAYER(name)} macro
   will only invoke this method \i {after} QApplication has been constructed,
   making it safe to use any Qt class in your layer's constructor.
@@ -329,7 +329,7 @@ void QValueSpace::reinitValuespace()
   Used by value space layer implementations to install themselves into the
   system.  \a layer should be a pointer to the layer to install.
   */
-void QValueSpace::installLayer(IValueSpaceLayer * layer)
+void QValueSpace::installLayer(QAbstractValueSpaceLayer * layer)
 {
     valueSpaceManager()->install(layer);
 }
@@ -354,7 +354,7 @@ void QValueSpaceManager::initServer()
 {
     Q_ASSERT(Uninit == type);
 
-    commonInit(IValueSpaceLayer::Server);
+    commonInit(QAbstractValueSpaceLayer::Server);
 }
 
 void QValueSpaceManager::init()
@@ -362,7 +362,7 @@ void QValueSpaceManager::init()
     if(Uninit != type)
         return; // Already initialized
 
-    commonInit(IValueSpaceLayer::Client);
+    commonInit(QAbstractValueSpaceLayer::Client);
 }
 
 void QValueSpaceManager::reinit()
@@ -373,7 +373,7 @@ void QValueSpaceManager::reinit()
     commonReinit();
 }
 
-void QValueSpaceManager::commonInit(IValueSpaceLayer::Type vsltype)
+void QValueSpaceManager::commonInit(QAbstractValueSpaceLayer::Type vsltype)
 {
     Q_ASSERT(Uninit == type);
 
@@ -382,7 +382,7 @@ void QValueSpaceManager::commonInit(IValueSpaceLayer::Type vsltype)
         install(funcs[ii]());
     funcs.clear();
 
-    type = (vsltype == IValueSpaceLayer::Server)?Server:Client;
+    type = (vsltype == QAbstractValueSpaceLayer::Server)?Server:Client;
 
     for(int ii = 0; ii < layers.count(); ++ii) {
         if(!initLayer(layers.at(ii))) {
@@ -409,7 +409,7 @@ bool QValueSpaceManager::isServer() const
     return (Server == type);
 }
 
-void QValueSpaceManager::install(IValueSpaceLayer * layer)
+void QValueSpaceManager::install(QAbstractValueSpaceLayer * layer)
 {
     Q_ASSERT(Uninit == type);
     Q_ASSERT(layer);
@@ -443,22 +443,22 @@ void QValueSpaceManager::install(QValueSpace::LayerCreateFunc func)
     funcs.append(func);
 }
 
-QList<IValueSpaceLayer *> const & QValueSpaceManager::getLayers()
+QList<QAbstractValueSpaceLayer *> const & QValueSpaceManager::getLayers()
 {
     init(); // Fallback init
 
     return layers;
 }
 
-bool QValueSpaceManager::initLayer(IValueSpaceLayer* layer)
+bool QValueSpaceManager::initLayer(QAbstractValueSpaceLayer* layer)
 {
     Q_ASSERT(Uninit != type);
 
-    return layer->startup((type==Client)?IValueSpaceLayer::Client:
-                                         IValueSpaceLayer::Server);
+    return layer->startup((type==Client)?QAbstractValueSpaceLayer::Client:
+                                         QAbstractValueSpaceLayer::Server);
 }
 
-bool QValueSpaceManager::reinitLayer(IValueSpaceLayer* layer)
+bool QValueSpaceManager::reinitLayer(QAbstractValueSpaceLayer* layer)
 {
     Q_ASSERT(Uninit != type);
 
@@ -490,7 +490,7 @@ public slots:
     }
 
 public:
-    QList<QPair<IValueSpaceLayer *, IValueSpaceLayer::HANDLE> > readers;
+    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::HANDLE> > readers;
     QHash<QValueSpaceItem *,int> connections;
 };
 
@@ -517,14 +517,14 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         if(!man)
             return;
 
-        const QList<IValueSpaceLayer *> & readerList = man->getLayers();
+        const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
 
         for(int ii = 0; ii < readerList.count(); ++ii) {
-            IValueSpaceLayer * read = readerList.at(ii);
+            QAbstractValueSpaceLayer * read = readerList.at(ii);
             if(!read) continue;
 
-            IValueSpaceLayer::HANDLE handle = read->item(IValueSpaceLayer::InvalidHandle, path);
-            if(IValueSpaceLayer::InvalidHandle != handle) {
+            QAbstractValueSpaceLayer::HANDLE handle = read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+            if(QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
             }
         }
@@ -551,7 +551,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
             QObject::connect(connections, SIGNAL(changed()),
                              space, SIGNAL(contentsChanged()));
             for(int ii = 0; ii < readers.count(); ++ii) {
-                readers.at(ii).first->setProperty(readers.at(ii).second, IValueSpaceLayer::Publish);
+                readers.at(ii).first->setProperty(readers.at(ii).second, QAbstractValueSpaceLayer::Publish);
                 QObject::connect(readers.at(ii).first, SIGNAL(handleChanged(uint)), connections, SLOT(handleChanged(uint)));
             }
         } else if(!connections->connections.contains(space)) {
@@ -601,7 +601,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
 
     unsigned int refCount;
     QByteArray path;
-    QList<QPair<IValueSpaceLayer *, IValueSpaceLayer::HANDLE> > readers;
+    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::HANDLE> > readers;
     QValueSpaceItemPrivateProxy * connections;
 };
 
@@ -1132,10 +1132,10 @@ QVariant QValueSpaceItem::value(const char * subPath, const QVariant &def) const
    \code
 
    QValueSpaceItem base("/Settings");
-   QValueSpaceItem equiv("/Settings/Nokia/IniValueSpace/General/Mappings);
+   QValueSpaceItem equiv("/Settings/Nokia/General/Mappings);
 
    // Is true
-   equiv.value() == base.value("Nokia/IniValueSpace/General/Mapping");
+   equiv.value() == base.value("Nokia/General/Mapping");
    \endcode
 
    If the item does not exist, \a def is returned.
@@ -1192,7 +1192,7 @@ void QValueSpaceItem::disconnectNotify(const char *signal)
   tree containing:
 
   \code
-  /Settings/Nokia/IniValueSpace
+  /Settings/Nokia/Device
   /Settings/Nokia/Other
   /Settings/Qt
   /Device/Buttons

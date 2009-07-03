@@ -138,7 +138,7 @@
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
 <h3 class="fn"><a name="subPaths"></a>QList&lt;QString&gt; QValueSpaceItem::subPaths () const</h3>
 <p>Returns a list of sub-paths for this item. For example, given a Value Space tree containing:</p>
-<pre>    /Settings/Nokia/IniValueSpace
+<pre>    /Settings/Nokia/Device
     /Settings/Nokia/Other
     /Settings/Qt
     /Device/Buttons</pre>
@@ -148,10 +148,10 @@
 <h3 class="fn"><a name="value"></a>QVariant QValueSpaceItem::value ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
 <p>Returns the value of sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. The following code shows how the item and <i>subPath</i> relate.</p>
 <pre>    QValueSpaceItem base(&quot;/Settings&quot;);
-    QValueSpaceItem equiv(&quot;/Settings/Nokia/IniValueSpace/General/Mappings);
+    QValueSpaceItem equiv(&quot;/Settings/Nokia/General/Mappings);
 
 <span class="comment">    // Is true</span>
-    equiv.value() == base.value(&quot;Nokia/IniValueSpace/General/Mapping&quot;);</pre>
+    equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
 <p>If the item does not exist, <i>def</i> is returned.</p>
 <p>See also <a href="qvaluespaceitem.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a>QVariant QValueSpaceItem::value ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>

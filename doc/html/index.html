@@ -39,10 +39,10 @@
 <p>Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which are stacked on top of each other to form the final unified view. If a &quot;higher&quot; layer contains an item, it shadows the value of items in the layers below it. The most important Value Space layers is:</p>
 <p><i>The Application Object layer</i></p>
 <p>The Application Object layer allows applications to add and remove &quot;transient&quot; data from the Value Space. Applications access the Application Object layer through the <a href="qvaluespaceobject.html">QValueSpaceObject</a> class.</p>
-<p>Consider the Value Space item <tt>/Device/Buttons</tt>. If two layer contained this item, the value in the layer with the higher layer order (see <a href="ivaluespacelayer.html#order">IValueSpaceLayer::order</a>()) would shadow that with the lower layer order. However, if only the layer with the lower order contained this item, it would be visible through the <a href="qvaluespaceitem.html">QValueSpaceItem</a> class, even if the higher order layer contained sub-items such as <tt>/Device/Buttons/1</tt>. That is, layer shadowing occurs by value not by path.</p>
+<p>Consider the Value Space item <tt>/Device/Buttons</tt>. If two layer contained this item, the value in the layer with the higher layer order (see <a href="qabstractvaluespacelayer.html#order">QAbstractValueSpaceLayer::order</a>()) would shadow that with the lower layer order. However, if only the layer with the lower order contained this item, it would be visible through the <a href="qvaluespaceitem.html">QValueSpaceItem</a> class, even if the higher order layer contained sub-items such as <tt>/Device/Buttons/1</tt>. That is, layer shadowing occurs by value not by path.</p>
 <a name="architecture"></a>
 <h4>Architecture</h4>
-<p>Layers in the Qt Value Space are provided by objects implementing the <a href="ivaluespacelayer.html">IValueSpaceLayer</a> interface. The two internal layers, the Application Object layer and the INI layer, are implemented in this fashion. The Value Space supports adding new, 3rd party layers through calls to the <a href="qvaluespace.html#installLayer">QValueSpace::installLayer</a>() method. All layers must be installed prior to the first Value Space usage. Although it is legal to have a different set of layers installed in each process (a process local layer, for example) this asymmetric model is discouraged as it might cause confusion if these two processes communicate.</p>
+<p>Layers in the Qt Value Space are provided by objects implementing the <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> interface. The two internal layers, the Application Object layer and the INI layer, are implemented in this fashion. The Value Space supports adding new, 3rd party layers through calls to the <a href="qvaluespace.html#installLayer">QValueSpace::installLayer</a>() method. All layers must be installed prior to the first Value Space usage. Although it is legal to have a different set of layers installed in each process (a process local layer, for example) this asymmetric model is discouraged as it might cause confusion if these two processes communicate.</p>
 <p>The Qt Value Space system is divided into two parts: a single server and zero or more clients. Internally the Value Space system draws no distinction between the two - the server is also a client, for example - but certain layers, in particular the Application Object layer, do. The Value Space server <b>must</b> be initialized via a call to <a href="qvaluespace.html#initValuespaceManager">QValueSpace::initValuespaceManager</a>() prior to any use of the Value Space. Value Space clients will automatically initialize the first time Value Space functionionality is used.</p>
 <a name="application-object-layer"></a>
 <h5>Application Object layer</h5>
@@ -62,7 +62,7 @@
 <li><a href="qvaluespaceitem.html">QValueSpaceItem</a></li>
 <li><a href="qvaluespaceobject.html">QValueSpaceObject</a></li>
 <li><a href="qvaluespace.html">QValueSpace</a></li>
-<li><a href="ivaluespacelayer.html">IValueSpaceLayer</a></li>
+<li><a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a></li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

@@ -1655,14 +1655,14 @@ ALServerImpl::~ALServerImpl()
 }
 
 // declare ApplicationLayer
-class ApplicationLayer : public IValueSpaceLayer
+class ApplicationLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 public:
     ApplicationLayer();
     virtual ~ApplicationLayer();
 
-    // IValueSpaceLayer
+    // QAbstractValueSpaceLayer
     virtual QString name();
     virtual bool startup(Type);
     virtual bool restart();
@@ -1760,7 +1760,7 @@ private:
            a change should be emitted anyway. */
         bool forceChange;
     };
-    ReadHandle * rh(IValueSpaceLayer::HANDLE handle) const
+    ReadHandle * rh(QAbstractValueSpaceLayer::HANDLE handle) const
     {
         Q_ASSERT(handle && INVALID_HANDLE != handle);
         return reinterpret_cast<ReadHandle *>(handle);
@@ -2619,7 +2619,7 @@ ApplicationLayer::HANDLE ApplicationLayer::item(HANDLE parent,
     QMap<QByteArray, ReadHandle *>::Iterator iter = handles.find(key);
     if(iter != handles.end()) {
         ++(*iter)->refCount;
-        return (IValueSpaceLayer::HANDLE)*iter;
+        return (QAbstractValueSpaceLayer::HANDLE)*iter;
     } else {
         ReadHandle * handle = new ReadHandle(key);
         clearHandle(handle);
@@ -2627,7 +2627,7 @@ ApplicationLayer::HANDLE ApplicationLayer::item(HANDLE parent,
         refreshHandle(handle);
         lock->unlock();
         handles.insert(key, handle);
-        return (IValueSpaceLayer::HANDLE)(handle);
+        return (QAbstractValueSpaceLayer::HANDLE)(handle);
     }
 }
 
