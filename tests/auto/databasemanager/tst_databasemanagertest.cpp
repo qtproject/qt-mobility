@@ -844,10 +844,12 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     //== Set a couple of external defaults in the user scope database,
     //   -remove the service that provides these defaults at the system scope.
     //    this will leave "hanging" default links in the user scope database
+    //   -also set one default which will not be a hanging link
     //   -recreate the database manager and run getServiceNames so it will
     //    connect to both system and user scope databases.
     //   -verify that the hanging defaults links have been appropriately removed
-    //    or reset to a new default interface implementation ==
+    //    or reset to a new default interface implementation
+    //   -also verify that the non-hanging link still exists ==
     QServiceFilter filter;
     filter.setServiceName("DharmaInitiative");
     filter.setInterface("com.dharma.electro.discharge");
@@ -862,16 +864,22 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(descriptors.count() > 0);
     QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
 
+    filter.setServiceName("WayneEnt");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
     QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
     QList<QPair<QString, QString> > externalDefaultsInfo = m_dbm->m_userDb->externalDefaultsInfo();
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
-    QCOMPARE(externalDefaultsInfo.length(), 2);
+    QCOMPARE(externalDefaultsInfo.length(), 3);
 
     delete m_dbm;
 
     m_dbm = new DatabaseManager;
     m_dbm->getServiceNames("", DatabaseManager::UserScope);
-    QCOMPARE(m_dbm->m_userDb->externalDefaultsInfo().count(), 0);
+    QCOMPARE(m_dbm->m_userDb->externalDefaultsInfo().count(), 1);
     descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
                                         DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor,"com.dharma.electro.discharge",
@@ -880,6 +888,11 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                         DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                            DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                            "WayneEnt", 2,0));
     clean();
 }
 #endif
