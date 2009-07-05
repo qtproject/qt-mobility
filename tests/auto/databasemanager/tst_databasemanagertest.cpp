@@ -893,6 +893,53 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                             DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                             "WayneEnt", 2,0));
+
+    // == set a system service interface as a default at user scope
+    //        -remove the availability of the system db and confirm the default
+    //         cannot be found
+    //        -set a new default
+    //        -restore availability of the system db and confirm the default
+    //         is still the new default
+    filter.setServiceName("omni");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+    delete m_dbm;
+
+    systemPermsSet = QFile::permissions(systemDbFilePath);
+    modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+
+    m_dbm = new DatabaseManager;
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    filter.setServiceName("LuthorCorp");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                        DatabaseManager::UserScope);
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                "LuthorCorp", 1,2));
+    modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+    m_dbm->getServiceNames("", DatabaseManager::UserScope);//this call is just to open the system db
+    QVERIFY(m_dbm->m_systemDb->isOpen());
+
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                            DatabaseManager::UserScope);
+    QVERIFY(descriptor.isValid());
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                "LuthorCorp", 1,2));
+
     clean();
 }
 #endif
