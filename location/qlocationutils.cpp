@@ -48,6 +48,7 @@
 
 #include <math.h>
 
+
 // converts e.g. 15306.0235 from NMEA sentence to 153.100392
 static double qlocationutils_nmeaDegreesToDecimal(double nmeaDegrees)
 {
@@ -284,10 +285,15 @@ bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
     int result = 0;
     for (int i=1; i<asteriskIndex; i++)
         result ^= data[i];
-
+/*
     char calc[CSUM_LEN + 1];
     ::snprintf(calc, CSUM_LEN + 1, "%02x", result);
     return ::strncmp(calc, &data[asteriskIndex+1], 2) == 0;
+    */
+
+    QString s;
+    s.sprintf("%02x", result);
+    return s.toAscii() == QByteArray(&data[asteriskIndex+1], 2);
 }
 
 bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
