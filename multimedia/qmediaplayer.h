@@ -96,7 +96,7 @@ public:
 public Q_SLOTS:
     void play();
     void pause();
-    void stop();    
+    void stop();
 
     void setPosition(qint64 position);
     void setVolume(int volume);
