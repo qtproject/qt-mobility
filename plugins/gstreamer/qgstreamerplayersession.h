@@ -84,6 +84,8 @@ public:
     void setVideoRenderer(QObject *renderer);
     bool isVideoAvailable() const;
 
+    QMap<QString,QVariant> tags() const { return m_tags; }
+
 public slots:
     void load(const QUrl &url);
 
@@ -106,6 +108,7 @@ signals:
     void bufferingChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
     void playbackFinished();
+    void tagsChanged();
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -118,6 +121,8 @@ private:
     GstElement* m_playbin;
     GstBus* m_bus;
     QGstreamerVideoRendererInterface *m_renderer;
+
+    QMap<QString,QVariant> m_tags;
 
     int m_volume;
     bool m_muted;

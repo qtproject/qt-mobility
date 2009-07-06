@@ -26,11 +26,13 @@ HEADERS += qgstreamerplayercontrol.h \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideowidget.h \
-    qgstreamerserviceplugin.h
+    qgstreamerserviceplugin.h \
+    qgstreamermetadataprovider.h
 SOURCES += qgstreamerplayercontrol.cpp \
     qgstreamerplayerservice.cpp \
     qgstreamerplayersession.cpp \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideowidget.cpp \
-    qgstreamerserviceplugin.cpp
+    qgstreamerserviceplugin.cpp \
+    qgstreamermetadataprovider.cpp

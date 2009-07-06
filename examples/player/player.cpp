@@ -167,9 +167,10 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metadataAvailabilityChanged(bool available)
 {
+    qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
 	if (available)
-		setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
-                                          arg(metaData->metadata(QLatin1String("Title")).toString()));
+        setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("artist")).toString()).
+                                          arg(metaData->metadata(QLatin1String("title")).toString()));
 }
 
 void Player::jump(const QModelIndex &index)
