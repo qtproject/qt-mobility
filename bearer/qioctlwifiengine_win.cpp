@@ -282,4 +282,3 @@ QIoctlWifiEngine *QIoctlWifiEngine::instance()
 }
 
 QT_END_NAMESPACE
-

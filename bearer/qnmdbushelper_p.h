@@ -30,8 +30,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNMDBUSHELPERPRIVATE_H
 #define QNMDBUSHELPERPRIVATE_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include <QDBusObjectPath>

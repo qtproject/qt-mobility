@@ -30,23 +30,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNETWORKCONFIGURATIONPRIVATE_H
 #define QNETWORKCONFIGURATIONPRIVATE_H
-
-#include <qnetworkconfiguration.h>
-#include <QtCore/qshareddata.h>
-#include <QNetworkInterface>
 
 //
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API.  It exists for the convenience
-// of the QLibrary class.  This header file may change from
-// version to version without notice, or even be removed.
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
 //
 // We mean it.
 //
+
+#include <qnetworkconfiguration.h>
+#include <QtCore/qshareddata.h>
+#include <QNetworkInterface>
 
 QT_BEGIN_NAMESPACE
 
@@ -93,4 +94,3 @@ private:
 QT_END_NAMESPACE
 
 #endif //QNETWORKCONFIGURATIONPRIVATE_H
-
