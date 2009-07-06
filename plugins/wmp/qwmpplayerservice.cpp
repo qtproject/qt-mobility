@@ -39,6 +39,8 @@
 #include "qwmpplayercontrol.h"
 #include "qwmpplaylist.h"
 
+#include "qmediaplayer.h"
+
 #include <QtCore/qvariant.h>
 
 #include <wmprealestate.h>
@@ -50,12 +52,12 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
     , m_videoOutput(0)
     , m_control(0)
     , m_metaData(0)
-    , m_playlist(0)
     , m_connectionPoint(0)
     , m_adviseCookie(0)
 {
+#ifdef QWMP_EVR
     qRegisterMetaType<IMFActivate *>();
-
+#endif
     if (S_OK == CoCreateInstance(
             __uuidof(WindowsMediaPlayer),
             0,
@@ -64,7 +66,6 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
             reinterpret_cast<void **>(&m_player))) {
         m_control = new QWmpPlayerControl(m_player, this);
         m_metaData = new QWmpMetaData(this);
-        m_playlist = new QWmpPlaylist(this);
 
         IConnectionPointContainer *container = 0;
 
@@ -100,17 +101,14 @@ QWmpPlayerService::~QWmpPlayerService()
     Q_ASSERT(m_ref == 1);
 }
 
-QAbstractMediaControl *QWmpPlayerService::control(const char *name)
+QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, "com.nokia.qt.MediaPlayerControl") == 0)
         return m_control;
+    else if (qstrcmp(name, "com.nokia.qt.MetaData/1.0") == 0)
+        return m_metaData;
     else
         return 0;
-}
-
-QWidget *QWmpPlayerService::createWidget()
-{
-    return new QEvrWidget;
 }
 
 QObject *QWmpPlayerService::videoOutput() const
@@ -121,7 +119,7 @@ QObject *QWmpPlayerService::videoOutput() const
 void QWmpPlayerService::setVideoOutput(QObject *output)
 {
     m_videoOutput = output;
-
+#ifdef QWMP_EVR
     IWMPVideoRenderConfig *config = 0;
 
     if (m_player && m_player->QueryInterface(
@@ -134,25 +132,32 @@ void QWmpPlayerService::setVideoOutput(QObject *output)
         config->put_presenterActivate(activate);
         config->Release();
     }
+#endif
 }
 
 QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
         QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> interfaces;
-
-    if (direction == Output)
+#ifndef QWMP_EVR
+    Q_UNUSED(direction);
+#else
+    if (direction == QMediaEndpointInterface::Output)
         interfaces << QMediaWidgetEndpoint_iid;
+#endif
 
     return interfaces;
 }
 
-QObject *QWmpPlayerService::createEndpoint(const char *interface)
+QObject *QWmpPlayerService::createEndpoint(const char *iid)
 {
-    if (strcmp(interface, QMediaWidgetEndpoint_iid) == 0)
-        return new EvrWidget;
-    else
-        return 0;
+#ifndef QWMP_EVR
+    Q_UNUSED(iid);
+#else
+    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0)
+        return new QEvrWidget;
+#endif
+    return 0;
 }
 
 // IUnknown
@@ -191,13 +196,13 @@ void QWmpPlayerService::PlayStateChange(long NewState)
 {
     switch (NewState) {
     case wmppsStopped:
-        m_control->setState(QMediaPlayerControl::Stopped);
+        m_control->setState(QMediaPlayer::StoppedState);
         break;
     case wmppsPaused:
-        m_control->setState(QMediaPlayerControl::Paused);
+        m_control->setState(QMediaPlayer::PausedState);
         break;
     case wmppsPlaying:
-        m_control->setState(QMediaPlayerControl::Playing);
+        m_control->setState(QMediaPlayer::PlayingState);
         break;
     default:
         break;
@@ -220,16 +225,7 @@ void QWmpPlayerService::MediaChange(IDispatch *Item)
 {
     Q_UNUSED(Item);
 
-    IWMPPlaylist *playlist = 0;
-
-    if (m_player->get_currentPlaylist(&playlist) == S_OK) {
-        m_playlist->setPlaylist(playlist);
-
-        playlist->Release();
-    }
-
     IWMPMedia *media = 0;
-
     if (m_player->get_currentMedia(&media) == S_OK) {
         double duration = 0;
 
@@ -241,6 +237,4 @@ void QWmpPlayerService::MediaChange(IDispatch *Item)
 
         media->Release();
     }
-
-    m_control->currentMediaChanged();
 }

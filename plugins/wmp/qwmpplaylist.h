@@ -35,40 +35,35 @@
 #ifndef QWMPPLAYLIST_H
 #define QWMPPLAYLIST_H
 
-#include "qwmpglobal.h"
+#include "qmediaplaylistsource.h"
 
-#include <QtCore/qobject.h>
 #include <QtCore/qvariant.h>
 
 #include <wmp.h>
 
-class Q_WMP_EXPORT QMediaPlaylist : public QObject
+class QWmpPlaylist : public QMediaPlaylistSource
 {
     Q_OBJECT
 public:
-    QMediaPlaylist(QObject *parent = 0) : QObject(parent) {}
-
-    virtual int count() const = 0;
-
-    virtual QStringList keys(int index) const = 0;
-
-    virtual int valueCount(int index, const QString &key) const = 0;
-
-    virtual QVariant value(int index, const QString &key, int value = 0) const = 0;
-    virtual QVariantList values(int index, const QString &key) const = 0;
-
-Q_SIGNALS:
-    void changed();
-};
-
-class QWmpPlaylist : public QMediaPlaylist
-{
-    Q_OBJECT
-public:
-    QWmpPlaylist(QObject *parent = 0);
+    QWmpPlaylist(IWMPCore3 *player, QObject *parent = 0);
     ~QWmpPlaylist();
 
-    int count() const;
+    bool load(const QString &location, const char *format = 0);
+    bool load(QIODevice * device, const char *format = 0);
+    bool save(const QString &location, const char *format = 0);
+    bool save(QIODevice * device, const char *format);
+
+    int size() const;
+    QMediaSource itemAt(int pos) const;
+
+    bool isReadOnly() const;
+
+    bool append(const QMediaSource &source);
+    bool append(const QList<QMediaSource> &sources);
+    bool insert(int pos, const QMediaSource &source);
+    bool remove(int pos);
+    bool remove(int start, int end);
+    bool clear();
 
     QStringList keys(int index) const;
 
@@ -80,9 +75,11 @@ public:
     IWMPPlaylist *playlist() const;
     void setPlaylist(IWMPPlaylist *playlist);
 
-    using QMediaPlaylist::changed;
+public Q_SLOTS:
+    virtual void shuffle();
 
 private:
+    IWMPCore3 *m_player;
     IWMPPlaylist *m_playlist;
 };
 

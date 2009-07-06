@@ -32,61 +32,34 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef QWMPSERVICEPROVIDER_H
+#define QWMPSERVICEPROVIDER_H
 
-#include "qmetadataprovider.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaserviceproviderplugin.h"
 
-#include <wmp.h>
+/*!
+#ifdef BUILD_WMP_LIB
+Q_DECL_EXPORT QMediaServiceProvider *createWmpProvider();
+#else
+Q_DECL_IMPORT QMediaServiceProvider *createWmpProvider();
+#endif
+*/
 
-class QWmpMetaData : public QMetadataProvider
+class QWmpServiceProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
-
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
-
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
-
-private:
-    IWMPMedia *m_media;
+    QObject* createObject(const char *iid) const;
 };
 
 
-class QAutoBStr
+class QWmpServiceProviderPlugin : public QMediaServiceProviderPlugin
 {
+    Q_OBJECT
 public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
+    QStringList keys() const;
+    QMediaServiceProvider *create(const QString &key);
 };
-
 
 #endif

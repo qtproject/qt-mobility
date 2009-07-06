@@ -35,7 +35,7 @@
 #ifndef QWMPPLAYERSERVICE_H
 #define QWMPPLAYERSERVICE_H
 
-#include <QtCore/qobject.h>
+#include "qmediaplayerservice.h"
 
 #include "qwmpevents.h"
 
@@ -56,7 +56,7 @@ public:
     QWmpPlayerService(QObject *parent = 0);
     ~QWmpPlayerService();
 
-    QAbstractMediaControl *control(const char *name);
+    QAbstractMediaControl *control(const char *name) const;
 
     QObject *videoOutput() const;
     void setVideoOutput(QObject *output);
@@ -64,7 +64,7 @@ public:
     QList<QByteArray> supportedEndpointInterfaces(
             QMediaEndpointInterface::Direction direction) const;
 
-    QObject *createEndpoint(const char *interface);
+    QObject *createEndpoint(const char *iid);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -83,7 +83,6 @@ private:
     QObject *m_videoOutput;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
-    QWmpPlaylist *m_playlist;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
 };

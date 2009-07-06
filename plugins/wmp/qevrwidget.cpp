@@ -34,6 +34,8 @@
 
 #include "qevrwidget.h"
 
+#ifdef QWMP_EVR
+
 #include "qmfactivate.h"
 
 #include <QtCore/qpointer.h>
@@ -141,7 +143,6 @@ QEvrWidget::QEvrWidget(QWidget *parent)
     : QMediaWidgetEndpoint(parent)
     , m_display(0)
     , m_activate(0)
-    , m_fullscreen(false)
 {
     m_activate = new QEvrWidgetActivate(this);
 }
@@ -258,3 +259,5 @@ void QEvrWidget::setDisplayControl(IMFVideoDisplayControl *control)
         m_display->SetVideoPosition(0, &displayRect);
     }
 }
+
+#endif

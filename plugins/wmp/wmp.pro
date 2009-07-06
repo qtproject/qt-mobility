@@ -1,15 +1,15 @@
 TEMPLATE = lib
+CONFIG += plugin
 TARGET = qwmp
-CONFIG  += dll warn_on
 
-DESTDIR = ../bin
-!static:DEFINES += QT_MAKEDLL
-
-DEFINES += QT_BUILD_WMP_LIB
+DEFINES += BUILD_WMP_LIB
 
 DESTDIR = $$OUT_PWD/../../lib
+DLLDESTDIR = $$OUT_PWD/../../bin/mediaservice
 
-LIBS += -levr -lstrmiids -lQtMedia
+LIBS += -L$$OUT_PWD/../../lib -lQtMedia -lstrmiids -lole32 -lOleaut32
+
+contains (DEFINES, QWMP_EVR) : LIBS += -levr
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
@@ -19,7 +19,10 @@ HEADERS = \
     qwmpevents.h \
     qwmpmetadata.h \
     qwmpplayercontrol.h \
-    qwmpplayerservice.h
+    qwmpplayerservice.h \
+    qwmpplaylist.h \
+    qwmpplaylistproxy.h \
+    qwmpserviceprovider.h
 
 SOURCES = \
     qevrwidget.cpp \
@@ -27,4 +30,8 @@ SOURCES = \
     qwmpevents.cpp \
     qwmpmetadata.cpp \
     qwmpplayercontrol.cpp \
-    qwmpplayerservice.cpp
+    qwmpplayerservice.cpp \
+    qwmpplaylist.cpp \
+    qwmpplaylistproxy.cpp \
+    qwmpserviceprovider.cpp
+
