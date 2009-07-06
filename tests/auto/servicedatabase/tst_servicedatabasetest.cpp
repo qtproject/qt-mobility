@@ -560,6 +560,14 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     customs["extension"] = "multidrive";
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
+    //test whether querying a custom property will affect the filter
+    QServiceFilter filter2;
+    interfaces = database.getInterfaces(filter2);
+    QCOMPARE(interfaces.count(), 36);
+    QString customProperty = filter2.customProperty("weapon");
+    QVERIFY(customProperty.isEmpty());
+    interfaces = database.getInterfaces(filter2);
+    QCOMPARE(interfaces.count(), 36);
     QVERIFY(database.close());
 }
 

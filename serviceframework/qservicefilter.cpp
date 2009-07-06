@@ -268,7 +268,7 @@ void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
 */
 QString QServiceFilter::customProperty(const QString& key) const
 {
-    return d->customProperties[key];
+    return d->customProperties.value(key);
 }
 
 /*!
