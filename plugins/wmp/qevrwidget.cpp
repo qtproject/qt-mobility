@@ -34,12 +34,16 @@
 
 #include "qevrwidget.h"
 
+#ifdef QWMP_EVR
+
 #include "qmfactivate.h"
 
 #include <QtCore/qpointer.h>
 #include <QtGui/qevent.h>
 
 #include <d3d9.h>
+
+typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
 
 class QEvrWidgetActivate : public QMFActivate
 {
@@ -56,21 +60,32 @@ public:
 private:
     QPointer<QEvrWidget> m_widget;
     IMFVideoPresenter *m_presenter;
+    HINSTANCE m_evrHwnd;
+    PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
 };
 
 QEvrWidgetActivate::QEvrWidgetActivate(QEvrWidget *widget)
     : m_widget(widget)
     , m_presenter(0)
+    , m_evrHwnd(LoadLibrary(L"evr"))
+    , ptrMFCreateVideoPresenter(0)
 {
+    if (m_evrHwnd) {
+        ptrMFCreateVideoPresenter = reinterpret_cast<PtrMFCreateVideoPresenter>(
+                GetProcAddress(m_evrHwnd, "MFCreateVideoPresenter"));
+    }
 }
 
 QEvrWidgetActivate::~QEvrWidgetActivate()
 {
+    FreeLibrary(m_evrHwnd);
 }
 
 HRESULT QEvrWidgetActivate::ActivateObject(REFIID riid, void **ppv)
 {
     if (riid != __uuidof(IMFVideoPresenter)) {
+        return E_NOINTERFACE;
+    } else if (!ptrMFCreateVideoPresenter) {
         return E_NOINTERFACE;
     } else if (m_presenter) {
         *ppv = m_presenter;
@@ -81,7 +96,7 @@ HRESULT QEvrWidgetActivate::ActivateObject(REFIID riid, void **ppv)
 
         HRESULT hr = S_OK;
 
-        if ((hr = MFCreateVideoPresenter(
+        if ((hr = (*ptrMFCreateVideoPresenter)(
                 0,
                 __uuidof(IDirect3DDevice9),
                 __uuidof(IMFVideoPresenter),
@@ -141,7 +156,6 @@ QEvrWidget::QEvrWidget(QWidget *parent)
     : QMediaWidgetEndpoint(parent)
     , m_display(0)
     , m_activate(0)
-    , m_fullscreen(false)
 {
     m_activate = new QEvrWidgetActivate(this);
 }
@@ -258,3 +272,5 @@ void QEvrWidget::setDisplayControl(IMFVideoDisplayControl *control)
         m_display->SetVideoPosition(0, &displayRect);
     }
 }
+
+#endif

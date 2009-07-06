@@ -45,5 +45,5 @@ QMediaPlayerControl::~QMediaPlayerControl()
 QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-    addPropertyWatch("position");
+//    addPropertyWatch("position");
 }

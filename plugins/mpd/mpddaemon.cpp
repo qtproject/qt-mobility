@@ -85,6 +85,8 @@ MpdDaemon::MpdDaemon(QObject *parent):
 
     // init
     d->state = Stopped;
+    d->song = -1;
+    d->volume = 100;
 }
 
 MpdDaemon::~MpdDaemon()
@@ -180,8 +182,11 @@ void MpdDaemon::checkStatus()
         QString const &name = t.at(0);
         QString const &value = t.at(1);
 
-        if (name == "volume:")
-            d->volume = value.toInt();
+        if (name == "volume:") {
+            const int volume = value.toInt();
+            if (d->volume != volume)
+                emit volumeChanged(d->volume = volume);
+        }
         else if (name == "repeat:")
             d->repeat = value.toInt() == 1;
         else if (name == "random:")
@@ -218,8 +223,18 @@ void MpdDaemon::checkStatus()
             d->songid = value.toInt();
         else if (name == "time:") {
             QStringList s = value.split(':');
-            d->position = s.at(0).toInt();
-            d->duration = s.at(1).toInt();
+            const qint64 position = s.at(0).toInt();
+            const qint64 duration = s.at(1).toInt();
+
+            if (d->position != position) {
+                d->position = position;
+                emit positionChanged(position * 1000);
+            }
+
+            if (d->duration != duration) {
+                d->duration = duration;
+                emit durationChanged(duration * 1000);
+            }
         }
         else if (name == "bitrate:")
             d->bitrate = value.toInt();

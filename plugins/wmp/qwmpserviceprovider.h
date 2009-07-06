@@ -32,62 +32,26 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERSERVICE_H
-#define QWMPPLAYERSERVICE_H
+#ifndef QWMPSERVICEPROVIDER_H
+#define QWMPSERVICEPROVIDER_H
 
-#include "qmediaplayerservice.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaserviceproviderplugin.h"
 
-#include "qwmpevents.h"
-
-#include <wmp.h>
-
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-
-class QWmpMetaData;
-class QWmpPlayerControl;
-class QWmpPlaylist;
-
-class QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
+class QWmpServiceProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    QWmpPlayerService(QObject *parent = 0);
-    ~QWmpPlayerService();
+    QObject* createObject(const char *iid) const;
+};
 
-    QAbstractMediaControl *control(const char *name) const;
 
-    void setVideoOutput(QObject *output);
-
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *iid);
-
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
-
-    // IWMPEvents
-    void STDMETHODCALLTYPE PlayStateChange(long NewState);
-    void STDMETHODCALLTYPE Buffering(VARIANT_BOOL Start);
-    void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
-    void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
-
-private:
-    volatile LONG m_ref;
-    IWMPPlayer4 *m_player;
-    QObject *m_videoOutput;
-    QWmpPlayerControl *m_control;
-    QWmpMetaData *m_metaData;
-    IConnectionPoint *m_connectionPoint;
-    DWORD m_adviseCookie;
-
-#ifdef QWMP_EVR
-    HINSTANCE m_evrHwnd;
-#endif
+class QWmpServiceProviderPlugin : public QMediaServiceProviderPlugin
+{
+    Q_OBJECT
+public:
+    QStringList keys() const;
+    QMediaServiceProvider *create(const QString &key);
 };
 
 #endif

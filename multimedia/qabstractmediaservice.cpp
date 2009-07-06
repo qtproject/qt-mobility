@@ -225,12 +225,12 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
 
     \sa supportedEndpointInterface(), setAudioOutput(), setVideoOutput()
 */
-QObject *QAbstractMediaService::createEndpoint(const char *interface)
+QObject *QAbstractMediaService::createEndpoint(const char *iid)
 {
 #ifdef QT_NO_VIDEOSURFACE
-    Q_UNUSED(interface);
+    Q_UNUSED(iid);
 #else
-    if (qstrcmp(interface, QMediaWidgetEndpointInterface_iid)) {
+    if (qstrcmp(iid, QMediaWidgetEndpointInterface_iid)) {
         QObject *object = createEndpoint(QVideoRendererEndpointInterface_iid);
 
         if (object) {
