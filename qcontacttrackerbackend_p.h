@@ -82,21 +82,15 @@ public:
     bool removeGroup(const QUniqueId& groupId);
 
     /* Definitions - Accessors and Mutators */
-    QStringList detailDefinitions() const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def);
-    bool removeDetailDefinition(const QContactDetailDefinition& def);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
+    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
+    bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
-
-    /* Error reporting */
-    QContactManager::Error error() const;
-
-private:
-    QContactManager::Error m_error;
 
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;

@@ -68,12 +68,6 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-// NOTE: Removed from Qt Mobility API.
-QContactManager::Error QContactTrackerEngine::error() const
-{
-    return m_error;
-}
-
 QList<QUniqueId> QContactTrackerEngine::contacts() const
 {
     return QList<QUniqueId>();
@@ -96,9 +90,11 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 {
     Q_UNUSED(batch);
 
+    qDebug() << __FUNCTION__ << "Saving.";
     // Ensure that the contact data is ok. This comes from QContactModelEngine
     if(!validateContact(*contact, error)) {
-        m_error = QContactManager::InvalidDetailError;
+        error = QContactManager::InvalidDetailError;
+        qDebug() << __FUNCTION__ << "Invalid detail error.";
         return false;
     }
 
@@ -197,7 +193,9 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
         }
     }
 
-    return false;
+    error = QContactManager::NoError;
+
+    return true;
 }
 
 bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch)
@@ -244,27 +242,49 @@ bool QContactTrackerEngine::removeGroup(const QUniqueId& groupId)
     return false;
 }
 
-QStringList QContactTrackerEngine::detailDefinitions() const
+QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(QContactManager::Error& error) const
 {
-    return QStringList();
+    // lazy initialisation of schema definitions.
+    if (d->m_definitions.isEmpty()) {
+        // none in the list?  get the schema definitions, and modify them to match our capabilities.
+        d->m_definitions = QContactManagerEngine::schemaDefinitions();
+
+        // modification: avatar is unique.
+        QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionId);
+        avatarDef.setUnique(true);
+        d->m_definitions.insert(QContactAvatar::DefinitionId, avatarDef);
+
+        // modification: url is unique.
+        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionId);
+        urlDef.setUnique(true);
+        d->m_definitions.insert(QContactUrl::DefinitionId, urlDef);
+    }
+
+    error = QContactManager::NoError;
+    return d->m_definitions;
 }
 
-QContactDetailDefinition QContactTrackerEngine::detailDefinition(const QString& definitionId) const
+QContactDetailDefinition QContactTrackerEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
 {
-    Q_UNUSED(definitionId)
-    return QContactDetailDefinition();
+    detailDefinitions(error); // just to populate the definitions if we haven't already.
+    error = QContactManager::DoesNotExistError;
+    if (d->m_definitions.contains(definitionId))
+        error = QContactManager::NoError;
+    return d->m_definitions.value(definitionId);
 }
 
-bool QContactTrackerEngine::saveDetailDefinition(const QContactDetailDefinition& def)
+bool QContactTrackerEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
 {
     Q_UNUSED(def)
+    error = QContactManager::UnspecifiedError; // Not implemented yet;
 
     return false;
 }
 
-bool QContactTrackerEngine::removeDetailDefinition(const QContactDetailDefinition& def)
+bool QContactTrackerEngine::removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
 {
     Q_UNUSED(def)
+    error = QContactManager::UnspecifiedError; // Not implemented yet;
 
     return false;
 }
