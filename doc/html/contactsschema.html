@@ -17,12 +17,13 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#schema-definition">Schema Definition</a></li>
 <ul><li><a href="#immutable-schema">Immutable Schema</a></li>
-<ul><li><a href="#access-constraints">Access constraints</a></li>
+<ul><li><a href="#qcontactmanagercapabilities-features">QContactManagerCapabilities features</a></li>
+<li><a href="#access-constraints">Access constraints</a></li>
 <li><a href="#attribute-keys">Attribute keys</a></li>
 <li><a href="#context-attribute-values">Context-attribute values</a></li>
-<li><a href="#qcontactmanager-error-codes"><a href="qcontactmanager.html#Error-enum">QContactManager error</a> codes</a></li>
-<li><a href="#qcontact-error-codes"><a href="qcontact.html#Error-enum">QContact error</a> codes</a></li>
-<li><a href="#qcontactgroup-error-codes"><a href="qcontactgroup.html#Error-enum">QContactGroup error</a> codes</a></li>
+<li><a href="#qcontactmanager-error-codes">QContactManager error codes</a></li>
+<li><a href="#qcontact-error-codes">QContact error codes</a></li>
+<li><a href="#qcontactgroup-error-codes">QContactGroup error codes</a></li>
 </ul>
 <li><a href="#default-schema">Default Schema</a></li>
 <ul><li><a href="#leaf-classes">Leaf Classes</a></li>
@@ -38,6 +39,8 @@
 <p>The schema consists of several parts.</p>
 <p>1) The &quot;immutable&quot; section of the schema, which consists of:</p>
 <ul>
+<li><a href="qcontactmanagercapabilities.html">QContactManagerCapabilities</a> features</li>
+<li><a href="qcontactdetail.html">QContactDetail</a> access constraints</li>
 <li><a href="qcontactdetail.html">QContactDetail</a> attribute keys</li>
 <li><a href="qcontactdetail.html">QContactDetail</a> context-attribute values</li>
 <li><a href="qcontactmanager.html">QContactManager</a> error codes</li>
@@ -58,6 +61,22 @@
 <p>These &quot;default&quot; schema entries may or may not be supported by any particular backend. Indeed, most backend implementations will use the default schema as a base, and then modify it (for example, by restricting certain definitions to be unique per contact) or extend it (for example, by creating new &quot;standard&quot; definitions and <a href="qcontactdetail.html">QContactDetail</a> leaf-classes) to provide clients with the best user-experience on the target platform.</p>
 <a name="immutable-schema"></a>
 <h3>Immutable Schema</h3>
+<a name="qcontactmanagercapabilities-features"></a>
+<h4>QContactManagerCapabilities features</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Feature Identifier</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>&quot;Groups&quot;</td><td>This backend supports all <a href="qcontactgroup.html">QContactGroup</a> related operations, and emits the appropriate signals</td></tr>
+<tr valign="top" class="even"><td>&quot;Locking&quot;</td><td>This backend supports database locking and unlocking operations</td></tr>
+<tr valign="top" class="odd"><td>&quot;Batch&quot;</td><td>This backend supports batch contact saving and loading, and emits the appropriate signals</td></tr>
+<tr valign="top" class="even"><td>&quot;ReadOnly&quot;</td><td>This backend supports read-only contact details, and performs validation on such details on save</td></tr>
+<tr valign="top" class="odd"><td>&quot;CreateOnly&quot;</td><td>This backend supports create-only contact details, and performs validation on such details on save</td></tr>
+<tr valign="top" class="even"><td>&quot;Filtering&quot;</td><td>This backend supports native filtering of some form</td></tr>
+<tr valign="top" class="odd"><td>&quot;Sorting&quot;</td><td>This backend supports native sorting of some form</td></tr>
+<tr valign="top" class="even"><td>&quot;Preferences&quot;</td><td>This backend supports saving preferred details per action per contact</td></tr>
+<tr valign="top" class="odd"><td>&quot;Asynchronous&quot;</td><td>This backend supports the asynchronous API</td></tr>
+<tr valign="top" class="even"><td>&quot;Synchronous&quot;</td><td>This backend supports the synchronous API</td></tr>
+</table></p>
+<p>Note that if a backend completely supports the feature set identified by the feature string, it should include the feature string in its list of supported features, but if a backend does not completely support the feature set identified by the feature string it must not include the feature string in its list of supported features.</p>
 <a name="access-constraints"></a>
 <h4>Access constraints</h4>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
@@ -85,9 +104,9 @@
 <p>Note that clients are not limited to using only these contexts; if they wish to define a detail as being valid for a context not contained in this list (for example, &quot;Ovi&quot;), they may do so - subject to whatever checks the backend wishes to perform when the contact to which the detail was added is saved.</p>
 <p>The value stored in a detail for the Context-attribute key is a comma-separated list of the allowable Context-attribute values. For example, &quot;Home,Work&quot; is a valid value.</p>
 <a name="qcontactmanager-error-codes"></a>
-<h4><a href="qcontactmanager.html#Error-enum">QContactManager error</a> codes</h4>
+<h4>QContactManager error codes</h4>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<thead><tr valign="top" class="qt-style"><th><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> Code</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
 <tr valign="top" class="even"><td>DoesNotExistError</td><td>The most recent operation failed because the requested contact, group or definition does not exist</td></tr>
 <tr valign="top" class="odd"><td>AlreadyExistsError</td><td>The most recent operation failed because the specified contact, group or definition already exists</td></tr>
@@ -102,9 +121,9 @@
 <tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
 </table></p>
 <a name="qcontact-error-codes"></a>
-<h4><a href="qcontact.html#Error-enum">QContact error</a> codes</h4>
+<h4>QContact error codes</h4>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<thead><tr valign="top" class="qt-style"><th><a href="qcontact.html#Error-enum">QContact::Error</a> Code</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
 <tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
 <tr valign="top" class="odd"><td>DetailDoesNotExistError</td><td>The most recent operation failed because the requested detail does not exist</td></tr>
@@ -115,9 +134,9 @@
 <tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
 </table></p>
 <a name="qcontactgroup-error-codes"></a>
-<h4><a href="qcontactgroup.html#Error-enum">QContactGroup error</a> codes</h4>
+<h4>QContactGroup error codes</h4>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<thead><tr valign="top" class="qt-style"><th><a href="qcontactgroup.html#Error-enum">QContactGroup::Error</a> Code</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
 <tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
 <tr valign="top" class="odd"><td>ContactNotInGroupError</td><td>The most recent operation failed because the requested contact is not a member of this group</td></tr>

@@ -19,6 +19,8 @@ The schema consists of several parts.
 
 1) The "immutable" section of the schema, which consists of:
 \list
+    \o \l{QContactManagerCapabilities} features
+    \o \l{QContactDetail} access constraints
     \o \l{QContactDetail} attribute keys
     \o \l{QContactDetail} context-attribute values
     \o \l{QContactManager} error codes
@@ -48,6 +50,47 @@ or extend it (for example, by creating new "standard" definitions and \l{QContac
 leaf-classes) to provide clients with the best user-experience on the target platform.
 
 \section2 Immutable Schema
+
+\section3 QContactManagerCapabilities features
+\table
+\header
+    \o Feature Identifier
+    \o Description
+\row
+    \o "Groups"
+    \o This backend supports all QContactGroup related operations, and emits the appropriate signals
+\row
+    \o "Locking"
+    \o This backend supports database locking and unlocking operations
+\row
+    \o "Batch"
+    \o This backend supports batch contact saving and loading, and emits the appropriate signals
+\row
+    \o "ReadOnly"
+    \o This backend supports read-only contact details, and performs validation on such details on save
+\row
+    \o "CreateOnly"
+    \o This backend supports create-only contact details, and performs validation on such details on save
+\row
+    \o "Filtering"
+    \o This backend supports native filtering of some form
+\row
+    \o "Sorting"
+    \o This backend supports native sorting of some form
+\row
+    \o "Preferences"
+    \o This backend supports saving preferred details per action per contact
+\row
+    \o "Asynchronous"
+    \o This backend supports the asynchronous API
+\row
+    \o "Synchronous"
+    \o This backend supports the synchronous API
+\endtable
+Note that if a backend completely supports the feature set identified by the feature string,
+it should include the feature string in its list of supported features, but if a backend
+does not completely support the feature set identified by the feature string it must not
+include the feature string in its list of supported features.
 
 \section3 Access constraints
 \table
@@ -104,10 +147,10 @@ contact to which the detail was added is saved.
 The value stored in a detail for the Context-attribute key is a comma-separated list of
 the allowable Context-attribute values.  For example, "Home,Work" is a valid value.
 
-\section3 \l{QContactManager::Error}{QContactManager error} codes
+\section3 QContactManager error codes
 \table
 \header
-    \o Error Code
+    \o QContactManager::Error Code
     \o Description
 \row
     \o NoError
@@ -147,10 +190,10 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o The most recent operation failed for an unknown reason
 \endtable
 
-\section3 \l{QContact::Error}{QContact error} codes
+\section3 QContact error codes
 \table
 \header
-    \o Error Code
+    \o QContact::Error Code
     \o Description
 \row
     \o NoError
@@ -178,10 +221,10 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o The most recent operation failed for an unknown reason
 \endtable
 
-\section3 \l{QContactGroup::Error}{QContactGroup error} codes
+\section3 QContactGroup error codes
 \table
 \header
-    \o Error Code
+    \o QContactGroup::Error Code
     \o Description
 \row
     \o NoError

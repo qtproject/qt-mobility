@@ -19,60 +19,60 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qcontactmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, InvalidDetailError, ..., UnspecifiedError }</li>
+<li><div class="fn"></div>enum <b><a href="qcontactmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, InvalidDetailError, ..., UnspecifiedError }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QContactManager &amp; <i>other</i> )</li>
-<li><div class="fn"/><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</li>
-<li><div class="fn"/>QContactManagerCapabilities <b><a href="qcontactmanager.html#capabilities">capabilities</a></b> () const</li>
-<li><div class="fn"/>QContact <b><a href="qcontactmanager.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contacts">contacts</a></b> () const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsModifiedSince">contactsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsRemovedSince">contactsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithAction">contactsWithAction</a></b> ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithDetail">contactsWithDetail</a></b> ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
-<li><div class="fn"/>QContactDetailDefinition <b><a href="qcontactmanager.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionId</i> ) const</li>
-<li><div class="fn"/>QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanager.html#detailDefinitions">detailDefinitions</a></b> () const</li>
-<li><div class="fn"/>QContactManager::Error <b><a href="qcontactmanager.html#error">error</a></b> () const</li>
-<li><div class="fn"/>QContactGroup <b><a href="qcontactmanager.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groups">groups</a></b> () const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QString <b><a href="qcontactmanager.html#managerId">managerId</a></b> () const</li>
-<li><div class="fn"/>QMap&lt;QString, QString&gt; <b><a href="qcontactmanager.html#managerParameters">managerParameters</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i> )</li>
-<li><div class="fn"/>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>idList</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i> )</li>
-<li><div class="fn"/>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contactList</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i> )</li>
-<li><div class="fn"/>QString <b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const</li>
-<li><div class="fn"/>QContactManager &amp; <b><a href="qcontactmanager.html#operator-eq">operator=</a></b> ( const QContactManager &amp; <i>other</i> )</li>
+<li><div class="fn"></div><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</li>
+<li><div class="fn"></div><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QContactManager &amp; <i>other</i> )</li>
+<li><div class="fn"></div><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</li>
+<li><div class="fn"></div>QContactManagerCapabilities <b><a href="qcontactmanager.html#capabilities">capabilities</a></b> () const</li>
+<li><div class="fn"></div>QContact <b><a href="qcontactmanager.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contacts">contacts</a></b> () const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsModifiedSince">contactsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsRemovedSince">contactsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithAction">contactsWithAction</a></b> ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithDetail">contactsWithDetail</a></b> ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
+<li><div class="fn"></div>QContactDetailDefinition <b><a href="qcontactmanager.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionId</i> ) const</li>
+<li><div class="fn"></div>QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanager.html#detailDefinitions">detailDefinitions</a></b> () const</li>
+<li><div class="fn"></div>QContactManager::Error <b><a href="qcontactmanager.html#error">error</a></b> () const</li>
+<li><div class="fn"></div>QContactGroup <b><a href="qcontactmanager.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groups">groups</a></b> () const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"></div>QString <b><a href="qcontactmanager.html#managerId">managerId</a></b> () const</li>
+<li><div class="fn"></div>QMap&lt;QString, QString&gt; <b><a href="qcontactmanager.html#managerParameters">managerParameters</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i> )</li>
+<li><div class="fn"></div>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>idList</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i> )</li>
+<li><div class="fn"></div>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contactList</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i> )</li>
+<li><div class="fn"></div>QString <b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const</li>
+<li><div class="fn"></div>QContactManager &amp; <b><a href="qcontactmanager.html#operator-eq">operator=</a></b> ( const QContactManager &amp; <i>other</i> )</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanager.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QStringList <b><a href="qcontactmanager.html#availableManagers">availableManagers</a></b> ()</li>
-<li><div class="fn"/>QString <b><a href="qcontactmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerId</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i> )</li>
-<li><div class="fn"/>QContactManager <b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i> )</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanager.html#splitUri">splitUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</li>
+<li><div class="fn"></div>QStringList <b><a href="qcontactmanager.html#availableManagers">availableManagers</a></b> ()</li>
+<li><div class="fn"></div>QString <b><a href="qcontactmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerId</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i> )</li>
+<li><div class="fn"></div>QContactManager <b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanager.html#splitUri">splitUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
