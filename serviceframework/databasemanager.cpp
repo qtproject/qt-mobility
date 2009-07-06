@@ -616,6 +616,9 @@ bool DatabaseManager::openDb(DbScope scope)
         return false;
     }
 
+    //if we are opening the system database and are at user scope
+    //cleanup and reset any old external defaults
+    //from the user scope database
     if (scope == SystemScope && m_userDb->isOpen()) {
         QList<QPair<QString,QString> > externalDefaultsInfo;
         externalDefaultsInfo = m_userDb->externalDefaultsInfo();
