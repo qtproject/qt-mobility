@@ -47,15 +47,15 @@ public:
     ~SessionWidget();
 
 private:
-    void updateSession();
+    void updateSessionState(QNetworkSession::State state);
+    void updateSessionError(QNetworkSession::SessionError error);
 
 private Q_SLOTS:
     void openSession();
     void openSyncSession();
     void closeSession();
     void stopSession();
-    void updateSessionState(QNetworkSession::State state);
-    void updateSessionError(QNetworkSession::SessionError error);
+    void updateSession();
 
 private:
     QNetworkSession *session;

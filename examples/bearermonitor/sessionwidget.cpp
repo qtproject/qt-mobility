@@ -41,9 +41,9 @@ SessionWidget::SessionWidget(const QNetworkConfiguration &config, QWidget *paren
     session = new QNetworkSession(config, this);
 
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
-            this, SLOT(updateSessionState(QNetworkSession::State)));
+            this, SLOT(updateSession()));
     connect(session, SIGNAL(error(QNetworkSession::SessionError)),
-            this, SLOT(updateSessionError(QNetworkSession::SessionError)));
+            this, SLOT(updateSession()));
 
     updateSession();
 
