@@ -54,6 +54,9 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
     , m_metaData(0)
     , m_connectionPoint(0)
     , m_adviseCookie(0)
+#ifdef QWMP_EVR
+    , m_evrHwnd(0)
+#endif
 {
 #ifdef QWMP_EVR
     qRegisterMetaType<IMFActivate *>();
@@ -98,6 +101,8 @@ QWmpPlayerService::~QWmpPlayerService()
     if (m_player)
         m_player->Release();
 
+    FreeLibrary(m_evrHwnd);
+
     Q_ASSERT(m_ref == 1);
 }
 
@@ -111,14 +116,9 @@ QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
         return 0;
 }
 
-QObject *QWmpPlayerService::videoOutput() const
-{
-    return m_videoOutput;
-}
-
 void QWmpPlayerService::setVideoOutput(QObject *output)
 {
-    m_videoOutput = output;
+    QAbstractMediaService::setVideoOutput(output);
 #ifdef QWMP_EVR
     IWMPVideoRenderConfig *config = 0;
 
@@ -142,7 +142,7 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
 #ifndef QWMP_EVR
     Q_UNUSED(direction);
 #else
-    if (direction == QMediaEndpointInterface::Output)
+    if (direction == QMediaEndpointInterface::Output && m_evrHwnd)
         interfaces << QMediaWidgetEndpoint_iid;
 #endif
 
@@ -154,7 +154,7 @@ QObject *QWmpPlayerService::createEndpoint(const char *iid)
 #ifndef QWMP_EVR
     Q_UNUSED(iid);
 #else
-    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0)
+    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0 && m_evrHwnd)
         return new QEvrWidget;
 #endif
     return 0;

@@ -36,13 +36,6 @@
 
 #include "qwmpplayerservice.h"
 
-/*
-QMediaServiceProvider *createWmpProvider()
-{
-    return new QWmpServiceProvider;
-}
-*/
-
 QObject *QWmpServiceProvider::createObject(const char *iid) const
 {
     if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)

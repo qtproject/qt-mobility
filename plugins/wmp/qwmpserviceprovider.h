@@ -38,14 +38,6 @@
 #include "qmediaserviceprovider.h"
 #include "qmediaserviceproviderplugin.h"
 
-/*!
-#ifdef BUILD_WMP_LIB
-Q_DECL_EXPORT QMediaServiceProvider *createWmpProvider();
-#else
-Q_DECL_IMPORT QMediaServiceProvider *createWmpProvider();
-#endif
-*/
-
 class QWmpServiceProvider : public QMediaServiceProvider
 {
     Q_OBJECT

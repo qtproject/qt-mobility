@@ -58,7 +58,6 @@ public:
 
     QAbstractMediaControl *control(const char *name) const;
 
-    QObject *videoOutput() const;
     void setVideoOutput(QObject *output);
 
     QList<QByteArray> supportedEndpointInterfaces(
@@ -85,6 +84,10 @@ private:
     QWmpMetaData *m_metaData;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
+
+#ifdef QWMP_EVR
+    HINSTANCE m_evrHwnd;
+#endif
 };
 
 #endif
