@@ -207,23 +207,81 @@ QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVari
     return QGraphicsItem::itemChange(change, value);
 }
 
+static QDebug operator<<(QDebug dbg, QNetworkConfiguration::StateFlags state)
+{
+    bool displayed = false;
+
+    if ((state & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+        dbg.nospace() << "Active";
+        displayed = true;
+    }
+    if ((state & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+        if (displayed)
+            dbg.nospace() << " | ";
+        dbg.nospace() << "Discovered";
+        displayed = true;
+    }
+    if ((state & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
+        if (displayed)
+            dbg.nospace() << " | ";
+        dbg.nospace() << "Defined";
+        displayed = true;
+    }
+    if ((state & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
+        if (displayed)
+            dbg.nospace() << " | ";
+        dbg.nospace() << "Undefined";
+        displayed = true;
+    }
+
+    return dbg.space();
+}
+
+static QDebug operator<<(QDebug dbg, QNetworkSession::State state)
+{
+    switch (state) {
+    case QNetworkSession::Invalid:
+        dbg.nospace() << "Invalid";
+        break;
+    case QNetworkSession::NotAvailable:
+        dbg.nospace() << "Not Available";
+        break;
+    case QNetworkSession::Connecting:
+        dbg.nospace() << "Connecting";
+        break;
+    case QNetworkSession::Connected:
+        dbg.nospace() << "Connected";
+        break;
+    case QNetworkSession::Closing:
+        dbg.nospace() << "Closing";
+        break;
+    case QNetworkSession::Disconnected:
+        dbg.nospace() << "Disconnected";
+        break;
+    case QNetworkSession::Roaming:
+        dbg.nospace() << "Roaming";
+        break;
+    };
+
+    return dbg.space();
+}
+
 void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::RightButton) {
-        qWarning() << configuration.name()
-                << configuration.identifier();
-        qWarning() << "    configuration state:" << configurationStateToString(configuration.state());
+        qWarning() << configuration.name() << configuration.identifier();
+        qWarning() << "    configuration state:" << configuration.state();
         qWarning() << "    session bearername:" << session->bearerName();
         qWarning() << "    active time:"<< session->activeTime();
-        qWarning() << "    session state:" << sessionStateToString(session->state());
+        qWarning() << "    session state:" << session->state();
         qWarning() << "    sent data:"<< session->sentData();
         qWarning() << "    received sdata:"<< session->receivedData();
 
 
-        if(configuration.type() == QNetworkConfiguration::ServiceNetwork) {
-           qWarning() << configuration.name() << "is servicenetwork";
+        if (configuration.type() == QNetworkConfiguration::ServiceNetwork) {
+            qWarning() << "    service network children:";
             foreach (const QNetworkConfiguration &config, configuration.children()) {
-                qWarning() << "    "<< config.name() << config.identifier() << config.state();
+                qWarning() << "        "<< config.name() << config.identifier() << config.state();
             }
         }
 
@@ -340,54 +398,6 @@ void Cloud::newConfigurationActivated()
                  height / 2 - text->boundingRect().height());
 
     stateChanged(session->state());
-}
-
-QString Cloud::configurationStateToString(QNetworkConfiguration::StateFlags state)
-{
-    QString stateStr;
-
-    if ((state & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-        stateStr += "Active | ";
-    }
-    if ((state & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-        stateStr += "Discovered | ";
-    }
-    if ((state & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
-        stateStr += "Defined | ";
-    }
-    if ((state & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
-        stateStr += "Undefined";
-    }
-
-    return stateStr;
-}
-
-QString Cloud::sessionStateToString(QNetworkSession::State state)
-{
-    switch (state) {
-    case QNetworkSession::Invalid:
-        return "Invalid";
-        break;
-    case QNetworkSession::NotAvailable:
-        return "Not Available";
-        break;
-    case QNetworkSession::Connecting:
-        return "Connecting";
-        break;
-    case QNetworkSession::Connected:
-        return "Connected";
-        break;
-    case QNetworkSession::Closing:
-        return "Closing";
-        break;
-    case QNetworkSession::Disconnected:
-        return "Disconnected";
-        break;
-    case QNetworkSession::Roaming:
-        return "Roaming";
-        break;
-    };
-    return QString();
 }
 
 qreal Cloud::getRadiusForState(QNetworkConfiguration::StateFlags state)

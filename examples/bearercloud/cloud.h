@@ -69,8 +69,6 @@ protected:
 private Q_SLOTS:
     void stateChanged(QNetworkSession::State state);
     void newConfigurationActivated();
-    QString configurationStateToString(QNetworkConfiguration::StateFlags state);
-    QString sessionStateToString(QNetworkSession::State state);
 
 private:
     QNetworkConfiguration configuration;
