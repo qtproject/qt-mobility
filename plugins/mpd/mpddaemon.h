@@ -66,6 +66,10 @@ signals:
     void playerStateChanged(int state);
     void playlistItemChanged(int item);
     void mixerChanged();
+    void volumeChanged(int volume);
+    void mutingChanged(bool muted);
+    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
 
 private slots:
     void readData();

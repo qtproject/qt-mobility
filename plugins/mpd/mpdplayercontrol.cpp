@@ -49,6 +49,13 @@ MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd, QObject *parent):
     connect(daemon, SIGNAL(playerStateChanged(int)), SIGNAL(stateChanged(int)));
     connect(daemon, SIGNAL(mixerChanged()), SLOT(mixerChanged()));
     connect(daemon, SIGNAL(playlistItemChanged(int)), SLOT(playlistItemChanged(int)));
+    connect(daemon, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+    connect(daemon, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(daemon, SIGNAL(volumeChanged(int)), SLOT(handleVolumeChanged(int)));
+    connect(daemon, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+
+    savedVolume = 100;
+    m_muted = false;
 }
 
 MpdPlayerControl::~MpdPlayerControl()
@@ -97,21 +104,33 @@ void MpdPlayerControl::setPlaylistPosition(int position)
 
 int MpdPlayerControl::volume() const
 {
-    return 100;
+    return daemon->volume();
+}
+
+static inline int clamp_volume(int volume)
+{
+    return qMin(100, qMax(0, volume));
 }
 
 void MpdPlayerControl::setVolume(int volume)
 {
+    daemon->send(QString("setvol %1").arg(clamp_volume(volume)));
 }
 
 bool MpdPlayerControl::isMuted() const
 {
-    return false;
+    return m_muted;
 }
-
 
 void MpdPlayerControl::setMuted(bool muted)
 {
+    if (m_muted == muted)
+        return;
+    m_muted = muted;
+    if (m_muted)
+        savedVolume = daemon->volume();
+
+    daemon->send(QString("setvol %1").arg(muted ? 0 : savedVolume));
 }
 
 bool MpdPlayerControl::isBuffering() const
@@ -179,5 +198,11 @@ void MpdPlayerControl::mixerChanged()
 void MpdPlayerControl::playlistItemChanged(int position)
 {
     emit playlistPositionChanged(playlistPos = position);
+}
+
+void MpdPlayerControl::handleVolumeChanged(int volume)
+{
+    if (!m_muted)
+        emit volumeChanged(volume);
 }
 

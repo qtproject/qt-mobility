@@ -85,11 +85,14 @@ private slots:
 //    void playerStateChanged();
     void playlistItemChanged(int position);
     void mixerChanged();
+    void handleVolumeChanged(int volume);
 
 private:
     MpdDaemon *daemon;
     QMediaPlaylist *playlist;
     int playlistPos;
+    int savedVolume;
+    bool m_muted;
 };
 
 #endif  // MPDPLAYERCONTROL_H
