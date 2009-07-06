@@ -70,7 +70,7 @@ public:
     \value Heading The bearing to true north, in degrees.
     \value GroundSpeed The ground speed, in metres/sec.
     \value VerticalSpeed The vertical speed, in metres/sec.
-    \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination.
+    \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination. A positive value indicates a clockwise direction from true north and a negative value indicates a counter-clockwise direction.
     \value HorizontalAccuracy The accuracy of the provided latitude-longitude value, in metres.
     \value VerticalAccuracy The accuracy of the provided altitude value, in metres.
 */
