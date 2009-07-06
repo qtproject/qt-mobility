@@ -11,7 +11,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Contacts Developer Resources<br /><span class="subtitle"></span>
 </h1>
 <ul><li><a href="#introduction">Introduction</a></li>
@@ -119,8 +119,11 @@
     QContactPhoneNumber phoneNumber = selected.detail(&quot;PhoneNumber&quot;); <span class="comment">// retrieves the first phone number</span>
     phoneNumber.setNumber(&quot;087654321&quot;);
 
-<span class="comment">    // now we save the updated detail.  The old detail will be overwritten.</span>
-    cm.saveDetail(&amp;phoneNumber);</pre>
+<span class="comment">    // now we save the updated detail.  The old detail will be overwritten in memory.</span>
+    selected.saveDetail(&amp;phoneNumber);
+
+<span class="comment">    // and save the updated contact back to the database</span>
+    cm.saveContact(&amp;selected);</pre>
 <a name="retrieving-contact-details-for-display"></a>
 <h3>Retrieving contact details for display</h3>
 <p>The user wishes to view the details of a particular contact without modifying them.</p>

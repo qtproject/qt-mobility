@@ -158,8 +158,11 @@ QAbstractListModel), and allow the user to modify that contact.
     QContactPhoneNumber phoneNumber = selected.detail("PhoneNumber"); // retrieves the first phone number
     phoneNumber.setNumber("087654321");
 
-    // now we save the updated detail.  The old detail will be overwritten.
-    cm.saveDetail(&phoneNumber);
+    // now we save the updated detail.  The old detail will be overwritten in memory.
+    selected.saveDetail(&phoneNumber);
+
+    // and save the updated contact back to the database
+    cm.saveContact(&selected);
 \endcode
 
 \section2 Retrieving contact details for display
