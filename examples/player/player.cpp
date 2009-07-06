@@ -101,11 +101,13 @@ Player::Player(QWidget *parent)
     volumeSlider->setRange(0, 100);
     volumeSlider->setValue(player->volume());
     connect(volumeSlider, SIGNAL(valueChanged(int)), player, SLOT(setVolume(int)));
+    connect(player, SIGNAL(volumeChanged(int)), volumeSlider, SLOT(setValue(int)));
 
     QPushButton *muteButton = new QPushButton(tr("Mute"));
     muteButton->setCheckable(true);
     muteButton->setChecked(player->isMuted());
     connect(muteButton, SIGNAL(clicked(bool)), player, SLOT(setMuted(bool)));
+    connect(player, SIGNAL(mutingChanged(bool)), muteButton, SLOT(setChecked(bool)));
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
