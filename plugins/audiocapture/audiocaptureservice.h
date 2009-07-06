@@ -37,6 +37,8 @@
 
 #include <QtCore/qobject.h>
 
+#include <QtMultimedia/qaudioinput.h>
+
 #include "qaudiocaptureservice.h"
 
 class AudioCaptureControl;
@@ -48,9 +50,13 @@ public:
     AudioCaptureService(QObject *parent = 0);
     ~AudioCaptureService();
 
+    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
+    QObject *createEndpoint(const char *interface);
+
     QAbstractMediaControl *control(const char *name) const;
 private:
     AudioCaptureControl *m_control;
+    QAudioInput* m_audioInput;
 };
 
 #endif

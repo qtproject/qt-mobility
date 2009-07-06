@@ -63,21 +63,11 @@ public:
     QAudioCapture(QAudioCaptureService *service = createAudioCaptureService(), QObject *parent = 0);
     ~QAudioCapture();
 
-    QByteArray defaultDevice();
-    QList<QByteArray> deviceList();
-    QStringList supportedCodecs();
-    QList<int> supportedFrequencies();
-    QList<int> supportedChannels();
-    QList<int> supportedSampleSizes();
-
 #ifdef AUDIOSERVICES
-    QList<QAudioFormat::Endian> supportedByteOrders();
-    QList<QAudioFormat::SampleType> supportedSampleTypes();
-
-    QAudioFormat format();
+    QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
 #endif
-    void setSink(QAbstractMediaObject* sink);
+    void setAudioInput(QObject *input);
     QAbstractMediaService* service() const;
 
 public Q_SLOTS:

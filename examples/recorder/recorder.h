@@ -35,21 +35,35 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
-#include <QtGui/QWidget>
+#include <QtGui>
+#include <QtMultimedia/qaudio.h>
+#include <QtMultimedia/qaudioinput.h>
 
 #include <qaudiocapture.h>
 
-class Recorder : public QWidget
+class QComboBox;
+
+class Recorder : public QMainWindow
 {
     Q_OBJECT
 public:
-    Recorder(QWidget *parent = 0);
+    Recorder();
     ~Recorder();
 
 private slots:
+    void status();
+    void toggleRecord();
+    void state(QAudio::State s);
+    void deviceChanged(int idx);
 
 private:
+    QAudioDeviceId device;
+    QAudioFormat   format;
     QAudioCapture* recorder;
+    QComboBox*     deviceBox;
+    QPushButton*   button;
+    QAudioInput*   audioInput;
+    QFile*         file;
 };
 
 #endif

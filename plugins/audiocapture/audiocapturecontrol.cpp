@@ -33,23 +33,23 @@
 ****************************************************************************/
 
 #include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
 
 #include "qmediasource.h"
 
 #include <QtCore/qdebug.h>
 
+#include <QtMultimedia/qaudio.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
+
 
 AudioCaptureControl::AudioCaptureControl(QObject *parent)
     :QAudioCaptureControl(parent)
 {
-    qWarning()<<"ccccccc";
 }
 
 AudioCaptureControl::AudioCaptureControl(AudioCaptureService *service, QObject *parent)
    :QAudioCaptureControl(parent), m_service(service)
 {
-    m_session = new AudioCaptureSession(this);
 }
 
 AudioCaptureControl::~AudioCaptureControl()
@@ -64,54 +64,7 @@ void AudioCaptureControl::stop()
 {
 }
 
-QByteArray AudioCaptureControl::defaultDevice()
-{
-    return QByteArray();
-}
-
-QList<QByteArray> AudioCaptureControl::deviceList()
-{
-    QList<QByteArray> list;
-    return list;
-}
-
-QStringList AudioCaptureControl::supportedCodecs()
-{
-    QStringList list;
-    return list;
-}
-
-QList<int> AudioCaptureControl::supportedFrequencies()
-{
-    QList<int> list;
-    return list;
-}
-
-QList<int> AudioCaptureControl::supportedChannels()
-{
-    QList<int> list;
-    return list;
-}
-
-QList<int> AudioCaptureControl::supportedSampleSizes()
-{
-    QList<int> list;
-    return list;
-}
-
-QList<QAudioFormat::Endian> AudioCaptureControl::supportedByteOrders()
-{
-    QList<QAudioFormat::Endian> list;
-    return list;
-}
-
-QList<QAudioFormat::SampleType> AudioCaptureControl::supportedSampleTypes()
-{
-    QList<QAudioFormat::SampleType> list;
-    return list;
-}
-
-QAudioFormat AudioCaptureControl::format()
+QAudioFormat AudioCaptureControl::format() const
 {
     return QAudioFormat();
 }
@@ -121,8 +74,6 @@ bool AudioCaptureControl::setFormat(const QAudioFormat &format)
     return true;
 }
 
-void AudioCaptureControl::setSink(QAbstractMediaObject* sink)
+void AudioCaptureControl::setAudioInput(QObject *input)
 {
 }
-
-

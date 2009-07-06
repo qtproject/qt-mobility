@@ -42,7 +42,6 @@
 #include "qmediasource.h"
 
 class AudioCaptureService;
-class AudioCaptureSession;
 
 class AudioCaptureControl : public QAudioCaptureControl
 {
@@ -55,22 +54,13 @@ public:
     void start();
     void stop();
 
-    QByteArray defaultDevice();
-    QList<QByteArray> deviceList();
-
-    QStringList supportedCodecs();
-    QList<int> supportedFrequencies();
-    QList<int> supportedChannels();
-    QList<int> supportedSampleSizes();
-    QList<QAudioFormat::Endian> supportedByteOrders();
-    virtual QList<QAudioFormat::SampleType> supportedSampleTypes();
-    QAudioFormat format();
+    QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
-    void setSink(QAbstractMediaObject* sink);
+
+    void setAudioInput(QObject *input);
 
 private:
     AudioCaptureService *m_service;
-    AudioCaptureSession *m_session;
 };
 
 #endif

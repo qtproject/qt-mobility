@@ -1,5 +1,6 @@
 TEMPLATE = lib
 
+#QT += multimedia
 #DEFINES += AUDIOSERVICES
 
 # distinct from QtMultimedia

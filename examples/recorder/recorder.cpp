@@ -37,13 +37,87 @@
 #include <qabstractmediaservice.h>
 
 #include <QtGui>
+#include <QtMultimedia/QAudioDeviceInfo>
 
-Recorder::Recorder(QWidget *parent)
-    : QWidget(parent)
+Recorder::Recorder()
 {
     recorder = new QAudioCapture;
+
+    audioInput = 0;
+    file = new QFile("/tmp/test.wav");
+
+    format.setFrequency(8000);
+    format.setChannels(1);
+    format.setSampleSize(8);
+    format.setSampleType(QAudioFormat::UnSignedInt);
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setCodec("audio/pcm");
+
+    QWidget *window = new QWidget;
+    QVBoxLayout* layout = new QVBoxLayout;
+
+    deviceBox = new QComboBox(this);
+    qWarning()<<recorder->service();
+    QList<QByteArray> devices = recorder->service()->supportedEndpointInterfaces(QMediaEndpointInterface::Input);
+    for(int i = 0; i < devices.size(); ++i) {
+        deviceBox->addItem(devices.at(i), i);
+    }
+    connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
+    layout->addWidget(deviceBox);
+
+    button = new QPushButton(this);
+    button->setText(tr("Click to start recording"));
+    connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
+    layout->addWidget(button);
+
+    window->setLayout(layout);
+    setCentralWidget(window);
+    window->show();
 }
 
 Recorder::~Recorder()
 {
+}
+
+void Recorder::status()
+{
+    qWarning()<<"bytesReady = "<<audioInput->bytesReady()<<" bytes, clock = "<<audioInput->clock()<<"ms, totalTime = "<<audioInput->totalTime()/1000<<"ms";
+}
+
+void Recorder::state(QAudio::State state)
+{
+    qWarning()<<" state="<<state;
+}
+
+void Recorder::deviceChanged(int idx)
+{
+    qWarning()<<"deviceChanged";
+
+    if(audioInput) {
+        audioInput->stop();
+        audioInput->disconnect(this);
+        delete audioInput;
+    }
+    device = deviceBox->itemData(idx).value<QAudioDeviceId>();
+    qWarning()<<"trying to use:"<<&device;
+    audioInput = new QAudioInput(device, format, this);
+    connect(audioInput,SIGNAL(notify()),SLOT(status()));
+    connect(audioInput,SIGNAL(stateChanged(QAudio::State)),SLOT(state(QAudio::State)));
+}
+
+void Recorder::toggleRecord()
+{
+    if(audioInput) {
+        if(audioInput->state() != QAudio::StopState) {
+            qWarning()<<"stop recording...";
+            audioInput->stop();
+            file->close();
+            button->setText(tr("Click to start recording"));
+        } else {
+            qWarning()<<"start recording...";
+            file->open(QIODevice::WriteOnly);
+            audioInput->start(file);
+            button->setText(tr("Click to stop recording"));
+        }
+    }
 }

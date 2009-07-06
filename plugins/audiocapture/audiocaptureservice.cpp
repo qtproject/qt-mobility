@@ -36,6 +36,9 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
+#include <QtMultimedia/qaudio.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
+
 #include "audiocaptureservice.h"
 #include "audiocapturecontrol.h"
 
@@ -52,5 +55,27 @@ AudioCaptureService::~AudioCaptureService()
 QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 {
     return m_control;
+}
+
+QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
+        QMediaEndpointInterface::Direction direction) const
+{
+    Q_UNUSED(direction);
+
+    QList<QByteArray> list;
+
+    if(QMediaEndpointInterface::Input) {
+        QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+        for(int i = 0; i < devices.size(); ++i) {
+            list.append(QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData());
+        }
+    }
+    return list;
+}
+
+QObject *AudioCaptureService::createEndpoint(const char *interface)
+{
+    qWarning()<<"createEndpoint "<<interface;
+    return 0;
 }
 

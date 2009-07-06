@@ -32,6 +32,8 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "qaudiocapture.h"
 
 #include "qabstractmediaobject_p.h"
@@ -85,105 +87,11 @@ void QAudioCapture::stop()
         d_func()->control->stop();
 }
 
-QByteArray QAudioCapture::defaultDevice()
+#ifdef AUDIOSERVICES
+QAudioFormat QAudioCapture::format() const
 {
     if(d_func()->control)
-        return d_func()->control->defaultDevice();
-    else
-        return QByteArray();
-}
-
-QList<QByteArray> QAudioCapture::deviceList()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->deviceList();
-    else {
-        QList<QByteArray> list;
-        return list;
-    }
-}
-
-QStringList QAudioCapture::supportedCodecs()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedCodecs();
-    else {
-        QStringList list;
-        return list;
-    }
-}
-
-QList<int> QAudioCapture::supportedFrequencies()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedFrequencies();
-    else {
-        QList<int> list;
-        return list;
-    }
-}
-
-QList<int> QAudioCapture::supportedChannels()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedChannels();
-    else {
-        QList<int> list;
-        return list;
-    }
-}
-
-QList<int> QAudioCapture::supportedSampleSizes()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedSampleSizes();
-    else {
-        QList<int> list;
-        return list;
-    }
-}
-
-#ifdef AUDIOSERVICES
-QList<QAudioFormat::Endian> QAudioCapture::supportedByteOrders()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedByteOrders();
-    else {
-        QList<QAudioFormat::Endian> list;
-        return list;
-    }
-}
-
-QList<QAudioFormat::SampleType> QAudioCapture::supportedSampleTypes()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->supportedSampleTypes();
-    else {
-        QList<QAudioFormat::SampleType> list;
-        return list;
-    }
-}
-
-QAudioFormat QAudioCapture::format()
-{
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        return d->control->format();
+        return d_func()->control->format();
     else
         return QAudioFormat();
 }
@@ -199,12 +107,8 @@ bool QAudioCapture::setFormat(const QAudioFormat &format)
 }
 #endif
 
-void QAudioCapture::setSink(QAbstractMediaObject* sink)
+void QAudioCapture::setAudioInput(QObject *input)
 {
-    Q_D(QAudioCapture);
-
-    if(d->control)
-        d->control->setSink(sink);
 }
 
 QAbstractMediaService *QAudioCapture::service() const
