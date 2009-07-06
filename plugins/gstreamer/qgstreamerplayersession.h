@@ -85,6 +85,8 @@ public:
     bool isVideoAvailable() const;
 
     QMap<QString,QVariant> tags() const { return m_tags; }
+    QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
+    int streamCount() const { return m_streamProperties.count(); }
 
 public slots:
     void load(const QUrl &url);
@@ -109,6 +111,7 @@ signals:
     void bufferingProgressChanged(int percentFilled);
     void playbackFinished();
     void tagsChanged();
+    void streamsChanged();
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -123,6 +126,8 @@ private:
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QString,QVariant> m_tags;
+    QList< QMap<QString,QVariant> > m_streamProperties;
+
 
     int m_volume;
     bool m_muted;
