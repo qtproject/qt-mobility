@@ -229,9 +229,12 @@ private slots:
 /*!
     \fn void QServiceManager::serviceAdded(const QString& serviceName, QServiceManager::Scope scope)
 
-    This signal is emited whenever a new service with the given 
+    This signal is emited whenever a new service with the given
     \a serviceName has been registered with the service manager.
     \a scope indicates where the service was added.
+
+    If the manager scope is QServiceManager::SystemScope, it will not receive
+    notifications about services added in the user scope.
 
     \sa addService()
 */
@@ -242,6 +245,9 @@ private slots:
     This signal is emited whenever a service with the given 
     \a serviceName has been deregistered with the service manager.
     \a scope indicates where the service was added.
+
+    If the manager scope is QServiceManager::SystemScope, it will not receive
+    notifications about services removed in the user scope.
 
     \sa removeService()
 */
@@ -622,7 +628,8 @@ void QServiceManager::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
             || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
-        d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, true);
+        if (d->scope != QServiceManager::SystemScope)
+            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, true);
         d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, true);
     }
 }
@@ -636,7 +643,8 @@ void QServiceManager::disconnectNotify(const char *signal)
             || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
         if (receivers(SIGNAL(serviceAdded(QString,QServiceManager::Scope))) == 0
                 && receivers(SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) == 0) {
-            d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, false);
+            if (d->scope != QServiceManager::SystemScope)
+                d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, false);
             d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, false);
         }
     }

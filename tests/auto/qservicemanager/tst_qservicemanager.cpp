@@ -1162,6 +1162,7 @@ void tst_QServiceManager::serviceAdded()
     QFETCH(QString, serviceName);
     QFETCH(QServiceManager::Scope, scope_modify);
     QFETCH(QServiceManager::Scope, scope_listen);
+    QFETCH(bool, expectSignal);
 
     QBuffer buffer;
     buffer.setData(xml);
@@ -1176,12 +1177,18 @@ void tst_QServiceManager::serviceAdded()
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
 
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyAdd.count(), 1);
-    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
-    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    if (expectSignal) {
+        QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+        QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    }
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyRemove.count(), 1);
 
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
@@ -1192,9 +1199,13 @@ void tst_QServiceManager::serviceAdded()
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyAdd.count(), 1);
-    QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
-    QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    if (expectSignal) {
+        QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
+        QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    }
 
     delete listener;
 }
@@ -1205,6 +1216,7 @@ void tst_QServiceManager::serviceAdded_data()
     QTest::addColumn<QString>("serviceName");
     QTest::addColumn<QServiceManager::Scope>("scope_modify");
     QTest::addColumn<QServiceManager::Scope>("scope_listen");
+    QTest::addColumn<bool>("expectSignal");
 
     QFile file1(xmlTestDataPath("sampleservice.xml"));
     QVERIFY(file1.open(QIODevice::ReadOnly));
@@ -1214,16 +1226,16 @@ void tst_QServiceManager::serviceAdded_data()
     QByteArray file1Data = file1.readAll();
 
     QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
-            << QServiceManager::UserScope << QServiceManager::UserScope;
+            << QServiceManager::UserScope << QServiceManager::UserScope << true;
     QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
-            << QServiceManager::UserScope << QServiceManager::UserScope;
+            << QServiceManager::UserScope << QServiceManager::UserScope << true;
 
     QTest::newRow("system scope") << file1Data << "SampleService"
-            << QServiceManager::SystemScope << QServiceManager::SystemScope;
+            << QServiceManager::SystemScope << QServiceManager::SystemScope << true;
     QTest::newRow("modify as user, listen in system") << file1Data << "SampleService"
-            << QServiceManager::UserScope << QServiceManager::SystemScope;
+            << QServiceManager::UserScope << QServiceManager::SystemScope << false;
     QTest::newRow("modify as system, listen in user") << file1Data << "SampleService"
-            << QServiceManager::SystemScope << QServiceManager::UserScope;
+            << QServiceManager::SystemScope << QServiceManager::UserScope << true;
 }
 
 void tst_QServiceManager::serviceRemoved()
@@ -1232,6 +1244,7 @@ void tst_QServiceManager::serviceRemoved()
     QFETCH(QString, serviceName);
     QFETCH(QServiceManager::Scope, scope_modify);
     QFETCH(QServiceManager::Scope, scope_listen);
+    QFETCH(bool, expectSignal);
 
     QBuffer buffer;
     buffer.setData(xml);
@@ -1245,29 +1258,41 @@ void tst_QServiceManager::serviceRemoved()
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyAdd.count(), 1);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyRemove.count(), 1);
-    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
-    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    if (expectSignal) {
+        QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+        QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    }
 
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
 #endif
-    
+
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyAdd.count(), 1);
 
     spyRemove.clear();
     QVERIFY(mgr_modify.removeService(serviceName));
+    if (!expectSignal)
+        QEXPECT_FAIL("", "Should not receive signal", Continue);
     QTRY_COMPARE(spyRemove.count(), 1);
-    QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
-    QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    if (expectSignal) {
+        QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
+        QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+    }
 
     delete listener;
 }
