@@ -720,6 +720,7 @@
             <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"></contents>
             <contents name="examples" title="Examples" level="2"></contents>
         </page>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Developer Resources" fulltitle="Qt Mobility Developer Resources" subtitle="" location="index.qdoc"></page>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
             <contents name="introduction" title="Introduction" level="1"></contents>
             <contents name="schema-definition" title="Schema Definition" level="1"></contents>

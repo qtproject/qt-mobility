@@ -387,6 +387,9 @@
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
+    <section ref="index.html" title="Qt Mobility Developer Resources">
+        <keyword ref="index.html">Qt Mobility Developer Resources</keyword>
+    </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
