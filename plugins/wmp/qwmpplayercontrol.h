@@ -39,6 +39,8 @@
 
 #include <wmp.h>
 
+class QWmpPlaylistProxy;
+
 class QWmpPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
@@ -85,12 +87,15 @@ public:
     QUrl url() const;
     void setUrl(const QUrl &url);
 
+    using QMediaPlayerControl::positionChanged;
+
 private:
     IWMPCore3 *m_player;
     IWMPControls *m_controls;
     IWMPSettings *m_settings;
     IWMPNetwork *m_network;
     QMediaPlaylist *m_playlist;
+    QWmpPlaylistProxy *m_playlistProxy;
     int m_state;
     qint64 m_duration;
     bool m_buffering;

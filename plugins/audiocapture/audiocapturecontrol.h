@@ -32,61 +32,35 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef AUDIOCAPTURECONTROL_H
+#define AUDIOCAPTURECONTROL_H
 
-#include "qmetadataprovider.h"
+#include <QtCore/qobject.h>
+#include <QtMultimedia/qaudioformat.h>
 
-#include <wmp.h>
+#include "qaudiocapturecontrol.h"
+#include "qmediasource.h"
 
-class QWmpMetaData : public QMetadataProvider
+class AudioCaptureService;
+
+class AudioCaptureControl : public QAudioCaptureControl
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+    AudioCaptureControl(QObject *parent = 0);
+    AudioCaptureControl(AudioCaptureService *service, QObject *parent = 0);
+    ~AudioCaptureControl();
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
+    void start();
+    void stop();
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
+    QAudioFormat format() const;
+    bool setFormat(const QAudioFormat &format);
 
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
+    void setAudioInput(QObject *input);
 
 private:
-    IWMPMedia *m_media;
+    AudioCaptureService *m_service;
 };
-
-
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
 
 #endif

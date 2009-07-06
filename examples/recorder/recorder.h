@@ -32,61 +32,38 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include "qmetadataprovider.h"
+#include <QtGui>
+#include <QtMultimedia/qaudio.h>
+#include <QtMultimedia/qaudioinput.h>
 
-#include <wmp.h>
+#include <qaudiocapture.h>
 
-class QWmpMetaData : public QMetadataProvider
+class QComboBox;
+
+class Recorder : public QMainWindow
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+    Recorder();
+    ~Recorder();
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
-
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
+private slots:
+    void status();
+    void toggleRecord();
+    void state(QAudio::State s);
+    void deviceChanged(int idx);
 
 private:
-    IWMPMedia *m_media;
+    QAudioDeviceId device;
+    QAudioFormat   format;
+    QAudioCapture* recorder;
+    QComboBox*     deviceBox;
+    QPushButton*   button;
+    QAudioInput*   audioInput;
+    QFile*         file;
 };
-
-
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
 
 #endif

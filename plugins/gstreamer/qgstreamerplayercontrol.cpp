@@ -48,12 +48,11 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
 }
 
 
-QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerService *service, QObject *parent)
-   :QMediaPlayerControl(parent), m_service(service)
+QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
+   :QMediaPlayerControl(parent), m_session(session)
 {
     QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);
-    m_session = new QGstreamerPlayerSession(this);
+    m_navigator = new QMediaPlaylistNavigator(playlist,this);    
     m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
     connect(m_navigator, SIGNAL(activated(QMediaSource)),

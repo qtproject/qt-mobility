@@ -47,7 +47,10 @@ class QAudioCaptureService : public QAbstractMediaService
 public:
     ~QAudioCaptureService();
 
-    virtual QAudioCaptureControl* control() const = 0;
+    virtual QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const = 0;
+    virtual QObject *createEndpoint(const char *interface) = 0;
+
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
     QAudioCaptureService(QObject *parent);

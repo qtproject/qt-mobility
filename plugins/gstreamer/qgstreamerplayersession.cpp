@@ -78,7 +78,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
 {
     if (m_playbin) {
-        stop();
+        stop();        
 
         delete m_busHelper;
         gst_object_unref(GST_OBJECT(m_bus));
@@ -90,6 +90,9 @@ void QGstreamerPlayerSession::load(const QUrl &url)
 {
     m_url = url;
     if (m_playbin) {
+        m_tags.clear();
+        emit tagsChanged();
+
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
 
         if (m_renderer)
@@ -192,6 +195,49 @@ void QGstreamerPlayerSession::setMuted(bool muted)
     g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
 }
 
+static void addTagToMap(const GstTagList *list,
+                        const gchar *tag,
+                        gpointer user_data)
+{
+    QMap<QString,QVariant> *map = reinterpret_cast< QMap<QString,QVariant>* >(user_data);
+
+    GValue val;
+    val.g_type = 0;
+    //g_value_init(&val,G_TYPE_INVALID);
+    gst_tag_list_copy_value(&val,list,tag);
+
+    switch( G_VALUE_TYPE(&val) ) {
+        case G_TYPE_STRING:
+        {
+            const gchar *str_value = g_value_get_string(&val);
+            map->insert(QString::fromLatin1(tag), QString::fromUtf8(str_value));
+            break;
+        }
+        case G_TYPE_INT:
+            map->insert(QString::fromLatin1(tag), g_value_get_int(&val));
+            break;
+        case G_TYPE_UINT:
+            map->insert(QString::fromLatin1(tag), g_value_get_uint(&val));
+            break;
+        case G_TYPE_LONG:
+            map->insert(QString::fromLatin1(tag), qint64(g_value_get_long(&val)));
+            break;
+        case G_TYPE_BOOLEAN:
+            map->insert(QString::fromLatin1(tag), g_value_get_boolean(&val));
+            break;
+        case G_TYPE_CHAR:
+            map->insert(QString::fromLatin1(tag), g_value_get_char(&val));
+            break;
+        case G_TYPE_DOUBLE:
+            map->insert(QString::fromLatin1(tag), g_value_get_double(&val));
+            break;
+        default:
+            break;
+    }
+
+    g_value_unset(&val);
+}
+
 void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
@@ -205,70 +251,84 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             emit positionChanged(newPos);
         }
 
-    } else if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
-        switch (GST_MESSAGE_TYPE(gm))  {
-        case GST_MESSAGE_DURATION:
-            break;
+    } else {
+        //tag message comes from elements inside playbin, not from playbin itself
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
+            qDebug() << "tag message";
+            GstTagList *tag_list;
+            gst_message_parse_tag(gm, &tag_list);
+            gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
 
-        case GST_MESSAGE_STATE_CHANGED:
-            {
-                GstState    oldState;
-                GstState    newState;
-                GstState    pending;
+            qDebug() << m_tags;
 
-                gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
+            emit tagsChanged();
+        }
 
-                switch (newState) {
-                case GST_STATE_VOID_PENDING:
-                case GST_STATE_NULL:
-                case GST_STATE_READY:
-                    break;
-                case GST_STATE_PAUSED:
-                    if (m_state != QMediaPlayer::PausedState)
-                        emit stateChanged(m_state = QMediaPlayer::PausedState);
-                    break;
-                case GST_STATE_PLAYING:
-                    if (oldState == GST_STATE_PAUSED)
-                        getStreamsInfo();
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
+            switch (GST_MESSAGE_TYPE(gm))  {
+            case GST_MESSAGE_DURATION:
+                break;
 
-                    if (m_state != QMediaPlayer::PlayingState)
-                        emit stateChanged(m_state = QMediaPlayer::PlayingState);
-                    break;
+            case GST_MESSAGE_STATE_CHANGED:
+                {
+                    GstState    oldState;
+                    GstState    newState;
+                    GstState    pending;
+
+                    gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
+
+                    switch (newState) {
+                    case GST_STATE_VOID_PENDING:
+                    case GST_STATE_NULL:
+                    case GST_STATE_READY:
+                        break;
+                    case GST_STATE_PAUSED:
+                        if (m_state != QMediaPlayer::PausedState)
+                            emit stateChanged(m_state = QMediaPlayer::PausedState);
+                        break;
+                    case GST_STATE_PLAYING:
+                        if (oldState == GST_STATE_PAUSED)
+                            getStreamsInfo();
+
+                        if (m_state != QMediaPlayer::PlayingState)
+                            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+                        break;
+                    }
                 }
-            }
-            break;
+                break;
 
-        case GST_MESSAGE_EOS:
-            if (m_state != QMediaPlayer::StoppedState && m_state != QMediaPlayer::EndOfStreamState) {
-                emit stateChanged(m_state = QMediaPlayer::EndOfStreamState);
-                emit playbackFinished();
-            }
-            break;
+            case GST_MESSAGE_EOS:
+                if (m_state != QMediaPlayer::StoppedState && m_state != QMediaPlayer::EndOfStreamState) {
+                    emit stateChanged(m_state = QMediaPlayer::EndOfStreamState);
+                    emit playbackFinished();
+                }
+                break;
 
-        case GST_MESSAGE_STREAM_STATUS:
-        case GST_MESSAGE_UNKNOWN:
-        case GST_MESSAGE_ERROR:
-        case GST_MESSAGE_WARNING:
-        case GST_MESSAGE_INFO:
-        case GST_MESSAGE_TAG:
-        case GST_MESSAGE_BUFFERING:
-        case GST_MESSAGE_STATE_DIRTY:
-        case GST_MESSAGE_STEP_DONE:
-        case GST_MESSAGE_CLOCK_PROVIDE:
-        case GST_MESSAGE_CLOCK_LOST:
-        case GST_MESSAGE_NEW_CLOCK:
-        case GST_MESSAGE_STRUCTURE_CHANGE:
-        case GST_MESSAGE_APPLICATION:
-        case GST_MESSAGE_ELEMENT:
-        case GST_MESSAGE_SEGMENT_START:
-        case GST_MESSAGE_SEGMENT_DONE:
-        case GST_MESSAGE_LATENCY:
+            case GST_MESSAGE_TAG:
+            case GST_MESSAGE_STREAM_STATUS:
+            case GST_MESSAGE_UNKNOWN:
+            case GST_MESSAGE_ERROR:
+            case GST_MESSAGE_WARNING:
+            case GST_MESSAGE_INFO:
+            case GST_MESSAGE_BUFFERING:
+            case GST_MESSAGE_STATE_DIRTY:
+            case GST_MESSAGE_STEP_DONE:
+            case GST_MESSAGE_CLOCK_PROVIDE:
+            case GST_MESSAGE_CLOCK_LOST:
+            case GST_MESSAGE_NEW_CLOCK:
+            case GST_MESSAGE_STRUCTURE_CHANGE:
+            case GST_MESSAGE_APPLICATION:
+            case GST_MESSAGE_ELEMENT:
+            case GST_MESSAGE_SEGMENT_START:
+            case GST_MESSAGE_SEGMENT_DONE:
+            case GST_MESSAGE_LATENCY:
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
-        case GST_MESSAGE_ASYNC_START:
-        case GST_MESSAGE_ASYNC_DONE:
+            case GST_MESSAGE_ASYNC_START:
+            case GST_MESSAGE_ASYNC_DONE:
 #endif
-        case GST_MESSAGE_ANY:
-            break;
+            case GST_MESSAGE_ANY:
+                break;
+            }
         }
     }
 }

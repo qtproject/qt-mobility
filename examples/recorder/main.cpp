@@ -32,61 +32,16 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "recorder.h"
 
-#include "qmetadataprovider.h"
+#include <QtGui>
 
-#include <wmp.h>
-
-class QWmpMetaData : public QMetadataProvider
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+    QApplication app(argc, argv);
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
+    Recorder recorder;
+    recorder.show();
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
-
-private:
-    IWMPMedia *m_media;
+    return app.exec();
 };
-
-
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
-
-#endif

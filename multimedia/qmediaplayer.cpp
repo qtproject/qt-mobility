@@ -93,7 +93,6 @@ QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
 
-    delete d->control;
     delete d->service;
 }
 

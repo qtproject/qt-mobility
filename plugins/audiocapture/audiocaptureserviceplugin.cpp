@@ -32,61 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#include "qmetadataprovider.h"
+#include "audiocaptureserviceplugin.h"
+#include "audiocaptureservice.h"
 
-#include <wmp.h>
+#include <qmediaserviceprovider.h>
 
-class QWmpMetaData : public QMetadataProvider
+
+class AudioCaptureProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
+            return new AudioCaptureService;
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
-
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
-
-private:
-    IWMPMedia *m_media;
+        return 0;
+    }
 };
 
-
-class QAutoBStr
+QStringList AudioCaptureServicePlugin::keys() const
 {
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
+    return QStringList() << "audiocapture";
+}
 
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
+QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
+{
+    if (key == "audiocapture")
+        return new AudioCaptureProvider;
 
-    inline operator BSTR() const { return m_string; }
+    qDebug() << "unsupported key:" << key;
+    return 0;
+}
 
-private:
-    BSTR m_string;
-};
+#include "audiocaptureserviceplugin.moc"
 
+Q_EXPORT_PLUGIN2(audiocaptureserviceplugin, AudioCaptureServicePlugin);
 
-#endif

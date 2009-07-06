@@ -32,6 +32,8 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "qaudiocapture.h"
 
 #include "qabstractmediaobject_p.h"
@@ -55,107 +57,108 @@ public:
     QAudioCaptureControl* control;
 };
 
+/*!
+    Construct a QAudioCapture from \a service with \a parent.
+*/
+
 QAudioCapture::QAudioCapture(QAudioCaptureService *service, QObject *parent)
     : QAbstractMediaObject(*new QAudioCapturePrivate, parent)
 {
     Q_D(QAudioCapture);
 
-    d->service = service;
-    d->control = qobject_cast<QAudioCaptureControl *>(service->control());
+    if(service) {
+        d->service = service;
+        d->control = qobject_cast<QAudioCaptureControl *>(service->control("audiocapture"));
+    } else {
+        d->service = 0;
+        d->control = 0;
+    }
 }
+
+/*!
+    Destroys the audiocapture object.
+*/
 
 QAudioCapture::~QAudioCapture()
 {
 }
 
+/*!
+    Start recording audio
+*/
+
 void QAudioCapture::start()
 {
-    d_func()->control->start();
+    if(d_func()->control)
+        d_func()->control->start();
 }
+
+/*!
+    Stop recording audio
+*/
 
 void QAudioCapture::stop()
 {
-    d_func()->control->stop();
-}
-
-QByteArray QAudioCapture::defaultDevice()
-{
-    return d_func()->control->defaultDevice();
-}
-
-QList<QByteArray> QAudioCapture::deviceList()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->deviceList();
-}
-
-QStringList QAudioCapture::supportedCodecs()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->supportedCodecs();
-}
-
-QList<int> QAudioCapture::supportedFrequencies()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->supportedFrequencies();
-}
-
-QList<int> QAudioCapture::supportedChannels()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->supportedChannels();
-}
-
-QList<int> QAudioCapture::supportedSampleSizes()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->supportedSampleSizes();
+    if(d_func()->control)
+        d_func()->control->stop();
 }
 
 #ifdef AUDIOSERVICES
-QList<QAudioFormat::Endian> QAudioCapture::supportedByteOrders()
-{
-    Q_D(QAudioCapture);
+/*!
+    Returns the audio format being used.
+*/
 
-    return d->control->supportedByteOrders();
+QAudioFormat QAudioCapture::format() const
+{
+    if(d_func()->control)
+        return d_func()->control->format();
+    else
+        return QAudioFormat();
 }
 
-QList<QAudioFormat::SampleType> QAudioCapture::supportedSampleTypes()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->supportedSampleTypes();
-}
-
-QAudioFormat QAudioCapture::format()
-{
-    Q_D(QAudioCapture);
-
-    return d->control->format();
-}
+/*!
+    Returns true if the \a format can be used.
+*/
 
 bool QAudioCapture::setFormat(const QAudioFormat &format)
 {
     Q_D(QAudioCapture);
 
-    return d->control->setFormat(format);
+    if(d->control)
+        return d->control->setFormat(format);
+    else
+        return false;
 }
 #endif
 
-void QAudioCapture::setSink(QAbstractMediaObject* sink)
-{
-    Q_D(QAudioCapture);
+/*!
+    Sets the source audio device?, maybe should be device name passed?
+*/
 
-    d->control->setSink(sink);
+void QAudioCapture::setAudioInput(QObject *input)
+{
 }
+
+/*!
+    Returns the session object being controlled by this recorder.
+*/
 
 QAbstractMediaService *QAudioCapture::service() const
 {
     return d_func()->service;
+}
+
+QAudioCaptureService* createAudioCaptureService(QMediaServiceProvider *provider)
+{
+    QObject *object = provider ? provider->createObject("com.nokia.qt.AudioCapture/1.0") : 0;
+
+    if (object) {
+        QAudioCaptureService *service = qobject_cast<QAudioCaptureService *>(object);
+
+        if (service)
+            return service;
+
+        delete service;
+    }
+    return 0;
 }

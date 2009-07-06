@@ -34,6 +34,11 @@
 
 #include "qwmpplayercontrol.h"
 
+#include "qwmpplaylistproxy.h"
+
+#include "qmediaplayer.h"
+#include "qmediaplaylist.h"
+
 #include <QtCore/qurl.h>
 
 QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
@@ -41,10 +46,18 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
         , m_player(player)
         , m_controls(0)
         , m_settings(0)
+        , m_playlist(0)
+        , m_playlistProxy(0)
+        , m_state(QMediaPlayer::StoppedState)
+        , m_duration(0)
+        , m_buffering(false)
+        , m_videoAvailable(false)
 {
     m_player->get_controls(&m_controls);
     m_player->get_settings(&m_settings);
     m_player->get_network(&m_network);
+
+    setMediaPlaylist(new QMediaPlaylist(0, this));
 
 }
 
@@ -73,6 +86,19 @@ QMediaPlaylist *QWmpPlayerControl::mediaPlaylist() const
 bool QWmpPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
 {
     m_playlist = playlist;
+
+    delete m_playlistProxy;
+
+    if (m_playlist && m_player) {
+        m_playlistProxy = new QWmpPlaylistProxy(playlist, m_player);
+
+        m_player->put_currentPlaylist(m_playlistProxy->wmpPlaylist());
+    } else {
+        m_playlistProxy = 0;
+        m_player->put_currentPlaylist(0);
+    }
+
+    return true;
 }
 
 qint64 QWmpPlayerControl::duration() const
@@ -108,7 +134,14 @@ int QWmpPlayerControl::playlistPosition() const
 
 void QWmpPlayerControl::setPlaylistPosition(int position)
 {
-    Q_UNUSED(position);
+    if (m_controls && m_playlistProxy && m_playlistProxy->wmpPlaylist()) {
+        IWMPMedia *media = 0;
+        if (m_playlistProxy->wmpPlaylist()->get_item(position, &media) == S_OK) {
+            m_controls->put_currentItem(media);
+
+            media->Release();
+        }
+    }
 }
 
 int QWmpPlayerControl::volume() const
@@ -150,7 +183,7 @@ bool QWmpPlayerControl::isBuffering() const
 
 void QWmpPlayerControl::setBuffering(bool buffering)
 {
-    emit bu
+    emit bufferingChanged(m_buffering = buffering);
 }
 
 int QWmpPlayerControl::bufferStatus() const
@@ -171,7 +204,7 @@ bool QWmpPlayerControl::isVideoAvailable() const
 void QWmpPlayerControl::setVideoAvailable(bool available)
 {
     if (m_videoAvailable != available)
-        emit videoAvailablilityChanged(m_videoAvailable = available);
+        emit this->videoAvailabilityChanged(m_videoAvailable = available);
 }
 
 void QWmpPlayerControl::play()
@@ -194,10 +227,14 @@ void QWmpPlayerControl::stop()
 
 void QWmpPlayerControl::advance()
 {
+    if (m_controls)
+        m_controls->next();
 }
 
 void QWmpPlayerControl::back()
 {
+    if (m_controls)
+        m_controls->previous();
 }
 
 QUrl QWmpPlayerControl::url() const

@@ -52,22 +52,12 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
 
-    virtual QByteArray defaultDevice() = 0;
-    virtual QList<QByteArray> deviceList() = 0;
-
-    virtual QStringList supportedCodecs() = 0;
-    virtual QList<int> supportedFrequencies() = 0;
-    virtual QList<int> supportedChannels() = 0;
-    virtual QList<int> supportedSampleSizes() =0;
 #ifdef AUDIOSERVICES
-    virtual QList<QAudioFormat::Endian> supportedByteOrders() = 0;
-    virtual QList<QAudioFormat::SampleType> supportedSampleTypes() = 0;
-
-    virtual QAudioFormat format() = 0;
+    virtual QAudioFormat format() const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
 #endif
 
-    virtual void setSink(QAbstractMediaObject* sink) = 0;
+    virtual void setAudioInput(QObject *input) = 0;
 protected:
     QAudioCaptureControl(QObject* parent);
 };

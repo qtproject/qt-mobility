@@ -38,7 +38,8 @@
 
 #include "qgstreamerplayerservice.h"
 #include "qgstreamerplayercontrol.h"
-//#include "qgstreamerplayersession.h"
+#include "qgstreamerplayersession.h"
+#include "qgstreamermetadataprovider.h"
 
 //#include "qmediawidgetendpoint.h"
 #include "qgstreamervideowidget.h"
@@ -49,7 +50,9 @@
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
     : QMediaPlayerService(parent)
 {    
-    m_control = new QGstreamerPlayerControl(this, this);
+    m_session = new QGstreamerPlayerSession(this);
+    m_control = new QGstreamerPlayerControl(m_session, this);
+    m_metadata = new QGstreamerMetadataProvider(m_session, this);
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
@@ -58,8 +61,13 @@ QGstreamerPlayerService::~QGstreamerPlayerService()
 
 QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 {
-    Q_UNUSED(name);
-    return m_control;
+    if (qstrcmp(name,"com.nokia.qt.MediaPlayerControl") == 0)
+        return m_control;
+
+    if (qstrcmp(name,"com.nokia.qt.MetadataControl") == 0)
+        return m_metadata;
+
+    return 0;
 }
 
 void QGstreamerPlayerService::setVideoOutput(QObject *output)
@@ -81,8 +89,7 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
 
 QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
 {
-    qDebug() << "request for endpoint" << interface;
-
+    //qDebug() << "request for endpoint" << interface;
     if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
         return new QGstreamerVideoWidget;
     }

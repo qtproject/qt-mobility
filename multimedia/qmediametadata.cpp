@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/private/qobject_p.h>
+#include <QtCore/QDebug>
 
 #include "qmediametadata.h"
 #include "qmetadataprovider.h"
@@ -65,9 +66,11 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
 
     d->service = mediaObject->service();
     d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetadataControl"));
-    if (d->provider != 0) {
+    if (d->provider) {
         connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
         connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
+    } else {
+        qWarning() << "No provider for media metadata";
     }
 }
 

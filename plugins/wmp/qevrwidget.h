@@ -35,6 +35,8 @@
 #ifndef QEVRWIDGET_H
 #define QEVRWIDGET_H
 
+#ifdef QWMP_EVR
+
 #include "qmediawidgetendpoint.h"
 
 #include <QtCore/qmetatype.h>
@@ -74,5 +76,7 @@ private:
 
     friend class QEvrWidgetActivate;
 };
+
+#endif
 
 #endif

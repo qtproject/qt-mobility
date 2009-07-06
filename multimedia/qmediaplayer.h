@@ -44,7 +44,7 @@
 class QMediaPlayerService;
 class QMediaPlaylist;
 
-extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
+extern Q_MEDIA_EXPORT QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
 
 
 class QMediaPlayerPrivate;

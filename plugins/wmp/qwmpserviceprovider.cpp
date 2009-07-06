@@ -32,61 +32,34 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "qwmpserviceprovider.h"
 
-#include "qmetadataprovider.h"
+#include "qwmpplayerservice.h"
 
-#include <wmp.h>
-
-class QWmpMetaData : public QMetadataProvider
+/*
+QMediaServiceProvider *createWmpProvider()
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+    return new QWmpServiceProvider;
+}
+*/
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
-
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
-
-private:
-    IWMPMedia *m_media;
-};
-
-
-class QAutoBStr
+QObject *QWmpServiceProvider::createObject(const char *iid) const
 {
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
+    if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
+        return new QWmpPlayerService;
+    return 0;
+}
 
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
+QStringList QWmpServiceProviderPlugin::keys() const
+{
+    return QStringList() << QLatin1String("mediaplayer");
+}
 
-    inline operator BSTR() const { return m_string; }
+QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
+{
+    if (key == QLatin1String("mediaplayer"))
+        return new QWmpServiceProvider;
+    return 0;
+}
 
-private:
-    BSTR m_string;
-};
-
-
-#endif
+Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);

@@ -32,61 +32,48 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "audiocapturecontrol.h"
 
-#include "qmetadataprovider.h"
+#include "qmediasource.h"
 
-#include <wmp.h>
+#include <QtCore/qdebug.h>
 
-class QWmpMetaData : public QMetadataProvider
+#include <QtMultimedia/qaudio.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
+
+
+AudioCaptureControl::AudioCaptureControl(QObject *parent)
+    :QAudioCaptureControl(parent)
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(QObject *parent = 0);
-    ~QWmpMetaData();
+}
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
-
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
-    static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
-
-private:
-    IWMPMedia *m_media;
-};
-
-
-class QAutoBStr
+AudioCaptureControl::AudioCaptureControl(AudioCaptureService *service, QObject *parent)
+   :QAudioCaptureControl(parent), m_service(service)
 {
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
+}
 
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
+AudioCaptureControl::~AudioCaptureControl()
+{
+}
 
-    inline operator BSTR() const { return m_string; }
+void AudioCaptureControl::start()
+{
+}
 
-private:
-    BSTR m_string;
-};
+void AudioCaptureControl::stop()
+{
+}
 
+QAudioFormat AudioCaptureControl::format() const
+{
+    return QAudioFormat();
+}
 
-#endif
+bool AudioCaptureControl::setFormat(const QAudioFormat &format)
+{
+    return true;
+}
+
+void AudioCaptureControl::setAudioInput(QObject *input)
+{
+}

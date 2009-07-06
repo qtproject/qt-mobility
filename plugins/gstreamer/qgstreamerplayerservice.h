@@ -47,6 +47,7 @@ class QMediaPlaylist;
 class QGstreamerMetaData;
 class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
+class QGstreamerMetadataProvider;
 
 class QMediaPlaylistNavigator;
 
@@ -67,6 +68,8 @@ public:
     QAbstractMediaControl *control(const char *name) const;    
 private:
     QGstreamerPlayerControl *m_control;
+    QGstreamerPlayerSession *m_session;
+    QGstreamerMetadataProvider *m_metadata;
 };
 
 #endif

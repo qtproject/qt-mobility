@@ -1,5 +1,6 @@
 TEMPLATE = lib
 
+#QT += multimedia
 #DEFINES += AUDIOSERVICES
 
 # distinct from QtMultimedia
@@ -44,7 +45,9 @@ HEADERS = \
     qsharedmediaplaylist.h \
     qaudiocapturecontrol.h \
     qaudiocaptureservice.h \
-    qaudiocapture.h
+    qaudiocapture.h \
+    qmediastreams.h \
+    qmediastreamscontrol.h
 
 SOURCES = \
     qabstractmediacontrol.cpp \
@@ -75,7 +78,9 @@ SOURCES = \
     qsharedmediaplaylist.cpp \
     qaudiocapturecontrol.cpp \
     qaudiocaptureservice.cpp \
-    qaudiocapture.cpp
+    qaudiocapture.cpp \
+    qmediastreams.cpp \
+    qmediastreamscontrol.cpp
 
 include (endpoints/endpoints.pri)
 
