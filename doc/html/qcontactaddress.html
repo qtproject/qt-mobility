@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/qcontactdetails.cpp -->
+<head>
+  <title>QContactAddress Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactAddress Class Reference</h1>
+<p>An address of a contact <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactAddress&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
+<ul>
+<li><a href="qcontactaddress-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#country">country</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#displayLabel">displayLabel</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#locality">locality</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#postcode">postcode</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#region">region</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setCountry">setCountry</a></b> ( const QString &amp; <i>country</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setDisplayLabel">setDisplayLabel</a></b> ( const QString &amp; <i>displayLabel</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setLocality">setLocality</a></b> ( const QString &amp; <i>locality</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setPostcode">setPostcode</a></b> ( const QString &amp; <i>postcode</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setRegion">setRegion</a></b> ( const QString &amp; <i>region</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactaddress.html#setStreet">setStreet</a></b> ( const QString &amp; <i>street</i> )</li>
+<li><div class="fn"/>QString <b><a href="qcontactaddress.html#street">street</a></b> () const</li>
+</ul>
+<ul>
+<li><div class="fn"/>18 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#AttributeSubTypeDomestic-var">AttributeSubTypeDomestic</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#AttributeSubTypeInternational-var">AttributeSubTypeInternational</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#AttributeSubTypeParcel-var">AttributeSubTypeParcel</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#AttributeSubTypePostal-var">AttributeSubTypePostal</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#DefinitionId-var">DefinitionId</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldCountry-var">FieldCountry</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldLocality-var">FieldLocality</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldPostcode-var">FieldPostcode</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldRegion-var">FieldRegion</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactaddress.html#FieldStreet-var">FieldStreet</a></b></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"/>1 protected function inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>An address of a contact</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="country"></a>QString QContactAddress::country () const</h3>
+<p>Returns the country segment of the address stored in this detail</p>
+<p>See also <a href="qcontactaddress.html#setCountry">setCountry</a>().</p>
+<h3 class="fn"><a name="displayLabel"></a>QString QContactAddress::displayLabel () const</h3>
+<p>Returns the display (formatted) label of the address stored in this detail. If no display label has been explicitly set for the detail, it is synthesised in a platform specific manner</p>
+<p>See also <a href="qcontactaddress.html#setDisplayLabel">setDisplayLabel</a>().</p>
+<h3 class="fn"><a name="locality"></a>QString QContactAddress::locality () const</h3>
+<p>Returns the locality segment of the address stored in this detail</p>
+<p>See also <a href="qcontactaddress.html#setLocality">setLocality</a>().</p>
+<h3 class="fn"><a name="postcode"></a>QString QContactAddress::postcode () const</h3>
+<p>Returns the postcode segment of the address stored in this detail</p>
+<p>See also <a href="qcontactaddress.html#setPostcode">setPostcode</a>().</p>
+<h3 class="fn"><a name="region"></a>QString QContactAddress::region () const</h3>
+<p>Returns the region segment of the address stored in this detail</p>
+<p>See also <a href="qcontactaddress.html#setRegion">setRegion</a>().</p>
+<h3 class="fn"><a name="setCountry"></a>void QContactAddress::setCountry ( const QString &amp; <i>country</i> )</h3>
+<p>Sets the country segment of the address stored in this detail to <i>country</i></p>
+<p>See also <a href="qcontactaddress.html#country">country</a>().</p>
+<h3 class="fn"><a name="setDisplayLabel"></a>void QContactAddress::setDisplayLabel ( const QString &amp; <i>displayLabel</i> )</h3>
+<p>Sets the display label of the address stored in this detail to <i>displayLabel</i></p>
+<p>See also <a href="qcontactaddress.html#displayLabel">displayLabel</a>().</p>
+<h3 class="fn"><a name="setLocality"></a>void QContactAddress::setLocality ( const QString &amp; <i>locality</i> )</h3>
+<p>Sets the locality segment of the address stored in this detail to <i>locality</i></p>
+<p>See also <a href="qcontactaddress.html#locality">locality</a>().</p>
+<h3 class="fn"><a name="setPostcode"></a>void QContactAddress::setPostcode ( const QString &amp; <i>postcode</i> )</h3>
+<p>Sets the postcode segment of the address stored in this detail to <i>postcode</i></p>
+<p>See also <a href="qcontactaddress.html#postcode">postcode</a>().</p>
+<h3 class="fn"><a name="setRegion"></a>void QContactAddress::setRegion ( const QString &amp; <i>region</i> )</h3>
+<p>Sets the region segment of the address stored in this detail to <i>region</i></p>
+<p>See also <a href="qcontactaddress.html#region">region</a>().</p>
+<h3 class="fn"><a name="setStreet"></a>void QContactAddress::setStreet ( const QString &amp; <i>street</i> )</h3>
+<p>Sets the street segment of the address stored in this detail to <i>street</i></p>
+<p>See also <a href="qcontactaddress.html#street">street</a>().</p>
+<h3 class="fn"><a name="street"></a>QString QContactAddress::street () const</h3>
+<p>Returns the street segment of the address stored in this detail</p>
+<p>See also <a href="qcontactaddress.html#setStreet">setStreet</a>().</p>
+<hr />
+<h2>Member Variable Documentation</h2>
+<h3 class="fn"><a name="AttributeSubTypeDomestic-var"></a>const QString QContactAddress::AttributeSubTypeDomestic</h3>
+<p>The constant attribute value which describes the address as being a domestic address</p>
+<h3 class="fn"><a name="AttributeSubTypeInternational-var"></a>const QString QContactAddress::AttributeSubTypeInternational</h3>
+<p>The constant attribute value which describes the address as being an international address</p>
+<h3 class="fn"><a name="AttributeSubTypeParcel-var"></a>const QString QContactAddress::AttributeSubTypeParcel</h3>
+<p>The constant attribute value which describes the address as being an address for parcel delivery</p>
+<h3 class="fn"><a name="AttributeSubTypePostal-var"></a>const QString QContactAddress::AttributeSubTypePostal</h3>
+<p>The constant attribute value which describes the address as being an address for postal delivery</p>
+<h3 class="fn"><a name="DefinitionId-var"></a>const QString QContactAddress::DefinitionId</h3>
+<p>The constant string which identifies the definition of details which are street addresses</p>
+<h3 class="fn"><a name="FieldCountry-var"></a>const QString QContactAddress::FieldCountry</h3>
+<p>The constant key for which the country value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<h3 class="fn"><a name="FieldDisplayLabel-var"></a>const QString QContactAddress::FieldDisplayLabel</h3>
+<p>The constant key for which the display label value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<h3 class="fn"><a name="FieldLocality-var"></a>const QString QContactAddress::FieldLocality</h3>
+<p>The constant key for which the locality value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<h3 class="fn"><a name="FieldPostcode-var"></a>const QString QContactAddress::FieldPostcode</h3>
+<p>The constant key for which the postcode value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<h3 class="fn"><a name="FieldRegion-var"></a>const QString QContactAddress::FieldRegion</h3>
+<p>The constant key for which the region value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<h3 class="fn"><a name="FieldStreet-var"></a>const QString QContactAddress::FieldStreet</h3>
+<p>The constant key for which the street value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

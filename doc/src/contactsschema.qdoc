@@ -1,0 +1,429 @@
+/*!
+
+\page contactsschema.html
+
+\title Qt Contacts Schema
+
+\tableofcontents
+
+\section1 Introduction
+
+The \l{Qt Contacts Developer Resources}{Qt Contacts API} makes use of string constants,
+enumerated types and key-value pairs.  In order to develop a backend engine which
+can service clients or provide synchronisation to other backends, the schema must be
+known.
+
+\section1 Schema Definition
+
+The schema consists of several parts.
+
+1) The "immutable" section of the schema, which consists of:
+\list
+    \o \l{QContactDetail} attribute keys
+    \o \l{QContactDetail} context-attribute values
+    \o \l{QContactManager} error codes
+    \o \l{QContact} error codes
+    \o \l{QContactGroup} error codes
+\endlist
+These parts of the schema are hard coded into the API, and cannot change.
+
+2) The "default" section of the schema, which consists of those sections of the schema
+which pertain unto the provided leaf-class \l{QContactDetail}s (and the provided
+\l{QContactDetailDefinition}s to which they conform).
+This includes informations such as:
+\list
+    \o The uniqueness (per contact) of any such details
+    \o The access constraints which apply to any such details
+    \o The subtype-attribute values defined for such details
+    \o \l{QContactDetailDefinition} identifiers
+    \o \l{QContactDetailDefinition::Field} keys
+    \o \l{QContactDetailDefinition::Field} value data types
+    \o \l{QContactDetailDefinition::Field} allowable values
+\endlist
+
+These "default" schema entries may or may not be supported by any particular backend.
+Indeed, most backend implementations will use the default schema as a base, and then
+modify it (for example, by restricting certain definitions to be unique per contact)
+or extend it (for example, by creating new "standard" definitions and \l{QContactDetail}
+leaf-classes) to provide clients with the best user-experience on the target platform.
+
+\section2 Immutable Schema
+
+\section3 Access constraints
+\table
+\header
+    \o Access Constraint
+    \o Description
+\row
+    \o Any
+    \o Details of this definition may be written or read at any time
+\row
+    \o CreateOnly
+    \o Details of this definition may be read at any time, and can only be written when the detail is first saved to a contact
+\row
+    \o ReadOnly
+    \o Details of this definition may be read at any time, but cannot be written or created
+\endtable
+
+\section3 Attribute keys
+\table
+\header
+    \o Attribute Key
+    \o Key Value
+\row
+    \o \l{QContactDetail::AttributeContext}
+    \o "Context"
+\row
+    \o \l{QContactDetail::AttributeSubType}
+    \o "SubType"
+\endtable
+Note that clients are not limited to using only these attributes; if they wish to provide
+more attributes for a particular detail, they may - subject to whatever checks the backend
+wishes to perform when the contact to which the detail was added is saved.
+
+\section3 Context-attribute values
+\table
+\header
+    \o Context-attribute
+    \o Value
+\row
+    \o \l{QContactDetail::AttributeContextHome}
+    \o "Home"
+\row
+    \o \l{QContactDetail::AttributeContextWork}
+    \o "Work"
+\row
+    \o \l{QContactDetail::AttributeContextOther}
+    \o "Other"
+\endtable
+Note that clients are not limited to using only these contexts; if they wish to define
+a detail as being valid for a context not contained in this list (for example, "Ovi"),
+they may do so - subject to whatever checks the backend wishes to perform when the
+contact to which the detail was added is saved.
+
+The value stored in a detail for the Context-attribute key is a comma-separated list of
+the allowable Context-attribute values.  For example, "Home,Work" is a valid value.
+
+\section3 \l{QContactManager::Error}{QContactManager error} codes
+\table
+\header
+    \o Error Code
+    \o Description
+\row
+    \o NoError
+    \o No error occurred during the most recent operation
+\row
+    \o DoesNotExistError
+    \o The most recent operation failed because the requested contact, group or definition does not exist
+\row
+    \o AlreadyExistsError
+    \o The most recent operation failed because the specified contact, group or definition already exists
+\row
+    \o InvalidDetailError
+    \o The most recent operation failed because one or more details in the contact did not conform to its definition
+\row
+    \o LockedError
+    \o The most recent operation failed because the database was locked
+\row
+    \o LimitReachedError
+    \o The most recent operation failed because no more objects of this type may be saved in the database
+\row
+    \o SizeExceededError
+    \o The most recent operation failed because the specified object exceeds the maximum allowable size for objects of that type
+\row
+    \o PermissionsError
+    \o The most recent operation failed because you do not have permission to perform that operation
+\row
+    \o OutOfMemoryError
+    \o The most recent operation failed because the process is out of memory
+\row
+    \o NotSupportedError
+    \o The most recent operation failed because the operation is not supported
+\row
+    \o BadArgumentError
+    \o The most recent operation failed because the given argument was invalid
+\row
+    \o UnspecifiedError
+    \o The most recent operation failed for an unknown reason
+\endtable
+
+\section3 \l{QContact::Error}{QContact error} codes
+\table
+\header
+    \o Error Code
+    \o Description
+\row
+    \o NoError
+    \o No error occurred during the most recent operation
+\row
+    \o OutOfMemoryError
+    \o The most recent operation failed because the process is out of memory
+\row
+    \o DetailDoesNotExistError
+    \o The most recent operation failed because the requested detail does not exist
+\row
+    \o DetailAlreadyExistsError
+    \o The most recent operation failed because the specified detail already exists
+\row
+    \o DetaiLimitReachedError
+    \o The most recent operation failed because no more details may be saved in the contact
+\row
+    \o DetailOfThisTypeLimitReachedError
+    \o The most recent operation failed because no more details of this definition may be saved in the contact
+\row
+    \o PermissionsError
+    \o The most recent operation failed because you do not have permission to perform that operation
+\row
+    \o UnspecifiedError
+    \o The most recent operation failed for an unknown reason
+\endtable
+
+\section3 \l{QContactGroup::Error}{QContactGroup error} codes
+\table
+\header
+    \o Error Code
+    \o Description
+\row
+    \o NoError
+    \o No error occurred during the most recent operation
+\row
+    \o OutOfMemoryError
+    \o The most recent operation failed because the process is out of memory
+\row
+    \o ContactNotInGroupError
+    \o The most recent operation failed because the requested contact is not a member of this group
+\row
+    \o ContactAlreadyInGroupError
+    \o The most recent operation failed because the specified contact is already a member of this group
+\row
+    \o PermissionsError
+    \o The most recent operation failed because you do not have permission to perform that operation
+\row
+    \o UnspecifiedError
+    \o The most recent operation failed for an unknown reason
+\endtable
+
+
+\section2 Default Schema
+
+\section3 Leaf Classes
+\table
+\header
+    \o Leaf Class
+    \o Definition Identifier
+    \o Definition Identifier Value
+    \o Description
+    \o Uniqueness Constraint
+    \o Access Constraint
+\row
+    \o QContactAddress
+    \o QContactAddress::DefinitionId
+    \o "StreetAddress"
+    \o Details of this definition contain an address of a particular contact
+    \o No
+    \o Any
+\row
+    \o QContactAnniversary
+    \o QContactAnniversary::DefinitionId
+    \o "Anniversary"
+    \o Details of this definition contain the (annually recurring) date of an important event
+    \o No
+    \o Any
+\row
+    \o QContactAvatar
+    \o QContactAvatar::DefinitionId
+    \o "Avatar"
+    \o Details of this definition contain the URI of an avatar of the contact
+    \o No
+    \o Any
+\row
+    \o QContactBirthday
+    \o QContactBirthday::DefinitionId
+    \o "Birthday"
+    \o Details of this definition contain the date of a contact's birthday
+    \o Yes
+    \o Any
+\row
+    \o QContactEmailAddress
+    \o QContactEmailAddress::DefinitionId
+    \o "EmailAddress"
+    \o Details of this definition contain an email address of a contact
+    \o No
+    \o Any
+\row
+    \o QContactGender
+    \o QContactGender::DefinitionId
+    \o "Gender"
+    \o Details of this definition contain the gender of a contact within a given context
+    \o No
+    \o Any
+\row
+    \o QContactGuid
+    \o QContactGuid::DefinitionId
+    \o "Guid"
+    \o Details of this definition contain a globally unique identifier for a contact
+    \o Yes
+    \o ReadOnly
+\row
+    \o QContactName
+    \o QContactName::DefinitionId
+    \o "Name"
+    \o Details of this definition contain the full name information of a contact
+    \o Yes
+    \o Any
+\row
+    \o QContactPhoneNumber
+    \o QContactPhoneNumber::DefinitionId
+    \o "PhoneNumber"
+    \o Details of this definition contain a telephony endpoint associated with a contact
+    \o No
+    \o Any
+\row
+    \o QContactSyncTarget
+    \o QContactSyncTarget::DefinitionId
+    \o "SyncTarget"
+    \o Details of this definition contain the id of a storage backend to which the contact should be synchronised
+    \o Yes
+    \o CreateOnly
+\row
+    \o QContactUrl
+    \o QContactUrl::DefinitionId
+    \o "Url"
+    \o Details of this definition contain a universal resource location related to the contact
+    \o No
+    \o Any
+\endtable
+
+\section3 Field Schema
+\table
+\header
+    \o Detail
+    \o Field Keys
+    \o Field Value Data Types
+    \o Allowable Values
+    \o Field Description
+\row
+    \o QContactAddress
+    \o \list
+            \o DisplayLabel
+            \o Street
+            \o Locality
+            \o Region
+            \o Postcode
+            \o Country
+       \endlist
+    \o \list
+            \o String
+            \o String
+            \o String
+            \o String
+            \o String
+            \o String
+       \endlist
+    \o \list
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+       \endlist
+    \o \list
+            \o The formatted address
+            \o The street segment of the address (i.e., street and number)
+            \o The locality segment of the address (i.e., city/suburb)
+            \o The region segment of the address (i.e., state)
+            \o The postcode segment of the address
+            \o The country segment of the address
+       \endlist
+\row
+    \o QContactAnniversary
+    \o \list \o OriginalDate \o CalendarId \o Event \endlist
+    \o \list \o Date \o String \o String \endlist
+    \o \list \o Any \o Any \o Any \endlist
+    \o \list \o The date of the original occurrance of the event \o The identifier of the calendar entry associated with this detail \o The name of the event remembered by this anniversary \endlist
+\row
+    \o QContactAvatar
+    \o \list \o Avatar \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o The location of an avatar file which is associated with a contact \endlist
+\row
+    \o QContactBirthday
+    \o \list \o Birthday \endlist
+    \o \list \o Date \endlist
+    \o \list \o Any \endlist
+    \o \list \o The date of the birthday associated with a contact \endlist
+\row
+    \o QContactEmailAddress
+    \o \list \o EmailAddress \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o The email address URL associated with a contact \endlist
+\row
+    \o QContactGender
+    \o \list \o Gender \endlist
+    \o \list \o String \endlist
+    \o \list \o "Male", "Female", "Unspecified" \endlist
+    \o \list \o The gender of a contact in a particular context \endlist
+\row
+    \o QContactGuid
+    \o \list \o Guid \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o A globally unique identifier which is associated with a contact \endlist
+\row
+    \o QContactName
+    \o \list
+            \o DisplayName
+            \o Prefix
+            \o First
+            \o Middle
+            \o Last
+            \o Suffix
+       \endlist
+    \o \list
+            \o String
+            \o String
+            \o String
+            \o String
+            \o String
+            \o String
+       \endlist
+    \o \list
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+            \o Any
+       \endlist
+    \o \list
+            \o The formatted name of a contact
+            \o The prefix segment of the name of a contact (e.g., "Mr", "Mrs", "Dr")
+            \o The first (given) name segment of the name of a contact
+            \o The middle (additional) name segment of the name of a contact
+            \o The last (surname) name segment of the name of a contact
+            \o The suffix segment of the name of a contact (e.g., "Esq.", "Ph.D")
+       \endlist
+\row
+    \o QContactPhoneNumber
+    \o \list \o PhoneNumber \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o A phone number associated with a contact \endlist
+\row
+    \o QContactSyncTarget
+    \o \list \o SyncTarget \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o The identifier of a backend store to which the contact containing this detail should be synchronised \endlist
+\row
+    \o QContactUrl
+    \o \list \o Url \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o A universal resource location associated with the contact containing this detail \endlist
+\endtable
+
+*/

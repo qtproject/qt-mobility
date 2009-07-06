@@ -1,0 +1,495 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "qcontactmanager.h"
+
+#include "qcontact_p.h"
+#include "qcontactgroup_p.h"
+#include "qcontactdetaildefinition.h"
+#include "qcontactmanager_p.h"
+
+#include "qcontactmanagercapabilities.h"
+#include "qcontactmanagercapabilities_p.h"
+
+#include <QSharedData>
+#include <QPair>
+
+/*!
+ * \class QContactManager
+ *
+ * This class provides adding, updating and removal of contacts and groups.
+ * It also provides definitions for fields that can be found in contacts.
+ */
+
+/*!
+ * \fn QContactManager::contactsAdded(const QList<QUniqueId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::contactsChanged(const QList<QUniqueId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::contactsRemoved(const QList<QUniqueId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::groupsAdded(const QList<QUniqueId>& groupIds)
+ * This signal is emitted at some point once the groups identified by \a groupIds have been added to a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::groupsChanged(const QList<QUniqueId>& groupIds)
+ * This signal is emitted at some point once the groups identified by \a groupIds have been modified in a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::groupsRemoved(const QList<QUniqueId>& groupIds)
+ * This signal is emitted at some point once the groups identified by \a groupIds have been removed from a datastore managed by this manager
+ */
+
+/*!
+ * \fn QContactManager::contactsWithAction(const QString& actionId, const QVariant& value) const
+ * Returns a list of contacts which have a detail with the given \a value for which the specified \a actionId is available
+ */
+
+/*!
+ * \fn QContactManager::contactsWithDetail(const QString& definitionId, const QVariant& value) const
+ * Returns a list of contacts which have a detail of the given \a definitionId with the specified \a value
+ */
+
+
+/*!
+    Returns a list of available manager ids that can be used when constructing
+    a QContactManager.  If an empty id is specified to the constructor, the
+    first value in this list will be used instead.
+  */
+QStringList QContactManager::availableManagers()
+{
+    QStringList ret;
+    ret << "memory" << "invalid"; // XXX make dynamic and plat specific
+    QContactManagerData::loadFactories();
+    ret.append(QContactManagerData::m_engines.keys());
+    return ret;
+}
+
+
+
+
+/*! Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false */
+bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
+{
+    // Format: qtcontacts:<managerid>:<key>=<value>&<key>=<value>
+    // 1) parameters are currently a qstringlist.. should they be a map?
+    // 2) is the uri going to be escaped?  my guess would be "probably not"
+    // 3) hence, do we assume that the prefix, managerid and storeid cannot contain `:'
+    // 4) similarly, that neither keys nor values can contain `=' or `&'
+
+    QStringList colonSplit = uri.split(":");
+    QString prefix = colonSplit.value(0);
+
+    if (prefix != "qtcontacts")
+        return false;
+
+    QString managerId = colonSplit.value(1);
+
+    if (managerId.trimmed().isEmpty())
+        return false;
+
+    QString firstParts = prefix + ":" + managerId + ":";
+    QString paramString = uri.mid(firstParts.length());
+
+    QMap<QString, QString> outParams;
+
+    // Now we have to decode each parameter
+    if (!paramString.isEmpty()) {
+        QStringList params = paramString.split(QRegExp("&(?!(amp;|equ;))"), QString::KeepEmptyParts);
+        // If we have an empty string for paramstring, we get one entry in params,
+        // so skip that case.
+        for(int i = 0; i < params.count(); i++) {
+            /* This should be something like "foo&amp;bar&equ;=grob&amp;" */
+            QStringList paramChunk = params.value(i).split("=", QString::KeepEmptyParts);
+
+            if (paramChunk.count() != 2)
+                return false;
+
+            QString arg = paramChunk.value(0);
+            QString param = paramChunk.value(1);
+            arg.replace("&equ;", "=");
+            arg.replace("&amp;", "&");
+            param.replace("&equ;", "=");
+            param.replace("&amp;", "&");
+            if (arg.isEmpty())
+                return false;
+            outParams.insert(arg, param);
+        }
+    }
+
+    if (pParams)
+        *pParams = outParams;
+    if (pManagerId)
+        *pManagerId = managerId;
+    return true;
+}
+
+/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerId and \a params */
+QString QContactManager::buildUri(const QString& managerId, const QMap<QString, QString>& params)
+{
+    QString ret("qtcontacts:%1:%2");
+    // we have to escape each param
+    QStringList escapedParams;
+    QStringList keys = params.keys();
+    for (int i=0; i < keys.size(); i++) {
+        QString key = keys.at(i);
+        QString arg = params.value(key);
+        arg = arg.replace('&', "&amp;");
+        arg = arg.replace('=', "&equ;");
+        key = key.replace('&', "&amp;");
+        key = key.replace('=', "&equ;");
+        key = key + "=" + arg;
+        escapedParams.append(key);
+    }
+    return ret.arg(managerId, escapedParams.join("&"));
+}
+
+/*! Constructs a QContactManager whose implementation, store and parameters are specified in the given \a storeUri */
+QContactManager QContactManager::fromUri(const QString& storeUri)
+{
+    if (storeUri.isEmpty()) {
+        return QContactManager();
+    } else {
+        QString id;
+        QMap<QString, QString> parameters;
+        if (splitUri(storeUri, &id, &parameters)) {
+            return QContactManager(id, parameters);
+        } else {
+            // invalid
+            return QContactManager("invalid", QMap<QString, QString>());
+        }
+    }
+}
+
+/*! Constructs a QContactManager whose implementation is identified by \a managerId with the given \a parameters */
+QContactManager::QContactManager(const QString& managerId, const QMap<QString, QString>& parameters)
+    : d(new QContactManagerData)
+{
+    d->createEngine(managerId, parameters);
+    connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
+}
+
+/*! Create a copy of \a other */
+QContactManager::QContactManager(const QContactManager& other)
+    : QObject(), d(new QContactManagerData(*other.d))
+{
+    connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
+}
+
+/*! Assigns this QContactManager to \a other */
+QContactManager& QContactManager::operator=(const QContactManager& other)
+{
+    if (this != &other) {
+        disconnect(d->m_engine, 0, 0, 0);
+        d.clear();
+        d = QSharedPointer<QContactManagerData>(new QContactManagerData(*other.d));
+        connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
+        connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
+        connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
+        connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
+        connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
+        connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
+    }
+    return *this;
+}
+
+/*! Frees the memory used by the QContactManager */
+QContactManager::~QContactManager()
+{
+}
+
+/*!
+ * \enum QContactManager::Error
+ *
+ * This enum specifies an error that occurred during the most recent operation:
+ *
+ * \value NoError The most recent operation was successful
+ * \value DoesNotExistError The most recent operation failed because the requested contact, group or definition does not exist
+ * \value AlreadyExistsError The most recent operation failed because the specified contact, group or definition already exists
+ * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
+ * \value LockedError The most recent operation failed because the datastore specified is currently locked
+ * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
+ * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
+ * \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ */
+
+/*! Return the error code of the most recent operation */
+QContactManager::Error QContactManager::error() const
+{
+    return d->m_error;
+}
+
+/*! Return the list of added contact ids */
+QList<QUniqueId> QContactManager::contacts() const
+{
+    return d->m_engine->contacts(d->m_error);
+}
+
+/*! Returns the contact in the database identified by \a contactId */
+QContact QContactManager::contact(const QUniqueId& contactId) const
+{
+    return d->m_engine->contact(contactId, d->m_error);
+}
+
+/*!
+ * Add the given \a contact to the database if it is a new contact,
+ * or updates the existing contact. Returns false on failure, or true on
+ * success.  If successful and the contact was a new contact, its UID will
+ * be set to a new, valid id.
+ *
+ * If the \a contact contains one or more details whose definitions have
+ * not yet been saved with the manager, the operation will fail and the
+ * manager will return \c QContactManager::UnsupportedError.
+ */
+bool QContactManager::saveContact(QContact* contact)
+{
+    return d->m_engine->saveContact(contact, false, d->m_error);
+}
+
+/*!
+ * Remove the contact identified by \a contactId from the database.
+ * Returns true if the contact was removed successfully, otherwise
+ * returns false.
+ */
+bool QContactManager::removeContact(const QUniqueId& contactId)
+{
+    return d->m_engine->removeContact(contactId, false, d->m_error);
+}
+
+/*!
+ * Adds the list of contacts given by \a contactList to the database.
+ * Returns a list of the error codes corresponding to the contacts in
+ * the \a contactList.  The \l QContactManager::error() function will
+ * only return \c QContactManager::NoError if all contacts were saved
+ * successfully.
+ *
+ * For each newly saved contact that was successful, the uid of the contact
+ * in the list will be updated with the new value.  If a failure occurs
+ * when saving a new contact, the id will be cleared.  If a failure occurs
+ * when updating a contact that already exists, then TODO.
+ *
+ * \sa QContactManager::saveContact()
+ */
+QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
+{
+    return d->m_engine->saveContacts(contactList, d->m_error);
+}
+
+/*!
+ * Remove the list of contacts identified in \a idList.
+ * Returns a list of the error codes corresponding to the contact ids in
+ * the \a idList.  The \l QContactManager::error() function will
+ * only return \c QContactManager::NoError if all contacts were removed
+ * successfully.
+ *
+ * For each contact that was removed succesfully, the corresponding
+ * id in the list will be retained but set to zero.  The id of contacts
+ * that were not successfully removed will be left alone.
+ *
+ * \sa QContactManager::removeContact()
+ */
+QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* idList)
+{
+    return d->m_engine->removeContacts(idList, d->m_error);
+}
+
+/*! Return the list of added group ids */
+QList<QUniqueId> QContactManager::groups() const
+{
+    return d->m_engine->groups(d->m_error);
+}
+
+/*! Returns the group which is identified by the given \a groupId, or a default-constructed group if no such group exists */
+QContactGroup QContactManager::group(const QUniqueId& groupId) const
+{
+    return d->m_engine->group(groupId, d->m_error);
+}
+
+/*!
+ * Saves the group \a group in the database.  The id of the group is
+ * used to determine the group to update.  If the group has no name set,
+ * this function will fail.  If the group does not already
+ * exist, it is added to the database.
+ *
+ * Returns true on success, or false on failure.
+ */
+bool QContactManager::saveGroup(QContactGroup* group)
+{
+    return d->m_engine->saveGroup(group, d->m_error);
+}
+
+/*! Remove the group with the given id \a groupId from the database.  Returns false if no group with that id exists, or the operation otherwise failed.  Returns true if the group was successfully deleted. */
+bool QContactManager::removeGroup(const QUniqueId& groupId)
+{
+    return d->m_engine->removeGroup(groupId, d->m_error);
+}
+
+/*!
+ * Returns a map of identifier to detail definition for the registered detail definitions
+ * which are valid for the contacts in this store
+ */
+QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions() const
+{
+    return d->m_engine->detailDefinitions(d->m_error);
+}
+
+/*! Returns the definition identified by the given \a definitionId that is valid for the contacts in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
+QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionId) const
+{
+    return d->m_engine->detailDefinition(definitionId, d->m_error);
+}
+
+/*! Persists the given definition \a def in the database.  Returns true if the definition was saved successfully, otherwise returns false */
+bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def)
+{
+    return d->m_engine->saveDetailDefinition(def, d->m_error);
+}
+
+/*! Removes the detail definition identified by \a definitionId from the database.  Returns true if the definition was removed successfully, otherwise returns false */
+bool QContactManager::removeDetailDefinition(const QString& definitionId)
+{
+    return d->m_engine->removeDetailDefinition(definitionId, d->m_error);
+}
+
+/*!
+    Returns an object describing the capabilities of this QContactManager.
+
+    \sa QContactManagerCapabilities
+ */
+QContactManagerCapabilities QContactManager::capabilities() const
+{
+    QContactManagerCapabilities caps;
+    caps.d->m_managerdata = d; // Tie the lifetime of the caps to our d pointer
+    caps.d->m_engine = d->m_engine;
+    return caps;
+}
+
+/*! Returns the manager id for this QContactManager */
+QString QContactManager::managerId() const
+{
+    return d->m_managerId;
+}
+
+/*! Return the parameters supplied to this QContactManager */
+QMap<QString, QString>QContactManager::managerParameters() const
+{
+    return d->m_params;
+}
+
+/*!
+ * Return the uri describing this QContactManager, including
+ * managerId, managerStoreId and any parameters.
+ */
+QString QContactManager::storeUri() const
+{
+    return d->m_uri;
+}
+
+/* Changelog Functions */
+/*!
+ * Returns a list of ids of contacts that have been added to this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::contactsAddedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->contactsAddedSince(timestamp ,d->m_error);
+}
+
+/*!
+ * Returns a list of contact ids that have been modified in this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::contactsModifiedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->contactsModifiedSince(timestamp, d->m_error);
+}
+
+/*!
+ * Returns a list of contact ids that have been removed in this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::contactsRemovedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->contactsRemovedSince(timestamp, d->m_error);
+}
+
+/*!
+ * Returns a list of group ids that have been modified in this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::groupsAddedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->groupsAddedSince(timestamp, d->m_error);
+}
+
+/*!
+ * Returns a list of group ids that have been modified in this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::groupsModifiedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->groupsModifiedSince(timestamp, d->m_error);
+}
+
+/*!
+ * Returns a list of group ids that have been modified in this manager
+ * since the given \a timestamp.
+ */
+QList<QUniqueId> QContactManager::groupsRemovedSince(const QDateTime& timestamp) const
+{
+    return d->m_engine->groupsRemovedSince(timestamp, d->m_error);
+}

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ./contactsschema.qdoc -->
+<head>
+  <title>Qt Contacts Schema</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Contacts Schema<br /><span class="subtitle"></span>
+</h1>
+<ul><li><a href="#introduction">Introduction</a></li>
+<li><a href="#schema-definition">Schema Definition</a></li>
+<ul><li><a href="#immutable-schema">Immutable Schema</a></li>
+<ul><li><a href="#access-constraints">Access constraints</a></li>
+<li><a href="#attribute-keys">Attribute keys</a></li>
+<li><a href="#context-attribute-values">Context-attribute values</a></li>
+<li><a href="#qcontactmanager-error-codes"><a href="qcontactmanager.html#Error-enum">QContactManager error</a> codes</a></li>
+<li><a href="#qcontact-error-codes"><a href="qcontact.html#Error-enum">QContact error</a> codes</a></li>
+<li><a href="#qcontactgroup-error-codes"><a href="qcontactgroup.html#Error-enum">QContactGroup error</a> codes</a></li>
+</ul>
+<li><a href="#default-schema">Default Schema</a></li>
+<ul><li><a href="#leaf-classes">Leaf Classes</a></li>
+<li><a href="#field-schema">Field Schema</a></li>
+</ul>
+</ul>
+</ul>
+<a name="introduction"></a>
+<h2>Introduction</h2>
+<p>The <a href="contacts.html">Qt Contacts API</a> makes use of string constants, enumerated types and key-value pairs. In order to develop a backend engine which can service clients or provide synchronisation to other backends, the schema must be known.</p>
+<a name="schema-definition"></a>
+<h2>Schema Definition</h2>
+<p>The schema consists of several parts.</p>
+<p>1) The &quot;immutable&quot; section of the schema, which consists of:</p>
+<ul>
+<li><a href="qcontactdetail.html">QContactDetail</a> attribute keys</li>
+<li><a href="qcontactdetail.html">QContactDetail</a> context-attribute values</li>
+<li><a href="qcontactmanager.html">QContactManager</a> error codes</li>
+<li><a href="qcontact.html">QContact</a> error codes</li>
+<li><a href="qcontactgroup.html">QContactGroup</a> error codes</li>
+</ul>
+<p>These parts of the schema are hard coded into the API, and cannot change.</p>
+<p>2) The &quot;default&quot; section of the schema, which consists of those sections of the schema which pertain unto the provided leaf-class <a href="qcontactdetail.html">QContactDetail</a>s (and the provided <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>s to which they conform). This includes informations such as:</p>
+<ul>
+<li>The uniqueness (per contact) of any such details</li>
+<li>The access constraints which apply to any such details</li>
+<li>The subtype-attribute values defined for such details</li>
+<li><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> identifiers</li>
+<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> keys</li>
+<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> value data types</li>
+<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> allowable values</li>
+</ul>
+<p>These &quot;default&quot; schema entries may or may not be supported by any particular backend. Indeed, most backend implementations will use the default schema as a base, and then modify it (for example, by restricting certain definitions to be unique per contact) or extend it (for example, by creating new &quot;standard&quot; definitions and <a href="qcontactdetail.html">QContactDetail</a> leaf-classes) to provide clients with the best user-experience on the target platform.</p>
+<a name="immutable-schema"></a>
+<h3>Immutable Schema</h3>
+<a name="access-constraints"></a>
+<h4>Access constraints</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Access Constraint</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>Any</td><td>Details of this definition may be written or read at any time</td></tr>
+<tr valign="top" class="even"><td>CreateOnly</td><td>Details of this definition may be read at any time, and can only be written when the detail is first saved to a contact</td></tr>
+<tr valign="top" class="odd"><td>ReadOnly</td><td>Details of this definition may be read at any time, but cannot be written or created</td></tr>
+</table></p>
+<a name="attribute-keys"></a>
+<h4>Attribute keys</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Attribute Key</th><th>Key Value</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContext-var">QContactDetail::AttributeContext</a></td><td>&quot;Context&quot;</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactdetail.html#AttributeSubType-var">QContactDetail::AttributeSubType</a></td><td>&quot;SubType&quot;</td></tr>
+</table></p>
+<p>Note that clients are not limited to using only these attributes; if they wish to provide more attributes for a particular detail, they may - subject to whatever checks the backend wishes to perform when the contact to which the detail was added is saved.</p>
+<a name="context-attribute-values"></a>
+<h4>Context-attribute values</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Context-attribute</th><th>Value</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContextHome-var">QContactDetail::AttributeContextHome</a></td><td>&quot;Home&quot;</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactdetail.html#AttributeContextWork-var">QContactDetail::AttributeContextWork</a></td><td>&quot;Work&quot;</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContextOther-var">QContactDetail::AttributeContextOther</a></td><td>&quot;Other&quot;</td></tr>
+</table></p>
+<p>Note that clients are not limited to using only these contexts; if they wish to define a detail as being valid for a context not contained in this list (for example, &quot;Ovi&quot;), they may do so - subject to whatever checks the backend wishes to perform when the contact to which the detail was added is saved.</p>
+<p>The value stored in a detail for the Context-attribute key is a comma-separated list of the allowable Context-attribute values. For example, &quot;Home,Work&quot; is a valid value.</p>
+<a name="qcontactmanager-error-codes"></a>
+<h4><a href="qcontactmanager.html#Error-enum">QContactManager error</a> codes</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
+<tr valign="top" class="even"><td>DoesNotExistError</td><td>The most recent operation failed because the requested contact, group or definition does not exist</td></tr>
+<tr valign="top" class="odd"><td>AlreadyExistsError</td><td>The most recent operation failed because the specified contact, group or definition already exists</td></tr>
+<tr valign="top" class="even"><td>InvalidDetailError</td><td>The most recent operation failed because one or more details in the contact did not conform to its definition</td></tr>
+<tr valign="top" class="odd"><td>LockedError</td><td>The most recent operation failed because the database was locked</td></tr>
+<tr valign="top" class="even"><td>LimitReachedError</td><td>The most recent operation failed because no more objects of this type may be saved in the database</td></tr>
+<tr valign="top" class="odd"><td>SizeExceededError</td><td>The most recent operation failed because the specified object exceeds the maximum allowable size for objects of that type</td></tr>
+<tr valign="top" class="even"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
+<tr valign="top" class="odd"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
+<tr valign="top" class="even"><td>NotSupportedError</td><td>The most recent operation failed because the operation is not supported</td></tr>
+<tr valign="top" class="odd"><td>BadArgumentError</td><td>The most recent operation failed because the given argument was invalid</td></tr>
+<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
+</table></p>
+<a name="qcontact-error-codes"></a>
+<h4><a href="qcontact.html#Error-enum">QContact error</a> codes</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
+<tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
+<tr valign="top" class="odd"><td>DetailDoesNotExistError</td><td>The most recent operation failed because the requested detail does not exist</td></tr>
+<tr valign="top" class="even"><td>DetailAlreadyExistsError</td><td>The most recent operation failed because the specified detail already exists</td></tr>
+<tr valign="top" class="odd"><td>DetaiLimitReachedError</td><td>The most recent operation failed because no more details may be saved in the contact</td></tr>
+<tr valign="top" class="even"><td>DetailOfThisTypeLimitReachedError</td><td>The most recent operation failed because no more details of this definition may be saved in the contact</td></tr>
+<tr valign="top" class="odd"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
+<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
+</table></p>
+<a name="qcontactgroup-error-codes"></a>
+<h4><a href="qcontactgroup.html#Error-enum">QContactGroup error</a> codes</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Error Code</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
+<tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
+<tr valign="top" class="odd"><td>ContactNotInGroupError</td><td>The most recent operation failed because the requested contact is not a member of this group</td></tr>
+<tr valign="top" class="even"><td>ContactAlreadyInGroupError</td><td>The most recent operation failed because the specified contact is already a member of this group</td></tr>
+<tr valign="top" class="odd"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
+<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
+</table></p>
+<a name="default-schema"></a>
+<h3>Default Schema</h3>
+<a name="leaf-classes"></a>
+<h4>Leaf Classes</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Leaf Class</th><th>Definition Identifier</th><th>Definition Identifier Value</th><th>Description</th><th>Uniqueness Constraint</th><th>Access Constraint</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td><a href="qcontactaddress.html#DefinitionId-var">QContactAddress::DefinitionId</a></td><td>&quot;StreetAddress&quot;</td><td>Details of this definition contain an address of a particular contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactanniversary.html">QContactAnniversary</a></td><td><a href="qcontactanniversary.html#DefinitionId-var">QContactAnniversary::DefinitionId</a></td><td>&quot;Anniversary&quot;</td><td>Details of this definition contain the (annually recurring) date of an important event</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactavatar.html">QContactAvatar</a></td><td><a href="qcontactavatar.html#DefinitionId-var">QContactAvatar::DefinitionId</a></td><td>&quot;Avatar&quot;</td><td>Details of this definition contain the URI of an avatar of the contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactbirthday.html">QContactBirthday</a></td><td><a href="qcontactbirthday.html#DefinitionId-var">QContactBirthday::DefinitionId</a></td><td>&quot;Birthday&quot;</td><td>Details of this definition contain the date of a contact's birthday</td><td>Yes</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td><a href="qcontactemailaddress.html#DefinitionId-var">QContactEmailAddress::DefinitionId</a></td><td>&quot;EmailAddress&quot;</td><td>Details of this definition contain an email address of a contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactgender.html">QContactGender</a></td><td><a href="qcontactgender.html#DefinitionId-var">QContactGender::DefinitionId</a></td><td>&quot;Gender&quot;</td><td>Details of this definition contain the gender of a contact within a given context</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td><a href="qcontactguid.html#DefinitionId-var">QContactGuid::DefinitionId</a></td><td>&quot;Guid&quot;</td><td>Details of this definition contain a globally unique identifier for a contact</td><td>Yes</td><td>ReadOnly</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td><a href="qcontactname.html#DefinitionId-var">QContactName::DefinitionId</a></td><td>&quot;Name&quot;</td><td>Details of this definition contain the full name information of a contact</td><td>Yes</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td><a href="qcontactphonenumber.html#DefinitionId-var">QContactPhoneNumber::DefinitionId</a></td><td>&quot;PhoneNumber&quot;</td><td>Details of this definition contain a telephony endpoint associated with a contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td><a href="qcontactsynctarget.html#DefinitionId-var">QContactSyncTarget::DefinitionId</a></td><td>&quot;SyncTarget&quot;</td><td>Details of this definition contain the id of a storage backend to which the contact should be synchronised</td><td>Yes</td><td>CreateOnly</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontacturl.html">QContactUrl</a></td><td><a href="qcontacturl.html#DefinitionId-var">QContactUrl::DefinitionId</a></td><td>&quot;Url&quot;</td><td>Details of this definition contain a universal resource location related to the contact</td><td>No</td><td>Any</td></tr>
+</table></p>
+<a name="field-schema"></a>
+<h4>Field Schema</h4>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Detail</th><th>Field Keys</th><th>Field Value Data Types</th><th>Allowable Values</th><th>Field Description</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td><ul>
+<li>DisplayLabel</li>
+<li>Street</li>
+<li>Locality</li>
+<li>Region</li>
+<li>Postcode</li>
+<li>Country</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The formatted address</li>
+<li>The street segment of the address (i.e&#x2e;, street and number)</li>
+<li>The locality segment of the address (i.e&#x2e;, city/suburb)</li>
+<li>The region segment of the address (i.e&#x2e;, state)</li>
+<li>The postcode segment of the address</li>
+<li>The country segment of the address</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactanniversary.html">QContactAnniversary</a></td><td><ul>
+<li>OriginalDate</li>
+<li>CalendarId</li>
+<li>Event</li>
+</ul>
+</td><td><ul>
+<li>Date</li>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The date of the original occurrance of the event</li>
+<li>The identifier of the calendar entry associated with this detail</li>
+<li>The name of the event remembered by this anniversary</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactavatar.html">QContactAvatar</a></td><td><ul>
+<li>Avatar</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The location of an avatar file which is associated with a contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactbirthday.html">QContactBirthday</a></td><td><ul>
+<li>Birthday</li>
+</ul>
+</td><td><ul>
+<li>Date</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The date of the birthday associated with a contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td><ul>
+<li>EmailAddress</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The email address URL associated with a contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactgender.html">QContactGender</a></td><td><ul>
+<li>Gender</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>&quot;Male&quot;, &quot;Female&quot;, &quot;Unspecified&quot;</li>
+</ul>
+</td><td><ul>
+<li>The gender of a contact in a particular context</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td><ul>
+<li>Guid</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>A globally unique identifier which is associated with a contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td><ul>
+<li>DisplayName</li>
+<li>Prefix</li>
+<li>First</li>
+<li>Middle</li>
+<li>Last</li>
+<li>Suffix</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The formatted name of a contact</li>
+<li>The prefix segment of the name of a contact (e.g&#x2e;, &quot;Mr&quot;, &quot;Mrs&quot;, &quot;Dr&quot;)</li>
+<li>The first (given) name segment of the name of a contact</li>
+<li>The middle (additional) name segment of the name of a contact</li>
+<li>The last (surname) name segment of the name of a contact</li>
+<li>The suffix segment of the name of a contact (e.g&#x2e;, &quot;Esq.&quot;, &quot;Ph.D&quot;)</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td><ul>
+<li>PhoneNumber</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>A phone number associated with a contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td><ul>
+<li>SyncTarget</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The identifier of a backend store to which the contact containing this detail should be synchronised</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontacturl.html">QContactUrl</a></td><td><ul>
+<li>Url</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>A universal resource location associated with the contact containing this detail</li>
+</ul>
+</td></tr>
+</table></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

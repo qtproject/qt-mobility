@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/qcontactmanagercapabilities.cpp -->
+<head>
+  <title>QContactManagerCapabilities Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManagerCapabilities Class Reference</h1>
+<p>The QContactManagerCapabilities class provides read access to the capabilities of a particular <a href="qcontactmanager.html">QContactManager</a>. <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactManagerCapabilities&gt;</pre><ul>
+<li><a href="qcontactmanagercapabilities-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/><b><a href="qcontactmanagercapabilities.html#QContactManagerCapabilities">QContactManagerCapabilities</a></b> ( const QContactManagerCapabilities &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qcontactmanagercapabilities.html#dtor.QContactManagerCapabilities">~QContactManagerCapabilities</a></b> ()</li>
+<li><div class="fn"/>QStringList <b><a href="qcontactmanagercapabilities.html#capabilities">capabilities</a></b> () const</li>
+<li><div class="fn"/>QStringList <b><a href="qcontactmanagercapabilities.html#fastFilterableDefinitions">fastFilterableDefinitions</a></b> () const</li>
+<li><div class="fn"/>QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagercapabilities.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
+<li><div class="fn"/>QContactManagerCapabilities &amp; <b><a href="qcontactmanagercapabilities.html#operator-eq">operator=</a></b> ( const QContactManagerCapabilities &amp; <i>other</i> )</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QContactManagerCapabilities class provides read access to the capabilities of a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>This class allows managers to report their capabilities to clients. The capabilities of a manager include which data types the backend supports, which definitions are natively filterable in the backend (and thus are high performance), and what subset of functionality the manager supports.</p>
+<p>If the manager that provided a capability object is subsequently destroyed, the QContactManagerCapabilities object will report default, empty capabilities.</p>
+<p>See also <a href="qcontactmanager.html">QContactManager</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QContactManagerCapabilities"></a>QContactManagerCapabilities::QContactManagerCapabilities ( const QContactManagerCapabilities &amp; <i>other</i> )</h3>
+<p>Constructs a new capabilities object from the existing <i>other</i> object.</p>
+<h3 class="fn"><a name="dtor.QContactManagerCapabilities"></a>QContactManagerCapabilities::~QContactManagerCapabilities ()</h3>
+<p>Frees the memory used by this instance</p>
+<h3 class="fn"><a name="capabilities"></a>QStringList QContactManagerCapabilities::capabilities () const</h3>
+<p>Returns a list of capabilities or functionalities which are supported by the manager associated with this object.</p>
+<h3 class="fn"><a name="fastFilterableDefinitions"></a>QStringList QContactManagerCapabilities::fastFilterableDefinitions () const</h3>
+<p>Returns a list of definition identifiers which are natively (fast) filterable by the manager associated with this object.</p>
+<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerCapabilities::supportedDataTypes () const</h3>
+<p>Returns the list of data types supported by the manager associated with this object.</p>
+<h3 class="fn"><a name="operator-eq"></a>QContactManagerCapabilities &amp; QContactManagerCapabilities::operator= ( const QContactManagerCapabilities &amp; <i>other</i> )</h3>
+<p>Assigns the existing capabilities object <i>other</i> to this object</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

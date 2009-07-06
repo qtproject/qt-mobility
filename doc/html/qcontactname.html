@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/qcontactdetails.cpp -->
+<head>
+  <title>QContactName Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactName Class Reference</h1>
+<p>The name of a contact <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactName&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
+<ul>
+<li><a href="qcontactname-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#displayName">displayName</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#first">first</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#last">last</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#middle">middle</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#prefix">prefix</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setDisplayName">setDisplayName</a></b> ( const QString &amp; <i>displayName</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setFirst">setFirst</a></b> ( const QString &amp; <i>first</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setLast">setLast</a></b> ( const QString &amp; <i>last</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setMiddle">setMiddle</a></b> ( const QString &amp; <i>middle</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setPrefix">setPrefix</a></b> ( const QString &amp; <i>prefix</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactname.html#setSuffix">setSuffix</a></b> ( const QString &amp; <i>suffix</i> )</li>
+<li><div class="fn"/>QString <b><a href="qcontactname.html#suffix">suffix</a></b> () const</li>
+</ul>
+<ul>
+<li><div class="fn"/>18 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#DefinitionId-var">DefinitionId</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldDisplayName-var">FieldDisplayName</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldFirst-var">FieldFirst</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldLast-var">FieldLast</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldMiddle-var">FieldMiddle</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldPrefix-var">FieldPrefix</a></b></li>
+<li><div class="fn"/>const QString <b><a href="qcontactname.html#FieldSuffix-var">FieldSuffix</a></b></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"/>1 protected function inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The name of a contact</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="displayName"></a>QString QContactName::displayName () const</h3>
+<p>Returns the display (formatted) name stored in this detail. If the display name has not been explicitly set, a platform-specific synthesised display name is returned.</p>
+<p>See also <a href="qcontactname.html#setDisplayName">setDisplayName</a>().</p>
+<h3 class="fn"><a name="first"></a>QString QContactName::first () const</h3>
+<p>Returns the first (given) name segment of the name stored in this detail</p>
+<p>See also <a href="qcontactname.html#setFirst">setFirst</a>().</p>
+<h3 class="fn"><a name="last"></a>QString QContactName::last () const</h3>
+<p>Returns the last (family, or surname) name segment of the name stored in this detail</p>
+<p>See also <a href="qcontactname.html#setLast">setLast</a>().</p>
+<h3 class="fn"><a name="middle"></a>QString QContactName::middle () const</h3>
+<p>Returns the middle (additional, or other) name segment of the name stored in this detail</p>
+<p>See also <a href="qcontactname.html#setMiddle">setMiddle</a>().</p>
+<h3 class="fn"><a name="prefix"></a>QString QContactName::prefix () const</h3>
+<p>Returns the prefix segment of the name stored in this detail</p>
+<p>See also <a href="qcontactname.html#setPrefix">setPrefix</a>().</p>
+<h3 class="fn"><a name="setDisplayName"></a>void QContactName::setDisplayName ( const QString &amp; <i>displayName</i> )</h3>
+<p>Sets the display name stored in this detail to <i>displayName</i></p>
+<p>See also <a href="qcontactname.html#displayName">displayName</a>().</p>
+<h3 class="fn"><a name="setFirst"></a>void QContactName::setFirst ( const QString &amp; <i>first</i> )</h3>
+<p>Sets the first name segment of the name stored in this detail to <i>first</i></p>
+<p>See also <a href="qcontactname.html#first">first</a>().</p>
+<h3 class="fn"><a name="setLast"></a>void QContactName::setLast ( const QString &amp; <i>last</i> )</h3>
+<p>Sets the last name segment of the name stored in this detail to <i>last</i></p>
+<p>See also <a href="qcontactname.html#last">last</a>().</p>
+<h3 class="fn"><a name="setMiddle"></a>void QContactName::setMiddle ( const QString &amp; <i>middle</i> )</h3>
+<p>Sets the middle name segment of the name stored in this detail to <i>middle</i></p>
+<p>See also <a href="qcontactname.html#middle">middle</a>().</p>
+<h3 class="fn"><a name="setPrefix"></a>void QContactName::setPrefix ( const QString &amp; <i>prefix</i> )</h3>
+<p>Sets the prefix segment of the name stored in this detail to <i>prefix</i></p>
+<p>See also <a href="qcontactname.html#prefix">prefix</a>().</p>
+<h3 class="fn"><a name="setSuffix"></a>void QContactName::setSuffix ( const QString &amp; <i>suffix</i> )</h3>
+<p>Sets the suffix segment of the name stored in this detail to <i>suffix</i></p>
+<p>See also <a href="qcontactname.html#suffix">suffix</a>().</p>
+<h3 class="fn"><a name="suffix"></a>QString QContactName::suffix () const</h3>
+<p>Returns the suffix segment of the name stored in this detail</p>
+<p>See also <a href="qcontactname.html#setSuffix">setSuffix</a>().</p>
+<hr />
+<h2>Member Variable Documentation</h2>
+<h3 class="fn"><a name="DefinitionId-var"></a>const QString QContactName::DefinitionId</h3>
+<p>The constant string which identifies the definition of details which are names</p>
+<h3 class="fn"><a name="FieldDisplayName-var"></a>const QString QContactName::FieldDisplayName</h3>
+<p>The constant key for which the display name value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<h3 class="fn"><a name="FieldFirst-var"></a>const QString QContactName::FieldFirst</h3>
+<p>The constant key for which the first name value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<h3 class="fn"><a name="FieldLast-var"></a>const QString QContactName::FieldLast</h3>
+<p>The constant key for which the last name value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<h3 class="fn"><a name="FieldMiddle-var"></a>const QString QContactName::FieldMiddle</h3>
+<p>The constant key for which the middle name value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<h3 class="fn"><a name="FieldPrefix-var"></a>const QString QContactName::FieldPrefix</h3>
+<p>The constant key for which the name prefix value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<h3 class="fn"><a name="FieldSuffix-var"></a>const QString QContactName::FieldSuffix</h3>
+<p>The constant key for which the name suffix value is stored in details of the <a href="qcontactname.html">QContactName</a> type</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

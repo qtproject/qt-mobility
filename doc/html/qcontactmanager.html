@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/qcontactmanager.cpp -->
+<head>
+  <title>QContactManager Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManager Class Reference</h1>
+<pre>    #include &lt;QContactManager&gt;</pre><ul>
+<li><a href="qcontactmanager-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"/>enum <b><a href="qcontactmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, InvalidDetailError, ..., UnspecifiedError }</li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</li>
+<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QContactManager &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</li>
+<li><div class="fn"/>QContactManagerCapabilities <b><a href="qcontactmanager.html#capabilities">capabilities</a></b> () const</li>
+<li><div class="fn"/>QContact <b><a href="qcontactmanager.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contacts">contacts</a></b> () const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsModifiedSince">contactsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsRemovedSince">contactsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithAction">contactsWithAction</a></b> ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contactsWithDetail">contactsWithDetail</a></b> ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</li>
+<li><div class="fn"/>QContactDetailDefinition <b><a href="qcontactmanager.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionId</i> ) const</li>
+<li><div class="fn"/>QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanager.html#detailDefinitions">detailDefinitions</a></b> () const</li>
+<li><div class="fn"/>QContactManager::Error <b><a href="qcontactmanager.html#error">error</a></b> () const</li>
+<li><div class="fn"/>QContactGroup <b><a href="qcontactmanager.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groups">groups</a></b> () const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
+<li><div class="fn"/>QString <b><a href="qcontactmanager.html#managerId">managerId</a></b> () const</li>
+<li><div class="fn"/>QMap&lt;QString, QString&gt; <b><a href="qcontactmanager.html#managerParameters">managerParameters</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i> )</li>
+<li><div class="fn"/>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>idList</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i> )</li>
+<li><div class="fn"/>QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanager.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contactList</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i> )</li>
+<li><div class="fn"/>QString <b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const</li>
+<li><div class="fn"/>QContactManager &amp; <b><a href="qcontactmanager.html#operator-eq">operator=</a></b> ( const QContactManager &amp; <i>other</i> )</li>
+</ul>
+<a name="signals"></a>
+<h3>Signals</h3>
+<ul>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"/>void <b><a href="qcontactmanager.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"/>QStringList <b><a href="qcontactmanager.html#availableManagers">availableManagers</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qcontactmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerId</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i> )</li>
+<li><div class="fn"/>QContactManager <b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i> )</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanager.html#splitUri">splitUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>This class provides adding, updating and removal of contacts and groups. It also provides definitions for fields that can be found in contacts.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="Error-enum"></a>enum QContactManager::Error</h3>
+<p>This enum specifies an error that occurred during the most recent operation:</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactManager::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
+<tr><td valign="top"><tt>QContactManager::DoesNotExistError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed because the requested contact, group or definition does not exist</td></tr>
+<tr><td valign="top"><tt>QContactManager::AlreadyExistsError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The most recent operation failed because the specified contact, group or definition already exists</td></tr>
+<tr><td valign="top"><tt>QContactManager::InvalidDetailError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The most recent operation failed because the specified contact contains details which do not conform to their definition</td></tr>
+<tr><td valign="top"><tt>QContactManager::LockedError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because the datastore specified is currently locked</td></tr>
+<tr><td valign="top"><tt>QContactManager::DetailAccessError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The most recent operation failed because a detail was modified or removed and its access method does not allow that</td></tr>
+<tr><td valign="top"><tt>QContactManager::PermissionsError</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The most recent operation failed because the caller does not have permission to perform the operation</td></tr>
+<tr><td valign="top"><tt>QContactManager::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The most recent operation failed due to running out of memory</td></tr>
+<tr><td valign="top"><tt>QContactManager::NotSupportedError</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The most recent operation failed because the requested operation is not supported in the specified store</td></tr>
+<tr><td valign="top"><tt>QContactManager::BadArgumentError</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The most recent operation failed because one or more of the parameters to the operation were invalid</td></tr>
+<tr><td valign="top"><tt>QContactManager::UnspecifiedError</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">The most recent operation failed for an undocumented reason</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</h3>
+<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation is identified by <i>managerId</i> with the given <i>parameters</i></p>
+<h3 class="fn"><a name="QContactManager-2"></a>QContactManager::QContactManager ( const QContactManager &amp; <i>other</i> )</h3>
+<p>Create a copy of <i>other</i></p>
+<h3 class="fn"><a name="dtor.QContactManager"></a>QContactManager::~QContactManager ()</h3>
+<p>Frees the memory used by the <a href="qcontactmanager.html">QContactManager</a></p>
+<h3 class="fn"><a name="availableManagers"></a>QStringList QContactManager::availableManagers ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a list of available manager ids that can be used when constructing a <a href="qcontactmanager.html">QContactManager</a>. If an empty id is specified to the constructor, the first value in this list will be used instead.</p>
+<h3 class="fn"><a name="buildUri"></a>QString QContactManager::buildUri ( const QString &amp; <i>managerId</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerId</i> and <i>params</i></p>
+<h3 class="fn"><a name="capabilities"></a><a href="qcontactmanagercapabilities.html">QContactManagerCapabilities</a> QContactManager::capabilities () const</h3>
+<p>Returns an object describing the capabilities of this <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>See also <a href="qcontactmanagercapabilities.html">QContactManagerCapabilities</a>.</p>
+<h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const QUniqueId &amp; <i>contactId</i> ) const</h3>
+<p>Returns the contact in the database identified by <i>contactId</i></p>
+<h3 class="fn"><a name="contacts"></a>QList&lt;QUniqueId&gt; QContactManager::contacts () const</h3>
+<p>Return the list of added contact ids</p>
+<h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been added to a datastore managed by this manager</p>
+<h3 class="fn"><a name="contactsAddedSince"></a>QList&lt;QUniqueId&gt; QContactManager::contactsAddedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of ids of contacts that have been added to this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="contactsChanged"></a>void QContactManager::contactsChanged ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been modified in a datastore managed by this manager</p>
+<h3 class="fn"><a name="contactsModifiedSince"></a>QList&lt;QUniqueId&gt; QContactManager::contactsModifiedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of contact ids that have been modified in this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="contactsRemoved"></a>void QContactManager::contactsRemoved ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been removed from a datastore managed by this manager</p>
+<h3 class="fn"><a name="contactsRemovedSince"></a>QList&lt;QUniqueId&gt; QContactManager::contactsRemovedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of contact ids that have been removed in this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="contactsWithAction"></a>QList&lt;QUniqueId&gt; QContactManager::contactsWithAction ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</h3>
+<p>Returns a list of contacts which have a detail with the given <i>value</i> for which the specified <i>actionId</i> is available</p>
+<h3 class="fn"><a name="contactsWithDetail"></a>QList&lt;QUniqueId&gt; QContactManager::contactsWithDetail ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i> = QVariant() ) const</h3>
+<p>Returns a list of contacts which have a detail of the given <i>definitionId</i> with the specified <i>value</i></p>
+<h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManager::detailDefinition ( const QString &amp; <i>definitionId</i> ) const</h3>
+<p>Returns the definition identified by the given <i>definitionId</i> that is valid for the contacts in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
+<h3 class="fn"><a name="detailDefinitions"></a>QMap&lt;QString, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManager::detailDefinitions () const</h3>
+<p>Returns a map of identifier to detail definition for the registered detail definitions which are valid for the contacts in this store</p>
+<h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactManager::error () const</h3>
+<p>Return the error code of the most recent operation</p>
+<h3 class="fn"><a name="fromUri"></a>QContactManager QContactManager::fromUri ( const QString &amp; <i>storeUri</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation, store and parameters are specified in the given <i>storeUri</i></p>
+<h3 class="fn"><a name="group"></a><a href="qcontactgroup.html">QContactGroup</a> QContactManager::group ( const QUniqueId &amp; <i>groupId</i> ) const</h3>
+<p>Returns the group which is identified by the given <i>groupId</i>, or a default-constructed group if no such group exists</p>
+<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManager::groups () const</h3>
+<p>Return the list of added group ids</p>
+<h3 class="fn"><a name="groupsAdded"></a>void QContactManager::groupsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been added to a datastore managed by this manager</p>
+<h3 class="fn"><a name="groupsAddedSince"></a>QList&lt;QUniqueId&gt; QContactManager::groupsAddedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of group ids that have been modified in this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="groupsChanged"></a>void QContactManager::groupsChanged ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been modified in a datastore managed by this manager</p>
+<h3 class="fn"><a name="groupsModifiedSince"></a>QList&lt;QUniqueId&gt; QContactManager::groupsModifiedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of group ids that have been modified in this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="groupsRemoved"></a>void QContactManager::groupsRemoved ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been removed from a datastore managed by this manager</p>
+<h3 class="fn"><a name="groupsRemovedSince"></a>QList&lt;QUniqueId&gt; QContactManager::groupsRemovedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
+<p>Returns a list of group ids that have been modified in this manager since the given <i>timestamp</i>.</p>
+<h3 class="fn"><a name="managerId"></a>QString QContactManager::managerId () const</h3>
+<p>Returns the manager id for this <a href="qcontactmanager.html">QContactManager</a></p>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QContactManager::managerParameters () const</h3>
+<p>Return the parameters supplied to this <a href="qcontactmanager.html">QContactManager</a></p>
+<h3 class="fn"><a name="removeContact"></a>bool QContactManager::removeContact ( const QUniqueId &amp; <i>contactId</i> )</h3>
+<p>Remove the contact identified by <i>contactId</i> from the database. Returns true if the contact was removed successfully, otherwise returns false.</p>
+<h3 class="fn"><a name="removeContacts"></a>QList&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManager::removeContacts ( QList&lt;QUniqueId&gt; * <i>idList</i> )</h3>
+<p>Remove the list of contacts identified in <i>idList</i>. Returns a list of the error codes corresponding to the contact ids in the <i>idList</i>. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
+<p>For each contact that was removed succesfully, the corresponding id in the list will be retained but set to zero. The id of contacts that were not successfully removed will be left alone.</p>
+<p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
+<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManager::removeDetailDefinition ( const QString &amp; <i>definitionId</i> )</h3>
+<p>Removes the detail definition identified by <i>definitionId</i> from the database. Returns true if the definition was removed successfully, otherwise returns false</p>
+<h3 class="fn"><a name="removeGroup"></a>bool QContactManager::removeGroup ( const QUniqueId &amp; <i>groupId</i> )</h3>
+<p>Remove the group with the given id <i>groupId</i> from the database. Returns false if no group with that id exists, or the operation otherwise failed. Returns true if the group was successfully deleted.</p>
+<h3 class="fn"><a name="saveContact"></a>bool QContactManager::saveContact ( <a href="qcontact.html">QContact</a> * <i>contact</i> )</h3>
+<p>Add the given <i>contact</i> to the database if it is a new contact, or updates the existing contact. Returns false on failure, or true on success. If successful and the contact was a new contact, its UID will be set to a new, valid id.</p>
+<p>If the <i>contact</i> contains one or more details whose definitions have not yet been saved with the manager, the operation will fail and the manager will return <tt>QContactManager::UnsupportedError</tt>.</p>
+<h3 class="fn"><a name="saveContacts"></a>QList&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManager::saveContacts ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contactList</i> )</h3>
+<p>Adds the list of contacts given by <i>contactList</i> to the database. Returns a list of the error codes corresponding to the contacts in the <i>contactList</i>. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
+<p>For each newly saved contact that was successful, the uid of the contact in the list will be updated with the new value. If a failure occurs when saving a new contact, the id will be cleared. If a failure occurs when updating a contact that already exists, then TODO.</p>
+<p>See also <a href="qcontactmanager.html#saveContact">QContactManager::saveContact</a>().</p>
+<h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactManager::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i> )</h3>
+<p>Persists the given definition <i>def</i> in the database. Returns true if the definition was saved successfully, otherwise returns false</p>
+<h3 class="fn"><a name="saveGroup"></a>bool QContactManager::saveGroup ( <a href="qcontactgroup.html">QContactGroup</a> * <i>group</i> )</h3>
+<p>Saves the group <i>group</i> in the database. The id of the group is used to determine the group to update. If the group has no name set, this function will fail. If the group does not already exist, it is added to the database.</p>
+<p>Returns true on success, or false on failure.</p>
+<h3 class="fn"><a name="splitUri"></a>bool QContactManager::splitUri ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
+<h3 class="fn"><a name="storeUri"></a>QString QContactManager::storeUri () const</h3>
+<p>Return the uri describing this <a href="qcontactmanager.html">QContactManager</a>, including managerId, managerStoreId and any parameters.</p>
+<h3 class="fn"><a name="operator-eq"></a>QContactManager &amp; QContactManager::operator= ( const QContactManager &amp; <i>other</i> )</h3>
+<p>Assigns this <a href="qcontactmanager.html">QContactManager</a> to <i>other</i></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

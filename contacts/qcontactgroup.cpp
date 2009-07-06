@@ -1,0 +1,194 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "qcontactgroup.h"
+#include "qcontactgroup_p.h"
+
+/*! \class QContactGroup
+ *
+ * The QContactGroup class provides a collection of contacts that share some
+ * commonality.  A QContactGroup has a name and consists of a list of ids
+ * of contacts who are a member of the group.
+ */
+
+/*! Create a new QContactGroup */
+QContactGroup::QContactGroup()
+    : d(new QContactGroupData)
+{
+}
+
+/*! Create a new QContactGroup from \a other */
+QContactGroup::QContactGroup(const QContactGroup &other)
+    : d(other.d)
+{
+}
+
+/*! Assign this QContactGroup to \a other */
+QContactGroup& QContactGroup::operator=(const QContactGroup &other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*! Free any memory used by this QContactGroup */
+QContactGroup::~QContactGroup()
+{
+}
+
+/*! Return the id of this QContactGroup */
+QUniqueId QContactGroup::id() const
+{
+    d->m_error = QContactGroup::NoError;
+    return d->m_id;
+}
+
+/*! Set the id of this QContactGroup to \a id.  Returns true if the id was set successfully, otherwise returns false */
+bool QContactGroup::setId(const QUniqueId& id)
+{
+    d->m_error = QContactGroup::NoError;
+    d->m_id = id;
+    return true;
+}
+
+/*!
+ * \enum QContactGroup::Error
+ *
+ * This enum specifies an error that occurred during the most recent operation:
+ *
+ * \value NoError The most recent operation was successful
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value ContactNotInGroupError The most recent operation failed because the requested contact is not a member of the group
+ * \value ContactAlreadyInGroupError The most recent operation failed because the specified contact is already a member of the group
+ * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ */
+
+/*! Return the error code of the most recent operation */
+QContactGroup::Error QContactGroup::error() const
+{
+    return d->m_error;
+}
+
+/*! Return the name of the group */
+QString QContactGroup::name() const
+{
+    d->m_error = QContactGroup::NoError;
+    return d->m_name;
+}
+
+/*! Set the name of the group to the given \a groupName.  Returns true if the name was set successfully, otherwise returns false */
+bool QContactGroup::setName(const QString& groupName)
+{
+    d->m_error = QContactGroup::NoError;
+    d->m_name = groupName;
+    return true;
+}
+
+/*! Add the contact identified by \a contactId to this QContactGroup.  Returns true if the contact was successfully added to the group, and false if the group already contains the contact, or the operation failed. */
+bool QContactGroup::addMember(const QUniqueId& contactId)
+{
+    d->m_error = QContactGroup::ContactAlreadyInGroupError;
+    if (d->m_members.contains(contactId))
+        return false;
+
+    d->m_members.append(contactId);
+    d->m_error = QContactGroup::NoError;
+    return true;
+}
+
+/*! Remove the contact identified by \a contactId from this QContactGroup.  Returns true if the contact was successfully removed from the group, and false if the group did not contain the contact, or the operation failed. */
+bool QContactGroup::removeMember(const QUniqueId& contactId)
+{
+    d->m_error = QContactGroup::ContactNotInGroupError;
+    if (!d->m_members.contains(contactId))
+        return false;
+
+    d->m_members.removeOne(contactId);
+    d->m_error = QContactGroup::NoError;
+    return true;
+}
+
+/*! Returns true if the contact identified by \a contactId is a member of the group */
+bool QContactGroup::hasMember(const QUniqueId& contactId) const
+{
+    d->m_error = QContactGroup::ContactNotInGroupError;
+    if (!d->m_members.contains(contactId))
+        return false;
+
+    d->m_error = QContactGroup::NoError;
+    return true;
+}
+
+/*! Returns an iterator over the contactIds of the entire membership of the group */
+QList<QUniqueId> QContactGroup::members() const
+{
+    d->m_error = QContactGroup::NoError;
+    return d->m_members;
+}
+
+
+// the following four functions are under consideration
+// /*! Returns the position in the list of the contact with the given \a contactId, or -1 if no such contact is a member of the group */
+//int QContactGroup::position(const QUniqueId& contactId) const
+//{
+//    d->m_error = QContactGroup::NoError;
+//    int retn = d->m_members.indexOf(contactId);
+//    if (retn == -1)
+//        d->m_error = QContactGroup::ContactNotInGroupError;
+//    return retn;
+//}
+//
+// /*! Sets the position contact with the given \a contactId in the list to \a position.  Returns true on success, false if no such contact is a member of the group */
+//bool QContactGroup::setPosition(int position, const QUniqueId& contactId)
+//{
+//    int currPosn = d->m_members.indexOf(contactId);
+//    d->m_error = QContactGroup::ContactNotInGroupError;
+//    if (currPosn == -1)
+//        return false;
+//
+//    d->m_members.removeOne(contactId);
+//    d->m_members.insert(position, contactId);
+//    d->m_error = QContactGroup::NoError;
+//    return true;    
+//}
+//QList<QContactDetail> QContactGroup::groupDetails() const
+//{
+//    d->m_error = QContactGroup::NoError;    
+//    return d->m_details;
+//}
+//bool QContactGroup::setGroupDetails(const QList<QContactDetail>& details)
+//{
+//    d->m_details = details;
+//    d->m_error = QContactGroup::NoError;
+//    return true;
+//}

@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>phonebook.cpp Example File (samplephonebook/phonebook.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="contacts.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">phonebook.cpp Example File<br /><span class="small-subtitle">samplephonebook/phonebook.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain
+    ** additional rights. These rights are described in the Nokia Qt LGPL
+    ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+    ** package.
+    **
+    ** If you have questions regarding the use of this file, please
+    ** contact Nokia at http://www.qtsoftware.com/contact.
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;phonebook.h&quot;
+    #include &quot;serialiser.h&quot;
+
+    #include &lt;QtGui&gt;
+
+    PhoneBook::PhoneBook(QWidget *parent)
+        : QWidget(parent)
+    {
+        <span class="comment">// instantiate a new contact manager - memory backend</span>
+        cm = new QContactManager();
+
+        contactsList = new QListWidget();
+        contactsList-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
+
+        QLabel *nameLabel = new QLabel(tr(&quot;Name:&quot;));
+        nameLine = new QLineEdit;
+
+        QLabel *avatarLabel = new QLabel(tr(&quot;Avatar:&quot;));
+        avatarButton = new QPushButton(&quot;No image selected&quot;);
+        QSizePolicy avatarPolicy;
+        avatarPolicy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
+        avatarPolicy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
+        avatarButton-&gt;setSizePolicy(avatarPolicy);
+        avatarButton-&gt;installEventFilter(this);
+
+        QLabel *emailLabel = new QLabel(tr(&quot;Email:&quot;));
+        emailLine = new QLineEdit;
+
+        QLabel *homePhoneLabel = new QLabel(tr(&quot;Home Phone:&quot;));
+        homePhoneLine = new QLineEdit;
+
+        QLabel *workPhoneLabel = new QLabel(tr(&quot;Work Phone:&quot;));
+        workPhoneLine = new QLineEdit;
+
+        QLabel *mobilePhoneLabel = new QLabel(tr(&quot;Mobile Phone:&quot;));
+        mobilePhoneLine = new QLineEdit;
+
+        QLabel *addressLabel = new QLabel(tr(&quot;Address:&quot;));
+        addressText = new QTextEdit;
+
+        addButton = new QPushButton(tr(&quot;&amp;Add&quot;));
+        addButton-&gt;setEnabled(false);
+        removeButton = new QPushButton(tr(&quot;&amp;Remove&quot;));
+        removeButton-&gt;setEnabled(false);
+        findButton = new QPushButton(tr(&quot;&amp;Find&quot;));
+        findButton-&gt;setEnabled(false);
+        saveButton = new QPushButton(tr(&quot;&amp;Save&quot;));
+        saveButton-&gt;setEnabled(true);
+
+        currentIndexLabel = new QLabel();
+        currentIndexLabel-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+
+        importButton = new QPushButton(tr(&quot;&amp;Import&quot;));
+        importButton-&gt;setToolTip(tr(&quot;Import contact from vCard file&quot;));
+        exportButton = new QPushButton(tr(&quot;&amp;Export&quot;));
+        exportButton-&gt;setToolTip(tr(&quot;Export contact as vCard file&quot;));
+        exportButton-&gt;setEnabled(false);
+
+        quitButton = new QPushButton(tr(&quot;&amp;Quit&quot;));
+
+        dialog = new FindDialog;
+
+        connect(avatarButton, SIGNAL(clicked()), this, SLOT(selectAvatar()));
+        connect(addButton, SIGNAL(clicked()), this, SLOT(addContact()));
+        connect(saveButton, SIGNAL(clicked()), this, SLOT(saveContact()));
+        connect(removeButton, SIGNAL(clicked()), this, SLOT(removeContact()));
+        connect(findButton, SIGNAL(clicked()), this, SLOT(findContact()));
+        connect(importButton, SIGNAL(clicked()), this, SLOT(importFromVCard()));
+        connect(exportButton, SIGNAL(clicked()), this, SLOT(exportAsVCard()));
+        connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
+        connect(contactsList, SIGNAL(currentRowChanged(int)), this, SLOT(contactSelected(int)));
+
+        QVBoxLayout *buttonLayout1 = new QVBoxLayout;
+        buttonLayout1-&gt;addStretch();
+        buttonLayout1-&gt;addWidget(addButton);
+        buttonLayout1-&gt;addWidget(saveButton);
+        buttonLayout1-&gt;addWidget(removeButton);
+        buttonLayout1-&gt;addWidget(findButton);
+        buttonLayout1-&gt;addWidget(importButton);
+        buttonLayout1-&gt;addWidget(exportButton);
+        buttonLayout1-&gt;addWidget(quitButton);
+        buttonLayout1-&gt;addStretch();
+
+        QHBoxLayout *currentIndexLayout = new QHBoxLayout;
+        currentIndexLayout-&gt;addStretch();
+        currentIndexLayout-&gt;addWidget(currentIndexLabel);
+
+        QGridLayout *inputLayout = new QGridLayout;
+        inputLayout-&gt;addWidget(nameLabel, 0, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(nameLine, 0, 1);
+        inputLayout-&gt;addWidget(avatarLabel, 1, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(avatarButton, 1, 1);
+        inputLayout-&gt;addWidget(emailLabel, 2, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(emailLine, 2, 1);
+        inputLayout-&gt;addWidget(homePhoneLabel, 3, 0,Qt::AlignRight);
+        inputLayout-&gt;addWidget(homePhoneLine, 3, 1);
+        inputLayout-&gt;addWidget(workPhoneLabel, 4, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(workPhoneLine, 4, 1);
+        inputLayout-&gt;addWidget(mobilePhoneLabel, 5, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(mobilePhoneLine, 5, 1);
+        inputLayout-&gt;addWidget(addressLabel, 6, 0, Qt::AlignRight);
+        inputLayout-&gt;addWidget(addressText, 6, 1);
+
+        QGridLayout *mainLayout = new QGridLayout;
+        mainLayout-&gt;addWidget(contactsList, 0, 0, 3, 1);
+        mainLayout-&gt;addLayout(inputLayout, 0, 1, 2, 2);
+        mainLayout-&gt;addLayout(buttonLayout1, 0, 3, 2, 1);
+        mainLayout-&gt;addLayout(currentIndexLayout, 2, 2);
+
+        setLayout(mainLayout);
+        setWindowTitle(tr(&quot;Sample Phone Book&quot;));
+
+        <span class="comment">// add a new, blank contact and kick off the display</span>
+        addContact();
+    }
+
+    bool PhoneBook::eventFilter(QObject* watched, QEvent* event)
+    {
+        if (watched == avatarButton &amp;&amp; event-&gt;type() == QEvent::Resize) {
+            QResizeEvent *re = (QResizeEvent*)event;
+            QSize trim(20,20);
+            QSize newSize = re-&gt;size();
+            newSize -= trim;
+            avatarButton-&gt;setIconSize(newSize);
+            return true;
+        }
+
+        return false;
+    }
+
+    void PhoneBook::contactSelected(int row)
+    {
+        if (row &lt; 0)
+            return;
+
+        while (currentIndex &gt; row) {
+            previous();
+        }
+
+        while (currentIndex &lt; row) {
+            next();
+        }
+    }
+
+    void PhoneBook::populateList(const QContact&amp; currentContact)
+    {
+        <span class="comment">// first, we sort the contacts according to display name</span>
+        <span class="comment">// then we populate the list widget.</span>
+        QList&lt;QContact&gt; sorted;
+        if (contacts.size() &gt; 0) {
+            sorted.append(contacts.at(0));
+            contacts.removeFirst();
+        }
+
+        <span class="comment">// sort the list.</span>
+        foreach (const QContact&amp; contact, contacts) {
+            bool inserted = false;
+            for (int i = 0; i &lt; sorted.size(); i++) {
+                if (contact.name().displayName().toLower() &lt; sorted.at(i).name().displayName().toLower()) {
+                    sorted.insert(i, contact);
+                    inserted = true;
+                    break;
+                }
+            }
+
+            if (!inserted) {
+                sorted.append(contact);
+            }
+        }
+
+        <span class="comment">// replace our member list.</span>
+        contacts = sorted;
+
+        <span class="comment">// and repopulate the list widget.</span>
+        contactsList-&gt;clear();
+        foreach (const QContact&amp; contact, contacts) {
+            new QListWidgetItem(contact.name().displayName(), contactsList);
+        }
+
+        <span class="comment">// now find out what our new current index is</span>
+        currentIndex = 0;
+        for (int i = 0; i &lt; contacts.size(); i++) {
+            if (contacts.at(i) == currentContact) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        <span class="comment">// and set the selection in the list widget.</span>
+        contactsList-&gt;setCurrentRow(currentIndex);
+    }
+
+    QContact PhoneBook::buildContact() const
+    {
+        <span class="comment">// builds the contact from the current index / current UI.</span>
+        QContact c;
+        c.name().setDisplayName(nameLine-&gt;text());
+
+        QContactEmailAddress emailAddress;
+        emailAddress.setEmailAddress(emailLine-&gt;text());
+        emailAddress.setAttribute(QContactDetail::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
+        c.saveDetail(&amp;emailAddress);
+
+        QContactPhoneNumber homePhone;
+        homePhone.setNumber(homePhoneLine-&gt;text());
+        homePhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextHome);
+        homePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+        c.saveDetail(&amp;homePhone);
+
+        QContactPhoneNumber workPhone;
+        workPhone.setNumber(workPhoneLine-&gt;text());
+        workPhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextWork);
+        workPhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+        c.saveDetail(&amp;workPhone);
+
+        QContactPhoneNumber mobilePhone;
+        mobilePhone.setNumber(mobilePhoneLine-&gt;text());
+        mobilePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeMobile);
+        c.saveDetail(&amp;mobilePhone);
+
+        QContactAddress address;
+        address.setDisplayLabel(addressText-&gt;toPlainText());
+        address.setAttribute(QContactDetail::AttributeSubType, QString(QContactAddress::AttributeSubTypeDomestic + &quot;,&quot; + QContactAddress::AttributeSubTypeParcel + &quot;,&quot; + QContactAddress::AttributeSubTypePostal));
+        c.saveDetail(&amp;address);
+
+        QContactAvatar avatar;
+        avatar.setAvatar(contactAvatars.at(currentIndex));
+        avatar.setAttribute(QContactDetail::AttributeSubType, QContactAvatar::AttributeSubTypeImage);
+        c.saveDetail(&amp;avatar);
+
+        return c;
+    }
+
+    void PhoneBook::displayContact()
+    {
+        QContact c = contacts.at(currentIndex);
+
+        <span class="comment">// display the name</span>
+        nameLine-&gt;setText(c.name().displayName());
+
+        <span class="comment">// display the email address</span>
+        emailLine-&gt;setText(c.detail(QContactEmailAddress::DefinitionId).value(QContactEmailAddress::FieldEmailAddress));
+
+        <span class="comment">// display the phone numbers</span>
+        QList&lt;QContactDetail&gt; phns = c.details(QContactPhoneNumber::DefinitionId);
+        bool foundHomePhone = false;
+        bool foundWorkPhone = false;
+        bool foundMobilePhone = false;
+        for (int i = 0; i &lt; phns.size(); i++) {
+            QContactPhoneNumber current = phns.at(i);
+            if (current.attribute(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
+                mobilePhoneLine-&gt;setText(current.number());
+                foundMobilePhone = true;
+            } else if (current.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+                workPhoneLine-&gt;setText(current.number());
+                foundWorkPhone = true;
+            } else {
+                homePhoneLine-&gt;setText(current.number());
+                foundHomePhone = true;
+            }
+        }
+
+        if (!foundHomePhone)
+            homePhoneLine-&gt;setText(&quot;&quot;);
+        if (!foundWorkPhone)
+            workPhoneLine-&gt;setText(&quot;&quot;);
+        if (!foundMobilePhone)
+            mobilePhoneLine-&gt;setText(&quot;&quot;);
+
+        <span class="comment">// display the address</span>
+        addressText-&gt;setText((QContactAddress(c.detail(QContactAddress::DefinitionId))).displayLabel());
+
+        <span class="comment">// and build the avatar filename and display it if it exists.</span>
+        QString avatarFile = contactAvatars.at(currentIndex);
+        if (avatarFile.isNull() || avatarFile.isEmpty()) {
+            avatarButton-&gt;setIcon(QIcon());
+            avatarButton-&gt;setText(&quot;No image selected&quot;);
+        } else {
+            avatarButton-&gt;setIcon(QIcon(avatarFile));
+            avatarButton-&gt;setText(&quot;&quot;);
+            avatarButton-&gt;setIconSize(avatarButton-&gt;size());
+        }
+
+        <span class="comment">// update the UI depending on the current state.</span>
+        QString currentIndexLabelString = tr(&quot;Contact %1 of %2 (%3)&quot;).arg(currentIndex+1).arg(contacts.size()).arg((contacts.at(currentIndex).id() == 0) ? tr(&quot;Unsaved&quot;) : tr(&quot;Saved&quot;));
+        currentIndexLabel-&gt;setText(currentIndexLabelString);
+
+        <span class="comment">// update the buttons</span>
+        if (contacts.at(currentIndex).id() == 0) {
+            addButton-&gt;setEnabled(false);
+            exportButton-&gt;setEnabled(false);
+            removeButton-&gt;setEnabled(false);
+        } else {
+            addButton-&gt;setEnabled(true);
+            findButton-&gt;setEnabled(true);
+            exportButton-&gt;setEnabled(true);
+            removeButton-&gt;setEnabled(true);
+        }
+    }
+
+    void PhoneBook::selectAvatar()
+    {
+        QString selected = QFileDialog::getOpenFileName(this, &quot;Select avatar image file&quot;, &quot;.&quot;);
+        if (!selected.isNull()) {
+            QContact curr = contacts.at(currentIndex);
+            QContactAvatar av = curr.detail(QContactAvatar::DefinitionId);
+            av.setAvatar(selected);
+            curr.saveDetail(&amp;av);
+
+            contactAvatars.replace(currentIndex, selected);
+            contacts.replace(currentIndex, curr);
+        }
+        displayContact();
+    }
+
+    void PhoneBook::addContact()
+    {
+        currentIndex = contacts.size();
+        contacts.append(QContact());
+        contactAvatars.append(&quot;&quot;);
+        displayContact();
+    }
+
+    void PhoneBook::saveContact()
+    {
+        QContact c = buildContact();
+        c.setId(contacts.at(currentIndex).id());
+        if (c.id() != 0) {
+            <span class="comment">// we want to check that the contact has actually changed since last save</span>
+            if (c == contacts.at(currentIndex)) {
+                <span class="comment">// no change.</span>
+                return;
+            }
+        }
+
+        if (!cm-&gt;saveContact(&amp;c)) {
+            QString errorCode = &quot;Unable to save the contact in the database; error code:&quot; + QString::number(cm-&gt;error());
+            QMessageBox::information(this, &quot;Save Failed&quot;, errorCode);
+            return;
+        }
+
+        contacts.replace(currentIndex, c);
+        populateList(c);
+        displayContact();
+    }
+
+    void PhoneBook::removeContact()
+    {
+        QString contactName = contacts.at(currentIndex).name().displayName();
+        int button = QMessageBox::question(this,
+            tr(&quot;Confirm Remove&quot;),
+            tr(&quot;Are you sure you want to remove \&quot;%1\&quot;?&quot;).arg(contactName),
+            QMessageBox::Yes | QMessageBox::No);
+
+        if (button == QMessageBox::Yes) {
+            <span class="comment">// remove the contact, and adjust our current position.</span>
+            if (contacts.at(currentIndex).id() != 0)
+                cm-&gt;removeContact(contacts.at(currentIndex).id());
+            contacts.removeAt(currentIndex);
+            contactAvatars.removeAt(currentIndex);
+            while (contacts.size() &lt;= currentIndex)
+                currentIndex -= 1;
+
+            <span class="comment">// if all contacts have been removed from the list, add a new (unsaved) contact.</span>
+            if (currentIndex &lt; 0) {
+                addContact();
+            }
+
+            QMessageBox::information(this, tr(&quot;Remove Successful&quot;),
+                tr(&quot;\&quot;%1\&quot; has been removed from your phone book.&quot;).arg(contactName));
+            QContact currentContact = contacts.at(currentIndex);
+            populateList(currentContact);
+            displayContact();
+        }
+    }
+
+    void PhoneBook::next()
+    {
+        <span class="comment">// we should display the next contact</span>
+        currentIndex += 1;
+        displayContact();
+    }
+
+    void PhoneBook::previous()
+    {
+        <span class="comment">// first, check to see if the current index is saved.</span>
+        <span class="comment">// if not, we delete it.</span>
+        if (contacts.at(currentIndex).id() == 0) {
+            contacts.removeAt(currentIndex);
+            contactAvatars.removeAt(currentIndex);
+        }
+
+        <span class="comment">// we should display the previous contact</span>
+        currentIndex -= 1;
+        displayContact();
+    }
+
+    void PhoneBook::findContact()
+    {
+        dialog-&gt;show();
+
+        if (dialog-&gt;exec() == 1) {
+            bool found = false;
+            QString contactName = dialog-&gt;getFindText();
+            <span class="comment">// XXX TODO: use QContactManager::contactsWithDetail</span>
+            for (int i = 0; i &lt; contacts.size(); i++) {
+                if (contacts.at(i).name().displayName() == contactName) {
+                    contactsList-&gt;setCurrentRow(i);
+                    contactSelected(i);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                QMessageBox::information(this, tr(&quot;Contact Not Found&quot;),
+                    tr(&quot;Sorry, \&quot;%1\&quot; is not in your address book.&quot;).arg(contactName));
+                return;
+            }
+        }
+    }
+
+    void PhoneBook::importFromVCard()
+    {
+        QString importFile = QFileDialog::getOpenFileName(this, &quot;Select vCard file to import&quot;, &quot;.&quot;, &quot;*.vcf&quot;);
+        if (importFile.isNull())
+            return;
+
+        <span class="comment">// import the vcard</span>
+        QContact importedContact;
+
+        <span class="comment">// read in the file that we are importing</span>
+        QFile file(importFile);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QMessageBox::information(this, tr(&quot;Import Failed&quot;),
+                    tr(&quot;Sorry, unable to import \&quot;%1\&quot;.&quot;).arg(importFile));
+            return;
+        }
+
+        QTextStream in(&amp;file);
+        QStringList vcardLines;
+        while (!in.atEnd()) {
+            vcardLines &lt;&lt; in.readLine();
+        }
+
+        if (vcardLines.isEmpty()) {
+            QMessageBox::information(this, tr(&quot;Import Failed&quot;),
+                    tr(&quot;Sorry, unable to import \&quot;%1\&quot;.&quot;).arg(importFile));
+            return;
+        }
+        file.close();
+
+        <span class="comment">// convert it to a contact - probably need to write function to check that it's a valid vcard...</span>
+        importedContact = Serialiser::convertVcard(vcardLines);
+
+        <span class="comment">// if the current contact is newly added (and not saved), we overwrite it</span>
+        cm-&gt;saveContact(&amp;importedContact);
+        if (contacts.at(currentIndex).id() == 0) {
+            contacts.replace(currentIndex, importedContact);
+            contactAvatars.replace(currentIndex, importedContact.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar));
+        } else {
+            contacts.append(importedContact);
+            contactAvatars.append(importedContact.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar));
+        }
+
+        <span class="comment">// update the display</span>
+        populateList(importedContact);
+        displayContact();
+    }
+
+    void PhoneBook::exportAsVCard()
+    {
+        <span class="comment">// convert the display name to a meaningful file name</span>
+        QString newName = QFileDialog::getSaveFileName(this, &quot;Export contact as...&quot;, &quot;.&quot;, &quot;*.vcf&quot;);
+        if (newName.isNull()) {
+            <span class="comment">// they clicked cancel.</span>
+            return;
+        }
+        if (!newName.endsWith(&quot;.vcf&quot;)) {
+            newName += &quot;.vcf&quot;;
+        }
+
+        QContact currentContact;
+        if (currentIndex &gt;= contacts.size())
+            currentContact = buildContact();
+        else
+            currentContact = contacts.at(currentIndex);
+        QStringList vcardLines = Serialiser::convertContact(currentContact);
+
+        QFile file(newName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::information(this, tr(&quot;Unable to export&quot;),
+                tr(&quot;Unable to export contact \&quot;%1\&quot;!&quot;).arg(contacts.at(currentIndex).name().displayName()));
+            return;
+        }
+
+        QTextStream out(&amp;file);
+        foreach (const QString&amp; line, vcardLines)
+            out &lt;&lt; line &lt;&lt; &quot;\n&quot;;
+        file.close();
+
+        QMessageBox::information(this, tr(&quot;Contact Exported&quot;),
+            tr(&quot;Successfully exported contact \&quot;%1\&quot; as \&quot;%2\&quot;!&quot;).arg(contacts.at(currentIndex).name().displayName()).arg(newName));
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>
