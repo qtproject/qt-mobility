@@ -32,16 +32,16 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#include "recorder.h"
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include <QtGui>
+
+int main(int argc, char *argv[])
 {
-}
+    QApplication app(argc, argv);
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
-{
-}
+    Recorder recorder;
+    recorder.show();
 
+    return app.exec();
+};

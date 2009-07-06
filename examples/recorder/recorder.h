@@ -32,16 +32,24 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#ifndef RECORDER_H
+#define RECORDER_H
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include <QtGui/QWidget>
+
+#include <qaudiocapture.h>
+
+class Recorder : public QWidget
 {
-}
+    Q_OBJECT
+public:
+    Recorder(QWidget *parent = 0);
+    ~Recorder();
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
-{
-}
+private slots:
 
+private:
+    QAudioCapture* recorder;
+};
+
+#endif

@@ -49,6 +49,11 @@ QMediaServiceProvider* QMediaProviderFactory::defaultServiceProvider(QString con
 {
     QMediaServiceProviderPlugin *plugin = qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
     //qDebug() << "plugin" << plugin << "of" << key;
-    return plugin->create(key);
+    if(plugin) {
+        return plugin->create(key);
+    } else {
+        qWarning()<<"no plugin found for: "<<key;
+        return 0;
+    }
 }
 
