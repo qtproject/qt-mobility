@@ -50,9 +50,6 @@
 #define SERVICE_PROPERTY_TABLE "ServiceProperty"
 #define INTERFACE_PROPERTY_TABLE "InterfaceProperty"
 
-//default connection
-#define RESOLVERDATABASE_DEFAULT_CONNECTION "qt_sql_default_connection"
-
 //separator
 #define RESOLVERDATABASE_PATH_SEPARATOR "//"
 
@@ -103,16 +100,13 @@ void DBError::setError(ErrorCode error, const QString &text)
         case(NotFound):
         case(LocationAlreadyRegistered):
         case(IfaceImplAlreadyRegistered):
-        case(InvalidSearchCriteria):
         case(CannotCreateDbDir):
-        case(CannotOpenUserDb):
-        case(CannotOpenSystemDb):
         case(InvalidDescriptorScope):
         case(IfaceIDNotExternal):
-        case(CannotCreateSystemDbDir):
-        case(CannotCreateUserDbDir):
         case(InvalidDatabaseFile):
         case(NoWritePermissions):
+        case(CannotOpenSystemDb):
+        case(CannotOpenUserDb):
             m_text = text;
             break;
         default:
@@ -462,9 +456,10 @@ QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descr
 }
 
 /*
-    This function should only ever be called on a user scope database
-    It returns a list of Interface IDs in the Defaults table
-    that refer to interface implementations in the system scope database
+    This function should only ever be called on a user scope database.
+    It returns a list of Interface Name and Interface ID pairs, where
+    the Interface ID refers to an external interface implementation
+    in the system scope database.
 
     May set the last error to:
     DBError::NoError
@@ -475,39 +470,41 @@ QString ServiceDatabase::getInterfaceID(const QServiceInterfaceDescriptor &descr
     Aside:  There is only one query which implicitly gets
     wrapped in it's own transaction.
 */
-QStringList ServiceDatabase::externalDefaultInterfaceIDs()
+QList<QPair<QString,QString> > ServiceDatabase::externalDefaultsInfo()
 {
-    QStringList interfaceIDs;
+    QList<QPair<QString,QString> > ret;
     if (!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::externalDefaultInterfaceIDs():-"
+        qWarning() << "ServiceDatabase::externalDefaultsInfo():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
-        return interfaceIDs;
+        return ret;
     }
 
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
 
     //Prepare search query, bind criteria values and execute search
-    QString selectComponent = "SELECT InterfaceID ";
+    QString selectComponent = "SELECT InterfaceName, InterfaceID ";
     QString fromComponent = "FROM Defaults ";
     QString whereComponent = "WHERE InterfaceID NOT IN (SELECT Interface.ID FROM Interface) ";
 
     //Aside: this individual query is implicitly wrapped in a transaction
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent)) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::getInterfaces():-"
+        qWarning() << "ServiceDatabase::externalDefaultsInfo():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
-        return interfaceIDs;
+        return ret;
     }
 
-    while (query.next())
-        interfaceIDs.append(query.value(EBindIndex).toString());
+    while (query.next()) {
+        ret.append(qMakePair(query.value(EBindIndex).toString(),
+                    query.value(EBindIndex1).toString()));
+    }
 
     m_lastError.setError(DBError::NoError);
-    return interfaceIDs;
+    return ret;
 }
 
 /*
@@ -677,73 +674,58 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
 bool ServiceDatabase::executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues)
 {
     Q_ASSERT(query != NULL);
-    if (!query->prepare(statement))
-    {
-        QString errorText;
-        errorText = "Problem: Could not prepare statement: %1"
-                    "\nReason: %2"
-                    "\nParameters: %3\n";
-        QString parameters;
-        if (bindValues.count() > 0) {
-            for(int i = 0; i < bindValues.count(); ++i) {
-                parameters.append(QString("\n\t[") + QString::number(i) + "]: " + bindValues.at(i).toString());
-            }
-        } else {
-            parameters = "None";
-        }
 
-        int result = query->lastError().number();
-        if (result == 26 || result == 11) { //SQLILTE_NOTADB || SQLITE_CORRUPT
-            m_lastError.setError(DBError::InvalidDatabaseFile,
-                    errorText.arg(statement).arg(query->lastError().text())
-                             .arg(parameters));
-        } else {
-            m_lastError.setSQLError(errorText.arg(statement)
+    bool success = false;
+    enum {Prepare =0 , Execute=1};
+    for(int stage=Prepare; stage <= Execute; ++stage) {
+        if ( stage == Prepare)
+            success = query->prepare(statement);
+        else // stage == Execute
+            success = query->exec();
+
+        if (!success) {
+            QString errorText;
+            errorText = "Problem: Could not %1 statement: %2"
+                "\nReason: %3"
+                "\nParameters: %4\n";
+            QString parameters;
+            if (bindValues.count() > 0) {
+                for(int i = 0; i < bindValues.count(); ++i) {
+                    parameters.append(QString("\n\t[") + QString::number(i) + "]: " + bindValues.at(i).toString());
+                }
+            } else {
+                parameters = "None";
+            }
+
+            DBError::ErrorCode errorType;
+            int result = query->lastError().number();
+            if (result == 26 || result == 11) {//SQLILTE_NOTADB || SQLITE_CORRUPT
+                qWarning() << "Service Framework:- Database file is corrupt or invalid:" << databasePath();
+                errorType = DBError::InvalidDatabaseFile;
+            }
+            else if ( result == 8) //SQLITE_READONLY
+                errorType = DBError::NoWritePermissions;
+            else
+                errorType = DBError::SqlError;
+
+            m_lastError.setError(errorType,
+                    errorText
+                    .arg(stage == Prepare ?"prepare":"execute")
+                    .arg(statement)
                     .arg(query->lastError().text())
                     .arg(parameters));
+
+            query->finish();
+            query->clear();
+            return false;
         }
 
-        query->finish();
-        query->clear();
-        return false;
-    }
-
-    foreach(const QVariant &bindValue, bindValues)
-        query->addBindValue(bindValue);
-
-    if(!query->exec())
-    {
-        QString errorText;
-        errorText = "Problem: Could not execute statement: %1"
-                    "\nReason: %2"
-                    "\nParameters: %3\n";
-        QString parameters;
-        if (bindValues.count() > 0) {
-            for(int i = 0; i < bindValues.count(); ++i) {
-                parameters.append(QString("\n\t[") + QString::number(i) + "]: " + bindValues.at(i).toString());
-
-            }
-        } else {
-            parameters = "None";
+        if (stage == Prepare) {
+            foreach(const QVariant &bindValue, bindValues)
+            query->addBindValue(bindValue);
         }
-
-        DBError::ErrorCode errorType;
-        int result = query->lastError().number();
-        if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
-            errorType = DBError::InvalidDatabaseFile;
-        else if ( result == 8) //SQLITE_READONLY
-            errorType = DBError::NoWritePermissions;
-        else
-            errorType = DBError::SqlError;
-
-        m_lastError.setError(errorType,
-                 errorText.arg(statement)
-                          .arg(query->lastError().text())
-                          .arg(parameters));
-        query->finish();
-        query->clear();
-        return false;
     }
+
     m_lastError.setError(DBError::NoError);
     return true;
 }
@@ -1354,9 +1336,11 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
     QSqlQuery query(database);
 
     if(!beginTransaction(&query, Write)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
                     << "Problem: Unable to begin transaction"
                     << "\nReason:" << qPrintable(m_lastError.text());
+#endif
         return false;
     }
 
@@ -1461,8 +1445,10 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         bindValues.append(serviceID);
         if (!executeQuery(&query, statement, bindValues)) {
             rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
             qWarning() << "ServiceDatabase::unregisterService():-"
                         << qPrintable(m_lastError.text());
+#endif
             return false;
         }
     }
@@ -1881,31 +1867,29 @@ bool ServiceDatabase::checkConnection()
 */
 bool ServiceDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
 {
-    if (type == Read) {
-         if (!query->exec(QLatin1String("BEGIN"))) {
-             int result = query->lastError().number();
-             if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
-                 m_lastError.setError(DBError::InvalidDatabaseFile, query->lastError().text());
-             else
-                 m_lastError.setError(DBError::SqlError, query->lastError().text());
-             return false;
-         }
-         m_lastError.setError(DBError::NoError);
-         return true;
-    } else { //type == Write
-        if (!query->exec(QLatin1String("BEGIN IMMEDIATE"))) {
-            int result = query->lastError().number();
-            if (result == 26 || result == 11)//SQLITE_NOTADB || SQLITE_CORRUPT
-                m_lastError.setError(DBError::InvalidDatabaseFile, query->lastError().text());
-            else if (result == 8) //SQLITE_READONLY
-                m_lastError.setError(DBError::NoWritePermissions, query->lastError().text());
-            else
-                m_lastError.setError(DBError::SqlError, query->lastError().text());
-            return false;
+    bool success;
+    if (type == Read)
+        success = query->exec(QLatin1String("BEGIN"));
+    else
+        success = query->exec(QLatin1String("BEGIN IMMEDIATE"));
+
+    if (!success) {
+        int result = query->lastError().number();
+        if (result == 26 || result == 11) {//SQLITE_NOTADB || SQLITE_CORRUPT
+            qWarning() << "Service Framework:- Database file is corrupt or invalid:" << databasePath();
+            m_lastError.setError(DBError::InvalidDatabaseFile, query->lastError().text());
         }
-        m_lastError.setError(DBError::NoError);
-        return true;
+        else if (result == 8) { //SQLITE_READONLY
+            qWarning() << "Service Framework:-  Insufficient permissions to write to database:" << databasePath();
+            m_lastError.setError(DBError::NoWritePermissions, query->lastError().text());
+        }
+        else
+            m_lastError.setError(DBError::SqlError, query->lastError().text());
+        return false;
     }
+
+    m_lastError.setError(DBError::NoError);
+    return true;
 }
 
 /*
