@@ -57,6 +57,10 @@ public:
     QAudioCaptureControl* control;
 };
 
+/*!
+    Construct a QAudioCapture from \a service with \a parent.
+*/
+
 QAudioCapture::QAudioCapture(QAudioCaptureService *service, QObject *parent)
     : QAbstractMediaObject(*new QAudioCapturePrivate, parent)
 {
@@ -71,15 +75,27 @@ QAudioCapture::QAudioCapture(QAudioCaptureService *service, QObject *parent)
     }
 }
 
+/*!
+    Destroys the audiocapture object.
+*/
+
 QAudioCapture::~QAudioCapture()
 {
 }
+
+/*!
+    Start recording audio
+*/
 
 void QAudioCapture::start()
 {
     if(d_func()->control)
         d_func()->control->start();
 }
+
+/*!
+    Stop recording audio
+*/
 
 void QAudioCapture::stop()
 {
@@ -88,6 +104,10 @@ void QAudioCapture::stop()
 }
 
 #ifdef AUDIOSERVICES
+/*!
+    Returns the audio format being used.
+*/
+
 QAudioFormat QAudioCapture::format() const
 {
     if(d_func()->control)
@@ -95,6 +115,10 @@ QAudioFormat QAudioCapture::format() const
     else
         return QAudioFormat();
 }
+
+/*!
+    Returns true if the \a format can be used.
+*/
 
 bool QAudioCapture::setFormat(const QAudioFormat &format)
 {
@@ -107,9 +131,17 @@ bool QAudioCapture::setFormat(const QAudioFormat &format)
 }
 #endif
 
+/*!
+    Sets the source audio device?, maybe should be device name passed?
+*/
+
 void QAudioCapture::setAudioInput(QObject *input)
 {
 }
+
+/*!
+    Returns the session object being controlled by this recorder.
+*/
 
 QAbstractMediaService *QAudioCapture::service() const
 {

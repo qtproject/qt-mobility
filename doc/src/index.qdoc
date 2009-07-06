@@ -21,6 +21,7 @@ To build the library, run \tt qmake and \tt make.
 \section2 Main classes
 
 \list
+    \o \l{QAudioCapture}
     \o \l{QMediaPlayer}
     \o \l{QMediaRecorder}
     \o \l{QRadioPlayer}
