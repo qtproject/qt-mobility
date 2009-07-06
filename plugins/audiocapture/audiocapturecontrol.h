@@ -32,16 +32,45 @@
 **
 ****************************************************************************/
 
+#ifndef AUDIOCAPTURECONTROL_H
+#define AUDIOCAPTURECONTROL_H
+
+#include <QtCore/qobject.h>
+#include <QtMultimedia/qaudioformat.h>
+
 #include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
 #include "qmediasource.h"
 
-QAudioCaptureControl::~QAudioCaptureControl()
-{
-}
+class AudioCaptureService;
+class AudioCaptureSession;
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+class AudioCaptureControl : public QAudioCaptureControl
 {
-}
+    Q_OBJECT
+public:
+    AudioCaptureControl(QObject *parent = 0);
+    AudioCaptureControl(AudioCaptureService *service, QObject *parent = 0);
+    ~AudioCaptureControl();
 
+    void start();
+    void stop();
+
+    QByteArray defaultDevice();
+    QList<QByteArray> deviceList();
+
+    QStringList supportedCodecs();
+    QList<int> supportedFrequencies();
+    QList<int> supportedChannels();
+    QList<int> supportedSampleSizes();
+    QList<QAudioFormat::Endian> supportedByteOrders();
+    virtual QList<QAudioFormat::SampleType> supportedSampleTypes();
+    QAudioFormat format();
+    bool setFormat(const QAudioFormat &format);
+    void setSink(QAbstractMediaObject* sink);
+
+private:
+    AudioCaptureService *m_service;
+    AudioCaptureSession *m_session;
+};
+
+#endif

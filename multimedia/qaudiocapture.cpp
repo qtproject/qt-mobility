@@ -60,8 +60,13 @@ QAudioCapture::QAudioCapture(QAudioCaptureService *service, QObject *parent)
 {
     Q_D(QAudioCapture);
 
-    d->service = service;
-    d->control = qobject_cast<QAudioCaptureControl *>(service->control());
+    if(service) {
+        d->service = service;
+        d->control = qobject_cast<QAudioCaptureControl *>(service->control("audiocapture"));
+    } else {
+        d->service = 0;
+        d->control = 0;
+    }
 }
 
 QAudioCapture::~QAudioCapture()
@@ -70,52 +75,82 @@ QAudioCapture::~QAudioCapture()
 
 void QAudioCapture::start()
 {
-    d_func()->control->start();
+    if(d_func()->control)
+        d_func()->control->start();
 }
 
 void QAudioCapture::stop()
 {
-    d_func()->control->stop();
+    if(d_func()->control)
+        d_func()->control->stop();
 }
 
 QByteArray QAudioCapture::defaultDevice()
 {
-    return d_func()->control->defaultDevice();
+    if(d_func()->control)
+        return d_func()->control->defaultDevice();
+    else
+        return QByteArray();
 }
 
 QList<QByteArray> QAudioCapture::deviceList()
 {
     Q_D(QAudioCapture);
 
-    return d->control->deviceList();
+    if(d->control)
+        return d->control->deviceList();
+    else {
+        QList<QByteArray> list;
+        return list;
+    }
 }
 
 QStringList QAudioCapture::supportedCodecs()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedCodecs();
+    if(d->control)
+        return d->control->supportedCodecs();
+    else {
+        QStringList list;
+        return list;
+    }
 }
 
 QList<int> QAudioCapture::supportedFrequencies()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedFrequencies();
+    if(d->control)
+        return d->control->supportedFrequencies();
+    else {
+        QList<int> list;
+        return list;
+    }
 }
 
 QList<int> QAudioCapture::supportedChannels()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedChannels();
+    if(d->control)
+        return d->control->supportedChannels();
+    else {
+        QList<int> list;
+        return list;
+    }
 }
 
 QList<int> QAudioCapture::supportedSampleSizes()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedSampleSizes();
+    if(d->control)
+        return d->control->supportedSampleSizes();
+    else {
+        QList<int> list;
+        return list;
+    }
 }
 
 #ifdef AUDIOSERVICES
@@ -123,28 +158,44 @@ QList<QAudioFormat::Endian> QAudioCapture::supportedByteOrders()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedByteOrders();
+    if(d->control)
+        return d->control->supportedByteOrders();
+    else {
+        QList<QAudioFormat::Endian> list;
+        return list;
+    }
 }
 
 QList<QAudioFormat::SampleType> QAudioCapture::supportedSampleTypes()
 {
     Q_D(QAudioCapture);
 
-    return d->control->supportedSampleTypes();
+    if(d->control)
+        return d->control->supportedSampleTypes();
+    else {
+        QList<QAudioFormat::SampleType> list;
+        return list;
+    }
 }
 
 QAudioFormat QAudioCapture::format()
 {
     Q_D(QAudioCapture);
 
-    return d->control->format();
+    if(d->control)
+        return d->control->format();
+    else
+        return QAudioFormat();
 }
 
 bool QAudioCapture::setFormat(const QAudioFormat &format)
 {
     Q_D(QAudioCapture);
 
-    return d->control->setFormat(format);
+    if(d->control)
+        return d->control->setFormat(format);
+    else
+        return false;
 }
 #endif
 
@@ -152,10 +203,26 @@ void QAudioCapture::setSink(QAbstractMediaObject* sink)
 {
     Q_D(QAudioCapture);
 
-    d->control->setSink(sink);
+    if(d->control)
+        d->control->setSink(sink);
 }
 
 QAbstractMediaService *QAudioCapture::service() const
 {
     return d_func()->service;
+}
+
+QAudioCaptureService* createAudioCaptureService(QMediaServiceProvider *provider)
+{
+    QObject *object = provider ? provider->createObject("com.nokia.qt.AudioCapture/1.0") : 0;
+
+    if (object) {
+        QAudioCaptureService *service = qobject_cast<QAudioCaptureService *>(object);
+
+        if (service)
+            return service;
+
+        delete service;
+    }
+    return 0;
 }

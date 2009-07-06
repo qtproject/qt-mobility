@@ -32,16 +32,29 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#ifndef AUDIOCAPTURESESSION_H
+#define AUDIOCAPTURESESSION_H
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include <QObject>
+#include "audiocapturecontrol.h"
+#include "qaudiocapture.h"
+
+
+class AudioCaptureSession : public QObject
 {
-}
+Q_OBJECT
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
-{
-}
+public:
+    AudioCaptureSession(QObject *parent);
+    virtual ~AudioCaptureSession();
 
+public slots:
+
+signals:
+
+private slots:
+
+private:
+};
+
+#endif // AUDIOCAPTURESESSION_H

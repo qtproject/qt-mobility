@@ -32,16 +32,25 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#ifndef AUDIOCAPTURESERVICE_H
+#define AUDIOCAPTURESERVICE_H
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include <QtCore/qobject.h>
+
+#include "qaudiocaptureservice.h"
+
+class AudioCaptureControl;
+
+class AudioCaptureService : public QAudioCaptureService
 {
-}
+    Q_OBJECT
+public:
+    AudioCaptureService(QObject *parent = 0);
+    ~AudioCaptureService();
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
-{
-}
+    QAbstractMediaControl *control(const char *name) const;
+private:
+    AudioCaptureControl *m_control;
+};
 
+#endif

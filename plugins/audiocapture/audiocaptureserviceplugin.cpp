@@ -32,16 +32,43 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include "audiocaptureserviceplugin.h"
+#include "audiocaptureservice.h"
+
+#include <qmediaserviceprovider.h>
+
+
+class AudioCaptureProvider : public QMediaServiceProvider
 {
+    Q_OBJECT
+public:
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
+            return new AudioCaptureService;
+
+        return 0;
+    }
+};
+
+QStringList AudioCaptureServicePlugin::keys() const
+{
+    return QStringList() << "audiocapture";
 }
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
 {
+    if (key == "audiocapture")
+        return new AudioCaptureProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
 }
+
+#include "audiocaptureserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(audiocaptureserviceplugin, AudioCaptureServicePlugin);
 

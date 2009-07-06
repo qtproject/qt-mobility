@@ -32,16 +32,15 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturecontrol.h"
-#include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#include "audiocapturesession.h"
 
-QAudioCaptureControl::~QAudioCaptureControl()
+#include <QDebug>
+
+AudioCaptureSession::AudioCaptureSession(QObject *parent)
+    :QObject(parent)
 {
 }
 
-QAudioCaptureControl::QAudioCaptureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+AudioCaptureSession::~AudioCaptureSession()
 {
 }
-
