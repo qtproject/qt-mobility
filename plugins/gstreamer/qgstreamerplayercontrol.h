@@ -139,12 +139,13 @@ class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
 class QMediaPlaylistNavigator;
 
+
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
 public:
-    QGstreamerPlayerControl(QGstreamerPlayerService *service, QObject *parent = 0);
+    QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
     ~QGstreamerPlayerControl();
 
     int state() const;
@@ -197,8 +198,7 @@ private slots:
     void play(const QMediaSource&);
     void updateState(QMediaPlayer::State state);
 
-private:
-    QGstreamerPlayerService *m_service;
+private:    
     QGstreamerPlayerSession *m_session;
     QMediaPlaylistNavigator *m_navigator;
 };

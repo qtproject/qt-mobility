@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/private/qobject_p.h>
+#include <QtCore/QDebug>
 
 #include "qmediametadata.h"
 #include "qmetadataprovider.h"
@@ -68,6 +69,8 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     if (d->provider != 0) {
         connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
         connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
+    } else {
+        qWarning() << "No provider for media metadata";
     }
 }
 
