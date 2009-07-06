@@ -4,4 +4,5 @@ SUBDIRS = tst_qcoordinate \
           tst_qsatelliteinfo \
           tst_qsatelliteinfosource \
           tst_qpositionsource \
-          tst_qpositionareamonitor
+          tst_qpositionareamonitor \
+          tst_qlocationutils

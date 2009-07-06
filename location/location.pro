@@ -14,6 +14,7 @@ INCLUDEPATH += .
 DEPENDPATH += .
 
 HEADERS +=  qlocationglobal.h \
+            qlocationutils_p.h \
             qcoordinate.h \
             qpositionupdate.h \
             qsatelliteinfo.h \
@@ -21,7 +22,8 @@ HEADERS +=  qlocationglobal.h \
             qpositionsource.h \
             qpositionareamonitor.h
 
-SOURCES +=  qcoordinate.cpp \
+SOURCES +=  qlocationutils.cpp \
+            qcoordinate.cpp \
             qpositionupdate.cpp \
             qsatelliteinfo.cpp \
             qsatelliteinfosource.cpp \
