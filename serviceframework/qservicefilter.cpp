@@ -249,7 +249,7 @@ int QServiceFilter::interfaceMinorVersion() const
 }
 
 /*!
-    The filter only matches implementations which have the custom constraint
+    The filter only matches implementations which have the custom property
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
