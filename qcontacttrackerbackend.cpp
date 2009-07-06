@@ -26,12 +26,17 @@ QString ContactTrackerFactory::managerId() const
 {
     return QString("tracker");
 }
-Q_EXPORT_PLUGIN2(contacts_tracker, ContactTrackerFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_tracker, ContactTrackerFactory);
 
 QContactTrackerEngine::QContactTrackerEngine(const QMap<QString, QString>& parameters)
     : d(new QContactTrackerEngineData)
 {
     Q_UNUSED(parameters);
+    // Let's load the settings. Here we store out detail definitions
+    // last used id, ...
+    bool ok;
+    QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
+    d->m_lastUsedId = definitions.value("nextAvailableContactId", "1").toUInt(&ok);
 }
 
 QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
@@ -63,6 +68,7 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
+// NOTE: Removed from Qt Mobility API.
 QContactManager::Error QContactTrackerEngine::error() const
 {
     return m_error;
@@ -86,10 +92,111 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId) const
     return QContact();
 }
 
-bool QContactTrackerEngine::saveContact(QContact* contact, bool batch)
+bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
 {
-    Q_UNUSED(contact)
-    Q_UNUSED(batch)
+    Q_UNUSED(batch);
+
+    // Ensure that the contact data is ok. This comes from QContactModelEngine
+    if(!validateContact(*contact, error)) {
+        m_error = QContactManager::InvalidDetailError;
+        return false;
+    }
+
+    Live<nco::PersonContact> ncoContact;
+    bool newContact = false;
+    if(contact->id() == 0) {
+        // Save new contact
+        newContact = true;
+        d->m_lastUsedId += 1;
+        ncoContact = ::tracker()->liveNode(QUrl("contact:"+(d->m_lastUsedId)));
+        QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
+        contact->setId(d->m_lastUsedId);
+        definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
+    }  else {
+        ncoContact = ::tracker()->liveNode(QUrl("contact:"+contact->id()));
+    }
+
+    ncoContact->setContactUID(QString(d->m_lastUsedId));
+
+    // Iterate the contact details that are set for the contact. Save them.
+    foreach(const QContactDetail& det, contact->details()) {
+        QString definition = det.definitionId();
+
+        /* Save name data */
+        if(definition == QContactName::DefinitionId) {
+            ncoContact->setNameGiven(det.value(QContactName::FieldFirst));
+            ncoContact->setNameAdditional(det.value(QContactName::FieldMiddle));
+            ncoContact->setNameFamily(det.value(QContactName::FieldLast));
+
+        /* Save address data */
+        } else if(definition == QContactAddress::DefinitionId) {
+            Live<nco::PostalAddress> ncoPostalAddress;
+
+            // Get the correct live nodes for address resources - depending on if
+            // this is home or work address.
+            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+                if(newContact) {
+                    ncoPostalAddress    = ncoContact->addHasPostalAddress();
+                } else {
+                    ncoPostalAddress    = ncoContact->getHasPostalAddress();
+                }
+
+            } else if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+                Live<nco::OrganizationContact> org;
+                Live<nco::Affiliation> aff;
+                if(newContact) {
+                    aff                 = ncoContact->addHasAffiliation();
+                    org                 = aff->addOrg();
+                    ncoPostalAddress    = org->addHasPostalAddress();
+                } else {
+                    aff                 = ncoContact->getHasAffiliation();
+                    org                 = aff->getOrg();
+                    ncoPostalAddress    = org->getHasPostalAddress();
+                }
+            }
+
+            // Found the correct address resource. Now update the data.
+            ncoPostalAddress->setStreetAddress(det.value(QContactAddress::FieldStreet));
+            ncoPostalAddress->setLocality(det.value(QContactAddress::FieldLocality));
+            ncoPostalAddress->setPostalcode(det.value(QContactAddress::FieldPostcode));
+            ncoPostalAddress->setRegion(det.value(QContactAddress::FieldRegion));
+            ncoPostalAddress->setCountry(det.value(QContactAddress::FieldCountry));
+
+        /* Save phone numbers. */
+        } else if(definition == QContactPhoneNumber::DefinitionId) {
+            Live<nco::Contact> contact;
+            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+                contact = ncoContact;
+            } else
+            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+                Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
+                contact = aff->getOrg();
+            }
+
+            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
+                QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
+                if(newContact) {
+                    Live<nco::CellPhoneNumber> cell = contact->addHasPhoneNumber();
+                    cell->setPhoneNumber(phoneNumber);
+                } else {
+                    /* TODO: This is totally a horrible way to handle Tracker data
+                     *       i.e. finding sub class types from a set of by libQtTracker... :-/
+                     */
+                    LiveNodes numbers = contact->getHasPhoneNumbers();
+                    foreach( Live<nco::PhoneNumber> number, numbers) {
+                        if(number.hasType<nco::CellPhoneNumber>()) {
+                            number->setPhoneNumber(phoneNumber);
+                        }
+                    }
+                }
+
+            /* Save emails */
+            } else if(definition == QContactEmailAddress::DefinitionId) {
+                // TODO.
+            }
+        }
+    }
+
     return false;
 }
 

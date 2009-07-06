@@ -23,6 +23,10 @@
 //
 
 #include <QSharedData>
+#include <QtTracker/Tracker>
+#include <QtTracker/ontologies/nco.h>
+
+using namespace SopranoLive;
 
 #include "qcontact.h"
 #include "qcontactname.h"
@@ -39,16 +43,17 @@ public:
     }
 
     QContactTrackerEngineData(const QContactTrackerEngineData& other)
-        : QSharedData(other), m_refCount(QAtomicInt(1))
+        : QSharedData(other), m_refCount(QAtomicInt(1)),
+        m_lastUsedId(other.m_lastUsedId),
+        m_definitions(other.m_definitions)
     {
     }
 
     ~QContactTrackerEngineData() {}
 
     QAtomicInt m_refCount;
-
-    static QMap<QString, QContactDetailDefinition> m_definitions;
-    static QUniqueId m_lastUsedId;
+    mutable QUniqueId m_lastUsedId;
+    mutable QMap<QString, QContactDetailDefinition> m_definitions;
 };
 
 class QTCONTACTS_EXPORT QContactTrackerEngine : public QContactManagerEngine
@@ -65,7 +70,7 @@ public:
     QList<QUniqueId> contacts() const;
     QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value) const;
     QContact contact(const QUniqueId& contactId) const;
-    bool saveContact(QContact* contact, bool batch = false);
+    bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, bool batch = false);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);

@@ -21,3 +21,5 @@ pluginlink.uninstall = rm -f /usr/lib/qt4/plugins/libqtcontacts_tracker.so
 pluginlink.commands = ln -sf qtcontacts-tracker/libqtcontacts_tracker.so "\$(INSTALL_ROOT)/usr/lib/qt4/plugins/libqtcontacts_tracker.so"
 
 INSTALLS += pluginlink
+
+LIBS += -lqttracker
