@@ -70,7 +70,6 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_TYPENAME \
                           Q_XML_EXPORT \
                           QTUITEST_EXPORT \
-                          QT_SFW_RESOLUTION_EXPORT \
                           Q_SFW_EXPORT \
                           QT_BEGIN_HEADER \
                           QT_END_HEADER \

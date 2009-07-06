@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -165,9 +157,8 @@ void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManag
         return;
     }
 
-    bool ok = false;
-    QStringList currentServices = database->getServiceNames(QString(), &ok);
-    if (!ok) {
+    QStringList currentServices = database->getServiceNames(QString());
+    if (database->lastError().errorCode() !=DBError::NoError) {
         qWarning("QServiceManager: failed to get current service names for serviceAdded() and serviceRemoved() signals");
         return;
     }
@@ -317,14 +308,13 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 {
     QList<QServiceInterfaceDescriptor> descriptors;
 
-    bool ok = false;
     int userDescriptorCount = 0;
     if (scope == UserScope) {
         if (!openDb(UserScope))
             return descriptors;
-        descriptors =  m_userDb->getInterfaces(filter, &ok);
 
-        if (ok == false) {
+        descriptors =  m_userDb->getInterfaces(filter);
+        if (m_userDb->lastError().errorCode() != DBError::NoError ) {
             descriptors.clear();
             m_lastError = m_userDb->lastError();
             return descriptors;
@@ -337,8 +327,8 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
     }
 
     if (openDb(SystemScope)) {
-        descriptors.append(m_systemDb->getInterfaces(filter, &ok));
-        if (ok == false) {
+        descriptors.append(m_systemDb->getInterfaces(filter));
+        if (m_systemDb->lastError().errorCode() != DBError::NoError) {
             descriptors.clear();
             m_lastError = m_systemDb->lastError();
             return descriptors;
@@ -365,12 +355,11 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DatabaseManager::DbScope scope)
 {
     QStringList serviceNames;
-    bool ok = false;
     if (scope == UserScope || scope == UserOnlyScope) {
         if(!openDb(DatabaseManager::UserScope))
             return serviceNames;
-        serviceNames = m_userDb->getServiceNames(interfaceName, &ok);
-        if(!ok) {
+        serviceNames = m_userDb->getServiceNames(interfaceName);
+        if(m_userDb->lastError().errorCode() != DBError::NoError) {
             serviceNames.clear();
             m_lastError = m_userDb->lastError();
             return serviceNames;
@@ -383,8 +372,8 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 
     if(openDb(DatabaseManager::SystemScope)) {
         QStringList systemServiceNames;
-        systemServiceNames = m_systemDb->getServiceNames(interfaceName, &ok);
-        if(!ok) {
+        systemServiceNames = m_systemDb->getServiceNames(interfaceName);
+        if(m_systemDb->lastError().errorCode() != DBError::NoError) {
             serviceNames.clear();
             m_lastError = m_systemDb->lastError();
             return serviceNames;
@@ -446,6 +435,7 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
+                    setDefaultService(descriptor, UserScope);
                     m_lastError.setError(DBError::NoError);
                     return descriptor;
                 } else {
@@ -603,13 +593,17 @@ bool DatabaseManager::openDb(DbScope scope)
     bool isOpen = db->open();
     if (!isOpen) {
         if (db->lastError().errorCode() == DBError::InvalidDatabaseFile) {
+            qWarning() << "Service Framework:- Database file is corrupt or invalid:" << db->databasePath();
             m_lastError = db->lastError();
         } else {
             DBError::ErrorCode errorType;
             if (scope == SystemScope)
                 errorType = DBError::CannotOpenSystemDb;
-            else
+            else {
+                qWarning() << "Service Framework:- Unable to open or create user scope database at: "
+                    << db->databasePath() << ".  The problem is most likely a permissions issue.";
                 errorType = DBError::CannotOpenUserDb;
+            }
 
             QString errorText("Unable to open service framework database: %1");
             m_lastError.setError(errorType,
@@ -622,13 +616,28 @@ bool DatabaseManager::openDb(DbScope scope)
         return false;
     }
 
+    //if we are opening the system database and are at user scope
+    //cleanup and reset any old external defaults
+    //from the user scope database
     if (scope == SystemScope && m_userDb->isOpen()) {
-        QStringList interfaceIDs = m_userDb->externalDefaultInterfaceIDs();
-        QServiceInterfaceDescriptor interface;
-        foreach( const QString &interfaceID, interfaceIDs ) {
-            interface = m_userDb->getInterface(interfaceID);
-            if (m_userDb->lastError().errorCode() == DBError::NotFound)
-                m_userDb->removeExternalDefaultServiceInterface(interfaceID);
+        QList<QPair<QString,QString> > externalDefaultsInfo;
+        externalDefaultsInfo = m_userDb->externalDefaultsInfo();
+        QServiceInterfaceDescriptor descriptor;
+        QPair<QString,QString> defaultInfo;
+
+        for (int i = 0; i < externalDefaultsInfo.count(); ++i) {
+            defaultInfo = externalDefaultsInfo[i];
+            descriptor = m_userDb->getInterface(defaultInfo.second);
+            if (m_userDb->lastError().errorCode() == DBError::NotFound) {
+                m_userDb->removeExternalDefaultServiceInterface(defaultInfo.second);
+                QList<QServiceInterfaceDescriptor> descriptors;
+                descriptors = getInterfaces(defaultInfo.first, UserScope);
+
+                if (descriptors.count() > 0 ) {
+                    descriptor = latestDescriptor(descriptors);
+                    setDefaultService(descriptor, UserScope);
+                }
+            }
         }
     }
 

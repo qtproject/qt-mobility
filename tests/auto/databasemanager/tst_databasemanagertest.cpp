@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -43,13 +35,13 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../servicefw/serviceframework/serviceresolution/qserviceinterfacedescriptor.cpp"
+#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
 #include <servicedatabase.h>
-#include "../../../servicefw/serviceframework/servicemetadata/servicemetadata.cpp"
-#include "../../../servicefw/serviceframework/servicedatabase/servicedatabase.cpp"
+#include "../../../serviceframework/servicemetadata.cpp"
+#include "../../../serviceframework/servicedatabase.cpp"
 #include <qservicefilter.h>
 #include <databasemanager.h>
-#include "../../../servicefw/serviceframework/servicedatabase/databasemanager.cpp"
+#include "../../../serviceframework/databasemanager.cpp"
 #include "../qsfwtestutil.h"
 
 #if defined(Q_OS_SYMBIAN)
@@ -69,9 +61,9 @@ private slots:
 #ifdef Q_OS_UNIX        
 	void permissions();
         void onlyUserDbAvailable();
-        void nonWritableSystemDb();
         void defaultServiceCornerCases();
 #endif
+        void nonWritableSystemDb();
         void cleanupTestCase();
 private:
        bool compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -197,6 +189,13 @@ void DatabaseManagerUnitTest::getInterfaces()
     QCOMPARE(descriptors[3].inSystemScope(), true);
     QVERIFY(compareDescriptor(descriptors[4], "com.dharma.wheel", "DharmaInitiative", 1, 0, capabilities, "C:/island/orchid.dll"));
     QCOMPARE(descriptors[4].inSystemScope(), true);
+
+    //search for a non-existent interface
+    filter.setServiceName("");
+    filter.setInterface("com.omni.device.fluxcapacitor");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 0);
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
 }
 
 void DatabaseManagerUnitTest::getServiceNames()
@@ -224,6 +223,14 @@ void DatabaseManagerUnitTest::getServiceNames()
     expectedNames.clear();
     expectedNames << "acme" << "LuthorCorp" << "Primatech" << "omni" << "WayneEnt"
                     << "DharmaInitiative" << "Autobot" << "Decepticon";
+    QCOMPARE(serviceNames.count(), expectedNames.count());
+    foreach(const QString &expectedName, expectedNames)
+        QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
+
+    //try getting names of services that implement particular interface
+    serviceNames = m_dbm->getServiceNames("com.omni.device.accelerometer", DatabaseManager::UserScope);
+    expectedNames.clear();
+    expectedNames << "LuthorCorp" << "Primatech" << "omni" << "WayneEnt";
     QCOMPARE(serviceNames.count(), expectedNames.count());
     foreach(const QString &expectedName, expectedNames)
         QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
@@ -348,6 +355,11 @@ void DatabaseManagerUnitTest::defaultService()
                                         DatabaseManager::SystemScope);
     QVERIFY(compareDescriptor(descriptors[0], "com.cybertron.transform",
                                 "Autobot", 2, 5));
+
+    //Look up a default service for a non-existent interface
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.fluxcapacitor", DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
 }
 
 void DatabaseManagerUnitTest::unregisterService()
@@ -392,6 +404,11 @@ void DatabaseManagerUnitTest::unregisterService()
     m_dbm->unregisterService("dharmainitiative", DatabaseManager::SystemScope);
     QCOMPARE(m_dbm->getInterfaces(filter, DatabaseManager::SystemScope).count(), 0);
     QCOMPARE(m_dbm->getInterfaces(filter, DatabaseManager::UserScope).count(), userCount);
+
+    //try and drop a table in the database by SQL injection
+    QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
     clean();
 }
 
@@ -719,6 +736,253 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     clean();
 }
 
+void DatabaseManagerUnitTest::defaultServiceCornerCases()
+{
+    m_dbm = new DatabaseManager;
+    ServiceMetaData parser("");
+
+    QStringList userServiceFiles;
+    userServiceFiles << "ServiceAcme.xml" << "ServiceLuthorCorp.xml"
+                    << "ServicePrimatech.xml"
+                    << "ServiceDharma_Swan.xml"
+                    << "ServiceDharma_Pearl.xml"
+                    << "ServiceDharma_Flame.xml"
+                    << "ServiceDecepticon.xml";
+
+    foreach (const QString &serviceFile, userServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    }
+
+    QStringList systemServiceFiles;
+    systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
+                        << "ServiceDharma_Hydra.xml"
+                        << "ServiceDharma_Orchid.xml"
+                        << "ServiceAutobot.xml";
+    foreach (const QString &serviceFile, systemServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    }
+
+    // == set a system service interface implementation as a default at user scope then
+    //    delete the system service and observe whether a new default
+    //    has been chosen ==
+    m_dbm->setDefaultService("DharmaInitiative", "com.dharma.electro.discharge",
+                                DatabaseManager::UserScope);
+    QServiceInterfaceDescriptor descriptor =
+                m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                                DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
+                                "DharmaInitiative", 42, 0));
+    QVERIFY(descriptor.inSystemScope());
+    QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                                DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
+                                "DharmaInitiative", 16, 0));
+    //  check again because there was a bug where the default service
+    //  was correctly returned the first time but not the second
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                                DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
+                                "DharmaInitiative", 16, 0));
+
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+
+    // == set a system service interface as a default at user scope,
+    //    remove availability to system db and confirm default cannot be found
+    //    for that interface.  Then restore the system db and confirm
+    //    that a default can indeed be found. ==
+    QVERIFY(m_dbm->setDefaultService("WayneEnt", "com.omni.device.accelerometer",
+                                        DatabaseManager::UserScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                        DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                    "WayneEnt", 2, 0));
+    QString systemDbFilePath = m_dbm->m_systemDb->databasePath();
+    QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
+    modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+
+    delete m_dbm;
+    m_dbm = new DatabaseManager;
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                DatabaseManager::UserScope);
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                DatabaseManager::UserScope);
+    QVERIFY(m_dbm->m_systemDb->isOpen());
+    QVERIFY(descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                    "WayneEnt", 2, 0));
+
+    //== set a system service interface as a user scope default,
+    //   delete the service from the system scope database,
+    //   ensure that when the default interface is queried
+    //   it no longer exists ==
+    m_dbm->setDefaultService("omni", "com.omni.device.lights", //(will set an entry in the
+                                DatabaseManager::UserScope);   //defaults table of the user db database)
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
+                                        DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.lights",
+                                "omni", 9, 0));
+    QVERIFY(m_dbm->unregisterService("omni", DatabaseManager::SystemScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
+                                            DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    clean();
+    //Reinitialise the database
+    m_dbm = new DatabaseManager;
+
+    userServiceFiles.clear();
+    userServiceFiles << "ServiceAcme.xml" << "ServiceLuthorCorp.xml"
+                    << "ServicePrimatech.xml"
+                    << "ServiceDharma_Swan.xml"
+                    << "ServiceDecepticon.xml";
+
+    foreach (const QString &serviceFile, userServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    }
+    systemServiceFiles.clear();
+    systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
+                        << "ServiceDharma_Hydra.xml"
+                        << "ServiceDharma_Orchid.xml"
+                        << "ServiceAutobot.xml";
+    foreach (const QString &serviceFile, systemServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    }
+
+    //== Set a couple of external defaults in the user scope database,
+    //   -remove the service that provides these defaults at the system scope.
+    //    this will leave "hanging" default links in the user scope database
+    //   -also set one default which will not be a hanging link
+    //   -recreate the database manager and run getServiceNames so it will
+    //    connect to both system and user scope databases.
+    //   -verify that the hanging defaults links have been appropriately removed
+    //    or reset to a new default interface implementation
+    //   -also verify that the non-hanging link still exists ==
+    QServiceFilter filter;
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("com.dharma.electro.discharge");
+    QList<QServiceInterfaceDescriptor> descriptors;
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QVERIFY(descriptors.count() > 0);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    filter.setServiceName("DharmaInitiative");
+    filter.setInterface("com.dharma.wheel");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QVERIFY(descriptors.count() > 0);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    filter.setServiceName("WayneEnt");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+
+    QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
+    QList<QPair<QString, QString> > externalDefaultsInfo = m_dbm->m_userDb->externalDefaultsInfo();
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(externalDefaultsInfo.length(), 3);
+
+    delete m_dbm;
+
+    m_dbm = new DatabaseManager;
+    m_dbm->getServiceNames("", DatabaseManager::UserScope);
+    QCOMPARE(m_dbm->m_userDb->externalDefaultsInfo().count(), 1);
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
+                                        DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor,"com.dharma.electro.discharge",
+                            "DharmaInitiative", 4,0));
+    descriptor = m_dbm->defaultServiceInterface("com.dharma.wheel",
+                                        DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                            DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                            "WayneEnt", 2,0));
+
+    // == set a system service interface as a default at user scope
+    //        -remove the availability of the system db and confirm the default
+    //         cannot be found
+    //        -set a new default
+    //        -restore availability of the system db and confirm the default
+    //         is still the new default
+    filter.setServiceName("omni");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+    delete m_dbm;
+
+    systemPermsSet = QFile::permissions(systemDbFilePath);
+    modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+
+    m_dbm = new DatabaseManager;
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                                DatabaseManager::UserScope);
+    QVERIFY(!descriptor.isValid());
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    filter.setServiceName("LuthorCorp");
+    filter.setInterface("com.omni.device.accelerometer");
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QCOMPARE(descriptors.count(), 1);
+    QVERIFY(m_dbm->m_userDb->isOpen());
+    QVERIFY(!m_dbm->m_systemDb->isOpen());
+    QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                        DatabaseManager::UserScope);
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                "LuthorCorp", 1,2));
+    modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+    m_dbm->getServiceNames("", DatabaseManager::UserScope);//this call is just to open the system db
+    QVERIFY(m_dbm->m_systemDb->isOpen());
+
+    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
+                                            DatabaseManager::UserScope);
+    QVERIFY(descriptor.isValid());
+    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
+                                "LuthorCorp", 1,2));
+
+    // == Try set a descriptor as a default but the descriptor is invalid
+    //    because the service it belongs to has been removed ==
+    descriptor = m_dbm->defaultServiceInterface("com.cybertron.transform",
+                                         DatabaseManager::SystemScope);
+    QVERIFY(compareDescriptor(descriptor, "com.cybertron.transform",
+                                "Autobot", 2, 7));
+    QVERIFY(m_dbm->unregisterService("Autobot",
+                            DatabaseManager::SystemScope));
+    QVERIFY(!m_dbm->setDefaultService(descriptor, DatabaseManager::UserScope));
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    QVERIFY(!m_dbm->setDefaultService(descriptor, DatabaseManager::SystemScope));
+    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+
+    clean();
+}
+#endif
+
 void DatabaseManagerUnitTest::nonWritableSystemDb()
 {
     m_dbm = new DatabaseManager;
@@ -910,108 +1174,13 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     QVERIFY(!m_dbm->unregisterService("DharmaInitiative",
                 DatabaseManager::SystemScope));
     QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+
+    //make system database writable again
+    modifyPermissionSet(systemPermsSet, QFile::WriteOwner);
+    QFile::setPermissions(systemDbFilePath, systemPermsSet);
+
     clean();
 }
-
-void DatabaseManagerUnitTest::defaultServiceCornerCases()
-{
-    m_dbm = new DatabaseManager;
-    ServiceMetaData parser("");
-
-    QStringList userServiceFiles;
-    userServiceFiles << "ServiceAcme.xml" << "ServiceLuthorCorp.xml"
-                    << "ServicePrimatech.xml"
-                    << "ServiceDharma_Swan.xml"
-                    << "ServiceDharma_Pearl.xml"
-                    << "ServiceDharma_Flame.xml"
-                    << "ServiceDecepticon.xml";
-
-    foreach (const QString &serviceFile, userServiceFiles) {
-        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
-        QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
-    }
-
-    QStringList systemServiceFiles;
-    systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
-                        << "ServiceDharma_Hydra.xml"
-                        << "ServiceDharma_Orchid.xml"
-                        << "ServiceAutobot.xml";
-    foreach (const QString &serviceFile, systemServiceFiles) {
-        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
-        QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    }
-
-    // == set a system service interface implementation as a default at user scope then
-    //    delete the system service and observe whether a new default
-    //    has been chosen ==
-    m_dbm->setDefaultService("DharmaInitiative", "com.dharma.electro.discharge",
-                                DatabaseManager::UserScope);
-    QServiceInterfaceDescriptor descriptor =
-                m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
-                                                DatabaseManager::UserScope);
-    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
-                                "DharmaInitiative", 42, 0));
-    QVERIFY(descriptor.inSystemScope());
-    QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
-    descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
-                                                DatabaseManager::UserScope);
-    QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
-                                "DharmaInitiative", 16, 0));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
-
-    // == set a system service interface as a default at user scope,
-    //    remove availability to system db and confirm default cannot be found
-    //    for that interface.  Then restore the system db and confirm
-    //    that a default can indeed be found. ==
-    QVERIFY(m_dbm->setDefaultService("WayneEnt", "com.omni.device.accelerometer",
-                                        DatabaseManager::UserScope));
-    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
-                                        DatabaseManager::UserScope);
-    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
-                                    "WayneEnt", 2, 0));
-    QString systemDbFilePath = m_dbm->m_systemDb->databasePath();
-    QFile::Permissions systemPermsSet = QFile::permissions(systemDbFilePath);
-    modifyPermissionSet(systemPermsSet, ~QFile::ReadOwner);
-    QFile::setPermissions(systemDbFilePath, systemPermsSet);
-
-    delete m_dbm;
-    m_dbm = new DatabaseManager;
-    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
-                                                DatabaseManager::UserScope);
-    QVERIFY(m_dbm->m_userDb->isOpen());
-    QVERIFY(!m_dbm->m_systemDb->isOpen());
-    QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
-
-    modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
-    QFile::setPermissions(systemDbFilePath, systemPermsSet);
-    descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
-                                                DatabaseManager::UserScope);
-    QVERIFY(m_dbm->m_systemDb->isOpen());
-    QVERIFY(descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
-    QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
-                                    "WayneEnt", 2, 0));
-
-    //== set a system service interface as a user scope default,
-    //   delete the service from the system scope database,
-    //   ensure that when the default interface is queried
-    //   it no longer exists ==
-    m_dbm->setDefaultService("omni", "com.omni.device.lights", //(will set an entry in the
-                                DatabaseManager::UserScope);   //defaults table of the user db database)
-    descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
-                                        DatabaseManager::UserScope);
-    QVERIFY(compareDescriptor(descriptor, "com.omni.device.lights",
-                                "omni", 9, 0));
-    QVERIFY(m_dbm->unregisterService("omni", DatabaseManager::SystemScope));
-    descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
-                                            DatabaseManager::UserScope);
-    QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
-}
-#endif
 
 void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
@@ -1060,14 +1229,13 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
 
 void DatabaseManagerUnitTest::clean()
 {
-    QSfwTestUtil::removeTempUserDb();
-    QSfwTestUtil::removeTempSystemDb();
-
     if (m_dbm != 0 ) {
         m_dbm->close();
         delete m_dbm;
     }
     m_dbm = 0;
+    
+    QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
 }
 
 void DatabaseManagerUnitTest::cleanupTestCase()

@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -58,24 +50,25 @@ class DBError
     public:
         enum ErrorCode {
             NoError,
-            DatabaseNotOpen = -2000,
-            InvalidDatabaseConnection,
-            ComponentAlreadyRegistered,
-            IfaceImplAlreadyRegistered,
-            NotFound,
-            SqlError,
-            InvalidSearchCriteria,
-            IfaceIDNotExternal,
-            CannotCloseDatabase,
-            CannotCreateDbDir,
-            CannotOpenSystemDb,
-            CannotOpenUserDb,
-            CannotCreateSystemDbDir,
-            CannotCreateUserDbDir,
-            ExternalIfaceIDFound,
-            InvalidDescriptorScope,
-            InvalidDatabaseFile,
-            NoWritePermissions,
+            DatabaseNotOpen = -2000,    //A connection with the database has not been opened
+                                        //  database needs to be opened before any operations take place
+            InvalidDatabaseConnection,  //The database connection does not have a valid driver
+            LocationAlreadyRegistered,  //A service location has already been registered.
+            IfaceImplAlreadyRegistered, //An interface implementation by a given service is already registered to that service
+            NotFound,       
+            SqlError,               //An Sql error occurred.
+            IfaceIDNotExternal,     //InterfaceID does not refer to an external interface implementation
+            CannotCreateDbDir,      //Directory to contain database could not be created(usu a permissions issue)
+            CannotOpenSystemDb,     //system database cannot be opened(usually a permissions issue)
+            CannotOpenUserDb,       //user database cannot be opened (usually a permissions issue)
+            ExternalIfaceIDFound,   //Notification for defaultServiceInterface() on a user scope database
+                                    //  to indicate that a default refers to an interface implementation in the
+                                    //  system scope database
+            InvalidDescriptorScope, //Notification for setDefaultService() on a system scope database
+                                    //  to indicate that a user scope descriptor cannot be used
+                                    //  with a system scope database.
+            InvalidDatabaseFile,    //database file is corrupted or not a valid database
+            NoWritePermissions,     //trying to perform a write operation without sufficient permissions
             UnknownError
         };
         DBError();
@@ -108,23 +101,22 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         bool close();
 
         bool isOpen() const;
-        void setDatabasePath(const QString &aDatabasePath);
+        void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
         bool registerService(ServiceMetaData &service);
         bool unregisterService(const QString &serviceName);
 
-        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, bool *ok = 0);
+        QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);
         QServiceInterfaceDescriptor getInterface(const QString &interfaceID);
         QString getInterfaceID(const QServiceInterfaceDescriptor &interface);
-        QStringList getServiceNames(const QString &interfaceName, bool *ok =0);
+        QStringList getServiceNames(const QString &interfaceName);
 
         QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName,
-                                                            QString *interfaceID = 0);
-        bool setDefaultService(const QString &serviceName, const QString &interfaceName);
+                                    QString *interfaceID = 0, bool inTransaction = false);
         bool setDefaultService(const QServiceInterfaceDescriptor &interface,
                                 const QString &externalInterfaceID = QString());
-        QStringList externalDefaultInterfaceIDs();
+        QList<QPair<QString,QString> > externalDefaultsInfo();
         bool removeExternalDefaultServiceInterface(const QString &interfaceID);
 
         DBError lastError() const { return m_lastError; }
@@ -134,6 +126,8 @@ Q_SIGNALS:
         void serviceRemoved(const QString& serviceName);
 
     private:
+        enum TransactionType{Read, Write};
+
         bool createTables();
         bool dropTables();
         bool checkTables();
@@ -141,18 +135,20 @@ Q_SIGNALS:
         bool checkConnection();
 
         bool executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>());
-        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface, bool *ok = 0);
+        QString getInterfaceID(QSqlQuery *query, const QServiceInterfaceDescriptor &interface);
         bool insertInterfaceData(QSqlQuery *query, const QServiceInterfaceDescriptor &anInterface, const QString &serviceID);
 
-        void databaseCommit(QSqlQuery *query, QSqlDatabase *database);
-        void databaseRollback(QSqlQuery *query, QSqlDatabase *database);
+        bool beginTransaction(QSqlQuery *query, TransactionType);
+        bool commitTransaction(QSqlQuery *query);
+        bool rollbackTransaction(QSqlQuery *query);
 
         bool populateInterfaceProperties(QServiceInterfaceDescriptor *descriptor, const QString &interfaceID);
         bool populateServiceProperties(QServiceInterfaceDescriptor *descriptor, const QString &serviceID);
 
-        QString iDatabasePath;
+        QString m_databasePath;
         QString m_connectionName;
-        bool iDatabaseOpen;
+        bool m_isDatabaseOpen;
+        bool m_inTransaction;
         DBError m_lastError;
 };
 
