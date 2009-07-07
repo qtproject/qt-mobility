@@ -53,9 +53,10 @@ This section provides some examples of common usage of the API.
 
 \section2 Filtering by detail definition and value
 
-In this example, it is assumed that there is a detail definition which is identified by the well-known
-identifier "PhoneNumber".  The client instantiates a default manager and asks for any contacts with
-a particular phone number.
+The client instantiates a default manager and asks for any contacts with
+a particular phone number.  The example assumes that the default manager supports
+the provided QContactPhoneNumber detail leaf class (which implements the default
+definition for phone number details).
 
 \code
     QString incomingCallNbr = "012345678";
@@ -119,8 +120,6 @@ The client creates a new contact, and saves it to a particular store (in this ca
 Note that while the available stores may be requested from the capabilities of the manager, we assume in this case that the client
 knows that the store is available.
 
-Note that vCard is a registered trademark of the Internet Mail Consortium.
-
 \code
     QContact c;
     c.name().setFirst("John");
@@ -170,10 +169,6 @@ QAbstractListModel), and allow the user to modify that contact.
 The user wishes to view the details of a particular contact without modifying them.
 
 \code
-    // the client code stores the id of the contact in a user-role (called ContactIdRole) of the model.
-    // we assume that the user wishes to modify the 5th (ie, index 4) contact in the model.
-    QUniqueId selectedContactId = model.data(model.index(4), ContactIdRole);
-
     // retrieve the contact identified by the particular id from the manager.
     QContactManager cm;
     QContact selected = cm.contact(selectedContactId);
@@ -217,7 +212,7 @@ Qt Mobility Contacts API.  They are general in design but are intended
 to fulfil specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality, or they may
-require clients to access contact information through the \l{QContactDetail}
+require that clients access contact information through the \l{QContactDetail}
 base class alone.
 
 \list

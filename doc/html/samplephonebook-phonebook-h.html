@@ -57,6 +57,7 @@
 
     class QListWidget;
     class QPushButton;
+    class QComboBox;
     class QLabel;
     class QLineEdit;
     class QTextEdit;
@@ -80,6 +81,10 @@
         void selectAvatar();
         void contactSelected(int row);
 
+    private slots:
+        void backendChanged(const QList&lt;QUniqueId&gt;&amp; changed);
+        void backendSelected(const QString&amp; backend);
+
     private:
         QContact buildContact() const;
         void displayContact();
@@ -96,6 +101,9 @@
         QPushButton *exportButton;
         QPushButton *quitButton;
         QLabel *currentIndexLabel;
+        QLabel *currentBackendLabel;
+
+        QComboBox *backendCombo;
 
         QLineEdit *nameLine;
         QPushButton *avatarButton;
@@ -109,7 +117,6 @@
 
         int currentIndex;
         QList&lt;QContact&gt; contacts;
-        QList&lt;QString&gt; contactAvatars;
 
         QContactManager *cm;
     };

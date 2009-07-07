@@ -45,7 +45,7 @@
 <p>This section provides some examples of common usage of the API.</p>
 <a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
-<p>In this example, it is assumed that there is a detail definition which is identified by the well-known identifier &quot;PhoneNumber&quot;. The client instantiates a default manager and asks for any contacts with a particular phone number.</p>
+<p>The client instantiates a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
 <pre>    QString incomingCallNbr = &quot;012345678&quot;;
     QContactManager cm; <span class="comment">// retrieves the default manager</span>
     QList&lt;QUniqueId&gt; matchingContacts = cm.contactsWithDetail(&quot;PhoneNumber&quot;, incomingCallNbr);
@@ -88,7 +88,6 @@
 <a name="saving-a-new-contact-to-a-particular-store"></a>
 <h3>Saving a new contact to a particular store</h3>
 <p>The client creates a new contact, and saves it to a particular store (in this case, a vCard store) of the default manager. Note that while the available stores may be requested from the capabilities of the manager, we assume in this case that the client knows that the store is available.</p>
-<p>Note that vCard is a registered trademark of the Internet Mail Consortium.</p>
 <pre>    QContact c;
     c.name().setFirst(&quot;John&quot;);
     c.name().setLast(&quot;Citizen&quot;);
@@ -127,11 +126,7 @@
 <a name="retrieving-contact-details-for-display"></a>
 <h3>Retrieving contact details for display</h3>
 <p>The user wishes to view the details of a particular contact without modifying them.</p>
-<pre><span class="comment">    // the client code stores the id of the contact in a user-role (called ContactIdRole) of the model.</span>
-<span class="comment">    // we assume that the user wishes to modify the 5th (ie, index 4) contact in the model.</span>
-    QUniqueId selectedContactId = model.data(model.index(4), ContactIdRole);
-
-<span class="comment">    // retrieve the contact identified by the particular id from the manager.</span>
+<pre><span class="comment">    // retrieve the contact identified by the particular id from the manager.</span>
     QContactManager cm;
     QContact selected = cm.contact(selectedContactId);
 
@@ -164,7 +159,7 @@
 </ul>
 <a name="detail-leaf-classes"></a>
 <h3>Detail leaf classes</h3>
-<p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Contacts API. They are general in design but are intended to fulfil specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality, or they may require clients to access contact information through the <a href="qcontactdetail.html">QContactDetail</a> base class alone.</p>
+<p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Contacts API. They are general in design but are intended to fulfil specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality, or they may require that clients access contact information through the <a href="qcontactdetail.html">QContactDetail</a> base class alone.</p>
 <ul>
 <li><a href="qcontactaddress.html">QContactAddress</a></li>
 <li><a href="qcontactanniversary.html">QContactAnniversary</a></li>
