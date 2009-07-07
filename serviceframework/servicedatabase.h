@@ -82,7 +82,7 @@ class DBError
             m_text = errorText;
         }
         QString text() const { return m_text; }
-        ErrorCode errorCode() const { return m_error; }
+        ErrorCode code() const { return m_error; }
     private:
         QString m_text;
         ErrorCode m_error;

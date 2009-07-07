@@ -195,7 +195,7 @@ void DatabaseManagerUnitTest::getInterfaces()
     filter.setInterface("com.omni.device.fluxcapacitor");
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 0);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 }
 
 void DatabaseManagerUnitTest::getServiceNames()
@@ -301,7 +301,7 @@ void DatabaseManagerUnitTest::defaultService()
     QCOMPARE(descriptors.count(), 1);
 
     QVERIFY(!m_dbm->setDefaultService(descriptors[0], DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::InvalidDescriptorScope);
+    QCOMPARE(m_dbm->lastError().code(), DBError::InvalidDescriptorScope);
 
     // == try setting defaults using setDefaultService(serviceName, interfaceName, ...)
     //set a local default in the user scope database
@@ -325,7 +325,7 @@ void DatabaseManagerUnitTest::defaultService()
 
     descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
                                                 DatabaseManager::UserScope);
-    QVERIFY(m_dbm->lastError().errorCode() == DBError::NoError);
+    QVERIFY(m_dbm->lastError().code() == DBError::NoError);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 42, 0));
 
@@ -359,7 +359,7 @@ void DatabaseManagerUnitTest::defaultService()
     //Look up a default service for a non-existent interface
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.fluxcapacitor", DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 }
 
 void DatabaseManagerUnitTest::unregisterService()
@@ -407,7 +407,7 @@ void DatabaseManagerUnitTest::unregisterService()
 
     //try and drop a table in the database by SQL injection
     QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     clean();
 }
@@ -519,7 +519,7 @@ void DatabaseManagerUnitTest::permissions()
     QVERIFY(parser.extractMetadata());
     m_dbm = new DatabaseManager;
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
 
     //try to create a system scope database with no permission to
     //create the directory needed for the system db
@@ -528,7 +528,7 @@ void DatabaseManagerUnitTest::permissions()
     QVERIFY(QFile::setPermissions(systemDir, systemPermsSet));
 
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
 
     //restore directory permissions
     modifyPermissionSet(userPermsSet, QFile::ExeOwner);
@@ -543,7 +543,7 @@ void DatabaseManagerUnitTest::permissions()
     modifyPermissionSet(userPermsSet, ~QFile::WriteOwner);
     QVERIFY(QFile::setPermissions(userDir + "/Nokia/", userPermsSet));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
 
     //restore user directory permissions and create and populate a user database
     modifyPermissionSet(userPermsSet, QFile::WriteOwner);
@@ -563,7 +563,7 @@ void DatabaseManagerUnitTest::permissions()
     descriptors= m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QVERIFY(!m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
 
     //restore permissions
     modifyPermissionSet(userPermsSet, QFile::ReadOwner);
@@ -582,7 +582,7 @@ void DatabaseManagerUnitTest::permissions()
     descriptors= m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QVERIFY(!m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::InvalidDatabaseFile);
+    QCOMPARE(m_dbm->lastError().code(), DBError::InvalidDatabaseFile);
 
     //recreate a valid user database
     userDbFile.remove();
@@ -601,7 +601,7 @@ void DatabaseManagerUnitTest::permissions()
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceLuthorCorp.xml")));
     QVERIFY(parser.extractMetadata());
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 5);
 
@@ -633,7 +633,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
         QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
-        QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+        QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     }
 
     QVERIFY(m_dbm->m_userDb->isOpen());
@@ -641,7 +641,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceOmni.xml")));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
     
     QServiceFilter filter;
     filter.setServiceName("");
@@ -649,7 +649,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QList<QServiceInterfaceDescriptor> descriptors;
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 8);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     //Use getInterfaces where the database has not already been opened
     //( via a previous call to register service)
@@ -659,7 +659,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QCOMPARE(descriptors.count(), 8);
     QVERIFY(m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     //Use getServiceNames where the database has not already been opened
     delete m_dbm;
@@ -667,7 +667,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QStringList serviceNames;
     serviceNames = m_dbm->getServiceNames("", DatabaseManager::UserScope);
     QCOMPARE(serviceNames.count(), 3);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     //Use defaultService where database has not already been opened
     delete m_dbm;
@@ -677,7 +677,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
             DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                             "LuthorCorp", 1, 2));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QVERIFY(m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
 
@@ -686,16 +686,16 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     m_dbm = new DatabaseManager;
     QVERIFY(m_dbm->setDefaultService("Primatech", "com.omni.device.accelerometer",
                         DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                                 DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                 "Primatech", 1, 4));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     QVERIFY(!m_dbm->setDefaultService("Primatech", "com.omni.device.accelerometer",
                                 DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
 
     //Use setDefaultService(descriptor, scope)
     filter.setServiceName("Primatech");
@@ -707,28 +707,28 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
                                 "Primatech", 1,2));
     QVERIFY(m_dbm->setDefaultService(descriptors[0],
                                             DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                             DatabaseManager::UserScope);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                 "Primatech", 1,2));
     QVERIFY(!m_dbm->setDefaultService(descriptor, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::InvalidDescriptorScope);
+    QCOMPARE(m_dbm->lastError().code(), DBError::InvalidDescriptorScope);
 
     //Use unregisterService()
     delete m_dbm;
     m_dbm = new DatabaseManager;
     QVERIFY(m_dbm->unregisterService("primatech", DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     filter.setServiceName("Primatech");
     filter.setInterface("");
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QCOMPARE(descriptors.count(),0);
 
     QVERIFY(!m_dbm->unregisterService("primatech", DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
 
     //restore permissions so we can clean up the test directories
     modifyPermissionSet(systemPermsSet, QFile::WriteOwner);
@@ -789,7 +789,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 16, 0));
 
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     // == set a system service interface as a default at user scope,
     //    remove availability to system db and confirm default cannot be found
@@ -813,7 +813,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
     QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
     QFile::setPermissions(systemDbFilePath, systemPermsSet);
@@ -821,7 +821,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
                                                 DatabaseManager::UserScope);
     QVERIFY(m_dbm->m_systemDb->isOpen());
     QVERIFY(descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                     "WayneEnt", 2, 0));
 
@@ -839,7 +839,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.lights",
                                             DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
     clean();
     //Reinitialise the database
     m_dbm = new DatabaseManager;
@@ -897,7 +897,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
 
     QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
     QList<QPair<QString, QString> > externalDefaultsInfo = m_dbm->m_userDb->externalDefaultsInfo();
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QCOMPARE(externalDefaultsInfo.length(), 3);
 
     delete m_dbm;
@@ -912,7 +912,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     descriptor = m_dbm->defaultServiceInterface("com.dharma.wheel",
                                         DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                             DatabaseManager::UserScope);
@@ -940,7 +940,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                                 DatabaseManager::UserScope);
     QVERIFY(!descriptor.isValid());
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     filter.setServiceName("LuthorCorp");
     filter.setInterface("com.omni.device.accelerometer");
@@ -951,7 +951,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                         DatabaseManager::UserScope);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
                                 "LuthorCorp", 1,2));
     modifyPermissionSet(systemPermsSet, QFile::ReadOwner);
@@ -974,10 +974,10 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     QVERIFY(m_dbm->unregisterService("Autobot",
                             DatabaseManager::SystemScope));
     QVERIFY(!m_dbm->setDefaultService(descriptor, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     QVERIFY(!m_dbm->setDefaultService(descriptor, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NotFound);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
     clean();
 }
@@ -1020,12 +1020,12 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
     QVERIFY(parser.extractMetadata());
     QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceAutobot.xml")));
     QVERIFY(parser.extractMetadata());
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
 
     //== test getInterfaces() ==
     delete m_dbm;
@@ -1101,7 +1101,7 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
                                     "DharmaInitiative", 4, 0));
     QVERIFY(m_dbm->setDefaultService("DharmaInitiative", "com.dhARMa.electro.discharge",
                                     DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.discharge",
                                             DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
@@ -1114,7 +1114,7 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
                                     "DharmaInitiative", 4, 0));
     QVERIFY(!m_dbm->setDefaultService("DharmaInitiative", "com.dharma.electro.discharge",
                                     DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
     descriptor = m_dbm->defaultServiceInterface("com.dharma.electro.Discharge",
                                             DatabaseManager::SystemScope);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
@@ -1133,7 +1133,7 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 1);
     QVERIFY(m_dbm->setDefaultService(descriptors[0], DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     descriptor = m_dbm->defaultServiceInterface("com.omni.device.accelerometer",
                                         DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer",
@@ -1158,22 +1158,22 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     //  try setting a descriptor at system scope
     QVERIFY(!m_dbm->setDefaultService(descriptor,
                                     DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
 
     //==test unregisterService()==
     delete m_dbm;
     m_dbm = new DatabaseManager;
     QVERIFY(m_dbm->unregisterService("primatech", DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     filter.setServiceName("Primatech");
     filter.setInterface("");
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoError);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     QCOMPARE(descriptors.count(), 0);
 
     QVERIFY(!m_dbm->unregisterService("DharmaInitiative",
                 DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().errorCode(), DBError::NoWritePermissions);
+    QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
 
     //make system database writable again
     modifyPermissionSet(systemPermsSet, QFile::WriteOwner);

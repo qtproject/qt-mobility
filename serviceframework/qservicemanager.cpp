@@ -118,7 +118,7 @@ public:
 
     void setError()
     {
-        switch (dbManager->lastError().errorCode()) {
+        switch (dbManager->lastError().code()) {
             case DBError::NoError:
                 error = QServiceManager::NoError;
                 break;
@@ -304,7 +304,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
     d->setError(NoError);
     QList<QServiceInterfaceDescriptor> descriptors = d->dbManager->getInterfaces(filter,
             d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
-    if (descriptors.isEmpty() && d->dbManager->lastError().errorCode() != DBError::NoError) {
+    if (descriptors.isEmpty() && d->dbManager->lastError().code() != DBError::NoError) {
         d->setError();
         return QList<QServiceInterfaceDescriptor>();
     }
@@ -598,7 +598,7 @@ QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QStri
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     QServiceInterfaceDescriptor info = d->dbManager->defaultServiceInterface(interfaceName, scope);
-    if (d->dbManager->lastError().errorCode() != DBError::NoError) {
+    if (d->dbManager->lastError().code() != DBError::NoError) {
         d->setError();
         return QServiceInterfaceDescriptor();
     }
