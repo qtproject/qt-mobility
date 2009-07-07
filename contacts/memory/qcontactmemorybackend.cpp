@@ -317,19 +317,6 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
 }
 
 /*! \reimp */
-QContactDetailDefinition QContactMemoryEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
-{
-    detailDefinitions(error); // just to populate the definitions if we haven't already.
-    if (d->m_definitions.contains(definitionId)) {
-        error = QContactManager::NoError;
-        return d->m_definitions.value(definitionId);
-    } else {
-        error = QContactManager::DoesNotExistError;
-        return QContactDetailDefinition();
-    }
-}
-
-/*! \reimp */
 bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
 {
     if (!validateDefinition(def, error)) {

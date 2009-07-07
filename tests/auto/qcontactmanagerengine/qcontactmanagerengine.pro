@@ -4,5 +4,6 @@ SUBDIRS += dummyplugin \
             dummyplugininvalid \
             dummypluginmemory \
             dummyotherplugin \
+            dummypluginempty \
             unittest
 

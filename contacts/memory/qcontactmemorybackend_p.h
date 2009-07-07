@@ -113,7 +113,6 @@ public:
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 

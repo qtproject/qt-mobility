@@ -83,7 +83,6 @@ Q_IMPORT_PLUGIN(contacts_teststaticdummy);
 Q_EXPORT_PLUGIN2(contacts_teststaticdummycopy, DummyStaticEngineFactory);
 Q_IMPORT_PLUGIN(contacts_teststaticdummycopy);
 
-
 /* And test an impostor as well */
 class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactory
 {
@@ -110,6 +109,19 @@ class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFacto
 
 Q_EXPORT_PLUGIN2(contacts_testimpostordummy2, ImpostorEngineFactory2);
 Q_IMPORT_PLUGIN(contacts_testimpostordummy2);
+
+/* An empty interface name */
+class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QContactManagerEngineFactory)
+    public:
+        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
+        QString managerId() const {return QString();}
+};
+
+Q_EXPORT_PLUGIN2(contacts_teststaticemptydummy, EmptyEngineFactory);
+Q_IMPORT_PLUGIN(contacts_teststaticemptydummy);
 
 /* And a different interface one too */
 

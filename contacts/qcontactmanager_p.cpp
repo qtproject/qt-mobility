@@ -88,7 +88,7 @@ void QContactManagerData::createEngine(const QString& managerId, const QMap<QStr
             m_managerId = "invalid";
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
-            m_engine = new QContactInvalidEngine();
+            m_engine = new QContactInvalidEngine(); // XXX share
         }
     }
     m_params = parameters;
@@ -114,7 +114,7 @@ void QContactManagerData::loadFactories()
             if (f) {
                 QString name = f->managerId();
                 qDebug() << "Static: found a" << f << "with name" << name;
-                if (name != "memory" && name != "invalid") {
+                if (name != "memory" && name != "invalid" && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
                         m_engines.insert(name, f);
                     } else {
@@ -169,7 +169,7 @@ void QContactManagerData::loadFactories()
                 QString name = f->managerId();
                 qDebug() << "Dynamic: found a" << f << "with name" << name;
 
-                if (name != "memory" && name != "invalid") {
+                if (name != "memory" && name != "invalid" && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
                         m_engines.insert(name, f);
                     } else {
