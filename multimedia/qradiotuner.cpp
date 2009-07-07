@@ -33,12 +33,23 @@
 ****************************************************************************/
 
 #include "qradiotuner.h"
+#include "qabstractmediacontrol_p.h"
 
+
+/*!
+    \class QRadioTuner
+    \ingroup multimedia
+
+    \preliminary
+    \brief The abstract class for controling the tuning of radio devices.
+
+    \sa QAbstractMediaService, QRadioPlayer
+*/
 
 QRadioTuner::QRadioTuner(QObject *parent):
-    QAbstractMediaControl(parent)
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-    addPropertyWatch("duration");
+//    addPropertyWatch("duration");
 }
 
 QRadioTuner::~QRadioTuner()

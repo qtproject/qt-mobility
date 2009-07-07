@@ -37,6 +37,16 @@
 
 
 /*!
+    \class QAbstractMediaObject
+    \ingroup multimedia
+
+    \preliminary
+    \brief The base Multimedia object.
+
+    \sa QAbstractMediaService, QAbstractMediaControl
+*/
+
+/*!
     \fn QAbstractMediaService* QAbstractMediaObject::service() const
 
     Returns the media service that provide the functionality for the Multimedia object.
