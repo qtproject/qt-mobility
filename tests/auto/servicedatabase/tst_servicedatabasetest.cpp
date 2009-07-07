@@ -519,15 +519,19 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
 
     customs["bot"] = "automatic";
     customs["extension"] = "multidrive";
-    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     customs.clear();
     customs["bot"] = "automatic";
-    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Autobot", 2, 5, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Autobot", 2, 5,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     customs.clear();
     customs["bot"] = "automatic";
-    QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Autobot", 1, 9, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    customs["weapon"] = "";
+    QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Autobot", 1, 9,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     filter.setCustomProperty("extension","multidrive");
     QCOMPARE(filter.customProperty("extension"), QString("multidrive"));
@@ -538,7 +542,8 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     customs.clear();
     customs["bot"] = "automatic";
     customs["extension"] = "multidrive";
-    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter manualFilter;
     manualFilter.setCustomProperty("bot", "manual");
@@ -547,8 +552,13 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
 
     customs.clear();
     customs["bot"]="manual";
-    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 1, 0, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
-    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Autobot", 2, 0, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    customs["weapon"]="laser";
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 1, 0,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    customs.clear();
+    customs["bot"] = "manual";
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Autobot", 2, 0,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter multidriveFilter;
     multidriveFilter.setCustomProperty("extension", "multidrive");
@@ -558,16 +568,81 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     customs.clear();
     customs["bot"] = "automatic";
     customs["extension"] = "multidrive";
-    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7, capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 2, 7,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     //test whether querying a custom property will affect the filter
-    QServiceFilter filter2;
-    interfaces = database.getInterfaces(filter2);
+    filter.setServiceName("");
+    filter.setInterface("");
+    filter.clearCustomProperties();
+    interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
-    QString customProperty = filter2.customProperty("weapon");
+    QString customProperty = filter.customProperty("spark");
     QVERIFY(customProperty.isEmpty());
-    interfaces = database.getInterfaces(filter2);
+    interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
+
+    //test the removal of a custom property from the filter
+    filter.setCustomProperty("bot", "automatic");
+    filter.setCustomProperty("extension", "multidrive");
+    QCOMPARE(filter.customKeys().length(), 2);
+    filter.removeCustomProperty("bot");
+    QCOMPARE(filter.customKeys().length(), 1);
+    filter.removeCustomProperty("extension");
+    QCOMPARE(filter.customKeys().length(), 0);
+
+    //test clearing of custom properties
+    filter.setCustomProperty("bot", "automatic");
+    filter.setCustomProperty("extension", "multidrive");
+    QCOMPARE(filter.customKeys().length(),2);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 1);
+    filter.clearCustomProperties();
+    QCOMPARE(filter.customKeys().length(), 0);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 36);
+
+    //test searching for an empty custom property
+    filter.setCustomProperty("weapon", "");
+    interfaces = database.getInterfaces(filter);
+    customs.clear();
+    customs["bot"] = "automatic";
+    customs["weapon"] = "";
+    QCOMPARE(interfaces.length(), 2);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 1, 9,
+                capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
+    customs.clear();
+    customs["weapon"]= "";
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 1, 1,
+                capabilities, customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+
+    filter.clearCustomProperties();
+
+    //test searching against a non-existent custom property
+    filter.setCustomProperty("fluxcapacitor", "fluxing");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(), 0);
+    QCOMPARE(database.lastError().errorCode(), DBError::NoError);
+
+    //try searching for custom property with service name and interface constraints
+    filter.clearCustomProperties();
+    filter.setServiceName("autobot");
+    filter.setInterface("com.cybertron.transform", "2.0");
+    filter.setCustomProperty("bot", "automatic");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),2);
+    QVERIFY(interfaces[0].majorVersion() == 2 && interfaces[0].minorVersion() == 7);
+    QVERIFY(interfaces[1].majorVersion() == 2 && interfaces[1].minorVersion() == 5);
+
+    //test that there is a difference between querying a custom
+    //property with an empty value and a custom property that has not been set
+    filter.clearCustomProperties();
+    filter.setCustomProperty("AllSpark", "");
+    QVERIFY(!filter.customProperty("AllSpark").isNull());
+    QVERIFY(filter.customProperty("AllSpark").isEmpty());
+    QVERIFY(filter.customProperty("Non-existentProperty").isNull());
+
     QVERIFY(database.close());
 }
 

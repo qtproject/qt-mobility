@@ -9,6 +9,7 @@
         <capabilities></capabilities>
         <description>Transformation interface</description>
         <customproperty key="bot">manual</customproperty>
+        <customproperty key="weapon">laser</customproperty>
     </interface>    
     <interface>
         <name>com.cybertron.transform</name>
@@ -38,5 +39,6 @@
         <capabilities></capabilities>
         <description>Transformation interface</description>
         <customproperty key="bot">automatic</customproperty>
+        <customproperty key="weapon"></customproperty>
     </interface>    
 </service>
