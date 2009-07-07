@@ -173,39 +173,75 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
         /* Save phone numbers. */
         } else if(definition == QContactPhoneNumber::DefinitionId) {
+            // The new phone number field to save into Tracker.
+            QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
+
+            // Our contact node - this can either be an OrganizationContact or PersonContact depending on
+            // if we are saving a work or home phone number.
             Live<nco::Contact> contact;
+
             if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
-                contact = ncoContact;
+                // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
+                contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
             } else
             if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+                // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
+                // Tracker will create new nodes for us if these don't already exist.
                 Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
                 contact = aff->getOrg();
             }
+            // Get all existing phone numbers from the Contact node.
+            LiveNodes numbers = contact->getHasPhoneNumbers();
 
+            // Save mobile phone number.
+            // TODO: Find a better way to edit and manipulate subclass types of LiveNodes.
             if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
-                QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
-                if(newContact) {
-                    Live<nco::CellPhoneNumber> cell = contact->addHasPhoneNumber();
-                    cell->setPhoneNumber(phoneNumber);
-                } else {
-                    /* TODO: This is totally a horrible way to handle Tracker data
-                     *       i.e. finding sub class types from a set of by libQtTracker... :-/
-                     */
-                    LiveNodes numbers = contact->getHasPhoneNumbers();
-                    foreach( Live<nco::PhoneNumber> number, numbers) {
-                        if(number.hasType<nco::CellPhoneNumber>()) {
-                            number->setPhoneNumber(phoneNumber);
-                        }
+                bool found = false;
+                foreach( Live<nco::PhoneNumber> number, numbers) {
+                    if(number.hasType<nco::CellPhoneNumber>()) {
+                        number->setPhoneNumber(phoneNumber);
+                        found = true;
                     }
                 }
-
-            /* Save emails */
-            } else if(definition == QContactEmailAddress::DefinitionId) {
-                // TODO.
+                if(!found) {
+                    Live<nco::CellPhoneNumber> number = ::tracker()->createLiveNode();
+                    number->setPhoneNumber(phoneNumber);
+                    contact->addHasPhoneNumber(number);
+                }
+            // Save voice number.
+            } else if(det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeVoice)) {
+                bool found = false;
+                foreach( Live<nco::VoicePhoneNumber> number, numbers) {
+                    if(number.hasType<nco::VoicePhoneNumber>()) {
+                        number->setPhoneNumber(phoneNumber);
+                        found = true;
+                    }
+                }
+                if(!found) {
+                    Live<nco::VoicePhoneNumber> number = ::tracker()->createLiveNode();
+                    number->setPhoneNumber(phoneNumber);
+                    contact->addHasPhoneNumber(number);
+                }
+            // Or save it as a general phone number
+            } else {
+                bool found = false;
+                foreach( Live<nco::PhoneNumber> number, numbers) {
+                    if(number.hasType<nco::PhoneNumber>()) {
+                        number->setPhoneNumber(phoneNumber);
+                        found = true;
+                    }
+                }
+                if(!found) {
+                    Live<nco::PhoneNumber> number = ::tracker()->createLiveNode();
+                    number->setPhoneNumber(phoneNumber);
+                    contact->addHasPhoneNumber(number);
+                }
             }
+        /* Save emails */
+        } else if(definition == QContactEmailAddress::DefinitionId) {
+                // TODO.
         }
     }
-
     error = QContactManager::NoError;
 
     return true;
