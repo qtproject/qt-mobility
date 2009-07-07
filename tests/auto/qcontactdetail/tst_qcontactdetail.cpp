@@ -46,20 +46,15 @@ public:
     tst_QContactDetail();
     virtual ~tst_QContactDetail();
 
-
 public slots:
     void init();
     void cleanup();
+
 private slots:
     void classHierarchy();
     void templates();
     void attributes();
     void values();
-
-    // leaf classes.
-    void phoneNumber();
-    void name();
-    void custom();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -645,122 +640,6 @@ void tst_QContactDetail::values()
     /* Check removing a missing value */
     QVERIFY(!p.removeValue("does not exist"));
     QCOMPARE(p.error(), QContactDetail::MissingValueError);
-}
-
-void tst_QContactDetail::phoneNumber()
-{
-    QContact c;
-    QContactPhoneNumber p1, p2;
-
-    // test property set
-    p1.setNumber("1234");
-    QCOMPARE(p1.number(), QString("1234"));
-    QCOMPARE(p1.value(QContactPhoneNumber::FieldNumber), QString("1234"));
-
-    // test property attributes
-//    QCOMPARE(p1.attributes(), QContactPhoneNumber::Landline); // default value
-//    p1.setAttributes(QContactPhoneNumber::Mobile | QContactPhoneNumber::Voip);
-//    QCOMPARE(p1.attributes(), QContactPhoneNumber::Mobile | QContactPhoneNumber::Voip);
-
-    // test property add
-    QVERIFY(c.saveDetail(&p1));
-    QCOMPARE(c.details("PhoneNumber").count(), 1);
-    QCOMPARE(QContactPhoneNumber(c.details("PhoneNumber").value(0)).number(), p1.number());
-
-    // test property update
-    p1.setValue("label","label1");
-    p1.setNumber("12345");
-    QVERIFY(c.saveDetail(&p1));
-    QCOMPARE(c.details("PhoneNumber").value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details("PhoneNumber").value(0).value(QContactPhoneNumber::FieldNumber), QString("12345"));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&p1));
-    QCOMPARE(c.details("PhoneNumber").count(), 0);
-    QVERIFY(c.saveDetail(&p2));
-    QCOMPARE(c.details("PhoneNumber").count(), 1);
-    QVERIFY(c.removeDetail(&p2));
-    QCOMPARE(c.details("PhoneNumber").count(), 0);
-    QVERIFY(c.removeDetail(&p2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
-    QCOMPARE(c.details("PhoneNumber").count(), 0);
-}
-
-void tst_QContactDetail::name()
-{
-    QContact c;
-    QContactName n1, n2;
-
-    QVERIFY(n1.isEmpty());
-    QVERIFY(n2.isEmpty());
-
-    // test property set
-    QCOMPARE(n1.displayName(), QString());
-    n1.setFirst("Freddy");
-    n1.setLast("Gumboots");
-    QCOMPARE(n1.displayName(), QString("Freddy Gumboots"));
-    QCOMPARE(n1.first(), QString("Freddy"));
-    n1.setDisplayName("1234");
-    QCOMPARE(n1.displayName(), QString("1234"));
-
-    // test property add
-    QVERIFY(c.saveDetail(&n1));
-    QCOMPARE(c.details("Name").count(), 1);
-    QCOMPARE(QContactName(c.details("Name").value(0)).displayName(), n1.displayName());
-    QVERIFY(c.saveDetail(&n1)); // we shoudl be able to "add" a new name; but, it should update
-    QCOMPARE(c.details("Name").count(), 1); // so count remains the same.
-
-    // test property update
-    n1.setValue("label","label1");
-    n1.setDisplayName("12345");
-    QVERIFY(c.saveDetail(&n1));
-
-    // test property remove
-    QVERIFY(!c.removeDetail(&n1));
-    QCOMPARE(c.details("Name").count(), 1);
-    QVERIFY(c.saveDetail(&n2));
-    QCOMPARE(c.details("Name").count(), 1);
-    QVERIFY(!c.removeDetail(&n2));
-    QCOMPARE(c.details("Name").count(), 1); // cannot remove the name
-    QVERIFY(!c.removeDetail(&n2));
-    QVERIFY(c.error() == QContact::PermissionsError);
-    QCOMPARE(c.details("Name").count(), 1);
-}
-
-void tst_QContactDetail::custom()
-{
-    QContact c;
-    QContactDetail c1("mycustom"), c2("mycustom");
-
-    // test property set
-    c1.setValue("custom", "1234");
-    QCOMPARE(c1.value("custom"), QString("1234"));
-
-    // test property attributes
-    //QCOMPARE(p1.attributes(), QContactPhoneNumber::Landline); // default value
-    //p1.setAttributes(QContactPhoneNumber::Mobile | QContactPhoneNumber::Voip);
-    //QCOMPARE(p1.attributes(), QContactPhoneNumber::Mobile | QContactPhoneNumber::Voip);
-
-    // test property add
-    QVERIFY(c.saveDetail(&c1));
-    QCOMPARE(c.details("mycustom").count(), 1);
-    QCOMPARE((c.details("mycustom").value(0)).value("custom"), c1.value("custom"));
-
-    // test property update
-    c1.setValue("label","label1");
-    c1.setValue("custom", "12345");
-    QVERIFY(c.saveDetail(&c1));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&c1));
-    QCOMPARE(c.details("mycustom").count(), 0);
-    QVERIFY(c.saveDetail(&c2));
-    QCOMPARE(c.details("mycustom").count(), 1);
-    QVERIFY(c.removeDetail(&c2));
-    QCOMPARE(c.details("mycustom").count(), 0);
-    QVERIFY(c.removeDetail(&c2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
-    QCOMPARE(c.details("mycustom").count(), 0);
 }
 
 

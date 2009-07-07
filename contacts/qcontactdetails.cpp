@@ -558,30 +558,31 @@ QString QContactAddress::displayLabel() const
 
     if (!lc.trimmed().isEmpty()) {
         if (!result.isEmpty())
-            result += " ";
+            result += "\n";
         result += lc;
     }
 
     if (!rg.trimmed().isEmpty()) {
         if (!result.isEmpty())
-            result += " ";
-        result += ", " + rg + ",";
+            result += "\n";
+        result += rg;
     }
 
     if (!pc.trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += " ";
+        if (!result.isEmpty()) {
+            if (result.at(result.size()-1) != '\n') {
+                result += ", ";
+            }
+
+        }
         result += pc;
     }
 
     if (!cn.trimmed().isEmpty()) {
         if (!result.isEmpty())
-            result += " ";
+            result += "\n";
         result += cn;
     }
-
-    if (result.endsWith(","))
-        result.chop(1);
 
     return result;
 }
