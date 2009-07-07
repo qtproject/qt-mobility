@@ -3,10 +3,10 @@ description = Multimedia Library Reference Documentation
 
 imagedirs = images
 
-headerdirs = ../../multimedia
+headerdirs = ../../multimedia ../../multimedia/endpoints
 
-sourcedirs = ../../multimedia \
-             .
+
+sourcedirs = ../../multimedia ../../multimedia/endpoints
 
 sources.fileextensions  = "*.qdoc *.cpp"
 

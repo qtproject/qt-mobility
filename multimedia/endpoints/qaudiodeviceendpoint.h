@@ -107,6 +107,10 @@ public:
     virtual Roles roles(int index) const = 0;
     virtual FormFactor formFactor(int index) const = 0;
 
+    virtual QString name(int index) const = 0;
+    virtual QString description(int index) const = 0;
+    virtual QIcon icon(int index) const = 0;
+
     virtual int defaultInputDevice(Role role) const = 0;
     virtual int defaultOutputDevice(Role role) const = 0;
 

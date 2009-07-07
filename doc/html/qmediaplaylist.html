@@ -13,49 +13,113 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylist Class Reference</h1>
+<p>The QMediaPlaylist class provides a list of media sources to play. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaPlaylist&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherited by <a href="qsharedmediaplaylist.html">QSharedMediaPlaylist</a>.</p>
 <ul>
 <li><a href="qmediaplaylist-members.html">List of all members, including inherited members</a></li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qmediaplaylist.html#QMediaPlayList">QMediaPlayList</a></b> ( QString <i>name</i>, QPlayListSource = defaultPlayListSource() )</li>
-<li><div class="fn"></div><b><a href="qmediaplaylist.html#clear">clear</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#enqueue">enqueue</a></b> ( QMediaSource )</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#remove">remove</a></b> ( QMediaSource )</li>
+<li><div class="fn"/><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaPlaylistSource * <i>source</i> = 0, QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>virtual <b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#append">append</a></b> ( const QMediaSource &amp; <i>source</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#append-2">append</a></b> ( const QList&lt;QMediaSource&gt; &amp; <i>sources</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#clear">clear</a></b> ()</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#insert">insert</a></b> ( int <i>pos</i>, const QMediaSource &amp; <i>source</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const</li>
+<li><div class="fn"/>QMediaSource <b><a href="qmediaplaylist.html#itemAt">itemAt</a></b> ( int <i>position</i> ) const</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#load">load</a></b> ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#remove">remove</a></b> ( int <i>pos</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#remove-2">remove</a></b> ( int <i>start</i>, int <i>end</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#save">save</a></b> ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</li>
+<li><div class="fn"/>bool <b><a href="qmediaplaylist.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</li>
+<li><div class="fn"/>int <b><a href="qmediaplaylist.html#size">size</a></b> () const</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#jump">jump</a></b> ( int )</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#next">next</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#pause">pause</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#prev">prev</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#start">start</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#stop">stop</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#shuffle">shuffle</a></b> ()</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediaplaylist.html#current">current</a></b> ( MediaSource )</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a></b> ( int <i>start</i>, int <i>end</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#itemsChanged">itemsChanged</a></b> ( int <i>start</i>, int <i>end</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ()</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
+<p>The QMediaPlaylist class provides a list of media sources to play.</p>
+<p>Depending on playlist source implementation, most of playlist modifcation operations can be asynchronous.</p>
+<p>See also <a href="qmediasource.html">QMediaSource</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlayList"></a>QMediaPlaylist::QMediaPlayList ( QString <i>name</i>, QPlayListSource = defaultPlayListSource() )</h3>
-<h3 class="fn"><a name="clear"></a>QMediaPlaylist::clear ()</h3>
-<h3 class="fn"><a name="current"></a>void QMediaPlaylist::current ( MediaSource )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<h3 class="fn"><a name="enqueue"></a>void QMediaPlaylist::enqueue ( <a href="qmediasource.html">QMediaSource</a> )</h3>
-<h3 class="fn"><a name="jump"></a>void QMediaPlaylist::jump ( int )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="next"></a>void QMediaPlaylist::next ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="pause"></a>void QMediaPlaylist::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="prev"></a>void QMediaPlaylist::prev ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="remove"></a>void QMediaPlaylist::remove ( <a href="qmediasource.html">QMediaSource</a> )</h3>
-<h3 class="fn"><a name="start"></a>void QMediaPlaylist::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="stop"></a>void QMediaPlaylist::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( <a href="qmediaplaylistsource.html">QMediaPlaylistSource</a> * <i>source</i> = 0, QObject * <i>parent</i> = 0 )</h3>
+<p>Create a new playlist object for playlist <i>source</i>. If source is null, internal local memory playlist source will be created.</p>
+<h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the playlist.</p>
+<h3 class="fn"><a name="append"></a>bool QMediaPlaylist::append ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )</h3>
+<p>Append the media <i>source</i> to the playlist.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="append-2"></a>bool QMediaPlaylist::append ( const QList&lt;<a href="qmediasource.html">QMediaSource</a>&gt; &amp; <i>sources</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
+<p>Append the list of media <i>sources</i> to the playlist.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3>
+<p>Remove all the items from the playlist.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="insert"></a>bool QMediaPlaylist::insert ( int <i>pos</i>, const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )</h3>
+<p>Insert the media <i>source</i> to the playlist at position <i>pos</i>.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3>
+<p>Returns true if the playlist contains no items; otherwise returns false.</p>
+<p>See also <a href="qmediaplaylist.html#size">size</a>().</p>
+<h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylist::isReadOnly () const</h3>
+<p>Returns true if the playlist can be modified; otherwise returns false.</p>
+<p>See also <a href="qmediaplaylist.html#size">size</a>() and ..</p>
+<h3 class="fn"><a name="itemAt"></a><a href="qmediasource.html">QMediaSource</a> QMediaPlaylist::itemAt ( int <i>position</i> ) const</h3>
+<p>Returns the media source at index <i>position</i> in the playlist.</p>
+<h3 class="fn"><a name="itemsAboutToBeInserted"></a>void QMediaPlaylist::itemsAboutToBeInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemsAboutToBeRemoved"></a>void QMediaPlaylist::itemsAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemsChanged"></a>void QMediaPlaylist::itemsChanged ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media sources have been changed in the playlist between start and end positions inclusive.</p>
+<h3 class="fn"><a name="itemsInserted"></a>void QMediaPlaylist::itemsInserted ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemsRemoved"></a>void QMediaPlaylist::itemsRemoved ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="load"></a>bool QMediaPlaylist::load ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
+<p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
+<p>New items are appended to playlist.</p>
+<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<h3 class="fn"><a name="load-2"></a>bool QMediaPlaylist::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
+<p>Load playlist from QIODevice <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
+<p>New items are appended to playlist.</p>
+<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<h3 class="fn"><a name="remove"></a>bool QMediaPlaylist::remove ( int <i>pos</i> )</h3>
+<p>Remove the item from the playlist at position <i>pos</i>.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="remove-2"></a>bool QMediaPlaylist::remove ( int <i>start</i>, int <i>end</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
+<p>Remove the items from the playlist from position <i>start</i> to <i>end</i> inclusive.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="save"></a>bool QMediaPlaylist::save ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
+<p>Save playlist to <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name.</p>
+<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
+<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylist::save ( QIODevice * <i>device</i>, const char * <i>format</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
+<p>Save playlist to QIODevice <i>device</i> using format <i>format</i>.</p>
+<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
+<h3 class="fn"><a name="shuffle"></a>void QMediaPlaylist::shuffle ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Shuffle items in the playlist.</p>
+<h3 class="fn"><a name="size"></a>int QMediaPlaylist::size () const</h3>
+<p>Returns the number of items in the playlist.</p>
+<p>See also <a href="qmediaplaylist.html#isEmpty">isEmpty</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

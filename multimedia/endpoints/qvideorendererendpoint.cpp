@@ -55,14 +55,11 @@ public:
     \brief The QVideoRendererEndpoint class provides a media end point that renders to a video
     surface.
 
-    \note QVideoRendererEndpoint must be created by a media service and cannot be instantiated
-    directly.
-
-    \sa QAbstractVideoService::createEndpoint()
+    \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
 */
 
 /*!
-    Constructs a new video renderer media end point.
+    Constructs a new video renderer media end point with the given \a parent.
 */
 QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
     : QObject(*new QVideoRendererEndpointPrivate, parent)
@@ -83,6 +80,12 @@ QMediaEndpointInterface::Direction QVideoRendererEndpoint::direction() const
 {
     return Output;
 }
+
+/*!
+    \property QVideoRendererEndpoint::surface
+
+    The video surface a renderer renders to.
+*/
 
 /*!
     Returns the video surface a renderer renders to.

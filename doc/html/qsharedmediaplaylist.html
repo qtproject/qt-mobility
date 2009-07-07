@@ -14,35 +14,29 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSharedMediaPlaylist Class Reference</h1>
 <pre>    #include &lt;QSharedMediaPlaylist&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
 <ul>
 <li><a href="qsharedmediaplaylist-members.html">List of all members, including inherited members</a></li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qsharedmediaplaylist.html#QSharedMediaPlaylist">QSharedMediaPlaylist</a></b> ( const QString &amp; <i>name</i>, QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div>virtual <b><a href="qsharedmediaplaylist.html#dtor.QSharedMediaPlaylist">~QSharedMediaPlaylist</a></b> ()</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#append">append</a></b> ( const QMediaSource &amp; <i>source</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#append-2">append</a></b> ( const QList&lt;QMediaSource&gt; &amp; <i>sources</i> )</li>
-<li><div class="fn"></div>virtual int <b><a href="qsharedmediaplaylist.html#currentItemPos">currentItemPos</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#insert">insert</a></b> ( int <i>pos</i>, const QMediaSource &amp; <i>source</i> )</li>
-<li><div class="fn"></div>virtual bool <b><a href="qsharedmediaplaylist.html#isShuffled">isShuffled</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qsharedmediaplaylist.html#name">name</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#remove">remove</a></b> ( int <i>fromPos</i>, int <i>toPos</i> )</li>
-<li><div class="fn"></div>virtual int <b><a href="qsharedmediaplaylist.html#size">size</a></b> () const</li>
-<li><div class="fn"></div>virtual QMediaSource <b><a href="qsharedmediaplaylist.html#operator-5b-5d">operator[]</a></b> ( int <i>pos</i> ) const</li>
+<li><div class="fn"/><b><a href="qsharedmediaplaylist.html#QSharedMediaPlaylist">QSharedMediaPlaylist</a></b> ( const QString &amp; <i>name</i>, QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>virtual <b><a href="qsharedmediaplaylist.html#dtor.QSharedMediaPlaylist">~QSharedMediaPlaylist</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qsharedmediaplaylist.html#name">name</a></b> () const</li>
 </ul>
-<a name="public-slots"></a>
-<h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#jump">jump</a></b> ( int )</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#shuffle">shuffle</a></b> ()</li>
-<li><div class="fn"></div>virtual void <b><a href="qsharedmediaplaylist.html#unshuffle">unshuffle</a></b> ()</li>
+<li><div class="fn"/>14 public functions inherited from <a href="qmediaplaylist.html#public-functions">QMediaPlaylist</a></li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"></div>QStringList <b><a href="qsharedmediaplaylist.html#sharedPlaylists">sharedPlaylists</a></b> ()</li>
+<li><div class="fn"/>QStringList <b><a href="qsharedmediaplaylist.html#sharedPlaylists">sharedPlaylists</a></b> ()</li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"/>1 public slot inherited from <a href="qmediaplaylist.html#public-slots">QMediaPlaylist</a></li>
+<li><div class="fn"/>5 signals inherited from <a href="qmediaplaylist.html#signals">QMediaPlaylist</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -51,19 +45,8 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QSharedMediaPlaylist"></a>QSharedMediaPlaylist::QSharedMediaPlaylist ( const QString &amp; <i>name</i>, QObject * <i>parent</i> = 0 )</h3>
 <h3 class="fn"><a name="dtor.QSharedMediaPlaylist"></a>QSharedMediaPlaylist::~QSharedMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="append"></a>void QSharedMediaPlaylist::append ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="append-2"></a>void QSharedMediaPlaylist::append ( const QList&lt;<a href="qmediasource.html">QMediaSource</a>&gt; &amp; <i>sources</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="currentItemPos"></a>int QSharedMediaPlaylist::currentItemPos () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="insert"></a>void QSharedMediaPlaylist::insert ( int <i>pos</i>, const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="isShuffled"></a>bool QSharedMediaPlaylist::isShuffled () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="jump"></a>void QSharedMediaPlaylist::jump ( int )&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <h3 class="fn"><a name="name"></a>QString QSharedMediaPlaylist::name () const</h3>
-<h3 class="fn"><a name="remove"></a>void QSharedMediaPlaylist::remove ( int <i>fromPos</i>, int <i>toPos</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <h3 class="fn"><a name="sharedPlaylists"></a>QStringList QSharedMediaPlaylist::sharedPlaylists ()&nbsp;&nbsp;<tt> [static]</tt></h3>
-<h3 class="fn"><a name="shuffle"></a>void QSharedMediaPlaylist::shuffle ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
-<h3 class="fn"><a name="size"></a>int QSharedMediaPlaylist::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<h3 class="fn"><a name="unshuffle"></a>void QSharedMediaPlaylist::unshuffle ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
-<h3 class="fn"><a name="operator-5b-5d"></a><a href="qmediasource.html">QMediaSource</a> QSharedMediaPlaylist::operator[] ( int <i>pos</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

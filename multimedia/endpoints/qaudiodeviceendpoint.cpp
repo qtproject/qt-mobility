@@ -57,42 +57,55 @@ public:
     \class QAudioDeviceEndpoint
     \preliminary
     \brief The QAudioDeviceEndpoint class provides an audio device selector media end point.
+
+    The QAudioDeviceEndpoint class provides descriptions of the audio devices available on a system
+    and allows one to be selected as the input or output of a media service.
+
+    \sa QAbstractMediaService::setAudioInput(), QAbstractMediaService::setAudioOutput()
 */
 
 /*!
-    \enum QAudioDeviceEndpoint::Direction
+    \enum QAudioDeviceEndpoint::DeviceDirection
 
-    \value InputDevice
-    \value OutputDevice
-    \value InputOutputDevice
+    Identifies if an audio device produces or consumes audio data.
+
+    \value InputDevice The device produces audio data.
+    \value OutputDevice The device consumes audio data.
+    \value InputOutputDevice  The device both produces and consumes audio data.
 */
 
 /*!
     \enum QAudioDeviceEndpoint::Role
 
-    \value ConsoleRole
-    \value MultimediaRole
-    \value CommunicationsRole
+    Identifies the type of use an audio is appropriate for.
+
+    \value ConsoleRole A device appropriate for system notifications, or game sounds.
+    \value MultimediaRole A device appropriate for music or video audio.
+    \value CommunicationsRole A device appropriate for voice or video calls.
+    \value AllRoles Mask for all roles.
 */
 
 /*!
     \enum QAudioDeviceEndpoint::FormFactor
 
-    \value UnknownFormFactor
-    \value RemoteNetworkDevice
-    \value Speakers
-    \value LineLevel
-    \value Headphones
-    \value Microphone
-    \value Headset
-    \value Handset
-    \value UnknownDigitalPassthrough,
-    \value SPDIF
-    \value HDMI
+    Identifies the form factor of a device.
+
+    \value UnknownFormFactor The form factor of the device is unknown.
+    \value RemoteNetworkDevice The device outputs to a remote network device.
+    \value Speakers The device outputs to speakers.
+    \value LineLevel The device renders to a line level socket.
+    \value Headphones The device outputs to head phones.
+    \value Microphone The devices receives input from a microphone.
+    \value Headset The device is a headset.
+    \value Handset The device is a handset.
+    \value UnknownDigitalPassthrough The device outputs to an unknown digital pass-through.
+    \value SPDIF The device outputs to an SPDIF socket.
+    \value HDMI The device outputs to an HDMI socket.
+    \value AllFormFactors Mask for all form factors.
 */
 
 /*!
-    Contructs a new audio device selector media end point.
+    Contructs a new audio device selector media end point with the given \a parent.
 */
 QAudioDeviceEndpoint::QAudioDeviceEndpoint(QObject *parent)
     : QObject(*new QAudioDeviceEndpointPrivate, parent)
@@ -115,6 +128,12 @@ QMediaEndpointInterface::Direction QAudioDeviceEndpoint::direction() const
 }
 
 /*!
+    \property QAudioDeviceEndpoint::directionFilter
+
+    The direction selectable devices are filtered on.
+*/
+
+/*!
     Returns the direction selectable devices are filtered on.
 */
 QAudioDeviceEndpoint::DeviceDirection QAudioDeviceEndpoint::directionFilter() const
@@ -131,6 +150,12 @@ void QAudioDeviceEndpoint::setDirectionFilter(DeviceDirection direction)
 }
 
 /*!
+    \property QAudioDeviceEndpoint::roleFilter
+
+    The roles selectable devices are filtered on.
+*/
+
+/*!
     Returns the roles selectable devices are filtered on.
 */
 QAudioDeviceEndpoint::Roles QAudioDeviceEndpoint::roleFilter() const
@@ -145,6 +170,12 @@ void QAudioDeviceEndpoint::setRoleFilter(Roles roles)
 {
     d_func()->roleFilter = roles;
 }
+
+/*!
+    \property QAudioDeviceEndpoint::formFactorFilter
+
+    The form factors selectable devices are filtered on.
+*/
 
 /*!
     Returns the form factors selectable devices are filtered on.
@@ -187,6 +218,24 @@ void QAudioDeviceEndpoint::setFormFactorFilter(FormFactors form)
 */
 
 /*!
+    \fn QAudioDeviceEndpoint::name(int device) const
+
+    Returns the name of a \a device.
+*/
+
+/*!
+    \fn QAudioDeviceEndpoint::description(int device) const
+
+    Returns a description of a \a device.
+*/
+
+/*!
+    \fn QAudioDeviceEndpoint::icon(int device) const
+
+    Returns an icon for a \a device.
+*/
+
+/*!
     \fn QAudioDeviceEndpoint::defaultInputDevice(Role role) const
 
     Returns the index of the default input device for a \a role.
@@ -196,6 +245,12 @@ void QAudioDeviceEndpoint::setFormFactorFilter(FormFactors form)
     \fn QAudioDeviceEndpoint::defaultOutputDevice(Role role) const
 
     Returns the index of the default output device for a \a role.
+*/
+
+/*!
+    \property QAudioDeviceEndpoint::selectedDevice
+
+    The index of the selected audio device.
 */
 
 /*!

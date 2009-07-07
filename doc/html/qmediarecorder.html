@@ -20,35 +20,30 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qmediarecorder.html#State-enum">State</a></b> { LoadingState, RecordingState, PausedState, StoppedState }</li>
-</ul>
-<a name="properties"></a>
-<h3>Properties</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qmediarecorder.html#position-prop">position</a></b> : const int</li>
+<li><div class="fn"/>enum <b><a href="qmediarecorder.html#State-enum">State</a></b> { LoadingState, RecordingState, PausedState, StoppedState }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QMediaRecorderService * <i>service</i> = createMediaRecorderService(), QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div><b><a href="qmediarecorder.html#dtor.QMediaRecorder">~QMediaRecorder</a></b> ()</li>
-<li><div class="fn"></div>virtual QMediaRecorderService * <b><a href="qmediarecorder.html#service">service</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#setRecordingSink">setRecordingSink</a></b> ( QAbstractMediaObject * <i>sink</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#setRecordingSource">setRecordingSource</a></b> ( QAbstractMediaObject * <i>source</i> )</li>
-<li><div class="fn"></div>MediaSink <b><a href="qmediarecorder.html#sink">sink</a></b> () const</li>
-<li><div class="fn"></div>State <b><a href="qmediarecorder.html#state">state</a></b> () const</li>
+<li><div class="fn"/><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QMediaRecorderService * <i>service</i> = createMediaRecorderService(), QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/><b><a href="qmediarecorder.html#dtor.QMediaRecorder">~QMediaRecorder</a></b> ()</li>
+<li><div class="fn"/>virtual QAbstractMediaService * <b><a href="qmediarecorder.html#service">service</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#setRecordingSink">setRecordingSink</a></b> ( QAbstractMediaObject * <i>sink</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#setRecordingSource">setRecordingSource</a></b> ( QAbstractMediaObject * <i>source</i> )</li>
+<li><div class="fn"/>QMediaSink * <b><a href="qmediarecorder.html#sink">sink</a></b> () const</li>
+<li><div class="fn"/>State <b><a href="qmediarecorder.html#state">state</a></b> () const</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#pause">pause</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#record">record</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#stop">stop</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#pause">pause</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#record">record</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#stop">stop</a></b> ()</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediarecorder.html#stateChangeed">stateChangeed</a></b> ( QMediaRecorder::State <i>state</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediarecorder.html#stateChanged">stateChanged</a></b> ( QMediaRecorder::State <i>state</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -57,20 +52,17 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaRecorder::State</h3>
 <hr />
-<h2>Property Documentation</h2>
-<h3 class="fn"><a name="position-prop"></a>position : const int</h3>
-<hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaRecorder"></a>QMediaRecorder::QMediaRecorder ( QMediaRecorderService * <i>service</i> = createMediaRecorderService(), QObject * <i>parent</i> = 0 )</h3>
 <h3 class="fn"><a name="dtor.QMediaRecorder"></a>QMediaRecorder::~QMediaRecorder ()</h3>
 <h3 class="fn"><a name="pause"></a>void QMediaRecorder::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <h3 class="fn"><a name="record"></a>void QMediaRecorder::record ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<h3 class="fn"><a name="service"></a>QMediaRecorderService * QMediaRecorder::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QMediaRecorder::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <h3 class="fn"><a name="setRecordingSink"></a>void QMediaRecorder::setRecordingSink ( QAbstractMediaObject * <i>sink</i> )</h3>
 <h3 class="fn"><a name="setRecordingSource"></a>void QMediaRecorder::setRecordingSource ( QAbstractMediaObject * <i>source</i> )</h3>
-<h3 class="fn"><a name="sink"></a>MediaSink QMediaRecorder::sink () const</h3>
+<h3 class="fn"><a name="sink"></a>QMediaSink * QMediaRecorder::sink () const</h3>
 <h3 class="fn"><a name="state"></a><a href="qmediarecorder.html#State-enum">State</a> QMediaRecorder::state () const</h3>
-<h3 class="fn"><a name="stateChangeed"></a>void QMediaRecorder::stateChangeed ( <a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QMediaRecorder::stateChanged ( <a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="stop"></a>void QMediaRecorder::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
