@@ -34,6 +34,14 @@ using namespace SopranoLive;
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
+namespace ContactContext {
+    typedef enum Location {
+        Unknown = 0,
+        Home,
+        Work
+    };
+}
+
 class QContactTrackerEngineData : public QSharedData
 {
 public:
@@ -54,10 +62,15 @@ public:
     QAtomicInt m_refCount;
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
+    Live<nco::Contact> getContactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
+    ContactContext::Location locationContext(const QContactDetail& det) const;
 };
 
 class QTCONTACTS_EXPORT QContactTrackerEngine : public QContactManagerEngine
 {
+
+
+
 public:
     QContactTrackerEngine(const QMap<QString, QString>& parameters);
     QContactTrackerEngine(const QContactTrackerEngine& other);

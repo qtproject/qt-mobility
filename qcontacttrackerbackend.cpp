@@ -143,14 +143,15 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
             // Get the correct live nodes for address resources - depending on if
             // this is home or work address.
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+//            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+            if(d->locationContext(det) == ContactContext::Home) {
                 if(newContact) {
                     ncoPostalAddress    = ncoContact->addHasPostalAddress();
                 } else {
                     ncoPostalAddress    = ncoContact->getHasPostalAddress();
                 }
 
-            } else if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+            } else if (d->locationContext(det) == ContactContext::Work) {
                 Live<nco::OrganizationContact> org;
                 Live<nco::Affiliation> aff;
                 if(newContact) {
@@ -176,20 +177,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             // The new phone number field to save into Tracker.
             QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
 
-            // Our contact node - this can either be an OrganizationContact or PersonContact depending on
-            // if we are saving a work or home phone number.
-            Live<nco::Contact> contact;
-
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
-                // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
-                contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
-            } else
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
-                // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
-                // Tracker will create new nodes for us if these don't already exist.
-                Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
-                contact = aff->getOrg();
-            }
+            Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
             // Get all existing phone numbers from the Contact node.
             LiveNodes numbers = contact->getHasPhoneNumbers();
 
@@ -239,7 +227,12 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             }
         /* Save emails */
         } else if(definition == QContactEmailAddress::DefinitionId) {
-                // TODO.
+            QString email = det.value(QContactEmailAddress::FieldEmailAddress);
+            Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
+
+            Live<nco::EmailAddress> liveEmail = contact->addHasEmailAddress();
+            liveEmail->setEmailAddress(email);
+            contact->addHasEmailAddress(liveEmail);
         }
     }
     error = QContactManager::NoError;
@@ -395,3 +388,29 @@ QString QContactTrackerEngine::escaped(const QString& input) const
     return retn;
 }
 #endif
+
+Live<nco::Contact> QContactTrackerEngineData::getContactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
+    // Our contact node - this can either be an OrganizationContact or PersonContact depending on
+    // if we are saving a work or home phone number.
+    Live<nco::Contact> contact;
+
+    if (locationContext(det) == ContactContext::Home) {
+        // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
+        contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
+    } else if (locationContext(det) == ContactContext::Work) {
+        // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
+        // Tracker will create new nodes for us if these don't already exist.
+        Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
+        contact = aff->getOrg();
+    }
+    return contact;
+}
+
+ContactContext::Location QContactTrackerEngineData::locationContext(const QContactDetail& det) const {
+    if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+        return ContactContext::Home;
+    } else if(det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+        return ContactContext::Work;
+    }
+    return ContactContext::Unknown;
+}
