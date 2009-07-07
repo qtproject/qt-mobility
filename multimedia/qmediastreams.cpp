@@ -49,41 +49,66 @@ Q_GLOBAL_STATIC(QMediaStreamInfoPrivate, qt_sharedMediaStreamInfo)
     \sa QMediaStreams
 */
 
+
+/*!
+Constructs an invalid stream information object.
+*/
 QMediaStreamInfo::QMediaStreamInfo()
     :d(qt_sharedMediaStreamInfo())
 {
 }
 
-QMediaStreamInfo::QMediaStreamInfo(StreamType type, int streamId)
-    :d(new QMediaStreamInfoPrivate(type, streamId))
+/*!
+Constructs a stream information object of type \a streamType and id \a streamId.
+*/
+QMediaStreamInfo::QMediaStreamInfo(StreamType streamType, int streamId)
+    :d(new QMediaStreamInfoPrivate(streamType, streamId))
 {
 }
 
+/*!
+  Constructs a copy of the QMediaStreamInfo \a other, passed as the argument to this constructor.
+*/
 QMediaStreamInfo::QMediaStreamInfo(const QMediaStreamInfo &other)
     :d(other.d)
 {
 }
 
+/*!
+  Assigns the value of the stream information object \a to this object.
+*/
 QMediaStreamInfo &QMediaStreamInfo::operator =(const QMediaStreamInfo &other)
 {
     d = other.d;
     return *this;
 }
 
+/*!
+  Destroys the stream information object.
+*/
 QMediaStreamInfo::~QMediaStreamInfo()
 {
 }
 
+/*!
+  Returns true if this is a NULL tream information object, false otherwise.
+*/
 bool QMediaStreamInfo::isNull() const
 {
     return d == qt_sharedMediaStreamInfo();
 }
 
+/*!
+  Returns identifier of stream.
+*/
 int QMediaStreamInfo::streamId() const
 {
     return d->streamId;
 }
 
+/*!
+  Returns stream type.
+*/
 QMediaStreamInfo::StreamType QMediaStreamInfo::type() const
 {
     return d->type;
@@ -114,21 +139,33 @@ void QMediaStreamInfo::setProperties(const QMap<QString,QVariant> &properties)
     d->properties = properties;
 }
 
+/*!
+  Returns the stream name, if available.
+*/
 QString QMediaStreamInfo::streamName() const
 {
     return property(QLatin1String("Name")).toString();
 }
 
+/*!
+  Set the stream name to \a name.
+*/
 void QMediaStreamInfo::setStreamName(const QString &name)
 {
     setProperty(QLatin1String("Name"), name);
 }
 
+/*!
+  Returns the ISO 639 stream language code, if available.
+*/
 QString QMediaStreamInfo::streamLanguage() const
 {
     return property(QLatin1String("Language")).toString();
 }
 
+/*!
+  Set the ISO 639 stream language code to \a language.
+*/
 void QMediaStreamInfo::setStreamLanguage(const QString &language)
 {
     setProperty(QLatin1String("Language"), language);

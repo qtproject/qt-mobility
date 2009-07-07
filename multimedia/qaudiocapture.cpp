@@ -132,14 +132,6 @@ bool QAudioCapture::setFormat(const QAudioFormat &format)
 #endif
 
 /*!
-    Sets the source audio device?, maybe should be device name passed?
-*/
-
-void QAudioCapture::setAudioInput(QObject *input)
-{
-}
-
-/*!
     Returns the session object being controlled by this recorder.
 */
 

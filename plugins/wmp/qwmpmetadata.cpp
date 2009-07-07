@@ -34,6 +34,8 @@
 
 #include "qwmpmetadata.h"
 
+#include "qwmpglobal.h"
+
 #include <QtCore/qstringlist.h>
 
 QWmpMetaData::QWmpMetaData(QObject *parent)

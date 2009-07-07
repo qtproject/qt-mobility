@@ -27,7 +27,8 @@ HEADERS += qgstreamerplayercontrol.h \
     qgstreamerbushelper.h \
     qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
-    qgstreamermetadataprovider.h
+    qgstreamermetadataprovider.h \
+    qgstreamerstreamscontrol.h
 SOURCES += qgstreamerplayercontrol.cpp \
     qgstreamerplayerservice.cpp \
     qgstreamerplayersession.cpp \
@@ -35,4 +36,5 @@ SOURCES += qgstreamerplayercontrol.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
-    qgstreamermetadataprovider.cpp
+    qgstreamermetadataprovider.cpp \
+    qgstreamerstreamscontrol.cpp

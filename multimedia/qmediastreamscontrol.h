@@ -18,6 +18,9 @@ public:
 signals:
     void streamsChanged();
     void activeStreamsChanged();
+
+protected:
+    QMediaStreamsControl(QObject *parent = 0);
 };
 
 #endif // QMEDIASTREAMSCONTROL_H

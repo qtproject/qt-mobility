@@ -36,17 +36,12 @@
 
 #include "qwmpplayerservice.h"
 
-/*
-QMediaServiceProvider *createWmpProvider()
-{
-    return new QWmpServiceProvider;
-}
-*/
-
 QObject *QWmpServiceProvider::createObject(const char *iid) const
 {
     if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
-        return new QWmpPlayerService;
+        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
+    else if (qstrcmp(iid, "com.nokia.qt.RemoteMediaPlayer/1.0") == 0)
+        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
     return 0;
 }
 

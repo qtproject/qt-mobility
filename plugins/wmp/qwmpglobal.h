@@ -32,38 +32,33 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOCAPTURECONTROL_H
-#define QAUDIOCAPTURECONTROL_H
+#ifndef QWMPGLOBAL_H
+#define QWMPGLOBAL_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudioformat.h>
-#endif
+#include <wmp.h>
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
+#include <QtCore/qstring.h>
 
-class QAudioCaptureControl : public QAbstractMediaControl
+const char *qwmp_error_string(HRESULT hr);
+
+class QAutoBStr
 {
-    Q_OBJECT
-
 public:
-    ~QAudioCaptureControl();
+    inline QAutoBStr(const QString &string)
+        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
+    {
+    }
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
+    inline ~QAutoBStr()
+    {
+        SysFreeString(m_string);
+    }
 
-#ifdef AUDIOSERVICES
-    virtual QAudioFormat format() const = 0;
-    virtual bool setFormat(const QAudioFormat &format) = 0;
+    inline operator BSTR() const { return m_string; }
 
-Q_SIGNALS:
-    void stateChanged(QAudio::State newState);
-#endif
-
-protected:
-    QAudioCaptureControl(QObject* parent);
+private:
+    BSTR m_string;
 };
 
-#endif  // QAUDIOCAPTURECONTROL_H
 
+#endif

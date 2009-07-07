@@ -35,7 +35,7 @@
 #include "qwmpplaylist.h"
 
 #include "qwmpmetadata.h"
-
+#include "qwmpglobal.h"
 #include "qmediasource.h"
 
 #include <QtCore/qstringlist.h>

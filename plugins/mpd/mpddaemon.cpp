@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/qstringlist.h>
-#include <QtCore/qtimer.h>>
+#include <QtCore/qtimer.h>
 #include <QtNetwork/qtcpsocket.h>
 
 #include "mpddaemon.h"

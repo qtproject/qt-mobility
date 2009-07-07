@@ -32,38 +32,28 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOCAPTURECONTROL_H
-#define QAUDIOCAPTURECONTROL_H
+#include "qwmpglobal.h"
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudioformat.h>
-#endif
-
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
-
-class QAudioCaptureControl : public QAbstractMediaControl
+const char *qwmp_error_string(HRESULT hr)
 {
-    Q_OBJECT
-
-public:
-    ~QAudioCaptureControl();
-
-    virtual void start() = 0;
-    virtual void stop() = 0;
-
-#ifdef AUDIOSERVICES
-    virtual QAudioFormat format() const = 0;
-    virtual bool setFormat(const QAudioFormat &format) = 0;
-
-Q_SIGNALS:
-    void stateChanged(QAudio::State newState);
-#endif
-
-protected:
-    QAudioCaptureControl(QObject* parent);
-};
-
-#endif  // QAUDIOCAPTURECONTROL_H
-
+    switch (hr) {
+    case S_OK:
+        return "OK";
+    case E_NOINTERFACE:
+        return "No such interface supported";
+    case E_POINTER:
+        return "Invalid pointer";
+    case E_FAIL:
+        return "Unspecified error";
+    case E_NOTIMPL:
+        return "Not implemented";
+    case CLASS_E_NOAGGREGATION:
+        return "Class does not support aggregation (or class object is remote)";
+    case CLASS_E_CLASSNOTAVAILABLE:
+        return "ClassFactory cannot supply requested class";
+    case CLASS_E_NOTLICENSED:
+        return "Class is not licensed for use";
+    default:
+        return "unknown error code";
+    }
+}

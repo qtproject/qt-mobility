@@ -49,16 +49,26 @@ class QWmpMetaData;
 class QWmpPlayerControl;
 class QWmpPlaylist;
 
-class QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
+class QWmpPlayerService
+    : public QMediaPlayerService
+    , public QWmpEvents
+    , public IOleClientSite
+    , public IServiceProvider
+    , public IWMPRemoteMediaServices
 {
     Q_OBJECT
 public:
-    QWmpPlayerService(QObject *parent = 0);
+    enum EmbedMode
+    {
+        LocalEmbed,
+        RemoteEmbed
+    };
+
+    QWmpPlayerService(EmbedMode mode, QObject *parent = 0);
     ~QWmpPlayerService();
 
     QAbstractMediaControl *control(const char *name) const;
 
-    QObject *videoOutput() const;
     void setVideoOutput(QObject *output);
 
     QList<QByteArray> supportedEndpointInterfaces(
@@ -77,14 +87,37 @@ public:
     void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
     void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
 
+
+    // IOleClientSite
+    HRESULT STDMETHODCALLTYPE SaveObject();
+    HRESULT STDMETHODCALLTYPE GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker, IMoniker **ppmk);
+    HRESULT STDMETHODCALLTYPE GetContainer(IOleContainer **ppContainer);
+    HRESULT STDMETHODCALLTYPE ShowObject();
+    HRESULT STDMETHODCALLTYPE OnShowWindow(BOOL fShow);
+    HRESULT STDMETHODCALLTYPE RequestNewObjectLayout();
+
+    // IServiceProvider
+    HRESULT STDMETHODCALLTYPE QueryService(REFGUID guidService, REFIID riid, void **ppvObject);
+
+    // IWMPRemoteMediaServices
+    HRESULT STDMETHODCALLTYPE GetServiceType(BSTR *pbstrType);
+    HRESULT STDMETHODCALLTYPE GetApplicationName(BSTR *pbstrName);
+    HRESULT STDMETHODCALLTYPE GetScriptableObject(BSTR *pbstrName, IDispatch **ppDispatch);
+    HRESULT STDMETHODCALLTYPE GetCustomUIMode(BSTR *pbstrFile);
+
 private:
     volatile LONG m_ref;
+    EmbedMode m_embedMode;
     IWMPPlayer4 *m_player;
     QObject *m_videoOutput;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
+
+#ifdef QWMP_EVR
+    HINSTANCE m_evrHwnd;
+#endif
 };
 
 #endif
