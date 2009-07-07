@@ -35,19 +35,22 @@
 #include "qwmpplayerservice.h"
 
 #include "qevrwidget.h"
+#include "qwmpglobal.h"
 #include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
 #include "qwmpplaylist.h"
 
 #include "qmediaplayer.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qvariant.h>
 
 #include <wmprealestate.h>
 
-QWmpPlayerService::QWmpPlayerService(QObject *parent)
+QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     : QMediaPlayerService(parent)
     , m_ref(1)
+    , m_embedMode(mode)
     , m_player(0)
     , m_videoOutput(0)
     , m_control(0)
@@ -61,31 +64,50 @@ QWmpPlayerService::QWmpPlayerService(QObject *parent)
 #ifdef QWMP_EVR
     qRegisterMetaType<IMFActivate *>();
 #endif
-    if (S_OK == CoCreateInstance(
+    HRESULT hr;
+
+    if ((hr = CoCreateInstance(
             __uuidof(WindowsMediaPlayer),
             0,
             CLSCTX_INPROC_SERVER,
             __uuidof(IWMPPlayer4),
-            reinterpret_cast<void **>(&m_player))) {
-        m_control = new QWmpPlayerControl(m_player, this);
-        m_metaData = new QWmpMetaData(this);
+            reinterpret_cast<void **>(&m_player))) != S_OK) {
+        qWarning("failed to create media player control, %x: %s", hr, qwmp_error_string(hr));
+    } else {
+        IOleObject *oleObject = 0;
+
+        if ((hr = m_player->QueryInterface(
+                __uuidof(IOleObject), reinterpret_cast<void **>(&oleObject))) != S_OK) {
+            qWarning("No IOleObject interface, %x: %s", hr, qwmp_error_string(hr));
+        } else {
+            if ((hr = oleObject->SetClientSite(this)) != S_OK) {
+                qWarning("Failed to set site, %x: %s", hr, qwmp_error_string(hr));
+            }
+
+            oleObject->Release();
+        }
 
         IConnectionPointContainer *container = 0;
 
-        if (m_player->QueryInterface(
-                IID_IConnectionPointContainer, reinterpret_cast<void **>(&container)) != S_OK) {
-            qWarning("No connection point container");
+        if ((hr = m_player->QueryInterface(
+                IID_IConnectionPointContainer, reinterpret_cast<void **>(&container))) != S_OK) {
+            qWarning("No connection point container, %x: %d", hr, qwmp_error_string(hr));
         } else {
-            if (container->FindConnectionPoint(__uuidof(IWMPEvents), &m_connectionPoint) != S_OK) {
-                qWarning("No connection point for IWMPEvents");
-            } else if (m_connectionPoint->Advise(this, &m_adviseCookie) != S_OK) {
-                qWarning("Failed to link to connection point");
+            if ((hr = container->FindConnectionPoint(
+                    __uuidof(IWMPEvents), &m_connectionPoint)) != S_OK) {
+                qWarning("No connection point for IWMPEvents %d", hr);
+            } else if ((hr = m_connectionPoint->Advise(
+                    static_cast<IWMPEvents3 *>(this), &m_adviseCookie)) != S_OK) {
+                qWarning("Failed to link to connection point, %x, %s", hr, qwmp_error_string(hr));
 
                 m_connectionPoint->Release();
                 m_connectionPoint = 0;
             }
             container->Release();
-        }   
+        }
+
+        m_control = new QWmpPlayerControl(m_player, this);
+        m_metaData = new QWmpMetaData(this);
     }
 }
 
@@ -97,6 +119,14 @@ QWmpPlayerService::~QWmpPlayerService()
     }
 
     delete m_control;
+
+    IOleObject *oleObject = 0;
+
+    if (m_player->QueryInterface(
+            __uuidof(IOleObject), reinterpret_cast<void **>(&oleObject)) == S_OK) {
+        oleObject->SetClientSite(0);
+        oleObject->Release();
+    }
 
     if (m_player)
         m_player->Release();
@@ -110,7 +140,7 @@ QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, "com.nokia.qt.MediaPlayerControl") == 0)
         return m_control;
-    else if (qstrcmp(name, "com.nokia.qt.MetaData/1.0") == 0)
+    else if (qstrcmp(name, "com.nokia.qt.MetadataControl") == 0)
         return m_metaData;
     else
         return 0;
@@ -163,18 +193,26 @@ QObject *QWmpPlayerService::createEndpoint(const char *iid)
 // IUnknown
 HRESULT QWmpPlayerService::QueryInterface(REFIID riid, void **object)
 {
-    if (riid == __uuidof(IUnknown)
+    if (!object) {
+        return E_POINTER;
+    } else if (riid == __uuidof(IUnknown)
             || riid == __uuidof(IWMPEvents)
             || riid == __uuidof(IWMPEvents2)
             || riid == __uuidof(IWMPEvents3)) {
-        AddRef();
-
         *object = static_cast<IWMPEvents3 *>(this);
-
-        return S_OK;
+    } else if (riid == __uuidof(IOleClientSite)) {
+        *object = static_cast<IOleClientSite *>(this);
+    } else if (riid == __uuidof(IServiceProvider)) {
+        *object = static_cast<IServiceProvider *>(this);
+    } else if (riid == __uuidof(IWMPRemoteMediaServices)) {
+        *object = static_cast<IWMPRemoteMediaServices *>(this);
     } else {
         return E_NOINTERFACE;
     }
+
+    AddRef();
+
+    return S_OK;
 }
 
 ULONG QWmpPlayerService::AddRef()
@@ -237,4 +275,108 @@ void QWmpPlayerService::MediaChange(IDispatch *Item)
 
         media->Release();
     }
+}
+
+// IOleClientSite
+HRESULT QWmpPlayerService::SaveObject()
+{
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpPlayerService::GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker, IMoniker **ppmk)
+{
+    Q_UNUSED(dwAssign);
+    Q_UNUSED(dwWhichMoniker);
+    Q_UNUSED(ppmk);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpPlayerService::GetContainer(IOleContainer **ppContainer)
+{
+    if (!ppContainer) {
+        return E_POINTER;
+    } else {
+        *ppContainer = 0;
+
+        return E_NOINTERFACE;
+    }
+}
+
+HRESULT QWmpPlayerService::ShowObject()
+{
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpPlayerService::OnShowWindow(BOOL fShow)
+{
+    Q_UNUSED(fShow);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpPlayerService::RequestNewObjectLayout()
+{
+    return E_NOTIMPL;
+}
+
+// IServiceProvider
+HRESULT QWmpPlayerService::QueryService(REFGUID guidService, REFIID riid, void **ppvObject)
+{
+    Q_UNUSED(guidService);
+
+    if (!ppvObject) {
+        return E_POINTER;
+    } else if (riid == __uuidof(IWMPRemoteMediaServices)) {
+        *ppvObject = static_cast<IWMPRemoteMediaServices *>(this);
+
+        AddRef();
+
+        return S_OK;
+    } else {
+        return E_NOINTERFACE;
+    }
+}
+
+// IWMPRemoteMediaServices
+HRESULT QWmpPlayerService::GetServiceType(BSTR *pbstrType)
+{
+    if (!pbstrType) {
+        return E_POINTER;
+    } else if (m_embedMode == RemoteEmbed) {
+        *pbstrType = SysAllocString(L"Remote");
+
+        return S_OK;
+    } else {
+        *pbstrType = SysAllocString(L"Local");
+
+        return S_OK;
+    }
+}
+
+HRESULT QWmpPlayerService::GetApplicationName(BSTR *pbstrName)
+{
+    if (!pbstrName) {
+        return E_POINTER;
+    } else {
+        *pbstrName = SysAllocString(static_cast<const wchar_t *>(
+                QCoreApplication::applicationName().utf16()));
+
+        return S_OK;
+    }
+}
+
+HRESULT QWmpPlayerService::GetScriptableObject(BSTR *pbstrName, IDispatch **ppDispatch)
+{
+    Q_UNUSED(pbstrName);
+    Q_UNUSED(ppDispatch);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpPlayerService::GetCustomUIMode(BSTR *pbstrFile)
+{
+    Q_UNUSED(pbstrFile);
+
+    return E_NOTIMPL;
 }

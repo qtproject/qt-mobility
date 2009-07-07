@@ -68,25 +68,4 @@ private:
     IWMPMedia *m_media;
 };
 
-
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
-
 #endif

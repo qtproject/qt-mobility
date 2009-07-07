@@ -32,29 +32,28 @@
 **
 ****************************************************************************/
 
-#include "qwmpserviceprovider.h"
+#include "qwmpglobal.h"
 
-#include "qwmpplayerservice.h"
-
-QObject *QWmpServiceProvider::createObject(const char *iid) const
+const char *qwmp_error_string(HRESULT hr)
 {
-    if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
-        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-    else if (qstrcmp(iid, "com.nokia.qt.RemoteMediaPlayer/1.0") == 0)
-        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
-    return 0;
+    switch (hr) {
+    case S_OK:
+        return "OK";
+    case E_NOINTERFACE:
+        return "No such interface supported";
+    case E_POINTER:
+        return "Invalid pointer";
+    case E_FAIL:
+        return "Unspecified error";
+    case E_NOTIMPL:
+        return "Not implemented";
+    case CLASS_E_NOAGGREGATION:
+        return "Class does not support aggregation (or class object is remote)";
+    case CLASS_E_CLASSNOTAVAILABLE:
+        return "ClassFactory cannot supply requested class";
+    case CLASS_E_NOTLICENSED:
+        return "Class is not licensed for use";
+    default:
+        return "unknown error code";
+    }
 }
-
-QStringList QWmpServiceProviderPlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer");
-}
-
-QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
-{
-    if (key == QLatin1String("mediaplayer"))
-        return new QWmpServiceProvider;
-    return 0;
-}
-
-Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);

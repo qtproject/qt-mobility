@@ -32,29 +32,33 @@
 **
 ****************************************************************************/
 
-#include "qwmpserviceprovider.h"
+#ifndef QWMPGLOBAL_H
+#define QWMPGLOBAL_H
 
-#include "qwmpplayerservice.h"
+#include <wmp.h>
 
-QObject *QWmpServiceProvider::createObject(const char *iid) const
+#include <QtCore/qstring.h>
+
+const char *qwmp_error_string(HRESULT hr);
+
+class QAutoBStr
 {
-    if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
-        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-    else if (qstrcmp(iid, "com.nokia.qt.RemoteMediaPlayer/1.0") == 0)
-        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
-    return 0;
-}
+public:
+    inline QAutoBStr(const QString &string)
+        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
+    {
+    }
 
-QStringList QWmpServiceProviderPlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer");
-}
+    inline ~QAutoBStr()
+    {
+        SysFreeString(m_string);
+    }
 
-QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
-{
-    if (key == QLatin1String("mediaplayer"))
-        return new QWmpServiceProvider;
-    return 0;
-}
+    inline operator BSTR() const { return m_string; }
 
-Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);
+private:
+    BSTR m_string;
+};
+
+
+#endif
