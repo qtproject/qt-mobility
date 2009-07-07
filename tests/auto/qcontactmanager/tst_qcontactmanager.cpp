@@ -1217,10 +1217,16 @@ void tst_QContactManager::contactValidation()
 
     // second, test an invalid uniqueness constraint
     QContactDetail d2 = QContactDetail("UniqueDetail");
-    d2.setValue(QContactSyncTarget::FieldSyncTarget, "test");
+    d2.setValue("value", "test");
     c.saveDetail(&d2);
-    QContactDetail d3 = QContactDetail(QContactSyncTarget::DefinitionId);
-    d3.setValue(QContactSyncTarget::FieldSyncTarget, "test2");
+
+    // One unique should be ok
+    QVERIFY(cm.saveContact(&c));
+    QCOMPARE(cm.error(), QContactManager::NoError);
+
+    // Two uniques should not be ok
+    QContactDetail d3 = QContactDetail("UniqueDetail");
+    d3.setValue("value", "test2");
     c.saveDetail(&d3);
     QVERIFY(!cm.saveContact(&c));
     QCOMPARE(cm.error(), QContactManager::InvalidDetailError);
