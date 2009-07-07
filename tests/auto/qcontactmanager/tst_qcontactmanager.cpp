@@ -69,6 +69,7 @@ private slots:
     void groups();
     void batch();
     void signalEmission();
+    void detailDefinitions();
 
     /* Tests that take no data */
     void contactValidation();
@@ -77,17 +78,24 @@ private slots:
     void invalidManager();
     void memoryManager();
 
-    /* data providers */
-    void uriParsing_data();
+    /* data providers (mostly all engines) */
+    void uriParsing_data(); // Special data
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
-    void referenceCounting_data();
+    void referenceCounting_data(); // Special data
     void groups_data() {addManagers();}
     void batch_data() {addManagers();}
     void signalEmission_data() {addManagers();}
+    void detailDefinitions_data() {addManagers();}
 };
+
+/* A class that no backend can support */
+class UnsupportedMetatype {
+    int foo;
+};
+Q_DECLARE_METATYPE(UnsupportedMetatype);
 
 tst_QContactManager::tst_QContactManager()
 {
@@ -1457,6 +1465,141 @@ void tst_QContactManager::errorStayingPut()
     QVERIFY(m2.error() == QContactManager::BadArgumentError);
     QVERIFY(m3.error() == QContactManager::InvalidDetailError);
 }
+
+void tst_QContactManager::detailDefinitions()
+{
+    QFETCH(QString, uri);
+    QContactManager cm = QContactManager::fromUri(uri);
+
+    QContactManagerCapabilities caps = cm.capabilities();
+    QMap<QString, QContactDetailDefinition> defs = cm.detailDefinitions();
+
+    /* Try to make a credible definition */
+    QContactDetailDefinition newDef;
+    QContactDetailDefinition::Field field;
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    field.dataType = caps.supportedDataTypes().value(0);
+    fields.insert("New Value", field);
+    newDef.setId("New Definition");
+    newDef.setFields(fields);
+
+    /* Updated version of an existing definition */
+    QContactDetailDefinition updatedDef = defs.begin().value();
+    fields = updatedDef.fields();
+    fields.insert("New Value", field);
+    updatedDef.setFields(fields);
+
+    /* Many invalid definitions */
+    QContactDetailDefinition noIdDef;
+    noIdDef.setFields(fields);
+
+    QContactDetailDefinition noFieldsDef;
+    noFieldsDef.setId("No fields");
+
+    QContactDetailDefinition readOnlyDef;
+    readOnlyDef.setId("Read only");
+    readOnlyDef.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+
+    QContactDetailDefinition invalidFieldKeyDef;
+    invalidFieldKeyDef.setId("Invalid field key");
+    QMap<QString, QContactDetailDefinition::Field> badfields;
+    badfields.insert(QString(), field);
+    invalidFieldKeyDef.setFields(badfields);
+
+    QContactDetailDefinition invalidFieldTypeDef;
+    invalidFieldTypeDef.setId("Invalid field type");
+    badfields.clear();
+    QContactDetailDefinition::Field badfield;
+    badfield.dataType = (QVariant::Type) qMetaTypeId<UnsupportedMetatype>();
+    badfields.insert("Bad type", badfield);
+    invalidFieldTypeDef.setFields(badfields);
+
+    QContactDetailDefinition invalidAllowedValuesDef;
+    invalidAllowedValuesDef.setId("Invalid field allowed values");
+    badfields.clear();
+    badfield.allowableValues << "String" << 5; // should be of same type as field
+    badfields.insert("Bad allowed", badfield);
+    invalidAllowedValuesDef.setFields(badfields);
+
+    /* Multiply defined fields.. depends on semantics. */
+
+    if (caps.capabilities().contains("MutableDefinitions")) {
+        /* First do some negative testing */
+
+        /* Bad add class */
+        QVERIFY(cm.saveDetailDefinition(QContactDetailDefinition()) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        /* Bad remove string */
+        QVERIFY(cm.removeDetailDefinition(QString()) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(noIdDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(noFieldsDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(readOnlyDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(invalidFieldKeyDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(invalidFieldTypeDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        QVERIFY(cm.saveDetailDefinition(invalidAllowedValuesDef) == false);
+        QVERIFY(cm.error() == QContactManager::BadArgumentError);
+
+        /* Check that our new definition doesn't already exist */
+        QVERIFY(cm.detailDefinition(newDef.id()).id().isEmpty());
+        QVERIFY(cm.error() == QContactManager::DoesNotExistError);
+
+        /* Add a new definition */
+        QVERIFY(cm.saveDetailDefinition(newDef) == true);
+        QVERIFY(cm.error() == QContactManager::NoError);
+
+        /* Now retrieve it */
+        QContactDetailDefinition def = cm.detailDefinition(newDef.id());
+        QVERIFY(def == newDef);
+
+        /* Update it */
+        QMap<QString, QContactDetailDefinition::Field> newFields = def.fields();
+        newFields.insert("Another new value", field);
+        newDef.setFields(newFields);
+
+        QVERIFY(cm.saveDetailDefinition(newDef) == true);
+        QVERIFY(cm.error() == QContactManager::NoError);
+
+        QVERIFY(cm.detailDefinition(newDef.id()) == newDef);
+
+        /* Remove it */
+        QVERIFY(cm.removeDetailDefinition(newDef.id()) == true);
+        QVERIFY(cm.error() == QContactManager::NoError);
+
+        /* and make sure it does not exist any more */
+        QVERIFY(cm.detailDefinition(newDef.id()).id().isEmpty());
+        QVERIFY(cm.error() == QContactManager::DoesNotExistError);
+    } else {
+        /* Bad add class */
+        QVERIFY(cm.saveDetailDefinition(QContactDetailDefinition()) == false);
+        QVERIFY(cm.error() == QContactManager::NotSupportedError);
+
+        /* Make sure we can't add/remove/modify detail definitions */
+        QVERIFY(cm.removeDetailDefinition(QString()) == false);
+        QVERIFY(cm.error() == QContactManager::NotSupportedError);
+
+        /* Try updating an existing definition */
+        QVERIFY(cm.saveDetailDefinition(updatedDef) == false);
+        QVERIFY(cm.error() == QContactManager::NotSupportedError);
+
+        /* Try removing an existing definition */
+        QVERIFY(cm.removeDetailDefinition(updatedDef.id()) == false);
+        QVERIFY(cm.error() == QContactManager::NotSupportedError);
+    }
+}
+
 
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

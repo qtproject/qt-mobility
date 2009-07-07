@@ -630,7 +630,7 @@ bool QContactKabcEngine::removeDetailDefinition(const QContactDetailDefinition& 
 QStringList QContactKabcEngine::capabilities() const
 {
     QStringList caplist;
-    caplist << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
+    caplist << "Locking" << "Batch" << "MutableDefinitions" << "Filtering" << "Sorting" << "Preferences";
     // ie, doesn't support: Changelog, Volatile, Asynchronous.
     return caplist;
 }

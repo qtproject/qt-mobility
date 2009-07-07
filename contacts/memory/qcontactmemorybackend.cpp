@@ -346,6 +346,11 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
 /*! \reimp */
 bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, QContactManager::Error& error)
 {
+    if (definitionId.isEmpty()) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     detailDefinitions(error); // just to populate the definitions if we haven't already.
     bool success = d->m_definitions.remove(definitionId);
     d->m_createOnlyIds.remove(definitionId);
@@ -360,7 +365,7 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 QStringList QContactMemoryEngine::capabilities() const
 {
     QStringList caplist;
-    caplist << "Groups" << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
+    caplist << "Groups" << "Locking" << "Batch" << "MutableDefinitions" << "Filtering" << "Sorting" << "Preferences";
     // ie, doesn't support: Changelog, Volatile, Asynchronous.
     return caplist;
 }
