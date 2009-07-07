@@ -35,9 +35,12 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
+#include <QtCore/qfile.h>
 
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
+#endif
 
 #include "audiocaptureservice.h"
 #include "audiocapturecontrol.h"
@@ -64,18 +67,36 @@ QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
 
     QList<QByteArray> list;
 
+#ifdef AUDIOSERVICES
     if(QMediaEndpointInterface::Input) {
         QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
         for(int i = 0; i < devices.size(); ++i) {
             list.append(QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData());
         }
     }
+#endif
     return list;
 }
 
 QObject *AudioCaptureService::createEndpoint(const char *interface)
 {
-    qWarning()<<"createEndpoint "<<interface;
+    QString type(interface);
+    if(type.contains("QFile")) {
+        return new QFile;
+    }
+#ifdef AUDIOSERVICES
+    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    for(int i = 0; i < devices.size(); ++i) {
+        QString dev = QAudioDeviceInfo(devices.at(i)).deviceName();
+        if(dev.contains(interface)) {
+            m_audioInput = new QAudioInput(m_control->format(), this);
+            qWarning()<<"created QAudioInput";
+            return m_audioInput;
+        }
+    }
+#endif
     return 0;
 }
+
+
 

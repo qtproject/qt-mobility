@@ -37,15 +37,17 @@
 #include <qabstractmediaservice.h>
 
 #include <QtGui>
+
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/QAudioDeviceInfo>
+#endif
 
 Recorder::Recorder()
 {
     recorder = new QAudioCapture;
 
-    audioInput = 0;
-    file = new QFile("/tmp/test.wav");
-
+#ifdef AUDIOSERVICES
+    QAudioFormat format;
     format.setFrequency(8000);
     format.setChannels(1);
     format.setSampleSize(8);
@@ -53,11 +55,13 @@ Recorder::Recorder()
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setCodec("audio/pcm");
 
+    recorder->setFormat(format);
+#endif
+
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
 
     deviceBox = new QComboBox(this);
-    qWarning()<<recorder->service();
     QList<QByteArray> devices = recorder->service()->supportedEndpointInterfaces(QMediaEndpointInterface::Input);
     for(int i = 0; i < devices.size(); ++i) {
         deviceBox->addItem(devices.at(i), i);
@@ -73,6 +77,8 @@ Recorder::Recorder()
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
+
+    active = false;
 }
 
 Recorder::~Recorder()
@@ -81,43 +87,43 @@ Recorder::~Recorder()
 
 void Recorder::status()
 {
-    qWarning()<<"bytesReady = "<<audioInput->bytesReady()<<" bytes, clock = "<<audioInput->clock()<<"ms, totalTime = "<<audioInput->totalTime()/1000<<"ms";
 }
 
+#ifdef AUDIOSERVICES
 void Recorder::state(QAudio::State state)
 {
     qWarning()<<" state="<<state;
 }
+#endif
 
 void Recorder::deviceChanged(int idx)
 {
-    qWarning()<<"deviceChanged";
-
-    if(audioInput) {
-        audioInput->stop();
-        audioInput->disconnect(this);
-        delete audioInput;
-    }
+#ifdef AUDIOSERVICES
     device = deviceBox->itemData(idx).value<QAudioDeviceId>();
-    qWarning()<<"trying to use:"<<&device;
-    audioInput = new QAudioInput(device, format, this);
-    connect(audioInput,SIGNAL(notify()),SLOT(status()));
-    connect(audioInput,SIGNAL(stateChanged(QAudio::State)),SLOT(state(QAudio::State)));
+    QObject* input = recorder->service()->createEndpoint(deviceBox->itemText(idx).toLocal8Bit().constData());
+    QFile* output = qobject_cast<QFile*>(recorder->service()->createEndpoint("QFile"));
+    if(output) {
+        output->setFileName("/tmp/test.raw");
+        output->open(QIODevice::WriteOnly);
+        recorder->service()->setAudioInput(input);
+        recorder->service()->setAudioOutput(qobject_cast<QObject*>(output));
+    }
+#endif
 }
 
 void Recorder::toggleRecord()
 {
-    if(audioInput) {
-        if(audioInput->state() != QAudio::StopState) {
-            qWarning()<<"stop recording...";
-            audioInput->stop();
-            file->close();
-            button->setText(tr("Click to start recording"));
-        } else {
-            qWarning()<<"start recording...";
-            file->open(QIODevice::WriteOnly);
-            audioInput->start(file);
-            button->setText(tr("Click to stop recording"));
-        }
+    if(!recorder) return;
+
+    if(!active) {
+        recorder->start();
+        button->setText(tr("Click to stop recording"));
+        active = true;
+    } else {
+        recorder->stop();
+        button->setText(tr("Click to start recording"));
+        QFile* output = qobject_cast<QFile*>(recorder->service()->audioOutput());
+        output->close();
+        active = false;
     }
 }

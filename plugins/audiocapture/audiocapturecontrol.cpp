@@ -33,14 +33,16 @@
 ****************************************************************************/
 
 #include "audiocapturecontrol.h"
+#include "audiocaptureservice.h"
 
 #include "qmediasource.h"
 
 #include <QtCore/qdebug.h>
 
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
-
+#endif
 
 AudioCaptureControl::AudioCaptureControl(QObject *parent)
     :QAudioCaptureControl(parent)
@@ -58,22 +60,31 @@ AudioCaptureControl::~AudioCaptureControl()
 
 void AudioCaptureControl::start()
 {
+#ifdef AUDIOSERVICES
+    QAudioInput* input = qobject_cast<QAudioInput*>(m_service->audioInput());
+
+    input->start(qobject_cast<QIODevice*>(m_service->audioOutput()));
+#endif
 }
 
 void AudioCaptureControl::stop()
 {
-}
+#ifdef AUDIOSERVICES
+    QAudioInput* input = qobject_cast<QAudioInput*>(m_service->audioInput());
 
+    input->stop();
+#endif
+}
+#ifdef AUDIOSERVICES
 QAudioFormat AudioCaptureControl::format() const
 {
-    return QAudioFormat();
+    return m_format;
 }
 
 bool AudioCaptureControl::setFormat(const QAudioFormat &format)
 {
+    m_format = format;
+
     return true;
 }
-
-void AudioCaptureControl::setAudioInput(QObject *input)
-{
-}
+#endif

@@ -1,6 +1,7 @@
 TEMPLATE = app
 
-Qt += multimedia
+#Qt += multimedia
+#DEFINES += AUDIOSERVICES
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 

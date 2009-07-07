@@ -36,7 +36,10 @@
 #define AUDIOCAPTURECONTROL_H
 
 #include <QtCore/qobject.h>
+
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudioformat.h>
+#endif
 
 #include "qaudiocapturecontrol.h"
 #include "qmediasource.h"
@@ -54,13 +57,17 @@ public:
     void start();
     void stop();
 
+#ifdef AUDIOSERVICES
     QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
-
-    void setAudioInput(QObject *input);
+#endif
 
 private:
     AudioCaptureService *m_service;
+
+#ifdef AUDIOSERVICES
+    QAudioFormat m_format;
+#endif
 };
 
 #endif

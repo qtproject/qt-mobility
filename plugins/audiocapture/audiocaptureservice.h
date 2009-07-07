@@ -37,7 +37,9 @@
 
 #include <QtCore/qobject.h>
 
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudioinput.h>
+#endif
 
 #include "qaudiocaptureservice.h"
 
@@ -56,7 +58,10 @@ public:
     QAbstractMediaControl *control(const char *name) const;
 private:
     AudioCaptureControl *m_control;
+
+#ifdef AUDIOSERVICES
     QAudioInput* m_audioInput;
+#endif
 };
 
 #endif

@@ -1,5 +1,9 @@
 TEMPLATE = lib
 CONFIG += plugin
+
+#QT += multimedia
+#DEFINES += AUDIOSERVICES
+
 TARGET = audiocapture
 DESTDIR = $$OUT_PWD/../../lib/mediaservice
 DEPENDPATH += .

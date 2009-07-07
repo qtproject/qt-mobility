@@ -36,8 +36,11 @@
 #define RECORDER_H
 
 #include <QtGui>
+
+#ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudioinput.h>
+#endif
 
 #include <qaudiocapture.h>
 
@@ -53,17 +56,22 @@ public:
 private slots:
     void status();
     void toggleRecord();
+#ifdef AUDIOSERVICES
     void state(QAudio::State s);
+#endif
     void deviceChanged(int idx);
 
 private:
+#ifdef AUDIOSERVICES
     QAudioDeviceId device;
     QAudioFormat   format;
+    QAudioInput*   audioInput;
+#endif
     QAudioCapture* recorder;
     QComboBox*     deviceBox;
     QPushButton*   button;
-    QAudioInput*   audioInput;
     QFile*         file;
+    bool           active;
 };
 
 #endif
