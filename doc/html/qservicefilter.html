@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../servicefw/serviceframework/serviceresolution/qservicefilter.cpp -->
+<!-- ../../serviceframework/qservicefilter.cpp -->
 <head>
   <title>QServiceFilter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -29,11 +29,13 @@
 <li><div class="fn"/><b><a href="qservicefilter.html#QServiceFilter-2">QServiceFilter</a></b> ( const QServiceFilter &amp; <i>other</i> )</li>
 <li><div class="fn"/><b><a href="qservicefilter.html#QServiceFilter-3">QServiceFilter</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</li>
 <li><div class="fn"/><b><a href="qservicefilter.html#dtor.QServiceFilter">~QServiceFilter</a></b> ()</li>
+<li><div class="fn"/>void <b><a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a></b> ()</li>
 <li><div class="fn"/>QList&lt;QString&gt; <b><a href="qservicefilter.html#customKeys">customKeys</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qservicefilter.html#customProperty">customProperty</a></b> ( const QString &amp; <i>key</i> ) const</li>
 <li><div class="fn"/>int <b><a href="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</a></b> () const</li>
 <li><div class="fn"/>int <b><a href="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qservicefilter.html#interfaceName">interfaceName</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a></b> ( const QString &amp; <i>key</i> )</li>
 <li><div class="fn"/>QString <b><a href="qservicefilter.html#serviceName">serviceName</a></b> () const</li>
 <li><div class="fn"/>void <b><a href="qservicefilter.html#setCustomProperty">setCustomProperty</a></b> ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"/>void <b><a href="qservicefilter.html#setInterface">setInterface</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</li>
@@ -44,8 +46,8 @@
 <a name="related-non-members"></a>
 <h3>Related Non-Members</h3>
 <ul>
-<li><div class="fn"/>QDataStream &amp; <b><a href="qservicefilter.html#operator-lt-lt">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</li>
-<li><div class="fn"/>QDataStream &amp; <b><a href="qservicefilter.html#operator-gt-gt">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</li>
+<li><div class="fn"/>QDataStream &amp; <b><a href="qservicefilter.html#operator-lt-lt-3">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</li>
+<li><div class="fn"/>QDataStream &amp; <b><a href="qservicefilter.html#operator-gt-gt-2">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -71,11 +73,14 @@
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
+<h3 class="fn"><a name="clearCustomProperties"></a>void QServiceFilter::clearCustomProperties ()</h3>
+<p>Clears all custom properties from the filter's set of constraints</p>
+<p>See also <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
 <h3 class="fn"><a name="customKeys"></a>QList&lt;QString&gt; QServiceFilter::customKeys () const</h3>
 <p>Returns the list of custom keys which have been added to the filter.</p>
 <h3 class="fn"><a name="customProperty"></a>QString QServiceFilter::customProperty ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
-<p>See also <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>().</p>
+<p>See also <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
 <h3 class="fn"><a name="interfaceMajorVersion"></a>int QServiceFilter::interfaceMajorVersion () const</h3>
 <p>Returns the major interface version for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
@@ -85,12 +90,15 @@
 <h3 class="fn"><a name="interfaceName"></a>QString QServiceFilter::interfaceName () const</h3>
 <p>Returns the interface name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
+<h3 class="fn"><a name="removeCustomProperty"></a>void QServiceFilter::removeCustomProperty ( const QString &amp; <i>key</i> )</h3>
+<p>Removes the custom property <i>key</i> from the filter's set of constraints</p>
+<p>See also <a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a>() and <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>().</p>
 <h3 class="fn"><a name="serviceName"></a>QString QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
 <h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3>
 <p>The filter only matches implementations which have the custom constraint <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
-<p>See also <a href="qservicefilter.html#customProperty">customProperty</a>().</p>
+<p>See also <a href="qservicefilter.html#customProperty">customProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
 <h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>
 <p>This method does nothing if <i>version</i> is not a valid version string or if <i>interfaceName</i> is empty.</p>
@@ -106,9 +114,11 @@
 <p>Copies the content of the <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i> into this one.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt"></a>QDataStream &amp; operator&lt;&lt; ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-3"></a>QDataStream &amp; operator&lt;&lt; ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Writes service filter <i>sf</i> to the stream <i>out</i> and returns a reference to the stream.</p>
-<h3 class="fn"><a name="operator-gt-gt"></a>QDataStream &amp; operator&gt;&gt; ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-gt-gt-2"></a>QDataStream &amp; operator&gt;&gt; ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
+<p>This is an overloaded member function, provided for convenience.</p>
 <p>Reads a service filter into <i>sf</i> from the stream <i>in</i> and returns a reference to the stream.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../servicefw/serviceframework/servicehandler/qservicemanager.cpp -->
+<!-- ../../serviceframework/qservicemanager.cpp -->
 <head>
   <title>QServiceManager Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -142,9 +142,11 @@
 <p>Returns the scope used for registering and searching of services.</p>
 <h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i>, <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a> <i>scope</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emited whenever a new service with the given <i>serviceName</i> has been registered with the service manager. <i>scope</i> indicates where the service was added.</p>
+<p>If the manager scope is <a href="qservicemanager.html#Scope-enum">QServiceManager::SystemScope</a>, it will not receive notifications about services added in the user scope.</p>
 <p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
 <h3 class="fn"><a name="serviceRemoved"></a>void QServiceManager::serviceRemoved ( const QString &amp; <i>serviceName</i>, <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a> <i>scope</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emited whenever a service with the given <i>serviceName</i> has been deregistered with the service manager. <i>scope</i> indicates where the service was added.</p>
+<p>If the manager scope is <a href="qservicemanager.html#Scope-enum">QServiceManager::SystemScope</a>, it will not receive notifications about services removed in the user scope.</p>
 <p>See also <a href="qservicemanager.html#removeService">removeService</a>().</p>
 <h3 class="fn"><a name="setDefaultServiceForInterface"></a>bool QServiceManager::setDefaultServiceForInterface ( const QString &amp; <i>service</i>, const QString &amp; <i>interfaceName</i> )</h3>
 <p>Sets the default interface implementation for <i>interfaceName</i> to the matching interface implementation provided by <i>service</i>.</p>

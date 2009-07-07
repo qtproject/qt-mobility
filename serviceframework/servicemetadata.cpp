@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 static const char  PATH_SEPARATOR[] = "\\";
 
-/*!
+/*
     \class ServiceMetaData
 
     Utility class (used by service database) that offers support for 
@@ -65,7 +65,7 @@ static const char  PATH_SEPARATOR[] = "\\";
         - each interface can be retrieved
 */
 
-/*!
+/*
  *  Class constructor
  *
  * @param aXmlFilePath path to the xml file that describes the service. 
@@ -77,7 +77,7 @@ ServiceMetaData::ServiceMetaData(const QString &aXmlFilePath)
     latestError = 0;
 }
 
-/*!
+/*
  *  Class constructor
  *
  * @param device QIODevice that contains the XML data that describes the service.
@@ -89,7 +89,7 @@ ServiceMetaData::ServiceMetaData(QIODevice *device)
     latestError = 0;
 }
 
-/*!
+/*
  *  Class destructor
  * 
  */
@@ -99,7 +99,7 @@ ServiceMetaData::~ServiceMetaData()
         delete xmlDevice;
 }
 
-/*!
+/*
     Sets the device containing the XML data that describes the service to \a device.
  */
 void ServiceMetaData::setDevice(QIODevice *device)
@@ -109,7 +109,7 @@ void ServiceMetaData::setDevice(QIODevice *device)
     ownsXmlDevice = false;
 }
 
-/*!
+/*
     Returns the device containing the XML data that describes the service.
 */
 QIODevice *ServiceMetaData::device() const
@@ -117,7 +117,7 @@ QIODevice *ServiceMetaData::device() const
     return xmlDevice;
 }
 
-/*!
+/*
  *  Gets the service name
  *
  * @return service name or default value (empty string) if it is not available
@@ -127,7 +127,7 @@ QString ServiceMetaData::name() const
     return serviceName;
 }
  
-/*!
+/*
  *  Gets the path of the service implementation file
  *
  * @return service implementation filepath
@@ -137,7 +137,7 @@ QString ServiceMetaData::location() const
     return serviceLocation;
 }
  
-/*!
+/*
  *  Gets the service description
  *
  * @return service description or default value (empty string) if it is not available
@@ -147,7 +147,7 @@ QString ServiceMetaData::description() const
     return serviceDescription;
 }
  
-/*!
+/*
    Returns the metadata of the interace at \a index; otherwise
    returns 0.
  */
@@ -156,7 +156,7 @@ QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces() const
     return serviceInterfaces;
 } 
 
-/*!
+/*
     Parses the file and extracts the service metadata \n
     Custom error codes: \n
     SFW_ERROR_UNABLE_TO_OPEN_FILE in case can not open the XML file \n
@@ -204,7 +204,7 @@ bool ServiceMetaData::extractMetadata()
     return !parseError;
 }
  
-/*!
+/*
     Gets the latest parsing error \n
     @return parsing error(negative value) or 0 in case there is none
  */
@@ -213,7 +213,7 @@ int ServiceMetaData::getLatestError() const
     return latestError;
 }
  
-/*!
+/*
     Parses and extracts the service metadata from the current xml <service> node \n
  */
 bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
@@ -292,7 +292,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     return !parseError;
 }
 
-/*!
+/*
     Parses and extracts the interface metadata from the current xml <interface> node \n
 */
 bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
@@ -479,7 +479,7 @@ void ServiceMetaData::transformVersion(const QString &version, int *major, int *
     }
 }
 
-/*!
+/*
  *  Clears the service metadata
  *
  */
