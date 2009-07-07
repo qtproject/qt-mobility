@@ -33,10 +33,20 @@
 ****************************************************************************/
 
 #include "qmediaplayercontrol.h"
-#include  "qabstractmediacontrol_p.h"
+#include "qabstractmediacontrol_p.h"
 #include "qmediasource.h"
 
 
+/*!
+    \class QMediaPlayerControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The abstract class for controling media playback, this is provided
+    by a QAbstractMediaService object, and is used by QMediaPlayer for playback.
+
+    \sa QAbstractMediaService, QMediaPlayer
+*/
 
 QMediaPlayerControl::~QMediaPlayerControl()
 {

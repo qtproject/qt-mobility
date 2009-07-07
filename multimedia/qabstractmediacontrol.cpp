@@ -40,6 +40,16 @@
 
 
 
+/*!
+    \class QAbstractMediaControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The base Multimedia control object.
+
+    \sa QAbstractMediaService, QAbstractMediaObject
+*/
+
 QAbstractMediaControl::~QAbstractMediaControl()
 {
 }
@@ -96,6 +106,10 @@ QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
     d->notifyTimer = new QTimer(this);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(notifyCheck()));
 }
+
+/*!
+    \internal
+*/
 
 QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent):
     QObject(dd, parent)

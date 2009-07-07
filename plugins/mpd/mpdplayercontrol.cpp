@@ -91,6 +91,7 @@ qint64 MpdPlayerControl::position() const
 
 void MpdPlayerControl::setPosition(qint64 position)
 {
+    daemon->send(QString("seek %1 %2").arg(daemon->currentSongPos()).arg(int(position / 1000)));
 }
 
 int MpdPlayerControl::playlistPosition() const

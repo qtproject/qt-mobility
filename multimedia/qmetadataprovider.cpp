@@ -36,10 +36,70 @@
 #include "qmetadataprovider.h"
 
 
+/*!
+    \class QMetadataProvider
+    \ingroup multimedia
+
+    \preliminary
+    \brief Implement this class to provide metadata information about your Multimedia object.
+*/
+
+/*!
+    Destroy the metadata object.
+*/
 
 QMetadataProvider::~QMetadataProvider()
 {
 }
+
+/*!
+    \fn bool QMetadataProvider::metadataAvailable() const
+
+    Returns true if metadata can be be provided by the service.
+*/
+
+/*!
+    \fn bool QMetadataProvider::isReadOnly() const
+
+    Returns true if metadata elements can not be added or changed for the service.
+*/
+
+/*!
+    \fn QList<QString> QMetadataProvider::availableMetadata() const
+
+    Returns a list of the names of all the metadata elements available.
+*/
+
+/*!
+    \fn QVariant QMetadataProvider::metadata(QString const &name) const
+
+    Returns the metadata for the element named \a name.
+*/
+
+/*!
+    \fn void QMetadataProvider::setMetadata(QString const &name, QVariant const &value)
+
+    Change the value of the metadata element named \a name, to \a value.
+*/
+
+/*!
+    \fn void QMetadataProvider::metadataAvailabilityChanged(bool metadataAvailable)
+
+    Signal the availability of metadata has changed, \a metadataAvailable will
+    be true if the multimedia object has metadata.
+*/
+
+/*!
+    \fn void QMetadataProvider::readOnlyChanged(bool readOnly)
+
+    Signal a change in the read only status of meta data, \a readOnly will be
+    true if metadata elements can not be added or adjusted.
+*/
+
+/*!
+    Construct a QMetadataProvider with \a parent. This class is meant as s base class
+    for service specific metadata providers so this contructor is protected.
+*/
 
 QMetadataProvider::QMetadataProvider(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)

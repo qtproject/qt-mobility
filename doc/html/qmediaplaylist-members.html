@@ -14,19 +14,34 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">List of All Members for QMediaPlaylist</h1>
 <p>This is the complete list of members for <a href="qmediaplaylist.html">QMediaPlaylist</a>, including inherited members.</p>
-<ul>
-<li><div class="fn"></div><a href="qmediaplaylist.html#QMediaPlayList">QMediaPlayList</a> ( QString, QPlayListSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#clear">clear</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#current">current</a> ( MediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#enqueue">enqueue</a> ( QMediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#jump">jump</a> ( int )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#next">next</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#pause">pause</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#prev">prev</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#remove">remove</a> ( QMediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#start">start</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#stop">stop</a> ()</li>
+<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaPlaylistSource *, QObject * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#append">append</a></b> ( const QMediaSource &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#append-2">append</a></b> ( const QList&lt;QMediaSource&gt; &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#clear">clear</a></b> () : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#insert">insert</a></b> ( int, const QMediaSource &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemAt">itemAt</a></b> ( int ) const : QMediaSource</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a></b> ( int, int )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a></b> ( int, int )</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemsChanged">itemsChanged</a></b> ( int, int )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QString &amp;, const char * ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice *, const char * ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#remove">remove</a></b> ( int ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#remove-2">remove</a></b> ( int, int ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#save">save</a></b> ( const QString &amp;, const char * ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#save-2">save</a></b> ( QIODevice *, const char * ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#shuffle">shuffle</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#size">size</a></b> () const : int</div></li>
 </ul>
+</td></tr>
+</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

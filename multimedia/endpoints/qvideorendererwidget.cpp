@@ -105,7 +105,7 @@ void QVideoRendererWidget::setFullscreen(bool fullscreen)
 }
 
 /*!
-    \reimp
+    Handles a paint event.
 */
 void QVideoRendererWidget::paintEvent(QPaintEvent *)
 {
@@ -121,7 +121,7 @@ void QVideoRendererWidget::paintEvent(QPaintEvent *)
 }
 
 /*!
-    \reimp
+    Handles a resize \a event.
 */
 void QVideoRendererWidget::resizeEvent(QResizeEvent *event)
 {

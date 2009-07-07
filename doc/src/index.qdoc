@@ -11,7 +11,7 @@
 
 The Multimedia Library provides a set of APIs to play and record media, and manage a collection of media content.
 
-This library requires Qt 4.5 to be installed.
+This library will require Qt 4.6. 
 
 To build the library, run \tt qmake and \tt make.
 
@@ -27,8 +27,17 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QRadioPlayer}
     \o \l{QMediaPlaylist}
     \o \l{QMediaImageViewer}
-    \o \l{QMediaMetaData}
+    \o \l{QMediaMetadata}
 \endlist
 
+\section2 Classes for service implementers.
 
+\list
+    \o \l{QAbstractMediaService}
+    \o \l{QAbstractMediaObject}
+    \o \l{QAbstractMediaControl}
+    \o \l{QMediaPlayerControl}
+    \o \l{QMetadataProvider}
+    \o \l{QMediaPlaylistSource}
+    \o \l{QRadioTuner}
 */

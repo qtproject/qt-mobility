@@ -35,6 +35,7 @@
 #include "qwmpplaylistproxy.h"
 
 #include "qmediaplaylist.h"
+#include "qwmpglobal.h"
 #include "qwmpmetadata.h"
 
 QWmpPlaylistProxy::QWmpPlaylistProxy(QMediaPlaylist *playlist, IWMPCore3 *player)

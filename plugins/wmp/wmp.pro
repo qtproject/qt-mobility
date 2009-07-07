@@ -15,6 +15,7 @@ HEADERS = \
     qevrwidget.h \
     qmfactivate.h \
     qwmpevents.h \
+    qwmpglobal.h \
     qwmpmetadata.h \
     qwmpplayercontrol.h \
     qwmpplayerservice.h \
@@ -26,6 +27,7 @@ SOURCES = \
     qevrwidget.cpp \
     qmfactivate.cpp \
     qwmpevents.cpp \
+    qwmpglobal.cpp \
     qwmpmetadata.cpp \
     qwmpplayercontrol.cpp \
     qwmpplayerservice.cpp \

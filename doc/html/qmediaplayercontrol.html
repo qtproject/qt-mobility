@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../multimedia/qmediaplayercontrol.cpp -->
+<head>
+  <title>QMediaPlayerControl Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlayerControl Class Reference</h1>
+<p>The abstract class for controling media playback, this is provided by a <a href="qabstractmediaservice.html">QAbstractMediaService</a> object, and is used by <a href="qmediaplayer.html">QMediaPlayer</a> for playback. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMediaPlayerControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qabstractmediacontrol.html">QAbstractMediaControl</a>.</p>
+<ul>
+<li><a href="qmediaplayercontrol-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#dtor.QMediaPlayerControl">~QMediaPlayerControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#advance">advance</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#back">back</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#bufferStatus">bufferStatus</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#duration">duration</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isBuffering">isBuffering</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isMuted">isMuted</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylist * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaPlaylist">mediaPlaylist</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#pause">pause</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#play">play</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playlistPosition">playlistPosition</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#position">position</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMediaPlaylist">setMediaPlaylist</a></b> ( QMediaPlaylist * <i>mediaPlaylist</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMuted">setMuted</a></b> ( bool <i>muted</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaylistPosition">setPlaylistPosition</a></b> ( int <i>position</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPosition">setPosition</a></b> ( qint64 <i>position</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setVolume">setVolume</a></b> ( int <i>volume</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#state">state</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stop">stop</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#volume">volume</a></b> () const = 0</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 public functions inherited from <a href="qabstractmediacontrol.html#public-functions">QAbstractMediaControl</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#bufferingChanged">bufferingChanged</a></b> ( bool <i>buffering</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaSource &amp; )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stateChanged">stateChanged</a></b> ( int <i>newState</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="qabstractmediacontrol.html#signals">QAbstractMediaControl</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#QMediaPlayerControl">QMediaPlayerControl</a></b> ( QObject * <i>parent</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>3 protected functions inherited from <a href="qabstractmediacontrol.html#protected-functions">QAbstractMediaControl</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="qabstractmediacontrol.html#properties">QAbstractMediaControl</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The abstract class for controling media playback, this is provided by a <a href="qabstractmediaservice.html">QAbstractMediaService</a> object, and is used by <a href="qmediaplayer.html">QMediaPlayer</a> for playback.</p>
+<p>See also <a href="qabstractmediaservice.html">QAbstractMediaService</a> and <a href="qmediaplayer.html">QMediaPlayer</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMediaPlayerControl"></a>QMediaPlayerControl::QMediaPlayerControl ( QObject * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="dtor.QMediaPlayerControl"></a>QMediaPlayerControl::~QMediaPlayerControl ()</h3>
+<h3 class="fn"><a name="advance"></a>void QMediaPlayerControl::advance ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="back"></a>void QMediaPlayerControl::back ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="bufferStatus"></a>int QMediaPlayerControl::bufferStatus () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="bufferStatusChanged"></a>void QMediaPlayerControl::bufferStatusChanged ( int <i>percentFilled</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="bufferingChanged"></a>void QMediaPlayerControl::bufferingChanged ( bool <i>buffering</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlayerControl::currentMediaChanged ( const <a href="qmediasource.html">QMediaSource</a> &amp; )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="duration"></a>qint64 QMediaPlayerControl::duration () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="durationChanged"></a>void QMediaPlayerControl::durationChanged ( qint64 <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="isBuffering"></a>bool QMediaPlayerControl::isBuffering () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="isMuted"></a>bool QMediaPlayerControl::isMuted () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="isVideoAvailable"></a>bool QMediaPlayerControl::isVideoAvailable () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="mediaPlaylist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaPlayerControl::mediaPlaylist () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#setMediaPlaylist">setMediaPlaylist</a>().</p>
+<h3 class="fn"><a name="mutingChanged"></a>void QMediaPlayerControl::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="pause"></a>void QMediaPlayerControl::pause ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="play"></a>void QMediaPlayerControl::play ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="playlistPosition"></a>int QMediaPlayerControl::playlistPosition () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#setPlaylistPosition">setPlaylistPosition</a>().</p>
+<h3 class="fn"><a name="playlistPositionChanged"></a>void QMediaPlayerControl::playlistPositionChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="position"></a>qint64 QMediaPlayerControl::position () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#setPosition">setPosition</a>().</p>
+<h3 class="fn"><a name="positionChanged"></a>void QMediaPlayerControl::positionChanged ( qint64 <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="setMediaPlaylist"></a>bool QMediaPlayerControl::setMediaPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>mediaPlaylist</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#mediaPlaylist">mediaPlaylist</a>().</p>
+<h3 class="fn"><a name="setMuted"></a>void QMediaPlayerControl::setMuted ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#isMuted">isMuted</a>().</p>
+<h3 class="fn"><a name="setPlaylistPosition"></a>void QMediaPlayerControl::setPlaylistPosition ( int <i>position</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#playlistPosition">playlistPosition</a>().</p>
+<h3 class="fn"><a name="setPosition"></a>void QMediaPlayerControl::setPosition ( qint64 <i>position</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#position">position</a>().</p>
+<h3 class="fn"><a name="setVolume"></a>void QMediaPlayerControl::setVolume ( int <i>volume</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#volume">volume</a>().</p>
+<h3 class="fn"><a name="state"></a>int QMediaPlayerControl::state () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QMediaPlayerControl::stateChanged ( int <i>newState</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stop"></a>void QMediaPlayerControl::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayerControl::videoAvailabilityChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="volume"></a>int QMediaPlayerControl::volume () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qmediaplayercontrol.html#setVolume">setVolume</a>().</p>
+<h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayerControl::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Multimedia API</div></td>
+</tr></table></div></address></body>
+</html>

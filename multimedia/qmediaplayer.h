@@ -61,7 +61,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
-    Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
+    Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailablityChanged)
     // Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
@@ -74,6 +74,7 @@ public:
     ~QMediaPlayer();
 
     State state() const;
+
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 

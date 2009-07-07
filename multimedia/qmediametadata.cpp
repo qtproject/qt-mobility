@@ -46,9 +46,7 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
-
-    \sa
+    \brief Use this class to extract Metadata from a Multimedia object.
 */
 
 class QMediaMetadataPrivate : public QObjectPrivate
@@ -58,6 +56,9 @@ public:
     QMetadataProvider       *provider;
 };
 
+/*!
+    Construct a QMediaMetadata to read and or write Metadata from the Mulitmedia object \a mediaObject.
+*/
 
 QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     QObject(*new QMediaMetadataPrivate, mediaObject)
@@ -66,13 +67,20 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
 
     d->service = mediaObject->service();
     d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetadataControl"));
-    if (d->provider) {
+
+    Q_ASSERT(d->provider != 0);
+
+    if (d->provider != 0) {
         connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
         connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
     } else {
         qWarning() << "No provider for media metadata";
     }
 }
+
+/*!
+    Destroys the metadata object.
+*/
 
 QMediaMetadata::~QMediaMetadata()
 {
@@ -98,6 +106,10 @@ bool QMediaMetadata::isReadOnly() const
     return d->provider->isReadOnly();
 }
 
+/*!
+    Returns a list of the names of all the metadata elements available.
+*/
+
 QList<QString> QMediaMetadata::availableMetadata() const
 {
     Q_D(const QMediaMetadata);
@@ -107,6 +119,10 @@ QList<QString> QMediaMetadata::availableMetadata() const
 
     return d->provider->availableMetadata();
 }
+
+/*!
+    Returns the metadata for the element named \a name.
+*/
 
 QVariant QMediaMetadata::metadata(QString const &name) const
 {
@@ -118,6 +134,10 @@ QVariant QMediaMetadata::metadata(QString const &name) const
     return d->provider->metadata(name);
 }
 
+/*!
+    Change the value of the metadata element named \a name, to \a value.
+*/
+
 void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
 {
     Q_D(QMediaMetadata);
@@ -125,4 +145,29 @@ void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
     if (d->provider != 0 && !d->provider->isReadOnly())
         d->provider->setMetadata(name, value);
 }
+
+/*!
+    \property QMediaMetadata::metadataAvailable
+    \brief true if metadata can be read from the Multimedia object.
+*/
+
+/*!
+    \property QMediaMetadata::readOnly
+    \brief true if metadata can only be read from the Multimedia object, false
+    if elements can be set.
+*/
+
+/*!
+    \fn void QMediaMetadata::metadataAvailabilityChanged(bool metadataAvailable)
+
+    Signal the availability of metadata has changed, \a metadataAvailable will
+    be true if the multimedia object has metadata.
+*/
+
+/*!
+    \fn void QMediaMetadata::readOnlyChanged(bool readOnly)
+
+    Signal a change in the read only status of meta data, \a readOnly will be
+    true if metadata elements can not be added or adjusted.
+*/
 

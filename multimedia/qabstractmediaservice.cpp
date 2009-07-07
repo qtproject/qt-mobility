@@ -75,6 +75,12 @@ QAbstractMediaService::QAbstractMediaService(QObject *parent):
 }
 
 /*!
+    \property QAbstractMediaService::audioOutput
+
+    The output that a media service renders audio to.
+*/
+
+/*!
     Returns the output that a media service renders audio to.
 */
 QObject *QAbstractMediaService::audioOutput() const
@@ -94,6 +100,12 @@ void QAbstractMediaService::setAudioOutput(QObject *output)
 {
     d_func()->audioOutput = output;
 }
+
+/*!
+    \property QAbstractMediaService::videoOutput
+
+    The output that a media service renders video to.
+*/
 
 /*!
     Returns the output that a media service renders video to.
@@ -117,6 +129,12 @@ void QAbstractMediaService::setVideoOutput(QObject *output)
 }
 
 /*!
+    \property QAbstractMediaService::dataOutput
+
+    The output that a media service writes data to.
+*/
+
+/*!
     Returns the output that a media service writes data to.
 */
 QObject *QAbstractMediaService::dataOutput() const
@@ -136,6 +154,12 @@ void QAbstractMediaService::setDataOutput(QObject *output)
 {
     d_func()->dataOutput = output;
 }
+
+/*!
+    \property QAbstractMediaService::audioInput
+
+    The input that a media service source audio from.
+*/
 
 /*!
     Returns the input that a media service sources audio from.
@@ -159,6 +183,12 @@ void QAbstractMediaService::setAudioInput(QObject *input)
 }
 
 /*!
+    \property QAbstractMediaService::videoInput
+
+    The input that a media service source video data from.
+*/
+
+/*!
     Returns the input that a media service sources video from.
 */
 QObject *QAbstractMediaService::videoInput() const
@@ -178,6 +208,12 @@ void QAbstractMediaService::setVideoInput(QObject *input)
 {
     d_func()->videoInput = input;
 }
+
+/*!
+    \property QAbstractMediaService::dataInput
+
+    The input that a media service reads data from.
+*/
 
 /*!
     Returns the input that a media service reads data from.
@@ -215,7 +251,7 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
 }
 
 /*!
-    Creates a new media end point object from the given \a interface.
+    Creates a new media end point object from the given \a iid.
 
     An end point object may be an input or output to a media service and can only be used with the
     service object that created it.
@@ -223,7 +259,7 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
     A list of supported end point interfaces can be queried using the supportedEndpointInterfaces()
     function.
 
-    \sa supportedEndpointInterface(), setAudioOutput(), setVideoOutput()
+    \sa supportedEndpointInterfaces(), setAudioOutput(), setVideoOutput()
 */
 QObject *QAbstractMediaService::createEndpoint(const char *iid)
 {
@@ -245,3 +281,10 @@ QObject *QAbstractMediaService::createEndpoint(const char *iid)
 #endif
     return 0;
 }
+
+
+/*!
+    \fn QAbstractMediaService::createEndpoint()
+
+    Creates a new media end point object.
+*/
