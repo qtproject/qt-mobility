@@ -42,10 +42,10 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling media playback, this is proivided
+    \brief The abstract class for controling media playback, this is provided
     by a QAbstractMediaService object, and is used by QMediaPlayer for playback.
 
-    \sa QAbstractMediaSerice, QMediaPlayer
+    \sa QAbstractMediaService, QMediaPlayer
 */
 
 QMediaPlayerControl::~QMediaPlayerControl()
