@@ -27,7 +27,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QRadioPlayer}
     \o \l{QMediaPlaylist}
     \o \l{QMediaImageViewer}
-    \o \l{QMediaMetaData}
+    \o \l{QMediaMetadata}
 \endlist
 
 
