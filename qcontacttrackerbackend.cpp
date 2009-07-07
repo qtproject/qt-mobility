@@ -15,6 +15,11 @@
 #include "qcontactmanagercapabilities.h"
 #include "qcontactmanagercapabilities_p.h"
 
+#include <QtTracker/Tracker>
+#include <QtTracker/ontologies/nco.h>
+#include <QtTracker/ontologies/nie.h>
+
+#include "tracker2qcontact.h"
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -80,21 +85,29 @@ QList<QUniqueId> QContactTrackerEngine::contactsWithDetail(const QString& defini
     return QList<QUniqueId>();
 }
 
-QContact QContactTrackerEngine::contact(const QUniqueId& contactId) const
+QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
 {
-    Q_UNUSED(contactId)
-    return QContact();
+    error = QContactManager::NoError;
+    SopranoLive::Live<SopranoLive::nco::PersonContact> ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contactId)));
+
+    if( ncoContact->getContactUID() == 0 ) {
+        error = QContactManager::DoesNotExistError;
+        return QContact();
+    }
+
+    QContact contact;
+    Tracker2QContact::copyContactData( ncoContact, contact );
+
+    return contact;
 }
 
 bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
 {
     Q_UNUSED(batch);
 
-    qDebug() << __FUNCTION__ << "Saving.";
     // Ensure that the contact data is ok. This comes from QContactModelEngine
     if(!validateContact(*contact, error)) {
         error = QContactManager::InvalidDetailError;
-        qDebug() << __FUNCTION__ << "Invalid detail error.";
         return false;
     }
 
@@ -104,15 +117,15 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
         // Save new contact
         newContact = true;
         d->m_lastUsedId += 1;
-        ncoContact = ::tracker()->liveNode(QUrl("contact:"+(d->m_lastUsedId)));
+        ncoContact = ::tracker()->liveNode(QUrl("contact:"+(QString::number(d->m_lastUsedId))));
         QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
         contact->setId(d->m_lastUsedId);
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
     }  else {
-        ncoContact = ::tracker()->liveNode(QUrl("contact:"+contact->id()));
+        ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contact->id())));
     }
 
-    ncoContact->setContactUID(QString(d->m_lastUsedId));
+    ncoContact->setContactUID(QString::number(d->m_lastUsedId));
 
     // Iterate the contact details that are set for the contact. Save them.
     foreach(const QContactDetail& det, contact->details()) {

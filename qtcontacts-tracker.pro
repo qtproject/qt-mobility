@@ -8,8 +8,10 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
 
-HEADERS += qcontacttrackerbackend_p.h
-SOURCES += qcontacttrackerbackend.cpp
+LIBS += -L/usr/lib -lqttracker
+
+HEADERS += qcontacttrackerbackend_p.h tracker2qcontact.h
+SOURCES += qcontacttrackerbackend.cpp tracker2qcontact.cpp
 
 INCLUDEPATH += ../../qtmobility/contacts
 

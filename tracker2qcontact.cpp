@@ -1,0 +1,228 @@
+/* * This file is part of qtcontacts-tracker
+ * Copyright © 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.
+ * Contact: Aleksandar Stojiljkovic <aleksandar.stojiljkovic@nokia.com>
+ * This software, including documentation, is protected by copyright controlled by
+ * Nokia Corporation. All rights are reserved. Copying, including reproducing, storing,
+ * adapting or translating, any or all of this material requires the prior written consent
+ * of Nokia Corporation. This material also contains confidential information which may
+ * not be disclosed to others without the prior written consent of Nokia.
+ */
+
+#include "tracker2qcontact.h"
+
+#include <qcontact.h>
+#include <qcontactname.h>
+#include <qcontactaddress.h>
+#include <qcontactanniversary.h>
+#include <qcontactavatar.h>
+#include <qcontactbirthday.h>
+#include <qcontactemailaddress.h>
+#include <qcontactphonenumber.h>
+#include <qcontacturl.h>
+#include <qcontactsynctarget.h>
+#include <qcontactgender.h>
+#include <qcontactguid.h>
+
+#include <QtTracker/ontologies/nco.h>
+
+using namespace SopranoLive;
+
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactName& name)
+{
+    name.setPrefix     ( ncoContact->getNameHonorificPrefix() );
+    name.setFirst      ( ncoContact->getNameGiven() );
+    name.setMiddle     ( ncoContact->getNameAdditional() );
+    name.setLast       ( ncoContact->getNameFamily() );
+    name.setSuffix     ( ncoContact->getNameHonorificSuffix() );
+    name.setDisplayName( ncoContact->getFullname() );
+}
+
+void copyDetailData(const Live<nco::PostalAddress>& ncoPostalAddress, QContactAddress& address)
+{
+    //address.setDisplayLabel ("");
+    address.setStreet       ( ncoPostalAddress->getStreetAddress() );
+    address.setLocality     ( ncoPostalAddress->getLocality() );
+    address.setRegion       ( ncoPostalAddress->getRegion() );
+    address.setPostcode     ( ncoPostalAddress->getPostalcode() );
+    address.setCountry      ( ncoPostalAddress->getCountry() );
+}
+
+void copyDetailData(const Live<nco::PhoneNumber>& ncoPhoneNumber, QContactPhoneNumber& detail)
+{
+    detail.setNumber (ncoPhoneNumber->getPhoneNumber());
+}
+
+void copyDetailData(const Live<nco::EmailAddress>& ncoEmail, QContactEmailAddress& detail)
+{
+    detail.setEmailAddress (ncoEmail->getEmailAddress());
+}
+
+// TODO
+/*
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactAvatar& detail)
+{
+    Q_UNUSED(ncoContact);
+    detail.setAvatar (QString());
+}
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactAnniversary& detail)
+{
+    Q_UNUSED(ncoContact);
+    Q_UNUSED(detail);
+    //detail.setDate (QDate());
+}
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactGender& detail)
+{
+    Q_UNUSED(ncoContact);
+    Q_UNUSED(detail);
+    //const Live< Gender > gender = ncoContact->getGender();
+    //detail.setGender (gender->);
+}
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactBirthday& detail)
+{
+    detail.setDate (QDate());
+}
+
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactGuid& detail)
+{
+    detail.setGuid (QString());
+}
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactSyncTarget& detail)
+{
+    detail.setSyncTarget (QString());
+}
+void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactUrl& detail)
+{
+    detail.setUrl (QString());
+}
+*/
+void Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContact, QContact& qcontact )
+{
+    bool ok;
+    qcontact.setId(QString(ncoContact->getContactUID()).toUInt(&ok));
+    if( not ok ) { Q_ASSERT(!"Could not convert id to number"); }
+
+    {
+        QContactName detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        LiveNodes addresses = ncoContact->getHasPostalAddresss(); //Home addresses
+        foreach( const Live<nco::PostalAddress>& address, addresses ) {
+            QContactAddress detail;
+            copyDetailData(address, detail);
+                //TODO pick one
+                // AttributeSubTypeParcel;
+                // AttributeSubTypePostal;
+                // AttributeSubTypeDomestic;
+                // AttributeSubTypeInternational;
+                // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
+            detail.setAttribute(QContactAddress::AttributeContext, QContactAddress::AttributeContextHome);
+            qcontact.saveDetail(&detail);
+        }
+
+        LiveNodes phoneNumbers = ncoContact->getHasPhoneNumbers(); //Home phone numbers
+        foreach( const Live<nco::PhoneNumber>& phoneNumber, phoneNumbers) {
+            QContactPhoneNumber detail;
+            copyDetailData(phoneNumber, detail);
+                //TODO pick one
+                // AttributeSubTypeLandline;
+                // AttributeSubTypeMobile;
+                // AttributeSubTypeFacsimile;
+                // AttributeSubTypePager;
+                // AttributeSubTypeVoice;
+                // AttributeSubTypeModem;
+                // AttributeSubTypeVideo;
+                // AttributeSubTypeCar;
+                // AttributeSubTypeBulletinBoardSystem;
+                // AttributeSubTypeMessagingCapable;
+                // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
+            detail.setAttribute(QContactPhoneNumber::AttributeContext, QContactPhoneNumber::AttributeContextHome);
+            qcontact.saveDetail(&detail);
+        }
+
+        LiveNodes emailAddresses = ncoContact->getHasEmailAddresss(); //Home email addresses
+        foreach( const Live<nco::EmailAddress>& ncoEmail, emailAddresses) {
+            QContactEmailAddress detail;
+            copyDetailData(ncoEmail, detail);
+            detail.setAttribute(QContactEmailAddress::AttributeContext, QContactEmailAddress::AttributeContextHome);
+            detail.setAttribute(QContactEmailAddress::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
+            qcontact.saveDetail(&detail);
+        }
+
+        LiveNodes affiliations = ncoContact->getHasAffiliations(); //Work addresses+phonenumbers+emails
+        foreach( const Live<nco::Affiliation>& affiliation, affiliations ) {
+            LiveNodes addresses = affiliation->getHasPostalAddresss();//Work addresses
+            foreach( const Live<nco::PostalAddress>& address, addresses ) {
+                QContactAddress detail;
+                copyDetailData(address, detail);
+                    //TODO pick one
+                    // AttributeSubTypeParcel;
+                    // AttributeSubTypePostal;
+                    // AttributeSubTypeDomestic;
+                    // AttributeSubTypeInternational;
+                    // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
+                detail.setAttribute(QContactAddress::AttributeContext, QContactAddress::AttributeContextWork);
+                qcontact.saveDetail(&detail);
+            }
+            LiveNodes phoneNumbers = affiliation->getHasPhoneNumbers(); //Work phone
+            foreach( const Live<nco::PhoneNumber>& phoneNumber, phoneNumbers) {
+                QContactPhoneNumber detail;
+                copyDetailData(phoneNumber, detail);
+                    //TODO pick one
+                    // AttributeSubTypeLandline;
+                    // AttributeSubTypeMobile;
+                    // AttributeSubTypeFacsimile;
+                    // AttributeSubTypePager;
+                    // AttributeSubTypeVoice;
+                    // AttributeSubTypeModem;
+                    // AttributeSubTypeVideo;
+                    // AttributeSubTypeCar;
+                    // AttributeSubTypeBulletinBoardSystem;
+                    // AttributeSubTypeMessagingCapable;
+                    // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
+                detail.setAttribute(QContactPhoneNumber::AttributeContext, QContactPhoneNumber::AttributeContextWork);
+                qcontact.saveDetail(&detail);
+            }
+            LiveNodes emailAddresses = affiliation->getHasEmailAddresss(); //Work email addresses
+            foreach( const Live<nco::EmailAddress>& ncoEmail, emailAddresses) {
+                QContactEmailAddress detail;
+                copyDetailData(ncoEmail, detail);
+                detail.setAttribute(QContactEmailAddress::AttributeContext, QContactEmailAddress::AttributeContextWork);
+                detail.setAttribute(QContactEmailAddress::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
+                qcontact.saveDetail(&detail);
+            }
+        }
+    }{
+    }
+    /*{ //TODO
+        QContactAvatar detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactAnniversary detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactGender detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactBirthday detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactGuid detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactSyncTarget detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }{
+        QContactUrl detail;
+        copyDetailData(ncoContact, detail);
+        qcontact.saveDetail(&detail);
+    }
+    */
+}
+
