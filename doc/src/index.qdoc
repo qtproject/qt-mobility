@@ -30,5 +30,14 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMediaMetadata}
 \endlist
 
+\section2 Classes for service implementers.
 
+\list
+    \o \l{QAbstractMediaService}
+    \o \l{QAbstractMediaObject}
+    \o \l{QAbstractMediaControl}
+    \o \l{QMediaPlayerControl}
+    \o \l{QMetadataProvider}
+    \o \l{QMediaPlaylistSource}
+    \o \l{QRadioTuner}
 */
