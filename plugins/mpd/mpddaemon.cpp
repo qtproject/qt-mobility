@@ -101,12 +101,12 @@ int MpdDaemon::playerState() const
 
 qint64 MpdDaemon::duration() const
 {
-    return d->duration;
+    return d->duration * 1000;
 }
 
 qint64 MpdDaemon::position() const
 {
-    return d->position;
+    return d->position * 1000;
 }
 
 int MpdDaemon::currentSongPos() const
