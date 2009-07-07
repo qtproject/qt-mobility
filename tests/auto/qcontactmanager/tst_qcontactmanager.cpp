@@ -1556,6 +1556,9 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(cm.detailDefinition(newDef.id()).id().isEmpty());
         QVERIFY(cm.error() == QContactManager::DoesNotExistError);
 
+        QVERIFY(cm.removeDetailDefinition(newDef.id()) == false);
+        QVERIFY(cm.error() == QContactManager::DoesNotExistError);
+
         /* Add a new definition */
         QVERIFY(cm.saveDetailDefinition(newDef) == true);
         QVERIFY(cm.error() == QContactManager::NoError);
