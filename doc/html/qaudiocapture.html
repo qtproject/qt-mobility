@@ -14,22 +14,33 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAudioCapture Class Reference</h1>
 <pre>    #include &lt;QAudioCapture&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qabstractmediaobject.html">QAbstractMediaObject</a>.</p>
 <ul>
 <li><a href="qaudiocapture-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapture.html#QAudioCapture">QAudioCapture</a></b> ( QAudioCaptureService * <i>service</i> = createAudioCaptureService(), QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapture.html#dtor.QAudioCapture">~QAudioCapture</a></b> ()</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapture.html#service">service</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"/><b><a href="qaudiocapture.html#QAudioCapture">QAudioCapture</a></b> ( QAudioCaptureService * <i>service</i> = createAudioCaptureService(), QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qaudiocapture.html#dtor.QAudioCapture">~QAudioCapture</a></b> ()</li>
-<li><div class="fn"/>virtual QAbstractMediaService * <b><a href="qaudiocapture.html#service">service</a></b> () const</li>
+<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
 </ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
-<ul>
-<li><div class="fn"/>void <b><a href="qaudiocapture.html#start">start</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qaudiocapture.html#stop">stop</a></b> ()</li>
-</ul>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapture.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapture.html#stop">stop</a></b> ()</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -40,6 +51,7 @@
 <h3 class="fn"><a name="dtor.QAudioCapture"></a>QAudioCapture::~QAudioCapture ()</h3>
 <p>Destroys the audiocapture object.</p>
 <h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QAudioCapture::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qabstractmediaobject.html#service">QAbstractMediaObject::service</a>().</p>
 <p>Returns the session object being controlled by this recorder.</p>
 <h3 class="fn"><a name="start"></a>void QAudioCapture::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Start recording audio</p>

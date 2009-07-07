@@ -19,21 +19,29 @@
 <ul>
 <li><a href="qvideorendererendpoint-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="properties"></a>
-<h3>Properties</h3>
+<h2>Properties</h2>
 <ul>
-<li><div class="fn"/><b><a href="qvideorendererendpoint.html#surface-prop">surface</a></b> : QAbstractVideoSurface *</li>
+<li><div class="fn"><b><a href="qvideorendererendpoint.html#surface-prop">surface</a></b> : QAbstractVideoSurface *</div></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideorendererendpoint.html#QVideoRendererEndpoint">QVideoRendererEndpoint</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideorendererendpoint.html#dtor.QVideoRendererEndpoint">~QVideoRendererEndpoint</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideorendererendpoint.html#surface-prop">setSurface</a></b> ( QAbstractVideoSurface * <i>surface</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QAbstractVideoSurface * </td><td class="memItemRight" valign="bottom"><b><a href="qvideorendererendpoint.html#surface-prop">surface</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual Direction </td><td class="memItemRight" valign="bottom"><b><a href="qvideorendererendpoint.html#direction">direction</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"/><b><a href="qvideorendererendpoint.html#QVideoRendererEndpoint">QVideoRendererEndpoint</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qvideorendererendpoint.html#dtor.QVideoRendererEndpoint">~QVideoRendererEndpoint</a></b> ()</li>
-<li><div class="fn"/>virtual void <b><a href="qvideorendererendpoint.html#surface-prop">setSurface</a></b> ( QAbstractVideoSurface * <i>surface</i> )</li>
-<li><div class="fn"/>QAbstractVideoSurface * <b><a href="qvideorendererendpoint.html#surface-prop">surface</a></b> () const</li>
-</ul>
-<ul>
-<li><div class="fn"/>1 public function inherited from <a href="qmediaendpointinterface.html#public-functions">QMediaEndpointInterface</a></li>
+<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediaendpointinterface.html#public-functions">QMediaEndpointInterface</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -44,17 +52,19 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="surface-prop"></a>surface : QAbstractVideoSurface *</h3>
 <p>The video surface a renderer renders to.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>QAbstractVideoSurface * surface () const</b></li>
-<li><div class="fn"/><b>virtual void setSurface ( QAbstractVideoSurface * <i>surface</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QAbstractVideoSurface * </td><td class="memItemRight" valign="bottom"><b>surface</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setSurface</b> ( QAbstractVideoSurface * <i>surface</i> )</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVideoRendererEndpoint"></a>QVideoRendererEndpoint::QVideoRendererEndpoint ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new video renderer media end point with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QVideoRendererEndpoint"></a>QVideoRendererEndpoint::~QVideoRendererEndpoint ()</h3>
 <p>Destroys a video renderer media end point.</p>
+<h3 class="fn"><a name="direction"></a><a href="qmediaendpointinterface.html#Direction-enum">Direction</a> QVideoRendererEndpoint::direction () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaendpointinterface.html#direction">QMediaEndpointInterface::direction</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,6 +1,24 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="multimedia-library.png" imagedir="../../gif" title="Multimedia Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="qabstractmediacontrol.html" title="QAbstractMediaControl Class Reference">
+        <keyword ref="qabstractmediacontrol.html">QAbstractMediaControl</keyword>
+        <keyword ref="qabstractmediacontrol.html#notifyInterval-prop">notifyInterval</keyword>
+        <keyword ref="qabstractmediacontrol.html#notifyInterval-prop">setNotifyInterval</keyword>
+        <keyword ref="qabstractmediacontrol.html#addPropertyWatch">addPropertyWatch</keyword>
+        <keyword ref="qabstractmediacontrol.html#changePropertyValue">changePropertyValue</keyword>
+        <keyword ref="qabstractmediacontrol.html#notifyIntervalChanged">notifyIntervalChanged</keyword>
+        <keyword ref="qabstractmediacontrol.html#notifyPropertyValueChanged">notifyPropertyValueChanged</keyword>
+        <keyword ref="qabstractmediacontrol.html#propertyValueChanged">propertyValueChanged</keyword>
+        <keyword ref="qabstractmediacontrol.html#removePropertyWatch">removePropertyWatch</keyword>
+        <keyword ref="qabstractmediacontrol.html#setNotifyObject">setNotifyObject</keyword>
+        <section ref="qabstractmediacontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qabstractmediaobject.html" title="QAbstractMediaObject Class Reference">
+        <keyword ref="qabstractmediaobject.html">QAbstractMediaObject</keyword>
+        <keyword ref="qabstractmediaobject.html#service">service</keyword>
+        <section ref="qabstractmediaobject-members.html" title="List of all members"/>
+    </section>
     <section ref="qabstractmediaservice.html" title="QAbstractMediaService Class Reference">
         <keyword ref="qabstractmediaservice.html">QAbstractMediaService</keyword>
         <keyword ref="qabstractmediaservice.html#audioInput-prop">audioInput</keyword>
@@ -85,6 +103,7 @@
         <keyword ref="qaudiorendererendpoint.html#sampleSize-prop">sampleSize</keyword>
         <keyword ref="qaudiorendererendpoint.html#sampleSize-prop">setSampleSize</keyword>
         <keyword ref="qaudiorendererendpoint.html#device">device</keyword>
+        <keyword ref="qaudiorendererendpoint.html#direction">direction</keyword>
         <keyword ref="qaudiorendererendpoint.html#setDevice">setDevice</keyword>
         <keyword ref="qaudiorendererendpoint.html#supportedChannels">supportedChannels</keyword>
         <keyword ref="qaudiorendererendpoint.html#supportedFrequencies">supportedFrequencies</keyword>
@@ -95,6 +114,7 @@
         <keyword ref="qiodeviceendpoint.html">QIODeviceEndpoint</keyword>
         <keyword ref="qiodeviceendpoint.html#device-prop">device</keyword>
         <keyword ref="qiodeviceendpoint.html#device-prop">setDevice</keyword>
+        <keyword ref="qiodeviceendpoint.html#direction">direction</keyword>
         <section ref="qiodeviceendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qmediaendpointinterface.html" title="QMediaEndpointInterface Class Reference">
@@ -141,6 +161,7 @@
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PausedState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::EndOfStreamState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PlayingState</keyword>
+        <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::ErrorState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::LoadingState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::StoppedState</keyword>
         <keyword ref="qmediaplayer.html#bufferStatus-prop">bufferStatus</keyword>
@@ -159,8 +180,8 @@
         <keyword ref="qmediaplayer.html#position-prop">position</keyword>
         <keyword ref="qmediaplayer.html#position-prop">setPosition</keyword>
         <keyword ref="qmediaplayer.html#state-prop">state</keyword>
-        <keyword ref="qmediaplayer.html#video-prop">video</keyword>
-        <keyword ref="qmediaplayer.html#video-prop">isVideoAvailable</keyword>
+        <keyword ref="qmediaplayer.html#videoAvailable-prop">videoAvailable</keyword>
+        <keyword ref="qmediaplayer.html#videoAvailable-prop">isVideoAvailable</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
         <keyword ref="qmediaplayer.html#advance">advance</keyword>
@@ -180,6 +201,40 @@
         <keyword ref="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</keyword>
         <keyword ref="qmediaplayer.html#volumeChanged">volumeChanged</keyword>
         <section ref="qmediaplayer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplayercontrol.html" title="QMediaPlayerControl Class Reference">
+        <keyword ref="qmediaplayercontrol.html">QMediaPlayerControl</keyword>
+        <keyword ref="qmediaplayercontrol.html#advance">advance</keyword>
+        <keyword ref="qmediaplayercontrol.html#back">back</keyword>
+        <keyword ref="qmediaplayercontrol.html#bufferStatus">bufferStatus</keyword>
+        <keyword ref="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#bufferingChanged">bufferingChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#currentMediaChanged">currentMediaChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#duration">duration</keyword>
+        <keyword ref="qmediaplayercontrol.html#durationChanged">durationChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#isBuffering">isBuffering</keyword>
+        <keyword ref="qmediaplayercontrol.html#isMuted">isMuted</keyword>
+        <keyword ref="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</keyword>
+        <keyword ref="qmediaplayercontrol.html#mediaPlaylist">mediaPlaylist</keyword>
+        <keyword ref="qmediaplayercontrol.html#mutingChanged">mutingChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#pause">pause</keyword>
+        <keyword ref="qmediaplayercontrol.html#play">play</keyword>
+        <keyword ref="qmediaplayercontrol.html#playlistPosition">playlistPosition</keyword>
+        <keyword ref="qmediaplayercontrol.html#playlistPositionChanged">playlistPositionChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#position">position</keyword>
+        <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#setMediaPlaylist">setMediaPlaylist</keyword>
+        <keyword ref="qmediaplayercontrol.html#setMuted">setMuted</keyword>
+        <keyword ref="qmediaplayercontrol.html#setPlaylistPosition">setPlaylistPosition</keyword>
+        <keyword ref="qmediaplayercontrol.html#setPosition">setPosition</keyword>
+        <keyword ref="qmediaplayercontrol.html#setVolume">setVolume</keyword>
+        <keyword ref="qmediaplayercontrol.html#state">state</keyword>
+        <keyword ref="qmediaplayercontrol.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#stop">stop</keyword>
+        <keyword ref="qmediaplayercontrol.html#videoAvailabilityChanged">videoAvailabilityChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#volume">volume</keyword>
+        <keyword ref="qmediaplayercontrol.html#volumeChanged">volumeChanged</keyword>
+        <section ref="qmediaplayercontrol-members.html" title="List of all members"/>
     </section>
     <section ref="qmediaplaylist.html" title="QMediaPlaylist Class Reference">
         <keyword ref="qmediaplaylist.html">QMediaPlaylist</keyword>
@@ -282,7 +337,19 @@
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">fullscreen</keyword>
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">isFullscreen</keyword>
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">setFullscreen</keyword>
+        <keyword ref="qmediawidgetendpoint.html#direction">direction</keyword>
         <section ref="qmediawidgetendpoint-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmetadataprovider.html" title="QMetadataProvider Class Reference">
+        <keyword ref="qmetadataprovider.html">QMetadataProvider</keyword>
+        <keyword ref="qmetadataprovider.html#availableMetadata">availableMetadata</keyword>
+        <keyword ref="qmetadataprovider.html#isReadOnly">isReadOnly</keyword>
+        <keyword ref="qmetadataprovider.html#metadata">metadata</keyword>
+        <keyword ref="qmetadataprovider.html#metadataAvailabilityChanged">metadataAvailabilityChanged</keyword>
+        <keyword ref="qmetadataprovider.html#metadataAvailable">metadataAvailable</keyword>
+        <keyword ref="qmetadataprovider.html#readOnlyChanged">readOnlyChanged</keyword>
+        <keyword ref="qmetadataprovider.html#setMetadata">setMetadata</keyword>
+        <section ref="qmetadataprovider-members.html" title="List of all members"/>
     </section>
     <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">
         <keyword ref="qradioplayer.html">QRadioPlayer</keyword>
@@ -313,6 +380,26 @@
         <keyword ref="qradioplayer.html#volumeChanged">volumeChanged</keyword>
         <section ref="qradioplayer-members.html" title="List of all members"/>
     </section>
+    <section ref="qradiotuner.html" title="QRadioTuner Class Reference">
+        <keyword ref="qradiotuner.html">QRadioTuner</keyword>
+        <keyword ref="qradiotuner.html#band">band</keyword>
+        <keyword ref="qradiotuner.html#duration">duration</keyword>
+        <keyword ref="qradiotuner.html#frequency">frequency</keyword>
+        <keyword ref="qradiotuner.html#isMuted">isMuted</keyword>
+        <keyword ref="qradiotuner.html#isStereo">isStereo</keyword>
+        <keyword ref="qradiotuner.html#searchBackward">searchBackward</keyword>
+        <keyword ref="qradiotuner.html#searchForward">searchForward</keyword>
+        <keyword ref="qradiotuner.html#setBand">setBand</keyword>
+        <keyword ref="qradiotuner.html#setDuration">setDuration</keyword>
+        <keyword ref="qradiotuner.html#setFrequency">setFrequency</keyword>
+        <keyword ref="qradiotuner.html#setMuted">setMuted</keyword>
+        <keyword ref="qradiotuner.html#setSignalStrength">setSignalStrength</keyword>
+        <keyword ref="qradiotuner.html#setStereo">setStereo</keyword>
+        <keyword ref="qradiotuner.html#setVolume">setVolume</keyword>
+        <keyword ref="qradiotuner.html#signalStrength">signalStrength</keyword>
+        <keyword ref="qradiotuner.html#volume">volume</keyword>
+        <section ref="qradiotuner-members.html" title="List of all members"/>
+    </section>
     <section ref="qsharedmediaplaylist.html" title="QSharedMediaPlaylist Class Reference">
         <keyword ref="qsharedmediaplaylist.html">QSharedMediaPlaylist</keyword>
         <keyword ref="qsharedmediaplaylist.html#name">name</keyword>
@@ -323,9 +410,14 @@
         <keyword ref="qvideorendererendpoint.html">QVideoRendererEndpoint</keyword>
         <keyword ref="qvideorendererendpoint.html#surface-prop">surface</keyword>
         <keyword ref="qvideorendererendpoint.html#surface-prop">setSurface</keyword>
+        <keyword ref="qvideorendererendpoint.html#direction">direction</keyword>
         <section ref="qvideorendererendpoint-members.html" title="List of all members"/>
     </section>
 </section>
-<section ref="overviews.html" title="Overviews"/>
+<section ref="overviews.html" title="Overviews">
+    <section ref="index.html" title="Multimedia Library Developer Resources">
+        <keyword ref="index.html">Multimedia Library Developer Resources</keyword>
+    </section>
+</section>
 <section ref="examples.html" title="Tutorial &amp; Examples"/>
 </DCF>

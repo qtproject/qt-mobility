@@ -13,58 +13,72 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaMetadata Class Reference</h1>
+<p>Use this class to extract Metadata from a Multimedia object. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaMetadata&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
 <li><a href="qmediametadata-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="properties"></a>
-<h3>Properties</h3>
+<h2>Properties</h2>
 <ul>
-<li><div class="fn"/><b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> : const bool</li>
-<li><div class="fn"/><b><a href="qmediametadata.html#readOnly-prop">readOnly</a></b> : const bool</li>
+<li><div class="fn"><b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> : const bool</div></li>
+<li><div class="fn"><b><a href="qmediametadata.html#readOnly-prop">readOnly</a></b> : const bool</div></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"/><b><a href="qmediametadata.html#QMediaMetadata">QMediaMetadata</a></b> ( QAbstractMediaObject * <i>mediaObject</i> )</li>
-<li><div class="fn"/><b><a href="qmediametadata.html#dtor.QMediaMetadata">~QMediaMetadata</a></b> ()</li>
-<li><div class="fn"/>QList&lt;QString&gt; <b><a href="qmediametadata.html#availableMetadata">availableMetadata</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qmediametadata.html#readOnly-prop">isReadOnly</a></b> () const</li>
-<li><div class="fn"/>QVariant <b><a href="qmediametadata.html#metadata">metadata</a></b> ( QString const &amp; <i>name</i> ) const</li>
-<li><div class="fn"/>bool <b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> () const</li>
-<li><div class="fn"/>void <b><a href="qmediametadata.html#setMetadata">setMetadata</a></b> ( QString const &amp; <i>name</i>, QVariant const &amp; <i>value</i> )</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#QMediaMetadata">QMediaMetadata</a></b> ( QAbstractMediaObject * <i>mediaObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#dtor.QMediaMetadata">~QMediaMetadata</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#availableMetadata">availableMetadata</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#readOnly-prop">isReadOnly</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#metadata">metadata</a></b> ( QString const &amp; <i>name</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#setMetadata">setMetadata</a></b> ( QString const &amp; <i>name</i>, QVariant const &amp; <i>value</i> )</td></tr>
+</table>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
-<ul>
-<li><div class="fn"/>void <b><a href="qmediametadata.html#metadataAvailabilityChanged">metadataAvailabilityChanged</a></b> ( bool <i>metaDataAvailable</i> )</li>
-<li><div class="fn"/>void <b><a href="qmediametadata.html#readOnlyChanged">readOnlyChanged</a></b> ( bool <i>readOnly</i> )</li>
-</ul>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#metadataAvailabilityChanged">metadataAvailabilityChanged</a></b> ( bool <i>metadataAvailable</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#readOnlyChanged">readOnlyChanged</a></b> ( bool <i>readOnly</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
+<p>Use this class to extract Metadata from a Multimedia object.</p>
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="metadataAvailable-prop"></a>metadataAvailable : const bool</h3>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>bool metadataAvailable () const</b></li>
-</ul>
+<p>This property holds true if metadata can be read from the Multimedia object.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>metadataAvailable</b> () const</td></tr>
+</table>
 <h3 class="fn"><a name="readOnly-prop"></a>readOnly : const bool</h3>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>bool isReadOnly () const</b></li>
-</ul>
+<p>This property holds true if metadata can only be read from the Multimedia object, false if elements can be set.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isReadOnly</b> () const</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaMetadata"></a>QMediaMetadata::QMediaMetadata ( QAbstractMediaObject * <i>mediaObject</i> )</h3>
+<h3 class="fn"><a name="QMediaMetadata"></a>QMediaMetadata::QMediaMetadata ( <a href="qabstractmediaobject.html">QAbstractMediaObject</a> * <i>mediaObject</i> )</h3>
+<p>Construct a <a href="qmediametadata.html">QMediaMetadata</a> to read and or write Metadata from the Mulitmedia object <i>mediaObject</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaMetadata"></a>QMediaMetadata::~QMediaMetadata ()</h3>
+<p>Destroys the metadata object.</p>
 <h3 class="fn"><a name="availableMetadata"></a>QList&lt;QString&gt; QMediaMetadata::availableMetadata () const</h3>
+<p>Returns a list of the names of all the metadata elements available.</p>
 <h3 class="fn"><a name="metadata"></a>QVariant QMediaMetadata::metadata ( QString const &amp; <i>name</i> ) const</h3>
+<p>Returns the metadata for the element named <i>name</i>.</p>
 <p>See also <a href="qmediametadata.html#setMetadata">setMetadata</a>().</p>
-<h3 class="fn"><a name="metadataAvailabilityChanged"></a>void QMediaMetadata::metadataAvailabilityChanged ( bool <i>metaDataAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="metadataAvailabilityChanged"></a>void QMediaMetadata::metadataAvailabilityChanged ( bool <i>metadataAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal the availability of metadata has changed, <i>metadataAvailable</i> will be true if the multimedia object has metadata.</p>
 <h3 class="fn"><a name="readOnlyChanged"></a>void QMediaMetadata::readOnlyChanged ( bool <i>readOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal a change in the read only status of meta data, <i>readOnly</i> will be true if metadata elements can not be added or adjusted.</p>
 <h3 class="fn"><a name="setMetadata"></a>void QMediaMetadata::setMetadata ( QString const &amp; <i>name</i>, QVariant const &amp; <i>value</i> )</h3>
+<p>Change the value of the metadata element named <i>name</i>, to <i>value</i>.</p>
 <p>See also <a href="qmediametadata.html#metadata">metadata</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

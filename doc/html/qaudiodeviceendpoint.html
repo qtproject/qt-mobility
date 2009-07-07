@@ -19,61 +19,72 @@
 <ul>
 <li><a href="qaudiodeviceendpoint-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"/>enum <b><a href="qaudiodeviceendpoint.html#DeviceDirection-enum">DeviceDirection</a></b> { InputDevice, OutputDevice, InputOutputDevice }</li>
-<li><div class="fn"/>enum <b><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactor</a></b> { UnknownFormFactor, RemoteNetworkDevice, Speakers, LineLevel, ..., AllFormFactors }</li>
-<li><div class="fn"/>flags <b><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactors</a></b></li>
-<li><div class="fn"/>enum <b><a href="qaudiodeviceendpoint.html#Role-enum">Role</a></b> { ConsoleRole, MultimediaRole, CommunicationsRole, AllRoles }</li>
-<li><div class="fn"/>flags <b><a href="qaudiodeviceendpoint.html#Role-enum">Roles</a></b></li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#DeviceDirection-enum">DeviceDirection</a></b> { InputDevice, OutputDevice, InputOutputDevice }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactor</a></b> { UnknownFormFactor, RemoteNetworkDevice, Speakers, LineLevel, ..., AllFormFactors }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactors</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#Role-enum">Role</a></b> { ConsoleRole, MultimediaRole, CommunicationsRole, AllRoles }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#Role-enum">Roles</a></b></td></tr>
+</table>
+<hr />
 <a name="properties"></a>
-<h3>Properties</h3>
+<h2>Properties</h2>
 <ul>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#directionFilter-prop">directionFilter</a></b> : DeviceDirection</li>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</a></b> : FormFactors</li>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</a></b> : Roles</li>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</a></b> : int</li>
+<li><div class="fn"><b><a href="qaudiodeviceendpoint.html#directionFilter-prop">directionFilter</a></b> : DeviceDirection</div></li>
+<li><div class="fn"><b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</a></b> : FormFactors</div></li>
+<li><div class="fn"><b><a href="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</a></b> : Roles</div></li>
+<li><div class="fn"><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</a></b> : int</div></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#QAudioDeviceEndpoint">QAudioDeviceEndpoint</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#dtor.QAudioDeviceEndpoint">~QAudioDeviceEndpoint</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#defaultInputDevice">defaultInputDevice</a></b> ( Role <i>role</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#defaultOutputDevice">defaultOutputDevice</a></b> ( Role <i>role</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#description">description</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#deviceCount">deviceCount</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#direction-2">direction</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">DeviceDirection </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#directionFilter-prop">directionFilter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual FormFactor </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#formFactor">formFactor</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FormFactors </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QIcon </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#icon">icon</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#name">name</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Roles </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual Roles </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#roles">roles</a></b> ( int <i>device</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#directionFilter-prop">setDirectionFilter</a></b> ( DeviceDirection <i>direction</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">setFormFactorFilter</a></b> ( FormFactors <i>form</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#roleFilter-prop">setRoleFilter</a></b> ( Roles <i>roles</i> )</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual Direction </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#direction">direction</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#QAudioDeviceEndpoint">QAudioDeviceEndpoint</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qaudiodeviceendpoint.html#dtor.QAudioDeviceEndpoint">~QAudioDeviceEndpoint</a></b> ()</li>
-<li><div class="fn"/>virtual int <b><a href="qaudiodeviceendpoint.html#defaultInputDevice">defaultInputDevice</a></b> ( Role <i>role</i> ) const = 0</li>
-<li><div class="fn"/>virtual int <b><a href="qaudiodeviceendpoint.html#defaultOutputDevice">defaultOutputDevice</a></b> ( Role <i>role</i> ) const = 0</li>
-<li><div class="fn"/>virtual QString <b><a href="qaudiodeviceendpoint.html#description">description</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>virtual int <b><a href="qaudiodeviceendpoint.html#deviceCount">deviceCount</a></b> () const = 0</li>
-<li><div class="fn"/>virtual int <b><a href="qaudiodeviceendpoint.html#direction">direction</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>DeviceDirection <b><a href="qaudiodeviceendpoint.html#directionFilter-prop">directionFilter</a></b> () const</li>
-<li><div class="fn"/>virtual FormFactor <b><a href="qaudiodeviceendpoint.html#formFactor">formFactor</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>FormFactors <b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</a></b> () const</li>
-<li><div class="fn"/>virtual QIcon <b><a href="qaudiodeviceendpoint.html#icon">icon</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>virtual QString <b><a href="qaudiodeviceendpoint.html#name">name</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>Roles <b><a href="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</a></b> () const</li>
-<li><div class="fn"/>virtual Roles <b><a href="qaudiodeviceendpoint.html#roles">roles</a></b> ( int <i>device</i> ) const = 0</li>
-<li><div class="fn"/>int <b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</a></b> () const</li>
-<li><div class="fn"/>virtual void <b><a href="qaudiodeviceendpoint.html#directionFilter-prop">setDirectionFilter</a></b> ( DeviceDirection <i>direction</i> )</li>
-<li><div class="fn"/>virtual void <b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">setFormFactorFilter</a></b> ( FormFactors <i>form</i> )</li>
-<li><div class="fn"/>virtual void <b><a href="qaudiodeviceendpoint.html#roleFilter-prop">setRoleFilter</a></b> ( Roles <i>roles</i> )</li>
+<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediaendpointinterface.html#public-functions">QMediaEndpointInterface</a></li>
 </ul>
-<ul>
-<li><div class="fn"/>1 public function inherited from <a href="qmediaendpointinterface.html#public-functions">QMediaEndpointInterface</a></li>
-</ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
-<ul>
-<li><div class="fn"/>virtual void <b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">setSelectedDevice</a></b> ( int <i>device</i> )</li>
-</ul>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">setSelectedDevice</a></b> ( int <i>device</i> )</td></tr>
+</table>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
-<ul>
-<li><div class="fn"/>void <b><a href="qaudiodeviceendpoint.html#devicesChanged">devicesChanged</a></b> ( int <i>index</i>, int <i>count</i> )</li>
-<li><div class="fn"/>void <b><a href="qaudiodeviceendpoint.html#devicesInserted">devicesInserted</a></b> ( int <i>index</i>, int <i>count</i> )</li>
-<li><div class="fn"/>void <b><a href="qaudiodeviceendpoint.html#devicesRemoved">devicesRemoved</a></b> ( int <i>index</i>, int <i>count</i> )</li>
-<li><div class="fn"/>void <b><a href="qaudiodeviceendpoint.html#selectedDeviceChanged">selectedDeviceChanged</a></b> ( int <i>index</i> )</li>
-</ul>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#devicesChanged">devicesChanged</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#devicesInserted">devicesInserted</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#devicesRemoved">devicesRemoved</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDeviceChanged">selectedDeviceChanged</a></b> ( int <i>index</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -84,7 +95,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="DeviceDirection-enum"></a>enum QAudioDeviceEndpoint::DeviceDirection</h3>
 <p>Identifies if an audio device produces or consumes audio data.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::InputDevice</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The device produces audio data.</td></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::OutputDevice</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">The device consumes audio data.</td></tr>
@@ -92,7 +103,7 @@
 </table></p>
 <h3 class="flags"><a name="FormFactor-enum"></a>enum QAudioDeviceEndpoint::FormFactor<br />flags QAudioDeviceEndpoint::FormFactors</h3>
 <p>Identifies the form factor of a device.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::UnknownFormFactor</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">The form factor of the device is unknown.</td></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::RemoteNetworkDevice</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">The device outputs to a remote network device.</td></tr>
@@ -110,7 +121,7 @@
 <p>The FormFactors type is a typedef for <a href="qflags.html">QFlags</a>&lt;FormFactor&gt;. It stores an OR combination of FormFactor values.</p>
 <h3 class="flags"><a name="Role-enum"></a>enum QAudioDeviceEndpoint::Role<br />flags QAudioDeviceEndpoint::Roles</h3>
 <p>Identifies the type of use an audio is appropriate for.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::ConsoleRole</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">A device appropriate for system notifications, or game sounds.</td></tr>
 <tr><td valign="top"><tt>QAudioDeviceEndpoint::MultimediaRole</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">A device appropriate for music or video audio.</td></tr>
@@ -122,32 +133,32 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="directionFilter-prop"></a>directionFilter : <a href="qaudiodeviceendpoint.html#DeviceDirection-enum">DeviceDirection</a></h3>
 <p>The direction selectable devices are filtered on.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>DeviceDirection directionFilter () const</b></li>
-<li><div class="fn"/><b>virtual void setDirectionFilter ( DeviceDirection <i>direction</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">DeviceDirection </td><td class="memItemRight" valign="bottom"><b>directionFilter</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDirectionFilter</b> ( DeviceDirection <i>direction</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="formFactorFilter-prop"></a>formFactorFilter : <a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactors</a></h3>
 <p>The form factors selectable devices are filtered on.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>FormFactors formFactorFilter () const</b></li>
-<li><div class="fn"/><b>virtual void setFormFactorFilter ( FormFactors <i>form</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">FormFactors </td><td class="memItemRight" valign="bottom"><b>formFactorFilter</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setFormFactorFilter</b> ( FormFactors <i>form</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="roleFilter-prop"></a>roleFilter : <a href="qaudiodeviceendpoint.html#Role-enum">Roles</a></h3>
 <p>The roles selectable devices are filtered on.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>Roles roleFilter () const</b></li>
-<li><div class="fn"/><b>virtual void setRoleFilter ( Roles <i>roles</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">Roles </td><td class="memItemRight" valign="bottom"><b>roleFilter</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setRoleFilter</b> ( Roles <i>roles</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="selectedDevice-prop"></a>selectedDevice : int</h3>
 <p>The index of the selected audio device.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>int selectedDevice () const</b></li>
-<li><div class="fn"/><b>virtual void setSelectedDevice ( int <i>device</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>selectedDevice</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setSelectedDevice</b> ( int <i>device</i> )</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAudioDeviceEndpoint"></a>QAudioDeviceEndpoint::QAudioDeviceEndpoint ( QObject * <i>parent</i> = 0 )</h3>
@@ -168,7 +179,9 @@
 <p>Signals that <i>count</i> new audio devices have been inserted into the list of available devices at <i>index</i>.</p>
 <h3 class="fn"><a name="devicesRemoved"></a>void QAudioDeviceEndpoint::devicesRemoved ( int <i>index</i>, int <i>count</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that <i>count</i> audio devices have been removed from the list of available devices at <i>index</i>.</p>
-<h3 class="fn"><a name="direction"></a>int QAudioDeviceEndpoint::direction ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="direction"></a><a href="qmediaendpointinterface.html#Direction-enum">Direction</a> QAudioDeviceEndpoint::direction () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaendpointinterface.html#direction">QMediaEndpointInterface::direction</a>().</p>
+<h3 class="fn"><a name="direction-2"></a>int QAudioDeviceEndpoint::direction ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the direction of a <i>device</i></p>
 <h3 class="fn"><a name="formFactor"></a><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactor</a> QAudioDeviceEndpoint::formFactor ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the form factor of a <i>device</i>.</p>

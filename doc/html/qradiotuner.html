@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../multimedia/qradiotuner.cpp -->
+<head>
+  <title>QRadioTuner Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRadioTuner Class Reference</h1>
+<p>The abstract class for controling the tuning of radio devices. <a href="#details">More...</a></p>
+<pre>    #include &lt;QRadioTuner&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qabstractmediacontrol.html">QAbstractMediaControl</a>.</p>
+<ul>
+<li><a href="qradiotuner-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#QRadioTuner">QRadioTuner</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#dtor.QRadioTuner">~QRadioTuner</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#band">band</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#duration">duration</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequency">frequency</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#isMuted">isMuted</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#isStereo">isStereo</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchBackward">searchBackward</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchForward">searchForward</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setBand">setBand</a></b> ( int <i>b</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setDuration">setDuration</a></b> ( qint64 <i>duration</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setFrequency">setFrequency</a></b> ( int <i>frequency</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setMuted">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setSignalStrength">setSignalStrength</a></b> ( int <i>strength</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setStereo">setStereo</a></b> ( bool <i>stereo</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#setVolume">setVolume</a></b> ( int <i>volume</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#signalStrength">signalStrength</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#volume">volume</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 public functions inherited from <a href="qabstractmediacontrol.html#public-functions">QAbstractMediaControl</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="qabstractmediacontrol.html#properties">QAbstractMediaControl</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="qabstractmediacontrol.html#signals">QAbstractMediaControl</a></li>
+<li><div class="fn"></div>3 protected functions inherited from <a href="qabstractmediacontrol.html#protected-functions">QAbstractMediaControl</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The abstract class for controling the tuning of radio devices.</p>
+<p>See also <a href="qabstractmediaservice.html">QAbstractMediaService</a> and <a href="qradioplayer.html">QRadioPlayer</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QRadioTuner"></a>QRadioTuner::QRadioTuner ( QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="dtor.QRadioTuner"></a>QRadioTuner::~QRadioTuner ()</h3>
+<h3 class="fn"><a name="band"></a>int QRadioTuner::band () const</h3>
+<p>See also <a href="qradiotuner.html#setBand">setBand</a>().</p>
+<h3 class="fn"><a name="duration"></a>qint64 QRadioTuner::duration () const</h3>
+<p>See also <a href="qradiotuner.html#setDuration">setDuration</a>().</p>
+<h3 class="fn"><a name="frequency"></a>int QRadioTuner::frequency () const</h3>
+<p>See also <a href="qradiotuner.html#setFrequency">setFrequency</a>().</p>
+<h3 class="fn"><a name="isMuted"></a>bool QRadioTuner::isMuted () const</h3>
+<h3 class="fn"><a name="isStereo"></a>bool QRadioTuner::isStereo () const</h3>
+<h3 class="fn"><a name="searchBackward"></a>void QRadioTuner::searchBackward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="searchForward"></a>void QRadioTuner::searchForward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setBand"></a>void QRadioTuner::setBand ( int <i>b</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#band">band</a>().</p>
+<h3 class="fn"><a name="setDuration"></a>void QRadioTuner::setDuration ( qint64 <i>duration</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#duration">duration</a>().</p>
+<h3 class="fn"><a name="setFrequency"></a>void QRadioTuner::setFrequency ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#frequency">frequency</a>().</p>
+<h3 class="fn"><a name="setMuted"></a>void QRadioTuner::setMuted ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#isMuted">isMuted</a>().</p>
+<h3 class="fn"><a name="setSignalStrength"></a>void QRadioTuner::setSignalStrength ( int <i>strength</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#signalStrength">signalStrength</a>().</p>
+<h3 class="fn"><a name="setStereo"></a>void QRadioTuner::setStereo ( bool <i>stereo</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#isStereo">isStereo</a>().</p>
+<h3 class="fn"><a name="setVolume"></a>void QRadioTuner::setVolume ( int <i>volume</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qradiotuner.html#volume">volume</a>().</p>
+<h3 class="fn"><a name="signalStrength"></a>int QRadioTuner::signalStrength () const</h3>
+<p>See also <a href="qradiotuner.html#setSignalStrength">setSignalStrength</a>().</p>
+<h3 class="fn"><a name="volume"></a>int QRadioTuner::volume () const</h3>
+<p>See also <a href="qradiotuner.html#setVolume">setVolume</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Multimedia API</div></td>
+</tr></table></div></address></body>
+</html>
