@@ -5,8 +5,7 @@ imagedirs = images
 
 headerdirs = ../../multimedia ../../multimedia/endpoints
 
-
-sourcedirs = ../../multimedia ../../multimedia/endpoints
+sourcedirs = ../../multimedia ../../multimedia/endpoints .
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
