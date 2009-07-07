@@ -14,19 +14,34 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">List of All Members for QMediaPlaylist</h1>
 <p>This is the complete list of members for <a href="qmediaplaylist.html">QMediaPlaylist</a>, including inherited members.</p>
-<ul>
-<li><div class="fn"></div><a href="qmediaplaylist.html#QMediaPlayList">QMediaPlayList</a> ( QString, QPlayListSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#clear">clear</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#current">current</a> ( MediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#enqueue">enqueue</a> ( QMediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#jump">jump</a> ( int )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#next">next</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#pause">pause</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#prev">prev</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#remove">remove</a> ( QMediaSource )</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#start">start</a> ()</li>
-<li><div class="fn"></div><a href="qmediaplaylist.html#stop">stop</a> ()</li>
+<p><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"/><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a> ( QMediaPlaylistSource *, QObject * )</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a> ()</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#append">append</a> ( const QMediaSource &amp; ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#append-2">append</a> ( const QList&lt;QMediaSource&gt; &amp; ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#clear">clear</a> () : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#insert">insert</a> ( int, const QMediaSource &amp; ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#isEmpty">isEmpty</a> () const : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a> () const : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemAt">itemAt</a> ( int ) const : QMediaSource</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a> ( int, int )</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a> ( int, int )</li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemsChanged">itemsChanged</a> ( int, int )</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a> ()</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a> ()</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#load">load</a> ( const QString &amp;, const char * ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#load-2">load</a> ( QIODevice *, const char * ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#remove">remove</a> ( int ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#remove-2">remove</a> ( int, int ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#save">save</a> ( const QString &amp;, const char * ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#save-2">save</a> ( QIODevice *, const char * ) : bool</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#shuffle">shuffle</a> ()</li>
+<li><div class="fn"/><a href="qmediaplaylist.html#size">size</a> () const : int</li>
 </ul>
+</td></tr>
+</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

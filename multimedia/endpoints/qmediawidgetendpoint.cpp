@@ -39,10 +39,9 @@
     \preliminary
     \brief The QMediaWidgetEndpoint class provides a QWidget media output.
 
-    \note QMediaWidgetEndpoint must be created by a media service and cannot be instantiated
-    directly.
+    \codeline QAbstractMediaService::createEndpoint<QMediaWidgetEndpoint *>();
 
-    \sa QAbstractMediaService::createEndpoint()
+    \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
 */
 
 /*!
@@ -75,6 +74,13 @@ QMediaEndpointInterface::Direction QMediaWidgetEndpoint::direction() const
 {
     return Output;
 }
+
+/*!
+    \property QMediaWidgetEndpoint::fullscreen
+
+    The full screen state of a media output widget.
+*/
+
 /*!
     Identifies if a media output widget is in full screen mode.
 

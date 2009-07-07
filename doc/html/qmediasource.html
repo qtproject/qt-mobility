@@ -21,18 +21,20 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource">QMediaSource</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource-2">QMediaSource</a></b> ( const QString &amp; <i>mimeType</i>, const QVariant &amp; <i>url</i> )</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource-3">QMediaSource</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#dtor.QMediaSource">~QMediaSource</a></b> ()</li>
-<li><div class="fn"></div>QVariant <b><a href="qmediasource.html#dataLocation">dataLocation</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#isNull">isNull</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qmediasource.html#mimeType">mimeType</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmediasource.html#setDataLocation">setDataLocation</a></b> ( const QVariant &amp; <i>url</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediasource.html#setMimeType">setMimeType</a></b> ( const QString &amp; <i>mimeType</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#operator-not-eq">operator!=</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
-<li><div class="fn"></div>QMediaSource &amp; <b><a href="qmediasource.html#operator-eq">operator=</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#operator-eq-eq">operator==</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
+<li><div class="fn"/><b><a href="qmediasource.html#QMediaSource">QMediaSource</a></b> ()</li>
+<li><div class="fn"/><b><a href="qmediasource.html#QMediaSource-2">QMediaSource</a></b> ( const QString &amp; <i>mimeType</i>, const QVariant &amp; <i>url</i> )</li>
+<li><div class="fn"/><b><a href="qmediasource.html#QMediaSource-3">QMediaSource</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qmediasource.html#dtor.QMediaSource">~QMediaSource</a></b> ()</li>
+<li><div class="fn"/>QVariant <b><a href="qmediasource.html#dataLocation">dataLocation</a></b> () const</li>
+<li><div class="fn"/>int <b><a href="qmediasource.html#duration">duration</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qmediasource.html#isNull">isNull</a></b> () const</li>
+<li><div class="fn"/>QString <b><a href="qmediasource.html#mimeType">mimeType</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qmediasource.html#setDataLocation">setDataLocation</a></b> ( const QVariant &amp; <i>url</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediasource.html#setDuration">setDuration</a></b> ( int <i>ms</i> )</li>
+<li><div class="fn"/>void <b><a href="qmediasource.html#setMimeType">setMimeType</a></b> ( const QString &amp; <i>mimeType</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediasource.html#operator-not-eq">operator!=</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
+<li><div class="fn"/>QMediaSource &amp; <b><a href="qmediasource.html#operator-eq">operator=</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
+<li><div class="fn"/>bool <b><a href="qmediasource.html#operator-eq-eq">operator==</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -46,11 +48,17 @@
 <h3 class="fn"><a name="dtor.QMediaSource"></a>QMediaSource::~QMediaSource ()</h3>
 <h3 class="fn"><a name="dataLocation"></a>QVariant QMediaSource::dataLocation () const</h3>
 <p>See also <a href="qmediasource.html#setDataLocation">setDataLocation</a>().</p>
+<h3 class="fn"><a name="duration"></a>int QMediaSource::duration () const</h3>
+<p>Return the duration of media in miliseconds or -1 if duration is not available.</p>
+<p>See also <a href="qmediasource.html#setDuration">setDuration</a>().</p>
 <h3 class="fn"><a name="isNull"></a>bool QMediaSource::isNull () const</h3>
 <h3 class="fn"><a name="mimeType"></a>QString QMediaSource::mimeType () const</h3>
 <p>See also <a href="qmediasource.html#setMimeType">setMimeType</a>().</p>
 <h3 class="fn"><a name="setDataLocation"></a>void QMediaSource::setDataLocation ( const QVariant &amp; <i>url</i> )</h3>
 <p>See also <a href="qmediasource.html#dataLocation">dataLocation</a>().</p>
+<h3 class="fn"><a name="setDuration"></a>void QMediaSource::setDuration ( int <i>ms</i> )</h3>
+<p>Set the duration of media in miliseconds.</p>
+<p>See also <a href="qmediasource.html#duration">duration</a>().</p>
 <h3 class="fn"><a name="setMimeType"></a>void QMediaSource::setMimeType ( const QString &amp; <i>mimeType</i> )</h3>
 <p>See also <a href="qmediasource.html#mimeType">mimeType</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QMediaSource::operator!= ( const QMediaSource &amp; <i>other</i> ) const</h3>

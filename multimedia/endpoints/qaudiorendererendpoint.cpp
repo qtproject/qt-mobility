@@ -58,6 +58,8 @@ public:
     \preliminary
     \brief The QAudioRendererEndpoint class provides a media end point that renders audio to a
     QIODevice
+
+    \sa QAbstractMediaService::setAudioOutput()
 */
 
 /*!
@@ -84,6 +86,12 @@ QMediaEndpointInterface::Direction QAudioRendererEndpoint::direction() const
 }
 
 /*!
+    \property QAudioRendererEndpoint::frequency
+
+    The frequency of the rendered audio.
+*/
+
+/*!
     Returns the frequency of the rendered audio.
 */
 int QAudioRendererEndpoint::frequency() const
@@ -106,6 +114,12 @@ void QAudioRendererEndpoint::setFrequency(int frequency)
 */
 
 /*!
+    \property QAudioRendererEndpoint::channels
+
+    The number of channels in the rendered audio.
+*/
+
+/*!
     Returns the number of channels in the renderered audio.
 */
 int QAudioRendererEndpoint::channels() const
@@ -125,6 +139,12 @@ void QAudioRendererEndpoint::setChannels(int channels)
     \fn QAudioRendererEndpoint::supportedChannels() const
 
     Returns a list of the numbers of channels supported by an audio renderer.
+*/
+
+/*!
+    \property QAudioRendererEndpoint::sampleSize
+
+    The sample size of the rendered audio.
 */
 
 /*!
