@@ -50,6 +50,9 @@ public:
     virtual QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const = 0;
     virtual QObject *createEndpoint(const char *interface) = 0;
 
+    virtual void setAudioOutput(QObject *output) = 0;
+    virtual void setAudioInput(QObject *input) = 0;
+
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:

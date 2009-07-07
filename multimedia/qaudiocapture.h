@@ -67,7 +67,6 @@ public:
     QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
 #endif
-    void setAudioInput(QObject *input);
     QAbstractMediaService* service() const;
 
 public Q_SLOTS:

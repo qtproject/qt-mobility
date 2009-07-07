@@ -36,6 +36,7 @@
 #define QAUDIOCAPTURECONTROL_H
 
 #ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudioformat.h>
 #endif
 
@@ -55,9 +56,11 @@ public:
 #ifdef AUDIOSERVICES
     virtual QAudioFormat format() const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
+
+Q_SIGNALS:
+    void stateChanged(QAudio::State newState);
 #endif
 
-    virtual void setAudioInput(QObject *input) = 0;
 protected:
     QAudioCaptureControl(QObject* parent);
 };
