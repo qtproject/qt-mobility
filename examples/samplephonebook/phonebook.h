@@ -43,6 +43,7 @@
 QT_BEGIN_NAMESPACE
 class QListWidget;
 class QPushButton;
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QTextEdit;
@@ -67,6 +68,10 @@ public slots:
     void selectAvatar();
     void contactSelected(int row);
 
+private slots:
+    void backendChanged(const QList<QUniqueId>& changed);
+    void backendSelected(const QString& backend);
+
 private:
     QContact buildContact() const;
     void displayContact();
@@ -83,6 +88,9 @@ private:
     QPushButton *exportButton;
     QPushButton *quitButton;
     QLabel *currentIndexLabel;
+    QLabel *currentBackendLabel;
+
+    QComboBox *backendCombo;
 
     QLineEdit *nameLine;
     QPushButton *avatarButton;
@@ -96,7 +104,6 @@ private:
 
     int currentIndex;
     QList<QContact> contacts;
-    QList<QString> contactAvatars;
 
     QContactManager *cm;
 };

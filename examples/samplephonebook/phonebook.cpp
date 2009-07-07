@@ -39,9 +39,6 @@
 PhoneBook::PhoneBook(QWidget *parent)
     : QWidget(parent)
 {
-    // instantiate a new contact manager - memory backend
-    cm = new QContactManager();
-
     contactsList = new QListWidget();
     contactsList->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
 
@@ -83,6 +80,13 @@ PhoneBook::PhoneBook(QWidget *parent)
     currentIndexLabel = new QLabel();
     currentIndexLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
+    currentBackendLabel = new QLabel(tr("Current Backend:"));
+    backendCombo = new QComboBox();
+    QStringList availableManagers = QContactManager::availableManagers();
+    foreach (const QString manager, availableManagers)
+        backendCombo->addItem(manager);
+    connect(backendCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected(QString)));
+
     importButton = new QPushButton(tr("&Import"));
     importButton->setToolTip(tr("Import contact from vCard file"));
     exportButton = new QPushButton(tr("&Export"));
@@ -116,6 +120,8 @@ PhoneBook::PhoneBook(QWidget *parent)
 
     QHBoxLayout *currentIndexLayout = new QHBoxLayout;
     currentIndexLayout->addStretch();
+    currentIndexLayout->addWidget(currentBackendLabel);
+    currentIndexLayout->addWidget(backendCombo);
     currentIndexLayout->addWidget(currentIndexLabel);
 
     QGridLayout *inputLayout = new QGridLayout;
@@ -143,8 +149,39 @@ PhoneBook::PhoneBook(QWidget *parent)
     setLayout(mainLayout);
     setWindowTitle(tr("Sample Phone Book"));
 
-    // add a new, blank contact and kick off the display
-    addContact();
+    // instantiate a new contact manager - default backend
+    cm = 0;
+    backendSelected(QString());
+}
+
+void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
+{
+    // load all contacts from the updated backend
+    QList<QUniqueId> contactIds = cm->contacts();
+    contacts.clear();
+    foreach (const QUniqueId cid, contactIds)
+        contacts.append(cm->contact(cid));
+
+    // if there are no contacts in the backend any more, we add a new, unsaved contact
+    // otherwise, display the current one.  Either way, need to repopulate the list.
+    populateList(cm->contact(changes.value(0))); // this may fail if the change was a removal.
+    if (contacts.isEmpty()) {
+        addContact();
+    } else {
+        displayContact();
+    }
+}
+
+void PhoneBook::backendSelected(const QString& backend)
+{
+    currentIndex = -1;
+    if (cm)
+        delete cm;
+    cm = new QContactManager(backend);
+    connect(cm, SIGNAL(contactsAdded(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
+    connect(cm, SIGNAL(contactsChanged(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
+    connect(cm, SIGNAL(contactsRemoved(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
+    backendChanged(QList<QUniqueId>());
 }
 
 bool PhoneBook::eventFilter(QObject* watched, QEvent* event)
@@ -256,17 +293,13 @@ QContact PhoneBook::buildContact() const
     address.setAttribute(QContactDetail::AttributeSubType, QString(QContactAddress::AttributeSubTypeDomestic + "," + QContactAddress::AttributeSubTypeParcel + "," + QContactAddress::AttributeSubTypePostal));
     c.saveDetail(&address);
 
-    QContactAvatar avatar;
-    avatar.setAvatar(contactAvatars.at(currentIndex));
-    avatar.setAttribute(QContactDetail::AttributeSubType, QContactAvatar::AttributeSubTypeImage);
-    c.saveDetail(&avatar);
-
     return c;
 }
 
 void PhoneBook::displayContact()
 {
     QContact c = contacts.at(currentIndex);
+    c = cm->contact(c.id()); // this removes any unsaved information.
 
     // display the name
     nameLine->setText(c.name().displayName());
@@ -304,7 +337,7 @@ void PhoneBook::displayContact()
     addressText->setText((QContactAddress(c.detail(QContactAddress::DefinitionId))).displayLabel());
 
     // and build the avatar filename and display it if it exists.
-    QString avatarFile = contactAvatars.at(currentIndex);
+    QString avatarFile = c.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar);
     if (avatarFile.isNull() || avatarFile.isEmpty()) {
         avatarButton->setIcon(QIcon());
         avatarButton->setText("No image selected");
@@ -315,7 +348,8 @@ void PhoneBook::displayContact()
     }
 
     // update the UI depending on the current state.
-    QString currentIndexLabelString = tr("Contact %1 of %2 (%3)").arg(currentIndex+1).arg(contacts.size()).arg((contacts.at(currentIndex).id() == 0) ? tr("Unsaved") : tr("Saved"));
+    QString currentState = contacts.at(currentIndex).id() == 0 ? "Unsaved" : "Saved";
+    QString currentIndexLabelString = tr("Contact %1 of %2 (%3)").arg(currentIndex+1).arg(contacts.size()).arg(currentState);
     currentIndexLabel->setText(currentIndexLabelString);
 
     // update the buttons
@@ -339,18 +373,18 @@ void PhoneBook::selectAvatar()
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionId);
         av.setAvatar(selected);
         curr.saveDetail(&av);
-
-        contactAvatars.replace(currentIndex, selected);
         contacts.replace(currentIndex, curr);
+
+        avatarButton->setIcon(QIcon(selected));
+        avatarButton->setText("");
+        avatarButton->setIconSize(avatarButton->size());
     }
-    displayContact();
 }
 
 void PhoneBook::addContact()
 {
     currentIndex = contacts.size();
     contacts.append(QContact());
-    contactAvatars.append("");
     displayContact();
 }
 
@@ -358,23 +392,13 @@ void PhoneBook::saveContact()
 {
     QContact c = buildContact();
     c.setId(contacts.at(currentIndex).id());
-    if (c.id() != 0) {
-        // we want to check that the contact has actually changed since last save
-        if (c == contacts.at(currentIndex)) {
-            // no change.
-            return;
-        }
-    }
-
+    QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionId);
+    c.saveDetail(&av);
     if (!cm->saveContact(&c)) {
         QString errorCode = "Unable to save the contact in the database; error code:" + QString::number(cm->error());
         QMessageBox::information(this, "Save Failed", errorCode);
         return;
     }
-
-    contacts.replace(currentIndex, c);
-    populateList(c);
-    displayContact();
 }
 
 void PhoneBook::removeContact()
@@ -386,24 +410,9 @@ void PhoneBook::removeContact()
         QMessageBox::Yes | QMessageBox::No);
 
     if (button == QMessageBox::Yes) {
-        // remove the contact, and adjust our current position.
-        if (contacts.at(currentIndex).id() != 0)
-            cm->removeContact(contacts.at(currentIndex).id());
-        contacts.removeAt(currentIndex);
-        contactAvatars.removeAt(currentIndex);
-        while (contacts.size() <= currentIndex)
-            currentIndex -= 1;
-
-        // if all contacts have been removed from the list, add a new (unsaved) contact.
-        if (currentIndex < 0) {
-            addContact();
-        }
-
+        cm->removeContact(contacts.at(currentIndex).id());
         QMessageBox::information(this, tr("Remove Successful"),
             tr("\"%1\" has been removed from your phone book.").arg(contactName));
-        QContact currentContact = contacts.at(currentIndex);
-        populateList(currentContact);
-        displayContact();
     }
 }
 
@@ -420,7 +429,6 @@ void PhoneBook::previous()
     // if not, we delete it.
     if (contacts.at(currentIndex).id() == 0) {
         contacts.removeAt(currentIndex);
-        contactAvatars.removeAt(currentIndex);
     }
 
     // we should display the previous contact
@@ -488,17 +496,6 @@ void PhoneBook::importFromVCard()
 
     // if the current contact is newly added (and not saved), we overwrite it
     cm->saveContact(&importedContact);
-    if (contacts.at(currentIndex).id() == 0) {
-        contacts.replace(currentIndex, importedContact);
-        contactAvatars.replace(currentIndex, importedContact.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar));
-    } else {
-        contacts.append(importedContact);
-        contactAvatars.append(importedContact.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar));
-    }
-
-    // update the display
-    populateList(importedContact);
-    displayContact();
 }
 
 void PhoneBook::exportAsVCard()

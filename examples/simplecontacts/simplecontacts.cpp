@@ -32,7 +32,6 @@
 ****************************************************************************/
 
 #include "qtcontacts.h"
-//#include "qcontactkabcbackenddetails.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -43,7 +42,6 @@ static void matchCall();
 static void viewDetails();
 static void editView();
 static void addPlugin();
-static void serialize();
 
 int main(int argc, char *argv[])
 {
@@ -54,7 +52,6 @@ int main(int argc, char *argv[])
     viewDetails();
     editView();
     addPlugin();
-    serialize();
     return 0;
 }
 
@@ -155,11 +152,11 @@ void viewDetails()
     }
 
     /* etc.. now physical addresses */
-    //QList<QContactDetail> addresses  = a.details("StreetAddress");
-    //foreach(const QContactAddress& detail, addresses) {
-    //    QString preferred = a.isPreferredDetail("DialActionId", detail) ? "preferred" : "";
-    //    qDebug() << QString("%1 address %4: '%2' ('%3')").arg(detail.attributes().value("Context")).arg(detail.value("label")).arg(detail.displayLabel()).arg(preferred);
-    //}
+    QList<QContactDetail> addresses  = a.details("StreetAddress");
+    foreach(const QContactAddress& detail, addresses) {
+        QString preferred = a.isPreferredDetail("SendFlowersActionId", detail) ? "preferred" : "";
+        qDebug() << QString("%1 address %4: '%2' ('%3')").arg(detail.attributes().value("Context")).arg(detail.value("label")).arg(detail.displayLabel()).arg(preferred);
+    }
 
     /* Now email addresses etc.... */
 
@@ -210,58 +207,3 @@ void addPlugin()
     /* TODO */
 }
 
-/* Sample code showing how a contact may be serialized to vcard */
-void serialize()
-{
-    /* Serializer missing from this branch */
-#if 0
-    QContact alice;
-
-    /* Set the name */
-    QContactName name;
-    name.setFirst("Alice");
-    name.setLast("Jones");
-    qDebug() << "Contact display name:" << name.displayName();
-
-    /* Set this separately (may not be supported on all platforms - corresponds to FN */
-    name.setDisplayName("Ally Jones");
-    qDebug() << "Contact display name:" << name.displayName();
-
-    /* Set the name */
-    alice.name() = name;
-
-    /* Add a phone number */
-    QContactPhoneNumber number;
-    number.setContext("Home");
-    number.setAttribute("Mobile");
-    number.setNumber("12345678");
-    number.setValue("label", "Home Mobile");
-    alice.addProperty(number);
-    alice.setPreferredProperty("DialActionId", number);
-
-    /* Add another one, too */
-    number.setContext("Work");
-    number.setAttribute("Landline");
-    number.setNumber("555-4444");
-    number.setLabel("Work Landline");
-    alice.addProperty(number);
-
-    /* serialize the contact to vcard */
-    qDebug() << "--------------------------------------";
-    QStringList serializedContact = QContactSerializer::serialize(alice);
-    foreach (QString vcardLine, serializedContact)
-        qDebug("%s", vcardLine.toAscii().data());
-
-    /* deserialize that vcard back to a contact */
-    QContact deserializedContact = QContactSerializer::deserialize(serializedContact);
-
-    /* then serialize _that_ contact, print it out, and check for inconsistencies. */
-    qDebug() << "--------------------------------------";
-    QStringList reserializedContact = QContactSerializer::serialize(deserializedContact);
-    foreach (QString vcardLine, reserializedContact)
-        qDebug("%s", vcardLine.toAscii().data());
-
-    qDebug() << "--------------------------------------";
-    qDebug() << "Serialization and Deserialization" << (serializedContact == reserializedContact ? "is" : "is not") << "Symmetric!";
-#endif
-}
