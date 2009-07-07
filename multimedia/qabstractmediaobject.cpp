@@ -35,15 +35,29 @@
 
 #include "qabstractmediaobject_p.h"
 
+
+/*!
+    \fn QAbstractMediaService* QAbstractMediaObject::service() const
+
+    Returns the media service that provide the functionality for the Multimedia object.
+*/
+
+/*!
+    Construct a QAbstractMediaObject with \a parent. This class is meant as a
+    base class for Multimedia objects so this constructor is protected.
+*/
+
 QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
     QObject(*new QAbstractMediaObjectPrivate, parent)
 {
 }
 
+
 /*!
     \internal
 */
-QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
-    : QObject(dd, parent)
+
+QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent):
+    QObject(dd, parent)
 {
 }

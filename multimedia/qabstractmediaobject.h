@@ -39,6 +39,7 @@
 
 #include "qmultimediaglobal.h"
 
+
 class QAbstractMediaService;
 
 
@@ -47,13 +48,16 @@ class QAbstractMediaObjectPrivate;
 class Q_MEDIA_EXPORT QAbstractMediaObject : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QAbstractMediaObject)
+
 public:
     virtual QAbstractMediaService* service() const = 0;
 
 protected:
     QAbstractMediaObject(QObject *parent);
     QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
+
+private:
+    Q_DECLARE_PRIVATE(QAbstractMediaObject)
 };
 
 
