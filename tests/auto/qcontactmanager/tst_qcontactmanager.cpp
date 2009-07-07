@@ -56,31 +56,37 @@ public slots:
     void init();
     void cleanup();
 private slots:
+
+    /* Special test with special data */
     void uriParsing();
+
+    /* Tests that are run on all managers */
     void nullIdOperations();
     void add();
     void update();
     void remove();
+    void referenceCounting();
+    void groups();
+    void batch();
+    void signalEmission();
+
+    /* Tests that take no data */
+    void contactValidation();
+    void errorStayingPut();
     void ctors();
     void invalidManager();
     void memoryManager();
-    void referenceCounting();
-    void contactValidation();
-    void signalEmission();
-    void groups();
-    void batch();
-
-    void errorStayingPut();
 
     /* data providers */
+    void uriParsing_data();
+    void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
+    void referenceCounting_data();
     void groups_data() {addManagers();}
     void batch_data() {addManagers();}
-
-    void uriParsing_data();
-    void referenceCounting_data();
+    void signalEmission_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -171,20 +177,6 @@ void tst_QContactManager::dumpContacts()
     }
 }
 
-void tst_QContactManager::nullIdOperations()
-{
-    QContactManager cm;
-    QVERIFY(!cm.removeContact(QUniqueId()));
-    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
-
-    QVERIFY(!cm.removeGroup(QUniqueId()));
-    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
-
-    QContact c = cm.contact(QUniqueId());
-    QVERIFY(c.id() == 0);
-    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
-}
-
 void tst_QContactManager::uriParsing_data()
 {
     QTest::addColumn<QString>("uri");
@@ -232,16 +224,33 @@ void tst_QContactManager::addManagers()
 
     QStringList managers = QContactManager::availableManagers();
 
-    /* Known bad ones */
+    /* Known one that will not pass */
     managers.removeAll("invalid");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
+        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         if (mgr == "memory") {
             params.insert("id", "tst_QContactManager");
+            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         }
-        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
     }
+}
+
+
+void tst_QContactManager::nullIdOperations()
+{
+    QFETCH(QString, uri);
+    QContactManager cm = QContactManager::fromUri(uri);
+    QVERIFY(!cm.removeContact(QUniqueId()));
+    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
+
+    QVERIFY(!cm.removeGroup(QUniqueId()));
+    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
+
+    QContact c = cm.contact(QUniqueId());
+    QVERIFY(c.id() == 0);
+    QVERIFY(cm.error() == QContactManager::DoesNotExistError);
 }
 
 void tst_QContactManager::uriParsing()
@@ -1309,10 +1318,9 @@ void tst_QContactManager::contactValidation()
 
 void tst_QContactManager::signalEmission()
 {
-    QMap<QString, QString> params;
-    params.insert("id", "tst_QContactManager::signalEmission()");
-    QContactManager m1("memory", params);
-    QContactManager m2("memory", params);
+    QFETCH(QString, uri);
+    QContactManager m1 = QContactManager::fromUri(uri);
+    QContactManager m2 = QContactManager::fromUri(uri);
 
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
@@ -1390,18 +1398,27 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     QCOMPARE(spy3.count(), remSigCount);
 
-    // verify that signals are emitted for modifications made to other managers (same id).
-    c.name().setSuffix("Test");
-    m2.saveContact(&c);
-    modSigCount += 1;
-    c.name().setPrefix("Test2");
-    m2.saveContact(&c);
-    modSigCount += 1;
-    QCOMPARE(spy2.count(), modSigCount); // check that we received the update signals.
-    m2.removeContact(c.id());
-    remSigCount += 1;
-    QCOMPARE(spy3.count(), remSigCount); // check that we received the remove signal.
+
+    /* There's a hitch with the memory engine - anonymous engines don't share signals */
+    QString engine;
+    QMap<QString, QString> params;
+    QContactManager::splitUri(uri, &engine, &params);
+
+    if (engine != "memory" || !params["id"].isEmpty()) {
+        // verify that signals are emitted for modifications made to other managers (same id).
+        c.name().setSuffix("Test");
+        m2.saveContact(&c);
+        modSigCount += 1;
+        c.name().setPrefix("Test2");
+        m2.saveContact(&c);
+        modSigCount += 1;
+        QCOMPARE(spy2.count(), modSigCount); // check that we received the update signals.
+        m2.removeContact(c.id());
+        remSigCount += 1;
+        QCOMPARE(spy3.count(), remSigCount); // check that we received the remove signal.
+    }
 }
+
 
 
 void tst_QContactManager::errorStayingPut()
