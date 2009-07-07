@@ -553,36 +553,33 @@ QString QContactAddress::displayLabel() const
     QString result = "";
 
     if (!st.trimmed().isEmpty()) {
-       result += st;
+       result += st + "\n";
     }
 
     if (!lc.trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += "\n";
-        result += lc;
+        result += lc + "\n";
     }
 
+    bool skipPostcode = false;
     if (!rg.trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += "\n";
-        result += rg;
+        skipPostcode = true;
+        if (!pc.trimmed().isEmpty()) {
+            result += rg + ", " + pc + "\n";
+        } else {
+            result += rg + "\n";
+        }
     }
 
-    if (!pc.trimmed().isEmpty()) {
-        if (!result.isEmpty()) {
-            if (result.at(result.size()-1) != '\n') {
-                result += ", ";
-            }
-
-        }
-        result += pc;
+    if (!skipPostcode && !pc.trimmed().isEmpty()) {
+        result += pc + "\n";
     }
 
     if (!cn.trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += "\n";
         result += cn;
     }
+
+    if (result.endsWith('\n'))
+        result.chop(1);
 
     return result;
 }
