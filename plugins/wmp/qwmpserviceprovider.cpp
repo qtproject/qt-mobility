@@ -32,62 +32,27 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERSERVICE_H
-#define QWMPPLAYERSERVICE_H
+#include "qwmpserviceprovider.h"
 
-#include "qmediaplayerservice.h"
+#include "qwmpplayerservice.h"
 
-#include "qwmpevents.h"
-
-#include <wmp.h>
-
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-
-class QWmpMetaData;
-class QWmpPlayerControl;
-class QWmpPlaylist;
-
-class QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
+QObject *QWmpServiceProvider::createObject(const char *iid) const
 {
-    Q_OBJECT
-public:
-    QWmpPlayerService(QObject *parent = 0);
-    ~QWmpPlayerService();
+    if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
+        return new QWmpPlayerService;
+    return 0;
+}
 
-    QAbstractMediaControl *control(const char *name) const;
+QStringList QWmpServiceProviderPlugin::keys() const
+{
+    return QStringList() << QLatin1String("mediaplayer");
+}
 
-    void setVideoOutput(QObject *output);
+QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
+{
+    if (key == QLatin1String("mediaplayer"))
+        return new QWmpServiceProvider;
+    return 0;
+}
 
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *iid);
-
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
-
-    // IWMPEvents
-    void STDMETHODCALLTYPE PlayStateChange(long NewState);
-    void STDMETHODCALLTYPE Buffering(VARIANT_BOOL Start);
-    void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
-    void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
-
-private:
-    volatile LONG m_ref;
-    IWMPPlayer4 *m_player;
-    QObject *m_videoOutput;
-    QWmpPlayerControl *m_control;
-    QWmpMetaData *m_metaData;
-    IConnectionPoint *m_connectionPoint;
-    DWORD m_adviseCookie;
-
-#ifdef QWMP_EVR
-    HINSTANCE m_evrHwnd;
-#endif
-};
-
-#endif
+Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);

@@ -73,23 +73,16 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
     d->control->setNotifyObject(this);
-    d->control->setNotifyInterval(250);
-    d->control->addPropertyWatch("position");
+//    d->control->setNotifyInterval(250);
+//    d->control->addPropertyWatch("position");
 
-    connect(d->control, SIGNAL(bufferingChanged(bool)),
-            this, SIGNAL(bufferingChanged(bool)));
-
-    connect(d->control, SIGNAL(playlistPositionChanged(int)),
-            this, SIGNAL(playlistPositionChanged(int)));
-
-    connect(d->control, SIGNAL(positionChanged(qint64)),
-            this, SIGNAL(positionChanged(qint64)));
-
-    connect(d->control, SIGNAL(durationChanged(qint64)),
-            this, SIGNAL(durationChanged(qint64)));
-
-    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
+    connect(d->control, SIGNAL(bufferingChanged(bool)), SIGNAL(bufferingChanged(bool)));
+    connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));
+    connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
 }
 
 /*!
@@ -100,7 +93,6 @@ QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
 
-    delete d->control;
     delete d->service;
 }
 

@@ -75,7 +75,7 @@ public:
     virtual QList<QByteArray> supportedEndpointInterfaces(
             QMediaEndpointInterface::Direction direction) const;
 
-    virtual QObject *createEndpoint(const char *interface);
+    virtual QObject *createEndpoint(const char *iid);
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 

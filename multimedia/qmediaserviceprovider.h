@@ -43,9 +43,9 @@ class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
 public:
-    virtual QObject* createObject(const char *interface) const = 0;
+    virtual QObject* createObject(const char *iid) const = 0;
 };
 
-extern QMediaServiceProvider *defaultServiceProvider(const char *type);
+extern Q_MEDIA_EXPORT QMediaServiceProvider *defaultServiceProvider(const char *type);
 
 #endif  // QMEDIASERVICEPROVIDER_H

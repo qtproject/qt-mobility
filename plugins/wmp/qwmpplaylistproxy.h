@@ -32,62 +32,37 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERSERVICE_H
-#define QWMPPLAYERSERVICE_H
+#ifndef QWMPPLAYLISTPROXY_H
+#define QWMPPLAYLISTPROXY_H
 
-#include "qmediaplayerservice.h"
-
-#include "qwmpevents.h"
+#include <QtCore/qobject.h>
 
 #include <wmp.h>
 
-class QMediaMetaData;
-class QMediaPlayerControl;
 class QMediaPlaylist;
 
-class QWmpMetaData;
-class QWmpPlayerControl;
-class QWmpPlaylist;
-
-class QWmpPlayerService : public QMediaPlayerService, public QWmpEvents
+class QWmpPlaylistProxy : public QObject
 {
     Q_OBJECT
 public:
-    QWmpPlayerService(QObject *parent = 0);
-    ~QWmpPlayerService();
+    QWmpPlaylistProxy(QMediaPlaylist *playlist, IWMPCore3 *player);
+    ~QWmpPlaylistProxy();
 
-    QAbstractMediaControl *control(const char *name) const;
+    IWMPPlaylist *wmpPlaylist() const;
 
-    void setVideoOutput(QObject *output);
-
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *iid);
-
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
-
-    // IWMPEvents
-    void STDMETHODCALLTYPE PlayStateChange(long NewState);
-    void STDMETHODCALLTYPE Buffering(VARIANT_BOOL Start);
-    void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
-    void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
+private Q_SLOTS:
+    void itemsAboutToBeInserted(int start, int end);
+    void itemsInserted();
+    void itemsAboutToBeRemoved(int start, int end);
+    void itemsChanged(int start, int end);
 
 private:
-    volatile LONG m_ref;
-    IWMPPlayer4 *m_player;
-    QObject *m_videoOutput;
-    QWmpPlayerControl *m_control;
-    QWmpMetaData *m_metaData;
-    IConnectionPoint *m_connectionPoint;
-    DWORD m_adviseCookie;
+    QMediaPlaylist *m_mediaPlaylist;
+    IWMPCore3 *m_player;
+    IWMPPlaylist *m_wmpPlaylist;
 
-#ifdef QWMP_EVR
-    HINSTANCE m_evrHwnd;
-#endif
+    int m_startPendingInserts;
+    int m_endPendingInserts;
 };
 
 #endif

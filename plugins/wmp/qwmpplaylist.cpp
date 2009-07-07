@@ -36,11 +36,14 @@
 
 #include "qwmpmetadata.h"
 
+#include "qmediasource.h"
+
 #include <QtCore/qstringlist.h>
 
 
-QWmpPlaylist::QWmpPlaylist(QObject *parent)
-    : QMediaPlaylist(parent)
+QWmpPlaylist::QWmpPlaylist(IWMPCore3 *player, QObject *parent)
+    : QMediaPlaylistSource(parent)
+    , m_player(player)
     , m_playlist(0)
 {
 }
@@ -49,9 +52,44 @@ QWmpPlaylist::~QWmpPlaylist()
 {
     if (m_playlist)
         m_playlist->Release();
+
+    if (m_player)
+        m_player->Release();
 }
 
-int QWmpPlaylist::count() const
+bool QWmpPlaylist::load(const QString &location, const char *format)
+{
+    Q_UNUSED(location);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+bool QWmpPlaylist::load(QIODevice * device, const char *format)
+{
+    Q_UNUSED(device);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+bool QWmpPlaylist::save(const QString &location, const char *format)
+{
+    Q_UNUSED(location);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+bool QWmpPlaylist::save(QIODevice * device, const char *format)
+{
+    Q_UNUSED(device);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+int QWmpPlaylist::size() const
 {
     long count = 0;
 
@@ -59,6 +97,101 @@ int QWmpPlaylist::count() const
         m_playlist->get_count(&count);
 
     return count;
+}
+
+QMediaSource QWmpPlaylist::itemAt(int pos) const
+{
+    QMediaSource source;
+
+    IWMPMedia *media = 0;
+    if (m_playlist && m_playlist->get_item(pos, &media) == S_OK) {
+        source.setDataLocation(QWmpMetaData::value(media, QLatin1String("URL"), 0));
+        source.setMimeType(QWmpMetaData::value(media, QLatin1String("MimeType"), 0).toString());
+
+        media->Release();
+    }
+
+    return source;
+}
+
+bool QWmpPlaylist::isReadOnly() const
+{
+    return false;
+}
+
+bool QWmpPlaylist::append(const QMediaSource &source)
+{
+    bool appended = false;
+
+    IWMPMedia *media = 0;
+    if (m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+        appended = m_playlist->appendItem(media) == S_OK;
+
+        media->Release();
+    }
+
+    return appended;
+}
+
+bool QWmpPlaylist::append(const QList<QMediaSource> &sources)
+{
+    foreach (const QMediaSource &source, sources) {
+        if (!append(source))
+            return false;
+    }
+    return true;
+}
+
+bool QWmpPlaylist::insert(int pos, const QMediaSource &source)
+{
+    bool inserted = false;
+
+    IWMPMedia *media = 0;
+    if (m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+        inserted = m_playlist->insertItem(pos, media) == S_OK;
+
+        media->Release();
+    }
+
+    return inserted;
+}
+
+bool QWmpPlaylist::remove(int pos)
+{
+    IWMPMedia *media = 0;
+    if (m_playlist->get_item(pos, &media) == S_OK && m_playlist->removeItem(media) == S_OK) {
+        emit itemsAboutToBeRemoved(pos, pos);
+        emit itemsRemoved();
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool QWmpPlaylist::remove(int start, int end)
+{
+    if (!m_playlist)
+        return false;
+
+    for (int i = start; i <= end; ++i) {
+        IWMPMedia *media = 0;
+        if (m_playlist->get_item(start, &media) == S_OK && m_playlist->removeItem(media) == S_OK) {
+            emit itemsAboutToBeRemoved(start, start);
+            emit itemsRemoved();
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool QWmpPlaylist::clear()
+{
+    return m_playlist && m_playlist->clear() == S_OK;
 }
 
 QStringList QWmpPlaylist::keys(int index) const
@@ -130,6 +263,8 @@ void QWmpPlaylist::setPlaylist(IWMPPlaylist *playlist)
 
     if (m_playlist)
         m_playlist->AddRef();
+}
 
-    emit changed();
+void QWmpPlaylist::shuffle()
+{
 }

@@ -36,27 +36,8 @@
 
 #include <QtCore/qstringlist.h>
 
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode()))) 
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
 QWmpMetaData::QWmpMetaData(QObject *parent)
-    : QMediaMetaData(parent)
+    : QMetadataProvider(parent)
     , m_media(0)
 {
 }
@@ -69,6 +50,7 @@ QWmpMetaData::~QWmpMetaData()
 
 bool QWmpMetaData::metadataAvailable() const
 {
+    return true;
 }
 
 bool QWmpMetaData::isReadOnly() const
@@ -111,8 +93,6 @@ void QWmpMetaData::setMedia(IWMPMedia *media)
 
     if (m_media)
         m_media->AddRef();
-
-    emit changed();
 }
 
 QStringList QWmpMetaData::keys(IWMPMedia *media)

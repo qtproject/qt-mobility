@@ -67,6 +67,18 @@ QMediaPlaylistSource::~QMediaPlaylistSource()
     \fn QMediaPlaylistSource::operator [](int pos) const;
 */
 
+
+/*!
+  Load playlist from \a location. If \a format is specified, it is used,
+  otherwise format is guessed from location name and data.
+
+  New items are appended to playlist.
+
+  QMediaPlaylist uses QMediaPlaylistSource to load/save playlists first,
+  than it tries available playlist I/O plugins.
+
+  Returns true if playlist was loaded succesfully, otherwise returns false.
+*/
 bool QMediaPlaylistSource::load(const QString &location, const char *format)
 {
     Q_UNUSED(location);
@@ -74,6 +86,14 @@ bool QMediaPlaylistSource::load(const QString &location, const char *format)
     return false;
 }
 
+/*!
+  Load playlist from QIODevice \a device. If \a format is specified, it is used,
+  otherwise format is guessed from device data.
+
+  New items are appended to playlist.
+
+  Returns true if playlist was loaded succesfully, otherwise returns false.
+*/
 bool QMediaPlaylistSource::load(QIODevice * device, const char *format)
 {
     Q_UNUSED(device);
@@ -81,6 +101,12 @@ bool QMediaPlaylistSource::load(QIODevice * device, const char *format)
     return false;
 }
 
+/*!
+  Save playlist to \a location. If \a format is specified, it is used,
+  otherwise format is guessed from location name.
+
+  Returns true if playlist was saved succesfully, otherwise returns false.
+  */
 bool QMediaPlaylistSource::save(const QString &location, const char *format)
 {
     Q_UNUSED(location);
@@ -88,6 +114,11 @@ bool QMediaPlaylistSource::save(const QString &location, const char *format)
     return false;
 }
 
+/*!
+  Save playlist to QIODevice \a device using format \a format.
+
+  Returns true if playlist was saved succesfully, otherwise returns false.
+*/
 bool QMediaPlaylistSource::save(QIODevice * device, const char *format)
 {
     Q_UNUSED(device);
@@ -95,17 +126,30 @@ bool QMediaPlaylistSource::save(QIODevice * device, const char *format)
     return false;
 }
 
+/*!
+  Returns true if the playlist is read-only; otherwise returns false.
+*/
 bool QMediaPlaylistSource::isReadOnly() const
 {
     return true;
 }
 
+/*!
+  Append \a source to the playlist.  
+
+  Returns true if the operation is successfull, other wise return false.
+*/
 bool QMediaPlaylistSource::append(const QMediaSource &source)
 {
     Q_UNUSED(source);
     return false;
 }
 
+/*!
+  Append a list of \a sources to the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
+*/
 bool QMediaPlaylistSource::append(const QList<QMediaSource> &sources)
 {
     foreach(const QMediaSource& source, sources ) {
@@ -116,6 +160,11 @@ bool QMediaPlaylistSource::append(const QList<QMediaSource> &sources)
     return true;
 }
 
+/*!
+  Insert a \a sources to the playlist at position \a pos.
+
+  Returns true if the operation is successfull, other wise return false.
+*/
 bool QMediaPlaylistSource::insert(int pos, const QMediaSource &source)
 {
     Q_UNUSED(pos);
@@ -123,12 +172,22 @@ bool QMediaPlaylistSource::insert(int pos, const QMediaSource &source)
     return false;
 }
 
+/*!
+  Remove a \a sources from the playlist at position \a pos.
+
+  Returns true if the operation is successfull, other wise return false.
+*/
 bool QMediaPlaylistSource::remove(int pos)
 {
     Q_UNUSED(pos);
     return false;
 }
 
+/*!
+  Remove the items from the playlist from position \a start to \a end inclusive.
+
+  Returns true if the operation is successfull, other wise return false.
+  */
 bool QMediaPlaylistSource::remove(int start, int end)
 {
     for (int pos=start; pos<=end; pos++) {
@@ -139,11 +198,19 @@ bool QMediaPlaylistSource::remove(int start, int end)
     return true;
 }
 
+/*!
+  Remove all the items from the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
+  */
 bool QMediaPlaylistSource::clear()
 {
     return remove(0, size()-1);
 }
 
+/*!
+  Shuffle items in the playlist.
+*/
 void QMediaPlaylistSource::shuffle()
 {
 }
