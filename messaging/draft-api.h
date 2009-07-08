@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef MessagingAPI
 #define MessagingAPI
+#include <QSharedDataPointer>
 #include <QString>
 #include <QByteArray>
 #include <QList>
@@ -40,6 +41,8 @@
 #include <QDateTime>
 #include <QObject>
 #include <QFlags>
+
+class QMessageIdPrivate;
 
 class QMessageId 
 {
@@ -54,11 +57,13 @@ public:
     bool isValid() const;
 
 private:
-    // ...
+    QSharedDataPointer<QMessageIdPrivate> d_ptr;
 };
 
 typedef QList<QMessageId> QMessageIdList;
 
+
+class QMessageContentContainerIdPrivate;
 
 class QMessageContentContainerId
 {
@@ -73,11 +78,13 @@ public:
     bool isValid() const;
 
 private:
-    // ...
+    QSharedDataPointer<QMessageContentContainerIdPrivate> d_ptr;
 };
 
 typedef QList<QMessageContentContainerId> QMessageContentContainerIdList;
 
+
+class QMessageFolderIdPrivate;
 
 class QMessageFolderId 
 {
@@ -92,11 +99,13 @@ public:
     bool isValid() const;
 
 private:
-    // ...
+    QSharedDataPointer<QMessageFolderIdPrivate> d_ptr;
 };
 
 typedef QList<QMessageFolderId> QMessageFolderIdList;
 
+
+class QMessageAccountIdPrivate;
 
 class QMessageAccountId 
 {
@@ -111,11 +120,13 @@ public:
     bool isValid() const;
 
 private:
-    // ...
+    QSharedDataPointer<QMessageAccountIdPrivate> d_ptr;
 };
 
 typedef QList<QMessageAccountId> QMessageAccountIdList;
 
+
+class QMessageContentContainerPrivate;
 
 class QMessageContentContainer {
 public:
@@ -178,8 +189,10 @@ private:
     virtual void setContentAvailable(bool available);
     virtual void setIndicativeSize(uint size);
 
-    // ...
+    QSharedDataPointer<QMessageContentContainerPrivate> d_ptr;
 };
+
+class QMessageAddressPrivate;
 
 class QMessageAddress {
 public:
@@ -200,11 +213,13 @@ public:
     void setType(Type type);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageAddressPrivate> d_ptr;
 };
 
 typedef QList<QMessageAddress> QMessageAddressList;
 
+
+class QMessagePrivate;
 
 class QMessage : public QMessageContentContainer {
 public:
@@ -325,11 +340,14 @@ private:
     void setParentAccountId(const QMessageAccountId &accountId);
     void setParentFolderId(const QMessageFolderId &folderId);
     void setSize(uint size);
-    // ...
+
+    QSharedDataPointer<QMessagePrivate> d_ptr;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
 
+
+class QMessageFolderPrivate;
 
 class QMessageFolder {
 public:
@@ -345,9 +363,11 @@ public:
     QString path() const;
 
 private:
-    // ...
+    QSharedDataPointer<QMessageFolderPrivate> d_ptr;
 };
 
+
+class QMessageAccountPrivate;
 
 class QMessageAccount {
 public:
@@ -364,7 +384,7 @@ public:
     static QMessageAccountId defaultAccount(QMessage::Type type);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageAccountPrivate> d_ptr;
 };
 
 
@@ -401,6 +421,8 @@ namespace QMessageDataComparator {
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessageDataComparator::Options)
 
 
+class QMessageAccountFilterKeyPrivate;
+
 class QMessageAccountFilterKey
 {
 public:
@@ -431,9 +453,11 @@ public:
     static QMessageAccountFilterKey name(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageAccountFilterKeyPrivate> d_ptr;
 };
 
+
+class QMessageAccountSortKeyPrivate;
 
 class QMessageAccountSortKey {
 public:
@@ -446,9 +470,11 @@ public:
     static QMessageAccountSortKey name(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageAccountSortKeyPrivate> d_ptr;
 };
 
+
+class QMessageFolderFilterKeyPrivate;
 
 class QMessageFolderFilterKey
 {
@@ -488,9 +514,11 @@ public:
     static QMessageFolderFilterKey ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageFolderFilterKeyPrivate> d_ptr;
 };
 
+
+class QMessageFolderSortKeyPrivate;
 
 class QMessageFolderSortKey {
 public:
@@ -507,9 +535,11 @@ public:
     static QMessageFolderSortKey path(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageFolderSortKeyPrivate> d_ptr;
 };
 
+
+class QMessageFilterKeyPrivate;
 
 class QMessageFilterKey
 {
@@ -574,9 +604,11 @@ public:
     static QMessageFilterKey ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageFilterKeyPrivate> d_ptr;
 };
 
+
+class QMessageSortKeyPrivate;
 
 class QMessageSortKey {
 public:
@@ -601,9 +633,11 @@ public:
     static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageSortKeyPrivate> d_ptr;
 };
 
+
+class QMessageStorePrivate;
 
 class QMessageStore : public QObject
 {
@@ -663,9 +697,11 @@ public slots:
     void stopNotifications(const QMessageFilterKey &key);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageStorePrivate> d_ptr;
 };
 
+
+class QMessageServiceActionPrivate;
 
 class QMessageServiceAction : public QObject
 {
@@ -678,6 +714,9 @@ public:
         Successful,
         Failed
     };
+
+    QMessageServiceAction(QObject *parent = 0);
+    ~QMessageServiceAction();
 
     void send(const QMessage &message, const QMessageAccountId &accountId);
     void compose(const QMessage &message);
@@ -695,6 +734,6 @@ signals:
     void activityChanged(QMessageServiceAction::Activity a);
 
 private:
-    // ...
+    QSharedDataPointer<QMessageServiceActionPrivate> d_ptr;
 };
 #endif

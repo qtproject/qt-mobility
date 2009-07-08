@@ -32,6 +32,15 @@
 ****************************************************************************/
 #include "draft-api.h"
 
+
+class QMessageIdPrivate : public QSharedData
+{
+public:
+    QMessageIdPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageId
     \ingroup messaging
@@ -136,6 +145,15 @@ bool QMessageId::isValid() const
 
     Qt-style synonym for QList<QMessageId>
 */
+
+
+class QMessageContentContainerIdPrivate : public QSharedData
+{
+public:
+    QMessageContentContainerIdPrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageContentContainerId
@@ -244,6 +262,15 @@ bool QMessageContentContainerId::isValid() const
     Qt-style synonym for QList<QMessageContentContainerId>
 */
 
+
+class QMessageFolderIdPrivate : public QSharedData
+{
+public:
+    QMessageFolderIdPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageFolderId
     \ingroup messaging
@@ -347,6 +374,15 @@ bool QMessageFolderId::isValid() const
     Qt-style synonym for QList<QMessageFolderId>
 */
 
+
+class QMessageAccountIdPrivate : public QSharedData
+{
+public:
+    QMessageAccountIdPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageAccountId
     \ingroup messaging
@@ -444,6 +480,15 @@ bool QMessageAccountId::isValid() const
 {
     return false; // stub
 }
+
+
+class QMessageContentContainerPrivate : public QSharedData
+{
+public:
+    QMessageContentContainerPrivate()
+    {
+    }
+};
 
 /*! \typedef QMessageAccountIdList
 
@@ -1021,6 +1066,14 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
 }
 
 
+class QMessageAddressPrivate : public QSharedData
+{
+public:
+    QMessageAddressPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageAddress
 
@@ -1114,6 +1167,14 @@ void QMessageAddress::setType(Type type)
     Qt-style synonym for QList<QMessageAddress>
 */
 
+
+class QMessagePrivate : public QSharedData
+{
+public:
+    QMessagePrivate()
+    {
+    }
+};
 
 /*!
     \class QMessage
@@ -1839,6 +1900,14 @@ QMessage QMessage::forward() const
 }
 
 
+class QMessageFolderPrivate : public QSharedData
+{
+public:
+    QMessageFolderPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageFolder
 
@@ -1925,6 +1994,14 @@ QString QMessageFolder::path() const
     return QString::null; // stub
 }
 
+
+class QMessageAccountPrivate : public QSharedData
+{
+public:
+    QMessageAccountPrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageAccount
@@ -2073,6 +2150,14 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
     \value CaseSensitive   The key should be case sensitive.
 */
 
+
+class QMessageAccountFilterKeyPrivate : public QSharedData
+{
+public:
+    QMessageAccountFilterKeyPrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageAccountFilterKey
@@ -2296,6 +2381,14 @@ QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QM
 }
 
 
+class QMessageAccountSortKeyPrivate : public QSharedData
+{
+public:
+    QMessageAccountSortKeyPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageAccountSortKey
 
@@ -2363,6 +2456,14 @@ QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
     return QMessageAccountSortKey(); // stub
 }
 
+
+class QMessageFolderFilterKeyPrivate : public QSharedData
+{
+public:
+    QMessageFolderFilterKeyPrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageFolderFilterKey
@@ -2658,6 +2759,14 @@ QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessag
 }
 
 
+class QMessageFolderSortKeyPrivate : public QSharedData
+{
+public:
+    QMessageFolderSortKeyPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageFolderSortKey
 
@@ -2760,6 +2869,14 @@ QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
     return QMessageFolderSortKey(); // stub
 }
 
+
+class QMessageFilterKeyPrivate : public QSharedData
+{
+public:
+    QMessageFilterKeyPrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageFilterKey
@@ -3282,6 +3399,15 @@ QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilte
     return QMessageFilterKey(); // stub
 }
 
+
+class QMessageSortKeyPrivate : public QSharedData
+{
+public:
+    QMessageSortKeyPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageSortKey
 
@@ -3467,6 +3593,15 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
+
+
+class QMessageStorePrivate : public QSharedData
+{
+public:
+    QMessageStorePrivate()
+    {
+    }
+};
 
 /*!
     \class QMessageStore
@@ -3878,6 +4013,15 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
     Q_UNUSED(key)    
 }
 
+
+class QMessageServiceActionPrivate : public QSharedData
+{
+public:
+    QMessageServiceActionPrivate()
+    {
+    }
+};
+
 /*!
     \class QMessageServiceAction
 
@@ -3917,6 +4061,23 @@ void QMessageStore::stopNotifications(const QMessageFilterKey &key)
     \value Successful       The action has completed successfully.
     \value Failed           The action could not be completed successfully, and has finished execution.
 */
+
+/*!
+    Constructs a message service action object.
+    
+    The \a parent is passed to the QObject constructor.
+*/
+QMessageServiceAction::QMessageServiceAction(QObject *parent)
+    : QObject(parent)
+{
+}
+
+/*!
+    Destroys the message service action.
+*/
+QMessageServiceAction::~QMessageServiceAction()
+{
+}
 
 /*!
   Transmit \a message using the account identified by \a accountId.
