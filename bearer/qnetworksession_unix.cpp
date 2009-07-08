@@ -34,6 +34,7 @@
 #include "qnetworksession_p.h"
 #include <qnetworkconfiguration.h>
 #include <QFile>
+#include <QMutex>
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include <NetworkManager/NetworkManager.h>
@@ -243,8 +244,9 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 
 void QNetworkSessionPrivate::open()
 {
-    if(!NetworkManagerAvailable()) {
-        //TODO
+    if (!NetworkManagerAvailable()) {
+        lastError = QNetworkSession::OperationNotSupportedError;
+        emit q->error(lastError);
     } else {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
         if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
@@ -269,26 +271,33 @@ void QNetworkSessionPrivate::open()
 
 void QNetworkSessionPrivate::close()
 {
-    if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+    if (!NetworkManagerAvailable()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
-        return;
-    }
-    if (isActive) {
-        // decrement session count
-        QString APPAth = publicConfig.identifier();
-
-        sessionManager()->decrement(publicConfig);
-
-        if(APPAth.contains("AccessPoint")) {
-            disconnect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-                    this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
-        }
-        if(sessionManager()->referenceCount(publicConfig) > 0)
-            isActive = false;
-        emit q->sessionClosed();
     } else {
-        qWarning() << __FUNCTION__ << "session is not active";
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+            lastError = QNetworkSession::OperationNotSupportedError;
+            emit q->error(lastError);
+            return;
+        }
+        if (isActive) {
+            // decrement session count
+            QString APPAth = publicConfig.identifier();
+
+            sessionManager()->decrement(publicConfig);
+
+            if(APPAth.contains("AccessPoint")) {
+                disconnect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                        this,SLOT(propertiesChanged( const QString &, QMap<QString,QVariant>)));
+            }
+            if(sessionManager()->referenceCount(publicConfig) > 0)
+                isActive = false;
+            emit q->sessionClosed();
+        } else {
+            qWarning() << __FUNCTION__ << "session is not active";
+        }
+#endif
     }
 }
 

@@ -113,8 +113,11 @@ private Q_SLOTS:
 #ifdef BEARER_ENGINE
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
     void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
+#endif
+
+#if defined(BEARER_ENGINE) || defined(Q_OS_UNIX)
+    void forcedSessionClose(const QNetworkConfiguration &config);
 #endif
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
@@ -127,9 +130,7 @@ private Q_SLOTS:
 
     void activateNmSession(const QNetworkConfiguration &config);
     void deactivateNmSession(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
 #endif
-
 
 private:
     QNetworkConfigurationManager manager;
