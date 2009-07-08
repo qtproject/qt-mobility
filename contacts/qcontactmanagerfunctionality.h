@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTMANAGERCAPABILITIES_H
-#define QCONTACTMANAGERCAPABILITIES_H
+#ifndef QCONTACTMANAGERFUNCTIONALITY_H
+#define QCONTACTMANAGERFUNCTIONALITY_H
 
 #include <QVariant>
 #include <QStringList>
@@ -41,27 +41,27 @@
 
 #include "qtcontactsglobal.h"
 
-class QContactManagerCapabilitiesPrivate;
-class QTCONTACTS_EXPORT QContactManagerCapabilities
+class QContactManagerFunctionalityPrivate;
+class QTCONTACTS_EXPORT QContactManagerFunctionality
 {
 public:
-    ~QContactManagerCapabilities();
+    ~QContactManagerFunctionality();
 
-    QContactManagerCapabilities(const QContactManagerCapabilities& other);
-    QContactManagerCapabilities& operator=(const QContactManagerCapabilities& other);
+    QContactManagerFunctionality(const QContactManagerFunctionality& other);
+    QContactManagerFunctionality& operator=(const QContactManagerFunctionality& other);
 
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:
-    bool operator==(const QContactManagerCapabilities& other) const;
-    bool operator!=(const QContactManagerCapabilities& other) const;
+    bool operator==(const QContactManagerFunctionality& other) const;
+    bool operator!=(const QContactManagerFunctionality& other) const;
 
 private:
     friend class QContactManager;
-    QContactManagerCapabilities();
-    QSharedDataPointer<QContactManagerCapabilitiesPrivate> d;
+    QContactManagerFunctionality();
+    QSharedDataPointer<QContactManagerFunctionalityPrivate> d;
 };
 
 #endif

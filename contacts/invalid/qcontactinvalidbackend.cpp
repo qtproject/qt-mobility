@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #include "qcontactinvalidbackend_p.h"
-#include "qcontactmanagercapabilities_p.h"
+#include "qcontactmanagerfunctionality_p.h"
 
 #include <QSharedData>
 

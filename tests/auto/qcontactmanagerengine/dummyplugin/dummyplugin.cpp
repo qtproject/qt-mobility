@@ -42,8 +42,8 @@
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
-#include "qcontactmanagercapabilities.h"
-#include "qcontactmanagercapabilities_p.h"
+#include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
 
 class DummyEngine : public QContactManagerEngine
 {

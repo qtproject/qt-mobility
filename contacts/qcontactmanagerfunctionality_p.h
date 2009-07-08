@@ -51,14 +51,14 @@
 #include <QWeakPointer>
 #include "qcontactmanager_p.h"
 
-class QContactManagerCapabilitiesPrivate : public QSharedData
+class QContactManagerFunctionalityPrivate : public QSharedData
 {
 public:
-    QContactManagerCapabilitiesPrivate() : m_engine(0)
+    QContactManagerFunctionalityPrivate() : m_engine(0)
     {
     }
 
-    QContactManagerCapabilitiesPrivate(const QContactManagerCapabilitiesPrivate& other)
+    QContactManagerFunctionalityPrivate(const QContactManagerFunctionalityPrivate& other)
         : QSharedData(other),
         m_managerdata(other.m_managerdata),
         m_engine(other.m_engine)

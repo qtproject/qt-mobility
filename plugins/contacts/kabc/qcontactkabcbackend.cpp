@@ -41,8 +41,8 @@
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
-#include "qcontactmanagercapabilities.h"
-#include "qcontactmanagercapabilities_p.h"
+#include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
 
 #include <kabc/resource.h>
 #include <kabc/addressee.h>

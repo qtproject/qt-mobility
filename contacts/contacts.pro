@@ -35,8 +35,8 @@ HEADERS += \
         qcontactguid.h \
         qcontactmanager.h \
         qcontactmanager_p.h \
-        qcontactmanagercapabilities.h \
-        qcontactmanagercapabilities_p.h \
+        qcontactmanagerfunctionality.h \
+        qcontactmanagerfunctionality_p.h \
         qcontacts_p.h \
         qcontactsynctarget.h \
         qcontacturl.h \
@@ -52,7 +52,7 @@ SOURCES += \
         qcontactgroup.cpp \
         qcontactmanager_p.cpp \
         qcontactmanager.cpp \
-        qcontactmanagercapabilities.cpp
+        qcontactmanagerfunctionality.cpp
 
 # invalid backend (nonoptional)
 HEADERS += ./invalid/qcontactinvalidbackend_p.h

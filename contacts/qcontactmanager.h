@@ -47,7 +47,7 @@
 
 #include "qcontact.h"
 #include "qcontactgroup.h"
-#include "qcontactmanagercapabilities.h"
+#include "qcontactmanagerfunctionality.h"
 
 class QContactManagerData;
 class QTCONTACTS_EXPORT QContactManager : public QObject
@@ -123,8 +123,8 @@ public:
     QList<QUniqueId> groupsModifiedSince(const QDateTime& timestamp) const;
     QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp) const;
 
-    /* Capabilities reporting */
-    QContactManagerCapabilities capabilities() const;
+    /* Functionality reporting */
+    QContactManagerFunctionality functionality() const;
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();

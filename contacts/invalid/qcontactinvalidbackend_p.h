@@ -49,12 +49,12 @@
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
-#include "qcontactmanagercapabilities.h"
+#include "qcontactmanagerfunctionality.h"
 
 #include <QMap>
 #include <QString>
 
-class QContactManagerCapabilitiesPrivate;
+class QContactManagerFunctionalityPrivate;
 class QContactInvalidEngine : public QContactManagerEngine
 {
 public:

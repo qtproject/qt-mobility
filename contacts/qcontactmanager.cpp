@@ -38,8 +38,8 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 
-#include "qcontactmanagercapabilities.h"
-#include "qcontactmanagercapabilities_p.h"
+#include "qcontactmanagerfunctionality.h"
+#include "qcontactmanagerfunctionality_p.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -407,13 +407,13 @@ bool QContactManager::removeDetailDefinition(const QString& definitionId)
 }
 
 /*!
-    Returns an object describing the capabilities of this QContactManager.
+    Returns an object describing the supported functionality of this QContactManager.
 
-    \sa QContactManagerCapabilities
+    \sa QContactManagerFunctionality
  */
-QContactManagerCapabilities QContactManager::capabilities() const
+QContactManagerFunctionality QContactManager::functionality() const
 {
-    QContactManagerCapabilities caps;
+    QContactManagerFunctionality caps;
     caps.d->m_managerdata = d; // Tie the lifetime of the caps to our d pointer
     caps.d->m_engine = d->m_engine;
     return caps;

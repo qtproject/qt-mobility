@@ -409,7 +409,7 @@ void tst_QContactManager::groups()
     QFETCH(QString, uri);
     QContactManager cm = QContactManager::fromUri(uri);
 
-    if (cm.capabilities().capabilities().contains("Groups")) {
+    if (cm.functionality().capabilities().contains("Groups")) {
         /* Positive testing */
 
         /* Test adding a null doesn't crash, before we do anything else */
@@ -944,7 +944,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Capabilities */
-    QContactManagerCapabilities caps = manager.capabilities();
+    QContactManagerFunctionality caps = manager.functionality();
     QVERIFY(caps.fastFilterableDefinitions().count() == 0);
     QVERIFY(caps.supportedDataTypes().count() == 0);
     QVERIFY(caps.capabilities().count() == 0);
@@ -1071,7 +1071,7 @@ void tst_QContactManager::referenceCounting()
     /* Now check retrieving the capabilities doesn't cause problems */
     if (true) {
         QContactManager *heapCopy = new QContactManager(managerId);
-        QContactManagerCapabilities cap = heapCopy->capabilities();
+        QContactManagerFunctionality cap = heapCopy->functionality();
 
         if (managerId != "invalid") {
             QVERIFY(cap.capabilities() != QStringList());
@@ -1088,7 +1088,7 @@ void tst_QContactManager::referenceCounting()
     /* test cloning an existing manager as well */
     if (true) {
         QContactManager *heapCopy = new QContactManager(manager);
-        QContactManagerCapabilities cap = heapCopy->capabilities();
+        QContactManagerFunctionality cap = heapCopy->functionality();
 
         if (managerId != "invalid") {
             QVERIFY(cap.capabilities() != QStringList());
@@ -1105,7 +1105,7 @@ void tst_QContactManager::referenceCounting()
     if (true) {
         /* Test a stack based manager, retrieve caps, then assign the manager elsewhere */
         QContactManager m1(managerId);
-        QContactManagerCapabilities cap(m1.capabilities());
+        QContactManagerFunctionality cap(m1.functionality());
 
         if (managerId != "invalid") {
             QVERIFY(cap.capabilities() != QStringList());
@@ -1120,7 +1120,7 @@ void tst_QContactManager::referenceCounting()
 
         /* Retrieve the caps again */
         m1 = QContactManager(managerId);
-        QContactManagerCapabilities cap2 = m1.capabilities();
+        QContactManagerFunctionality cap2 = m1.functionality();
         cap = cap2;
 
         if (managerId != "invalid") {
@@ -1471,7 +1471,7 @@ void tst_QContactManager::detailDefinitions()
     QFETCH(QString, uri);
     QContactManager cm = QContactManager::fromUri(uri);
 
-    QContactManagerCapabilities caps = cm.capabilities();
+    QContactManagerFunctionality caps = cm.functionality();
     QMap<QString, QContactDetailDefinition> defs = cm.detailDefinitions();
 
     /* Try to make a credible definition */
