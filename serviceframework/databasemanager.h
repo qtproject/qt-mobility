@@ -58,9 +58,9 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);
         QStringList getServiceNames(const QString &interfaceName, DbScope scope);
 
-        QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName, DbScope scope);
-        bool setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope);
-        bool setDefaultService(const QServiceInterfaceDescriptor &interface, DbScope scope);
+        QServiceInterfaceDescriptor interfaceDefault(const QString &interfaceName, DbScope scope);
+        bool setInterfaceDefault(const QString &serviceName, const QString &interfaceName, DbScope scope);
+        bool setInterfaceDefault(const QServiceInterfaceDescriptor &interface, DbScope scope);
 
         DBError lastError(){ return m_lastError;}
 

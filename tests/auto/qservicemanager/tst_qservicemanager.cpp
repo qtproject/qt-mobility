@@ -248,13 +248,13 @@ private slots:
 
     void removeService();
 
-    void setDefaultServiceForInterface_strings();
-    void setDefaultServiceForInterface_strings_multipleInterfaces();
+    void setInterfaceDefault_strings();
+    void setInterfaceDefault_strings_multipleInterfaces();
 
-    void setDefaultServiceForInterface_descriptor();
-    void setDefaultServiceForInterface_descriptor_data();
+    void setInterfaceDefault_descriptor();
+    void setInterfaceDefault_descriptor_data();
 
-    void defaultServiceInterface();
+    void interfaceDefault();
 
     void serviceAdded();
     void serviceAdded_data();
@@ -701,13 +701,13 @@ void tst_QServiceManager::loadInterface_string()
     QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice2.xml")), PRINT_ERR(mgr));
 
     // if first service is set as default, it should be returned
-    QVERIFY(mgr.setDefaultServiceForInterface(serviceA, commonInterface));
+    QVERIFY(mgr.setInterfaceDefault(serviceA, commonInterface));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
 
     // if second service is set as default, it should be returned
-    QVERIFY(mgr.setDefaultServiceForInterface(serviceB, commonInterface));
+    QVERIFY(mgr.setInterfaceDefault(serviceB, commonInterface));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceBClassName);
@@ -922,8 +922,8 @@ void tst_QServiceManager::addService()
 
     // the service should be automatically set as the default for its
     // implemented interfaces since it was the first service added for them
-    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
-    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.interfaceDefault(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.interfaceDefault(commonInterface).serviceName(), QString("ServiceA"));
 
     // add second service
     TST_QSERVICEMANAGER_ADD_SERVICE(paramType, tempFileB);
@@ -933,8 +933,8 @@ void tst_QServiceManager::addService()
     QVERIFY(result.contains("ServiceB"));
 
     // the default does not change once ServiceB is added
-    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
-    QCOMPARE(mgr.defaultServiceInterface(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.interfaceDefault(commonInterface).serviceName(), QString("ServiceA"));
+    QCOMPARE(mgr.interfaceDefault(commonInterface).serviceName(), QString("ServiceA"));
 
     delete tempFileA;
     delete tempFileB;
@@ -1028,7 +1028,7 @@ void tst_QServiceManager::removeService()
     QCOMPARE(settings.value("installed").toBool(), true);
 }
 
-void tst_QServiceManager::setDefaultServiceForInterface_strings()
+void tst_QServiceManager::setInterfaceDefault_strings()
 {
     QServiceManager mgr;
     QString interfaceName = "com.nokia.qt.serviceframework.tests.AnInterface";
@@ -1044,12 +1044,12 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
     QBuffer buffer(&xml);
 
     // fails if the specified interface hasn't been registered
-    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), false);
+    QCOMPARE(mgr.setInterfaceDefault("ServiceA", interfaceName), false);
 
     // now it works
     QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
-    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceA", interfaceName), true);
-    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
+    QCOMPARE(mgr.setInterfaceDefault("ServiceA", interfaceName), true);
+    QCOMPARE(mgr.interfaceDefault(interfaceName), descriptor);
 
     // replace the default with another service
     properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES[1];
@@ -1060,16 +1060,16 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings()
     buffer.close();
     buffer.setData(xml);
     QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
-    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceB", interfaceName), true);
-    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptor);
+    QCOMPARE(mgr.setInterfaceDefault("ServiceB", interfaceName), true);
+    QCOMPARE(mgr.interfaceDefault(interfaceName), descriptor);
 
     // bad arguments
-    QCOMPARE(mgr.setDefaultServiceForInterface("", ""), false);
-    QCOMPARE(mgr.setDefaultServiceForInterface("blah", "blah"), false);
-    QCOMPARE(mgr.setDefaultServiceForInterface("SampleService", ""), false);
+    QCOMPARE(mgr.setInterfaceDefault("", ""), false);
+    QCOMPARE(mgr.setInterfaceDefault("blah", "blah"), false);
+    QCOMPARE(mgr.setInterfaceDefault("SampleService", ""), false);
 }
 
-void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfaces()
+void tst_QServiceManager::setInterfaceDefault_strings_multipleInterfaces()
 {
     QServiceManager mgr;
     QString interfaceName = "com.nokia.qt.serviceframework.tests.AnInterface";
@@ -1087,11 +1087,11 @@ void tst_QServiceManager::setDefaultServiceForInterface_strings_multipleInterfac
             properties[QServiceInterfaceDescriptor::Location].toString());
     QBuffer buffer(&xml);
     QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
-    QCOMPARE(mgr.setDefaultServiceForInterface("ServiceC", interfaceName), true);
-    QCOMPARE(mgr.defaultServiceInterface(interfaceName), descriptorList[1]);
+    QCOMPARE(mgr.setInterfaceDefault("ServiceC", interfaceName), true);
+    QCOMPARE(mgr.interfaceDefault(interfaceName), descriptorList[1]);
 }
 
-void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
+void tst_QServiceManager::setInterfaceDefault_descriptor()
 {
     QFETCH(QServiceManager::Scope, scope_add);
     QFETCH(QServiceManager::Scope, scope_find);
@@ -1104,28 +1104,28 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor()
     DescriptorProperties properties;
     properties[QServiceInterfaceDescriptor::Location] = VALID_PLUGIN_FILES.first();
 
-    QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
+    QCOMPARE(mgr.setInterfaceDefault(desc), false);
 
     desc = createDescriptor(interfaceName, 1, 0, "SomeService", properties,
             scope_add == QServiceManager::SystemScope);
 
     // fails if the specified interface hasn't been registered
-    QCOMPARE(mgr.setDefaultServiceForInterface(desc), false);
+    QCOMPARE(mgr.setInterfaceDefault(desc), false);
 
     // now it works
     QByteArray xml = createServiceXml("SomeService",
             createInterfaceXml(QList<QServiceInterfaceDescriptor>() << desc), VALID_PLUGIN_FILES.first());
     QBuffer buffer(&xml);
     QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
-    QCOMPARE(mgr.setDefaultServiceForInterface(desc), true);
+    QCOMPARE(mgr.setInterfaceDefault(desc), true);
 
-    QCOMPARE(mgr.defaultServiceInterface(interfaceName), desc);
+    QCOMPARE(mgr.interfaceDefault(interfaceName), desc);
 
     QServiceManager mgrWithOtherScope(scope_find);
-    QCOMPARE(mgrWithOtherScope.defaultServiceInterface(interfaceName).isValid(), expectFound);
+    QCOMPARE(mgrWithOtherScope.interfaceDefault(interfaceName).isValid(), expectFound);
 }
 
-void tst_QServiceManager::setDefaultServiceForInterface_descriptor_data()
+void tst_QServiceManager::setInterfaceDefault_descriptor_data()
 {
     QTest::addColumn<QServiceManager::Scope>("scope_add");
     QTest::addColumn<QServiceManager::Scope>("scope_find");
@@ -1142,10 +1142,10 @@ void tst_QServiceManager::setDefaultServiceForInterface_descriptor_data()
             << QServiceManager::SystemScope << QServiceManager::UserScope << true;
 }
 
-void tst_QServiceManager::defaultServiceInterface()
+void tst_QServiceManager::interfaceDefault()
 {
     QServiceManager mgr;
-    QVERIFY(!mgr.defaultServiceInterface("").isValid());
+    QVERIFY(!mgr.interfaceDefault("").isValid());
 }
 
 void tst_QServiceManager::serviceAdded()

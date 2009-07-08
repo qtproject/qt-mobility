@@ -398,7 +398,7 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
     return serviceNames;
 }
 
-QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QString &interfaceName, DbScope scope)
+QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
     QServiceInterfaceDescriptor descriptor;
     if (scope == UserScope) {
@@ -435,7 +435,7 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
-                    setDefaultService(descriptor, UserScope);
+                    setInterfaceDefault(descriptor, UserScope);
                     m_lastError.setError(DBError::NoError);
                     return descriptor;
                 } else {
@@ -485,7 +485,7 @@ QServiceInterfaceDescriptor DatabaseManager::defaultServiceInterface(const QStri
     return QServiceInterfaceDescriptor();
 }
 
-bool DatabaseManager::setDefaultService(const QString &serviceName, const QString &interfaceName, DbScope scope)
+bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const QString &interfaceName, DbScope scope)
 {
     QList<QServiceInterfaceDescriptor> descriptors;
     QServiceFilter filter;
@@ -512,10 +512,10 @@ bool DatabaseManager::setDefaultService(const QString &serviceName, const QStrin
                 latestIndex = i;
     }
 
-    return setDefaultService(descriptors[latestIndex], scope);
+    return setInterfaceDefault(descriptors[latestIndex], scope);
 }
 
-bool DatabaseManager::setDefaultService(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
+bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
     if (scope == UserScope) {
         if (!openDb(UserScope))
@@ -635,7 +635,7 @@ bool DatabaseManager::openDb(DbScope scope)
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
-                    setDefaultService(descriptor, UserScope);
+                    setInterfaceDefault(descriptor, UserScope);
                 }
             }
         }

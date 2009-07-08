@@ -110,7 +110,7 @@ void ServiceBrowser::reloadInterfaceImplementationsList()
             text += " (" + descriptors[i].serviceName() + ")";
 
         QServiceInterfaceDescriptor defaultInterfaceImpl = 
-                serviceManager->defaultServiceInterface(descriptors[i].interfaceName());
+                serviceManager->interfaceDefault(descriptors[i].interfaceName());
         if (descriptors[i] == defaultInterfaceImpl)
             text += tr(" (default)");
 
@@ -164,7 +164,7 @@ void ServiceBrowser::setDefaultInterfaceImplementation()
 
     QServiceInterfaceDescriptor descriptor = item->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
-        if (serviceManager->setDefaultServiceForInterface(descriptor)) {
+        if (serviceManager->setInterfaceDefault(descriptor)) {
             int currentIndex = interfacesListWidget->row(item);
             reloadInterfaceImplementationsList();
             interfacesListWidget->setCurrentRow(currentIndex);
@@ -200,7 +200,7 @@ void ServiceBrowser::reloadAttributesRadioButtonText()
     QServiceInterfaceDescriptor selectedImpl =
             item->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     QServiceInterfaceDescriptor defaultImpl = 
-            serviceManager->defaultServiceInterface(selectedImpl.interfaceName());
+            serviceManager->interfaceDefault(selectedImpl.interfaceName());
 
     defaultImplRadioButton->setText(tr("Default implementation for %1\n(currently provided by %2)")
             .arg(defaultImpl.interfaceName())
