@@ -435,14 +435,14 @@ Live<nco::Contact> QContactTrackerEngineData::getContactByContext(const QContact
     // if we are saving a work or home phone number.
     Live<nco::Contact> contact;
 
-    if (locationContext(det) == ContactContext::Home) {
-        // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
-        contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
-    } else if (locationContext(det) == ContactContext::Work) {
+    if (locationContext(det) == ContactContext::Work) {
         // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
         // Tracker will create new nodes for us if these don't already exist.
         Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
         contact = aff->getOrg();
+    } else {   // Assume home context.
+        // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
+        contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
     }
     return contact;
 }
