@@ -36,174 +36,208 @@
 #include <QDebug>
 #include <QApplication>
 
-static void addContact();
-static void callContact();
-static void matchCall();
-static void viewDetails();
-static void editView();
-static void addPlugin();
+static void addContact(QContactManager*);
+static void callContact(QContactManager*);
+static void matchCall(QContactManager*, const QString&);
+static void viewDetails(QContactManager*);
+static void addPlugin(QContactManager*);
+static void editView(QContactManager*);
+static void loadManager();
+static void loadManagerWithParameters();
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    addContact();
-    callContact();
-    matchCall();
-    viewDetails();
-    editView();
-    addPlugin();
+
+    QContactManager* cm = new QContactManager();
+    addContact(cm);
+    callContact(cm);
+    matchCall(cm, "111-222-333"); // unknown number.
+    matchCall(cm, "12345678");    // alice's number.
+    viewDetails(cm);
+    addPlugin(cm);
+    editView(cm);
+    delete cm;
+
+    loadManager();
+    loadManagerWithParameters();
+
     return 0;
 }
 
-/* Sample code for adding a contact */
-void addContact()
+//! [Creating a new contact]
+void addContact(QContactManager* cm)
 {
-    QContactManager cm;
     QContact alice;
 
-    /* Set the name */
-    QContactName name;
-    name.setFirst("Alice");
-    name.setLast("Jones");
-    qDebug() << "addContact():";
-    qDebug() << "Contact display name:" << name.displayName();
-
-    /* Set this separately (may not be supported on all platforms - corresponds to FN */
-    name.setDisplayName("Ally Jones");
-    qDebug() << "Contact display name:" << name.displayName();
-
-    /* Set the name */
-    alice.name() = name;
+    /* Set the contact's name */
+    alice.name().setFirst("Alice");
+    alice.name().setLast("Jones");
+    alice.name().setDisplayName("Ally Jones");
 
     /* Add a phone number */
     QContactPhoneNumber number;
     number.setAttribute("Context", "Home");
     number.setAttribute("SubType", "Mobile");
     number.setNumber("12345678");
-    number.setValue("label", "Home Mobile");
     alice.saveDetail(&number);
     alice.setPreferredDetail("DialActionId", number);
 
-    /* Add another one, too */
+    /* Add a second phone number */
     QContactPhoneNumber number2;
     number2.setAttribute("Context", "Work");
     number2.setAttribute("SubType", "Landline");
     number2.setNumber("555-4444");
-    number2.setValue("label", "Work Landline");
     alice.saveDetail(&number2);
 
-    /* Save it */
-    cm.saveContact(&alice);
-    qDebug() << "Just saved Alice as contact with id =" << alice.id();
+    /* Save the contact */
+    cm->saveContact(&alice);
 }
+//! [Creating a new contact]
 
-/* Sample code for calling a contact */
-void callContact()
+//! [Calling an existing contact]
+void callContact(QContactManager* cm)
 {
-    QContactManager cm;
-    QContact a = cm.contact(cm.contacts().value(0)); // Does assume there's at least one contact...
+    QList<QUniqueId> contactIds = cm->contacts();
+    QContact a = cm->contact(contactIds.first());
 
-    /* Get all the phone properties */
-    QList<QContactDetail> numbers = a.details("PhoneNumber");
+    /* Get this contact's first phone number */
+    QContactPhoneNumber phn = a.detail("PhoneNumber");
+    if (!phn.isEmpty()) {
+        // First, we need some way of retrieving the QObject which provides the action.
+        // This may be through the (previously announced) Qt Service Framework:
+        //QServiceManager* manager = new QServiceManager();
+        //QObject* dialer = manager->loadInterface("com.nokia.qt.mobility.contacts.Dialer");
+        //QContactAbstractAction* dialerImpl = static_cast<QContactAbstractAction*>dialer;
+        //dialerImpl->performAction("DialActionId", a, phn);
+    }
+}
+//! [Calling an existing contact]
 
-    if (numbers.count() > 1) {
-        /* Prompt the user for a specific one */
-        qDebug() << "Contact" << a.name().displayName() << "has " << numbers.count() << " numbers:";
-        foreach (const QContactPhoneNumber& number, numbers) {
-            qDebug() << number.value("label") << ": " << number.number();
-        }
-    } else if (numbers.count() == 1) {
-        /* Just one */
-        qDebug() << "Contact" << a.name().displayName() << "has only one number:" << numbers[0].value("label") << ": " << ((QContactPhoneNumber)numbers[0]).number();
+//! [Filtering by definition and value]
+void matchCall(QContactManager* cm, const QString& incomingCallNbr)
+{
+    QList<QUniqueId> matchingContacts = cm->contactsWithDetail("PhoneNumber", incomingCallNbr);
+    if (matchingContacts.size() == 0) {
+        qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
-        /* Cannot call this contact */
-        qDebug() << "Contact" << a.name().displayName() << "has no telephone numbers.";
+        qDebug() << "Incoming call from"
+                 << cm->contact(matchingContacts.at(0)).name().displayName()
+                 << "(" << incomingCallNbr << ")";
     }
 }
+//! [Filtering by definition and value]
 
-/* Sample code for matching a call */
-void matchCall()
+//! [Viewing the details of a contact]
+void viewDetails(QContactManager* cm)
 {
-    // XXX TODO
+    QList<QUniqueId> contactIds = cm->contacts();
+    QContact a = cm->contact(contactIds.first());
+    qDebug() << "Viewing the details of" << a.name().displayName();
+
+    QList<QContactDetail> allDetails = a.details();
+    for (int i = 0; i < allDetails.size(); i++) {
+        QContactDetail detail = allDetails.at(i);
+        QContactDetailDefinition currentDefinition = cm->detailDefinition(detail.definitionId());
+        QMap<QString, QContactDetailDefinition::Field> fields = currentDefinition.fields();
+
+        qDebug("\tDetail #%d (%s):", i, detail.definitionId().toAscii().constData());
+        foreach (const QString& fieldKey, fields.keys()) {
+            qDebug() << "\t\t" << fieldKey << "(" << fields.value(fieldKey).dataType << ") =" << detail.value(fieldKey);
+        }
+        qDebug();
+    }
 }
+//! [Viewing the details of a contact]
 
-/* Sample code for viewing the details of a contact */
-void viewDetails()
+//! [Installing a plugin which modifies a definition]
+void addPlugin(QContactManager* cm)
 {
-    QContactManager cm;
-    QContact a = cm.contact(cm.contacts().value(0)); // Does assume there's at least one contact...
-    qDebug() << "viewDetails():";
-    qDebug() << "Retrieved contact with id =" << a.id();
+    /* Find the definition that we are modifying */
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
+    QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionId);
 
-    /* We want to display the name first */
-    QContactName name = a.name();
+    /* Make our modifications: we add a "Label" field to email addresses */
+    QContactDetailDefinition::Field newField;
+    newField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinition::Field> fields = modified.fields();
+    fields.insert("Label", newField);
 
-    /* Do display stuff with name */
-    qDebug() << QString("Contact '%1':").arg(name.displayName()).toLatin1();
-    qDebug() << QString("First name: %1").arg(name.first()).toLatin1();
-    qDebug() << QString("Middle name: %1").arg(name.middle()).toLatin1();
-    qDebug() << QString("Last name: %1").arg(name.last()).toLatin1();
+    /* Update the definition with the new field included */
+    modified.setFields(fields);
 
-    /* Now phone numbers */
+    /* Save the definition back to the manager */
+    if (cm->saveDetailDefinition(modified))
+        qDebug() << "Successfully modified the detail definition!";
+    else
+        qDebug() << "This backend could not support our modifications!";
+}
+//! [Installing a plugin which modifies a definition]
+
+//! [Modifying an existing contact]
+void editView(QContactManager* cm)
+{
+    QList<QUniqueId> contactIds = cm->contacts();
+    QContact a = cm->contact(contactIds.first());
+    qDebug() << "Modifying the details of" << a.name().displayName();
+
+    /* Change the first phone number */
     QList<QContactDetail> numbers = a.details("PhoneNumber");
-    foreach(const QContactPhoneNumber& detail, numbers) {
-        QString preferred = a.isPreferredDetail("DialActionId", detail) ? "preferred" : "";
-        qDebug() << QString("%1 %2 phone %5: '%3' ('%4')").arg(detail.attributes().value("Context")).arg(detail.attributes().value("SubType")).arg(detail.value("label")).arg(detail.number()).arg(preferred);
-    }
+    QContactPhoneNumber phone = numbers.value(0);
+    phone.setNumber("123-4445");
 
-    /* etc.. now physical addresses */
-    QList<QContactDetail> addresses  = a.details("StreetAddress");
-    foreach(const QContactAddress& detail, addresses) {
-        QString preferred = a.isPreferredDetail("SendFlowersActionId", detail) ? "preferred" : "";
-        qDebug() << QString("%1 address %4: '%2' ('%3')").arg(detail.attributes().value("Context")).arg(detail.value("label")).arg(detail.displayLabel()).arg(preferred);
-    }
+    /* Add an email address */
+    QContactEmailAddress email;
+    email.setEmailAddress("alice.jones@example");
+    email.setAttribute("Context", "Work");
+    email.setAttribute("Subtype", "Internet");
+    email.setValue("Label", "Alice's Work Email Address");
 
-    /* Now email addresses etc.... */
+    /* Save the updated details to the contact. */
+    a.saveDetail(&phone);
+    a.saveDetail(&email);
 
+    /* Now we must save the updated contact back to the database. */
+    cm->saveContact(&a);
+    viewDetails(cm);
 }
+//! [Modifying an existing contact]
 
-/* Sample code for editing a contact */
-void editView()
+//! [Loading a specific manager backend]
+void loadManager()
 {
-    /* This relies on addContact :) */
-    QContactManager cm;
-    QContact a = cm.contact(cm.contacts().value(0)); // Does assume there's at least one contact...
-    qDebug() << "editView():";
-    qDebug() << "Retrieved contact with id =" << a.id();
-
-    /* We want to display the name first */
-    QContactName name = a.name();
-    qDebug() << "Editing" << name.displayName();
-
-    QList<QContactDetail> numbers = a.details("PhoneNumber");
-
-    /* Change the home phone number */
-    QContactPhoneNumber detail = numbers.value(0);
-    detail.setNumber("123-4445");
-    a.saveDetail(&detail);
-
-    /* and make the bus phone preferred */
-    a.setPreferredDetail("DialActionId", numbers.value(1));
-
-    /* add another number */
-    QContactPhoneNumber newDetail;
-    newDetail.setNumber("111-2222-333");
-    newDetail.setAttribute("Context", "Work");
-    newDetail.setAttribute("Subtype", "Landline");
-    newDetail.setValue("label", "Second work number");
-    a.saveDetail(&newDetail);
-
-    /* save it */
-    cm.saveContact(&a);
-    qDebug() << "Saved that contact with id =" << a.id();
-
-    qDebug() << "Finished editing - new details:";
-    viewDetails();
+    QContactManager* cm = new QContactManager("KABC");
+    QList<QUniqueId> contactIds = cm->contacts();
+    if (!contactIds.isEmpty()) {
+        QContact a = cm->contact(contactIds.first());
+        qDebug() << "This manager contains" << a.name().displayName();
+    } else {
+        qDebug() << "This manager contains no contacts";
+    }
 }
+//! [Loading a specific manager backend]
 
-/* Sample code showing how a plugin can add a property and store it to some contacts */
-void addPlugin()
+//! [Loading a specific manager backend with parameters]
+void loadManagerWithParameters()
 {
-    /* TODO */
-}
+    QMap<QString, QString> parameters;
+    parameters.insert("Settings", "~/.qcontactmanager-kabc-settings.ini");
+    QContactManager* cm = new QContactManager("KABC", parameters);
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
 
+    qDebug() << "This backend currently supports the following detail definitions:";
+    QList<QContactDetailDefinition> allDefinitions = definitions.values();
+    foreach (const QContactDetailDefinition& defn, allDefinitions) {
+        QMap<QString, QContactDetailDefinition::Field> fields = defn.fields();
+        foreach (const QString& fieldKey, fields.keys()) {
+            QList<QVariant> allowableValues = fields.value(fieldKey).allowableValues;
+            qDebug() << "\t" << fieldKey << "(" << fields.value(fieldKey).dataType << "):";
+            if (allowableValues.isEmpty()) {
+                qDebug() << "\t\tAny Value Permitted";
+            } else {
+                qDebug() << allowableValues;
+            }
+        }
+    }
+}
+//! [Loading a specific manager backend with parameters]

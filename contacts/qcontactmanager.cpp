@@ -82,17 +82,6 @@
  */
 
 /*!
- * \fn QContactManager::contactsWithAction(const QString& actionId, const QVariant& value) const
- * Returns a list of contacts which have a detail with the given \a value for which the specified \a actionId is available
- */
-
-/*!
- * \fn QContactManager::contactsWithDetail(const QString& definitionId, const QVariant& value) const
- * Returns a list of contacts which have a detail of the given \a definitionId with the specified \a value
- */
-
-
-/*!
     Returns a list of available manager ids that can be used when constructing
     a QContactManager.  If an empty id is specified to the constructor, the
     first value in this list will be used instead.
@@ -277,6 +266,18 @@ QContactManager::Error QContactManager::error() const
 QList<QUniqueId> QContactManager::contacts() const
 {
     return d->m_engine->contacts(d->m_error);
+}
+
+/*! Returns a list of contacts which have a detail with the given \a value for which the specified \a actionId is available */
+QList<QUniqueId> QContactManager::contactsWithAction(const QString& actionId, const QVariant& value) const
+{
+    return d->m_engine->contactsWithAction(actionId, value, d->m_error);
+}
+
+/*! Returns a list of contacts which have a detail of the given \a definitionId with the specified \a value */
+QList<QUniqueId> QContactManager::contactsWithDetail(const QString& definitionId, const QVariant& value) const
+{
+    return d->m_engine->contactsWithDetail(definitionId, value, d->m_error);
 }
 
 /*! Returns the contact in the database identified by \a contactId */

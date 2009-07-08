@@ -65,7 +65,7 @@
 
 /*!
  * \class QContactGuid
- * \brief The globally unique Id of the contact
+ * \brief The globally unique Id of a contact
  */
 
 ///*!
@@ -80,17 +80,17 @@
 
 /*!
  * \class QContactPhoneNumber
- * \brief The name of a contact
+ * \brief A phone number of a contact
  */
 
 /*!
  * \class QContactSyncTarget
- * \brief A sync target for the contact
+ * \brief A sync target for a contact
  */
 
 /*!
  * \class QContactUrl
- * \brief A url associated with the contact
+ * \brief A url associated with a contact
  */
 
 /*!
