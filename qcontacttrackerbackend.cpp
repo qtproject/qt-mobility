@@ -237,14 +237,11 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             // TODO: Known issue: we support only on of each type at the moment.
             //       We should somehow get a notification from UI if we are adding
             //       a new detail field, or editing the existing one.
-            LiveNodes liveEmails = contact->getHasEmailAddresss();
-            QList<Live<nco::EmailAddress> > emailList = liveEmails;
-            if(emailList.isEmpty()) {
-                Live<nco::EmailAddress> newEmail = contact->addHasEmailAddress();
-                newEmail->setEmailAddress(email);
-            } else {
-                emailList.first()->setEmailAddress(email);
+            Live<nco::EmailAddress> liveEmail = contact->firstHasEmailAddress();
+            if(liveEmail == 0) {
+                liveEmail = contact->addHasEmailAddress();
             }
+            liveEmail->setEmailAddress(email);
         }
     }
 
