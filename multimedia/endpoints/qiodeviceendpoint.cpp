@@ -52,7 +52,20 @@ public:
     \preliminary
     \brief The QIODeviceEndpoint class provides a media endpoint that reads or writes a QIODevice.
 
+    The interface name of QIODeviceEndpoint is \c com.nokia.Qt.QIODeviceEndpoint/1.0 as
+    defined in QIODeviceEndpoint_iid.
+
     \sa QAbstractMediaService::setDataInput(), QAbstractMediaService::setDataOutput()
+*/
+
+/*!
+    \macro QIODeviceEndpoint_iid
+
+    \c com.nokia.Qt.QIODeviceEndpoint/1.0
+
+    Defines the interface name of QIODeviceEndpoint.
+
+    \relates QIODeviceEndpoint
 */
 
 /*!

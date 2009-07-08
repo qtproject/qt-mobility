@@ -61,7 +61,20 @@ public:
     The QAudioDeviceEndpoint class provides descriptions of the audio devices available on a system
     and allows one to be selected as the input or output of a media service.
 
+    The interface name of QAudioDeviceEndpoint is \c com.nokia.Qt.QAudioDeviceEndpoint/1.0 as
+    defined in QAudioDeviceEndpoint_iid.
+
     \sa QAbstractMediaService::setAudioInput(), QAbstractMediaService::setAudioOutput()
+*/
+
+/*!
+    \macro QAudioDeviceEndpoint_iid
+
+    \c com.nokia.Qt.QAudioDeviceEndpoint/1.0
+
+    Defines the interface name of QAudioDeviceEndpoint.
+
+    \relates QAudioDeviceEndpoint
 */
 
 /*!

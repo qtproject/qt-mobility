@@ -286,5 +286,8 @@ QObject *QAbstractMediaService::createEndpoint(const char *iid)
 /*!
     \fn QAbstractMediaService::createEndpoint()
 
-    Creates a new media end point object.
+    Creates a new media end point object of type \c T.
+
+    \c T must be a pointer to a class that inherits from QObject and has been declared as a media
+    endpoint using Q_MEDIA_DECLARE_ENDPOINT.
 */
