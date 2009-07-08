@@ -1,10 +1,11 @@
 ######################################################################
 #
-# Mobility API project - examples
+# Mobility API project
 #
 ######################################################################
 
 TEMPLATE = subdirs
 TARGET = 
 CONFIG += ordered
-SUBDIRS += samplephonebook
+include(../../../common.pri)
+SUBDIRS = qtcontactsdocsample

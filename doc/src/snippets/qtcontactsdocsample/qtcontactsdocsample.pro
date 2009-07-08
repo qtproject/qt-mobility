@@ -5,12 +5,10 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = simplecontacts
+TARGET = qtcontactsdocsample
 DEPENDPATH += .
-INCLUDEPATH += . ../../contacts ../../contacts/$${CONTACTS_BACKEND} ../../util
+INCLUDEPATH += . ../../../../contacts
 LIBS += -lQtContacts
 
-include(../../common.pri)
-
-# Input
-SOURCES += simplecontacts.cpp
+include(../../../../common.pri)
+SOURCES += qtcontactsdocsample.cpp
