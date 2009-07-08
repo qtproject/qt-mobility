@@ -320,9 +320,9 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">ErrorCode</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NotYetImplemented</keyword>
+        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingMemoryOverflow</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::FrameworkFault</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::InvalidId</keyword>
-        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingIdsOverflow</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
@@ -336,7 +336,7 @@
         <keyword ref="qmessagestore.html#folder">folder</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
-        <keyword ref="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</keyword>
+        <keyword ref="qmessagestore.html#maximumWorkingMemory">maximumWorkingMemory</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
         <keyword ref="qmessagestore.html#messagesAdded">messagesAdded</keyword>
         <keyword ref="qmessagestore.html#messagesRemoved">messagesRemoved</keyword>
@@ -346,7 +346,7 @@
         <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
-        <keyword ref="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</keyword>
+        <keyword ref="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</keyword>
         <keyword ref="qmessagestore.html#startNotifications">startNotifications</keyword>
         <keyword ref="qmessagestore.html#stopNotifications">stopNotifications</keyword>
         <keyword ref="qmessagestore.html#updateMessage">updateMessage</keyword>

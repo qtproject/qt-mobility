@@ -21,7 +21,7 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"></div>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingIdsOverflow }</li>
+<li><div class="fn"></div>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingMemoryOverflow }</li>
 <li><div class="fn"></div>enum <b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { NoRemovalRecord, CreateRemovalRecord }</li>
 </ul>
 <a name="public-functions"></a>
@@ -34,14 +34,14 @@
 <li><div class="fn"></div>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> ) const</li>
 <li><div class="fn"></div>QMessageFolder <b><a href="qmessagestore.html#folder">folder</a></b> ( const QMessageFolderId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
-<li><div class="fn"></div>uint <b><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a></b> ()</li>
+<li><div class="fn"></div>uint <b><a href="qmessagestore.html#maximumWorkingMemory">maximumWorkingMemory</a></b> ()</li>
 <li><div class="fn"></div>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>QMessageAccountIdList <b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i>, const QMessageAccountSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>QMessageFolderIdList <b><a href="qmessagestore.html#queryFolders">queryFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i>, const QMessageFolderSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a></b> ( uint <i>maximumIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a></b> ( uint <i>maximumBytes</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</li>
 </ul>
 <a name="public-slots"></a>
@@ -85,7 +85,7 @@
 <tr><td valign="top"><tt>QMessageStore::ContentInaccessible</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The operation failed because the content data cannot be accessed by the messaging store.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::NotYetImplemented</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The operation failed because the messaging store does not yet implement the operation.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::FrameworkFault</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The operation failed because the messaging store encountered an error in performing the operation.</td></tr>
-<tr><td valign="top"><tt>QMessageStore::WorkingIdsOverflow</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The operation failed because the messaging store could not perform the operation within the constraint specified by <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</td></tr>
+<tr><td valign="top"><tt>QMessageStore::WorkingMemoryOverflow</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The operation failed because the messaging store could not perform the operation within the constraint specified by <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</td></tr>
 </table></p>
 <h3 class="fn"><a name="RemovalOption-enum"></a>enum QMessageStore::RemovalOption</h3>
 <p>Defines whether or not a message will be removed from the originating server.</p>
@@ -104,13 +104,13 @@
 <p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), <a href="qmessagestore.html#removeMessage">removeMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="countAccounts"></a>int QMessageStore::countAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="countFolders"></a>int QMessageStore::countFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>int QMessageStore::countMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessagefilterkey.html">QMessageFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="folder"></a><a href="qmessagefolder.html">QMessageFolder</a> QMessageStore::folder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> ) const</h3>
 <p>Returns the <a href="qmessagefolder.html">QMessageFolder</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="instance"></a>QMessageStore * QMessageStore::instance ()&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -118,11 +118,11 @@
 <p>If necessary, the store will be instantiated and initialized.</p>
 <h3 class="fn"><a name="lastError"></a><a href="qmessagestore.html#ErrorCode-enum">QMessageStore::ErrorCode</a> QMessageStore::lastError () const</h3>
 <p>Returns the code of the last error condition reported by the messaging store.</p>
-<h3 class="fn"><a name="maximumWorkingIds"></a>uint QMessageStore::maximumWorkingIds ()</h3>
-<p>Returns 0 if no constraint has been set by <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
-<p>Otherwise returns the maximum working list size as set by <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
-<p>The default working list size is platform specific.</p>
-<p>See also <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
+<h3 class="fn"><a name="maximumWorkingMemory"></a>uint QMessageStore::maximumWorkingMemory ()</h3>
+<p>Returns 0 if no constraint has been set by <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
+<p>Otherwise returns the maximum working memory as set by <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
+<p>The default maximum working memory is platform specific.</p>
+<p>See also <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="message"></a><a href="qmessage.html">QMessage</a> QMessageStore::message ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> ) const</h3>
 <p>Returns the <a href="qmessage.html">QMessage</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="messagesAdded"></a>void QMessageStore::messagesAdded ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -136,13 +136,13 @@
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
 <h3 class="fn"><a name="queryAccounts"></a>QMessageAccountIdList QMessageStore::queryAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i>, const <a href="qmessageaccountsortkey.html">QMessageAccountSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="queryFolders"></a>QMessageFolderIdList QMessageStore::queryFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i>, const <a href="qmessagefoldersortkey.html">QMessageFolderSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
-<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a>().</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
 <p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then a removal record will be created for the removed message.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
@@ -160,11 +160,11 @@
         return QMessageStore::instance()-&gt;removeMessages(idsFilter);
     }</pre>
 <p>See also <a href="qmessagestore.html#removeMessage">removeMessage</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
-<h3 class="fn"><a name="setMaximumWorkingIds"></a>void QMessageStore::setMaximumWorkingIds ( uint <i>maximumIds</i> )</h3>
-<p>If <i>maximumIds</i> is 0, removes any constraint on the maximum number of ids that can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
-<p>Otherwise sets the maximum number of ids than can be kept in the working list when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>(). A failure to satisfy the working list size constraint is reported by <a href="qmessagestore.html#lastError">lastError</a>() returning <a href="qmessagestore.html#ErrorCode-enum">WorkingIdsOverflow</a>.</p>
-<p>The working list is used only when an atomic evaluation of a <a href="qmessagefilterkey.html">QMessageFilterKey</a> based query is not supported.</p>
-<p>See also <a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#lastError">lastError</a>().</p>
+<h3 class="fn"><a name="setMaximumWorkingMemory"></a>void QMessageStore::setMaximumWorkingMemory ( uint <i>maximumBytes</i> )</h3>
+<p>If <i>maximumBytes</i> is 0, removes any constraint on the maximum memory that can be allocated directly by the store when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
+<p>Otherwise sets the maximum number of bytes than can be directly allocated by the store when evaluating <a href="qmessagestore.html#countMessages">countMessages</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>() to <i>maximumBytes</i>. A failure to satisfy the working memory constraint is reported by <a href="qmessagestore.html#lastError">lastError</a>() returning <a href="qmessagestore.html#ErrorCode-enum">WorkingMemoryOverflow</a>.</p>
+<p>The store only directly allocates working memory on platforms where evaluating a boolean <a href="qmessagefilterkey.html">QMessageFilterKey</a> based query requires a combination of calls to the underlying platform query function.</p>
+<p>See also <a href="qmessagestore.html#maximumWorkingMemory">maximumWorkingMemory</a>(), <a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a>, <a href="qmessagestore.html#countMessages">countMessages</a>(), <a href="qmessagestore.html#queryMessages">queryMessages</a>(), and <a href="qmessagestore.html#lastError">lastError</a>().</p>
 <h3 class="fn"><a name="startNotifications"></a>void QMessageStore::startNotifications ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Starts emission of <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() and <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() signals for messages that match <i>key</i>.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#stopNotifications">stopNotifications</a>().</p>
