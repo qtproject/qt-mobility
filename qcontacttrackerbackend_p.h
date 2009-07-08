@@ -113,9 +113,9 @@ public:
     QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    bool removeContact(const QUniqueId& contactId, bool batch = false);
+    bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);
+    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;

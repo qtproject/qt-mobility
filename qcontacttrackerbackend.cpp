@@ -258,12 +258,20 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
     return true;
 }
 
-bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch)
+bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
 {
-    Q_UNUSED(contactId)
-    Q_UNUSED(batch)
+    QUrl url = QUrl("contact:"+QString::number(contactId));
+    qDebug() << url.toString();
+    Live<nco::PersonContact> ncoContact = ::tracker()->liveNode(url);
+    ncoContact->remove();
 
-    return false;
+    error = QContactManager::NoError;
+    if (!batch) {
+        QList<QUniqueId> removed;
+        removed.append(contactId);
+        emit contactsRemoved(removed);
+    }
+    return true;
 }
 
 QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
@@ -314,10 +322,34 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
 
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds)
+QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
 {
-    Q_UNUSED(contactIds)
-    return QList<QContactManager::Error>();
+    QList<QUniqueId> removed;
+    QList<QContactManager::Error> errors;
+    error = QContactManager::NoError;
+
+    if (!contactIds) {
+        error = QContactManager::BadArgumentError;
+        return errors;
+    }
+
+    for (int i = 0; i < contactIds->count(); i++) {
+        QContactManager::Error lastError;
+        removeContact(contactIds->at(i), true, lastError);
+        errors.append(lastError);
+        if (lastError == QContactManager::NoError) {
+            removed.append(contactIds->at(i));
+            (*contactIds)[i] = 0;
+        }
+        else {
+            error = lastError;
+        }
+    }
+
+    if (!removed.isEmpty()) {
+        emit contactsRemoved(removed);
+    }
+    return errors;
 }
 
 QList<QUniqueId> QContactTrackerEngine::groups() const
