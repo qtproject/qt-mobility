@@ -62,6 +62,10 @@ public:
     QAtomicInt m_refCount;
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
+
+    template <class T>
+    Live<T> nodeByClasstype(QList<Live<nco::ContactMedium> > contactMediums) const;
+
     Live<nco::Contact> getContactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
     ContactContext::Location locationContext(const QContactDetail& det) const;
 };
