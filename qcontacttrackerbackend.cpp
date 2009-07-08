@@ -247,8 +247,16 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             }
         }
     }
-    error = QContactManager::NoError;
 
+    QList<QUniqueId> emitList;
+    emitList.append(contact->id());
+    if (newContact) {
+        emit contactsAdded(emitList);
+    } else {
+        emit contactsChanged(emitList);
+    }
+
+    error = QContactManager::NoError;
     return true;
 }
 
