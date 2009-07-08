@@ -130,20 +130,22 @@ void BearerDialog::configurationAdded(const QNetworkConfiguration &config)
 
 void BearerDialog::configurationRemoved(const QNetworkConfiguration &config)
 {
-    QList<QTreeWidgetItem *> items = treeWidget->findItems(config.name(), Qt::MatchExactly);
+    for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = treeWidget->topLevelItem(i);
 
-    while (!items.isEmpty())
-        delete treeWidget->takeTopLevelItem(treeWidget->indexOfTopLevelItem(items.takeFirst()));
+        if (item->data(0, Qt::UserRole).toString() == config.identifier()) {
+            delete item;
+            break;
+        }
+    }
 }
 
 void BearerDialog::configurationChanged(const QNetworkConfiguration &config)
 {
-    QList<QTreeWidgetItem *> items = treeWidget->findItems(config.name(), Qt::MatchExactly);
+    for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = treeWidget->topLevelItem(i);
 
-    while (!items.isEmpty()) {
-        QTreeWidgetItem *item = items.takeFirst();
-
-        if (item) {
+        if (item->data(0, Qt::UserRole).toString() == config.identifier()) {
             updateItem(item, config);
 
             if (config.type() == QNetworkConfiguration::ServiceNetwork)
@@ -151,6 +153,8 @@ void BearerDialog::configurationChanged(const QNetworkConfiguration &config)
 
             if (item == treeWidget->currentItem())
                 showConfigurationFor(item);
+
+            break;
         }
     }
 }
