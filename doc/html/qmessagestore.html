@@ -27,6 +27,8 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
+<li><div class="fn"></div><b><a href="qmessagestore.html#QMessageStore">QMessageStore</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div>virtual <b><a href="qmessagestore.html#dtor.QMessageStore">~QMessageStore</a></b> ()</li>
 <li><div class="fn"></div>QMessageAccount <b><a href="qmessagestore.html#account">account</a></b> ( const QMessageAccountId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * <i>m</i> )</li>
 <li><div class="fn"></div>int <b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> ) const</li>
@@ -96,6 +98,12 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMessageStore"></a>QMessageStore::QMessageStore ( QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs the messaging store.</p>
+<p>If <i>parent</i> is not 0 then the messaging store will be deleted when <i>parent</i> is deleted.</p>
+<p>See also <a href="qmessagestore.html#instance">instance</a>().</p>
+<h3 class="fn"><a name="dtor.QMessageStore"></a>QMessageStore::~QMessageStore ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the messaging store.</p>
 <h3 class="fn"><a name="account"></a><a href="qmessageaccount.html">QMessageAccount</a> QMessageStore::account ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> ) const</h3>
 <p>Returns the <a href="qmessageaccount.html">QMessageAccount</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="addMessage"></a>bool QMessageStore::addMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>

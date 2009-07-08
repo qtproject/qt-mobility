@@ -738,6 +738,10 @@
                 <value name="FrameworkFault" value="5"/>
                 <value name="WorkingMemoryOverflow" value="6"/>
             </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageStore" fullname="QMessageStore::QMessageStore" href="qmessagestore.html#QMessageStore" location="draft-api.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageStore(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageStore" fullname="QMessageStore::~QMessageStore" href="qmessagestore.html#dtor.QMessageStore" location="draft-api.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageStore()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="lastError" fullname="QMessageStore::lastError" href="qmessagestore.html#lastError" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageStore::ErrorCode" signature="lastError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="queryMessages" fullname="QMessageStore::queryMessages" href="qmessagestore.html#queryMessages" location="draft-api.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageIdList" signature="queryMessages(const QMessageFilterKey &amp; key, const QMessageSortKey &amp; sortKey, uint limit, uint offset) const">
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
