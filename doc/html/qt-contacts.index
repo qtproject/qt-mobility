@@ -708,12 +708,14 @@
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
+            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="2"/>
             <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="2"/>
-            <contents name="saving-a-new-contact-to-the-default-store" title="Saving a new contact to the default store" level="2"/>
-            <contents name="saving-a-new-contact-to-a-particular-manager" title="Saving a new contact to a particular manager" level="2"/>
-            <contents name="saving-a-new-contact-to-a-particular-store" title="Saving a new contact to a particular store" level="2"/>
+            <contents name="viewing-a-specific-detail-of-a-contact" title="Viewing a specific detail of a contact" level="2"/>
+            <contents name="viewing-all-of-the-details-of-a-contact" title="Viewing all of the details of a contact" level="2"/>
+            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="2"/>
             <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="2"/>
-            <contents name="retrieving-contact-details-for-display" title="Retrieving contact details for display" level="2"/>
+            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="2"/>
+            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="2"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>

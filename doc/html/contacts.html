@@ -17,12 +17,14 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#using-the-api">Using the API</a></li>
-<ul><li><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
-<li><a href="#saving-a-new-contact-to-the-default-store">Saving a new contact to the default store</a></li>
-<li><a href="#saving-a-new-contact-to-a-particular-manager">Saving a new contact to a particular manager</a></li>
-<li><a href="#saving-a-new-contact-to-a-particular-store">Saving a new contact to a particular store</a></li>
+<ul><li><a href="#saving-a-new-contact-to-the-default-manager">Saving a new contact to the default manager</a></li>
+<li><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
+<li><a href="#viewing-a-specific-detail-of-a-contact">Viewing a specific detail of a contact</a></li>
+<li><a href="#viewing-all-of-the-details-of-a-contact">Viewing all of the details of a contact</a></li>
+<li><a href="#installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail">Installing a plugin that modifies the definition of one type of detail</a></li>
 <li><a href="#modifying-an-existing-contact-and-saving-the-modifications">Modifying an existing contact and saving the modifications</a></li>
-<li><a href="#retrieving-contact-details-for-display">Retrieving contact details for display</a></li>
+<li><a href="#loading-the-manager-for-a-specific-backend">Loading the manager for a specific backend</a></li>
+<li><a href="#loading-a-manager-with-specific-parameters">Loading a manager with specific parameters</a></li>
 </ul>
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
@@ -43,100 +45,177 @@
 <a name="using-the-api"></a>
 <h2>Using the API</h2>
 <p>This section provides some examples of common usage of the API.</p>
+<a name="saving-a-new-contact-to-the-default-manager"></a>
+<h3>Saving a new contact to the default manager</h3>
+<p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager. We assume the existence of a specialised leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialised leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
+<pre>    void addContact(QContactManager* cm)
+    {
+        QContact alice;
+
+        <span class="comment">/* Set the contact's name */</span>
+        alice.name().setFirst(&quot;Alice&quot;);
+        alice.name().setLast(&quot;Jones&quot;);
+        alice.name().setDisplayName(&quot;Ally Jones&quot;);
+
+        <span class="comment">/* Add a phone number */</span>
+        QContactPhoneNumber number;
+        number.setAttribute(&quot;Context&quot;, &quot;Home&quot;);
+        number.setAttribute(&quot;SubType&quot;, &quot;Mobile&quot;);
+        number.setNumber(&quot;12345678&quot;);
+        alice.saveDetail(&amp;number);
+        alice.setPreferredDetail(&quot;DialActionId&quot;, number);
+
+        <span class="comment">/* Add a second phone number */</span>
+        QContactPhoneNumber number2;
+        number2.setAttribute(&quot;Context&quot;, &quot;Work&quot;);
+        number2.setAttribute(&quot;SubType&quot;, &quot;Landline&quot;);
+        number2.setNumber(&quot;555-4444&quot;);
+        alice.saveDetail(&amp;number2);
+
+        <span class="comment">/* Save the contact */</span>
+        cm-&gt;saveContact(&amp;alice);
+    }</pre>
 <a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
-<p>The client instantiates a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
-<pre>    QString incomingCallNbr = &quot;012345678&quot;;
-    QContactManager cm; <span class="comment">// retrieves the default manager</span>
-    QList&lt;QUniqueId&gt; matchingContacts = cm.contactsWithDetail(&quot;PhoneNumber&quot;, incomingCallNbr);
-    if (matchingContacts.size() == 0)
-        qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
-    else
-        qDebug() &lt;&lt; &quot;Incoming call from&quot; &lt;&lt; matchingContacts.at(0).name().displayName() &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;</pre>
-<a name="saving-a-new-contact-to-the-default-store"></a>
-<h3>Saving a new contact to the default store</h3>
-<p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.</p>
-<pre>    QContact c;
-    c.name().setFirst(&quot;John&quot;);
-    c.name().setLast(&quot;Citizen&quot;);
-    QContactDetail phoneNumber;
-    phoneNumber.setValue(&quot;PhoneNumber&quot;, &quot;012345678&quot;);
-    c.saveDetail(&amp;phoneNumber);
+<p>The client utilises a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
+<pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
+    {
+        QList&lt;QUniqueId&gt; matchingContacts = cm-&gt;contactsWithDetail(&quot;PhoneNumber&quot;, incomingCallNbr);
+        if (matchingContacts.size() == 0) {
+            qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
+        } else {
+            qDebug() &lt;&lt; &quot;Incoming call from&quot;
+                     &lt;&lt; cm-&gt;contact(matchingContacts.at(0)).name().displayName()
+                     &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
+        }
+    }</pre>
+<a name="viewing-a-specific-detail-of-a-contact"></a>
+<h3>Viewing a specific detail of a contact</h3>
+<p>The client retrieves the phone numbers of a contact, and displays the first one</p>
+<pre>    void viewSpecificDetail(QContactManager* cm)
+    {
+        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QContact a = cm-&gt;contact(contactIds.first());
+        qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; a.name().displayName()
+                 &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;Number&quot;);
+    }</pre>
+<a name="viewing-all-of-the-details-of-a-contact"></a>
+<h3>Viewing all of the details of a contact</h3>
+<p>The client retrieves all of the details of a contact, and displays them</p>
+<pre>    void viewDetails(QContactManager* cm)
+    {
+        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QContact a = cm-&gt;contact(contactIds.first());
+        qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; a.name().displayName();
 
-    QContactManager cm;
-    if (!cm.saveContact(&amp;c))
-        qDebug() &lt;&lt; &quot;Error occurred when saving contact:&quot; &lt;&lt; cm.error();
-    else
-        qDebug() &lt;&lt; &quot;Contact&quot; &lt;&lt; c.name().displayName() &lt;&lt; &quot;saved successfully!&quot;;</pre>
-<a name="saving-a-new-contact-to-a-particular-manager"></a>
-<h3>Saving a new contact to a particular manager</h3>
-<p>The client creates a new contact, and saves it to the default store of a particular manager (in this case, a vCard backend). While the available managers may be requested from the plugin framework, here we assume that the client knows that the particular manager is available on this platform.</p>
-<p>Also, we assume the existence of a specialised leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier. These specialised leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
-<p>Note that vCard is a registered trademark of the Internet Mail Consortium.</p>
-<pre>    QContact c;
-    c.name().setFirst(&quot;John&quot;);
-    c.name().setLast(&quot;Citizen&quot;);
-    QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber(&quot;012345678&quot;);
-    c.saveDetail(&amp;phoneNumber);
+        QList&lt;QContactDetail&gt; allDetails = a.details();
+        for (int i = 0; i &lt; allDetails.size(); i++) {
+            QContactDetail detail = allDetails.at(i);
+            QContactDetailDefinition currentDefinition = cm-&gt;detailDefinition(detail.definitionId());
+            QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = currentDefinition.fields();
 
-    QContactManager cm(&quot;com.nokia.mobility.contacts.vCardBackend&quot;);
-    if (!cm.saveContact(&amp;c))
-        qDebug() &lt;&lt; &quot;Error occurred when saving contact:&quot; &lt;&lt; cm.error();
-    else
-        qDebug() &lt;&lt; &quot;Contact&quot; &lt;&lt; c.name().displayName() &lt;&lt; &quot;saved successfully!&quot;;</pre>
-<a name="saving-a-new-contact-to-a-particular-store"></a>
-<h3>Saving a new contact to a particular store</h3>
-<p>The client creates a new contact, and saves it to a particular store (in this case, a vCard store) of the default manager. Note that while the available stores may be requested from the capabilities of the manager, we assume in this case that the client knows that the store is available.</p>
-<pre>    QContact c;
-    c.name().setFirst(&quot;John&quot;);
-    c.name().setLast(&quot;Citizen&quot;);
-    QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber(&quot;012345678&quot;);
-    c.saveDetail(&amp;phoneNumber);
+            qDebug(&quot;\tDetail #%d (%s):&quot;, i, detail.definitionId().toAscii().constData());
+            foreach (const QString&amp; fieldKey, fields.keys()) {
+                qDebug() &lt;&lt; &quot;\t\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType &lt;&lt; &quot;) =&quot; &lt;&lt; detail.value(fieldKey);
+            }
+            qDebug();
+        }
+    }</pre>
+<a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
+<h3>Installing a plugin that modifies the definition of one type of detail</h3>
+<p>The client installs a plugin, which requires a new field to be added to details of the &quot;EmailAddress&quot; definition. It loads the definition from the default manager, modifies it (by adding the new field - a label field), and saves it back.</p>
+<pre>    void addPlugin(QContactManager* cm)
+    {
+        <span class="comment">/* Find the definition that we are modifying */</span>
+        QMap&lt;QString, QContactDetailDefinition&gt; definitions = cm-&gt;detailDefinitions();
+        QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionId);
 
-    QContactManager cm(QString(), &quot;vCard&quot;);
-    if (!cm.saveContact(&amp;c))
-        qDebug() &lt;&lt; &quot;Error occurred when saving contact:&quot; &lt;&lt; cm.error();
-    else
-        qDebug() &lt;&lt; &quot;Contact&quot; &lt;&lt; c.name().displayName() &lt;&lt; &quot;saved successfully!&quot;</pre>
+        <span class="comment">/* Make our modifications: we add a &quot;Label&quot; field to email addresses */</span>
+        QContactDetailDefinition::Field newField;
+        newField.dataType = QVariant::String;
+        QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = modified.fields();
+        fields.insert(&quot;Label&quot;, newField);
+
+        <span class="comment">/* Update the definition with the new field included */</span>
+        modified.setFields(fields);
+
+        <span class="comment">/* Save the definition back to the manager */</span>
+        if (cm-&gt;saveDetailDefinition(modified))
+            qDebug() &lt;&lt; &quot;Successfully modified the detail definition!&quot;;
+        else
+            qDebug() &lt;&lt; &quot;This backend could not support our modifications!&quot;;
+    }</pre>
 <a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
 <h3>Modifying an existing contact and saving the modifications</h3>
-<p>Here we assume that the user has selected a contact in a list widget, and clicked the &quot;Edit&quot; button, or something similar. The client code would retrieve the particular contact from the list (most likely using a class derived from QAbstractListModel), and allow the user to modify that contact.</p>
-<pre><span class="comment">    // retrieve the contact identified by a particular id from the manager.</span>
-    QContactManager cm;
-    QContact selected = cm.contact(selectedContactId);
+<p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
+<pre>    void editView(QContactManager* cm)
+    {
+        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QContact a = cm-&gt;contact(contactIds.first());
+        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; a.name().displayName();
 
-<span class="comment">    // the user has changed the last name of the contact</span>
-    selected.name().setLast(&quot;Civilian&quot;);
+        <span class="comment">/* Change the first phone number */</span>
+        QList&lt;QContactDetail&gt; numbers = a.details(&quot;PhoneNumber&quot;);
+        QContactPhoneNumber phone = numbers.value(0);
+        phone.setNumber(&quot;123-4445&quot;);
 
-<span class="comment">    // the user also wants to change the first phone number of the contact</span>
-    QContactPhoneNumber phoneNumber = selected.detail(&quot;PhoneNumber&quot;); <span class="comment">// retrieves the first phone number</span>
-    phoneNumber.setNumber(&quot;087654321&quot;);
+        <span class="comment">/* Add an email address */</span>
+        QContactEmailAddress email;
+        email.setEmailAddress(&quot;alice.jones@example&quot;);
+        email.setAttribute(&quot;Context&quot;, &quot;Work&quot;);
+        email.setAttribute(&quot;Subtype&quot;, &quot;Internet&quot;);
+        email.setValue(&quot;Label&quot;, &quot;Alice's Work Email Address&quot;);
 
-<span class="comment">    // now we save the updated detail.  The old detail will be overwritten in memory.</span>
-    selected.saveDetail(&amp;phoneNumber);
+        <span class="comment">/* Save the updated details to the contact. */</span>
+        a.saveDetail(&amp;phone);
+        a.saveDetail(&amp;email);
 
-<span class="comment">    // and save the updated contact back to the database</span>
-    cm.saveContact(&amp;selected);</pre>
-<a name="retrieving-contact-details-for-display"></a>
-<h3>Retrieving contact details for display</h3>
-<p>The user wishes to view the details of a particular contact without modifying them.</p>
-<pre><span class="comment">    // retrieve the contact identified by the particular id from the manager.</span>
-    QContactManager cm;
-    QContact selected = cm.contact(selectedContactId);
+        <span class="comment">/* Now we must save the updated contact back to the database. */</span>
+        cm-&gt;saveContact(&amp;a);
+        viewDetails(cm);
+    }</pre>
+<a name="loading-the-manager-for-a-specific-backend"></a>
+<h3>Loading the manager for a specific backend</h3>
+<p>In this example, the client loads a manager for a specific backend. While this could be found and retrieved using a more advanced plugin framework (such as the Qt Service Framework), this code assumes that the client has <i>a priori</i> knowledge of the backend in question.</p>
+<pre>    void loadManager()
+    {
+        QContactManager* cm = new QContactManager(&quot;KABC&quot;);
+        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        if (!contactIds.isEmpty()) {
+            QContact a = cm-&gt;contact(contactIds.first());
+            qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; a.name().displayName();
+        } else {
+            qDebug() &lt;&lt; &quot;This manager contains no contacts&quot;;
+        }
 
-<span class="comment">    // retrieve all of the details of the contact.</span>
-    QList&lt;QContactDetail&gt; allDetails = selected.details();
+        delete cm;
+    }</pre>
+<a name="loading-a-manager-with-specific-parameters"></a>
+<h3>Loading a manager with specific parameters</h3>
+<p>The client loads a manager with specific parameters defined. The parameters which are available are backend specific, and so the client had to know that the &quot;Settings&quot; parameter was valid, and what argument it took. In this example, the client tells the backend to load detail definitions saved in a particular settings file.</p>
+<pre>    void loadManagerWithParameters()
+    {
+        QMap&lt;QString, QString&gt; parameters;
+        parameters.insert(&quot;Settings&quot;, &quot;~/.qcontactmanager-kabc-settings.ini&quot;);
+        QContactManager* cm = new QContactManager(&quot;KABC&quot;, parameters);
+        QMap&lt;QString, QContactDetailDefinition&gt; definitions = cm-&gt;detailDefinitions();
 
-<span class="comment">    // for each detail, we want to know which information to display.</span>
-<span class="comment">    // so, we ask the manager for the definition of each detail.</span>
-    foreach (const QContactDetail&amp; detail, allDetails) {
-        <span class="comment">// depending on the field type, we can display each of the fields differently.</span>
-        QContactDetailDefinition definition = cm.detailDefinition(detail.definitionId());
-        QMap&lt;QString, QVariant::Type&gt; fields = definition.fields();
+        qDebug() &lt;&lt; &quot;This backend currently supports the following detail definitions:&quot;;
+        QList&lt;QContactDetailDefinition&gt; allDefinitions = definitions.values();
+        foreach (const QContactDetailDefinition&amp; defn, allDefinitions) {
+            QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = defn.fields();
+            foreach (const QString&amp; fieldKey, fields.keys()) {
+                QList&lt;QVariant&gt; allowableValues = fields.value(fieldKey).allowableValues;
+                qDebug() &lt;&lt; &quot;\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType &lt;&lt; &quot;):&quot;;
+                if (allowableValues.isEmpty()) {
+                    qDebug() &lt;&lt; &quot;\t\tAny Value Permitted&quot;;
+                } else {
+                    qDebug() &lt;&lt; allowableValues;
+                }
+            }
+        }
 
-        <span class="comment">// ...</span>
+        delete cm;
     }</pre>
 <a name="building-and-compiling"></a>
 <h2>Building and compiling</h2>

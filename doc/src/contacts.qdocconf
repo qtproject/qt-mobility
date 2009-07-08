@@ -11,7 +11,8 @@ sourcedirs = ../../contacts \
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
-exampledirs = ../../examples
+exampledirs = ../../examples \
+              .
 
 outputdir               = ../html
 

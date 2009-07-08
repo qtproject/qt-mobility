@@ -51,137 +51,68 @@ The engine of a manager may be implemented as a plugin to allow dynamic loading 
 
 This section provides some examples of common usage of the API.
 
+\section2 Saving a new contact to the default manager
+
+    The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.
+    We assume the existence of a specialised leaf-class that allows simple access to details of the definition identified
+    by the "PhoneNumber" identifier, and another that allows simple access to details of the definition identified by the
+    "Name" identifier.  These specialised leaf classes may be written by anyone, and simply wrap the functionality
+    provided by QContactDetail in order to allow simpler access to fields supported by a particular definition.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Creating a new contact
+
 \section2 Filtering by detail definition and value
 
-The client instantiates a default manager and asks for any contacts with
-a particular phone number.  The example assumes that the default manager supports
-the provided QContactPhoneNumber detail leaf class (which implements the default
-definition for phone number details).
+    The client utilises a default manager and asks for any contacts with
+    a particular phone number.  The example assumes that the default manager supports
+    the provided QContactPhoneNumber detail leaf class (which implements the default
+    definition for phone number details).
 
-\code
-    QString incomingCallNbr = "012345678";
-    QContactManager cm; // retrieves the default manager
-    QList<QUniqueId> matchingContacts = cm.contactsWithDetail("PhoneNumber", incomingCallNbr);
-    if (matchingContacts.size() == 0)
-        qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
-    else
-        qDebug() << "Incoming call from" << matchingContacts.at(0).name().displayName() << "(" << incomingCallNbr << ")";
-\endcode
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Filtering by definition and value
 
-\section2 Saving a new contact to the default store
+\section2 Viewing a specific detail of a contact
 
-The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.
+    The client retrieves the phone numbers of a contact, and displays the first one
 
-\code
-    QContact c;
-    c.name().setFirst("John");
-    c.name().setLast("Citizen");
-    QContactDetail phoneNumber;
-    phoneNumber.setValue("PhoneNumber", "012345678");
-    c.saveDetail(&phoneNumber);
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Viewing a specific detail of a contact
 
-    QContactManager cm;
-    if (!cm.saveContact(&c))
-        qDebug() << "Error occurred when saving contact:" << cm.error();
-    else
-        qDebug() << "Contact" << c.name().displayName() << "saved successfully!";
-\endcode
+\section2 Viewing all of the details of a contact
 
-\section2 Saving a new contact to a particular manager
+    The client retrieves all of the details of a contact, and displays them
 
-The client creates a new contact, and saves it to the default store of a particular manager (in this case, a vCard backend).
-While the available managers may be requested from the plugin framework, here we assume that the client knows that the
-particular manager is available on this platform.
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Viewing the details of a contact
 
-Also, we assume the existence of a specialised leaf-class that allows simple access to details of the definition identified
-by the "PhoneNumber" identifier.  These specialised leaf classes may be written by anyone, and simply wrap the functionality
-provided by QContactDetail in order to allow simpler access to fields supported by a particular definition.
+\section2 Installing a plugin that modifies the definition of one type of detail
 
-Note that vCard is a registered trademark of the Internet Mail Consortium.
+    The client installs a plugin, which requires a new field to be added to details of the
+    "EmailAddress" definition.  It loads the definition from the default manager,
+    modifies it (by adding the new field - a label field), and saves it back.
 
-\code
-    QContact c;
-    c.name().setFirst("John");
-    c.name().setLast("Citizen");
-    QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber("012345678");
-    c.saveDetail(&phoneNumber);
-
-    QContactManager cm("com.nokia.mobility.contacts.vCardBackend");
-    if (!cm.saveContact(&c))
-        qDebug() << "Error occurred when saving contact:" << cm.error();
-    else
-        qDebug() << "Contact" << c.name().displayName() << "saved successfully!";
-\endcode
-
-\section2 Saving a new contact to a particular store
-
-The client creates a new contact, and saves it to a particular store (in this case, a vCard store) of the default manager.
-Note that while the available stores may be requested from the capabilities of the manager, we assume in this case that the client
-knows that the store is available.
-
-\code
-    QContact c;
-    c.name().setFirst("John");
-    c.name().setLast("Citizen");
-    QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber("012345678");
-    c.saveDetail(&phoneNumber);
-
-    QContactManager cm(QString(), "vCard");
-    if (!cm.saveContact(&c))
-        qDebug() << "Error occurred when saving contact:" << cm.error();
-    else
-        qDebug() << "Contact" << c.name().displayName() << "saved successfully!"
-\endcode
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Installing a plugin which modifies a definition
 
 \section2 Modifying an existing contact and saving the modifications
 
-Here we assume that the user has selected a contact in a list widget, and clicked the "Edit" button, or something similar.
-The client code would retrieve the particular contact from the list (most likely using a class derived from
-QAbstractListModel), and allow the user to modify that contact.
+    The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the
+    contact back to the manager.  Note that it uses the newly added field of the email address definition!
 
-\code
-    // retrieve the contact identified by a particular id from the manager.
-    QContactManager cm;
-    QContact selected = cm.contact(selectedContactId);
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Modifying an existing contact
 
-    // the user has changed the last name of the contact
-    selected.name().setLast("Civilian");
+\section2 Loading the manager for a specific backend
 
-    // the user also wants to change the first phone number of the contact
-    QContactPhoneNumber phoneNumber = selected.detail("PhoneNumber"); // retrieves the first phone number
-    phoneNumber.setNumber("087654321");
+    In this example, the client loads a manager for a specific backend.  While this could be
+    found and retrieved using a more advanced plugin framework (such as the Qt Service Framework),
+    this code assumes that the client has \i{a priori} knowledge of the backend in question.
 
-    // now we save the updated detail.  The old detail will be overwritten in memory.
-    selected.saveDetail(&phoneNumber);
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend
 
-    // and save the updated contact back to the database
-    cm.saveContact(&selected);
-\endcode
+\section2 Loading a manager with specific parameters
 
-\section2 Retrieving contact details for display
+    The client loads a manager with specific parameters defined.  The parameters which are available
+    are backend specific, and so the client had to know that the "Settings" parameter was valid, and
+    what argument it took.  In this example, the client tells the backend to load detail definitions
+    saved in a particular settings file.
 
-The user wishes to view the details of a particular contact without modifying them.
-
-\code
-    // retrieve the contact identified by the particular id from the manager.
-    QContactManager cm;
-    QContact selected = cm.contact(selectedContactId);
-
-    // retrieve all of the details of the contact.
-    QList<QContactDetail> allDetails = selected.details();
-
-    // for each detail, we want to know which information to display.
-    // so, we ask the manager for the definition of each detail.
-    foreach (const QContactDetail& detail, allDetails) {
-        // depending on the field type, we can display each of the fields differently.
-        QContactDetailDefinition definition = cm.detailDefinition(detail.definitionId());
-        QMap<QString, QVariant::Type> fields = definition.fields();
-
-        // ...
-    }
-\endcode
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend with parameters
 
 \section1 Building and compiling
 

@@ -39,6 +39,7 @@
 static void addContact(QContactManager*);
 static void callContact(QContactManager*);
 static void matchCall(QContactManager*, const QString&);
+static void viewSpecificDetail(QContactManager*);
 static void viewDetails(QContactManager*);
 static void addPlugin(QContactManager*);
 static void editView(QContactManager*);
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
     callContact(cm);
     matchCall(cm, "111-222-333"); // unknown number.
     matchCall(cm, "12345678");    // alice's number.
+    viewSpecificDetail(cm);
     viewDetails(cm);
     addPlugin(cm);
     editView(cm);
@@ -127,6 +129,16 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
     }
 }
 //! [Filtering by definition and value]
+
+//! [Viewing a specific detail of a contact]
+void viewSpecificDetail(QContactManager* cm)
+{
+    QList<QUniqueId> contactIds = cm->contacts();
+    QContact a = cm->contact(contactIds.first());
+    qDebug() << "The first phone number of" << a.name().displayName()
+             << "is" << a.details("PhoneNumber").first().value("Number");
+}
+//! [Viewing a specific detail of a contact]
 
 //! [Viewing the details of a contact]
 void viewDetails(QContactManager* cm)
@@ -214,6 +226,8 @@ void loadManager()
     } else {
         qDebug() << "This manager contains no contacts";
     }
+
+    delete cm;
 }
 //! [Loading a specific manager backend]
 
@@ -239,5 +253,7 @@ void loadManagerWithParameters()
             }
         }
     }
+
+    delete cm;
 }
 //! [Loading a specific manager backend with parameters]
