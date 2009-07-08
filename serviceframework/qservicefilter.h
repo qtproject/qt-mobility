@@ -75,6 +75,8 @@ public:
     QList<QString> customKeys() const;
     QString customProperty(const QString& key) const;
     void setCustomProperty(const QString& key, const QString& value);
+    void removeCustomProperty(const QString &key);
+    void clearCustomProperties();
 
 private:
     QServiceFilterPrivate *d;

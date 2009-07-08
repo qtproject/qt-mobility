@@ -92,7 +92,7 @@ public:
     template <class T>
     T* getInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
     {
-        return getInterface<T>(defaultServiceInterface(interfaceName), context, session);
+        return getInterface<T>(interfaceDefault(interfaceName), context, session);
     }
 
     template <class T>
@@ -125,10 +125,10 @@ public:
     bool addService(QIODevice* xmlDevice);
     bool removeService(const QString& serviceName);
 
-    bool setDefaultServiceForInterface(const QString &service, const QString &interfaceName);
-    bool setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor);
+    bool setInterfaceDefault(const QString &service, const QString &interfaceName);
+    bool setInterfaceDefault(const QServiceInterfaceDescriptor& descriptor);
 
-    QServiceInterfaceDescriptor defaultServiceInterface(const QString& interfaceName) const;
+    QServiceInterfaceDescriptor interfaceDefault(const QString& interfaceName) const;
 
     Error error() const;
 

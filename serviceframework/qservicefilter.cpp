@@ -253,7 +253,7 @@ int QServiceFilter::interfaceMinorVersion() const
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
-    \sa customProperty()
+    \sa customProperty(), removeCustomProperty()
 */
 void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
 {
@@ -264,11 +264,31 @@ void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
     Returns the value for the custom property \a key; otherwise
     returns a null string.
 
-    \sa setCustomProperty()
+    \sa setCustomProperty(), removeCustomProperty()
 */
 QString QServiceFilter::customProperty(const QString& key) const
 {
-    return d->customProperties[key];
+    return d->customProperties.value(key);
+}
+
+/*!
+    Removes the custom property \a key from the filter's set of constraints
+
+    \sa clearCustomProperties(), setCustomProperty()
+*/
+void QServiceFilter::removeCustomProperty(const QString &key)
+{
+    d->customProperties.remove(key);
+}
+
+/*!
+    Clears all custom properties from the filter's set of constraints
+
+    \sa removeCustomProperty()
+*/
+void QServiceFilter::clearCustomProperties()
+{
+    d->customProperties.clear();
 }
 
 /*!

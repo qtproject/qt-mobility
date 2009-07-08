@@ -334,7 +334,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     QString interfaceID;;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
         interfaceID = getInterfaceID(&query, interface);
-        if (m_lastError.errorCode() == DBError::NoError) {
+        if (m_lastError.code() == DBError::NoError) {
             QString errorText;
             errorText = "Cannot register service \"%1\". \"%1\" is already registered "
                         "and implements interface \"%2\", Version \"%3.%4.\"  \"%1\" must "
@@ -351,7 +351,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
                         << "Problem:" << qPrintable(m_lastError.text());
 #endif
             return false;
-        } else if (m_lastError.errorCode() == DBError::NotFound){
+        } else if (m_lastError.code() == DBError::NotFound){
             //No interface implementation already exists for the service
             //so add it
             if(!insertInterfaceData(&query, interface, serviceID)) {
@@ -380,13 +380,13 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     QServiceInterfaceDescriptor defaultInterface;
     foreach(const QServiceInterfaceDescriptor &interface, interfaces) {
         defaultInterface = defaultServiceInterface(interface.interfaceName(), NULL, true);
-        if (m_lastError.errorCode() == DBError::NoError
-                || m_lastError.errorCode() == DBError::ExternalIfaceIDFound) {
+        if (m_lastError.code() == DBError::NoError
+                || m_lastError.code() == DBError::ExternalIfaceIDFound) {
             continue; //default already exists so don't do anything
-        } else if (m_lastError.errorCode() == DBError::NotFound) {
+        } else if (m_lastError.code() == DBError::NotFound) {
             //default does not already exist so create one
             interfaceID = getInterfaceID(&query, interface);
-            if (m_lastError.errorCode() != DBError::NoError) {
+            if (m_lastError.code() != DBError::NoError) {
                 rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
                 qWarning() << "ServiceDatabase::registerService():-"

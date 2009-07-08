@@ -85,10 +85,31 @@ The subsequent code snippet demonstrates how this may look like:
 ...
 QServiceManager manager;
 FileStorage* storage = 0;
-manager->setDefaultServiceForInterface("FileManager", "com.nokia.qt.examples.FileStorage");
+manager->setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
 storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
 
 \endcode
+
+
+\section2 Database scope
+
+A QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.
+
+\section3 User scope
+
+In user scope, services are registered in a storage location specific to the current user; for example, in the user's home directory. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service must be available in the user-scope storage location, or the operation fails.
+
+For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.
+
+The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a \c scope parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)
+
+\section3 System scope
+
+In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.
+
+Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are only emitted for system-wide services.
+
+
 
 \section1 Adding and removing of services
 

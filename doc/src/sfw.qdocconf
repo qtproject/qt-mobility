@@ -3,12 +3,10 @@ description = Qt Service Framework Reference Documentation
 
 imagedirs = images
 
-headerdirs = ../../servicefw/serviceframework/serviceresolution \
-             ../../servicefw/serviceframework/servicehandler \
+headerdirs = ../../serviceframework \
              .
 
-sourcedirs = ../../servicefw/serviceframework/serviceresolution \
-             ../../servicefw/serviceframework/servicehandler \
+sourcedirs = ../../serviceframework \
              .
 
 sources.fileextensions  = "*.qdoc *.cpp"

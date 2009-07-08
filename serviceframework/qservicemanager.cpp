@@ -118,7 +118,7 @@ public:
 
     void setError()
     {
-        switch (dbManager->lastError().errorCode()) {
+        switch (dbManager->lastError().code()) {
             case DBError::NoError:
                 error = QServiceManager::NoError;
                 break;
@@ -193,7 +193,8 @@ private slots:
     specific to the current user (e.g. in the user's home directory). When
     searching for services and interface implementations, first search in the
     user-specific location; if the service or interface implementation
-    is not found, search in the system-wide storage location.
+    is not found, search in the system-wide storage location (if the user has
+    sufficient permissions to do so).
 
     \value SystemScope When adding and removing services, use a system-wide
     storage location accessible to all users. When searching
@@ -304,7 +305,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
     d->setError(NoError);
     QList<QServiceInterfaceDescriptor> descriptors = d->dbManager->getInterfaces(filter,
             d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
-    if (descriptors.isEmpty() && d->dbManager->lastError().errorCode() != DBError::NoError) {
+    if (descriptors.isEmpty() && d->dbManager->lastError().code() != DBError::NoError) {
         d->setError();
         return QList<QServiceInterfaceDescriptor>();
     }
@@ -335,7 +336,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
 */
 QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 {
-    return loadInterface(defaultServiceInterface(interfaceName), context, session);
+    return loadInterface(interfaceDefault(interfaceName), context, session);
 }
 
 /*!
@@ -427,7 +428,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service is already registered and implements any of the same interface
     versions that the new plugin implements.
 
-    \sa setDefaultServiceForInterface()
+    \sa setInterfaceDefault()
 */
 bool QServiceManager::addService(const QString& xmlFilePath)
 {
@@ -458,7 +459,7 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     Services are always added based on the \l scope() of the current 
     service manager instance.
 
-    \sa setDefaultServiceForInterface()
+    \sa setInterfaceDefault()
 */
 bool QServiceManager::addService(QIODevice *device)
 {
@@ -501,7 +502,7 @@ bool QServiceManager::addService(QIODevice *device)
     with the same version number, the service manager makes a random choice with 
     regards to the new default implementation. If this is 
     not the desired behaviour the default selection should be updated
-    via setDefaultServiceForInterface().
+    via setInterfaceDefault().
 
     Services are always removed based on the \l scope() of the current 
     service manager instance.
@@ -552,7 +553,7 @@ bool QServiceManager::removeService(const QString& serviceName)
 
     Returns true if the operation succeeded, and false otherwise.
 */
-bool QServiceManager::setDefaultServiceForInterface(const QString &service, const QString &interfaceName)
+bool QServiceManager::setInterfaceDefault(const QString &service, const QString &interfaceName)
 {
     d->setError(NoError);
     if (service.isEmpty() || interfaceName.isEmpty()) {
@@ -561,7 +562,7 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
     }
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
-    if (!d->dbManager->setDefaultService(service, interfaceName, scope)) {
+    if (!d->dbManager->setInterfaceDefault(service, interfaceName, scope)) {
         d->setError();
         return false;
     }
@@ -577,12 +578,12 @@ bool QServiceManager::setDefaultServiceForInterface(const QString &service, cons
 
     Returns true if the operation succeeded, and false otherwise.
 */
-bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescriptor& descriptor)
+bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& descriptor)
 {
     d->setError(NoError);
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
-    if (!d->dbManager->setDefaultService(descriptor, scope)) {
+    if (!d->dbManager->setInterfaceDefault(descriptor, scope)) {
         d->setError();
         return false;
     }
@@ -590,15 +591,15 @@ bool QServiceManager::setDefaultServiceForInterface(const QServiceInterfaceDescr
 }
 
 /*!
-    Returns the default interface for the given \a interfaceName.
+    Returns the default interface implementation for the given \a interfaceName.
 */
-QServiceInterfaceDescriptor QServiceManager::defaultServiceInterface(const QString& interfaceName) const
+QServiceInterfaceDescriptor QServiceManager::interfaceDefault(const QString& interfaceName) const
 {
     d->setError(NoError);
     DatabaseManager::DbScope scope = d->scope == SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
-    QServiceInterfaceDescriptor info = d->dbManager->defaultServiceInterface(interfaceName, scope);
-    if (d->dbManager->lastError().errorCode() != DBError::NoError) {
+    QServiceInterfaceDescriptor info = d->dbManager->interfaceDefault(interfaceName, scope);
+    if (d->dbManager->lastError().code() != DBError::NoError) {
         d->setError();
         return QServiceInterfaceDescriptor();
     }
