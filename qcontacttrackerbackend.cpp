@@ -173,16 +173,9 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
                     number = contact->addHasPhoneNumber();
                 }
                 number->setPhoneNumber(phoneNumber);
-            // Save voice number.
-            } else if(det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeVoice)) {
-                Live<nco::VoicePhoneNumber> number = d->nodeByClasstype<nco::VoicePhoneNumber>(numbers);
-                if(!number.isLive()) {
-                    number = contact->addHasPhoneNumber();
-                }
-                number->setPhoneNumber(phoneNumber);
-            // Or save it as a general phone number
+            // Or save as general voice number.
             } else {
-                Live<nco::PhoneNumber> number = d->nodeByClasstype<nco::PhoneNumber>(numbers);
+                Live<nco::VoicePhoneNumber> number = d->nodeByClasstype<nco::VoicePhoneNumber>(numbers);
                 if(!number.isLive()) {
                     number = contact->addHasPhoneNumber();
                 }
