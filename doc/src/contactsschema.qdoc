@@ -19,7 +19,7 @@ The schema consists of several parts.
 
 1) The "immutable" section of the schema, which consists of:
 \list
-    \o \l{QContactManagerCapabilities} features
+    \o \l{QContactManagerFunctionality} features
     \o \l{QContactDetail} access constraints
     \o \l{QContactDetail} attribute keys
     \o \l{QContactDetail} context-attribute values
@@ -51,7 +51,7 @@ leaf-classes) to provide clients with the best user-experience on the target pla
 
 \section2 Immutable Schema
 
-\section3 QContactManagerCapabilities features
+\section3 QContactManagerFunctionality features
 \table
 \header
     \o Feature Identifier
@@ -71,6 +71,9 @@ leaf-classes) to provide clients with the best user-experience on the target pla
 \row
     \o "CreateOnly"
     \o This backend supports create-only contact details, and performs validation on such details on save
+\row
+    \o "MutableDefinitions"
+    \o This backend supports saving, updating or removing detail definitions.  Some built in definitions may still be immutable.
 \row
     \o "Filtering"
     \o This backend supports native filtering of some form
