@@ -83,6 +83,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+    connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
 }
 
 /*!
@@ -196,6 +197,14 @@ int QMediaPlayer::bufferStatus() const
 bool QMediaPlayer::isVideoAvailable() const
 {
     return d_func()->control->isVideoAvailable();
+}
+
+/*!
+  Returns true if playback position can be changed by setPosition(); otherwise, returns false.
+*/
+bool QMediaPlayer::isSeekable() const
+{
+    return d_func()->control->isSeekable();
 }
 
 /*!

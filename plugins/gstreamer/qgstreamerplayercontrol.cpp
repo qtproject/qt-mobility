@@ -79,6 +79,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(bufferStatusChanged(int)));
     connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
             this, SIGNAL(videoAvailabilityChanged(bool)));
+    connect(m_session, SIGNAL(seekableChanged(bool)),
+            this, SIGNAL(seekableChanged(bool)));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -129,6 +131,11 @@ int QGstreamerPlayerControl::volume() const
 bool QGstreamerPlayerControl::isMuted() const
 {
     return m_session->isMuted();
+}
+
+bool QGstreamerPlayerControl::isSeekable() const
+{
+    return m_session->isSeekable();
 }
 
 void QGstreamerPlayerControl::setPlaylistPosition(int playlistPosition)

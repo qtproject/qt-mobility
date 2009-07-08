@@ -92,6 +92,8 @@ public:
 
     bool isVideoAvailable() const;
 
+    bool isSeekable() const;
+
     QAbstractMediaService* service() const;
 
 public Q_SLOTS:
@@ -118,6 +120,7 @@ Q_SIGNALS:
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
+    void seekableChanged(bool seekable);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
