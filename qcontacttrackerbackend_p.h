@@ -85,7 +85,7 @@ public:
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
     bool removeContact(const QUniqueId& contactId, bool batch = false);
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);
+    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);
 
     /* Groups - Accessors and Mutators */

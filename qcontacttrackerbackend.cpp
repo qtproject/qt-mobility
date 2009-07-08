@@ -248,12 +248,14 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
         }
     }
 
-    QList<QUniqueId> emitList;
-    emitList.append(contact->id());
-    if (newContact) {
-        emit contactsAdded(emitList);
-    } else {
-        emit contactsChanged(emitList);
+    if(!batch) {
+        QList<QUniqueId> emitList;
+        emitList.append(contact->id());
+        if (newContact) {
+            emit contactsAdded(emitList);
+        } else {
+            emit contactsChanged(emitList);
+        }
     }
 
     error = QContactManager::NoError;
@@ -268,10 +270,52 @@ bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch
     return false;
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts)
+QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
-    Q_UNUSED(contacts)
-    return QList<QContactManager::Error>();
+    QList<QContactManager::Error> errorList;
+    QContactManager::Error functionError = QContactManager::NoError;
+    QList<QUniqueId> addedList;
+    QList<QUniqueId> changedList;
+
+    if(contacts == 0) {
+        error = QContactManager::BadArgumentError;
+        return QList<QContactManager::Error>();
+    }
+
+    for(int i=0; i<contacts->count(); i++) {
+        QContact contact = contacts->at(i);
+        QUniqueId old_id = contact.id();
+
+        if(!saveContact(&contact, true, error)) {
+            functionError = error;
+            errorList.append(functionError);
+        } else {
+            if(old_id == 0) {
+                // Add info for new contact signal
+                addedList.append(contact.id());
+            } else {
+                // Or to the changed contact signal list.
+                changedList.append(contact.id());
+            }
+
+            // No error while saving.
+            errorList.append(QContactManager::NoError);
+        }
+
+    }
+
+    error = functionError;      // Last operation error is the batch error.
+
+    if(!addedList.isEmpty()) {
+        emit contactsAdded(addedList);
+    }
+
+    if(!changedList.isEmpty()) {
+        emit contactsChanged(changedList);
+    }
+
+    return errorList;
+
 }
 
 QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds)
