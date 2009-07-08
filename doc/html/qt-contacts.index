@@ -289,6 +289,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="T" signature="value(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypeAttribute" fullname="QContactDetail::setSubTypeAttribute" href="qcontactdetail.html#setSubTypeAttribute" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypeAttribute(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subTypeAttribute" fullname="QContactDetail::subTypeAttribute" href="qcontactdetail.html#subTypeAttribute" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subTypeAttribute() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContextAttribute" fullname="QContactDetail::setContextAttribute" href="qcontactdetail.html#setContextAttribute" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContextAttribute(const QString &amp; context)">
+                <parameter left="const QString &amp;" right="" name="context" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contextAttribute" fullname="QContactDetail::contextAttribute" href="qcontactdetail.html#contextAttribute" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="contextAttribute() const"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QContactDetail" fullname="QContactDetail::QContactDetail" href="qcontactdetail.html#QContactDetail-4" location="qcontactdetail.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QContactDetail(const QContactDetail &amp; other, const QString &amp; expectedDefinitionId)">
                 <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
                 <parameter left="const QString &amp;" right="" name="expectedDefinitionId" default=""/>
@@ -722,6 +730,7 @@
             <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"/>
             <contents name="examples" title="Examples" level="2"/>
         </page>
+        <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL" location="qcontactdetail.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QContactDetail" type="" signature="Q_DECLARE_CUSTOM_CONTACT_DETAIL()"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Developer Resources" fulltitle="Qt Mobility Developer Resources" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>

@@ -32,6 +32,7 @@
 <li><div class="fn"></div>virtual <b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</li>
 <li><div class="fn"></div>QString <b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; <i>attribute</i> ) const</li>
 <li><div class="fn"></div>QMap&lt;QString, QString&gt; <b><a href="qcontactdetail.html#attributes">attributes</a></b> () const</li>
+<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#contextAttribute">contextAttribute</a></b> () const</li>
 <li><div class="fn"></div>QString <b><a href="qcontactdetail.html#definitionId">definitionId</a></b> () const</li>
 <li><div class="fn"></div>QContactDetail::Error <b><a href="qcontactdetail.html#error">error</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</li>
@@ -39,8 +40,11 @@
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>attribute</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setAttributes">setAttributes</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>attributes</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a></b> ( const QString &amp; <i>context</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a></b> ( const QString &amp; <i>subType</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setValues">setValues</a></b> ( const QVariantMap &amp; <i>values</i> )</li>
+<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a></b> () const</li>
 <li><div class="fn"></div>T <b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</li>
 <li><div class="fn"></div>QString <b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</li>
 <li><div class="fn"></div>QVariantMap <b><a href="qcontactdetail.html#values">values</a></b> () const</li>
@@ -55,12 +59,51 @@
 <li><div class="fn"></div><b><a href="qcontactdetail.html#QContactDetail-4">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</li>
 <li><div class="fn"></div>QContactDetail &amp; <b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</li>
 </ul>
+<a name="macros"></a>
+<h3>Macros</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a></b></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactDetail class provides access to a single, complete detail about a contact.</p>
-<p>Every discrete datum related to a contact may be accessed via a QContactDetail. QContactDetail encapsulates the common aspects of such data, and provides access to the definition of the detail.</p>
-<p>See also <a href="qcontact.html">QContact</a> and <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>.</p>
+<p>All of the information for a contact is stored in one or more QContactDetail objects.</p>
+<p>A detail is a group of logically related bits of data - for example, a street address is a single detail that has multiple fields (number, region, country etc). Every QContactDetail has an associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> id that describes the fields, their data type, any restrictions on their values, and any restrictions on creating or updating details of that definition.</p>
+<p>A detail might also has some metadata, stored in &quot;attributes&quot;. What these attributes are used for varies a little depending on the detail, but two common attributes are <tt>Context</tt> and <tt>SubType</tt>.</p>
+<ul>
+<li>The <tt>Context</tt> attribute (with id <a href="qcontactdetail.html#AttributeContext-var">AttributeContext</a>) is intended to store the context that this detail is associated with. Commonly this will be something like &quot;Home&quot; or &quot;Work&quot;.</li>
+<li>The <tt>SubType</tt> attribute (with id <a href="qcontactdetail.html#AttributeSubType-var">AttributeSubType</a>) is intended to store any particular distinctions between details of this type. For example, a phone number might have a SubType of &quot;Mobile&quot; or &quot;Fax&quot;.</li>
+</ul>
+<p>In general, a given attribute has a single value. In some cases, if you wish to associate more than one value, you need to comma separate the values.</p>
+<p>It is possible to inherit from QContactDetail to provide convenience or standardized access to values. For example, <a href="qcontactphonenumber.html">QContactPhoneNumber</a> provides a convenient API for manipulating a QContactDetail as a phone number, according to the schema.</p>
+<p>If you wish to create your own, customized contact detail, you should use the <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a> macro in order to ensure proper operation. See the predefined leaf classes (like <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactaddress.html">QContactAddress</a>) for more information.</p>
+<p>QContactDetail objects act like values. In general, you can assign them to and fro and have reasonable behaviour, like the following example.</p>
+<pre>    QContactPhoneNumber number;
+    number.setNumber(&quot;555-1212&quot;);
+<span class="comment">    // number.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
+<span class="comment">    // number.definitionId() == QContactPhoneNumber::staticType()</span>
+
+    QContactDetail detail = number;
+<span class="comment">    // detail.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
+<span class="comment">    // detail.definitionId() == QContactPhoneNumber::staticType()</span>
+
+    QContactPhoneNumber otherNumber = detail;
+<span class="comment">    // otherNumber.number() == &quot;555-1212&quot;;</span>
+<span class="comment">    // otherNumber.definitionId() == QContactPhoneNumber::staticType()</span>
+
+    QContactAddress address = detail;
+<span class="comment">    // address is now a default constructed QContactAddress</span>
+<span class="comment">    // address.error() == QContactDetail::IncompatibleAssignmentError</span>
+<span class="comment">    // address.value(QContactPhoneNumber::FieldNumber) is empty</span>
+<span class="comment">    // address.definitionId() == QContactAddress::staticType()</span>
+
+    QContactAddress otherAddress = number;
+<span class="comment">    // otherAddress is now a default constructed QContactAddress</span>
+<span class="comment">    // otherAddress.error() == QContactDetail::IncompatibleAssignmentError</span>
+<span class="comment">    // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty</span>
+<span class="comment">    // otherAddress.definitionId() == QContactAddress::staticType()</span></pre>
+<p>See also <a href="qcontact.html">QContact</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>, and <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QContactDetail::Error</h3>
@@ -92,6 +135,11 @@
 <h3 class="fn"><a name="attributes"></a>QMap&lt;QString, QString&gt; QContactDetail::attributes () const</h3>
 <p>Returns the attributes of this detail</p>
 <p>See also <a href="qcontactdetail.html#setAttributes">setAttributes</a>().</p>
+<h3 class="fn"><a name="contextAttribute"></a>QString QContactDetail::contextAttribute () const</h3>
+<p>This is a convenience function to return the <tt>Context</tt> attribute of this detail.</p>
+<p>It is equivalent to the following code:</p>
+<pre>    attribute(QContactDetail::AttributeContext);</pre>
+<p>See also <a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a>().</p>
 <h3 class="fn"><a name="definitionId"></a>QString QContactDetail::definitionId () const</h3>
 <p>Returns the identifier of the definition which defines the semantics and structure of this detail</p>
 <h3 class="fn"><a name="error"></a><a href="qcontactdetail.html#Error-enum">QContactDetail::Error</a> QContactDetail::error () const</h3>
@@ -108,12 +156,30 @@
 <h3 class="fn"><a name="setAttributes"></a>bool QContactDetail::setAttributes ( const QMap&lt;QString, QString&gt; &amp; <i>attributes</i> )</h3>
 <p>Sets the attributes of this detail to <i>attributes</i>. Returns true if the operation succeeded.</p>
 <p>See also <a href="qcontactdetail.html#attributes">attributes</a>().</p>
+<h3 class="fn"><a name="setContextAttribute"></a>void QContactDetail::setContextAttribute ( const QString &amp; <i>context</i> )</h3>
+<p>This is a convenience function that sets the <tt>Context</tt> attribute of this detail to <i>context</i>.</p>
+<p>Not all details have meaningful values for the <tt>Context</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
+<p>It is equivalent to the following code:</p>
+<pre>    setAttribute(QContactDetail::AttributeContext, context);</pre>
+<p>See also <a href="qcontactdetail.html#contextAttribute">contextAttribute</a>().</p>
+<h3 class="fn"><a name="setSubTypeAttribute"></a>void QContactDetail::setSubTypeAttribute ( const QString &amp; <i>subType</i> )</h3>
+<p>This is a convenience function that sets the <tt>SubType</tt> attribute of this detail to <i>subType</i>.</p>
+<p>Not all details have meaningful values for the <tt>SubType</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
+<p>It is equivalent to the following code:</p>
+<pre>    setAttribute(QContactDetail::AttributeSubType, subType);</pre>
+<p>See also <a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a>().</p>
 <h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i>. Returns true if the operation succeeded</p>
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
 <h3 class="fn"><a name="setValues"></a>bool QContactDetail::setValues ( const QVariantMap &amp; <i>values</i> )</h3>
 <p>Sets the values stored in this detail to <i>values</i>. Returns true if the operation succeeded, otherwise false</p>
 <p>See also <a href="qcontactdetail.html#values">values</a>().</p>
+<h3 class="fn"><a name="subTypeAttribute"></a>QString QContactDetail::subTypeAttribute () const</h3>
+<p>This is a convenience function to return the <tt>SubType</tt> attribute of this detail.</p>
+<p>Not all details have meaningful values for the <tt>SubType</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
+<p>It is equivalent to the following code:</p>
+<pre>    attribute(QContactDetail::AttributeSubType);</pre>
+<p>See also <a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a>().</p>
 <h3 class="fn"><a name="value"></a>T QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
@@ -131,6 +197,35 @@
 <p>Assigns this detail to <i>other</i></p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetail::operator== ( const QContactDetail &amp; <i>other</i> ) const</h3>
 <p>Compares this detail to <i>other</i>. Returns true if the definition, attributes and values of <i>other</i> are equal to those of this detail</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="Q_DECLARE_CUSTOM_CONTACT_DETAIL"></a>Q_DECLARE_CUSTOM_CONTACT_DETAIL</h3>
+<p>Macro for simplifying declaring custom (leaf) detail classes.</p>
+<p>If you are creating a convenience class for a type of <a href="qcontactdetail.html">QContactDetail</a>, you should use this macro when declaring your class to ensure that it interoperates with other contact functionality.</p>
+<p>Here is an example of a class (<a href="qcontactphonenumber.html">QContactPhoneNumber</a>) using this macro. Note that the class provides some predefined constants for attributes, and some convenience methods that return values associated with schema fields.</p>
+<pre>    class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
+    {
+    public:
+        Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;);
+
+        static const QString DefinitionId; <span class="comment">// == staticType() == &quot;PhoneNumber&quot;</span>
+
+        static const QString FieldNumber;
+
+        static const QString AttributeSubTypeLandline;
+        static const QString AttributeSubTypeMobile;
+        static const QString AttributeSubTypeFacsimile;
+        static const QString AttributeSubTypePager;
+        static const QString AttributeSubTypeVoice;
+        static const QString AttributeSubTypeModem;
+        static const QString AttributeSubTypeVideo;
+        static const QString AttributeSubTypeCar;
+        static const QString AttributeSubTypeBulletinBoardSystem;
+        static const QString AttributeSubTypeMessagingCapable;
+
+        void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
+        QString number() const {return value(FieldNumber);}
+    };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -112,6 +112,7 @@
         <keyword ref="qcontactdetail.html#assign">assign</keyword>
         <keyword ref="qcontactdetail.html#attribute">attribute</keyword>
         <keyword ref="qcontactdetail.html#attributes">attributes</keyword>
+        <keyword ref="qcontactdetail.html#contextAttribute">contextAttribute</keyword>
         <keyword ref="qcontactdetail.html#definitionId">definitionId</keyword>
         <keyword ref="qcontactdetail.html#error">error</keyword>
         <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
@@ -119,14 +120,18 @@
         <keyword ref="qcontactdetail.html#removeValue">removeValue</keyword>
         <keyword ref="qcontactdetail.html#setAttribute">setAttribute</keyword>
         <keyword ref="qcontactdetail.html#setAttributes">setAttributes</keyword>
+        <keyword ref="qcontactdetail.html#setContextAttribute">setContextAttribute</keyword>
+        <keyword ref="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</keyword>
         <keyword ref="qcontactdetail.html#setValue">setValue</keyword>
         <keyword ref="qcontactdetail.html#setValues">setValues</keyword>
+        <keyword ref="qcontactdetail.html#subTypeAttribute">subTypeAttribute</keyword>
         <keyword ref="qcontactdetail.html#value">value</keyword>
         <keyword ref="qcontactdetail.html#values">values</keyword>
         <keyword ref="qcontactdetail.html#variantValue">variantValue</keyword>
         <keyword ref="qcontactdetail.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactdetail.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactdetail.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</keyword>
         <section ref="qcontactdetail-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinition.html" title="QContactDetailDefinition Class Reference">
