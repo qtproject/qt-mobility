@@ -21,7 +21,7 @@ public:
     void setMetadata(QString const &name, QVariant const &value);
 
 Q_SIGNALS:
-    void metadataAvailabilityChanged(bool metadataAvailable);
+    void metadataChanged();
     void readOnlyChanged(bool readOnly);
 
 private slots:

@@ -71,7 +71,7 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     Q_ASSERT(d->provider != 0);
 
     if (d->provider != 0) {
-        connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
+        connect(d->provider, SIGNAL(metadataChanged()), SIGNAL(metadataChanged()));
         connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
     } else {
         qWarning() << "No provider for media metadata";
@@ -158,10 +158,9 @@ void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
 */
 
 /*!
-    \fn void QMediaMetadata::metadataAvailabilityChanged(bool metadataAvailable)
+    \fn void QMediaMetadata::metadataChanged()
 
-    Signal the availability of metadata has changed, \a metadataAvailable will
-    be true if the multimedia object has metadata.
+    Signal the metadata has changed.
 */
 
 /*!

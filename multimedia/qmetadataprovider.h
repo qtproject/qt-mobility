@@ -54,7 +54,7 @@ public:
     virtual void setMetadata(QString const &name, QVariant const &value) = 0;
 
 Q_SIGNALS:
-    void metadataAvailabilityChanged(bool metadataAvailable);
+    void metadataChanged();
     void readOnlyChanged(bool readOnly);
 
 protected:

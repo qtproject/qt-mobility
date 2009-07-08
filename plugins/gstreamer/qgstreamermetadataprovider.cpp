@@ -45,5 +45,5 @@ void QGstreamerMetadataProvider::setMetadata(QString const &name, QVariant const
 
 void QGstreamerMetadataProvider::updateTags()
 {    
-    emit metadataAvailabilityChanged(metadataAvailable());
+    emit metadataChanged();
 }

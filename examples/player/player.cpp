@@ -55,13 +55,13 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
-    connect(metaData, SIGNAL(metadataAvailabilityChanged(bool)), SLOT(metadataAvailabilityChanged(bool)));
+    connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
 
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
-        player->service()->setVideoOutput(videoWidget);        
+        player->service()->setVideoOutput(videoWidget);
     }
 
     playlistModel = new PlaylistModel(this);
@@ -167,10 +167,10 @@ void Player::positionChanged(qint64 progress)
     slider->setValue(progress / 1000);
 }
 
-void Player::metadataAvailabilityChanged(bool available)
+void Player::metadataChanged()
 {
     qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
-	if (available)
+    if (metaData->metadataAvailable())
         setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("artist")).toString()).
                                           arg(metaData->metadata(QLatin1String("title")).toString()));
 }
