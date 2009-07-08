@@ -144,30 +144,9 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
         /* Save address data */
         } else if(definition == QContactAddress::DefinitionId) {
-            Live<nco::PostalAddress> ncoPostalAddress;
-
-            // Get the correct live nodes for address resources - depending on if
-            // this is home or work address.
-            if(d->locationContext(det) == ContactContext::Home) {
-                if(newContact) {
-                    ncoPostalAddress    = ncoContact->addHasPostalAddress();
-                } else {
-                    ncoPostalAddress    = ncoContact->getHasPostalAddress();
-                }
-
-            } else if (d->locationContext(det) == ContactContext::Work) {
-                Live<nco::OrganizationContact> org;
-                Live<nco::Affiliation> aff;
-                if(newContact) {
-                    aff                 = ncoContact->addHasAffiliation();
-                    org                 = aff->addOrg();
-                    ncoPostalAddress    = org->addHasPostalAddress();
-                } else {
-                    aff                 = ncoContact->getHasAffiliation();
-                    org                 = aff->getOrg();
-                    ncoPostalAddress    = org->getHasPostalAddress();
-                }
-            }
+            // OrganizationContact or PersonalContact depending on the context
+            Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
+            Live<nco::PostalAddress> ncoPostalAddress = contact->getHasPostalAddress();
 
             // Found the correct address resource. Now update the data.
             ncoPostalAddress->setStreetAddress(det.value(QContactAddress::FieldStreet));
@@ -181,12 +160,13 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             // The new phone number field to save into Tracker.
             QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
 
+            // OrganizationContact or PersonalContact depending on the context
             Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
+
             // Get all existing phone numbers from the Contact node.
             LiveNodes numbers = contact->getHasPhoneNumbers();
 
             // Save mobile phone number.
-            // TODO: Find a better way to edit and manipulate subclass types of LiveNodes.
             if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
                 Live<nco::CellPhoneNumber> number = d->nodeByClasstype<nco::CellPhoneNumber>(numbers);
                 if(!number.isLive()) {
@@ -214,7 +194,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             QString email = det.value(QContactEmailAddress::FieldEmailAddress);
             Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
 
-            // TODO: Known issue: we support only on of each type at the moment.
+            // TODO: Known issue: we support only one of each type at the moment.
             //       We should somehow get a notification from UI if we are adding
             //       a new detail field, or editing the existing one.
             Live<nco::EmailAddress> liveEmail = contact->firstHasEmailAddress();
@@ -439,12 +419,11 @@ Live<nco::Contact> QContactTrackerEngineData::getContactByContext(const QContact
         // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
         // Tracker will create new nodes for us if these don't already exist.
         Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
-        contact = aff->getOrg();
+        return contact = aff->getOrg();
     } else {   // Assume home context.
         // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
-        contact = ::tracker()->liveNode(QUrl("contact:"+ncoContact->getContactUID()));
+        return ncoContact;
     }
-    return contact;
 }
 
 ContactContext::Location QContactTrackerEngineData::locationContext(const QContactDetail& det) const {
