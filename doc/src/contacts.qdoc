@@ -133,6 +133,13 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QContactGroup}
 \endlist
 
+\section2 Functionality reporting
+
+Different backends have different capabilities and offer different functionality.
+In order to allow clients to query the provided functionality at runtime, every
+backend must be capable of reporting their functionality.  The functionality is
+reported in a \l{QContactManagerFunctionality} instance.
+
 \section2 Detail leaf classes
 
 Several subclasses of \l{QContactDetail} are provided as part of the

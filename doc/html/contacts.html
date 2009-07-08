@@ -29,6 +29,7 @@
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
+<li><a href="#functionality-reporting">Functionality reporting</a></li>
 <li><a href="#detail-leaf-classes">Detail leaf classes</a></li>
 <li><a href="#examples">Examples</a></li>
 </ul>
@@ -232,6 +233,9 @@
 <li><a href="qcontact.html">QContact</a></li>
 <li><a href="qcontactgroup.html">QContactGroup</a></li>
 </ul>
+<a name="functionality-reporting"></a>
+<h3>Functionality reporting</h3>
+<p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality. The functionality is reported in a QContactManagerFunctionality instance.</p>
 <a name="detail-leaf-classes"></a>
 <h3>Detail leaf classes</h3>
 <p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Contacts API. They are general in design but are intended to fulfil specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality, or they may require that clients access contact information through the <a href="qcontactdetail.html">QContactDetail</a> base class alone.</p>

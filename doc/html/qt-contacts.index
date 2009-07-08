@@ -713,6 +713,7 @@
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""></page>
         </page>
         <page access="public" status="commendable" name="contacts.html" href="contacts.html" subtype="page" title="Qt Contacts Developer Resources" fulltitle="Qt Contacts Developer Resources" subtitle="" location="contacts.qdoc">
+<<<<<<< HEAD:doc/html/qt-contacts.index
             <contents name="introduction" title="Introduction" level="1"></contents>
             <contents name="overview" title="Overview" level="1"></contents>
             <contents name="using-the-api" title="Using the API" level="1"></contents>
@@ -729,6 +730,25 @@
             <contents name="main-classes" title="Main classes" level="2"></contents>
             <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"></contents>
             <contents name="examples" title="Examples" level="2"></contents>
+=======
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="using-the-api" title="Using the API" level="1"/>
+            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="2"/>
+            <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="2"/>
+            <contents name="viewing-a-specific-detail-of-a-contact" title="Viewing a specific detail of a contact" level="2"/>
+            <contents name="viewing-all-of-the-details-of-a-contact" title="Viewing all of the details of a contact" level="2"/>
+            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="2"/>
+            <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="2"/>
+            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="2"/>
+            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="2"/>
+            <contents name="building-and-compiling" title="Building and compiling" level="1"/>
+            <contents name="reference-documentation" title="Reference documentation" level="1"/>
+            <contents name="main-classes" title="Main classes" level="2"/>
+            <contents name="functionality-reporting" title="Functionality reporting" level="2"/>
+            <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"/>
+            <contents name="examples" title="Examples" level="2"/>
+>>>>>>> Minor doc changes:doc/html/qt-contacts.index
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL" location="qcontactdetail.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QContactDetail" type="" signature="Q_DECLARE_CUSTOM_CONTACT_DETAIL()"></function>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Developer Resources" fulltitle="Qt Mobility Developer Resources" subtitle="" location="index.qdoc"></page>
