@@ -125,7 +125,7 @@
                 text += &quot; (&quot; + descriptors[i].serviceName() + &quot;)&quot;;
 
             QServiceInterfaceDescriptor defaultInterfaceImpl =
-                    serviceManager-&gt;defaultServiceInterface(descriptors[i].interfaceName());
+                    serviceManager-&gt;interfaceDefault(descriptors[i].interfaceName());
             if (descriptors[i] == defaultInterfaceImpl)
                 text += tr(&quot; (default)&quot;);
 
@@ -179,7 +179,7 @@
 
         QServiceInterfaceDescriptor descriptor = item-&gt;data(Qt::UserRole).value&lt;QServiceInterfaceDescriptor&gt;();
         if (descriptor.isValid()) {
-            if (serviceManager-&gt;setDefaultServiceForInterface(descriptor)) {
+            if (serviceManager-&gt;setInterfaceDefault(descriptor)) {
                 int currentIndex = interfacesListWidget-&gt;row(item);
                 reloadInterfaceImplementationsList();
                 interfacesListWidget-&gt;setCurrentRow(currentIndex);
@@ -215,7 +215,7 @@
         QServiceInterfaceDescriptor selectedImpl =
                 item-&gt;data(Qt::UserRole).value&lt;QServiceInterfaceDescriptor&gt;();
         QServiceInterfaceDescriptor defaultImpl =
-                serviceManager-&gt;defaultServiceInterface(selectedImpl.interfaceName());
+                serviceManager-&gt;interfaceDefault(selectedImpl.interfaceName());
 
         defaultImplRadioButton-&gt;setText(tr(&quot;Default implementation for %1\n(currently provided by %2)&quot;)
                 .arg(defaultImpl.interfaceName())

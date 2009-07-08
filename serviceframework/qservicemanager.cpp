@@ -193,7 +193,8 @@ private slots:
     specific to the current user (e.g. in the user's home directory). When
     searching for services and interface implementations, first search in the
     user-specific location; if the service or interface implementation
-    is not found, search in the system-wide storage location.
+    is not found, search in the system-wide storage location (if the user has
+    sufficient permissions to do so).
 
     \value SystemScope When adding and removing services, use a system-wide
     storage location accessible to all users. When searching
@@ -590,7 +591,7 @@ bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& des
 }
 
 /*!
-    Returns the default interface for the given \a interfaceName.
+    Returns the default interface implementation for the given \a interfaceName.
 */
 QServiceInterfaceDescriptor QServiceManager::interfaceDefault(const QString& interfaceName) const
 {

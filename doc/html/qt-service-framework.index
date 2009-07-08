@@ -76,14 +76,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="removeService" fullname="QServiceManager::removeService" href="qservicemanager.html#removeService" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeService(const QString &amp; serviceName)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDefaultServiceForInterface" fullname="QServiceManager::setDefaultServiceForInterface" href="qservicemanager.html#setDefaultServiceForInterface" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setDefaultServiceForInterface(const QString &amp; service, const QString &amp; interfaceName)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setInterfaceDefault" fullname="QServiceManager::setInterfaceDefault" href="qservicemanager.html#setInterfaceDefault" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setInterfaceDefault(const QString &amp; service, const QString &amp; interfaceName)">
                 <parameter left="const QString &amp;" right="" name="service" default=""></parameter>
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDefaultServiceForInterface" fullname="QServiceManager::setDefaultServiceForInterface" href="qservicemanager.html#setDefaultServiceForInterface-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setDefaultServiceForInterface(const QServiceInterfaceDescriptor &amp; descriptor)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setInterfaceDefault" fullname="QServiceManager::setInterfaceDefault" href="qservicemanager.html#setInterfaceDefault-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setInterfaceDefault(const QServiceInterfaceDescriptor &amp; descriptor)">
                 <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="descriptor" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultServiceInterface" fullname="QServiceManager::defaultServiceInterface" href="qservicemanager.html#defaultServiceInterface" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QServiceInterfaceDescriptor" signature="defaultServiceInterface(const QString &amp; interfaceName) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceDefault" fullname="QServiceManager::interfaceDefault" href="qservicemanager.html#interfaceDefault" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QServiceInterfaceDescriptor" signature="interfaceDefault(const QString &amp; interfaceName) const">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""></parameter>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QServiceManager::error" href="qservicemanager.html#error" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"></function>
@@ -257,6 +257,9 @@
             <contents name="verbose-lookup" title="Verbose lookup" level="2"></contents>
             <contents name="default-lookup" title="Default lookup" level="2"></contents>
             <contents name="header-lookup" title="Header lookup" level="2"></contents>
+            <contents name="database-scope" title="Database scope" level="2"></contents>
+            <contents name="user-scope" title="User scope" level="3"></contents>
+            <contents name="system-scope" title="System scope" level="3"></contents>
             <contents name="adding-and-removing-of-services" title="Adding and removing of services" level="1"></contents>
             <contents name="xml-format" title="XML format" level="2"></contents>
             <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="2"></contents>

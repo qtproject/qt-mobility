@@ -101,7 +101,7 @@
                 text += &quot; (&quot; + descriptors[i].serviceName() + &quot;)&quot;;
 
             QServiceInterfaceDescriptor defaultInterfaceImpl =
-                    serviceManager-&gt;defaultServiceInterface(descriptors[i].interfaceName());
+                    serviceManager-&gt;interfaceDefault(descriptors[i].interfaceName());
             if (descriptors[i] == defaultInterfaceImpl)
                 text += tr(&quot; (default)&quot;);
 
@@ -113,7 +113,7 @@
     }</pre>
 <p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
 <p>The example maps each entry in the interface implementations list to its corresponding <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object using the QListWidgetItem::setData() method.</p>
-<p>Note how we also call <a href="qservicemanager.html#defaultServiceInterface">QServiceManager::defaultServiceInterface</a>() to determine whether an interface implementation is the default for that interface.</p>
+<p>Note how we also call QServiceManager::defaultServiceInterface() to determine whether an interface implementation is the default for that interface.</p>
 <pre>    void ServiceBrowser::reloadAttributesList()
     {
         QListWidgetItem *item = interfacesListWidget-&gt;currentItem();
