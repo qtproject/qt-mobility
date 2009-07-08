@@ -37,6 +37,7 @@
 
 #include "qmediaendpointinterface.h"
 
+class QIcon;
 class QAudioDeviceEndpointPrivate;
 
 class Q_MEDIA_EXPORT QAudioDeviceEndpoint : public QObject, public QMediaEndpointInterface
