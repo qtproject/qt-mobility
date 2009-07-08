@@ -47,11 +47,92 @@ const QString QContactDetail::AttributeContextWork("Work");
  *
  * \brief The QContactDetail class provides access to a single, complete detail about a contact.
  *
- * Every discrete datum related to a contact may be accessed via a QContactDetail.
- * QContactDetail encapsulates the common aspects of such data, and provides access
- * to the definition of the detail.
+ * All of the information for a contact is stored in one or more QContactDetail objects.
  *
- * \sa QContact, QContactDetailDefinition
+ * A detail is a group of logically related bits of data - for example, a street address is a single
+ * detail that has multiple fields (number, region, country etc).  Every QContactDetail has an
+ * associated QContactDetailDefinition id that describes the fields, their data type, any
+ * restrictions on their values, and any restrictions on creating or updating details of that
+ * definition.
+ *
+ * A detail might also has some metadata, stored in "attributes".  What these attributes
+ * are used for varies a little depending on the detail, but two common attributes are
+ * \c Context and \c SubType.
+ *
+ * \list
+ * \o The \c Context attribute (with id \l AttributeContext) is intended to store the
+ * context that this detail is associated with.  Commonly this will be something like
+ * "Home" or "Work".
+ *
+ * \o The \c SubType attribute (with id \l AttributeSubType) is intended to store any
+ * particular distinctions between details of this type.  For example, a phone number
+ * might have a SubType of "Mobile" or "Fax".
+ * \endlist
+ *
+ * In general, a given attribute has a single value.  In some cases, if you wish to
+ * associate more than one value, you need to comma separate the values.
+ *
+ * It is possible to inherit from QContactDetail to provide convenience or
+ * standardized access to values.  For example, \l QContactPhoneNumber provides
+ * a convenient API for manipulating a QContactDetail as a phone number, according
+ * to the schema.
+ *
+ * If you wish to create your own, customized contact detail, you should use
+ * the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
+ * operation.  See the predefined leaf classes (like \l QContactPhoneNumber,
+ * \l QContactAddress) for more information.
+ *
+ * QContactDetail objects act like values.  In general, you can assign them
+ * to and fro and have reasonable behaviour, like the following example.
+ *
+ * \code
+ *
+ * QContactPhoneNumber number;
+ * number.setNumber("555-1212");
+ * // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
+ * // number.definitionId() == QContactPhoneNumber::staticType()
+ *
+ * QContactDetail detail = number;
+ * // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
+ * // detail.definitionId() == QContactPhoneNumber::staticType()
+ *
+ * QContactPhoneNumber otherNumber = detail;
+ * // otherNumber.number() == "555-1212";
+ * // otherNumber.definitionId() == QContactPhoneNumber::staticType()
+ *
+ * QContactAddress address = detail;
+ * // address is now a default constructed QContactAddress
+ * // address.error() == QContactDetail::IncompatibleAssignmentError
+ * // address.value(QContactPhoneNumber::FieldNumber) is empty
+ * // address.definitionId() == QContactAddress::staticType()
+ *
+ * QContactAddress otherAddress = number;
+ * // otherAddress is now a default constructed QContactAddress
+ * // otherAddress.error() == QContactDetail::IncompatibleAssignmentError
+ * // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
+ * // otherAddress.definitionId() == QContactAddress::staticType()
+ * \endcode
+ *
+ * \sa QContact, QContactDetailDefinition, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+ */
+
+/*!
+ * \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
+ * \relates QContactDetail
+ *
+ * Macro for simplifying declaring custom (leaf) detail classes.
+ *
+ * If you are creating a convenience class for a type of QContactDetail,
+ * you should use this macro when declaring your class to ensure that
+ * it interoperates with other contact functionality.
+ *
+ * Here is an example of a class (\l QContactPhoneNumber) using this macro.
+ * Note that the class provides some predefined constants for attributes,
+ * and some convenience methods that return values associated with schema
+ * fields.
+ *
+ * \snippet contacts/qcontactphonenumber.h 0
+ *
  */
 
 /*!
@@ -273,3 +354,55 @@ bool QContactDetail::setValues(const QVariantMap& values)
     return true;
 }
 
+/*!
+ * \fn void QContactDetail::setSubTypeAttribute(const QString& subType)
+ *
+ * This is a convenience function that sets the \c SubType attribute of this detail to \a subType.
+ *
+ * Not all details have meaningful values for the \c SubType attribute - refer to either the
+ * schema or specific classes like \l QContactPhoneNumber for more information.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setAttribute(QContactDetail::AttributeSubType, subType);
+ * \endcode
+ */
+
+/*!
+ * \fn QString QContactDetail::subTypeAttribute() const
+ *
+ * This is a convenience function to return the \c SubType attribute of this detail.
+ *
+ * Not all details have meaningful values for the \c SubType attribute - refer to either the
+ * schema or specific classes like \l QContactPhoneNumber for more information.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * attribute(QContactDetail::AttributeSubType);
+ * \endcode
+ */
+
+/*!
+ * \fn void QContactDetail::setContextAttribute(const QString& context)
+ *
+ * This is a convenience function that sets the \c Context attribute of this detail to \a context.
+ *
+ * Not all details have meaningful values for the \c Context attribute - refer to either the
+ * schema or specific classes like \l QContactPhoneNumber for more information.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setAttribute(QContactDetail::AttributeContext, context);
+ * \endcode
+ */
+
+/*!
+ * \fn QString QContactDetail::contextAttribute() const
+ *
+ * This is a convenience function to return the \c Context attribute of this detail.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * attribute(QContactDetail::AttributeContext);
+ * \endcode
+ */

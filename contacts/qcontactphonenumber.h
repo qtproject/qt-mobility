@@ -42,6 +42,7 @@
 #include "qcontact.h"
 
 /* Leaf class */
+//! [0]
 class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
@@ -65,6 +66,7 @@ public:
     void setNumber(const QString& number) {setValue(FieldNumber, number);}
     QString number() const {return value(FieldNumber);}
 };
+//! [0]
 
 #endif
 

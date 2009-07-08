@@ -12,6 +12,7 @@ sourcedirs = ../../contacts \
 sources.fileextensions  = "*.qdoc *.cpp"
 
 exampledirs = ../../examples \
+              ../.. \
               .
 
 outputdir               = ../html
@@ -71,6 +72,7 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QTUITEST_EXPORT \
                           QT_SFW_RESOLUTION_EXPORT \
                           Q_SFW_EXPORT \
+                          QTCONTACTS_EXPORT \
                           QT_BEGIN_HEADER \
                           QT_END_HEADER \
                           QT_BEGIN_NAMESPACE \

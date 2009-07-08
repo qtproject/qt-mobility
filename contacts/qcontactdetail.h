@@ -94,6 +94,27 @@ public:
         return variantValue(key).value<T>();
     }
 
+    void setSubTypeAttribute(const QString& subType)
+    {
+        setAttribute(QContactDetail::AttributeSubType, subType);
+    }
+
+    QString subTypeAttribute() const
+    {
+        return attribute(QContactDetail::AttributeSubType);
+    }
+
+    void setContextAttribute(const QString& context)
+    {
+        setAttribute(QContactDetail::AttributeContext, context);
+    }
+
+    QString contextAttribute() const
+    {
+        return attribute(QContactDetail::AttributeContext);
+    }
+
+
 protected:
     QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId);
     QContactDetail& assign(const QContactDetail& other, const QString& expectedDefinitionId);
@@ -103,11 +124,6 @@ private:
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 
-/*!
- * \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
- * \relates QContactDetail
- * Macro for simplifying declaring custom (leaf) detail classes
- */
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionIdString) \
     className() : QContactDetail(staticType()) {} \
     className(const QContactDetail& field) : QContactDetail(field, staticType()) {} \
