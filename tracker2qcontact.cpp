@@ -151,7 +151,8 @@ void Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
 
         LiveNodes affiliations = ncoContact->getHasAffiliations(); //Work addresses+phonenumbers+emails
         foreach( const Live<nco::Affiliation>& affiliation, affiliations ) {
-            LiveNodes addresses = affiliation->getHasPostalAddresss();//Work addresses
+            Live<nco::OrganizationContact> org = affiliation->getOrg();
+            LiveNodes addresses = org->getHasPostalAddresss();//Work addresses
             foreach( const Live<nco::PostalAddress>& address, addresses ) {
                 QContactAddress detail;
                 copyDetailData(address, detail);
@@ -164,7 +165,7 @@ void Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
                 detail.setAttribute(QContactAddress::AttributeContext, QContactAddress::AttributeContextWork);
                 qcontact.saveDetail(&detail);
             }
-            LiveNodes phoneNumbers = affiliation->getHasPhoneNumbers(); //Work phone
+            LiveNodes phoneNumbers = org->getHasPhoneNumbers(); //Work phone
             foreach( const Live<nco::PhoneNumber>& phoneNumber, phoneNumbers) {
                 QContactPhoneNumber detail;
                 copyDetailData(phoneNumber, detail);
@@ -183,7 +184,7 @@ void Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
                 detail.setAttribute(QContactPhoneNumber::AttributeContext, QContactPhoneNumber::AttributeContextWork);
                 qcontact.saveDetail(&detail);
             }
-            LiveNodes emailAddresses = affiliation->getHasEmailAddresss(); //Work email addresses
+            LiveNodes emailAddresses = org->getHasEmailAddresss(); //Work email addresses
             foreach( const Live<nco::EmailAddress>& ncoEmail, emailAddresses) {
                 QContactEmailAddress detail;
                 copyDetailData(ncoEmail, detail);
