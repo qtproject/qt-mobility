@@ -68,6 +68,7 @@
 
     public:
         PhoneBook(QWidget *parent = 0);
+        ~PhoneBook();
 
     public slots:
         void addContact();
@@ -118,6 +119,7 @@
         int currentIndex;
         QList&lt;QContact&gt; contacts;
 
+        QMap&lt;QString, QContactManager*&gt; managers;
         QContactManager *cm;
     };
 

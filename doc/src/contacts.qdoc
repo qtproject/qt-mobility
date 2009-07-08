@@ -142,11 +142,7 @@ The client code would retrieve the particular contact from the list (most likely
 QAbstractListModel), and allow the user to modify that contact.
 
 \code
-    // the client code stores the id of the contact in a user-role (called ContactIdRole) of the model.
-    // we assume that the user wishes to modify the 5th (ie, index 4) contact in the model.
-    QUniqueId selectedContactId = model.data(model.index(4), ContactIdRole);
-
-    // retrieve the contact identified by the particular id from the manager.
+    // retrieve the contact identified by a particular id from the manager.
     QContactManager cm;
     QContact selected = cm.contact(selectedContactId);
 

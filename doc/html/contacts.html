@@ -103,11 +103,7 @@
 <a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
 <h3>Modifying an existing contact and saving the modifications</h3>
 <p>Here we assume that the user has selected a contact in a list widget, and clicked the &quot;Edit&quot; button, or something similar. The client code would retrieve the particular contact from the list (most likely using a class derived from QAbstractListModel), and allow the user to modify that contact.</p>
-<pre><span class="comment">    // the client code stores the id of the contact in a user-role (called ContactIdRole) of the model.</span>
-<span class="comment">    // we assume that the user wishes to modify the 5th (ie, index 4) contact in the model.</span>
-    QUniqueId selectedContactId = model.data(model.index(4), ContactIdRole);
-
-<span class="comment">    // retrieve the contact identified by the particular id from the manager.</span>
+<pre><span class="comment">    // retrieve the contact identified by a particular id from the manager.</span>
     QContactManager cm;
     QContact selected = cm.contact(selectedContactId);
 
