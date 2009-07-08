@@ -624,7 +624,7 @@ public:
         ContentInaccessible,
         NotYetImplemented,
         FrameworkFault,
-        WorkingIdsOverflow
+        WorkingMemoryOverflow
     };
 
     QMessageStore::ErrorCode lastError() const;
@@ -645,8 +645,8 @@ public:
     QMessageFolder folder(const QMessageFolderId &id) const;
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    void setMaximumWorkingIds(uint maximumIds);
-    uint maximumWorkingIds();
+    void setMaximumWorkingMemory(uint maximumBytes);
+    uint maximumWorkingMemory();
     
     static QMessageStore* instance();
     

@@ -48,7 +48,7 @@
     If the message a QMessageId identifies is removed from the messaging store then the identifier 
     will not be reused.
     
-    The QMessageId implementation should be small, ideally less than or equal to 16 bytes.
+    The QMessageId implementation should be as small as is practical for the underlying platform.
     
     \sa QMessage, QMessageStore
 */
@@ -3537,13 +3537,13 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 
     Defines the result of attempting to perform a messaging store operation.
 
-    \value NoError              The operation was successfully performed.
-    \value InvalidId            The operation failed due to the specification of an invalid identifier.
-    \value ConstraintFailure    The operation failed due to a constraint violation.
-    \value ContentInaccessible  The operation failed because the content data cannot be accessed by the messaging store.
-    \value NotYetImplemented    The operation failed because the messaging store does not yet implement the operation.
-    \value FrameworkFault       The operation failed because the messaging store encountered an error in performing the operation.
-    \value WorkingIdsOverflow   The operation failed because the messaging store could not perform the operation within the constraint specified by setMaximumWorkingIds().
+    \value NoError                The operation was successfully performed.
+    \value InvalidId              The operation failed due to the specification of an invalid identifier.
+    \value ConstraintFailure      The operation failed due to a constraint violation.
+    \value ContentInaccessible    The operation failed because the content data cannot be accessed by the messaging store.
+    \value NotYetImplemented      The operation failed because the messaging store does not yet implement the operation.
+    \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
+    \value WorkingMemoryOverflow  The operation failed because the messaging store could not perform the operation within the constraint specified by setMaximumWorkingMemory().
 */
 
 /*!
@@ -3564,7 +3564,7 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingIds()
+    \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
 QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
@@ -3585,7 +3585,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingIds()
+    \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
 {
@@ -3606,7 +3606,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingIds()
+    \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
 {
@@ -3622,7 +3622,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingIds()
+    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
 {
@@ -3635,7 +3635,7 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     filtering criteria defined in QMessageFolderFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingIds()
+    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
 int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
 {
@@ -3648,7 +3648,7 @@ int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
     filtering criteria defined in QMessageAccountFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingIds()
+    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
 int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 {
@@ -3765,35 +3765,36 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 }
 
 /*!
-   If \a maximumIds is 0, removes any constraint on the maximum number of ids
-   that can be kept in the working list when evaluating countMessages() 
-   and queryMessages().
+   If \a maximumBytes is 0, removes any constraint on the maximum memory 
+   that can be allocated directly by the store when evaluating 
+   countMessages() and queryMessages().
    
-   Otherwise sets the maximum number of ids than can be kept in the working
-   list when evaluating countMessages() and queryMessages(). A failure to 
-   satisfy the working list size constraint is reported by lastError()
-   returning WorkingIdsOverflow.
+   Otherwise sets the maximum number of bytes than can be directly allocated 
+   by the store when evaluating countMessages() and queryMessages() to 
+   \a maximumBytes. A failure  to satisfy the working memory constraint is 
+   reported by lastError() returning WorkingMemoryOverflow.
    
-   The working list is used only when an atomic evaluation of a QMessageFilterKey
-   based query is not supported.
+   The store only directly allocates working memory on platforms where 
+   evaluating a boolean QMessageFilterKey based query requires a combination 
+   of calls to the underlying platform query function.
    
-   \sa maximumWorkingIds(), ErrorCode, countMessages(), queryMessages(), lastError()
+   \sa maximumWorkingMemory(), ErrorCode, countMessages(), queryMessages(), lastError()
 */
-void QMessageStore::setMaximumWorkingIds(uint maximumIds)
+void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
 {
-    Q_UNUSED(maximumIds)
+    Q_UNUSED(maximumBytes)
 }
 
 /*!
-   Returns 0 if no constraint has been set by setMaximumWorkingIds().
+   Returns 0 if no constraint has been set by setMaximumWorkingMemory().
    
-   Otherwise returns the maximum working list size as set by setMaximumWorkingIds().
+   Otherwise returns the maximum working memory as set by setMaximumWorkingMemory().
    
-   The default working list size is platform specific.
+   The default maximum working memory is platform specific.
    
-   \sa setMaximumWorkingIds(), ErrorCode, countMessages(), queryMessages()
+   \sa setMaximumWorkingMemory(), ErrorCode, countMessages(), queryMessages()
 */
-uint QMessageStore::maximumWorkingIds()
+uint QMessageStore::maximumWorkingMemory()
 {
     return 0; // stub
 }
