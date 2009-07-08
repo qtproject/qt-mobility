@@ -105,6 +105,11 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 {
     Q_UNUSED(batch);
 
+    if(contact == 0) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     // Ensure that the contact data is ok. This comes from QContactModelEngine
     if(!validateContact(*contact, error)) {
         error = QContactManager::InvalidDetailError;
@@ -143,7 +148,6 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
             // Get the correct live nodes for address resources - depending on if
             // this is home or work address.
-//            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
             if(d->locationContext(det) == ContactContext::Home) {
                 if(newContact) {
                     ncoPostalAddress    = ncoContact->addHasPostalAddress();
@@ -230,9 +234,17 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             QString email = det.value(QContactEmailAddress::FieldEmailAddress);
             Live<nco::Contact> contact = d->getContactByContext(det, ncoContact);
 
-            Live<nco::EmailAddress> liveEmail = contact->addHasEmailAddress();
-            liveEmail->setEmailAddress(email);
-            contact->addHasEmailAddress(liveEmail);
+            // TODO: Known issue: we support only on of each type at the moment.
+            //       We should somehow get a notification from UI if we are adding
+            //       a new detail field, or editing the existing one.
+            LiveNodes liveEmails = contact->getHasEmailAddresss();
+            QList<Live<nco::EmailAddress> > emailList = liveEmails;
+            if(emailList.isEmpty()) {
+                Live<nco::EmailAddress> newEmail = contact->addHasEmailAddress();
+                newEmail->setEmailAddress(email);
+            } else {
+                emailList.first()->setEmailAddress(email);
+            }
         }
     }
     error = QContactManager::NoError;
