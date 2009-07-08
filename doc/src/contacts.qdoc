@@ -101,16 +101,17 @@ This section provides some examples of common usage of the API.
 
     In this example, the client loads a manager for a specific backend.  While this could be
     found and retrieved using a more advanced plugin framework (such as the Qt Service Framework),
-    this code assumes that the client has \i{a priori} knowledge of the backend in question.
+    this code assumes that the client has prior knowledge of the backend in question.
 
     \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend
 
 \section2 Loading a manager with specific parameters
 
     The client loads a manager with specific parameters defined.  The parameters which are available
-    are backend specific, and so the client had to know that the "Settings" parameter was valid, and
-    what argument it took.  In this example, the client tells the backend to load detail definitions
-    saved in a particular settings file.
+    are backend specific, and so the client had to know that the "Settings" parameter was valid for
+    the particular backend, and what argument it took.
+    In this example, the client tells the backend to load detail definitions saved in a particular
+    settings file.
 
     \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend with parameters
 
