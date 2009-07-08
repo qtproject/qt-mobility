@@ -96,62 +96,103 @@ QMediaPlayer::~QMediaPlayer()
     delete d->service;
 }
 
+/*!
+  Returns playback state.
+*/
 QMediaPlayer::State QMediaPlayer::state() const
 {
     return QMediaPlayer::State(d_func()->control->state());
 }
 
-
+/*!
+  Returns the playlist used by this media player.
+*/
 QMediaPlaylist* QMediaPlayer::mediaPlaylist() const
 {
     return d_func()->control->mediaPlaylist();
 }
 
+/*!
+  Set the playlist of this media player to \a mediaPlaylist.
+
+  In many cases it is possible just to use the playlist
+  constructed by player, but sometimes replacing the whole
+  playlist allows to avoid copyting of all the items bettween playlists.
+
+  Returns true if player can use this passed playlist; otherwise returns false.
+*/
 bool QMediaPlayer::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
     return d_func()->control->setMediaPlaylist(mediaPlaylist);
 }
 
+/*!
+  Returns position of the current media source in the playlist.
+*/
 int QMediaPlayer::playlistPosition() const
 {
     return d_func()->control->playlistPosition();
 }
 
+/*!
+  Returns the current media source.
+*/
 QMediaSource QMediaPlayer::currentMediaSource() const
 {
     return mediaPlaylist()->itemAt(playlistPosition());
 }
 
+/*!
+  Returns duration of currently played source in miliseconds.
+*/
 qint64 QMediaPlayer::duration() const
 {
     return d_func()->control->duration();
 }
 
+/*!
+  Returns position in miliseconds the current source plays at.
+*/
 qint64 QMediaPlayer::position() const
 {
     return d_func()->control->position();
 }
 
+/*!
+  Returns playback volume, in range 0..100.
+*/
 int QMediaPlayer::volume() const
 {
     return d_func()->control->volume();
 }
 
+/*!
+  Returns true is audio is muted; otherwise returns false.
+*/
 bool QMediaPlayer::isMuted() const
 {
     return d_func()->control->isMuted();
 }
 
+/*!
+  Returns true if the media player is currently buffering the input data.
+*/
 bool QMediaPlayer::isBuffering() const
 {
     return d_func()->control->isBuffering();
 }
 
+/*!
+  Returns how much the buffer is filled in percent.
+*/
 int QMediaPlayer::bufferStatus() const
 {
     return d_func()->control->bufferStatus();
 }
 
+/*!
+  Returns true if the current media contains video data; otherwise, returns false.
+*/
 bool QMediaPlayer::isVideoAvailable() const
 {
     return d_func()->control->isVideoAvailable();
@@ -170,7 +211,6 @@ QAbstractMediaService* QMediaPlayer::service() const
 /*!
     Start or resume playing the current source.
 */
-
 void QMediaPlayer::play()
 {
     d_func()->control->play();
@@ -179,7 +219,6 @@ void QMediaPlayer::play()
 /*!
     Pause playing the current source.
 */
-
 void QMediaPlayer::pause()
 {
     d_func()->control->pause();
@@ -188,7 +227,6 @@ void QMediaPlayer::pause()
 /*!
     Stop playing, and reset the play position to the beginning.
 */
-
 void QMediaPlayer::stop()
 {
     d_func()->control->stop();
@@ -198,7 +236,6 @@ void QMediaPlayer::stop()
     Set the current play position to \a position, relative to the beginning.
     This method is not guaranteed to be synchronous.
 */
-
 void QMediaPlayer::setPosition(qint64 position)
 {
     d_func()->control->setPosition(position);
@@ -208,7 +245,6 @@ void QMediaPlayer::setPosition(qint64 position)
     Set the current volume [ 0 - 100 ] to  \a volume.
     This method is not guaranteed to be synchronous.
 */
-
 void QMediaPlayer::setVolume(int volume)
 {
     d_func()->control->setVolume(volume);
@@ -219,7 +255,6 @@ void QMediaPlayer::setVolume(int volume)
     playback volume, false to unmute.  This method is not guaranteed to be
     synchronous.
 */
-
 void QMediaPlayer::setMuted(bool muted)
 {
     d_func()->control->setMuted(muted);
@@ -228,7 +263,6 @@ void QMediaPlayer::setMuted(bool muted)
 /*!
     Advance to the next media source in playlist.
 */
-
 void QMediaPlayer::advance()
 {
     d_func()->control->advance();
@@ -237,7 +271,6 @@ void QMediaPlayer::advance()
 /*!
     Return to the previous media source in playlist.
 */
-
 void QMediaPlayer::back()
 {
     d_func()->control->back();
