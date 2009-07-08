@@ -55,7 +55,20 @@ public:
     \brief The QVideoRendererEndpoint class provides a media end point that renders to a video
     surface.
 
+    The interface name of QVideoRendererEndpoint is \c com.nokia.Qt.QVideoRendererEndpoint/1.0 as
+    defined in QVideoRendererEndpoint_iid.
+
     \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
+*/
+
+/*!
+    \macro QVideoRendererEndpoint_iid
+
+    \c com.nokia.Qt.QVideoRendererEndpoint/1.0
+
+    Defines the interface name of QVideoRendererEndpoint.
+
+    \relates QVideoRendererEndpoint
 */
 
 /*!
