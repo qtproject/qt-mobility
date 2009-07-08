@@ -62,7 +62,7 @@ Q_GLOBAL_STATIC(QGenericEngine, genericEngine)
 
 static QString qGetInterfaceType(const QString &interface)
 {
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+#ifdef Q_OS_WIN32
     unsigned long oid;
     DWORD bytesWritten;
 

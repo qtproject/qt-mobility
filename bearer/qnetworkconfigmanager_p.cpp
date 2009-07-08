@@ -35,7 +35,7 @@
 #include "qgenericengine_p.h"
 #include "qnlaengine_win_p.h"
 
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
 #include "qioctlwifiengine_win_p.h"
 #endif
@@ -141,7 +141,7 @@ void QNetworkConfigurationManagerPrivate::updateNlaConfigurations(QList<QString>
 }
 #endif
 
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+#ifdef Q_OS_WIN32
 bool QNetworkConfigurationManagerPrivate::updateWlanNativeConfigurations(QList<QString> &knownConfigs)
 {
     bool ok;
@@ -194,7 +194,7 @@ void QNetworkConfigurationManagerPrivate::updateWlanIoctlConfigurations(QList<QS
 }
 #endif
 
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+#ifdef Q_OS_WIN32
 void QNetworkConfigurationManagerPrivate::updateWlanConfigurations(QList<QString> &knownConfigs)
 {
     // try to use Native WiFi, otherwise fallback to ioctl method
@@ -276,8 +276,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         }
 #endif
 
-#ifdef Q_OS_WIN
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
         nativeWifi = QNativeWifiEngine::instance();
         if (nativeWifi) {
             connect(nativeWifi, SIGNAL(configurationsChanged()),
@@ -292,7 +291,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                     this, SLOT(updateConfigurations()));
         }
 #endif
-#endif
     }
 
     if (updateState & Updating) {
@@ -303,7 +301,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 #ifdef Q_OS_WIN
             else if (engine == nla)
                 updateState &= ~NlaUpdating;
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
             else if (engine == nativeWifi)
                 updateState &= ~NativeWifiUpdating;
             else if (engine == ioctlWifi)
@@ -319,10 +317,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 #ifdef Q_OS_WIN
     updateNlaConfigurations(knownConfigs);
 #endif
-#ifdef Q_OS_WIN
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
     updateWlanConfigurations(knownConfigs);
-#endif
 #endif
     updateInternetServiceConfiguration(knownConfigs);
 
@@ -407,8 +403,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
     }
 #endif
 
-#ifdef Q_OS_WIN
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
     if (nativeWifi) {
         updateState |= NativeWifiUpdating;
         nativeWifi->requestUpdate();
@@ -418,7 +413,6 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
         updateState |= IoctlWifiUpdating;
         ioctlWifi->requestUpdate();
     }
-#endif
 #endif
 }
 

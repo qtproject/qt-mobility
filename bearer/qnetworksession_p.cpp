@@ -37,7 +37,7 @@
 #include "qgenericengine_p.h"
 #include "qnlaengine_win_p.h"
 
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+#ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
 #include "qioctlwifiengine_win_p.h"
 #endif
@@ -58,8 +58,7 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
         return nla;
 #endif
 
-#ifdef Q_OS_WIN
-#ifndef Q_OS_WINCE
+#ifdef Q_OS_WIN32
     QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
     if (nativeWifi && nativeWifi->hasIdentifier(id))
         return nativeWifi;
@@ -67,7 +66,6 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
     QIoctlWifiEngine *ioctlWifi = QIoctlWifiEngine::instance();
     if (ioctlWifi && ioctlWifi->hasIdentifier(id))
         return ioctlWifi;
-#endif
 #endif
 
     QGenericEngine *generic = QGenericEngine::instance();
