@@ -3,13 +3,24 @@
  * provide integration with the Qt Service Framework (QSFW) module
  * of the Mobility API.
  *
- * QContactAbstractAction must be implemented by any plugin wishing
+ * QContactActionFactory must be implemented by any plugin wishing
  * to provide clients the ability to perform actions on details of a
  * QContact.
- *
- * The provider must also implement QServicePluginInterface in accordance
- * with the Qt Service Framework documentation.
  */
+
+class QContactActionFactory : public QObject
+{
+    Q_OBJECT
+    Q_INTERFACE(...)
+
+public:
+    QStringList actions() const;
+    QString id() const;
+    int majorVersion() const; // perhaps
+    int minorVersion() const;
+
+    QContactAbstractAction* instance(const QString& action) const;
+};
 
 class QContactAbstractAction : public QObject
 {
@@ -17,19 +28,19 @@ class QContactAbstractAction : public QObject
 
 public:
     virtual ~QContactAbstractAction();
-    virtual QStringList actions() const;
-    virtual QStringList actionsForContact(const QContact& contac) const;
-    virtual QStringList actionsForDetail(const QContactDetail& detail) const;
-    virtual bool supportsAction(const QString& actionId);
-    virtual bool supportsDetail(const QString& actionId, const QContactDetail& detail) const;
-    virtual QList<QContactDetail> supportedDetails(const QString& actionId, const QContact& contact) const;
-    virtual QVariantMap metadata(const QString& actionId) const;
-    virtual void performAction(const QString& actionId, const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+    virtual QString actionId() const;
 
-    QServiceInterfaceDescriptor descriptor(); // needed?
+    virtual QVariantMap metadata() const; // label, icon etc
 
-    static QList<QContactAbstractAction*> implementations(const QString& actionId) const;
+    virtual QContactFilter contactFilter() const; // use for matching
 
+    virtual bool supportsDetail(const QContactDetail& detail) const;
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
+
+    virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+
+    /* This goes in QCM, probably  */
+    static QList<QContactAbstractAction*> supportedActions(const QContactActionFilter& filter) const;
 private:
     QSharedDataPointer<QContactAbstractActionData> d;
 };
