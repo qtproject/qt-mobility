@@ -149,9 +149,15 @@ PhoneBook::PhoneBook(QWidget *parent)
     setLayout(mainLayout);
     setWindowTitle(tr("Sample Phone Book"));
 
-    // instantiate a new contact manager - default backend
+    // instantiate a new contact manager
     cm = 0;
-    backendSelected(QString());
+    backendSelected(backendCombo->currentText());
+}
+
+PhoneBook::~PhoneBook()
+{
+    foreach (const QContactManager* manager, managers.values())
+        delete manager;
 }
 
 void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
@@ -175,12 +181,25 @@ void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
 void PhoneBook::backendSelected(const QString& backend)
 {
     currentIndex = -1;
+
+    // first, disconnect any signals from the current manager
     if (cm)
-        delete cm;
-    cm = new QContactManager(backend);
+        cm->disconnect();
+
+    // then, load the selected manager (or create it if it doesn't exist)
+    if (managers.value(backend, 0) != 0) {
+        cm = managers.value(backend);
+    } else {
+        cm = new QContactManager(backend);
+        managers.insert(backend, cm);
+    }
+
+    // and connect the selected manager's signals to our slots
     connect(cm, SIGNAL(contactsAdded(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
     connect(cm, SIGNAL(contactsChanged(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
     connect(cm, SIGNAL(contactsRemoved(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
+
+    // and trigger an update.
     backendChanged(QList<QUniqueId>());
 }
 
