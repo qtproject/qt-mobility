@@ -3547,6 +3547,26 @@ QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 */
 
 /*!
+    Constructs the messaging store.
+    
+    If \a parent is not 0 then the messaging store will be deleted when \a parent is deleted.
+    
+    \sa instance()
+*/
+QMessageStore::QMessageStore(QObject *parent)
+    : QObject(parent)
+{
+    Q_ASSERT(instance() != 0);
+}
+
+/*!
+    Destroys the messaging store.
+*/
+QMessageStore::~QMessageStore()
+{
+}
+
+/*!
     Returns the code of the last error condition reported by the messaging store.
 */
 QMessageStore::ErrorCode QMessageStore::lastError() const
