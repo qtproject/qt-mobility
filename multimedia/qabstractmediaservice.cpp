@@ -251,7 +251,7 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
 }
 
 /*!
-    Creates a new media end point object from the given \a iid.
+    Creates a new media end point object from the given \a interface name.
 
     An end point object may be an input or output to a media service and can only be used with the
     service object that created it.
@@ -261,12 +261,12 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
 
     \sa supportedEndpointInterfaces(), setAudioOutput(), setVideoOutput()
 */
-QObject *QAbstractMediaService::createEndpoint(const char *iid)
+QObject *QAbstractMediaService::createEndpoint(const char *interface)
 {
 #ifdef QT_NO_VIDEOSURFACE
-    Q_UNUSED(iid);
+    Q_UNUSED(interface);
 #else
-    if (qstrcmp(iid, QMediaWidgetEndpointInterface_iid)) {
+    if (qstrcmp(interface, QMediaWidgetEndpointInterface_iid)) {
         QObject *object = createEndpoint(QVideoRendererEndpointInterface_iid);
 
         if (object) {
