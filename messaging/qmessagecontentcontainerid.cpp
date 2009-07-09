@@ -61,19 +61,12 @@
 
     Creates an invalid identifier, toString() will return a null string;
 */
-QMessageContentContainerId::QMessageContentContainerId()
-{
-}
 
 /*!
     \fn QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
 
     Constructs a copy of \a other.
 */
-QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageContentContainerId::QMessageContentContainerId(const QString& id)
@@ -82,10 +75,6 @@ QMessageContentContainerId::QMessageContentContainerId(const QMessageContentCont
     
     \sa toString()
 */
-QMessageContentContainerId::QMessageContentContainerId(const QString& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn bool QMessageContentContainerId::operator==(const QMessageContentContainerId &other) const
@@ -93,22 +82,12 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     Returns true if this identifier and the \a other identifier are identical;
     otherwise returns false.
 */
-bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
-QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn bool QMessageContentContainerId::toString() const
@@ -120,20 +99,12 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
     String representations of identifiers should not be used to test for equality, instead 
     the equality operator should be used.
 */
-QString QMessageContentContainerId::toString() const
-{
-    return QString::null; // stub
-}
 
 /*!
     \fn bool QMessageContentContainerId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
 */
-bool QMessageContentContainerId::isValid() const
-{
-    return false; // stub
-}
 
 /*! \typedef QMessageContentContainerIdList
 

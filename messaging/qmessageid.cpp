@@ -59,19 +59,12 @@
 
     Creates an invalid identifier, toString() will return a null string.
 */
-QMessageId::QMessageId()
-{
-}
 
 /*!
     \fn QMessageId::QMessageId(const QMessageId& other)
 
     Constructs a copy of \a other.
 */
-QMessageId::QMessageId(const QMessageId& other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageId::QMessageId(const QString& id)
@@ -80,10 +73,6 @@ QMessageId::QMessageId(const QMessageId& other)
     
     \sa toString()
 */
-QMessageId::QMessageId(const QString& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn bool QMessageId::operator==(const QMessageId &other) const
@@ -91,22 +80,12 @@ QMessageId::QMessageId(const QString& id)
     Returns true if this identifier and the \a other identifier are identical;
     otherwise returns false.
 */
-bool QMessageId::operator==(const QMessageId& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageId& QMessageId::operator=(const QMessageId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
-QMessageId& QMessageId::operator=(const QMessageId& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn bool QMessageId::toString() const
@@ -118,20 +97,12 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
     String representations of identifiers should not be used to test for equality, instead 
     the equality operator should be used.
 */
-QString QMessageId::toString() const
-{
-    return QString::null; // stub
-}
 
 /*!
     \fn bool QMessageId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
 */
-bool QMessageId::isValid() const
-{
-    return false; // stub
-}
 
 /*! \typedef QMessageIdList
 

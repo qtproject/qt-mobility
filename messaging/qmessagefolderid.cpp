@@ -57,19 +57,12 @@
 
     Creates an invalid identifier, toString() will return a null string.
 */
-QMessageFolderId::QMessageFolderId()
-{
-}
 
 /*!
     \fn QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 
     Constructs a copy of \a other.
 */
-QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageFolderId::QMessageFolderId(const QString& id)
@@ -78,10 +71,6 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
     
     \sa toString()
 */
-QMessageFolderId::QMessageFolderId(const QString& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn bool QMessageFolderId::operator==(const QMessageFolderId &other) const
@@ -89,22 +78,12 @@ QMessageFolderId::QMessageFolderId(const QString& id)
     Returns true if this identifier and the \a other identifier are identical;
     otherwise returns false.
 */
-bool QMessageFolderId::operator==(const QMessageFolderId& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.
 */
-QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn bool QMessageFolderId::toString() const
@@ -116,20 +95,12 @@ QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
     String representations of identifiers should not be used to test for equality, instead 
     the equality operator should be used.
 */
-QString QMessageFolderId::toString() const
-{
-    return QString::null; // stub
-}
 
 /*!
     \fn bool QMessageFolderId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
 */
-bool QMessageFolderId::isValid() const
-{
-    return false; // stub
-}
 
 /*! \typedef QMessageFolderIdList
 
