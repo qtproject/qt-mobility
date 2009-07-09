@@ -138,7 +138,7 @@ To build the library, run \tt qmake and \tt make.
 Different backends have different capabilities and offer different functionality.
 In order to allow clients to query the provided functionality at runtime, every
 backend must be capable of reporting their functionality.  The functionality is
-reported in a \l{QContactManagerFunctionality} instance.
+reported in an instance of a \l{QContactManagerInfo} object.
 
 \section2 Detail leaf classes
 
@@ -146,9 +146,7 @@ Several subclasses of \l{QContactDetail} are provided as part of the
 Qt Mobility Contacts API.  They are general in design but are intended
 to fulfil specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
-they may offer their own which provide similar functionality, or they may
-require that clients access contact information through the \l{QContactDetail}
-base class alone.
+they may offer their own which provide similar functionality.
 
 \list
     \o \l{QContactAddress}

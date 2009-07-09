@@ -19,7 +19,7 @@ The schema consists of several parts.
 
 1) The "immutable" section of the schema, which consists of:
 \list
-    \o \l{QContactManagerFunctionality} features
+    \o \l{QContactManagerInfo} features
     \o \l{QContactDetail} access constraints
     \o \l{QContactDetail} attribute keys
     \o \l{QContactDetail} context-attribute values
@@ -51,7 +51,7 @@ leaf-classes) to provide clients with the best user-experience on the target pla
 
 \section2 Immutable Schema
 
-\section3 QContactManagerFunctionality features
+\section3 QContactManagerInfo features
 \table
 \header
     \o Feature Identifier
