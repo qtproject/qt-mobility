@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qgeocoordinate.h"
+#include "qlocationutils_p.h"
 
 #include <QDateTime>
 #include <QHash>
@@ -58,6 +58,13 @@ public:
     double lat;
     double lng;
     double alt;
+
+    QGeoCoordinatePrivate()
+    {
+        lat = qQNaN();
+        lng = qQNaN();
+        alt = qQNaN();
+    }
 };
 
 
@@ -106,32 +113,44 @@ public:
 QGeoCoordinate::QGeoCoordinate()
     : d(new QGeoCoordinatePrivate)
 {
-    d->lat = qQNaN();
-    d->lng = qQNaN();
-    d->alt = qQNaN();
 }
 
 /*!
     Constructs a coordinate with the given \a latitude and \a longitude.
+
+    If the latitude is not between -90 to 90 inclusive, or the longitude
+    is not between -180 to 180 inclusive, none of the values are set and
+    the type() will be QGeoCoordinate::InvalidCoordinate.
+
+    \sa isValid()
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     : d(new QGeoCoordinatePrivate)
 {
-    d->lat = latitude;
-    d->lng = longitude;
-    d->alt = qQNaN();
+    if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
+        d->lat = latitude;
+        d->lng = longitude;
+    }
 }
 
 /*!
     Constructs a coordinate with the given \a latitude, \a longitude
     and \a altitude.
+
+    If the latitude is not between -90 to 90 inclusive, or the longitude
+    is not between -180 to 180 inclusive, none of the values are set and
+    the type() will be QGeoCoordinate::InvalidCoordinate.
+
+    \sa isValid()
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
     : d(new QGeoCoordinatePrivate)
 {
-    d->lat = latitude;
-    d->lng = longitude;
-    d->alt = altitude;
+    if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
+        d->lat = latitude;
+        d->lng = longitude;
+        d->alt = altitude;
+    }
 }
 
 /*!
@@ -306,10 +325,10 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     // Haversine formula
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
-    double y = qSin(dlat/2) * qSin(dlat/2)
+    double y = qSin(dlat/2.0) * qSin(dlat/2.0)
             + qCos(qgeocoordinate_degToRad(d->lat))
             * qCos(qgeocoordinate_degToRad(other.d->lat))
-            * qSin(dlon/2) * qSin(dlon/2);
+            * qSin(dlon/2.0) * qSin(dlon/2.0);
     double x = 2 * atan2(qSqrt(y), qSqrt(1-y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }

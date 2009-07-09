@@ -36,8 +36,11 @@
 #include <QMetaType>
 #include <QDebug>
 
+#include <float.h>
+
 Q_DECLARE_METATYPE(QGeoCoordinate)
 Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateFormat)
+Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateType)
 
 static const QGeoCoordinate BRISBANE(-27.46758, 153.027892);
 static const QGeoCoordinate MELBOURNE(-37.814251, 144.963169);
@@ -47,6 +50,20 @@ static const QGeoCoordinate NORTH_POLE(90, 0);
 static const QGeoCoordinate SOUTH_POLE(-90, 0);
 
 static const QChar DEGREES_SYMB(0x00B0);
+
+
+QByteArray tst_qgeocoordinate_debug;
+
+void tst_qgeocoordinate_messageHandler(QtMsgType type, const char *msg)
+{
+    switch(type) {
+        case QtDebugMsg :
+            tst_qgeocoordinate_debug = QByteArray(msg);
+            break;
+        default:
+            break;
+    }
+}
 
 
 class tst_QGeoCoordinate : public QObject
@@ -68,23 +85,237 @@ private slots:
         QCOMPARE(c, QGeoCoordinate());
     }
 
+    void constructor_lat_long()
+    {
+        QFETCH(double, latitude);
+        QFETCH(double, longitude);
+        QFETCH(QGeoCoordinate::CoordinateType, type);
+
+        QGeoCoordinate c(latitude, longitude);
+        QCOMPARE(c.type(), type);
+        if (type != QGeoCoordinate::InvalidCoordinate) {
+            QVERIFY(c.isValid());
+            QCOMPARE(c.latitude(), latitude);
+            QCOMPARE(c.longitude(), longitude);
+        } else {
+            QVERIFY(!c.isValid());
+            QVERIFY(c.latitude() != latitude);
+            QVERIFY(c.longitude() != longitude);
+        }
+    }
+
+    void constructor_lat_long_data()
+    {
+        QTest::addColumn<double>("latitude");
+        QTest::addColumn<double>("longitude");
+        QTest::addColumn<QGeoCoordinate::CoordinateType>("type");
+
+        QTest::newRow("both zero") << 0.0 << 0.0 << QGeoCoordinate::Coordinate2D;
+        QTest::newRow("both negative") << -1.0 << -1.0 << QGeoCoordinate::Coordinate2D;
+        QTest::newRow("both positive") << 1.0 << 1.0 << QGeoCoordinate::Coordinate2D;
+        QTest::newRow("latitude negative") << -1.0 << 1.0 << QGeoCoordinate::Coordinate2D;
+        QTest::newRow("longitude negative") << 1.0 << -1.0 << QGeoCoordinate::Coordinate2D;
+
+        QTest::newRow("both too high") << 90.1 << 180.1 << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("latitude too high") << 90.1 << 0.1 << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("longitude too high") << 0.1 << 180.1 << QGeoCoordinate::InvalidCoordinate;
+
+        QTest::newRow("both too low") << -90.1 << -180.1 << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("latitude too low") << -90.1 << 0.1 << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("longitude too low") << 0.1 << -180.1 << QGeoCoordinate::InvalidCoordinate;
+
+        QTest::newRow("both not too high") << 90.0 << 180.0 << QGeoCoordinate::Coordinate2D;
+        QTest::newRow("both not too low") << -90.0 << -180.0 << QGeoCoordinate::Coordinate2D;
+
+        QTest::newRow("latitude too high and longitude too low") << 90.1 << -180.1 << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("latitude too low and longitude too high") << -90.1 << 180.1 << QGeoCoordinate::InvalidCoordinate;
+    }
+
+    void constructor_lat_long_alt()
+    {
+        QFETCH(double, latitude);
+        QFETCH(double, longitude);
+        QFETCH(double, altitude);
+        QFETCH(QGeoCoordinate::CoordinateType, type);
+
+        QGeoCoordinate c(latitude, longitude, altitude);
+        QCOMPARE(c.type(), type);
+        if (type != QGeoCoordinate::InvalidCoordinate) {
+            QCOMPARE(c.latitude(), latitude);
+            QCOMPARE(c.longitude(), longitude);
+            QCOMPARE(c.altitude(), altitude);
+        } else {
+            QVERIFY(!c.isValid());
+            QVERIFY(c.latitude() != latitude);
+            QVERIFY(c.longitude() != longitude);
+            QVERIFY(c.altitude() != altitude);
+        }
+    }
+
+    void constructor_lat_long_alt_data()
+    {
+        QTest::addColumn<double>("latitude");
+        QTest::addColumn<double>("longitude");
+        QTest::addColumn<double>("altitude");
+        QTest::addColumn<QGeoCoordinate::CoordinateType>("type");
+
+        QTest::newRow("all zero") << 0.0 << 0.0 << 0.0 << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("all negative") << -1.0 << -1.0 << -2.0 << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("all positive") << 1.0 << 1.0 << 4.0 << QGeoCoordinate::Coordinate3D;
+
+        QTest::newRow("latitude negative") << -1.0 << 1.0 << 1.0 << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("longitude negative") << 1.0 << -1.0  << 1.0 << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("altitude negative") << 1.0 << 1.0  << -1.0 << QGeoCoordinate::Coordinate3D;
+
+        QTest::newRow("altitude not too high") << 1.0 << 1.0  << DBL_MAX << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("altitude not too low") << 1.0 << 1.0  << DBL_MIN << QGeoCoordinate::Coordinate3D;
+
+        QTest::newRow("all not too high") << 90.0 << 180.0  << DBL_MAX << QGeoCoordinate::Coordinate3D;
+        QTest::newRow("all not too low") << -90.0 << -180.0  << DBL_MIN << QGeoCoordinate::Coordinate3D;
+
+        QTest::newRow("all too high") << 90.1 << 180.1 << DBL_MAX << QGeoCoordinate::InvalidCoordinate;
+        QTest::newRow("all too low") << -90.1 << -180.1 << DBL_MIN << QGeoCoordinate::InvalidCoordinate;
+    }
+
+    void copy_constructor()
+    {
+        QFETCH(QGeoCoordinate, c);
+
+        QGeoCoordinate copy(c);
+        QCOMPARE(copy.type(), c.type());
+        if (c.type() != QGeoCoordinate::InvalidCoordinate) {
+            QCOMPARE(copy.latitude(), c.latitude());
+            QCOMPARE(copy.longitude(), c.longitude());
+            if (c.type() == QGeoCoordinate::Coordinate3D)
+                QCOMPARE(copy.altitude(), c.altitude());
+        }
+    }
+
+    void copy_constructor_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("c");
+
+        QTest::newRow("no argument") << QGeoCoordinate();
+        QTest::newRow("latitude, longitude arguments all zero") << QGeoCoordinate(0.0, 0.0);
+
+        QTest::newRow("latitude, longitude arguments not too high") << QGeoCoordinate(90.0, 180.0);
+        QTest::newRow("latitude, longitude arguments not too low") << QGeoCoordinate(-90.0, -180.0);
+        QTest::newRow("latitude, longitude arguments too high") << QGeoCoordinate(90.1, 180.1);
+        QTest::newRow("latitude, longitude arguments too low") << QGeoCoordinate(-90.1, -180.1);
+
+        QTest::newRow("latitude, longitude, altitude arguments all zero") << QGeoCoordinate(0.0, 0.0, 0.0);
+        QTest::newRow("latitude, longitude, altitude arguments not too high values") << QGeoCoordinate(90.0, 180.0, DBL_MAX);
+        QTest::newRow("latitude, longitude, altitude arguments not too low values") << QGeoCoordinate(-90.0, -180.0, DBL_MIN);
+
+        QTest::newRow("latitude, longitude, altitude arguments too high latitude & longitude") << QGeoCoordinate(90.1, 180.1, DBL_MAX);
+        QTest::newRow("latitude, longitude, altitude arguments too low latitude & longitude") << QGeoCoordinate(-90.1, -180.1, DBL_MAX);
+    }
+
+    void assign()
+    {
+        QFETCH(QGeoCoordinate, c);
+
+        QGeoCoordinate c1 = c;
+        QCOMPARE(c.type(), c1.type());
+        if (c.isValid()) {
+            QCOMPARE(c.latitude(), c.latitude());
+            QCOMPARE(c.longitude(), c.longitude());
+            if (c.type() == QGeoCoordinate::Coordinate3D)
+                QCOMPARE(c.altitude(), c.altitude());
+        }
+    }
+
+    void assign_data()
+    {
+        copy_constructor_data();
+    }
+
+    void comparison()
+    {
+        QFETCH(QGeoCoordinate, c1);
+        QFETCH(QGeoCoordinate, c2);
+        QFETCH(bool, result);
+
+        QCOMPARE(c1 == c2, result);
+    }
+
+    void comparison_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("c1");
+        QTest::addColumn<QGeoCoordinate>("c2");
+        QTest::addColumn<bool>("result");
+
+        QTest::newRow("Invalid != BRISBANE")
+                << QGeoCoordinate(-190,-1000) << BRISBANE << false;
+        QTest::newRow("BRISBANE != MELBOURNE")
+                << BRISBANE << MELBOURNE << false;
+        QTest::newRow("equal")
+                << BRISBANE << BRISBANE << true;
+        QTest::newRow("LONDON != uninitialized data")
+                << LONDON << QGeoCoordinate() << false;
+        QTest::newRow("uninitialized data == uninitialized data")
+                << QGeoCoordinate() << QGeoCoordinate() << true;
+        QTest::newRow("invalid == same invalid")
+                << QGeoCoordinate(-190,-1000) << QGeoCoordinate(-190,-1000) << true;
+        QTest::newRow("invalid == different invalid")
+                << QGeoCoordinate(-190,-1000) << QGeoCoordinate(190,1000) << true;
+        QTest::newRow("valid != another valid")
+                << QGeoCoordinate(-90,-180) << QGeoCoordinate(-45,+45) << false;
+        QTest::newRow("valid == same valid")
+                << QGeoCoordinate(-90,-180) << QGeoCoordinate(-90,-180) << true;
+    }
+
     void type()
     {
+        QFETCH(QGeoCoordinate, c);
+        QFETCH(QGeoCoordinate::CoordinateType, type);
+
+        QCOMPARE(c.type(), type);
+    }
+
+    void type_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("c");
+        QTest::addColumn<QGeoCoordinate::CoordinateType>("type");
+
         QGeoCoordinate c;
-        QVERIFY(!c.isValid());
-        QVERIFY(c.type() == QGeoCoordinate::InvalidCoordinate);
 
-        c.setLatitude(1);
-        QVERIFY(!c.isValid());
-        QVERIFY(c.type() == QGeoCoordinate::InvalidCoordinate);
+        QTest::newRow("no values set")  << c << QGeoCoordinate::InvalidCoordinate;
 
-        c.setLongitude(1);
-        QVERIFY(c.isValid());
-        QVERIFY(c.type() == QGeoCoordinate::Coordinate2D);
+        c.setAltitude(1.0);
+        QTest::newRow("only altitude is set")  << c << QGeoCoordinate::InvalidCoordinate;
 
-        c.setAltitude(1);
-        QVERIFY(c.isValid());
-        QVERIFY(c.type() == QGeoCoordinate::Coordinate3D);
+        c.setLongitude(1.0);
+        QTest::newRow("only latitude and altitude is set") << c << QGeoCoordinate::InvalidCoordinate;
+
+        c.setLatitude(-1.0);
+        QTest::newRow("all valid: 3D Coordinate") << c << QGeoCoordinate::Coordinate3D;
+
+        c.setLatitude(-90.1);
+        QTest::newRow("too low latitude and valid longitude") << c << QGeoCoordinate::InvalidCoordinate;
+
+        c.setLongitude(-180.1);
+        c.setLatitude(90.0);
+        QTest::newRow("valid latitude and too low longitude") << c << QGeoCoordinate::InvalidCoordinate;
+
+        c.setLatitude(90.1);
+        c.setLongitude(-180.0);
+        QTest::newRow("too high latitude and valid longitude") << c << QGeoCoordinate::InvalidCoordinate;
+
+        c.setLatitude(-90.0);
+        c.setLongitude(180.1);
+        QTest::newRow("valid latitude and too high longitude") << c << QGeoCoordinate::InvalidCoordinate;
+    }
+
+    void valid()
+    {
+        QFETCH(QGeoCoordinate, c);
+        QCOMPARE(c.isValid(), c.type() != QGeoCoordinate::InvalidCoordinate);
+    }
+
+    void valid_data()
+    {
+        type_data();
     }
 
     void addDataValues(TestDataType type)
@@ -114,43 +345,52 @@ private slots:
         }
     }
 
-    void latitude_data() { addDataValues(Latitude); }
     void latitude()
     {
         QFETCH(double, value);
         QGeoCoordinate c;
         c.setLatitude(value);
-        QCOMPARE(QString::number(c.latitude()), QString::number(value));
+        QCOMPARE(c.latitude(), value);
 
         QGeoCoordinate c2 = c;
-        QCOMPARE(QString::number(c2.latitude()), QString::number(value));
+        QCOMPARE(c.latitude(), value);
         QCOMPARE(c2, c);
     }
+    void latitude_data() { addDataValues(Latitude); }
 
-    void longitude_data() { addDataValues(Longitude); }
     void longitude()
     {
         QFETCH(double, value);
         QGeoCoordinate c;
         c.setLongitude(value);
-        QCOMPARE(QString::number(c.longitude()), QString::number(value));
+        QCOMPARE(c.longitude(), value);
 
         QGeoCoordinate c2 = c;
-        QCOMPARE(QString::number(c2.longitude()), QString::number(value));
+        QCOMPARE(c.longitude(), value);
         QCOMPARE(c2, c);
     }
+    void longitude_data() { addDataValues(Longitude); }
 
-    void altitude_data() { addDataValues(Altitude); }
     void altitude()
     {
         QFETCH(double, value);
         QGeoCoordinate c;
         c.setAltitude(value);
-        QCOMPARE(QString::number(c.altitude()), QString::number(value));
+        QCOMPARE(c.altitude(), value);
 
         QGeoCoordinate c2 = c;
-        QCOMPARE(QString::number(c2.altitude()), QString::number(value));
+        QCOMPARE(c.altitude(), value);
         QCOMPARE(c2, c);
+    }
+    void altitude_data() { addDataValues(Altitude); }
+
+    void distanceTo()
+    {
+        QFETCH(QGeoCoordinate, c1);
+        QFETCH(QGeoCoordinate, c2);
+        QFETCH(double, distance);
+
+        QCOMPARE(qRound(c1.distanceTo(c2)), qRound(distance));
     }
 
     void distanceTo_data()
@@ -164,20 +404,20 @@ private slots:
         QTest::newRow("invalid coord 2")
                 << BRISBANE << QGeoCoordinate() << 0.0;
         QTest::newRow("brisbane -> melbourne")
-                << BRISBANE << MELBOURNE << 1374820.0;
+                << BRISBANE << MELBOURNE << 1374820.162;
         QTest::newRow("london -> new york")
-                << LONDON << NEW_YORK << 5570540.0;
+                << LONDON << NEW_YORK << 5570538.499;
         QTest::newRow("north pole -> south pole")
-                << NORTH_POLE << SOUTH_POLE << 20015100.0;
+                << NORTH_POLE << SOUTH_POLE << 20015109.42;
     }
 
-    void distanceTo()
+    void azimuthTo()
     {
         QFETCH(QGeoCoordinate, c1);
         QFETCH(QGeoCoordinate, c2);
-        QFETCH(double, distance);
+        QFETCH(double, azimuth);
 
-        QCOMPARE(QString::number(c1.distanceTo(c2)), QString::number(distance));
+        QCOMPARE(QString::number(c1.azimuthTo(c2)), QString::number(azimuth));
     }
 
     void azimuthTo_data()
@@ -198,13 +438,13 @@ private slots:
                 << NORTH_POLE << SOUTH_POLE << 180.0;
     }
 
-    void azimuthTo()
+    void degreesToString()
     {
-        QFETCH(QGeoCoordinate, c1);
-        QFETCH(QGeoCoordinate, c2);
-        QFETCH(double, azimuth);
+        QFETCH(QGeoCoordinate, coord);
+        QFETCH(QGeoCoordinate::CoordinateFormat, format);
+        QFETCH(QString, string);
 
-        QCOMPARE(QString::number(c1.azimuthTo(c2)), QString::number(azimuth));
+        QCOMPARE(coord.toString(format), string);
     }
 
     void degreesToString_data()
@@ -217,6 +457,87 @@ private slots:
         QGeoCoordinate southEast(-27.46758, 153.027892);
         QGeoCoordinate northWest(27.46758, -153.027892);
         QGeoCoordinate southWest(-27.46758, -153.027892);
+
+        QGeoCoordinate empty;
+        QGeoCoordinate toohigh(90.1, 180.1);
+        QGeoCoordinate toolow(-90.1, -180.1);
+        QGeoCoordinate allzero(0.0, 0.0);
+
+        QTest::newRow("empty, dd, no hemisphere")
+                << empty << QGeoCoordinate::DecimalDegrees
+                << QString("<Invalid coordinate>");
+        QTest::newRow("empty, dd, hemisphere")
+                << empty << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("empty, dm, no hemisphere")
+                << empty << QGeoCoordinate::DegreesMinutes
+                << QString("<Invalid coordinate>");
+        QTest::newRow("empty, dm, hemisphere")
+                << empty << QGeoCoordinate::DegreesMinutesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("empty, dms, no hemisphere")
+                << empty << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("<Invalid coordinate>");
+        QTest::newRow("empty, dms, hemisphere")
+                << empty << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
+                << QString("<Invalid coordinate>");
+
+        QTest::newRow("too low, dd, no hemisphere")
+                << toolow << QGeoCoordinate::DecimalDegrees
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too low, dd, hemisphere")
+                << toolow << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too low, dm, no hemisphere")
+                << toolow << QGeoCoordinate::DegreesMinutes
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too low, dm, hemisphere")
+                << toolow << QGeoCoordinate::DegreesMinutesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too low, dms, no hemisphere")
+                << toolow << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too low, dms, hemisphere")
+                << toolow << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
+                << QString("<Invalid coordinate>");
+
+        QTest::newRow("too high, dd, no hemisphere")
+                << toohigh << QGeoCoordinate::DecimalDegrees
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too high, dd, hemisphere")
+                << toohigh << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too high, dm, no hemisphere")
+                << toohigh << QGeoCoordinate::DegreesMinutes
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too high, dm, hemisphere")
+                << toohigh << QGeoCoordinate::DegreesMinutesWithHemisphere
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too high, dms, no hemisphere")
+                << toohigh << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("<Invalid coordinate>");
+        QTest::newRow("too high, dms, hemisphere")
+                << toohigh << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
+                << QString("<Invalid coordinate>");
+
+        QTest::newRow("allzero, dd, no hemisphere")
+                << allzero << QGeoCoordinate::DecimalDegrees
+                << QString("0.00000%1, 0.00000%1").arg(DEGREES_SYMB);
+        QTest::newRow("allzero, dd, hemisphere")
+                << allzero << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << QString("0.00000%1, 0.00000%1").arg(DEGREES_SYMB);
+        QTest::newRow("allzero, dm, no hemisphere")
+                << allzero << QGeoCoordinate::DegreesMinutes
+                << QString("0%1 0.000', 0%1 0.000'").arg(DEGREES_SYMB);
+        QTest::newRow("allzero, dm, hemisphere")
+                << allzero << QGeoCoordinate::DegreesMinutesWithHemisphere
+                << QString("0%1 0.000', 0%1 0.000'").arg(DEGREES_SYMB);
+        QTest::newRow("allzero, dms, no hemisphere")
+                << allzero << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("0%1 0' 0.0\", 0%1 0' 0.0\"").arg(DEGREES_SYMB);
+        QTest::newRow("allzero, dms, hemisphere")
+                << allzero << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
+                << QString("0%1 0' 0.0\", 0%1 0' 0.0\"").arg(DEGREES_SYMB);
 
         QTest::newRow("NE, dd, no hemisphere")
                 << northEast << QGeoCoordinate::DecimalDegrees
@@ -333,37 +654,55 @@ private slots:
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" W").arg(DEGREES_SYMB);
     }
 
-    void degreesToString()
-    {
-        QFETCH(QGeoCoordinate, coord);
-        QFETCH(QGeoCoordinate::CoordinateFormat, format);
-        QFETCH(QString, string);
-
-        QCOMPARE(coord.toString(format), string);
-    }
-
     void datastream()
     {
-        QFETCH(QGeoCoordinate, coord);
-        
+        QFETCH(QGeoCoordinate, c);
+
         QByteArray ba;
         QDataStream out(&ba, QIODevice::WriteOnly);
-        out << coord;
+        out << c;
 
         QDataStream in(&ba, QIODevice::ReadOnly);
         QGeoCoordinate inCoord;
         in >> inCoord;
-        QCOMPARE(inCoord, coord);
+        QCOMPARE(inCoord, c);
     }
 
     void datastream_data()
     {
-        QTest::addColumn<QGeoCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate>("c");
 
         QTest::newRow("invalid") << QGeoCoordinate();
         QTest::newRow("valid lat, long") << BRISBANE;
         QTest::newRow("valid lat, long, alt") << QGeoCoordinate(-1, -1, -1);
         QTest::newRow("valid lat, long, alt again") << QGeoCoordinate(1, 1, 1);
+    }
+
+    void debug()
+    {
+        QFETCH(QGeoCoordinate, c);
+        QFETCH(QByteArray, debugString);
+
+        qInstallMsgHandler(tst_qgeocoordinate_messageHandler);
+        qDebug() << c;
+        qInstallMsgHandler(0);
+        QCOMPARE(tst_qgeocoordinate_debug, debugString);
+    }
+
+    void debug_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("c");
+        QTest::addColumn<QByteArray>("debugString");
+
+        QTest::newRow("uninitialized") << QGeoCoordinate()
+                << QByteArray("QGeoCoordinate(?, ?)");
+        QTest::newRow("initialized without altitude") << BRISBANE
+                << (QString("QGeoCoordinate(%1, %2)").arg(BRISBANE.latitude())
+                        .arg(BRISBANE.longitude())).toLatin1();
+        QTest::newRow("invalid initialization") << QGeoCoordinate(-100,-200)
+                << QByteArray("QGeoCoordinate(?, ?)");
+        QTest::newRow("initialized with altitude") << QGeoCoordinate(1,2,3)
+                << QByteArray("QGeoCoordinate(1, 2, 3)");
     }
 };
 
