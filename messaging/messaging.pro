@@ -60,6 +60,7 @@ SOURCES += qmessageid_win.cpp \
            qmessagecontentcontainerid_win.cpp \
            qmessagefolderid_win.cpp \
            qmessageaccountid_win.cpp \
+           qmessagecontentcontainer_win.cpp \
            qmessage_win.cpp \
            qmessagefolder_win.cpp \
            qmessageaccount_win.cpp \

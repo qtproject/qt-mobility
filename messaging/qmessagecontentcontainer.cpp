@@ -106,38 +106,24 @@
     
     Constructs an empty container object.
 */
-QMessageContentContainer::QMessageContentContainer()
-{
-}
 
 /*!
     \fn QMessageContentContainer::~QMessageContentContainer()
     
     Destroys the container object.
 */
-QMessageContentContainer::~QMessageContentContainer()
-{
-}
 
 /*!
     \fn QMessageContentContainer::containerId() const
     
     Returns the identifier of the container object.
 */
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    return QMessageContentContainerId();
-}
 
 /*!
     \fn QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
     
     Sets the identifier of the container object to \a id.
 */
-void QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn QMessageContentContainer::messageId() const
@@ -145,10 +131,6 @@ void QMessageContentContainer::setContainerId(const QMessageContentContainerId &
     Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
     message identifier.
 */
-QMessageId QMessageContentContainer::messageId() const
-{
-    return QMessageId(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContentType(const QByteArray &data)
@@ -161,10 +143,6 @@ QMessageId QMessageContentContainer::messageId() const
 
     \sa clearContents(), contentType(), contentSubType(), contentCharset(), contentFileName(), setHeaderField()
 */
-void QMessageContentContainer::setContentType(const QByteArray &data)
-{
-    Q_UNUSED(data)
-}
 
 /*!
     \fn QMessageContentContainer::contentType() const
@@ -179,10 +157,6 @@ void QMessageContentContainer::setContentType(const QByteArray &data)
 
     \sa setContentType()
 */
-QByteArray QMessageContentContainer::contentType() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContentSubType(const QByteArray &data)
@@ -191,10 +165,6 @@ QByteArray QMessageContentContainer::contentType() const
 
     \sa contentSubType()
 */
-void QMessageContentContainer::setContentSubType(const QByteArray &data)
-{
-    Q_UNUSED(data);
-}
 
 /*!
     \fn QMessageContentContainer::contentSubType() const
@@ -206,10 +176,6 @@ void QMessageContentContainer::setContentSubType(const QByteArray &data)
 
     \sa setContentSubType()
 */
-QByteArray QMessageContentContainer::contentSubType() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContentCharset(const QByteArray &data)
@@ -218,10 +184,6 @@ QByteArray QMessageContentContainer::contentSubType() const
 
     \sa contentCharset()
 */
-void QMessageContentContainer::setContentCharset(const QByteArray &data)
-{
-    Q_UNUSED(data)
-}
 
 /*!
     \fn QMessageContentContainer::contentCharset() const
@@ -233,10 +195,6 @@ void QMessageContentContainer::setContentCharset(const QByteArray &data)
 
     \sa setContentCharset()
 */
-QByteArray QMessageContentContainer::contentCharset() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContentFileName(const QByteArray &data)
@@ -245,10 +203,6 @@ QByteArray QMessageContentContainer::contentCharset() const
 
     \sa contentFileName()
 */
-void QMessageContentContainer::setContentFileName(const QByteArray &data)
-{
-    Q_UNUSED(data)
-}
 
 /*!
     \fn QMessageContentContainer::contentFileName() const
@@ -260,10 +214,6 @@ void QMessageContentContainer::setContentFileName(const QByteArray &data)
 
     \sa setContentFileName()
 */
-QByteArray QMessageContentContainer::contentFileName() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContentAvailable(bool available)
@@ -272,10 +222,6 @@ QByteArray QMessageContentContainer::contentFileName() const
 
     \sa contentAvailable()
 */
-void QMessageContentContainer::setContentAvailable(bool available)
-{
-    Q_UNUSED(available)
-}
 
 /*!
     \fn QMessageContentContainer::contentAvailable() const
@@ -283,10 +229,6 @@ void QMessageContentContainer::setContentAvailable(bool available)
     Returns true if the entirety of the content contained is available on the device; 
     otherwise returns false.
 */
-bool QMessageContentContainer::contentAvailable() const
-{
-    return false;
-}
 
 /*!
     \fn QMessageContentContainer::setIndicativeSize(uint size)
@@ -295,20 +237,12 @@ bool QMessageContentContainer::contentAvailable() const
 
     \sa indicativeSize()
 */
-void QMessageContentContainer::setIndicativeSize(uint size)
-{
-    Q_UNUSED(size)
-}
 
 /*!
     \fn QMessageContentContainer::indicativeSize() const
     
     Returns an indication of the size of the container including contents.
 */
-uint QMessageContentContainer::indicativeSize() const
-{
-    return 0;
-}
 
 /*!
     \fn QMessageContentContainer::decodedTextContent() const
@@ -318,10 +252,6 @@ uint QMessageContentContainer::indicativeSize() const
     
     \sa preferredCharsets()
 */
-QString QMessageContentContainer::decodedTextContent() const
-{
-    return QString::null;
-}
 
 /*!
     \fn QMessageContentContainer::decodedContent() const
@@ -334,20 +264,12 @@ QString QMessageContentContainer::decodedTextContent() const
 
     \sa decodedTextContent()
 */
-QByteArray QMessageContentContainer::decodedContent() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::decodedContentFileName() const
     
     Returns the name of a local file containing the content, when available.
 */
-QString QMessageContentContainer::decodedContentFileName() const
-{
-    return QString(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::writeContentTo(QDataStream& out) const
@@ -357,10 +279,6 @@ QString QMessageContentContainer::decodedContentFileName() const
 
     \sa readContentFrom()
 */
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
-{
-    Q_UNUSED(out)
-}
 
 /*!
     \fn QMessageContentContainer::clearContents()
@@ -372,9 +290,6 @@ void QMessageContentContainer::writeContentTo(QDataStream& out) const
 
     \sa contentType(), contentSubType(), contentCharset()
 */
-void QMessageContentContainer::clearContents()
-{
-}
 
 /*!
     \fn QMessageContentContainer::setContent(const QString &text)
@@ -387,10 +302,6 @@ void QMessageContentContainer::clearContents()
 
     \sa preferredCharsets(), setContentSubType()
 */
-void QMessageContentContainer::setContent(const QString &text)
-{
-    Q_UNUSED(text)
-}
 
 /*!
     \fn QMessageContentContainer::setContent(const QByteArray &data)
@@ -402,10 +313,6 @@ void QMessageContentContainer::setContent(const QString &text)
     \sa setContentType(), setContentSubType(), setContentCharset()
 
 */
-void QMessageContentContainer::setContent(const QByteArray &data)
-{
-    Q_UNUSED(data)
-}
 
 /*!
     \fn QMessageContentContainer::setContentFromFile(const QString &fileName)
@@ -417,10 +324,6 @@ void QMessageContentContainer::setContent(const QByteArray &data)
 
     \sa setContentType(), setContentSubType(), setContentCharset()
 */
-void QMessageContentContainer::setContentFromFile(const QString &fileName)
-{
-    Q_UNUSED(fileName)
-}
 
 /*!
     \fn QMessageContentContainer::readContentFrom(QDataStream &in)
@@ -432,10 +335,6 @@ void QMessageContentContainer::setContentFromFile(const QString &fileName)
 
     \sa writeContentTo(), setContentType(), setContentSubType(), setContentCharset()
 */
-void QMessageContentContainer::readContentFrom(QDataStream &in)
-{
-    Q_UNUSED(in)
-}
 
 /*!
     \fn QMessageContentContainer::appendContent(const QMessageContentContainer & content)
@@ -449,11 +348,6 @@ void QMessageContentContainer::readContentFrom(QDataStream &in)
 
     \sa container(), clearContents(), replaceContent(), contentIds()
 */
-QMessageContentContainerId QMessageContentContainer::appendContent(const QMessageContentContainer & content)
-{
-    Q_UNUSED(content)
-    return QMessageContentContainerId(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
@@ -463,11 +357,6 @@ QMessageContentContainerId QMessageContentContainer::appendContent(const QMessag
 
     \sa container(), clearContents(), appendContent(), contentIds()
 */
-void QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
-{
-    Q_UNUSED(id)
-    Q_UNUSED(content)
-}
 
 /*!
     \fn QMessageContentContainer::contentIds() const
@@ -477,10 +366,6 @@ void QMessageContentContainer::replaceContent(const QMessageContentContainerId &
 
     \sa container(), clearContents(), appendContent(), replaceContent()
 */
-QMessageContentContainerIdList QMessageContentContainer::contentIds() const
-{
-    return QMessageContentContainerIdList(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::container(const QMessageContentContainerId id) const
@@ -491,11 +376,6 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 
     \sa contentIds(), clearContents(), appendContent(), replaceContent()
 */
-const QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId id) const
-{
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::container(const QMessageContentContainerId id)
@@ -506,11 +386,6 @@ const QMessageContentContainer QMessageContentContainer::container(const QMessag
 
     \sa contentIds(), clearContents(), appendContent(), replaceContent()
 */
-QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId id)
-{
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
@@ -525,11 +400,6 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 
     \sa setHeaderField(), headerField(), headerFields()
 */
-void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
-}
 
 /*!
     \fn QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
@@ -549,11 +419,6 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
 
     \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
-void QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
-}
 
 /*!
     \fn QMessageContentContainer::headerField(const QByteArray &name) const
@@ -563,11 +428,6 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 
     \sa headerFieldValues(), appendHeaderField(), setHeaderField(), headerFields(), preferredCharsets()
 */
-QString QMessageContentContainer::headerField(const QByteArray &name) const
-{
-    Q_UNUSED(name)
-    return QString(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::headerFieldValues(const QByteArray &name) const
@@ -577,11 +437,6 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
 
     \sa appendHeaderField(), setHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
-QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
-{
-    Q_UNUSED(name)
-    return QList<QString>(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::headerFields() const
@@ -590,10 +445,6 @@ QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &nam
 
     \sa appendHeaderField(), setHeaderField(), headerField(), preferredCharsets()
 */
-QList<QByteArray> QMessageContentContainer::headerFields() const
-{
-    return QList<QByteArray>(); // stub
-}
 
 /*!
     \fn QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
@@ -604,11 +455,6 @@ QList<QByteArray> QMessageContentContainer::headerFields() const
 
     \sa setHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
-void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
-}
 
 /*!
     \fn QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
@@ -618,11 +464,6 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
 
     \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
 */
-void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
-}
 
 /*!
     \fn QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
@@ -632,10 +473,6 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByt
 
     \sa preferredCharsets()
 */
-void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
-{
-    Q_UNUSED(charsetNames);
-}
 
 /*!
     \fn QMessageContentContainer::preferredCharsets()
@@ -645,10 +482,6 @@ void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &cha
 
     \sa setPreferredCharsets()
 */
-QList<QByteArray> QMessageContentContainer::preferredCharsets()
-{
-    return QList<QByteArray>(); // stub;
-}
 
 /*!
     \fn QMessageContentContainer::containerDataModified() const
@@ -656,20 +489,12 @@ QList<QByteArray> QMessageContentContainer::preferredCharsets()
     Returns true if the container has been modified since it was constructed; 
     otherwise returns false.
 */
-bool QMessageContentContainer::containerDataModified() const
-{
-    return false; // stub
-}
 
 /*!
     \fn QMessageContentContainer::setContainerDataModified(bool modified)
     
     Sets the modified data state of the container to \a modified.
 */
-void QMessageContentContainer::setContainerDataModified(bool modified)
-{
-    Q_UNUSED(modified);
-}
 
 /*!
     \fn QMessageContentContainer::prependContent(const QMessageContentContainer & content)
@@ -681,8 +506,3 @@ void QMessageContentContainer::setContainerDataModified(bool modified)
 
     Returns an identifier for the prepended content.
 */
-QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
-{
-    Q_UNUSED(content);
-    return QMessageContentContainerId(); // stub
-}
