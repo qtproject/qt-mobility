@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QCOORDINATE_H
-#define QCOORDINATE_H
+#ifndef QGEOCOORDINATE_H
+#define QGEOCOORDINATE_H
 
 #include "qlocationglobal.h"
 
@@ -39,13 +39,13 @@
 
 class QDebug;
 class QDataStream;
-class QCoordinatePrivate;
+class QGeoCoordinatePrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QCoordinate
+class Q_LOCATION_EXPORT QGeoCoordinate
 {
 public:
     enum CoordinateType {
@@ -63,16 +63,16 @@ public:
         DegreesMinutesSecondsWithHemisphere
     };
 
-    QCoordinate();
-    QCoordinate(double latitude, double longitude);
-    QCoordinate(double latitude, double longitude, double altitude);
-    QCoordinate(const QCoordinate &other);
-    ~QCoordinate();
+    QGeoCoordinate();
+    QGeoCoordinate(double latitude, double longitude);
+    QGeoCoordinate(double latitude, double longitude, double altitude);
+    QGeoCoordinate(const QGeoCoordinate &other);
+    ~QGeoCoordinate();
 
-    QCoordinate &operator=(const QCoordinate &other);
+    QGeoCoordinate &operator=(const QGeoCoordinate &other);
 
-    bool operator==(const QCoordinate &other) const;
-    inline bool operator!=(const QCoordinate &other) const { return !operator==(other); }
+    bool operator==(const QGeoCoordinate &other) const;
+    inline bool operator!=(const QGeoCoordinate &other) const { return !operator==(other); }
 
     bool isValid() const;
     CoordinateType type() const;
@@ -86,22 +86,22 @@ public:
     void setAltitude(double altitude);
     double altitude() const;
 
-    qreal distanceTo(const QCoordinate &other) const;
-    qreal azimuthTo(const QCoordinate &other) const;
+    qreal distanceTo(const QGeoCoordinate &other) const;
+    qreal azimuthTo(const QGeoCoordinate &other) const;
 
     QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:
-    QCoordinatePrivate *d;
+    QGeoCoordinatePrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QCoordinate &);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QCoordinate &coordinate);
-Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QCoordinate &coordinate);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
 #endif
 
 QT_END_NAMESPACE

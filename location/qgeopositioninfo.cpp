@@ -30,33 +30,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qpositionupdate.h"
+#include "qgeopositioninfo.h"
 
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
 
-class QPositionUpdatePrivate
+class QGeoPositionInfoPrivate
 {
 public:
     QDateTime updateTime;
-    QCoordinate coord;
+    QGeoCoordinate coord;
     QHash<int, qreal> doubleProps;
 };
 
 /*!
-    \class QPositionUpdate
-    \brief The QPositionUpdate class contains information gathered on one's global position, direction and velocity at a particular point in time.
+    \class QGeoPositionInfo
+    \brief The QGeoPositionInfo class contains information gathered on one's global position, direction and velocity at a particular point in time.
 
-    A QPositionUpdate contains, at a minimum, a geographical coordinate and
+    A QGeoPositionInfo contains, at a minimum, a geographical coordinate and
     a timestamp. It may also have heading and speed measurements as well as
     estimates of the accuracy of the provided data.
 
-    \sa QPositionSource
+    \sa QGeoPositionInfoSource
 */
 
 /*!
-    \enum QPositionUpdate::Property
+    \enum QGeoPositionInfo::Property
     Defines the properties for a position update.
 
     \value Heading The bearing to true north, in degrees.
@@ -72,16 +72,16 @@ public:
 
     \sa isValid()
 */
-QPositionUpdate::QPositionUpdate()
-    : d(new QPositionUpdatePrivate)
+QGeoPositionInfo::QGeoPositionInfo()
+    : d(new QGeoPositionInfoPrivate)
 {
 }
 
 /*!
     Creates an update with the given \a coordinate and \a updateTime.
 */
-QPositionUpdate::QPositionUpdate(const QCoordinate &coordinate, const QDateTime &updateTime)
-    : d(new QPositionUpdatePrivate)
+QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime)
+    : d(new QGeoPositionInfoPrivate)
 {
     d->updateTime = updateTime;
     d->coord = coordinate;
@@ -90,8 +90,8 @@ QPositionUpdate::QPositionUpdate(const QCoordinate &coordinate, const QDateTime 
 /*!
     Creates an update with the values of \a other.
 */
-QPositionUpdate::QPositionUpdate(const QPositionUpdate &other)
-    : d(new QPositionUpdatePrivate)
+QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
+    : d(new QGeoPositionInfoPrivate)
 {
     operator=(other);
 }
@@ -99,7 +99,7 @@ QPositionUpdate::QPositionUpdate(const QPositionUpdate &other)
 /*!
     Destroys an update.
 */
-QPositionUpdate::~QPositionUpdate()
+QGeoPositionInfo::~QGeoPositionInfo()
 {
     delete d;
 }
@@ -107,7 +107,7 @@ QPositionUpdate::~QPositionUpdate()
 /*!
     Assigns the values from \a other to this update.
 */
-QPositionUpdate &QPositionUpdate::operator=(const QPositionUpdate &other)
+QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 {
     if (this == &other)
         return *this;
@@ -123,7 +123,7 @@ QPositionUpdate &QPositionUpdate::operator=(const QPositionUpdate &other)
     Returns true if all of this update's values are the same as those of
     \a other.
 */
-bool QPositionUpdate::operator==(const QPositionUpdate &other) const
+bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
     return d->updateTime == other.d->updateTime
             && d->coord == other.d->coord
@@ -131,7 +131,7 @@ bool QPositionUpdate::operator==(const QPositionUpdate &other) const
 }
 
 /*!
-    \fn bool QPositionUpdate::operator!=(const QPositionUpdate &other) const
+    \fn bool QGeoPositionInfo::operator!=(const QGeoPositionInfo &other) const
 
     Returns true if any of this update's values are not the same as those of
     \a other.
@@ -140,9 +140,9 @@ bool QPositionUpdate::operator==(const QPositionUpdate &other) const
 /*!
     Returns true if the update's updateTime() and coordinate() values are both valid.
 
-    \sa QCoordinate::isValid(), QDateTime::isValid()
+    \sa QGeoCoordinate::isValid(), QDateTime::isValid()
 */
-bool QPositionUpdate::isValid() const
+bool QGeoPositionInfo::isValid() const
 {
     return d->updateTime.isValid() && d->coord.isValid();
 }
@@ -154,7 +154,7 @@ bool QPositionUpdate::isValid() const
 
     \sa updateTime()
 */
-void QPositionUpdate::setUpdateTime(const QDateTime &updateTime)
+void QGeoPositionInfo::setUpdateTime(const QDateTime &updateTime)
 {
     d->updateTime = updateTime;
 }
@@ -166,7 +166,7 @@ void QPositionUpdate::setUpdateTime(const QDateTime &updateTime)
 
     \sa setUpdateTime()
 */
-QDateTime QPositionUpdate::updateTime() const
+QDateTime QGeoPositionInfo::updateTime() const
 {
     return d->updateTime;
 }
@@ -176,7 +176,7 @@ QDateTime QPositionUpdate::updateTime() const
 
     \sa coordinate()
 */
-void QPositionUpdate::setCoordinate(const QCoordinate &coordinate)
+void QGeoPositionInfo::setCoordinate(const QGeoCoordinate &coordinate)
 {
     d->coord = coordinate;
 }
@@ -188,7 +188,7 @@ void QPositionUpdate::setCoordinate(const QCoordinate &coordinate)
 
     \sa setCoordinate()
 */
-QCoordinate QPositionUpdate::coordinate() const
+QGeoCoordinate QGeoPositionInfo::coordinate() const
 {
     return d->coord;
 }
@@ -196,9 +196,9 @@ QCoordinate QPositionUpdate::coordinate() const
 /*!
     Sets the value for \a property to \a value.
 
-    \sa doubleProperty()
+    \sa property()
 */
-void QPositionUpdate::setDoubleProperty(Property property, qreal value)
+void QGeoPositionInfo::setProperty(Property property, qreal value)
 {
     d->doubleProps[int(property)] = value;
 }
@@ -208,9 +208,9 @@ void QPositionUpdate::setDoubleProperty(Property property, qreal value)
 
     Returns -1 if the value has not been set.
 
-    \sa hasProperty(), setDoubleProperty()
+    \sa hasProperty(), setProperty()
 */
-qreal QPositionUpdate::doubleProperty(Property property) const
+qreal QGeoPositionInfo::property(Property property) const
 {
     if (d->doubleProps.contains(int(property)))
         return d->doubleProps[int(property)];
@@ -220,7 +220,7 @@ qreal QPositionUpdate::doubleProperty(Property property) const
 /*!
     Removes the specified \a property and its value.
 */
-void QPositionUpdate::removeProperty(Property property)
+void QGeoPositionInfo::removeProperty(Property property)
 {
     d->doubleProps.remove(int(property));
 }
@@ -228,15 +228,15 @@ void QPositionUpdate::removeProperty(Property property)
 /*!
     Returns true if the specified \a property is present in this update.
 */
-bool QPositionUpdate::hasProperty(Property property) const
+bool QGeoPositionInfo::hasProperty(Property property) const
 {
     return d->doubleProps.contains(int(property));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QPositionUpdate &update)
+QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
 {
-    dbg.nospace() << "QPositionUpdate(" << update.d->updateTime;
+    dbg.nospace() << "QGeoPositionInfo(" << update.d->updateTime;
     dbg.nospace() << ", ";
     dbg.nospace() << update.d->coord;
 
@@ -244,22 +244,22 @@ QDebug operator<<(QDebug dbg, const QPositionUpdate &update)
     for (int i=0; i<props.count(); i++) {
         dbg.nospace() << ", ";
         switch (props[i]) {
-            case QPositionUpdate::Heading:
+            case QGeoPositionInfo::Heading:
                 dbg.nospace() << "Heading=";
                 break;
-            case QPositionUpdate::GroundSpeed:
+            case QGeoPositionInfo::GroundSpeed:
                 dbg.nospace() << "GroundSpeed=";
                 break;
-            case QPositionUpdate::VerticalSpeed:
+            case QGeoPositionInfo::VerticalSpeed:
                 dbg.nospace() << "VerticalSpeed=";
                 break;
-            case QPositionUpdate::MagneticVariation:
+            case QGeoPositionInfo::MagneticVariation:
                 dbg.nospace() << "MagneticVariation=";
                 break;
-            case QPositionUpdate::HorizontalAccuracy:
+            case QGeoPositionInfo::HorizontalAccuracy:
                 dbg.nospace() << "HorizontalAccuracy=";
                 break;
-            case QPositionUpdate::VerticalAccuracy:
+            case QGeoPositionInfo::VerticalAccuracy:
                 dbg.nospace() << "VerticalAccuracy=";
                 break;
         }
@@ -271,7 +271,7 @@ QDebug operator<<(QDebug dbg, const QPositionUpdate &update)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update)
+QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update)
 {
     stream << update.d->updateTime;
     stream << update.d->coord;
@@ -281,7 +281,7 @@ QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update)
+QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update)
 {
     stream >> update.d->updateTime;
     stream >> update.d->coord;

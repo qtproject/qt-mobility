@@ -30,64 +30,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QPOSITIONSOURCE_H
-#define QPOSITIONSOURCE_H
+#ifndef QGEOAREAMONITOR_H
+#define QGEOAREAMONITOR_H
 
 #include "qlocationglobal.h"
-#include "qpositionupdate.h"
+#include "qgeocoordinate.h"
 
 #include <QObject>
 
-class QPositionSourcePrivate;
+class QGeoPositionInfo;
+class QGeoAreaMonitorPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-class Q_LOCATION_EXPORT QPositionSource : public QObject
+class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
 {
     Q_OBJECT
 public:
-    enum PositioningMethod {
-        SatellitePositioningMethods = 0x000000ff,
-        NonSatellitePositioningMethods = 0xffffff00,
-        AllPositioningMethods = 0xffffffff
-    };
-    Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
+    explicit QGeoAreaMonitor(QObject *parent = 0);
+    virtual ~QGeoAreaMonitor() = 0;
 
-    explicit QPositionSource(QObject *parent = 0);
-    virtual ~QPositionSource();
+    virtual void setMonitoredArea(const QGeoCoordinate &coordinate, int radius);
+    QGeoCoordinate coordinate() const;
+    int radius() const;
 
-    virtual void setUpdateInterval(int msec);
-    int updateInterval() const;
-
-    virtual void setPreferredPositioningMethods(PositioningMethods methods);
-    PositioningMethods preferredPositioningMethods() const;
-
-    virtual QPositionUpdate lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
-
-    virtual PositioningMethods supportedPositioningMethods() const = 0;
-    virtual int minimumUpdateInterval() const = 0;
-
-    static QPositionSource *createSource(QObject *parent = 0);
-
-public slots:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
-
-    virtual void requestUpdate(int timeout = 5000) = 0;
+    static QGeoAreaMonitor *createMonitor(QObject *parent = 0);
 
 signals:
-    void positionUpdated(const QPositionUpdate &update);
-    void requestTimeout();
+    void areaEntered(const QGeoPositionInfo &update);
+    void areaExited(const QGeoPositionInfo &update);
 
 private:
-    Q_DISABLE_COPY(QPositionSource)
-    QPositionSourcePrivate *d;
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPositionSource::PositioningMethods)
+    Q_DISABLE_COPY(QGeoAreaMonitor)
+    QGeoAreaMonitorPrivate *d;
+}; 
 
 QT_END_NAMESPACE
 

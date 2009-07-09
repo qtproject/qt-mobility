@@ -30,18 +30,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qpositionsource.h"
+#include "qgeopositioninfosource.h"
 
 /*!
-    \class QPositionSource
-    \brief The QPositionSource class is an abstract base class for the distribution of positional updates.
+    \class QGeoPositionInfoSource
+    \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
-    The static function QPositionSource::createSource() creates a default
+    The static function QGeoPositionInfoSource::createSource() creates a default
     position source that is appropriate for the platform, if one is available.
-    Otherwise, QPositionSource can be subclassed to create an appropriate
+    Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate
     custom source of position data.
 
-    Users of a QPositionSource subclass can request the current position using
+    Users of a QGeoPositionInfoSource subclass can request the current position using
     requestUpdate(), or start and stop regular position updates using
     startUpdates() and stopUpdates(). When an update is available,
     positionUpdate() is emitted. The last known position can be accessed with
@@ -54,7 +54,7 @@
 
     \code
         // Emit updates every 10 seconds if available
-        QPositionSource *source = QPositionSource::createSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
         source->setUpdateInterval(10000);
     \endcode
 
@@ -66,7 +66,7 @@
 */
 
 /*!
-    \enum QPositionSource::PositioningMethod
+    \enum QGeoPositionInfoSource::PositioningMethod
     Defines the types of positioning methods.
 
     \value SatellitePositioningMethods Satellite-based positioning methods such as GPS.
@@ -74,11 +74,11 @@
     \value AllPositioningMethods A flag that matches all positioning methods.
 */
 
-class QPositionSourcePrivate
+class QGeoPositionInfoSourcePrivate
 {
 public:
     int interval;
-    QPositionSource::PositioningMethods methods;
+    QGeoPositionInfoSource::PositioningMethods methods;
 };
 
 
@@ -86,9 +86,9 @@ public:
     Creates a position source with the specified \a parent.
 */
 
-QPositionSource::QPositionSource(QObject *parent)
+QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
     : QObject(parent),
-      d(new QPositionSourcePrivate)
+      d(new QGeoPositionInfoSourcePrivate)
 {
     d->interval = 0;
     d->methods = 0;
@@ -97,7 +97,7 @@ QPositionSource::QPositionSource(QObject *parent)
 /*!
     Destroys the position source.
 */
-QPositionSource::~QPositionSource()
+QGeoPositionInfoSource::~QGeoPositionInfoSource()
 {
     delete d;
 }
@@ -119,7 +119,7 @@ QPositionSource::~QPositionSource()
     base method implementation to ensure updateInterval() returns the correct
     value.
 */
-void QPositionSource::setUpdateInterval(int msec)
+void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
     d->interval = msec;
 }
@@ -129,7 +129,7 @@ void QPositionSource::setUpdateInterval(int msec)
 
     Returns 0 if no interval has been set.
 */
-int QPositionSource::updateInterval() const
+int QGeoPositionInfoSource::updateInterval() const
 {
     return d->interval;
 }
@@ -143,7 +143,7 @@ int QPositionSource::updateInterval() const
     \sa supportedPositioningMethods()
 */
 
-void QPositionSource::setPreferredPositioningMethods(PositioningMethods methods)
+void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
     d->methods = methods;
 }
@@ -151,7 +151,7 @@ void QPositionSource::setPreferredPositioningMethods(PositioningMethods methods)
 /*!
     Returns the positioning methods set by setPreferredPositioningMethods().
 */
-QPositionSource::PositioningMethods QPositionSource::preferredPositioningMethods() const
+QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPositioningMethods() const
 {
     return d->methods;
 }
@@ -163,13 +163,13 @@ QPositionSource::PositioningMethods QPositionSource::preferredPositioningMethods
     Returns 0 if the system has no default position source.
 */
 
-QPositionSource *QPositionSource::createSource(QObject *)
+QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *)
 {
     return 0;
 }
 
 /*!
-    \fn QPositionUpdate QPositionSource::lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
+    \fn QGeoPositionInfo QGeoPositionInfoSource::lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 
     Returns an update containing the last known position, or a null update
     if none is available.
@@ -180,7 +180,7 @@ QPositionSource *QPositionSource::createSource(QObject *)
 */
 
 /*!
-    \fn virtual PositioningMethods QPositionSource::supportedPositioningMethods() const = 0;
+    \fn virtual PositioningMethods QGeoPositionInfoSource::supportedPositioningMethods() const = 0;
 
     Returns the positioning methods available to this source.
 
@@ -188,14 +188,14 @@ QPositionSource *QPositionSource::createSource(QObject *)
 */
 
 /*!
-    \fn virtual int QPositionSource::minimumUpdateInterval() const = 0;
+    \fn virtual int QGeoPositionInfoSource::minimumUpdateInterval() const = 0;
 
     Returns the minimum value accepted by setUpdateInterval().
 */
 
 
 /*!
-    \fn virtual void QPositionSource::startUpdates() = 0;
+    \fn virtual void QGeoPositionInfoSource::startUpdates() = 0;
 
     Starts emitting updates at regular intervals as specified by setUpdateInterval().
 
@@ -204,13 +204,13 @@ QPositionSource *QPositionSource::createSource(QObject *)
 */
 
 /*!
-    \fn virtual void QPositionSource::stopUpdates() = 0;
+    \fn virtual void QGeoPositionInfoSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
 */
 
 /*!
-    \fn virtual void QPositionSource::requestUpdate(int timeout = 5000);
+    \fn virtual void QGeoPositionInfoSource::requestUpdate(int timeout = 5000);
 
     Attempts to get the current position and emit positionUpdated() with
     this information. This is useful if you do not need the regular updates
@@ -228,7 +228,7 @@ QPositionSource *QPositionSource::createSource(QObject *)
 */
 
 /*!
-    \fn void QPositionSource::positionUpdated(const QPositionUpdate &update);
+    \fn void QGeoPositionInfoSource::positionUpdated(const QGeoPositionInfo &update);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update becomes available.
@@ -237,7 +237,7 @@ QPositionSource *QPositionSource::createSource(QObject *)
 */
 
 /*!
-    \fn void QPositionSource::requestTimeout();
+    \fn void QGeoPositionInfoSource::requestTimeout();
 
     Emitted if requestUpdate() was called and the current position could
     not be retrieved within the specified timeout.

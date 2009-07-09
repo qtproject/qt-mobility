@@ -30,26 +30,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qcoordinate.h>
+#include <qgeocoordinate.h>
 #include <qtest.h>
 
 #include <QMetaType>
 #include <QDebug>
 
-Q_DECLARE_METATYPE(QCoordinate)
-Q_DECLARE_METATYPE(QCoordinate::CoordinateFormat)
+Q_DECLARE_METATYPE(QGeoCoordinate)
+Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateFormat)
 
-static const QCoordinate BRISBANE(-27.46758, 153.027892);
-static const QCoordinate MELBOURNE(-37.814251, 144.963169);
-static const QCoordinate LONDON(51.500152, -0.126236);
-static const QCoordinate NEW_YORK(40.71453, -74.00713);
-static const QCoordinate NORTH_POLE(90, 0);
-static const QCoordinate SOUTH_POLE(-90, 0);
+static const QGeoCoordinate BRISBANE(-27.46758, 153.027892);
+static const QGeoCoordinate MELBOURNE(-37.814251, 144.963169);
+static const QGeoCoordinate LONDON(51.500152, -0.126236);
+static const QGeoCoordinate NEW_YORK(40.71453, -74.00713);
+static const QGeoCoordinate NORTH_POLE(90, 0);
+static const QGeoCoordinate SOUTH_POLE(-90, 0);
 
 static const QChar DEGREES_SYMB(0x00B0);
 
 
-class tst_QCoordinate : public QObject
+class tst_QGeoCoordinate : public QObject
 {
     Q_OBJECT
 
@@ -63,28 +63,28 @@ private:
 private slots:
     void constructor()
     {
-        QCoordinate c;
+        QGeoCoordinate c;
         QVERIFY(!c.isValid());
-        QCOMPARE(c, QCoordinate());
+        QCOMPARE(c, QGeoCoordinate());
     }
 
     void type()
     {
-        QCoordinate c;
+        QGeoCoordinate c;
         QVERIFY(!c.isValid());
-        QVERIFY(c.type() == QCoordinate::InvalidCoordinate);
+        QVERIFY(c.type() == QGeoCoordinate::InvalidCoordinate);
 
         c.setLatitude(1);
         QVERIFY(!c.isValid());
-        QVERIFY(c.type() == QCoordinate::InvalidCoordinate);
+        QVERIFY(c.type() == QGeoCoordinate::InvalidCoordinate);
 
         c.setLongitude(1);
         QVERIFY(c.isValid());
-        QVERIFY(c.type() == QCoordinate::Coordinate2D);
+        QVERIFY(c.type() == QGeoCoordinate::Coordinate2D);
 
         c.setAltitude(1);
         QVERIFY(c.isValid());
-        QVERIFY(c.type() == QCoordinate::Coordinate3D);
+        QVERIFY(c.type() == QGeoCoordinate::Coordinate3D);
     }
 
     void addDataValues(TestDataType type)
@@ -118,11 +118,11 @@ private slots:
     void latitude()
     {
         QFETCH(double, value);
-        QCoordinate c;
+        QGeoCoordinate c;
         c.setLatitude(value);
         QCOMPARE(QString::number(c.latitude()), QString::number(value));
 
-        QCoordinate c2 = c;
+        QGeoCoordinate c2 = c;
         QCOMPARE(QString::number(c2.latitude()), QString::number(value));
         QCOMPARE(c2, c);
     }
@@ -131,11 +131,11 @@ private slots:
     void longitude()
     {
         QFETCH(double, value);
-        QCoordinate c;
+        QGeoCoordinate c;
         c.setLongitude(value);
         QCOMPARE(QString::number(c.longitude()), QString::number(value));
 
-        QCoordinate c2 = c;
+        QGeoCoordinate c2 = c;
         QCOMPARE(QString::number(c2.longitude()), QString::number(value));
         QCOMPARE(c2, c);
     }
@@ -144,25 +144,25 @@ private slots:
     void altitude()
     {
         QFETCH(double, value);
-        QCoordinate c;
+        QGeoCoordinate c;
         c.setAltitude(value);
         QCOMPARE(QString::number(c.altitude()), QString::number(value));
 
-        QCoordinate c2 = c;
+        QGeoCoordinate c2 = c;
         QCOMPARE(QString::number(c2.altitude()), QString::number(value));
         QCOMPARE(c2, c);
     }
 
     void distanceTo_data()
     {
-        QTest::addColumn<QCoordinate>("c1");
-        QTest::addColumn<QCoordinate>("c2");
+        QTest::addColumn<QGeoCoordinate>("c1");
+        QTest::addColumn<QGeoCoordinate>("c2");
         QTest::addColumn<double>("distance");
 
         QTest::newRow("invalid coord 1")
-                << QCoordinate() << BRISBANE << 0.0;
+                << QGeoCoordinate() << BRISBANE << 0.0;
         QTest::newRow("invalid coord 2")
-                << BRISBANE << QCoordinate() << 0.0;
+                << BRISBANE << QGeoCoordinate() << 0.0;
         QTest::newRow("brisbane -> melbourne")
                 << BRISBANE << MELBOURNE << 1374820.0;
         QTest::newRow("london -> new york")
@@ -173,8 +173,8 @@ private slots:
 
     void distanceTo()
     {
-        QFETCH(QCoordinate, c1);
-        QFETCH(QCoordinate, c2);
+        QFETCH(QGeoCoordinate, c1);
+        QFETCH(QGeoCoordinate, c2);
         QFETCH(double, distance);
 
         QCOMPARE(QString::number(c1.distanceTo(c2)), QString::number(distance));
@@ -182,14 +182,14 @@ private slots:
 
     void azimuthTo_data()
     {
-        QTest::addColumn<QCoordinate>("c1");
-        QTest::addColumn<QCoordinate>("c2");
+        QTest::addColumn<QGeoCoordinate>("c1");
+        QTest::addColumn<QGeoCoordinate>("c2");
         QTest::addColumn<double>("azimuth");
 
         QTest::newRow("invalid coord 1")
-                << QCoordinate() << BRISBANE << 0.0;
+                << QGeoCoordinate() << BRISBANE << 0.0;
         QTest::newRow("invalid coord 2")
-                << BRISBANE << QCoordinate() << 0.0;
+                << BRISBANE << QGeoCoordinate() << 0.0;
         QTest::newRow("brisbane -> melbourne")
                 << BRISBANE << MELBOURNE << 211.1717;
         QTest::newRow("london -> new york")
@@ -200,8 +200,8 @@ private slots:
 
     void azimuthTo()
     {
-        QFETCH(QCoordinate, c1);
-        QFETCH(QCoordinate, c2);
+        QFETCH(QGeoCoordinate, c1);
+        QFETCH(QGeoCoordinate, c2);
         QFETCH(double, azimuth);
 
         QCOMPARE(QString::number(c1.azimuthTo(c2)), QString::number(azimuth));
@@ -209,134 +209,134 @@ private slots:
 
     void degreesToString_data()
     {
-        QTest::addColumn<QCoordinate>("coord");
-        QTest::addColumn<QCoordinate::CoordinateFormat>("format");
+        QTest::addColumn<QGeoCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate::CoordinateFormat>("format");
         QTest::addColumn<QString>("string");
 
-        QCoordinate northEast(27.46758, 153.027892);
-        QCoordinate southEast(-27.46758, 153.027892);
-        QCoordinate northWest(27.46758, -153.027892);
-        QCoordinate southWest(-27.46758, -153.027892);
+        QGeoCoordinate northEast(27.46758, 153.027892);
+        QGeoCoordinate southEast(-27.46758, 153.027892);
+        QGeoCoordinate northWest(27.46758, -153.027892);
+        QGeoCoordinate southWest(-27.46758, -153.027892);
 
         QTest::newRow("NE, dd, no hemisphere")
-                << northEast << QCoordinate::DecimalDegrees
+                << northEast << QGeoCoordinate::DecimalDegrees
                 << QString("27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("NE, dd, hemisphere")
-                << northEast << QCoordinate::DecimalDegreesWithHemisphere
+                << northEast << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("NE, dm, no hemisphere")
-                << northEast << QCoordinate::DegreesMinutes
+                << northEast << QGeoCoordinate::DegreesMinutes
                 << QString("27%1 28.055', 153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("NE, dm, hemisphere")
-                << northEast << QCoordinate::DegreesMinutesWithHemisphere
+                << northEast << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' N, 153%1 1.674' E").arg(DEGREES_SYMB);
         QTest::newRow("NE, dms, no hemisphere")
-                << northEast << QCoordinate::DegreesMinutesSeconds
+                << northEast << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("27%1 28' 3.3\", 153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("NE, dms, hemisphere")
-                << northEast << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << northEast << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("SE, dd, no hemisphere")
-                << southEast << QCoordinate::DecimalDegrees
+                << southEast << QGeoCoordinate::DecimalDegrees
                 << QString("-27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("SE, dd, hemisphere")
-                << southEast << QCoordinate::DecimalDegreesWithHemisphere
+                << southEast << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("SE, dm, no hemisphere")
-                << southEast << QCoordinate::DegreesMinutes
+                << southEast << QGeoCoordinate::DegreesMinutes
                 << QString("-27%1 28.055', 153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("SE, dm, hemisphere")
-                << southEast << QCoordinate::DegreesMinutesWithHemisphere
+                << southEast << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' S, 153%1 1.674' E").arg(DEGREES_SYMB);
         QTest::newRow("SE, dms, no hemisphere")
-                << southEast << QCoordinate::DegreesMinutesSeconds
+                << southEast << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("-27%1 28' 3.3\", 153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("SE, dms, hemisphere")
-                << southEast << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << southEast << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("NE, dd, no hemisphere")
-                << northEast << QCoordinate::DecimalDegrees
+                << northEast << QGeoCoordinate::DecimalDegrees
                 << QString("27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("NE, dd, hemisphere")
-                << northEast << QCoordinate::DecimalDegreesWithHemisphere
+                << northEast << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("NE, dm, no hemisphere")
-                << northEast << QCoordinate::DegreesMinutes
+                << northEast << QGeoCoordinate::DegreesMinutes
                 << QString("27%1 28.055', 153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("NE, dm, hemisphere")
-                << northEast << QCoordinate::DegreesMinutesWithHemisphere
+                << northEast << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' N, 153%1 1.674' E").arg(DEGREES_SYMB);
         QTest::newRow("NE, dms, no hemisphere")
-                << northEast << QCoordinate::DegreesMinutesSeconds
+                << northEast << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("27%1 28' 3.3\", 153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("NE, dms, hemisphere")
-                << northEast << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << northEast << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("SE, dd, no hemisphere")
-                << southEast << QCoordinate::DecimalDegrees
+                << southEast << QGeoCoordinate::DecimalDegrees
                 << QString("-27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("SE, dd, hemisphere")
-                << southEast << QCoordinate::DecimalDegreesWithHemisphere
+                << southEast << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("SE, dm, no hemisphere")
-                << southEast << QCoordinate::DegreesMinutes
+                << southEast << QGeoCoordinate::DegreesMinutes
                 << QString("-27%1 28.055', 153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("SE, dm, hemisphere")
-                << southEast << QCoordinate::DegreesMinutesWithHemisphere
+                << southEast << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' S, 153%1 1.674' E").arg(DEGREES_SYMB);
         QTest::newRow("SE, dms, no hemisphere")
-                << southEast << QCoordinate::DegreesMinutesSeconds
+                << southEast << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("-27%1 28' 3.3\", 153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("SE, dms, hemisphere")
-                << southEast << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << southEast << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("NW, dd, no hemisphere")
-                << northWest << QCoordinate::DecimalDegrees
+                << northWest << QGeoCoordinate::DecimalDegrees
                 << QString("27.46758%1, -153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("NW, dd, hemisphere")
-                << northWest << QCoordinate::DecimalDegreesWithHemisphere
+                << northWest << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 W").arg(DEGREES_SYMB);
         QTest::newRow("NW, dm, no hemisphere")
-                << northWest << QCoordinate::DegreesMinutes
+                << northWest << QGeoCoordinate::DegreesMinutes
                 << QString("27%1 28.055', -153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("NW, dm, hemisphere")
-                << northWest << QCoordinate::DegreesMinutesWithHemisphere
+                << northWest << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' N, 153%1 1.674' W").arg(DEGREES_SYMB);
         QTest::newRow("NW, dms, no hemisphere")
-                << northWest << QCoordinate::DegreesMinutesSeconds
+                << northWest << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("27%1 28' 3.3\", -153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("NW, dms, hemisphere")
-                << northWest << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << northWest << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" W").arg(DEGREES_SYMB);
 
         QTest::newRow("SW, dd, no hemisphere")
-                << southWest << QCoordinate::DecimalDegrees
+                << southWest << QGeoCoordinate::DecimalDegrees
                 << QString("-27.46758%1, -153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("SW, dd, hemisphere")
-                << southWest << QCoordinate::DecimalDegreesWithHemisphere
+                << southWest << QGeoCoordinate::DecimalDegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 W").arg(DEGREES_SYMB);
         QTest::newRow("SW, dm, no hemisphere")
-                << southWest << QCoordinate::DegreesMinutes
+                << southWest << QGeoCoordinate::DegreesMinutes
                 << QString("-27%1 28.055', -153%1 1.674'").arg(DEGREES_SYMB);
         QTest::newRow("SW, dm, hemisphere")
-                << southWest << QCoordinate::DegreesMinutesWithHemisphere
+                << southWest << QGeoCoordinate::DegreesMinutesWithHemisphere
                 << QString("27%1 28.055' S, 153%1 1.674' W").arg(DEGREES_SYMB);
         QTest::newRow("SW, dms, no hemisphere")
-                << southWest << QCoordinate::DegreesMinutesSeconds
+                << southWest << QGeoCoordinate::DegreesMinutesSeconds
                 << QString("-27%1 28' 3.3\", -153%1 1' 40.4\"").arg(DEGREES_SYMB);
         QTest::newRow("SW, dms, hemisphere")
-                << southWest << QCoordinate::DegreesMinutesSecondsWithHemisphere
+                << southWest << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" W").arg(DEGREES_SYMB);
     }
 
     void degreesToString()
     {
-        QFETCH(QCoordinate, coord);
-        QFETCH(QCoordinate::CoordinateFormat, format);
+        QFETCH(QGeoCoordinate, coord);
+        QFETCH(QGeoCoordinate::CoordinateFormat, format);
         QFETCH(QString, string);
 
         QCOMPARE(coord.toString(format), string);
@@ -344,28 +344,28 @@ private slots:
 
     void datastream()
     {
-        QFETCH(QCoordinate, coord);
+        QFETCH(QGeoCoordinate, coord);
         
         QByteArray ba;
         QDataStream out(&ba, QIODevice::WriteOnly);
         out << coord;
 
         QDataStream in(&ba, QIODevice::ReadOnly);
-        QCoordinate inCoord;
+        QGeoCoordinate inCoord;
         in >> inCoord;
         QCOMPARE(inCoord, coord);
     }
 
     void datastream_data()
     {
-        QTest::addColumn<QCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate>("coord");
 
-        QTest::newRow("invalid") << QCoordinate();
+        QTest::newRow("invalid") << QGeoCoordinate();
         QTest::newRow("valid lat, long") << BRISBANE;
-        QTest::newRow("valid lat, long, alt") << QCoordinate(-1, -1, -1);
-        QTest::newRow("valid lat, long, alt again") << QCoordinate(1, 1, 1);
+        QTest::newRow("valid lat, long, alt") << QGeoCoordinate(-1, -1, -1);
+        QTest::newRow("valid lat, long, alt again") << QGeoCoordinate(1, 1, 1);
     }
 };
 
-QTEST_MAIN(tst_QCoordinate)
-#include "tst_qcoordinate.moc"
+QTEST_MAIN(tst_QGeoCoordinate)
+#include "tst_qgeocoordinate.moc"

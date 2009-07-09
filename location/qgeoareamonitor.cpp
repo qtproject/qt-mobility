@@ -30,13 +30,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qpositionareamonitor.h"
+#include "qgeoareamonitor.h"
 
 /*!
-    \class QPositionAreaMonitor
-    \brief The QPositionAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
+    \class QGeoAreaMonitor
+    \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
 
-    A QPositionAreaMonitor emits signals when the current position is in
+    A QGeoAreaMonitor emits signals when the current position is in
     range, or has moved out of range, of a specified area.
 
     For example:
@@ -45,23 +45,23 @@
         public:
             MyClass::MyClass()
             {
-                QPositionAreaMonitor *monitor = QPositionAreaMonitor::createMonitor();
-                connect(monitor, SIGNAL(areaEntered(QPositionUpdate)),
-                        this, SLOT(areaEntered(QPositionUpdate)));
-                connect(monitor, SIGNAL(areaExited(QPositionUpdate)),
-                        this, SLOT(areaExited(QPositionUpdate)));
+                QGeoAreaMonitor *monitor = QGeoAreaMonitor::createMonitor();
+                connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
+                        this, SLOT(areaEntered(QGeoPositionInfo)));
+                connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
+                        this, SLOT(areaExited(QGeoPositionInfo)));
 
-                QCoordinate bigBenLocation(51.50104, -0.124632);
+                QGeoCoordinate bigBenLocation(51.50104, -0.124632);
                 monitor->setMonitoredArea(bigBenLocation, 100);
             }
 
         public slots:
-            void areaEntered(const QPositionUpdate &update)
+            void areaEntered(const QGeoPositionInfo &update)
             {
                 qDebug() << "Now within 100 meters, current position is" << update.coordinate();
             }
 
-            void areaExited(const QPositionUpdate &update)
+            void areaExited(const QGeoPositionInfo &update)
             {
                 qDebug() << "No longer within 100 meters, current position is" << update.coordinate();
             }
@@ -69,10 +69,10 @@
 */
 
 
-class QPositionAreaMonitorPrivate
+class QGeoAreaMonitorPrivate
 {
 public:
-    QCoordinate coord;
+    QGeoCoordinate coord;
     int radius;
 };
 
@@ -80,9 +80,9 @@ public:
 /*!
     Creates a monitor with the given \a parent.
 */
-QPositionAreaMonitor::QPositionAreaMonitor(QObject *parent)
+QGeoAreaMonitor::QGeoAreaMonitor(QObject *parent)
     : QObject(parent),
-      d(new QPositionAreaMonitorPrivate)
+      d(new QGeoAreaMonitorPrivate)
 {
     d->radius = 0;
 }
@@ -90,7 +90,7 @@ QPositionAreaMonitor::QPositionAreaMonitor(QObject *parent)
 /*!
     Destroys the monitor.
 */
-QPositionAreaMonitor::~QPositionAreaMonitor()
+QGeoAreaMonitor::~QGeoAreaMonitor()
 {
 }
 
@@ -106,7 +106,7 @@ QPositionAreaMonitor::~QPositionAreaMonitor()
     values.
 */
 
-void QPositionAreaMonitor::setMonitoredArea(const QCoordinate &coordinate, int radius)
+void QGeoAreaMonitor::setMonitoredArea(const QGeoCoordinate &coordinate, int radius)
 {
     d->coord = coordinate;
     d->radius = radius;
@@ -116,7 +116,7 @@ void QPositionAreaMonitor::setMonitoredArea(const QCoordinate &coordinate, int r
     Returns the coordinate set with setMonitoredArea(), or an invalid
     coordinate if no area has been set.
 */
-QCoordinate QPositionAreaMonitor::coordinate() const
+QGeoCoordinate QGeoAreaMonitor::coordinate() const
 {
     return d->coord;
 }
@@ -125,7 +125,7 @@ QCoordinate QPositionAreaMonitor::coordinate() const
     Returns the radius set with setMonitoredArea(), or 0 if no area
     has been set.
 */
-int QPositionAreaMonitor::radius() const
+int QGeoAreaMonitor::radius() const
 {
     return d->radius;
 }
@@ -136,13 +136,13 @@ int QPositionAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QPositionAreaMonitor *QPositionAreaMonitor::createMonitor(QObject *parent)
+QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(QObject *parent)
 {
     return 0;
 }
 
 /*!
-    \fn void QPositionAreaMonitor::areaEntered(const QPositionUpdate &update);
+    \fn void QGeoAreaMonitor::areaEntered(const QGeoPositionInfo &update);
 
     Emitted when the current position has moved from a position outside the
     monitored area to a position within the monitored area.
@@ -151,7 +151,7 @@ QPositionAreaMonitor *QPositionAreaMonitor::createMonitor(QObject *parent)
 */
 
 /*!
-    \fn void QPositionAreaMonitor::areaExited(const QPositionUpdate &update);
+    \fn void QGeoAreaMonitor::areaExited(const QGeoPositionInfo &update);
 
     Emitted when the current position has moved from a position within the
     monitored area to a position outside the monitored area.

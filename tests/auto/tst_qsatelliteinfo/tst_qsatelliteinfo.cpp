@@ -48,7 +48,7 @@ private:
     QSatelliteInfo updateWithProperty(QSatelliteInfo::Property property, qreal value)
     {
         QSatelliteInfo info;
-        info.setDoubleProperty(property, value);
+        info.setProperty(property, value);
         return info;
     }
 
@@ -138,7 +138,7 @@ private slots:
         QTest::newRow("100000") << 100000;
     }
 
-    void setDoubleProperty()
+    void setProperty()
     {
         QFETCH(QSatelliteInfo::Property, property);
         QFETCH(qreal, value);
@@ -146,22 +146,22 @@ private slots:
         QSatelliteInfo u;
 
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
 
         u.removeProperty(property);
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
 
-        u.setDoubleProperty(property, value);
+        u.setProperty(property, value);
         QVERIFY(u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), value);
+        QCOMPARE(u.property(property), value);
 
         u.removeProperty(property);
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
     }
 
-    void setDoubleProperty_data()
+    void setProperty_data()
     {
         QTest::addColumn<QSatelliteInfo::Property>("property");
         QTest::addColumn<qreal>("value");

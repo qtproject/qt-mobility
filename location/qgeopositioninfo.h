@@ -30,23 +30,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QPOSITIONUPDATE_H
-#define QPOSITIONUPDATE_H
+#ifndef QGEOPOSITIONINFO_H
+#define QGEOPOSITIONINFO_H
 
 #include "qlocationglobal.h"
-#include "qcoordinate.h"
+#include "qgeocoordinate.h"
 
 #include <QDateTime>
 
 class QDebug;
 class QDataStream;
-class QPositionUpdatePrivate;
+class QGeoPositionInfoPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QPositionUpdate
+class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:
     enum Property {
@@ -58,48 +58,48 @@ public:
         VerticalAccuracy
     };
 
-    QPositionUpdate();
-    QPositionUpdate(const QCoordinate &coordinate, const QDateTime &updateTime);
-    QPositionUpdate(const QPositionUpdate &other);
-    ~QPositionUpdate();
+    QGeoPositionInfo();
+    QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime);
+    QGeoPositionInfo(const QGeoPositionInfo &other);
+    ~QGeoPositionInfo();
 
-    QPositionUpdate &operator=(const QPositionUpdate &other);
+    QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
 
-    bool operator==(const QPositionUpdate &other) const;
-    inline bool operator!=(const QPositionUpdate &other) const { return !operator==(other); }
+    bool operator==(const QGeoPositionInfo &other) const;
+    inline bool operator!=(const QGeoPositionInfo &other) const { return !operator==(other); }
 
     bool isValid() const;
 
     void setUpdateTime(const QDateTime &updateTime);
     QDateTime updateTime() const;
 
-    void setCoordinate(const QCoordinate &coordinate);
-    QCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    QGeoCoordinate coordinate() const;
 
-    void setDoubleProperty(Property property, qreal value);
-    qreal doubleProperty(Property property) const;
+    void setProperty(Property property, qreal value);
+    qreal property(Property property) const;
     void removeProperty(Property property);
 
     bool hasProperty(Property property) const;
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QPositionUpdate &update);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update);
-    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
 #endif
-    QPositionUpdatePrivate *d;
+    QGeoPositionInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QPositionUpdate &update);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QPositionUpdate &update);
-Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QPositionUpdate &update);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
 #endif
 
 QT_END_NAMESPACE

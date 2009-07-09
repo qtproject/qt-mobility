@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "../../../location/qlocationutils_p.h"
-#include "qpositionupdate.h"
+#include "qgeopositioninfo.h"
 
 #include <QDebug>
 #include <QTest>
@@ -39,15 +39,15 @@
 
 #include <math.h>
 
-Q_DECLARE_METATYPE(QPositionUpdate)
-Q_DECLARE_METATYPE(QCoordinate)
+Q_DECLARE_METATYPE(QGeoPositionInfo)
+Q_DECLARE_METATYPE(QGeoCoordinate)
 
 namespace QTest {
     template<>
-    char *toString(const QPositionUpdate &update)
+    char *toString(const QGeoPositionInfo &update)
     {
         QByteArray bytes;
-        bytes += "QPositionUpdate(" + update.updateTime().toString();
+        bytes += "QGeoPositionInfo(" + update.updateTime().toString();
         bytes += ", ";
         bytes += update.coordinate().toString();
         bytes += ')';
@@ -84,11 +84,11 @@ private slots:
     void getUpdateFromNmea()
     {
         QFETCH(QString, nmea);
-        QFETCH(QPositionUpdate, expectedUpdate);
+        QFETCH(QGeoPositionInfo, expectedUpdate);
         QFETCH(bool, expectedHasFix);
         QFETCH(bool, expectedResult);
 
-        QPositionUpdate update;
+        QGeoPositionInfo update;
         bool hasFix;
         bool b = QLocationUtils::getUpdateFromNmea(nmea.toAscii(), nmea.length(), &update, &hasFix);
         QCOMPARE(b, expectedResult);
@@ -99,11 +99,11 @@ private slots:
     void getUpdateFromNmea_data()
     {
         QTest::addColumn<QString>("nmea");
-        QTest::addColumn<QPositionUpdate>("expectedUpdate");
+        QTest::addColumn<QGeoPositionInfo>("expectedUpdate");
         QTest::addColumn<bool>("expectedHasFix");
         QTest::addColumn<bool>("expectedResult");
 
-        QTest::newRow("empty") << QString() << QPositionUpdate() << false << false;
+        QTest::newRow("empty") << QString() << QGeoPositionInfo() << false << false;
 
         // must use exact double values or comparisons fail
         double lat = nmeaDegreesToDecimal(2734.7964); 
@@ -112,7 +112,7 @@ private slots:
         QList<double> dblValues;
         dblValues << -1.534 << -1.0 << 0.0 << 0.12123 << 3.23 << 123124.11;
 
-        QPositionUpdate update;
+        QGeoPositionInfo update;
 
         // all types
         QList<QString> types;
@@ -120,117 +120,117 @@ private slots:
         for (int i=0; i<types.count(); i++) {
             // the sentence type is valid even if it is empty so the method still returns true
             QTest::newRow(qPrintable(types[i])) << addChecksumEtc(types[i])
-                    << QPositionUpdate() << false << true;
+                    << QGeoPositionInfo() << false << true;
         }
 
         // bad type
-        QTest::newRow("unknown type") << addChecksumEtc("$GPZZZ*") << QPositionUpdate() << false << false;
+        QTest::newRow("unknown type") << addChecksumEtc("$GPZZZ*") << QGeoPositionInfo() << false << false;
 
         // --GGA:
 
         QTest::newRow("GGA-time") << addChecksumEtc("$GPGGA,060613.626,,,,,,,,,,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
                 << false << true;
 
         QTest::newRow("GGA-lat/long") << addChecksumEtc("$GPGGA,,2734.7964,S,15306.0124,E,,,,,,,,,*")
-                << QPositionUpdate(QCoordinate(-lat, lng), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime())
                 << false << true;
 
         QTest::newRow("GGA-lat/long/alt") << addChecksumEtc("$GPGGA,,2734.7964,S,15306.0124,E,,,,26.8,,,,,*")
-                << QPositionUpdate(QCoordinate(-lat, lng, 26.8), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng, 26.8), QDateTime())
                 << false << true;
     
         QTest::newRow("GGA alt but no lat/long") << addChecksumEtc("$GPGGA,,,,,,,,,26.8,,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
         for (int i=-1; i<10; i++) {
             bool hasFix = i > 0;
             QTest::newRow("GGA-fix") << addChecksumEtc(QString("$GPGGA,,,,,,%1,,,,,,,,*").arg(i))
-                    << QPositionUpdate(QCoordinate(), QDateTime())
+                    << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                     << hasFix << true;
         }
 
         QTest::newRow("GGA-all") << addChecksumEtc("$GPGGA,060613.626,2734.7964,S,15306.0124,E,1,03,2.9,-26.8,M,36.8,M,1,0000*")
-                << QPositionUpdate(QCoordinate(-lat, lng, -26.8), QDateTime(QDate(), QTime(6,6,13,626)))
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng, -26.8), QDateTime(QDate(), QTime(6,6,13,626)))
                 << true << true;
 
 
         // --GLL:
 
         QTest::newRow("GLL-lat/long") << addChecksumEtc("$GPGLL,2734.7964,S,15306.0124,E,,,*")
-                << QPositionUpdate(QCoordinate(-lat, lng), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime())
                 << false << true;
 
         QTest::newRow("GLL-time") << addChecksumEtc("$GPGLL,,,,,060613.626,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
                 << false << true;
 
         QTest::newRow("GLL-fix-ok") << addChecksumEtc("$GPGLL,,,,,,A,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << true << true;
 
         QTest::newRow("GLL-fix-bad") << addChecksumEtc("$GPGLL,,,,,,V,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
         QTest::newRow("GLL-all") << addChecksumEtc("$GGGLL,2734.7964,S,15306.0124,E,220125.999,A,,*")
-                << QPositionUpdate(QCoordinate(-lat, lng), QDateTime(QDate(), QTime(22,1,25,999)))
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime(QDate(), QTime(22,1,25,999)))
                 << true << true;
 
                 
         // --RMC:
 
         QTest::newRow("RMC-time") << addChecksumEtc("$GPRMC,060613.626,,,,,,,,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(), QTime(6, 6, 13, 626)))
                 << false << true;
         
         QTest::newRow("RMC-fix-ok") << addChecksumEtc("$GPRMC,,A,,,,,,,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << true << true;
 
         QTest::newRow("RMC-fix-bad") << addChecksumEtc("$GPRMC,,V,,,,,,,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
         QTest::newRow("RMC-lat/long") << addChecksumEtc("$GPRMC,,,2734.7964,S,15306.0124,E,,,,,*")
-                << QPositionUpdate(QCoordinate(-lat, lng), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime())
                 << false << true;
 
         for (int i=0; i<dblValues.count(); i++) {
-            update = QPositionUpdate();
-            update.setDoubleProperty(QPositionUpdate::Heading, dblValues[i]);
+            update = QGeoPositionInfo();
+            update.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
             QTest::newRow(qPrintable(QString("RMC-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,,%1,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << update << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
-            update = QPositionUpdate();
-            update.setDoubleProperty(QPositionUpdate::GroundSpeed, dblValues[i] * 1.852 / 3.6);
+            update = QGeoPositionInfo();
+            update.setProperty(QGeoPositionInfo::GroundSpeed, dblValues[i] * 1.852 / 3.6);
             QTest::newRow(qPrintable(QString("RMC-speed %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,%1,,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << update << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
-            update = QPositionUpdate();
-            update.setDoubleProperty(QPositionUpdate::MagneticVariation, dblValues[i]);
+            update = QGeoPositionInfo();
+            update.setProperty(QGeoPositionInfo::MagneticVariation, dblValues[i]);
             char direction = dblValues[i] > 0 ? 'E' : 'W';
             QTest::newRow(qPrintable(QString("RMC-magVar %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,,,,%1,%2,*").arg(qAbs(dblValues[i]), 0, 'g', 10).arg(direction)) 
                     << update << false << true;
         }
 
         QTest::newRow("RMC-date") << addChecksumEtc("$GPRMC,,,,,,,,,010520,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(2020,5,1), QTime(), Qt::UTC))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(2020,5,1), QTime(), Qt::UTC))
                 << false << true;
 
         QTest::newRow("RMC-date bad format") << addChecksumEtc("$GPRMC,,,,,,,,,10520,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
-        update = QPositionUpdate(QCoordinate(-lat, lng), QDateTime(QDate(2008,4,3), QTime(22,1,25,999), Qt::UTC));
-        update.setDoubleProperty(QPositionUpdate::GroundSpeed, 8.9 * 1.852 / 3.6);
-        update.setDoubleProperty(QPositionUpdate::Heading, 47.6);
-        update.setDoubleProperty(QPositionUpdate::MagneticVariation, -11.2);
+        update = QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime(QDate(2008,4,3), QTime(22,1,25,999), Qt::UTC));
+        update.setProperty(QGeoPositionInfo::GroundSpeed, 8.9 * 1.852 / 3.6);
+        update.setProperty(QGeoPositionInfo::Heading, 47.6);
+        update.setProperty(QGeoPositionInfo::MagneticVariation, -11.2);
         QTest::newRow("RMC-all") << addChecksumEtc("$GPRMC,220125.999,A,2734.7964,S,15306.0124,E,8.9,47.6,030408,11.2,W,A*")
                 << update
                 << true << true;
@@ -238,22 +238,22 @@ private slots:
         // -- VTG:
 
         for (int i=0; i<dblValues.count(); i++) {
-            update = QPositionUpdate();
-            update.setDoubleProperty(QPositionUpdate::Heading, dblValues[i]);
+            update = QGeoPositionInfo();
+            update.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
             QTest::newRow(qPrintable(QString("VTG-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPVTG,%1,,,,,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << update << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
-            update = QPositionUpdate();
-            update.setDoubleProperty(QPositionUpdate::GroundSpeed, dblValues[i] / 3.6);
+            update = QGeoPositionInfo();
+            update.setProperty(QGeoPositionInfo::GroundSpeed, dblValues[i] / 3.6);
             QTest::newRow(qPrintable(QString("VTG-speed %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPVTG,,,,,,,%1,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << update << false << true;
         }
 
-        update = QPositionUpdate();
-        update.setDoubleProperty(QPositionUpdate::Heading, 158.7);
-        update.setDoubleProperty(QPositionUpdate::GroundSpeed, 61.5 / 3.6);
+        update = QGeoPositionInfo();
+        update.setProperty(QGeoPositionInfo::Heading, 158.7);
+        update.setProperty(QGeoPositionInfo::GroundSpeed, 61.5 / 3.6);
         QTest::newRow("VTG-all") << addChecksumEtc("$GPVTG,158.7,T,169.9,M,33.2,N,61.5,K,A*")
                 << update
                 << false << true;
@@ -261,32 +261,32 @@ private slots:
         // ZDA:
 
         QTest::newRow("ZDA-time") << addChecksumEtc("$GPZDA,152333.4,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(), QTime(15,23,33, 4), Qt::UTC))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(), QTime(15,23,33, 4), Qt::UTC))
                 << false << true;
 
         QTest::newRow("ZDA-date day only") << addChecksumEtc("$GPZDA,,1,,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
         QTest::newRow("ZDA-date month only") << addChecksumEtc("$GPZDA,,,12,,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
         
         QTest::newRow("ZDA-date bad year only") << addChecksumEtc("$GPZDA,,,,2005,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime())
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime())
                 << false << true;
 
         QTest::newRow("ZDA-date") << addChecksumEtc("$GPZDA,,1,12,2005,,*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(2005,12,1), QTime(), Qt::UTC))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(2005,12,1), QTime(), Qt::UTC))
                 << false << true;
 
         QTest::newRow("ZDA-all") << addChecksumEtc("$GPZDA,052953.05,03,04,2008,00,00*")
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(2008, 4, 3), QTime(5, 29, 53, 5), Qt::UTC))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(2008, 4, 3), QTime(5, 29, 53, 5), Qt::UTC))
                 << false << true;
 
         // test if multiple sentences are passed in, only first is parsed
         QTest::newRow("multiple") << (addChecksumEtc("$GPZDA,052953.05,03,04,2008,00,00*") + addChecksumEtc("$GPVTG,158.7,T,169.9,M,33.2,N,61.5,K,A*"))
-                << QPositionUpdate(QCoordinate(), QDateTime(QDate(2008, 4, 3), QTime(5, 29, 53, 5), Qt::UTC))
+                << QGeoPositionInfo(QGeoCoordinate(), QDateTime(QDate(2008, 4, 3), QTime(5, 29, 53, 5), Qt::UTC))
                 << false << true;
     }
 

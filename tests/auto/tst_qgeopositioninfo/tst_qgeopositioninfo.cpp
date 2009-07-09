@@ -30,51 +30,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qpositionupdate.h>
+#include <qgeopositioninfo.h>
 
 #include <QMetaType>
 #include <QObject>
 #include <QDebug>
 #include <QTest>
 
-Q_DECLARE_METATYPE(QCoordinate)
-Q_DECLARE_METATYPE(QPositionUpdate)
-Q_DECLARE_METATYPE(QPositionUpdate::Property)
+Q_DECLARE_METATYPE(QGeoCoordinate)
+Q_DECLARE_METATYPE(QGeoPositionInfo)
+Q_DECLARE_METATYPE(QGeoPositionInfo::Property)
 
-class tst_QPositionUpdate : public QObject
+class tst_QGeoPositionInfo : public QObject
 {
     Q_OBJECT
 
 private:
-    QPositionUpdate updateWithProperty(QPositionUpdate::Property property, qreal value)
+    QGeoPositionInfo updateWithProperty(QGeoPositionInfo::Property property, qreal value)
     {
-        QPositionUpdate u;
-        u.setDoubleProperty(property, value);
+        QGeoPositionInfo u;
+        u.setProperty(property, value);
         return u;
     }
 
     void addTestData_update()
     {
-        QTest::addColumn<QPositionUpdate>("u");
+        QTest::addColumn<QGeoPositionInfo>("u");
 
         QDateTime dt = QDateTime::currentDateTime();
 
-        QTest::newRow("coord") << QPositionUpdate(QCoordinate(1,1,1), QDateTime());
-        QTest::newRow("datetime") << QPositionUpdate(QCoordinate(), dt);
+        QTest::newRow("coord") << QGeoPositionInfo(QGeoCoordinate(1,1,1), QDateTime());
+        QTest::newRow("datetime") << QGeoPositionInfo(QGeoCoordinate(), dt);
 
-        QTest::newRow("Heading") << updateWithProperty(QPositionUpdate::Heading, 0.0);
-        QTest::newRow("GroundSpeed") << updateWithProperty(QPositionUpdate::GroundSpeed, 0.0);
-        QTest::newRow("VerticalSpeed") << updateWithProperty(QPositionUpdate::VerticalSpeed, 0.0);
-        QTest::newRow("MagneticVariation") << updateWithProperty(QPositionUpdate::MagneticVariation, 0.0);
-        QTest::newRow("HorizontalAccuracy") << updateWithProperty(QPositionUpdate::HorizontalAccuracy, 0.0);
-        QTest::newRow("VerticalAccuracy") << updateWithProperty(QPositionUpdate::VerticalAccuracy, 0.0);
+        QTest::newRow("Heading") << updateWithProperty(QGeoPositionInfo::Heading, 0.0);
+        QTest::newRow("GroundSpeed") << updateWithProperty(QGeoPositionInfo::GroundSpeed, 0.0);
+        QTest::newRow("VerticalSpeed") << updateWithProperty(QGeoPositionInfo::VerticalSpeed, 0.0);
+        QTest::newRow("MagneticVariation") << updateWithProperty(QGeoPositionInfo::MagneticVariation, 0.0);
+        QTest::newRow("HorizontalAccuracy") << updateWithProperty(QGeoPositionInfo::HorizontalAccuracy, 0.0);
+        QTest::newRow("VerticalAccuracy") << updateWithProperty(QGeoPositionInfo::VerticalAccuracy, 0.0);
 
     }
 
 private slots:
     void isValid()
     {
-        QPositionUpdate u;
+        QGeoPositionInfo u;
         QVERIFY(!u.isValid());
         QVERIFY(!u.coordinate().isValid());
         QVERIFY(u.updateTime().isNull());
@@ -82,30 +82,30 @@ private slots:
 
     void constructor_coord_dateTime()
     {
-        QFETCH(QCoordinate, coord);
+        QFETCH(QGeoCoordinate, coord);
         QFETCH(QDateTime, dateTime);
 
-        QPositionUpdate u(coord, dateTime);
+        QGeoPositionInfo u(coord, dateTime);
         QCOMPARE(u.coordinate(), coord);
         QCOMPARE(u.updateTime(), dateTime);
     }
 
     void constructor_coord_dateTime_data()
     {
-        QTest::addColumn<QCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate>("coord");
         QTest::addColumn<QDateTime>("dateTime");
 
-        QTest::newRow("both null") << QCoordinate() << QDateTime();
-        QTest::newRow("both valid") << QCoordinate(1,1) << QDateTime::currentDateTime();
-        QTest::newRow("valid coord") << QCoordinate(1,1) << QDateTime();
-        QTest::newRow("valid datetime") << QCoordinate() << QDateTime::currentDateTime();
+        QTest::newRow("both null") << QGeoCoordinate() << QDateTime();
+        QTest::newRow("both valid") << QGeoCoordinate(1,1) << QDateTime::currentDateTime();
+        QTest::newRow("valid coord") << QGeoCoordinate(1,1) << QDateTime();
+        QTest::newRow("valid datetime") << QGeoCoordinate() << QDateTime::currentDateTime();
     }
 
     void constructor_copy()
     {
-        QFETCH(QPositionUpdate, u);
+        QFETCH(QGeoPositionInfo, u);
 
-        QCOMPARE(QPositionUpdate(u), u);
+        QCOMPARE(QGeoPositionInfo(u), u);
     }
 
     void constructor_copy_data()
@@ -115,14 +115,14 @@ private slots:
 
     void operator_comparison()
     {
-        QFETCH(QPositionUpdate, u);
+        QFETCH(QGeoPositionInfo, u);
 
         QVERIFY(u == u); 
         QCOMPARE(u != u, false); 
-        QCOMPARE(u == QPositionUpdate(), false);
-        QCOMPARE(u != QPositionUpdate(), true);
+        QCOMPARE(u == QGeoPositionInfo(), false);
+        QCOMPARE(u != QGeoPositionInfo(), true);
 
-        QVERIFY(QPositionUpdate() == QPositionUpdate());
+        QVERIFY(QGeoPositionInfo() == QGeoPositionInfo());
     }
 
     void operator_comparison_data()
@@ -134,7 +134,7 @@ private slots:
     {
         QFETCH(QDateTime, dateTime);
 
-        QPositionUpdate u;
+        QGeoPositionInfo u;
         u.setUpdateTime(dateTime);
         QCOMPARE(u.updateTime(), dateTime);
     }
@@ -148,63 +148,63 @@ private slots:
 
     void updateTime()
     {
-        QPositionUpdate u;
+        QGeoPositionInfo u;
         QVERIFY(u.updateTime().isNull());
     }
 
     void setCoordinate()
     {
 
-        QFETCH(QCoordinate, coord);
+        QFETCH(QGeoCoordinate, coord);
 
-        QPositionUpdate u;
+        QGeoPositionInfo u;
         u.setCoordinate(coord);
         QCOMPARE(u.coordinate(), coord);
     }
 
     void setCoordinate_data()
     {
-        QTest::addColumn<QCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate>("coord");
 
-        QTest::newRow("invalid") << QCoordinate();
-        QTest::newRow("valid") << QCoordinate(30,30);
+        QTest::newRow("invalid") << QGeoCoordinate();
+        QTest::newRow("valid") << QGeoCoordinate(30,30);
     }
 
-    void setDoubleProperty()
+    void setProperty()
     {
-        QFETCH(QPositionUpdate::Property, property);
+        QFETCH(QGeoPositionInfo::Property, property);
         QFETCH(qreal, value);
 
-        QPositionUpdate u;
+        QGeoPositionInfo u;
         
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
 
         u.removeProperty(property);
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
 
-        u.setDoubleProperty(property, value);
+        u.setProperty(property, value);
         QVERIFY(u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), value);
+        QCOMPARE(u.property(property), value);
 
         u.removeProperty(property);
         QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.doubleProperty(property), qreal(-1.0));
+        QCOMPARE(u.property(property), qreal(-1.0));
     }
 
-    void setDoubleProperty_data()
+    void setProperty_data()
     {
-        QTest::addColumn<QPositionUpdate::Property>("property");
+        QTest::addColumn<QGeoPositionInfo::Property>("property");
         QTest::addColumn<qreal>("value");
 
-        QList<QPositionUpdate::Property> props;
-        props << QPositionUpdate::Heading
-              << QPositionUpdate::GroundSpeed
-              << QPositionUpdate::VerticalSpeed
-              << QPositionUpdate::MagneticVariation
-              << QPositionUpdate::HorizontalAccuracy
-              << QPositionUpdate::VerticalSpeed;
+        QList<QGeoPositionInfo::Property> props;
+        props << QGeoPositionInfo::Heading
+              << QGeoPositionInfo::GroundSpeed
+              << QGeoPositionInfo::VerticalSpeed
+              << QGeoPositionInfo::MagneticVariation
+              << QGeoPositionInfo::HorizontalAccuracy
+              << QGeoPositionInfo::VerticalSpeed;
         for (int i=0; i<props.count(); i++) {
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(-1.0);
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(0.0);
@@ -214,14 +214,14 @@ private slots:
 
     void datastream()
     {
-        QFETCH(QPositionUpdate, u);
+        QFETCH(QGeoPositionInfo, u);
 
         QByteArray ba;
         QDataStream out(&ba, QIODevice::WriteOnly);
         out << u;
 
         QDataStream in(&ba, QIODevice::ReadOnly);
-        QPositionUpdate inUpdate;
+        QGeoPositionInfo inUpdate;
         in >> inUpdate;
         QCOMPARE(inUpdate, u);
     }
@@ -233,5 +233,5 @@ private slots:
 };
 
 
-QTEST_MAIN(tst_QPositionUpdate)
-#include "tst_qpositionupdate.moc"
+QTEST_MAIN(tst_QGeoPositionInfo)
+#include "tst_qgeopositioninfo.moc"

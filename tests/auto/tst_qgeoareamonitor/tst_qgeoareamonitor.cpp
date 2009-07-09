@@ -30,30 +30,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qpositionareamonitor.h>
+#include <qgeoareamonitor.h>
 
 #include <QTest>
 #include <QMetaType>
 
 #include <limits.h>
 
-Q_DECLARE_METATYPE(QCoordinate)
+Q_DECLARE_METATYPE(QGeoCoordinate)
 
-class MyPositionAreaMonitor : public QPositionAreaMonitor
+class MyPositionAreaMonitor : public QGeoAreaMonitor
 {
     Q_OBJECT
 public:
     ~MyPositionAreaMonitor() {}
 };
 
-class tst_QPositionAreaMonitor : public QObject
+class tst_QGeoAreaMonitor : public QObject
 {
     Q_OBJECT
 
 private slots:
     void setMonitoredArea()
     {
-        QFETCH(QCoordinate, coord);
+        QFETCH(QGeoCoordinate, coord);
         QFETCH(int, radius);
 
         MyPositionAreaMonitor mon;
@@ -64,23 +64,23 @@ private slots:
 
     void setMonitoredArea_data()
     {
-        QTest::addColumn<QCoordinate>("coord");
+        QTest::addColumn<QGeoCoordinate>("coord");
         QTest::addColumn<int>("radius");
 
         QList<int> radii = QList<int>() << INT_MIN << -1 << 0 << 1 << INT_MAX;
         for (int i=0; i<radii.count(); i++) {
             QTest::newRow(qPrintable(QString("null coord, radius %1").arg(radii[i])))
-                    << QCoordinate() << radii[i];
+                    << QGeoCoordinate() << radii[i];
         }
 
-        QTest::newRow("valid coord, 0 radius") << QCoordinate(1, 1, 1) << 0;
-        QTest::newRow("invalid coord, 0 radius") << QCoordinate(-200, 1, 1) << 0;
+        QTest::newRow("valid coord, 0 radius") << QGeoCoordinate(1, 1, 1) << 0;
+        QTest::newRow("invalid coord, 0 radius") << QGeoCoordinate(-200, 1, 1) << 0;
     }
 
     void coordinate()
     {
         MyPositionAreaMonitor mon;
-        QCOMPARE(mon.coordinate(), QCoordinate());
+        QCOMPARE(mon.coordinate(), QGeoCoordinate());
     }
 
     void radius()
@@ -91,10 +91,10 @@ private slots:
 
     void createMonitor()
     {
-        QVERIFY(QPositionAreaMonitor::createMonitor() == 0);
+        QVERIFY(QGeoAreaMonitor::createMonitor() == 0);
     }
 };
 
 
-QTEST_MAIN(tst_QPositionAreaMonitor)
-#include "tst_qpositionareamonitor.moc"
+QTEST_MAIN(tst_QGeoAreaMonitor)
+#include "tst_qgeoareamonitor.moc"

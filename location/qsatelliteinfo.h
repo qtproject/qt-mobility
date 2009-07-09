@@ -65,8 +65,8 @@ public:
     void setSignalStrength(int signalStrength);
     int signalStrength() const;
 
-    void setDoubleProperty(Property property, qreal value);
-    qreal doubleProperty(Property property) const;
+    void setProperty(Property property, qreal value);
+    qreal property(Property property) const;
     void removeProperty(Property property);
 
     bool hasProperty(Property property) const;

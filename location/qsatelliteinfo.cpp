@@ -159,7 +159,7 @@ int QSatelliteInfo::signalStrength() const
 /*!
     Sets the value for \a property to \a value.
 */
-void QSatelliteInfo::setDoubleProperty(Property property, qreal value)
+void QSatelliteInfo::setProperty(Property property, qreal value)
 {
     d->doubleProps[int(property)] = value;
 }
@@ -169,9 +169,9 @@ void QSatelliteInfo::setDoubleProperty(Property property, qreal value)
 
     Returns -1 if the value has not been set.
 
-    \sa hasProperty(), setDoubleProperty()
+    \sa hasProperty(), setProperty()
 */
-qreal QSatelliteInfo::doubleProperty(Property property) const
+qreal QSatelliteInfo::property(Property property) const
 {
     if (d->doubleProps.contains(int(property)))
         return d->doubleProps[int(property)];

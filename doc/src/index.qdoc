@@ -21,10 +21,10 @@ To build the library, run \tt qmake and \tt make.
 \section2 Main classes
 
 \list
-    \o \l{QCoordinate}
-    \o \l{QPositionAreaMonitor}
-    \o \l{QPositionSource}
-    \o \l{QPositionUpdate}
+    \o \l{QGeoCoordinate}
+    \o \l{QGeoAreaMonitor}
+    \o \l{QGeoPositionInfoSource}
+    \o \l{QGeoPositionInfo}
     \o \l{QSatelliteInfoSource}
     \o \l{QSatelliteInfo}
 \endlist

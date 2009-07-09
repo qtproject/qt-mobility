@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qcoordinate.h"
+#include "qgeocoordinate.h"
 
 #include <QDateTime>
 #include <QHash>
@@ -46,13 +46,13 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-static const double qcoordinate_EARTH_MEAN_RADIUS = 6371.0072;
+static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
-inline static double qcoordinate_degToRad(double deg) { return deg * M_PI / 180; }
-inline static double qcoordinate_radToDeg(double rad) { return rad * 180 / M_PI; }
+inline static double qgeocoordinate_degToRad(double deg) { return deg * M_PI / 180; }
+inline static double qgeocoordinate_radToDeg(double rad) { return rad * 180 / M_PI; }
 
 
-class QCoordinatePrivate
+class QGeoCoordinatePrivate
 {
 public:
     double lat;
@@ -62,10 +62,10 @@ public:
 
 
 /*!
-    \class QCoordinate
-    \brief The QCoordinate class defines a geographical position on the surface of the Earth.
+    \class QGeoCoordinate
+    \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
 
-    A QCoordinate is defined by latitude, longitude, and optionally, altitude.
+    A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.
 
     Use type() to determine whether a coordinate is a 2D coordinate (has
     latitude and longitude only) or 3D coordinate (has latitude, longitude
@@ -76,7 +76,7 @@ public:
 */
 
 /*!
-    \enum QCoordinate::CoordinateType
+    \enum QGeoCoordinate::CoordinateType
     Defines the types of a coordinate.
 
     \value InvalidCoordinate An invalid coordinate. A coordinate is invalid if its latitude or longitude values are invalid.
@@ -85,7 +85,7 @@ public:
 */
 
 /*!
-    \enum QCoordinate::CoordinateFormat
+    \enum QGeoCoordinate::CoordinateFormat
     Defines the possible formatting options for toString().
 
     \value DecimalDegrees Returns a string representation of the coordinates in decimal degrees format.
@@ -103,8 +103,8 @@ public:
     Constructs a coordinate. The coordinate will be invalid until
     setLatitude() and setLongitude() have been called.
 */
-QCoordinate::QCoordinate()
-    : d(new QCoordinatePrivate)
+QGeoCoordinate::QGeoCoordinate()
+    : d(new QGeoCoordinatePrivate)
 {
     d->lat = qQNaN();
     d->lng = qQNaN();
@@ -114,8 +114,8 @@ QCoordinate::QCoordinate()
 /*!
     Constructs a coordinate with the given \a latitude and \a longitude.
 */
-QCoordinate::QCoordinate(double latitude, double longitude)
-    : d(new QCoordinatePrivate)
+QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
+    : d(new QGeoCoordinatePrivate)
 {
     d->lat = latitude;
     d->lng = longitude;
@@ -126,8 +126,8 @@ QCoordinate::QCoordinate(double latitude, double longitude)
     Constructs a coordinate with the given \a latitude, \a longitude
     and \a altitude.
 */
-QCoordinate::QCoordinate(double latitude, double longitude, double altitude)
-    : d(new QCoordinatePrivate)
+QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
+    : d(new QGeoCoordinatePrivate)
 {
     d->lat = latitude;
     d->lng = longitude;
@@ -137,8 +137,8 @@ QCoordinate::QCoordinate(double latitude, double longitude, double altitude)
 /*!
     Constructs a coordinate from the contents of \a other.
 */
-QCoordinate::QCoordinate(const QCoordinate &other)
-    : d(new QCoordinatePrivate)
+QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
+    : d(new QGeoCoordinatePrivate)
 {
     operator=(other);
 }
@@ -146,7 +146,7 @@ QCoordinate::QCoordinate(const QCoordinate &other)
 /*!
     Destroys the coordinate object.
 */
-QCoordinate::~QCoordinate()
+QGeoCoordinate::~QGeoCoordinate()
 {
     delete d;
 }
@@ -155,7 +155,7 @@ QCoordinate::~QCoordinate()
     Assigns \a other to this coordinate and returns a reference to this
     coordinate.
 */
-QCoordinate &QCoordinate::operator=(const QCoordinate &other)
+QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 {
     if (this == &other)
         return *this;
@@ -171,7 +171,7 @@ QCoordinate &QCoordinate::operator=(const QCoordinate &other)
     Returns true if the latitude, longitude and altitude of this
     coordinate are the same as those of \a other.
 */
-bool QCoordinate::operator==(const QCoordinate &other) const
+bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
     return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat) )
             && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng) )
@@ -179,7 +179,7 @@ bool QCoordinate::operator==(const QCoordinate &other) const
 }
 
 /*!
-    \fn bool QCoordinate::operator!=(const QCoordinate &other) const;
+    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinate &other) const;
 
     Returns true if the latitude, longitude or altitude of this
     coordinate are not the same as those of \a other.
@@ -188,7 +188,7 @@ bool QCoordinate::operator==(const QCoordinate &other) const
 /*!
     Returns true if the type() is Coordinate2D or Coordinate3D.
 */
-bool QCoordinate::isValid() const
+bool QGeoCoordinate::isValid() const
 {
     CoordinateType t = type();
     return t == Coordinate2D || t == Coordinate3D;
@@ -197,7 +197,7 @@ bool QCoordinate::isValid() const
 /*!
     Returns the type of this coordinate.
 */
-QCoordinate::CoordinateType QCoordinate::type() const
+QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
 {
     if ( (d->lat >= -90 && d->lat <= 90)
           && (d->lng >= -180 && d->lng <= 180) ) {
@@ -218,7 +218,7 @@ QCoordinate::CoordinateType QCoordinate::type() const
 
     \sa setLatitude(), type()
 */
-double QCoordinate::latitude() const
+double QGeoCoordinate::latitude() const
 {
     return d->lat;
 }
@@ -231,7 +231,7 @@ double QCoordinate::latitude() const
 
     \sa latitude()
 */
-void QCoordinate::setLatitude(double latitude)
+void QGeoCoordinate::setLatitude(double latitude)
 {
     d->lat = latitude;
 }
@@ -245,7 +245,7 @@ void QCoordinate::setLatitude(double latitude)
 
     \sa setLongitude(), type()
 */
-double QCoordinate::longitude() const
+double QGeoCoordinate::longitude() const
 {
     return d->lng;
 }
@@ -258,7 +258,7 @@ double QCoordinate::longitude() const
 
     \sa longitude()
 */
-void QCoordinate::setLongitude(double longitude)
+void QGeoCoordinate::setLongitude(double longitude)
 {
     d->lng = longitude;
 }
@@ -270,7 +270,7 @@ void QCoordinate::setLongitude(double longitude)
 
     \sa setAltitude(), type()
 */
-double QCoordinate::altitude() const
+double QGeoCoordinate::altitude() const
 {
     return d->alt;
 }
@@ -280,7 +280,7 @@ double QCoordinate::altitude() const
 
     \sa altitude()
 */
-void QCoordinate::setAltitude(double altitude)
+void QGeoCoordinate::setAltitude(double altitude)
 {
     d->alt = altitude;
 }
@@ -294,24 +294,24 @@ void QCoordinate::setAltitude(double altitude)
     purpose of this calculation.
 
     Returns 0 if the type of this coordinate or the type of \a other is
-    QCoordinate::InvalidCoordinate.
+    QGeoCoordinate::InvalidCoordinate.
 */
-qreal QCoordinate::distanceTo(const QCoordinate &other) const
+qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
 {
-    if (type() == QCoordinate::InvalidCoordinate
-            || other.type() == QCoordinate::InvalidCoordinate) {
+    if (type() == QGeoCoordinate::InvalidCoordinate
+            || other.type() == QGeoCoordinate::InvalidCoordinate) {
         return 0;
     }
 
     // Haversine formula
-    double dlat = qcoordinate_degToRad(other.d->lat - d->lat);
-    double dlon = qcoordinate_degToRad(other.d->lng - d->lng);
+    double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
+    double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
     double y = qSin(dlat/2) * qSin(dlat/2)
-            + qCos(qcoordinate_degToRad(d->lat))
-            * qCos(qcoordinate_degToRad(other.d->lat))
+            + qCos(qgeocoordinate_degToRad(d->lat))
+            * qCos(qgeocoordinate_degToRad(other.d->lat))
             * qSin(dlon/2) * qSin(dlon/2);
     double x = 2 * atan2(qSqrt(y), qSqrt(1-y));
-    return qreal(x * qcoordinate_EARTH_MEAN_RADIUS * 1000);
+    return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
 
 /*!
@@ -322,24 +322,24 @@ qreal QCoordinate::distanceTo(const QCoordinate &other) const
     this calculation.
 
     Returns 0 if the type of this coordinate or the type of \a other is
-    QCoordinate::InvalidCoordinate.
+    QGeoCoordinate::InvalidCoordinate.
 */
-qreal QCoordinate::azimuthTo(const QCoordinate &other) const
+qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
 {
-    if (type() == QCoordinate::InvalidCoordinate
-            || other.type() == QCoordinate::InvalidCoordinate) {
+    if (type() == QGeoCoordinate::InvalidCoordinate
+            || other.type() == QGeoCoordinate::InvalidCoordinate) {
         return 0;
     }
 
-    double dlon = qcoordinate_degToRad(other.d->lng - d->lng);
-    double lat1Rad = qcoordinate_degToRad(d->lat);
-    double lat2Rad = qcoordinate_degToRad(other.d->lat);
+    double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
+    double lat1Rad = qgeocoordinate_degToRad(d->lat);
+    double lat2Rad = qgeocoordinate_degToRad(other.d->lat);
 
     double y = qSin(dlon) * qCos(lat2Rad);
     double x = qCos(lat1Rad) * qSin(lat2Rad) - qSin(lat1Rad) * qCos(lat2Rad) * qCos(dlon);
 
     double whole;
-    double fraction = modf(qcoordinate_radToDeg(atan2(y, x)), &whole);
+    double fraction = modf(qgeocoordinate_radToDeg(atan2(y, x)), &whole);
     return qreal((int(whole + 360) % 360) + fraction);
 }
 
@@ -374,9 +374,9 @@ qreal QCoordinate::azimuthTo(const QCoordinate &other) const
         \o 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E
     \endtable
 */
-QString QCoordinate::toString(CoordinateFormat format) const
+QString QGeoCoordinate::toString(CoordinateFormat format) const
 {
-    if (type() == QCoordinate::InvalidCoordinate)
+    if (type() == QGeoCoordinate::InvalidCoordinate)
         return QObject::tr("<Invalid coordinate>");
 
     QString latStr;
@@ -463,12 +463,12 @@ QString QCoordinate::toString(CoordinateFormat format) const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QCoordinate &coord)
+QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 {
     double lat = coord.latitude();
     double lng = coord.longitude();
 
-    dbg.nospace() << "QCoordinate(";
+    dbg.nospace() << "QGeoCoordinate(";
     if (qIsNaN(lat))
         dbg.nospace() << '?';
     else
@@ -478,7 +478,7 @@ QDebug operator<<(QDebug dbg, const QCoordinate &coord)
         dbg.nospace() << '?';
     else
         dbg.nospace() << lng;
-    if (coord.type() == QCoordinate::Coordinate3D) {
+    if (coord.type() == QGeoCoordinate::Coordinate3D) {
         dbg.nospace() << ", ";
         dbg.nospace() << coord.altitude();
     }
@@ -494,7 +494,7 @@ QDebug operator<<(QDebug dbg, const QCoordinate &coord)
     \sa {Format of the QDataStream Operators}
 */
 
-QDataStream &operator<<(QDataStream &stream, const QCoordinate &coordinate)
+QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
 {
     stream << coordinate.latitude();
     stream << coordinate.longitude();
@@ -511,7 +511,7 @@ QDataStream &operator<<(QDataStream &stream, const QCoordinate &coordinate)
     \sa {Format of the QDataStream Operators}
 */
 
-QDataStream &operator>>(QDataStream &stream, QCoordinate &coordinate)
+QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
 {
     double value;
     stream >> value;

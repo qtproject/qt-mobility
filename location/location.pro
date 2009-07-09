@@ -15,18 +15,18 @@ DEPENDPATH += .
 
 HEADERS +=  qlocationglobal.h \
             qlocationutils_p.h \
-            qcoordinate.h \
-            qpositionupdate.h \
+            qgeocoordinate.h \
+            qgeopositioninfo.h \
             qsatelliteinfo.h \
             qsatelliteinfosource.h \
-            qpositionsource.h \
-            qpositionareamonitor.h
+            qgeopositioninfosource.h \
+            qgeoareamonitor.h
 
 SOURCES +=  qlocationutils.cpp \
-            qcoordinate.cpp \
-            qpositionupdate.cpp \
+            qgeocoordinate.cpp \
+            qgeopositioninfo.cpp \
             qsatelliteinfo.cpp \
             qsatelliteinfosource.cpp \
-            qpositionsource.cpp \
-            qpositionareamonitor.cpp
+            qgeopositioninfosource.cpp \
+            qgeoareamonitor.cpp
 

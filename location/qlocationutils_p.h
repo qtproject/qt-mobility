@@ -44,7 +44,7 @@
 #include <QtGlobal>
 
 class QTime;
-class QPositionUpdate;
+class QGeoPositionInfo;
 class QByteArray;
 
 class QLocationUtils
@@ -54,7 +54,7 @@ public:
     inline static bool isValidLong(double lng) { return lng >= -180 && lng <= 180; }
 
     /*
-        Converts a GGA, GLL, RMC, VTG or ZDA sentence to a QPositionUpdate.
+        Converts a GGA, GLL, RMC, VTG or ZDA sentence to a QGeoPositionInfo.
 
         Note:
         - GGA and GLL sentences have time but not date so the update's
@@ -62,7 +62,7 @@ public:
         - RMC reports date with a two-digit year so in this case the year
           is assumed to be after the year 2000.
     */
-    Q_AUTOTEST_EXPORT static bool getUpdateFromNmea(const char *data, int size, QPositionUpdate *update, bool *hasFix);
+    Q_AUTOTEST_EXPORT static bool getUpdateFromNmea(const char *data, int size, QGeoPositionInfo *update, bool *hasFix);
 
     /*
         Returns true if the given NMEA sentence has a valid checksum.

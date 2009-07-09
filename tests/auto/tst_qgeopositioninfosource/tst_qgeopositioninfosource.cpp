@@ -30,24 +30,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qpositionsource.h>
-#include <qpositionupdate.h>
+#include <qgeopositioninfosource.h>
+#include <qgeopositioninfo.h>
 
 #include <QTest>
 #include <QMetaType>
 
 #include <limits.h>
 
-Q_DECLARE_METATYPE(QPositionSource::PositioningMethod)
-Q_DECLARE_METATYPE(QPositionSource::PositioningMethods)
+Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
+Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
 
-class MyPositionSource : public QPositionSource
+class MyPositionSource : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
-    QPositionUpdate lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const
     {
-        return QPositionUpdate();
+        return QGeoPositionInfo();
     }
 
     virtual PositioningMethods supportedPositioningMethods() const { return 0; }
@@ -59,7 +59,7 @@ public:
     virtual void requestUpdate(int timeout = 5000) {}
 };
 
-class tst_QPositionSource : public QObject
+class tst_QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
 
@@ -95,19 +95,19 @@ private slots:
         QFETCH(int, methods);
 
         MyPositionSource s;
-        s.setPreferredPositioningMethods(static_cast<QPositionSource::PositioningMethods>(methods));
-        QCOMPARE(s.preferredPositioningMethods(), static_cast<QPositionSource::PositioningMethods>(methods));
+        s.setPreferredPositioningMethods(static_cast<QGeoPositionInfoSource::PositioningMethods>(methods));
+        QCOMPARE(s.preferredPositioningMethods(), static_cast<QGeoPositionInfoSource::PositioningMethods>(methods));
     }
 
     void setPreferredPositioningMethods_data()
     {
         QTest::addColumn<int>("methods");
-        QTest::newRow("sat") << int(QPositionSource::SatellitePositioningMethods);
-        QTest::newRow("sat | non-sat") << int(QPositionSource::SatellitePositioningMethods
-                              | QPositionSource::NonSatellitePositioningMethods);
-        QTest::newRow("all") << int(QPositionSource::AllPositioningMethods);
-        QTest::newRow("all | sat") << int(QPositionSource::AllPositioningMethods
-                                    | QPositionSource::NonSatellitePositioningMethods);
+        QTest::newRow("sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+        QTest::newRow("sat | non-sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods
+                              | QGeoPositionInfoSource::NonSatellitePositioningMethods);
+        QTest::newRow("all") << int(QGeoPositionInfoSource::AllPositioningMethods);
+        QTest::newRow("all | sat") << int(QGeoPositionInfoSource::AllPositioningMethods
+                                    | QGeoPositionInfoSource::NonSatellitePositioningMethods);
     }
 
     void preferredPositioningMethods()
@@ -118,10 +118,10 @@ private slots:
 
     void createSource()
     {
-        QVERIFY(QPositionSource::createSource() == 0);
+        QVERIFY(QGeoPositionInfoSource::createSource() == 0);
     }
 };
 
 
-QTEST_MAIN(tst_QPositionSource)
-#include "tst_qpositionsource.moc"
+QTEST_MAIN(tst_QGeoPositionInfoSource)
+#include "tst_qgeopositioninfosource.moc"

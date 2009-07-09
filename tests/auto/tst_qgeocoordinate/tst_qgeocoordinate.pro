@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = tst_qcoordinate
+TARGET = tst_qgeocoordinate
 CONFIG+=testcase
 
 include (../../../common.pri)
@@ -7,7 +7,7 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-SOURCES += tst_qcoordinate.cpp
+SOURCES += tst_qgeocoordinate.cpp
 
 LIBS += -lQtLocation
 
