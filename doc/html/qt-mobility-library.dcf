@@ -1,10 +1,105 @@
 <!DOCTYPE DCF>
-<DCF ref="index.html" icon="qt-service-framework.png" imagedir="../../gif" title="Qt Service Framework Reference Documentation">
+<DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
 <section ref="classes.html" title="Classes">
     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
         <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
         <keyword ref="qabstractsecuritysession.html#isAllowed">isAllowed</keyword>
         <section ref="qabstractsecuritysession-members.html" title="List of all members"/>
+    </section>
+    <section ref="qnetworkconfiguration.html" title="QNetworkConfiguration Class Reference">
+        <keyword ref="qnetworkconfiguration.html">QNetworkConfiguration</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">Purpose</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Unknown</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Public</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::ServiceSpecific</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Private</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">StateFlag</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">StateFlags</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Undefined</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Defined</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Discovered</keyword>
+        <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Active</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">Type</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::Invalid</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</keyword>
+        <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</keyword>
+        <keyword ref="qnetworkconfiguration.html#children">children</keyword>
+        <keyword ref="qnetworkconfiguration.html#identifier">identifier</keyword>
+        <keyword ref="qnetworkconfiguration.html#isValid">isValid</keyword>
+        <keyword ref="qnetworkconfiguration.html#name">name</keyword>
+        <keyword ref="qnetworkconfiguration.html#purpose">purpose</keyword>
+        <keyword ref="qnetworkconfiguration.html#roamingAvailable">roamingAvailable</keyword>
+        <keyword ref="qnetworkconfiguration.html#state">state</keyword>
+        <keyword ref="qnetworkconfiguration.html#type">type</keyword>
+        <keyword ref="qnetworkconfiguration.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qnetworkconfiguration.html#operator-eq">operator=</keyword>
+        <keyword ref="qnetworkconfiguration.html#operator-eq-eq">operator==</keyword>
+        <section ref="qnetworkconfiguration-members.html" title="List of all members"/>
+    </section>
+    <section ref="qnetworkconfigurationmanager.html" title="QNetworkConfigurationManager Class Reference">
+        <keyword ref="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlag</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlags</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::ForcedRoaming</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DirectConnectionRouting</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::BearerManagement</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::ApplicationLevelRoaming</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DataStatistics</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::SystemSessionSupport</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#capabilities">capabilities</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#configurationAdded">configurationAdded</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#configurationChanged">configurationChanged</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#configurationFromIdentifier">configurationFromIdentifier</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#configurationRemoved">configurationRemoved</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#defaultConfiguration">defaultConfiguration</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#onlineStateChanged">onlineStateChanged</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</keyword>
+        <section ref="qnetworkconfigurationmanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qnetworksession.html" title="QNetworkSession Class Reference">
+        <keyword ref="qnetworksession.html">QNetworkSession</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">SessionError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::RoamingError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::SessionAbortedError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::OperationNotSupportedError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::UnknownSessionError</keyword>
+        <keyword ref="qnetworksession.html#SessionError-enum">QNetworkSession::InvalidConfigurationError</keyword>
+        <keyword ref="qnetworksession.html#State-enum">State</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Invalid</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Roaming</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::NotAvailable</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Connected</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Disconnected</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Connecting</keyword>
+        <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Closing</keyword>
+        <keyword ref="qnetworksession.html#accept">accept</keyword>
+        <keyword ref="qnetworksession.html#activeTime">activeTime</keyword>
+        <keyword ref="qnetworksession.html#bearerName">bearerName</keyword>
+        <keyword ref="qnetworksession.html#close">close</keyword>
+        <keyword ref="qnetworksession.html#configuration">configuration</keyword>
+        <keyword ref="qnetworksession.html#error">error</keyword>
+        <keyword ref="qnetworksession.html#errorString">errorString</keyword>
+        <keyword ref="qnetworksession.html#ignore">ignore</keyword>
+        <keyword ref="qnetworksession.html#interface">interface</keyword>
+        <keyword ref="qnetworksession.html#isActive">isActive</keyword>
+        <keyword ref="qnetworksession.html#migrate">migrate</keyword>
+        <keyword ref="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</keyword>
+        <keyword ref="qnetworksession.html#open">open</keyword>
+        <keyword ref="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</keyword>
+        <keyword ref="qnetworksession.html#property">property</keyword>
+        <keyword ref="qnetworksession.html#receivedData">receivedData</keyword>
+        <keyword ref="qnetworksession.html#reject">reject</keyword>
+        <keyword ref="qnetworksession.html#sentData">sentData</keyword>
+        <keyword ref="qnetworksession.html#sessionClosed">sessionClosed</keyword>
+        <keyword ref="qnetworksession.html#sessionOpened">sessionOpened</keyword>
+        <keyword ref="qnetworksession.html#state">state</keyword>
+        <keyword ref="qnetworksession.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qnetworksession.html#stop">stop</keyword>
+        <keyword ref="qnetworksession.html#waitForOpened">waitForOpened</keyword>
+        <section ref="qnetworksession-members.html" title="List of all members"/>
     </section>
     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
         <keyword ref="qservicecontext.html">QServiceContext</keyword>
@@ -38,6 +133,8 @@
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
         <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
         <keyword ref="qservicefilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qservicefilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <keyword ref="qservicefilter.html#operator-gt-gt">operator&gt;&gt;</keyword>
         <section ref="qservicefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qserviceinterfacedescriptor.html" title="QServiceInterfaceDescriptor Class Reference">
@@ -58,8 +155,6 @@
         <keyword ref="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-eq">operator=</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#operator-lt-lt">operator&lt;&lt;</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#operator-gt-gt">operator&gt;&gt;</keyword>
         <section ref="qserviceinterfacedescriptor-members.html" title="List of all members"/>
     </section>
     <section ref="qservicemanager.html" title="QServiceManager Class Reference">
@@ -102,8 +197,8 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="index.html" title="Qt Service Framework Developer Resources">
-        <keyword ref="index.html">Qt Service Framework Developer Resources</keyword>
+    <section ref="index.html" title="">
+        <keyword ref="index.html"></keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">

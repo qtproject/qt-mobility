@@ -4,3 +4,4 @@ SUBDIRS += filemanagerplugin \
            bluetoothtransferplugin \
            servicebrowser
 
+SUBDIRS += bearermonitor bearercloud

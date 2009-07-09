@@ -2,12 +2,11 @@
 
 \page index.html
 
-\title Qt Service Framework Developer Resources
-
 \tableofcontents
 
 
-\section1 Introduction
+\section1 Qt Service Framework
+\section2 Introduction
 
 The Qt Service framework provides a set of APIs that allows clients to discover and instanciate arbitrary services. 
 This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms.
@@ -15,7 +14,7 @@ Due to the service frameworks knowledge of service interfaces, their versions an
 it may even be used to unify and access multiple platform specific service implementations via the same Qt-based 
 client application.
 
-\section1 Overview 
+\section2 Overview 
 
 A service is an independent component that allows a client to perform a well-defined operation. Clients
 can find services based on their name and version as well as the interface that is implemented by the service object.
@@ -38,7 +37,7 @@ whereas new clients can utilize the new interface.
 
 Future versions of this framework may also enable access to out-of-process service provider. 
 
-\section1 Using the framework
+\section2 Using the framework
 
 This section assumes that the user wants to access the \i FileManager service which offers an implementation for the \i com.nokia.qt.examples.FileStorage interface
 The service framework enables multiple ways of accessing those implementations. 
@@ -46,7 +45,7 @@ The service framework enables multiple ways of accessing those implementations.
 QServiceManager is the main class to lookup and instanciate services. Services can be found by constraining the search via service meta data or
 by using the default lookup mechanism.
 
-\section2 Verbose lookup
+\section3 Verbose lookup
 
 The client code has precise knowledge of the service and its interfaces. 
 
@@ -61,7 +60,7 @@ The client code has precise knowledge of the service and its interfaces.
     QObject* service = manager->loadInterface(objs.at(0));
 \endcode
 
-\section2 Default lookup
+\section3 Default lookup
 
 The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases 
 the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of 
@@ -73,7 +72,7 @@ compatible to previous versions.
     QObject* storage = manager->loadInterface("com.nokia.qt.examples.FileStorage");
 \endcode
 
-\section2 Header lookup
+\section3 Header lookup
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using 
 Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases 
@@ -91,11 +90,11 @@ storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage"
 \endcode
 
 
-\section2 Database scope
+\section3 Database scope
 
 A QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.
 
-\section3 User scope
+\section4 User scope
 
 In user scope, services are registered in a storage location specific to the current user; for example, in the user's home directory. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
 
@@ -103,7 +102,7 @@ For service and interface lookups, a manager will first search the user-specific
 
 The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a \c scope parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)
 
-\section3 System scope
+\section4 System scope
 
 In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.
 
@@ -113,12 +112,12 @@ Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRem
 
 
 
-\section1 Adding and removing of services
+\section2 Adding and removing of services
 
 New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code
 to its meta description.
 
-\section2 XML format
+\section3 XML format
 
 Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following 
 DTD:
@@ -221,12 +220,12 @@ An example for a valid XML service description could be the following \i TestSer
     </service>
 \endcode
 
-\section2 Installing the service at runtime
+\section3 Installing the service at runtime
 
 New services can be added and removed at any time via QServiceManager::addService() and QServiceManager::removeService().
 
 
-\section1 Identifying services
+\section2 Identifying services
 
 Each implementation is identified by a service name, an interface name and its version. This information is encapsulated 
 by QServiceInterfaceDescriptor which can be used to request references to service objects. 
@@ -246,7 +245,7 @@ above \i com.nokia.qt.TestService interface:
     }
 \endcode
 
-\section1 Upgrading services
+\section2 Upgrading services
 There are two ways in which to upgrade a service.  The first is an incremental approach whereby QServiceManager::addService() is used to register 
 an XML descriptor whose service name already exists but defines new interface implementations.  For example an already existing service, "ovi"
 may define version 1.0 of interface,"IDownload".  QServiceManager::addService() is then called with an XML descriptor that declares itself
@@ -257,6 +256,107 @@ The second method is a replacement approach whereby an existing service is compl
 As an example the already existing "ovi" service may implement interface "IDownload" version 1.0, the new "ovi" service may 
 implement "IDownload" version 1.0 and version 1.1.  In this case the old service implementation must be first be removed using
 QServiceManager::removeService() to make way for the new service implementation.
+
+\section1 Bearer Management
+
+The Bearer Management API controls the system's connectivity state. This incorporates simple information such
+as whether the device is online and how many interfaces there are as well as enables the application developer
+to start, stop network interfaces and influences other connection specific details. Depending on the platform's
+capabilities it may even provide session management so that a network interface remains up for as long as
+clients have a registered interest in them while at the same time optimizes the interface's uptime. 
+This API is a key enabler for HTTP level roaming in \l {http://doc.trolltech.com/doc/qt/qnetworkmanager.html}{QNetworkAccessManager}.
+
+This API does not provide support for management of network configurations themselves. It is up to the platform
+to provide infrastructure which enables to user to create, edit or delete network configurations. 
+
+\section2 The API in details
+
+Computer systems manage their network interfaces via a set of configurations. Each configuration describes a set of parameters
+which instruct the system how a particular network interface is started. One of the most simplistic examples might be an Ethernet
+configuration that links a network card to a DHCP server. A more complex example might be a Wireless LAN configuration which may comprise
+of hardware details such as the WLAN card address, WLAN access point details (e.g ESSID, encryption details) and user specific 
+information (for example username and password). Once the network interface was configured and started according to the configuration
+blue print, multiple applications are free to use this link layer connection/session for their own socket operations. This API carefully distinguishes
+a network session and the network connections (represented by socket sessions) which it supports.
+
+The distinction between physical network interfaces, their mappping to multiple configurations, how such a mapping can create an active
+link layer connection and a network connection that can be created once the session has been established is important to understand 
+the various elements of this API. The Bearer Management API in conjunction with QNetworkInterface follows the same principle.
+QNetworkInterface already provides the required abstraction for physical network interface. In addition QNetworkConfiguration encapsulates
+a network configuration which can be used to create, destroy and monitor link layer connections (represented by QNetworkSession object).
+
+\section3 Service networks
+
+Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle
+multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where
+all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet
+or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually
+map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while
+ensuring minimal impact on the user experience.
+
+The \l{QNetworkConfiguration::Type} flag specifies to what category a configuration belongs. The \l{QNetworkConfiguration::InternetAccessPoint} type
+is the most common example. It represents a configuration that can be used to create a session. The above mentioned grouping behavior is provided
+by \l {QNetworkConfiguration::ServiceNetwork} configurations. Service networks are place holders until such time when the user attempts to \l {QNetworkSession::open()}{open()}
+a new session. At that point in time the system determines which of the configurations \l{QNetworkConfiguration::children()} is best to use.
+A service network can only have one level of indirection which implies children can only be of type \l {QNetworkConfiguration::InternetAccessPoint}.
+
+Most systems allow the user to define the systems default configuration. Usually the default behavior is either a service network, a particular 
+internet access point or the user instructs the platform to ask the user once an application requests the network. User interaction is generally
+implemented by some sort of system dialog which shows up at the appropriate point in time. The application does not have to handle the user input. This API provides the 
+\l QNetworkConfigurationManager::defaultConfiguration() call which serves a similar purpose. The subsequent code snippet provides a quick way how 
+an application can quickly create a new network session without having to interact with the user:
+
+\code
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities() & QNetworkConfigurationManager::BearerManagement);
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || !canStartIAP)
+        return;
+    switch(cfg.type()) {
+        case QNetworkConfiguration::InternetAccessPoint:
+            // no user interaction -> system starts IAP immediately
+            break;
+        case QNetworkConfiguration::ServiceNetwork:
+            // no user interaction -> system determines best IAP in group and starts it
+            break;
+        case QNetworkConfiguration::UserChoice:
+            // IAP resolved by asking user as part of QNetworkSession::open()
+            break;
+    }
+    QNetworkSession* session = new QNetworkSession(cfg);
+    session->open();
+
+\endcode
+
+To accommodate the "Ask user" use case the default configuration can be of type QNetworkConfiguration::UserChoice. A user choice configuration
+is resolved as part of the \l {QNetworkSession::open()} call. Note that a \l{QNetworkConfiguration::UserChoice}{UserChoice} configuration is only 
+ever returned via \l {QNetworkConfigurationManager::defaultConfiguration()} and not \l QNetworkConfigurationManager::allConfigurations().
+
+On systems which do not maintain a list of \l {QNetworkConfigurationManager::defaultConfiguration()}{defaultConfiguration()}
+an invalid configuration is returned. A possible workaround could be to implement a custom dialog which is populated based on what 
+\l QNetworkConfigurationManager::allConfigurations() returns.
+
+\section3 Managing network sessions
+
+A QNetworkSession object separates a \l {QNetworkSession::state()}{state()} and an \l{QNetworkSession::isActive()}{isActive()} condition.
+The state() attribute enables developers to detect whether the system currently maintains a global network session for the given QNetworkConfiguration.
+If \l {QNetworkSession::isActive()}{isActive()} returns true the QNetworkSession instance at hand was at least one of the entities requesting the
+global network session. This distinction is required to support the notion of session registrations. For as long as there are one or more
+active QNetworkSession instances the underlying network interface is not shut down. Therefore the session \l{QNetworkSession::state()}{state()} can be used to monitor
+the state of network interfaces.
+
+An active session is created by calling \l {QNetworkSession::open()} and closed via \l{QNetworkSession::close()}, respectively. If the session
+is \l{QNetworkSession::Disconnected}{disconnected} at the time of the \l{QNetworkSession::open()}{open()} call the underlying interface is started;
+otherwise only the reference counter against the global session is incremeted. The opposite behavior can be observed when using \l{QNetworkSession::close()}{close()}.
+In some use cases it may be necessary to turn the interface off despite of active sessions. This can be achieved by calling \l{QNetworkSession::stop()}{stop()}.
+An example use case could be a network manager type of application allowing the user to control the overall state of the devices connectivity.
+
+Global (inter-process) session support is platform dependent and can be detected via \l {QNetworkConfigurationManager::SystemSessionSupport}. If the system does not support
+global session calling \l{QNetworkSession::close()}{close()} never stops the interface.
+
+\section3 Roaming
+
+\section3 Platform capabilities
 
 \section1 Building and compiling
 
@@ -270,20 +370,36 @@ To build the library, run \tt qmake and \tt make.
 \section2 Main classes
 
 \list
-    \o \l{QServiceContext}
-    \o \l{QServiceFilter}
-    \o \l{QServiceInterfaceDescriptor}
-    \o \l{QServiceManager}
-    \o \l{QServicePluginInterface}
-    \o \l{QAbstractSecuritySession}
+    \o Service Framework
+    \list
+        \o \l{QServiceContext}
+        \o \l{QServiceFilter}
+        \o \l{QServiceInterfaceDescriptor}
+        \o \l{QServiceManager}
+        \o \l{QServicePluginInterface}
+        \o \l{QAbstractSecuritySession}
+    \endlist
+    \o Bearer management
+    \list
+        \o \l{QNetworkConfiguration}
+        \o \l{QNetworkConfigurationManager}
+        \o \l{QNetworkSession}
+    \endlist
 \endlist
 
 \section2 Examples
 
 \list
-    \o \l{File Manager Plugin Example}
-    \o \l{Bluetooth Transfer Plugin Example}
-    \o \l{Service Browser Example}
+    \o Service Framework
+    \list
+        \o \l{File Manager Plugin Example}
+        \o \l{Bluetooth Transfer Plugin Example}
+        \o \l{Service Browser Example}
+    \endlist
+    \o Bearer Management
+    \list
+
+    \endlist
 \endlist
 
 */

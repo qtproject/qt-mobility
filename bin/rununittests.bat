@@ -11,6 +11,9 @@ tst_qservicemanager.exe
 tst_qservicefilter.exe
 tst_qserviceinterfacedescriptor.exe
 tst_qabstractsecuritysession.exe
+tst_qnetworkconfiguration
+tst_qnetworkconfigurationmanager
+tst_qnetworksession
 
 
 cd %SAVED_PWD%

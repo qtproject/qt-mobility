@@ -46,12 +46,19 @@ SOURCE_DIR = $$PWD
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
 }
 
+#TODO
+wince* {
+    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/bearer.dll
+    BEARERLIB.path = .
+    DEPLOYMENT += BEARERLIB
+}
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += . $$SOURCE_DIR
+
 #For some reason the default include path doesn't include MOC_DIR on symbian
 symbian {
 	INCLUDEPATH += $$MOC_DIR

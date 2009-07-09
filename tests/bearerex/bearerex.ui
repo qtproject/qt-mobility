@@ -1,0 +1,81 @@
+<ui version="4.0" >
+ <class>BearerExMainWindow</class>
+ <widget class="QMainWindow" name="BearerExMainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>344</width>
+    <height>492</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Bearer Example</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QVBoxLayout" name="verticalLayout" >
+    <item>
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Network Configurations</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="XQListWidget" native="1" name="listWidget" />
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="0" column="0" >
+       <widget class="QPushButton" name="updateConfigurationsButton" >
+        <property name="text" >
+         <string>Update Configs</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="updateListButton" >
+        <property name="text" >
+         <string>Update List</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QPushButton" name="createSessionButton" >
+        <property name="text" >
+         <string>Create Session</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QPushButton" name="showDetailsButton" >
+        <property name="text" >
+         <string>Show Details</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2" >
+       <widget class="QPushButton" name="monitorConfigurationsButton" >
+        <property name="text" >
+         <string>Start Monitoring</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>XQListWidget</class>
+   <extends>QWidget</extends>
+   <header>xqlistwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

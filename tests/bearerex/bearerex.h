@@ -1,0 +1,122 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+#ifndef ACCESSPOINTMANAGEREX_H
+#define ACCESSPOINTMANAGEREX_H
+
+#include <QtGui>
+
+#include "ui_bearerex.h"
+#include "ui_detailedinfodialog.h"
+#include "ui_sessiondialog.h"
+
+#include "qnetworkconfigmanager.h"
+#include "qnetworksession.h"
+#include "xqlistwidget.h"
+
+class QHttp;
+
+class BearerEx : public QMainWindow, public Ui::BearerExMainWindow
+{
+     Q_OBJECT
+
+public:
+    BearerEx(QWidget* parent = 0);
+    void createMenus();
+    void showConfigurations();
+
+private Q_SLOTS:
+    void on_updateConfigurationsButton_clicked();
+    void on_updateListButton_clicked();
+    void on_showDetailsButton_clicked();
+    void on_createSessionButton_clicked();
+    void on_monitorConfigurationsButton_clicked();
+
+    void configurationsUpdateCompleted();
+    void configurationAdded(const QNetworkConfiguration& config);
+    void configurationRemoved(const QNetworkConfiguration& config);
+    void onlineStateChanged(bool isOnline);
+    void configurationChanged(const QNetworkConfiguration & config);     
+
+private:
+    QNetworkConfigurationManager m_NetworkConfigurationManager;
+    QAction* m_openAction;
+    bool m_monitor;
+};
+
+class DetailedInfoDialog : public QDialog, public Ui::DetailedInfoDialog
+{
+    Q_OBJECT
+
+public:
+    DetailedInfoDialog(QNetworkConfiguration* apNetworkConfiguration = 0, QWidget* parent = 0);
+};
+
+
+class SessionDialog : public QDialog, public Ui::SessionDialog
+{
+    Q_OBJECT
+
+public:
+    SessionDialog(QNetworkConfiguration* apNetworkConfiguration = 0, QNetworkConfigurationManager* configManager = 0, QWidget* parent = 0);
+    ~SessionDialog();
+
+private Q_SLOTS:
+    void on_createQHttpButton_clicked();
+    void on_sendRequestButton_clicked();
+    void on_openSessionButton_clicked();
+    void on_closeSessionButton_clicked();
+    void on_stopConnectionButton_clicked();
+    void on_deleteSessionButton_clicked();
+    void on_alrButton_clicked();
+    void done(bool error);
+    
+    void newConfigurationActivated();
+    void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
+    void stateChanged(QNetworkSession::State state);
+    void sessionOpened();
+    void sessionClosed();
+    void error(QNetworkSession::SessionError error);
+
+private: //data
+    QHttp* m_http;
+    QNetworkSession* m_NetworkSession;
+    QNetworkConfigurationManager* m_ConfigManager;
+    QNetworkConfiguration m_config;
+    bool m_httpRequestOngoing;
+    bool m_alrEnabled;
+};
+
+#endif // ACCESSPOINTMANAGEREX_H
+
+// End of file
+
