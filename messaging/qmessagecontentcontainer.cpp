@@ -102,6 +102,8 @@
 */
 
 /*!
+    \fn QMessageContentContainer::QMessageContentContainer()
+    
     Constructs an empty container object.
 */
 QMessageContentContainer::QMessageContentContainer()
@@ -109,6 +111,8 @@ QMessageContentContainer::QMessageContentContainer()
 }
 
 /*!
+    \fn QMessageContentContainer::~QMessageContentContainer()
+    
     Destroys the container object.
 */
 QMessageContentContainer::~QMessageContentContainer()
@@ -116,7 +120,9 @@ QMessageContentContainer::~QMessageContentContainer()
 }
 
 /*!
-      Returns the identifier of the container object.
+    \fn QMessageContentContainer::containerId() const
+    
+    Returns the identifier of the container object.
 */
 QMessageContentContainerId QMessageContentContainer::containerId() const
 {
@@ -124,7 +130,9 @@ QMessageContentContainerId QMessageContentContainer::containerId() const
 }
 
 /*!
-      Sets the identifier of the container object to \a id.
+    \fn QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
+    
+    Sets the identifier of the container object to \a id.
 */
 void QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
 {
@@ -132,7 +140,7 @@ void QMessageContentContainer::setContainerId(const QMessageContentContainerId &
 }
 
 /*!
-    \fn QMessageId QMessageContentContainer::messageId() const
+    \fn QMessageContentContainer::messageId() const
 
     Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
     message identifier.
@@ -143,6 +151,8 @@ QMessageId QMessageContentContainer::messageId() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContentType(const QByteArray &data)
+    
     Clears all existing content, including all parts, using clearContents() and sets the content 
     type of the container to \a data.
 
@@ -157,6 +167,8 @@ void QMessageContentContainer::setContentType(const QByteArray &data)
 }
 
 /*!
+    \fn QMessageContentContainer::contentType() const
+    
     Returns the content type of the container. Common types are "text", "image", "audio", 
     "video", "application", "message" and "multipart".
 
@@ -173,6 +185,8 @@ QByteArray QMessageContentContainer::contentType() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContentSubType(const QByteArray &data)
+    
     Sets the internet media (MIME) content subtype of the content to \a data.
 
     \sa contentSubType()
@@ -183,6 +197,8 @@ void QMessageContentContainer::setContentSubType(const QByteArray &data)
 }
 
 /*!
+    \fn QMessageContentContainer::contentSubType() const
+    
     Returns the internet media (MIME) subtype of the content.
 
     The default is "plain" for "text" type media content, "mixed" for "multipart" type content, 
@@ -196,6 +212,8 @@ QByteArray QMessageContentContainer::contentSubType() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContentCharset(const QByteArray &data)
+    
     Sets the internet media (MIME) content charset to \a data.
 
     \sa contentCharset()
@@ -206,6 +224,8 @@ void QMessageContentContainer::setContentCharset(const QByteArray &data)
 }
 
 /*!
+    \fn QMessageContentContainer::contentCharset() const
+    
     Returns the internet media (MIME) content charset, when defined; otherwise an empty array is 
     returned.
 
@@ -219,6 +239,8 @@ QByteArray QMessageContentContainer::contentCharset() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContentFileName(const QByteArray &data)
+    
     Sets the suggested filename of the content to \a data.
 
     \sa contentFileName()
@@ -229,6 +251,8 @@ void QMessageContentContainer::setContentFileName(const QByteArray &data)
 }
 
 /*!
+    \fn QMessageContentContainer::contentFileName() const
+    
     Returns the suggested filename of the attachment, when defined;
     otherwise an empty array is returned.
 
@@ -242,6 +266,8 @@ QByteArray QMessageContentContainer::contentFileName() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContentAvailable(bool available)
+    
     Sets the content availability of the content contained to \a available.
 
     \sa contentAvailable()
@@ -252,6 +278,8 @@ void QMessageContentContainer::setContentAvailable(bool available)
 }
 
 /*!
+    \fn QMessageContentContainer::contentAvailable() const
+    
     Returns true if the entirety of the content contained is available on the device; 
     otherwise returns false.
 */
@@ -261,6 +289,8 @@ bool QMessageContentContainer::contentAvailable() const
 }
 
 /*!
+    \fn QMessageContentContainer::setIndicativeSize(uint size)
+    
     Set the size indication of the container including contents to \a size.
 
     \sa indicativeSize()
@@ -271,6 +301,8 @@ void QMessageContentContainer::setIndicativeSize(uint size)
 }
 
 /*!
+    \fn QMessageContentContainer::indicativeSize() const
+    
     Returns an indication of the size of the container including contents.
 */
 uint QMessageContentContainer::indicativeSize() const
@@ -279,6 +311,8 @@ uint QMessageContentContainer::indicativeSize() const
 }
 
 /*!
+    \fn QMessageContentContainer::decodedTextContent() const
+    
     For textual content encoded with a recognized charset decodedTextContent() will return 
     the content as a unicode string; otherwise a null string is returned.
     
@@ -290,6 +324,8 @@ QString QMessageContentContainer::decodedTextContent() const
 }
 
 /*!
+    \fn QMessageContentContainer::decodedContent() const
+    
     Return the content after decoding any transfer encoding used to represent binary data 
     using 7-bit ASCII characters, such as quoted-printable and base64.
   
@@ -304,6 +340,8 @@ QByteArray QMessageContentContainer::decodedContent() const
 }
 
 /*!
+    \fn QMessageContentContainer::decodedContentFileName() const
+    
     Returns the name of a local file containing the content, when available.
 */
 QString QMessageContentContainer::decodedContentFileName() const
@@ -312,6 +350,8 @@ QString QMessageContentContainer::decodedContentFileName() const
 }
 
 /*!
+    \fn QMessageContentContainer::writeContentTo(QDataStream& out) const
+    
     For a non multipart container writes the content as would be returned by decodedContent() 
     into the stream \a out; otherwise for a multipart container does nothing.
 
@@ -323,6 +363,8 @@ void QMessageContentContainer::writeContentTo(QDataStream& out) const
 }
 
 /*!
+    \fn QMessageContentContainer::clearContents()
+    
     Clears existing content either media or parts, and resets the content type, subtype and 
     charset to default values for text content. 
 
@@ -335,6 +377,8 @@ void QMessageContentContainer::clearContents()
 }
 
 /*!
+    \fn QMessageContentContainer::setContent(const QString &text)
+    
     Sets the content to \a text, content type to "text", and charset to the first charset 
     returned by preferredCharsets() that can encode \a text if any; otherwise sets the charset 
     to "UTF-8".
@@ -349,6 +393,8 @@ void QMessageContentContainer::setContent(const QString &text)
 }
 
 /*!
+    \fn QMessageContentContainer::setContent(const QByteArray &data)
+    
     Sets the content to \a data.
 
     Does not modify the content type, subtype or charset, they should be set separately.
@@ -362,6 +408,8 @@ void QMessageContentContainer::setContent(const QByteArray &data)
 }
 
 /*!
+    \fn QMessageContentContainer::setContentFromFile(const QString &fileName)
+    
     For a multipart container does nothing; otherwise sets the content of the container to be the 
     content of the file \a fileName.
 
@@ -375,6 +423,8 @@ void QMessageContentContainer::setContentFromFile(const QString &fileName)
 }
 
 /*!
+    \fn QMessageContentContainer::readContentFrom(QDataStream &in)
+    
     For a multipart container does nothing; otherwise sets the content of the container by 
     reading from the stream \a in.
 
@@ -388,6 +438,8 @@ void QMessageContentContainer::readContentFrom(QDataStream &in)
 }
 
 /*!
+    \fn QMessageContentContainer::appendContent(const QMessageContentContainer & content)
+    
     Appends \a content to the end of the list of content contained.
 
     For a non multipart container, before a part is appended the content type of the 
@@ -404,6 +456,8 @@ QMessageContentContainerId QMessageContentContainer::appendContent(const QMessag
 }
 
 /*!
+    \fn QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
+    
     If the container contains content with the identifier \a id, either directly or recursively 
     then replaces that content with \a content; otherwise does nothing.
 
@@ -416,6 +470,8 @@ void QMessageContentContainer::replaceContent(const QMessageContentContainerId &
 }
 
 /*!
+    \fn QMessageContentContainer::contentIds() const
+    
     For a multipart container returns a list of identifiers for all content directly contained by 
     the container; otherwise returns an empty list.
 
@@ -427,6 +483,8 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 }
 
 /*!
+    \fn QMessageContentContainer::container(const QMessageContentContainerId id) const
+    
     If the container contains another container with identifier \a id either directly or 
     recursively then returns that other container; otherwise returns an empty container 
     constructed with the default constructor.
@@ -440,6 +498,8 @@ const QMessageContentContainer QMessageContentContainer::container(const QMessag
 }
 
 /*!
+    \fn QMessageContentContainer::container(const QMessageContentContainerId id)
+    
     If the container contains another container with identifier \a id either directly or 
     recursively then returns that other container; otherwise returns an empty container 
     constructed with the default constructor.
@@ -453,6 +513,8 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 }
 
 /*!
+    \fn QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
+    
     Append a header field with name \a name and value \a value to the end of the list of 
     header fields for the container. Any existing header field with the same name is not 
     modified.
@@ -470,6 +532,8 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
 }
 
 /*!
+    \fn QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
+    
     Sets the value of the first header field of the container with name \a name to \a value if it 
     already exists; otherwise appends a header with the supplied name and value.
 
@@ -492,6 +556,8 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 }
 
 /*!
+    \fn QMessageContentContainer::headerField(const QByteArray &name) const
+    
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
 
@@ -504,6 +570,8 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
 }
 
 /*!
+    \fn QMessageContentContainer::headerFieldValues(const QByteArray &name) const
+    
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
@@ -516,6 +584,8 @@ QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &nam
 }
 
 /*!
+    \fn QMessageContentContainer::headerFields() const
+    
     Returns a list of names of header fields of the container.
 
     \sa appendHeaderField(), setHeaderField(), headerField(), preferredCharsets()
@@ -526,6 +596,8 @@ QList<QByteArray> QMessageContentContainer::headerFields() const
 }
 
 /*!
+    \fn QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
+    
     Append a header field with name \a name and value \a value to the end of the list of 
     header fields for the container. Any existing header field with the same name is not 
     modified.
@@ -539,6 +611,8 @@ void QMessageContentContainer::appendHeaderField(const QByteArray &name, const Q
 }
 
 /*!
+    \fn QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
+    
     Sets the value of the first header field of the container with name \a name to \a value if it 
     already exists; otherwise appends a header with the supplied name and value.
 
@@ -551,6 +625,8 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByt
 }
 
 /*!
+    \fn QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
+    
     Sets the ordered by preference list of names of charsets to use when encoding unicode QString 
     text with setContent(), appendHeaderField() or setHeaderField() to \a charsetNames.
 
@@ -562,6 +638,8 @@ void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &cha
 }
 
 /*!
+    \fn QMessageContentContainer::preferredCharsets()
+    
     Returns an ordered by preference list of charset names to use when encoding unicode QString 
     text with setContent(), appendHeaderField() or setHeaderField().
 
@@ -573,6 +651,8 @@ QList<QByteArray> QMessageContentContainer::preferredCharsets()
 }
 
 /*!
+    \fn QMessageContentContainer::containerDataModified() const
+    
     Returns true if the container has been modified since it was constructed; 
     otherwise returns false.
 */
@@ -582,6 +662,8 @@ bool QMessageContentContainer::containerDataModified() const
 }
 
 /*!
+    \fn QMessageContentContainer::setContainerDataModified(bool modified)
+    
     Sets the modified data state of the container to \a modified.
 */
 void QMessageContentContainer::setContainerDataModified(bool modified)
@@ -590,6 +672,8 @@ void QMessageContentContainer::setContainerDataModified(bool modified)
 }
 
 /*!
+    \fn QMessageContentContainer::prependContent(const QMessageContentContainer & content)
+    
     Prepend \a content to the start of the list of content contained.
 
     For a non multipart container, before a part is prepended the content type of the 

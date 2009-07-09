@@ -53,6 +53,8 @@
 */
 
 /*!
+    \fn QMessageAccount::QMessageAccount()
+    
     Creates an empty and invalid account object.
 */
 QMessageAccount::QMessageAccount()
@@ -60,6 +62,9 @@ QMessageAccount::QMessageAccount()
 }
 
 /*!
+    \fn QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+
+    
     Convenience constructor that creates a QMessageAccount by loading the data from the messaging 
     store as specified by the QMessageAccountId \a id. If the account does not exist in the 
     store, then this constructor will create an empty and invalid QMessageAccount.
@@ -72,6 +77,8 @@ QMessageAccount::QMessageAccount(const QMessageAccountId &id)
 }
 
 /*!
+    \fn QMessageAccount::~QMessageAccount()
+    
     Destroys the account object.
 */
 QMessageAccount::~QMessageAccount()
@@ -79,6 +86,8 @@ QMessageAccount::~QMessageAccount()
 }
 
 /*!
+    \fn QMessageAccount::id() const
+    
     Returns the identifier for this account.
 */
 QMessageAccountId QMessageAccount::id() const
@@ -87,6 +96,8 @@ QMessageAccountId QMessageAccount::id() const
 }
 
 /*!
+    \fn QMessageAccount::name() const
+    
     Returns the name of the account for display purposes.
 */
 QString QMessageAccount::name() const
@@ -95,6 +106,8 @@ QString QMessageAccount::name() const
 }
 
 /*!
+    \fn QMessageAccount::fromAddress() const
+    
     Returns the address from which the account's outgoing messages should be reported as originating.
 */
 QMessageAddress QMessageAccount::fromAddress() const
@@ -103,6 +116,8 @@ QMessageAddress QMessageAccount::fromAddress() const
 }
 
 /*!
+    \fn QMessageAccount::types() const
+    
     Returns the types of messages this account deals with.
 */
 QMessage::TypeFlags QMessageAccount::types() const
@@ -111,6 +126,8 @@ QMessage::TypeFlags QMessageAccount::types() const
 }
 
 /*!
+    \fn QMessageAccount::signature() const
+    
     Return the signature for the account if one exists and is enabled; otherwise returns an empty 
     string.
 */
@@ -120,6 +137,8 @@ QString QMessageAccount::signature() const
 }
 
 /*!
+    \fn QMessageAccount::defaultAccount(QMessage::Type type)
+    
     Returns the default account for messages of type \a type.
 */
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)

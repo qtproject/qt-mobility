@@ -55,3 +55,5 @@ SOURCES += qmessageid.cpp \
            qmessagesortkey.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
+
+SOURCES += qmessage_win.cpp

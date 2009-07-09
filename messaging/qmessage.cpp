@@ -147,58 +147,48 @@
 */
 
 /*!
+    \fn QMessage::QMessage()
+    
     Constructs an empty message.
 */
-QMessage::QMessage()
-{
-}
 
 /*!
+    \fn QMessage::(const QMessageId& id)
+
     Constructs a message from data stored in the messaging store with identifier \a id.
     
     \sa QMessageStore
 */
-QMessage::QMessage(const QMessageId& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
+    \fn QMessage::~QMessage()
+    
     Destroys the message.
 */
-QMessage::~QMessage()
-{
-}
 
 /*!
+    \fn QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
+    
     Constructs a message of type \a t from the data contained in \a ba.
     
     See the class description for a list of supported message encapsulations.
     
     \sa toTransmissionFormat()
 */
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
-}
     
 /*!
+    \fn QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
+    
     Constructs a message of type \a t from the data contained in \a fileName.
 
     See the class description for a list of supported message encapsulations.
     
     \sa toTransmissionFormat()
 */
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
-}
 
 /*!
+    \fn QMessage::toTransmissionFormat() const
+    
     Returns the message in a format suitable for transmission.
     
     See the class description for the encapsulations used for each
@@ -206,12 +196,10 @@ QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
     
     \sa fromTransmissionFormat()
 */
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return QByteArray(); // stub
-}
 
 /*!
+    \fn QMessage::toTransmissionFormat(QDataStream& out) const
+  
     Writes the message to the output stream \a out.
     
     See the class description for the encapsulations used for each
@@ -219,335 +207,265 @@ QByteArray QMessage::toTransmissionFormat() const
 
     \sa fromTransmissionFormat()
 */
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    Q_UNUSED(out)
-}
 
 /*!
+    \fn QMessage::id() const
+  
     Returns the identifier of the message.
 
     \sa QMessageFilterKey::id()
 */
-QMessageId QMessage::id() const
-{
-    return QMessageId(); // stub
-}
     
 /*!
+    \fn QMessage::setId(const QMessageId &id)
+  
     Sets the identifier of the message to \a id.
     
     \sa id()
 */
-void QMessage::setId(const QMessageId &id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
+    \fn QMessage::type() const
+    
     Returns the Type of the message.
     
     \sa setType(), QMessageFilterKey::type()
 */
-QMessage::Type QMessage::type() const
-{
-    return None; // stub
-}
     
 /*!
+    \fn QMessage::setType(Type t)
+    
     Sets the Type of the message to \a t.
     
     The type of a message may be set for non-empty messages.
     
     \sa type()
 */
-void QMessage::setType(Type t)
-{
-    Q_UNUSED(t)
-}
 
 /*!
+    \fn QMessage::parentAccountId() const
+    
     Returns the identifier of the parent account of the message if any; otherwise returns an 
     invalid identifier.
 */
-QMessageAccountId QMessage::parentAccountId() const
-{
-    return QMessageAccountId(); // stub
-}
     
 /*!
+    \fn QMessage::setParentAccountId(const QMessageAccountId &accountId)
+  
     Sets the identifier of the parent account of the message to \a accountId.
 */
-void QMessage::setParentAccountId(const QMessageAccountId &accountId)
-{
-    Q_UNUSED(accountId)
-}
 
 /*!
+    \fn QMessage::parentFolderId() const
+  
     Returns the identifier of the folder that contains the message if any; otherwise returns an 
     invalid identifier.
 */
-QMessageFolderId QMessage::parentFolderId() const
-{
-    return QMessageFolderId(); // stub
-}
-    
-/*!
-    Sets the identifier of the folder that contains the message to \a folderId.
-*/
-void QMessage::setParentFolderId(const QMessageFolderId &folderId)
-{
-    Q_UNUSED(folderId)
-}
 
 /*!
+    \fn QMessage::setParentFolderId(const QMessageFolderId &folderId)
+  
+    Sets the identifier of the folder that contains the message to \a folderId.
+*/
+
+/*!
+    \fn QMessage::standardFolder() const
+  
     Returns the standard folder of the message.
     
     Defaults to InboxFolder.
 */
-QMessage::StandardFolder QMessage::standardFolder() const
-{
-    return QMessage::InboxFolder; // stub
-}
     
 /*!
+    \fn QMessage::setStandardFolder(StandardFolder sf)
+  
     Sets the standard folder of the message to \a sf.
 */
-void QMessage::setStandardFolder(StandardFolder sf)
-{
-    Q_UNUSED(sf)
-}
     
 /*!
+    \fn QMessage::from() const
+  
     Returns the originating address of the message.
 
     \sa setFrom(), QMessageFilterKey::sender()
 */
-QMessageAddress QMessage::from() const
-{
-    return QMessageAddress(); // stub
-}
 
 /*!
+    \fn QMessage::setFrom(const QMessageAddress &address)
+  
     Sets the from address, that is the originating address of the message to \a address.
 
     \sa from()
 */
-void QMessage::setFrom(const QMessageAddress &address)
-{
-    Q_UNUSED(address)
-}
 
 /*!
+    \fn QMessage::subject() const
+  
     Returns the subject of the message, if present; otherwise returns a null string.
 
     \sa setSubject(), QMessageFilterKey::subject()
 */
-QString QMessage::subject() const
-{
-    return QString::null; //stub
-}
 
 /*!
+    \fn QMessage::setSubject(const QString &s)
+    
     Sets the subject of the message to \a s.
     
     \sa subject()
 */
-void QMessage::setSubject(const QString &s)
-{
-    Q_UNUSED(s)
-}
 
 /*!
+    \fn QMessage::date() const
+  
     Returns the timestamp contained in the origination date header field of the message, if present; 
     otherwise returns a null timestamp.
     
     \sa setDate(), QMessageFilterKey::timeStamp()
 */
-QDateTime QMessage::date() const
-{
-    return date(); // stub
-}
 
 /*!
+    \fn QMessage::setDate(const QDateTime &d)
+  
     Sets the origination date header field specifying the timestamp of the message to \a d.
     
     \sa date()
 */
-void QMessage::setDate(const QDateTime &d)
-{
-    Q_UNUSED(d)
-}
 
 /*!
+    \fn QMessage::receivedDate() const
+  
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns a null timestamp.
     
     \sa setReceivedDate(), QMessageFilterKey::receptionTimeStamp()
 */
-QDateTime QMessage::receivedDate() const
-{
-    return QDateTime(); // stub
-}
 
 /*!
+    \fn QMessage::setReceivedDate(const QDateTime &d)
+  
     Sets the timestamp indicating the time of message reception by the device to \a d.
     
     \sa receivedDate()
 */
-void QMessage::setReceivedDate(const QDateTime &d)
-{
-    Q_UNUSED(d)
-}
 
 /*! 
+    \fn QMessage::to() const
+  
     Returns the list of primary recipients for the message.
 
     \sa setTo(), QMessageFilterKey::recipients()
 */
-QMessageAddressList QMessage::to() const
-{
-    return QMessageAddressList(); // stub
-}
 
 /*! 
+    \fn QMessage::setTo(const QMessageAddressList& toList)
+  
     Sets the list of primary recipients for the message to \a toList.
     
     \sa to()
 */
-void QMessage::setTo(const QMessageAddressList& toList)
-{
-    Q_UNUSED(toList)
-}
 
 /*! 
+    \fn QMessage::setTo(const QMessageAddress& address)
+  
     Sets the primary recipient for the message to \a address.
     
     \sa to()
 */
-void QMessage::setTo(const QMessageAddress& address)
-{
-    Q_UNUSED(address)
-}
 
 /*!
+    \fn QMessage::cc() const
+  
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
     \sa to(), bcc(), setCc(), QMessageFilterKey::recipients()
 */  
-QMessageAddressList QMessage::cc() const
-{
-    return QMessageAddressList(); // stub
-}
 
 /*!
+   \fn QMessage::setCc(const QMessageAddressList& ccList)
+  
     Set the list of cc (carbon copy) recipients for the message to \a ccList.
 
     \sa cc(), setTo(), setBcc()
 */  
-void QMessage::setCc(const QMessageAddressList& ccList)
-{
-    Q_UNUSED(ccList)
-}
 
 /*!
+    \fn QMessage::bcc() const
+  
     Returns the list of all the bcc (blind carbon copy) recipients specified for the message.
 
     \sa to(), cc(), setBcc()
 */  
-QMessageAddressList QMessage::bcc() const
-{
-    return QMessageAddressList(); // stub
-}
 
 /*!
+    \fn QMessage::setBcc(const QMessageAddressList& bccList)
+  
     Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
 
     \sa bcc(), setTo(), setCc()
 */  
-void QMessage::setBcc(const QMessageAddressList& bccList)
-{
-    Q_UNUSED(bccList)
-}
 
 /*!
+    \fn QMessage::status() const
+    
     Returns the status flags value for the message.
 
     \sa setStatus(), QMessageFilterKey::status()
 */
-QMessage::StatusFlags QMessage::status() const
-{
-    return StatusFlags(None); // stub
-}
 
 /*!
+    \fn QMessage::setStatus(QMessage::StatusFlags newStatus)
+    
     Sets the status flags value for the message to \a newStatus.
 
     \sa status()
 */
-void QMessage::setStatus(QMessage::StatusFlags newStatus)
-{
-    Q_UNUSED(newStatus)
-}
 
 /*!
+    \fn QMessage::priority() const
+    
     Returns the priority of the message.
 
     The default is Normal.
 
     \sa setPriority(), QMessageFilterKey::priority()
 */
-QMessage::Priority QMessage::priority() const
-{
-    return QMessage::Normal; // stub
-}
 
 /*!
+    \fn QMessage::setPriority(Priority newPriority)
+    
     Sets the priority of the message to \a newPriority.
 
     \sa priority()
 */
-void QMessage::setPriority(Priority newPriority)
-{
-    Q_UNUSED(newPriority)
-}
 
 /*!
+    \fn QMessage::size() const
+    
     Returns the complete size of the message as indicated on the originating server.
     
     \sa QMessageFilterKey::size()
 */
-uint QMessage::size() const
-{
-    return 0; // stub
-}
 
 /*!
+    \fn QMessage::setSize(uint size)
+    
     Sets the complete size of the message as found on the originating server to \a size.
     
     \sa size()
 */
-void QMessage::setSize(uint size)
-{
-    Q_UNUSED(size)
-}
 
 /*!
+    \fn QMessage::body() const
+  
     Returns the identifier for the body content contained by the Message if a body exists; 
     otherwise returns an invalid identifier.
     
     \sa QMessageContentContainer, setBody()
 */
-QMessageContentContainerId QMessage::body() const
-{
-    // TODO: Example body finding algorithm.
-    // If the content type of the message is text, then that is the body
-    // otherwise if the first part of the body is text then that is the body.
-    
-    return QMessageContentContainerId(); // stub
-}
 
 /*!
+    \fn QMessage::setBody(const QString &body)
+  
     Sets the body text of the message to be the string \a body.
     
     The internet media (MIME) content type of the body will be "text", the subtype will be 
@@ -558,14 +476,10 @@ QMessageContentContainerId QMessage::body() const
     
     \sa body(), setBodyFromFile(), preferredCharsets()
 */
-void QMessage::setBody(const QString &body)
-{
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id, maybe should add protected setBodyId() and bodyId() methods to the API.
-    Q_UNUSED(body)
-}
 
 /*!
+    \fn QMessage::setBodyFromFile(const QString &fileName)
+  
     Sets the body text of the message to be the contents of the file \a fileName.
     
     The internet media (MIME) content type of the body will be "text", the subtype will be 
@@ -577,66 +491,48 @@ void QMessage::setBody(const QString &body)
         
     \sa body(), setBody(), preferredCharsets()
 */
-void QMessage::setBodyFromFile(const QString &fileName)
-{
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id. Will need to use prepend for multipart messages.
-    Q_UNUSED(fileName)
-}
 
 /*!
+    \fn QMessage::attachments() const
+  
     Returns a list of attachments for the message.
 
     The body of the message will not be included in the list.
     
     \sa appendAttachments(), clearAttachments()
 */
-QMessageContentContainerIdList QMessage::attachments() const
-{
-    //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
-    //    have to recurse into them, somewhat ambiguous.
-    //    Don't recurse, just ignore any body part, see body() for body finding algorithm.
-    
-    // Implementation note, this should be platform independent.
-    return QMessageContentContainerIdList(); // stub
-}
 
 /*!
+    \fn QMessage::appendAttachments(const QStringList &fileNames)
+  
     Append the contents of the files specified by \a fileNames to the end of the list of 
     attachments for the message. The internet media (MIME) type of the attachments will be 
     determined by examining the contents the files.
 
     \sa attachments(), clearAttachments()
 */
-void QMessage::appendAttachments(const QStringList &fileNames)
-{
-    // Implementation note, this should be platform independent.
-    Q_UNUSED(fileNames)
-}
 
 /*!
+    \fn QMessage::clearAttachments()
+  
     Clears the list of attachments for the message, leaving only the message body, if any.
 
     \sa attachments(), appendAttachments()
 */  
-void QMessage::clearAttachments()
-{
-    // Implementation note, this should be platform independent.
-}
 
 /*!
+    \fn QMessage::setOriginatorPort(uint port)
+  
     Sets the originating port of the message to \a port.
 
     Only relevant for SMS messages.
     
     \sa originatorPort(), setDestinationPort()
 */
-void QMessage::setOriginatorPort(uint port)
-{
-    Q_UNUSED(port)
-}
 
 /*!
+    \fn QMessage::originatorPort()
+  
     Returns the originating port of the message.
 
     Only relevant for SMS messages.
@@ -645,24 +541,20 @@ void QMessage::setOriginatorPort(uint port)
     
     \sa setOriginatorPort(), setDestinationPort()
 */
-uint QMessage::originatorPort()
-{
-    return 0; // stub
-}
 
 /*!
+    \fn QMessage::setDestinationPort(uint port)
+  
     Sets the destination port of the message to \a port.
 
     Only relevant for SMS messages.
     
     \sa setOriginatorPort(), destinationPort()
 */
-void QMessage::setDestinationPort(uint port)
-{
-    Q_UNUSED(port)
-}
 
 /*!
+    \fn QMessage::destinationPort()
+  
     Returns the destination port of the message.
 
     Only relevant for SMS messages.
@@ -671,87 +563,64 @@ void QMessage::setDestinationPort(uint port)
     
     \sa setDestinationPort(), setOriginatorPort()
 */
-uint QMessage::destinationPort()
-{
-    return 0; // stub
-}
 
 /*!
+    \fn QMessage::customField(const QString &name) const
+    
     Returns the value of the custom field with name \a name.
 
     \sa setCustomField(), customFields()
 */
-QString QMessage::customField(const QString &name) const
-{
-    Q_UNUSED(name);
-    return QString(); // stub
-}
 
 /*!
+    \fn QMessage::setCustomField(const QString &name, const QString &value)
     Sets the value of the custom field with name \a name to \a value.
 
     \sa customField(), customFields()
 */
-void QMessage::setCustomField(const QString &name, const QString &value)
-{
-    Q_UNUSED(name);
-    Q_UNUSED(value);
-}
 
 /*!
+    \fn QMessage::customFields() const
+    
     Returns a list of names of custom fields.
 
     \sa customField(), setCustomField()
 */
-QList<QString> QMessage::customFields() const
-{
-    return QList<QString>(); // stub
-}
 
 
 /*!
+    \fn QMessage::dataModified() const
+    
     Returns true if the message has been modified since it was constructed; 
     otherwise returns false.
 */
-bool QMessage::dataModified() const
-{
-    return false; // stub
-}
 
 /*!
+    \fn QMessage::setDataModified(bool modified)
+    
     Sets the modified data state of the message to \a modified.
 */
-void QMessage::setDataModified(bool modified)
-{
-    Q_UNUSED(modified);
-}
 
 /*!
-  Creates a reply to sender response to the message
+    \fn QMessage::replyTo() const
+
+    Creates a reply to sender response to the message
   
-  \sa QMessageServiceAction::compose()
+    \sa QMessageServiceAction::compose()
 */
-QMessage QMessage::replyTo() const
-{
-    return QMessage(); // stub
-}
 
 /*!
-  Creates a reply to all response to the message
+    \fn QMessage::replyToAll() const
+    
+    Creates a reply to all response to the message
   
-  \sa QMessageServiceAction::compose()
+    \sa QMessageServiceAction::compose()
 */
-QMessage QMessage::replyToAll() const
-{
-    return QMessage(); // stub
-}
 
 /*!
-  Creates a copy the message in a format suitable for forwarding.
+    \fn QMessage::forward() const
+
+    Creates a copy the message in a format suitable for forwarding.
   
-  \sa QMessageServiceAction::compose()
+    \sa QMessageServiceAction::compose()
 */
-QMessage QMessage::forward() const
-{
-    return QMessage(); // stub
-}

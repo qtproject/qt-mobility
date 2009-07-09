@@ -74,6 +74,8 @@
 */
 
 /*!
+    \fn QMessageServiceAction::QMessageServiceAction(QObject *parent)
+  
     Constructs a message service action object.
     
     The \a parent is passed to the QObject constructor.
@@ -84,6 +86,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
 }
 
 /*!
+    \fn QMessageServiceAction::~QMessageServiceAction()
+  
     Destroys the message service action.
 */
 QMessageServiceAction::~QMessageServiceAction()
@@ -91,9 +95,11 @@ QMessageServiceAction::~QMessageServiceAction()
 }
 
 /*!
-  Transmit \a message using the account identified by \a accountId.
+    \fn QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
   
-  \sa QMessage, QMessageAccountId
+    Transmit \a message using the account identified by \a accountId.
+  
+    \sa QMessage, QMessageAccountId
 */
 void QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
 {
@@ -102,11 +108,13 @@ void QMessageServiceAction::send(const QMessage &message, const QMessageAccountI
 }
 
 /*!
-  Open a composer application using \a message as a prototype.
+    \fn QMessageServiceAction::compose(const QMessage &message)
   
-  The default application for handling the type of \a message should be used.
+    Open a composer application using \a message as a prototype.
   
-  \sa QMessage::type()
+    The default application for handling the type of \a message should be used.
+  
+    \sa QMessage::type()
 */
 void QMessageServiceAction::compose(const QMessage &message)
 {
@@ -114,6 +122,8 @@ void QMessageServiceAction::compose(const QMessage &message)
 }
 
 /*!
+    \fn QMessageServiceAction::retrieve(const QMessageId& id)
+  
     Retrieve meta data of the message identified by \a id.  
 
     The meta data (including flags, from, to, subject, and date fields where applicable) of 
@@ -130,6 +140,8 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
 }
 
 /*!
+    \fn QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+  
     Retrieve the container identified by \a id, the contents of the container should also be 
     retrieved.
     
@@ -141,6 +153,8 @@ void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 }
 
 /*!
+    \fn QMessageServiceAction::show(const QMessageId& id)
+  
     Show the message identified by \a id.
 
     The default application for handling the type of message that \a id identifies should be used.
@@ -153,6 +167,8 @@ void QMessageServiceAction::show(const QMessageId& id)
 }
     
 /*!
+    \fn QMessageServiceAction::exportUpdates()
+  
     Synchronize any changes that have been queued by message store operations with external servers.
 
     \sa QMessageStore::addMessage(), QMessageStore::updateMessage(), QMessageStore::removeMessage(), QMessageStore::removeMessages()
@@ -162,6 +178,8 @@ void QMessageServiceAction::exportUpdates()
 }
     
 /*!
+    \fn QMessageServiceAction::activity() const
+  
     Returns the current activity state of the action.
 
     \sa activityChanged()
@@ -172,6 +190,8 @@ QMessageServiceAction::Activity QMessageServiceAction::activity() const
 }
 
 /*!
+    \fn QMessageServiceAction::cancelOperation()
+  
     Attempts to cancel the last requested operation.
 */
 void QMessageServiceAction::cancelOperation()
@@ -188,6 +208,8 @@ void QMessageServiceAction::cancelOperation()
 */
 
 /*!
+    \fn QMessageServiceAction::lastErrorString() const
+  
     Returns a string indicating the last error condition reported by the action if any; 
     otherwise returns a null string.
 */

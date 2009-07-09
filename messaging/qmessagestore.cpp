@@ -112,6 +112,8 @@
 */
 
 /*!
+    \fn QMessageStore::QMessageStore(QObject *parent)
+    
     Constructs the messaging store.
     
     If \a parent is not 0 then the messaging store will be deleted when \a parent is deleted.
@@ -125,6 +127,8 @@ QMessageStore::QMessageStore(QObject *parent)
 }
 
 /*!
+    \fn QMessageStore::~QMessageStore()
+    
     Destroys the messaging store.
 */
 QMessageStore::~QMessageStore()
@@ -132,6 +136,8 @@ QMessageStore::~QMessageStore()
 }
 
 /*!
+    \fn QMessageStore::lastError() const
+    
     Returns the code of the last error condition reported by the messaging store.
 */
 QMessageStore::ErrorCode QMessageStore::lastError() const
@@ -140,6 +146,8 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
 }
 
 /*!
+    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
@@ -161,6 +169,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 }
 
 /*!
+    \fn QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
+    
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
@@ -182,6 +192,8 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
 }
 
 /*!
+    \fn QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
+    
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     all message identifiers will be returned.
@@ -203,6 +215,8 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
 }
 
 /*!
+    \fn QMessageStore::countMessages(const QMessageFilterKey& key) const
+    
     Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
@@ -216,6 +230,8 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
 }
 
 /*!
+    \fn QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
+    
     Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageFolderFilterKey \a key. If 
     key is empty a count of all messages is returned.
@@ -229,6 +245,8 @@ int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
 }
 
 /*!
+    \fn QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
+    
     Returns the count of the number of messages which match the 
     filtering criteria defined in QMessageAccountFilterKey \a key. If 
     key is empty a count of all messages is returned.
@@ -242,6 +260,8 @@ int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 }
 
 /*!
+    \fn QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
+    
     Removes the message with QMessageId \a id from the messaging store. If \a option is 
     QMessageStore::CreateRemovalRecord then a removal record will be created for the
     removed message.
@@ -261,6 +281,8 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 }
 
 /*!
+    \fn QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
+    
     Removes all messages identified by the key \a key from the messaging store.
     If \a option is QMessageStore::CreateRemovalRecord then removal records will be 
     created for each removed message.
@@ -293,6 +315,8 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 }
 
 /*!
+    \fn QMessageStore::addMessage(QMessage *m)
+    
     Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
@@ -308,6 +332,8 @@ bool QMessageStore::addMessage(QMessage *m)
 }
 
 /*!
+    \fn QMessageStore::updateMessage(QMessage *m)
+    
     Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
 
@@ -323,6 +349,8 @@ bool QMessageStore::updateMessage(QMessage *m)
 }
 
 /*!
+    \fn QMessageStore::message(const QMessageId& id) const
+    
    Returns the QMessage identified by \a id from the store.
 */
 QMessage QMessageStore::message(const QMessageId& id) const
@@ -332,6 +360,8 @@ QMessage QMessageStore::message(const QMessageId& id) const
 }
 
 /*!
+    \fn QMessageStore::folder(const QMessageFolderId& id) const
+    
    Returns the QMessageFolder identified by \a id from the store.
 */
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
@@ -341,6 +371,8 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 }
 
 /*!
+    \fn QMessageStore::account(const QMessageAccountId& id) const
+    
    Returns the QMessageAccount identified by \a id from the store.
 */
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
@@ -350,6 +382,8 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 }
 
 /*!
+    \fn QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
+    
    If \a maximumBytes is 0, removes any constraint on the maximum memory 
    that can be allocated directly by the store when evaluating 
    countMessages() and queryMessages().
@@ -371,6 +405,8 @@ void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
 }
 
 /*!
+    \fn QMessageStore::maximumWorkingMemory()
+    
    Returns 0 if no constraint has been set by setMaximumWorkingMemory().
    
    Otherwise returns the maximum working memory as set by setMaximumWorkingMemory().
@@ -385,6 +421,8 @@ uint QMessageStore::maximumWorkingMemory()
 }
 
 /*!
+    \fn QMessageStore::instance()
+    
     Returns the single instance of the QMessageStore class.
 
     If necessary, the store will be instantiated and initialized.
@@ -422,6 +460,8 @@ QMessageStore* QMessageStore::instance()
 */
 
 /*!
+    \fn QMessageStore::startNotifications(const QMessageFilterKey &key)
+    
     Starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
     for messages that match \a key.
     
@@ -433,6 +473,8 @@ void QMessageStore::startNotifications(const QMessageFilterKey &key)
 }
 
 /*!
+    \fn QMessageStore::stopNotifications(const QMessageFilterKey &key)
+    
     Stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
     for messages that match \a key.
     
