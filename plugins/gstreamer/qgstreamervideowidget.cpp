@@ -25,6 +25,8 @@ QGstreamerVideoWidget::QGstreamerVideoWidget(QWidget *parent)
             g_object_set(G_OBJECT(m_videoSink), "contrast", 0, (const char*)NULL);
             g_object_set(G_OBJECT(m_videoSink), "hue", 0, (const char*)NULL);
             g_object_set(G_OBJECT(m_videoSink), "saturation", 0, (const char*)NULL);
+
+            g_object_set(G_OBJECT(m_videoSink), "force-aspect-ratio", 1, (const char*)NULL);
         }
     }
 
@@ -82,3 +84,18 @@ void QGstreamerVideoWidget::windowExposed()
         gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
 }
 
+void QGstreamerVideoWidget::setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio)
+{
+    QMediaWidgetEndpoint::setAspectRatio(ratio);
+    if (m_videoSink)
+        g_object_set(G_OBJECT(m_videoSink),
+                     "force-aspect-ratio",
+                     (ratio == QMediaWidgetEndpoint::AspectRatioAuto),
+                     (const char*)NULL);
+
+}
+
+void QGstreamerVideoWidget::setCustomAspectRatio(const QSize &ratio)
+{
+    QMediaWidgetEndpoint::setCustomAspectRatio(ratio);
+}

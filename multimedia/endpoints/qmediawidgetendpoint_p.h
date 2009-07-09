@@ -54,11 +54,14 @@ class QMediaWidgetEndpointPrivate : public QWidgetPrivate
 {
 public:
     QMediaWidgetEndpointPrivate()
-        : fullscreen(false)
+        : fullscreen(false),
+          aspectRatio(QMediaWidgetEndpoint::AspectRatioAuto)
     {
     }
 
     bool fullscreen;
+    QMediaWidgetEndpoint::AspectRatio aspectRatio;
+    QSize customAspectRatio;
 };
 
 #endif

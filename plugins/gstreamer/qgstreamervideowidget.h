@@ -16,6 +16,10 @@ public:
     GstElement *videoSink();
     void precessNewStream() { setOverlay(); }
 
+protected slots:
+    virtual void setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio);
+    virtual void setCustomAspectRatio(const QSize &ratio);
+
 protected:
     virtual bool event(QEvent*);
 

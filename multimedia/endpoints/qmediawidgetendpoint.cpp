@@ -109,3 +109,58 @@ void QMediaWidgetEndpoint::setFullscreen(bool fullscreen)
 {
     d_func()->fullscreen = fullscreen;
 }
+
+/*!
+  \enum QMediaWidgetEndpoint::AspectRatio
+
+  Defines the width:height ratio to be used for the video.
+
+  \value AspectRatioAuto
+            Let the decoder find the aspect ratio automatically from
+            the media file (this is the default).
+
+  \value AspectRatioWidget
+            Fits the video into the widget making the aspect ratio depend solely on the size of the widget.
+            This way the aspect ratio is freely resizeable by the user.
+
+  \value AspectRatioCustom
+            The aspect ratio is defined by QMediaWidgetEndpoint::customAspectRatio()
+*/
+
+
+/*!
+    \property QMediaWidgetEndpoint::aspectRatio
+
+    The aspect ratio mode of a media output widget.
+
+    \sa QMediaWidgetEndpoint::AspectRatio QMediaWidgetEndpoint::customAspectRatio
+*/
+
+/*!
+    \property QMediaWidgetEndpoint::customAspectRatio
+
+    The aspect ratio value used when QMediaWidgetEndpoint::aspectRatio == AspectRatioCustom.
+
+    \sa QMediaWidgetEndpoint::aspectRatio
+*/
+
+QMediaWidgetEndpoint::AspectRatio QMediaWidgetEndpoint::aspectRatio() const
+{
+    return d_func()->aspectRatio;
+}
+
+void QMediaWidgetEndpoint::setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio)
+{
+    d_func()->aspectRatio = ratio;
+}
+
+
+QSize QMediaWidgetEndpoint::customAspectRatio() const
+{
+    return d_func()->customAspectRatio;
+}
+
+void QMediaWidgetEndpoint::setCustomAspectRatio(const QSize &customRatio)
+{
+    d_func()->customAspectRatio = customRatio;
+}
