@@ -60,8 +60,8 @@ private slots:
     void properties();
     void getServiceNames();
     void defaultExternalIfaceIDs();
-    void defaultServiceInterface();
-    void setDefaultService();
+    void interfaceDefault();
+    void setInterfaceDefault();
     void unregister();
     void cleanupTestCase();
 
@@ -691,7 +691,7 @@ void ServiceDatabaseUnitTest::properties()
     QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     //get a list of capabilities from a default service
-    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    interface = database.interfaceDefault("com.cyberdyne.terminator");
     capabilities.clear();
     capabilities << "NetworkServices";
     QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
@@ -724,7 +724,7 @@ void ServiceDatabaseUnitTest::properties()
             QString("Remote communications interface for the T-800v1.5"));
 
     //get a description from a default service
-    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    interface = database.interfaceDefault("com.omni.device.Accelerometer");
     QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Interface that provides accelerometer readings(omni)"));
 
@@ -895,14 +895,14 @@ void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
 
     //see if we can set a "cross-reference" default interface
     //ie user db referencing an interfaceID belonging to the system db
-    QVERIFY(database.setDefaultService(interface, "FAKE-INTERFACE-ID"));
+    QVERIFY(database.setInterfaceDefault(interface, "FAKE-INTERFACE-ID"));
     QString interfaceID;
-    QServiceInterfaceDescriptor descriptor = database.defaultServiceInterface("gov.usa.stargate", &interfaceID);
+    QServiceInterfaceDescriptor descriptor = database.interfaceDefault("gov.usa.stargate", &interfaceID);
     QCOMPARE(database.lastError().code(), DBError::ExternalIfaceIDFound);
     QCOMPARE(interfaceID, QString("FAKE-INTERFACE-ID"));
 
     interface.d->interfaceName = "gov.ru.stargate";
-    QVERIFY(database.setDefaultService(interface, "FAKE-INTERFACE-ID2"));
+    QVERIFY(database.setInterfaceDefault(interface, "FAKE-INTERFACE-ID2"));
     QList<QPair<QString,QString> > externalDefaultsInfo = database.externalDefaultsInfo();
     QCOMPARE(externalDefaultsInfo[0].second, QString("FAKE-INTERFACE-ID"));
     QCOMPARE(externalDefaultsInfo[1].second, QString("FAKE-INTERFACE-ID2"));
@@ -910,7 +910,7 @@ void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
     //see if we can remove the "cross-reference" default interface
     QVERIFY(database.removeExternalDefaultServiceInterface("FAKE-INTERFACE-ID"));
     interfaceID.clear();
-    descriptor = database.defaultServiceInterface("gov.usa.stargate", &interfaceID);
+    descriptor = database.interfaceDefault("gov.usa.stargate", &interfaceID);
     QVERIFY(database.lastError().code() == DBError::NotFound);
     QVERIFY(interfaceID.isEmpty());
 
@@ -928,19 +928,19 @@ void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
     database.close();
 }
 
-void ServiceDatabaseUnitTest::defaultServiceInterface()
+void ServiceDatabaseUnitTest::interfaceDefault()
 {
     QServiceInterfaceDescriptor interface;
     bool ok;
 
     //try getting the default service interface implementation when database is not open
-    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    interface = database.interfaceDefault("com.cyberdyne.terminator");
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
     QVERIFY(!interface.isValid());
 
     //try getting a valid default, in this case only one implementation exists
     QVERIFY(database.open());
-    interface = database.defaultServiceInterface("com.omni.device.Lights");
+    interface = database.interfaceDefault("com.omni.device.Lights");
     QVERIFY(database.lastError().code() == DBError::NoError);
     QVERIFY(interface.isValid());
     QStringList capabilities;
@@ -953,7 +953,7 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
 
     //try getting a valid default, in this case two services implement the interface
     ok = false;
-    interface = database.defaultServiceInterface("com.CyBerDynE.Terminator");
+    interface = database.interfaceDefault("com.CyBerDynE.Terminator");
     QVERIFY(database.lastError().code() == DBError::NoError);
     QVERIFY(interface.isValid());
 
@@ -966,7 +966,7 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
 
     //try getting a valid default, in this case multiple services implement the interface
     ok = false;
-    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    interface = database.interfaceDefault("com.omni.device.Accelerometer");
     QVERIFY(database.lastError().code() == DBError::NoError);
     QVERIFY(interface.isValid());
     capabilities.clear();
@@ -978,13 +978,13 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
                                     "Interface that provides accelerometer readings(omni)"));
 
     //try searching for an interface that isn't registered
-    interface = database.defaultServiceInterface("com.omni.device.FluxCapacitor");
+    interface = database.interfaceDefault("com.omni.device.FluxCapacitor");
     QVERIFY(database.lastError().code() == DBError::NotFound);
     QVERIFY(!interface.isValid());
 
     //try getting the default interface impl for a service that is made up of multiple
     //plugins
-    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(database.lastError().code() == DBError::NoError);
     capabilities.clear();
     QVERIFY(compareDescriptor(interface, "com.dharma.electro.discharge",
@@ -992,13 +992,13 @@ void ServiceDatabaseUnitTest::defaultServiceInterface()
                                 capabilities, customs, "C:/island/swan.dll"));
 
     //trying getting the default using an empty interface name
-    interface = database.defaultServiceInterface("");
+    interface = database.interfaceDefault("");
     QVERIFY(database.lastError().code() == DBError::NotFound);
     QVERIFY(!interface.isValid());
     QVERIFY(database.close());
 }
 
-void ServiceDatabaseUnitTest::setDefaultService()
+void ServiceDatabaseUnitTest::setInterfaceDefault()
 {
     QServiceInterfaceDescriptor interface;
     interface.d = new QServiceInterfaceDescriptorPrivate;
@@ -1007,7 +1007,7 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->major = 1;
     interface.d->minor = 6;
 
-    QVERIFY(!database.setDefaultService(interface));
+    QVERIFY(!database.setInterfaceDefault(interface));
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
 
     QVERIFY(database.open());
@@ -1015,12 +1015,12 @@ void ServiceDatabaseUnitTest::setDefaultService()
     //try setting the default to a older version provided by the same
     //service
     QServiceInterfaceDescriptor defaultInterface;
-    defaultInterface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    defaultInterface = database.interfaceDefault("com.cyberdyne.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "Cyberdyne", 2, 1));
 
-    QVERIFY(database.setDefaultService(interface));
-    defaultInterface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    QVERIFY(database.setInterfaceDefault(interface));
+    defaultInterface = database.interfaceDefault("com.cyberdyne.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "Cyberdyne", 1, 6));
 
@@ -1030,8 +1030,8 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->major = 1;
     interface.d->minor = 5;
 
-    QVERIFY(database.setDefaultService(interface));
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    QVERIFY(database.setInterfaceDefault(interface));
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
@@ -1040,10 +1040,10 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->interfaceName = "com.dharma.electro.discharge";
     interface.d->major = 8;
     interface.d->minor = 0;
-    QVERIFY(database.setDefaultService(interface));
+    QVERIFY(database.setInterfaceDefault(interface));
     QStringList capabilities;
     QHash<QString,QString> customs;
-    defaultInterface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    defaultInterface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(compareDescriptor(defaultInterface, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 8, 0, capabilities, customs,
                                 "C:/island/pearl.dll"));
@@ -1055,9 +1055,9 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->major = 1;
     interface.d->minor = 9;
 
-    QVERIFY(!database.setDefaultService(interface));
+    QVERIFY(!database.setInterfaceDefault(interface));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
@@ -1067,9 +1067,9 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->major = 1;
     interface.d->minor = 5;
 
-    QVERIFY(!database.setDefaultService(interface));
+    QVERIFY(!database.setInterfaceDefault(interface));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
@@ -1078,9 +1078,9 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->interfaceName = "com.cyberdyne.terminator";
     interface.d->major = 1;
     interface.d->minor = 4;
-    QVERIFY(!database.setDefaultService(interface));
+    QVERIFY(!database.setInterfaceDefault(interface));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
@@ -1089,18 +1089,18 @@ void ServiceDatabaseUnitTest::setDefaultService()
     interface.d->interfaceName = "COM.cyberdyne.terminaTOR";
     interface.d->major = 1;
     interface.d->minor = 5;
-    QVERIFY(!database.setDefaultService(interface));
+    QVERIFY(!database.setInterfaceDefault(interface));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
     //try setting the default using an invalid interface
     QServiceInterfaceDescriptor invalidInterface;
     QVERIFY(!invalidInterface.isValid());
-    QVERIFY(!database.setDefaultService(invalidInterface));
+    QVERIFY(!database.setInterfaceDefault(invalidInterface));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
-    defaultInterface = database.defaultServiceInterface("com.CYBERDYNE.terminator");
+    defaultInterface = database.interfaceDefault("com.CYBERDYNE.terminator");
     QVERIFY(compareDescriptor(defaultInterface, "com.cyberdyne.terminator",
                                         "skynet", 1, 5));
 
@@ -1146,10 +1146,10 @@ void ServiceDatabaseUnitTest::unregister()
 
     //confirm that it is the default service for a couple of interfaces
     QServiceInterfaceDescriptor interface;
-    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    interface = database.interfaceDefault("com.omni.device.Accelerometer");
     QVERIFY(interface.serviceName() == "OMNI");//other services implement this interface
 
-    interface = database.defaultServiceInterface("com.omni.service.Video");
+    interface = database.interfaceDefault("com.omni.service.Video");
     QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this interface
 
     //confirm that interface and service properties exist for the service
@@ -1189,14 +1189,14 @@ void ServiceDatabaseUnitTest::unregister()
     QVERIFY(!serviceFound);
 
     //ensure a new default interface has been assigned for the following interface
-    interface = database.defaultServiceInterface("com.omni.device.Accelerometer");
+    interface = database.interfaceDefault("com.omni.device.Accelerometer");
     QVERIFY(interface.isValid());
     QCOMPARE(interface.serviceName(), QString("WayneEnt"));
     QCOMPARE(interface.majorVersion(), 2);
     QCOMPARE(interface.minorVersion(), 0);
 
     //ensure there is no longer a default for the following interface
-    interface = database.defaultServiceInterface("com.omni.service.Video");
+    interface = database.interfaceDefault("com.omni.service.Video");
     QVERIFY(!interface.isValid());
 
     //ensure the associated interfaceIDs no longer exist in the Property
@@ -1216,12 +1216,12 @@ void ServiceDatabaseUnitTest::unregister()
     interface.d->interfaceName = "com.cyberdyne.terminator";
     interface.d->major = 2;
     interface.d->minor = 0;
-    QVERIFY(database.setDefaultService(interface));
+    QVERIFY(database.setInterfaceDefault(interface));
 
-    interface = database.defaultServiceInterface("com.cyberdyne.terminator");
+    interface = database.interfaceDefault("com.cyberdyne.terminator");
     QVERIFY(interface.isValid());
     QVERIFY(database.unregisterService("cyberDYNE"));
-    interface = database.defaultServiceInterface("com.cyberdyne.terminatOR");
+    interface = database.interfaceDefault("com.cyberdyne.terminatOR");
     QVERIFY(interface.isValid());
     QVERIFY(compareDescriptor(interface, "com.cyberdyne.terminator",
                                 "skynet", 3, 6));
@@ -1239,7 +1239,7 @@ void ServiceDatabaseUnitTest::unregister()
         QVERIFY(existsInServicePropertyTable(serviceID));
 
     QVERIFY(database.unregisterService("DHARMAInitiative"));
-    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(!interface.isValid());
     QCOMPARE(database.lastError().code(), DBError::NotFound);
     filter.setServiceName("DharmaInitiative");
@@ -1260,7 +1260,7 @@ void ServiceDatabaseUnitTest::unregister()
     ServiceMetaData parser(testdir.absoluteFilePath("ServiceDharma_Flame.xml"));
     QVERIFY(parser.extractMetadata());
     QVERIFY(database.registerService(parser));
-    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(interface.isValid());
     filter.setServiceName("DharmaInitiative");
     filter.setInterface("");
@@ -1274,7 +1274,7 @@ void ServiceDatabaseUnitTest::unregister()
     filter.setInterface("");
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 4);
-    interface = database.defaultServiceInterface("com.dharma.electro.discharge");
+    interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(interface.isValid());
     QStringList capabilities;
     QHash<QString,QString> customs;

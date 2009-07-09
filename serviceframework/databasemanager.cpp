@@ -481,7 +481,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
         if (!openDb(UserScope))
             return QServiceInterfaceDescriptor();
         QString interfaceID;
-        descriptor = m_userDb->defaultServiceInterface(interfaceName, &interfaceID);
+        descriptor = m_userDb->interfaceDefault(interfaceName, &interfaceID);
 
         if (m_userDb->lastError().code() == DBError::NoError) {
             descriptor.d->systemScope = false;
@@ -545,7 +545,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
             return QServiceInterfaceDescriptor();
         }
     } else {
-        descriptor = m_systemDb->defaultServiceInterface(interfaceName);
+        descriptor = m_systemDb->interfaceDefault(interfaceName);
         if (m_systemDb->lastError().code() == DBError::NoError) {
             descriptor.d->systemScope = true;
             return descriptor;
@@ -614,7 +614,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
         if (!openDb(UserScope))
             return false;
         if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
-            if(m_userDb->setDefaultService(descriptor)) {
+            if(m_userDb->setInterfaceDefault(descriptor)) {
                 m_lastError.setError(DBError::NoError);
                 return true;
             } else {
@@ -628,7 +628,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
 
             QString interfaceDescriptorID = m_systemDb->getInterfaceID(descriptor);
             if (m_systemDb->lastError().code() == DBError::NoError) {
-                if(m_userDb->setDefaultService(descriptor, interfaceDescriptorID)) {
+                if(m_userDb->setInterfaceDefault(descriptor, interfaceDescriptorID)) {
                     m_lastError.setError(DBError::NoError);
                     return true;
                 } else {
@@ -650,7 +650,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
             if (!openDb(SystemScope)) {
                 return false;
             } else {
-                if (m_systemDb->setDefaultService(descriptor)) {
+                if (m_systemDb->setInterfaceDefault(descriptor)) {
                     m_lastError.setError(DBError::NoError);
                     return true;
                 } else {

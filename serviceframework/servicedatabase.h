@@ -61,10 +61,10 @@ class DBError
             CannotCreateDbDir,      //Directory to contain database could not be created(usu a permissions issue)
             CannotOpenSystemDb,     //system database cannot be opened(usually a permissions issue)
             CannotOpenUserDb,       //user database cannot be opened (usually a permissions issue)
-            ExternalIfaceIDFound,   //Notification for defaultServiceInterface() on a user scope database
+            ExternalIfaceIDFound,   //Notification for interfaceDefault() on a user scope database
                                     //  to indicate that a default refers to an interface implementation in the
                                     //  system scope database
-            InvalidDescriptorScope, //Notification for setDefaultService() on a system scope database
+            InvalidDescriptorScope, //Notification for setInterfaceDefault() on a system scope database
                                     //  to indicate that a user scope descriptor cannot be used
                                     //  with a system scope database.
             InvalidDatabaseFile,    //database file is corrupted or not a valid database
@@ -112,9 +112,9 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         QString getInterfaceID(const QServiceInterfaceDescriptor &interface);
         QStringList getServiceNames(const QString &interfaceName);
 
-        QServiceInterfaceDescriptor defaultServiceInterface(const QString &interfaceName,
+        QServiceInterfaceDescriptor interfaceDefault(const QString &interfaceName,
                                     QString *interfaceID = 0, bool inTransaction = false);
-        bool setDefaultService(const QServiceInterfaceDescriptor &interface,
+        bool setInterfaceDefault(const QServiceInterfaceDescriptor &interface,
                                 const QString &externalInterfaceID = QString());
         QList<QPair<QString,QString> > externalDefaultsInfo();
         bool removeExternalDefaultServiceInterface(const QString &interfaceID);
