@@ -33,11 +33,15 @@
 
 #include "qnetworkconfigmanager_p.h"
 #include "qgenericengine_p.h"
-#include "qnlaengine_win_p.h"
 
 #ifdef Q_OS_WIN32
+#include "qnlaengine_win_p.h"
 #include "qnativewifiengine_win_p.h"
 #include "qioctlwifiengine_win_p.h"
+#endif
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#include <qnetworkmanagerservice_p.h>
+#include "qnmwifiengine_unix_p.h"
 #endif
 
 #include <QtCore/qdebug.h>
@@ -45,6 +49,27 @@
 #include <QtCore/qstringlist.h>
 
 QT_BEGIN_NAMESPACE
+
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    static QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
+#endif
+
+#if !defined(Q_OS_WIN32)
+static bool NetworkManagerAvailable()
+{
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
+        if (reply.isValid())
+            return reply.value();
+    }
+#endif
+    return false;
+}
+#endif
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
@@ -186,7 +211,8 @@ void QNetworkConfigurationManagerPrivate::updateInternetServiceConfiguration()
     while (i != accessPointConfigurations.constEnd()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> child = i.value();
 
-        if (child.data()->internet) {
+        if (child.data()->internet && ((child.data()->state & QNetworkConfiguration::Defined)
+                    == QNetworkConfiguration::Defined)) {
             serviceNetworkMembers.append(child);
 
             state |= child.data()->state;
@@ -213,6 +239,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         onlineConfigurations = 0;
 
         generic = QGenericEngine::instance();
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        if(!NetworkManagerAvailable())
+#endif
         if (generic) {
             connect(generic, SIGNAL(configurationsChanged()),
                     this, SLOT(updateConfigurations()));
@@ -241,10 +270,26 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                     this, SLOT(updateConfigurations()));
         }
 #endif
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        nmWifi = QNmWifiEngine::instance();
+        if (nmWifi) {
+
+            if (firstUpdate) {
+                connect(nmWifi, SIGNAL(configurationsChanged()),
+                        this, SLOT(updateConfigurations()));
+            }
+        }
+#endif
     }
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+       if(NetworkManagerAvailable())
+            if (engine == nmWifi)
+                updateState &= ~NmUpdating;
+       else
+#endif
         if (engine == generic)
             updateState &= ~GenericUpdating;
 #ifdef Q_OS_WIN
@@ -261,6 +306,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+        if (nmWifi)
+            engines << nmWifi;
+        else
+#endif
         if (generic)
             engines << generic;
 #ifdef Q_OS_WIN
@@ -367,11 +417,17 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
 
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    if (nmWifi) {
+        updateState |= NmUpdating;
+        nmWifi->requestUpdate();
+    }
+#else
     if (generic) {
         updateState |= GenericUpdating;
         generic->requestUpdate();
     }
-
+#endif
 #ifdef Q_OS_WIN
     if (nla) {
         updateState |= NlaUpdating;

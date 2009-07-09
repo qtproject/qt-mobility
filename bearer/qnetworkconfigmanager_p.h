@@ -58,18 +58,10 @@ class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
 class QIoctlWifiEngine;
+class QNmWifiEngine;
 #endif
 
 #include <QStringList>
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-#include <qnetworkmanagerservice_p.h>
-
-#include <QDBusConnection>
-#include <QDBusMessage>
-#include <QObject>
-#include <QDBusObjectPath>
-#endif
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {
@@ -134,34 +126,6 @@ private:
     void abort();
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-//    QNetworkManagerInterface *iface;
-
-    QStringList knownSsids;
-    bool updating;
-    QString currentActiveAP;
-    QString defaultConnectionPath;
-    QStringList getKnownSsids();
-
-    void updateEthConfigurations(QNetworkManagerInterfaceDevice *devIface);
-    void updateWifiConfigurations(QNetworkManagerInterfaceDevice *devIface);
-    void updateServiceNetworks(QNetworkManagerInterfaceDevice *devIface);
-
-    void updateServiceNetworkState(bool isWifi);
-    void updateState(const QString &ident, quint32 state);
-
-    QString getNameForConfiguration(QNetworkManagerInterfaceDevice *devIface);
-
-    QStringList getActiveConnectionsPaths(QDBusInterface &iface);
-    QNetworkConfiguration::StateFlags getAPState(qint32 vState, bool isKnown);
-
-     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
-     QNetworkManagerInterfaceDevice *devIface;
-     QNetworkManagerInterface *iface;
-
-    //    QStringList getActiveDevicesPaths(QDBusInterface &iface);
-#endif
-
 #ifdef BEARER_ENGINE
     QGenericEngine *generic;
 #ifdef Q_OS_WIN
@@ -181,10 +145,15 @@ private:
         NlaUpdating = 0x04,
         NativeWifiUpdating = 0x08,
         IoctlWifiUpdating = 0x10,
+        NmUpdating = 0x20,
     };
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
 
     EngineUpdateState updateState;
+#endif
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && defined(BEARER_ENGINE)
+    QNmWifiEngine *nmWifi;
+//    void updateNmConfigurations(QList<QString> &knownConfigs);
 #endif
 
 private Q_SLOTS:
@@ -192,13 +161,6 @@ private Q_SLOTS:
     void configurationAdded(QNetworkConfigurationPrivate *cpPriv, QNetworkSessionEngine *engine);
     void configurationRemoved(const QString &id);
     void configurationChanged(QNetworkConfigurationPrivate *cpPriv);
-#endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-    void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
-    void accessPointAdded(const QString &, QDBusObjectPath );
-    void accessPointRemoved( const QString &, QDBusObjectPath );
-    void updateDeviceInterfaceState(const QString &, quint32);
-    void updateAccessPointState(const QString &, quint32);
 #endif
 };
 

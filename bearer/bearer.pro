@@ -51,6 +51,7 @@ symbian: {
                qnetworksession_p.h
 
     win32:DEFINES += BEARER_ENGINE
+    !mac:unix:contains(QT_CONFIG,dbus):DEFINES += BEARER_ENGINE
 
     contains(DEFINES, BEARER_ENGINE) {
         HEADERS += qnetworksessionengine_p.h \
@@ -62,14 +63,15 @@ symbian: {
                    qgenericengine.cpp
     }
 
-    !mac:unix:SOURCES += qnetworkconfigmanager_unix.cpp \
-                    qnetworkconfiguration_unix.cpp \
-                    qnetworksession_unix.cpp
-
     !mac:unix:contains(QT_CONFIG,dbus): {
         QT += dbus
-        HEADERS += qnmdbushelper_p.h qnetworkmanagerservice_p.h
-        SOURCES += qnmdbushelper.cpp qnetworkmanagerservice_p.cpp
+        HEADERS += qnmdbushelper_p.h \
+                   qnetworkmanagerservice_p.h \
+                   qnmwifiengine_unix_p.h
+
+        SOURCES += qnmdbushelper.cpp \
+                   qnetworkmanagerservice_p.cpp \
+                   qnmwifiengine_unix.cpp
     }
 
     win32: {
