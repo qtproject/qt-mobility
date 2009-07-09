@@ -149,6 +149,11 @@ bool MpdPlayerControl::isVideoAvailable() const
     return false;
 }
 
+bool MpdPlayerControl::isSeekable() const
+{
+    return true;
+}
+
 void MpdPlayerControl::play()
 {
     daemon->send("play");
