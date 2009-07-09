@@ -332,6 +332,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 } else {
                     QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
                 }
+            } else if (error == QNetworkSession::UnknownSessionError) {
+                    QSKIP("Unknown Session error.", SkipSingle);
             } else {
                 QFAIL("Error opening session.");
             }
