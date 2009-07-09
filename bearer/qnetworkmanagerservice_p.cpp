@@ -636,6 +636,82 @@ QNmSettingsMap QNetworkManagerSettingsConnection::getSettings()
 // QMap< QString, QMap<QString,QVariant> > map
 }
 
+NMDeviceType QNetworkManagerSettingsConnection::getType()
+{
+    QNmSettingsMap map = getSettings();
+    QNmSettingsMap::const_iterator i = map.find("connection");
+    while (i != map.end() && i.key() == "connection") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("type");
+        while (ii != innerMap.end() && ii.key() == "type") {
+            QString devType = ii.value().toString();
+            if (devType == "802-3-ethernet") {
+                return 	DEVICE_TYPE_802_3_ETHERNET;
+            }
+            if (devType == "802-11-wireless") {
+                return 	DEVICE_TYPE_802_11_WIRELESS;
+            }
+        }
+    }
+    return 	DEVICE_TYPE_UNKNOWN;
+}
+
+bool QNetworkManagerSettingsConnection::isAutoConnect()
+{
+    QNmSettingsMap map = getSettings();
+    QNmSettingsMap::const_iterator i = map.find("connection");
+    while (i != map.end() && i.key() == "connection") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("autoconnect");
+        while (ii != innerMap.end() && ii.key() == "autoconnect") {
+            return ii.value().toBool();
+        }
+    }
+    return false;
+}
+
+quint64 QNetworkManagerSettingsConnection::getTimestamp()
+{
+    QNmSettingsMap map = getSettings();
+    QNmSettingsMap::const_iterator i = map.find("connection");
+    while (i != map.end() && i.key() == "connection") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("timestamp");
+        while (ii != innerMap.end() && ii.key() == "timestamp") {
+            return ii.value().toUInt();
+        }
+    }
+    return 	0;
+}
+
+QString QNetworkManagerSettingsConnection::getId()
+{
+    QNmSettingsMap map = getSettings();
+    QNmSettingsMap::const_iterator i = map.find("connection");
+    while (i != map.end() && i.key() == "connection") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
+        while (ii != innerMap.end() && ii.key() == "id") {
+            return ii.value().toString();
+        }
+    }
+    return 	QString();
+}
+
+QString QNetworkManagerSettingsConnection::getUuid()
+{
+    QNmSettingsMap map = getSettings();
+    QNmSettingsMap::const_iterator i = map.find("connection");
+    while (i != map.end() && i.key() == "connection") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("uuid");
+        while (ii != innerMap.end() && ii.key() == "uuid") {
+            return ii.value().toString();
+        }
+    }
+    return 	QString();
+}
+
 /////////////
 class QNetworkManagerConnectionActivePrivate
 {

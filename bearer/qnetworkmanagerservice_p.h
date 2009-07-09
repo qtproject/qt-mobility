@@ -300,6 +300,11 @@ public:
     QNmSettingsMap getSettings();
     //    void update(QNmSettingsMap map);
     bool setConnections();
+    NMDeviceType getType();
+    bool isAutoConnect();
+    quint64 getTimestamp();
+    QString getId();
+    QString getUuid();
 
 Q_SIGNALS:
     
