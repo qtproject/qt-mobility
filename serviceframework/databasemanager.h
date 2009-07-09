@@ -73,7 +73,6 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
     private:
         void initDbPath(DbScope scope);
         bool openDb(DbScope scope);
-        void close();
 
         ServiceDatabase *m_userDb;
         ServiceDatabase *m_systemDb;

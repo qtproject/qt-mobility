@@ -197,6 +197,41 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
                 && d1.minorVersion() < d2.minorVersion());
 }
 
+/*
+    \class DatabaseManager
+    The database manager is responsible for receiving queries about
+    services and managing user and system scope databases in order to
+    respond to those queries.
+
+    It provides operations for
+    - registering and unregistering services
+    - querying for services and interfaces
+    - setting and getting default interface implementations
+
+    and provides notifications by emitting signals for added
+    or removed services.
+
+    Implementation note:
+    When one of the above operations is first invoked a connection with the
+    appropriate database(s) is opened.  This connection remains
+    open until the DatabaseManager is destroyed.
+
+    If the system scope database cannot be opened when performing
+    user scope operations.  The operations are carried out as per normal
+    but only acting on the user scope database.  Each operation invokation
+    will try to open a connection with the system scope database.
+
+    Terminology note:
+    When referring to user scope regarding operations, it generally
+    means access to both the user and system databases with the
+    data from both combined into a single dataset.
+    When referring to a user scope database it means the
+    user database only.
+*/
+
+/*
+   Constructor
+*/
 DatabaseManager::DatabaseManager()
     : m_userDb(new ServiceDatabase),
       m_systemDb(new ServiceDatabase),
@@ -206,13 +241,29 @@ DatabaseManager::DatabaseManager()
     initDbPath(SystemScope);
 }
 
+/*
+   Destructor
+*/
 DatabaseManager::~DatabaseManager()
 {
-    close();
     delete m_fileWatcher;
     m_fileWatcher = 0;
+
+    //Aside: databases are implicitly closed
+    //during deletion
+    delete m_userDb;
+    m_userDb = 0;
+
+    delete m_systemDb;
+    m_systemDb = 0;
 }
 
+
+/*
+    Initialises database path of m_userDb
+    or m_systemDb, but does not open any
+    database connections
+*/
 void DatabaseManager::initDbPath(DbScope scope)
 {
     QSettings::Scope settingsScope;
@@ -238,14 +289,13 @@ void DatabaseManager::initDbPath(DbScope scope)
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 }
 
-void DatabaseManager::close()
-{
-    delete m_userDb;
-    m_userDb = 0;
-    delete m_systemDb;
-    m_systemDb = 0;
-}
+/*
+    Adds the details \a  service into the service database corresponding to
+    \a scope.
 
+    Returns true if the operation succeeded and false otherwise.
+    The last error is set when this function is called.
+*/
 bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
 {
     if (scope == DatabaseManager::SystemScope) {
@@ -260,7 +310,7 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
                 return true;
             }
         }
-    } else { //must registering service at user scope
+    } else { //must  be registering service at user scope
         if (!openDb(DatabaseManager::UserScope)) {
             return false;
         } else {
@@ -275,6 +325,13 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
     }
 }
 
+/*
+    Removes the details of \serviceName from the database corresponding to \a
+    scope.
+
+    Returns true if the operation succeeded, false otherwise.
+    The last error is set when this function is called.
+*/
 bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scope)
 {
     if(scope == DatabaseManager::SystemScope) {
@@ -304,6 +361,12 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
     }
 }
 
+/*
+    Retrieves a list of interface descriptors that fulfill the constraints specified
+    by \a filter at a given \a scope.
+
+    The last error is set when this function is called.
+*/
 QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
 {
     QList<QServiceInterfaceDescriptor> descriptors;
@@ -352,6 +415,13 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
     return descriptors;
 }
 
+
+/*
+    Retrieves a list of the names of services that provide the interface
+    specified by \a interfaceName.
+
+    The last error is set when this function is called.
+*/
 QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DatabaseManager::DbScope scope)
 {
     QStringList serviceNames;
@@ -398,6 +468,12 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
     return serviceNames;
 }
 
+/*
+    Returns the default interface implementation descriptor for a given
+    \a interfaceName and \a scope.
+
+    The last error is set when this function is called.
+*/
 QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
     QServiceInterfaceDescriptor descriptor;
@@ -433,6 +509,8 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
                 QList<QServiceInterfaceDescriptor> descriptors;
                 descriptors = getInterfaces(interfaceName, UserScope);
 
+                //make the latest interface implementation the new
+                //default if there is one
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
                     setInterfaceDefault(descriptor, UserScope);
@@ -485,12 +563,20 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     return QServiceInterfaceDescriptor();
 }
 
-bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const QString &interfaceName, DbScope scope)
-{
-    QList<QServiceInterfaceDescriptor> descriptors;
-    QServiceFilter filter;
-    filter.setServiceName(serviceName);
-    filter.setInterface(interfaceName);
+/*
+    Sets the default interface implemenation for \a interfaceName to the matching
+    interface implementation provided by \a service.
+
+    If \a service provides more than one interface implementation, the newest
+    version of the interface is set as the default.
+
+    Returns true if the operation was succeeded, false otherwise
+    The last error is set when this function is called.
+*/
+bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
+        QString &interfaceName, DbScope scope) {
+    QList<QServiceInterfaceDescriptor> descriptors; QServiceFilter filter;
+    filter.setServiceName(serviceName); filter.setInterface(interfaceName);
 
     descriptors = getInterfaces(filter, scope);
     if (m_lastError.code() != DBError::NoError)
@@ -515,6 +601,13 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const QStr
     return setInterfaceDefault(descriptors[latestIndex], scope);
 }
 
+/*
+    Sets the interface implementation specified by \a descriptor to be the default
+    implementation for the particular interface specified in the descriptor.
+
+    Returns true if the operation succeeded, false otherwise.
+    The last error is set when this function is called.
+*/
 bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
     if (scope == UserScope) {
@@ -569,6 +662,12 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
     }
 }
 
+
+/*
+    Opens a database connection with the database at a specific \a scope.
+
+    The last error is set when this function is called.
+*/
 bool DatabaseManager::openDb(DbScope scope)
 {
     if (scope == SystemScope && m_systemDb->isOpen() && !QFile::exists(m_systemDb->databasePath())) {
@@ -597,8 +696,9 @@ bool DatabaseManager::openDb(DbScope scope)
             m_lastError = db->lastError();
         } else {
             DBError::ErrorCode errorType;
-            if (scope == SystemScope)
+            if (scope == SystemScope) {
                 errorType = DBError::CannotOpenSystemDb;
+            }
             else {
                 qWarning() << "Service Framework:- Unable to open or create user scope database at: "
                     << db->databasePath() << ".  The problem is most likely a permissions issue.";
@@ -616,7 +716,7 @@ bool DatabaseManager::openDb(DbScope scope)
         return false;
     }
 
-    //if we are opening the system database and are at user scope
+    //if we are opening the system database while the user database is open,
     //cleanup and reset any old external defaults
     //from the user scope database
     if (scope == SystemScope && m_userDb->isOpen()) {
@@ -645,6 +745,10 @@ bool DatabaseManager::openDb(DbScope scope)
     return true;
 }
 
+/*
+    Returns the interface descriptor with the highest version from the
+    list of interface \a descriptors
+*/
 QServiceInterfaceDescriptor DatabaseManager::latestDescriptor(
                                     const QList<QServiceInterfaceDescriptor> &descriptors)
 {
@@ -660,11 +764,15 @@ QServiceInterfaceDescriptor DatabaseManager::latestDescriptor(
     return descriptors[latestIndex];
 }
 
+/*
+    Sets whether change notifications for added and removed services are
+    \a enabled or not at a given \a scope.
+*/
 void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
 {
-    if (!m_fileWatcher)
-        m_fileWatcher = new DatabaseFileWatcher(this);
-    m_fileWatcher->setEnabled(scope == SystemScope ? m_systemDb : m_userDb, enabled);
+    if (!m_fileWatcher) m_fileWatcher = new
+    DatabaseFileWatcher(this); m_fileWatcher->setEnabled(scope == SystemScope ?
+            m_systemDb : m_userDb, enabled);
 }
 
 QT_END_NAMESPACE

@@ -1230,11 +1230,10 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
 void DatabaseManagerUnitTest::clean()
 {
     if (m_dbm != 0 ) {
-        m_dbm->close();
         delete m_dbm;
     }
     m_dbm = 0;
-    
+
     QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
 }
 
