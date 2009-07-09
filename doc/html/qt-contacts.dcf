@@ -238,7 +238,6 @@
         <keyword ref="qcontactmanager.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmanager.html#error">error</keyword>
         <keyword ref="qcontactmanager.html#fromUri">fromUri</keyword>
-        <keyword ref="qcontactmanager.html#functionality">functionality</keyword>
         <keyword ref="qcontactmanager.html#group">group</keyword>
         <keyword ref="qcontactmanager.html#groups">groups</keyword>
         <keyword ref="qcontactmanager.html#groupsAdded">groupsAdded</keyword>
@@ -247,6 +246,7 @@
         <keyword ref="qcontactmanager.html#groupsModifiedSince">groupsModifiedSince</keyword>
         <keyword ref="qcontactmanager.html#groupsRemoved">groupsRemoved</keyword>
         <keyword ref="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</keyword>
+        <keyword ref="qcontactmanager.html#information">information</keyword>
         <keyword ref="qcontactmanager.html#managerId">managerId</keyword>
         <keyword ref="qcontactmanager.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanager.html#removeContact">removeContact</keyword>
@@ -308,13 +308,13 @@
         <keyword ref="qcontactmanagerenginefactory.html#managerId">managerId</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
     </section>
-    <section ref="qcontactmanagerfunctionality.html" title="QContactManagerFunctionality Class Reference">
-        <keyword ref="qcontactmanagerfunctionality.html">QContactManagerFunctionality</keyword>
-        <keyword ref="qcontactmanagerfunctionality.html#capabilities">capabilities</keyword>
-        <keyword ref="qcontactmanagerfunctionality.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
-        <keyword ref="qcontactmanagerfunctionality.html#supportedDataTypes">supportedDataTypes</keyword>
-        <keyword ref="qcontactmanagerfunctionality.html#operator-eq">operator=</keyword>
-        <section ref="qcontactmanagerfunctionality-members.html" title="List of all members"/>
+    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
+        <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
+        <keyword ref="qcontactmanagerinfo.html#capabilities">capabilities</keyword>
+        <keyword ref="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
+        <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmanagerinfo.html#operator-eq">operator=</keyword>
+        <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>

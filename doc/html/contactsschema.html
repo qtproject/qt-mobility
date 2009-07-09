@@ -17,7 +17,7 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#schema-definition">Schema Definition</a></li>
 <ul><li><a href="#immutable-schema">Immutable Schema</a></li>
-<ul><li><a href="#qcontactmanagerfunctionality-features">QContactManagerFunctionality features</a></li>
+<ul><li><a href="#qcontactmanagerinfo-features">QContactManagerInfo features</a></li>
 <li><a href="#access-constraints">Access constraints</a></li>
 <li><a href="#attribute-keys">Attribute keys</a></li>
 <li><a href="#context-attribute-values">Context-attribute values</a></li>
@@ -39,7 +39,7 @@
 <p>The schema consists of several parts.</p>
 <p>1) The &quot;immutable&quot; section of the schema, which consists of:</p>
 <ul>
-<li><a href="qcontactmanagerfunctionality.html">QContactManagerFunctionality</a> features</li>
+<li><a href="qcontactmanagerinfo.html">QContactManagerInfo</a> features</li>
 <li><a href="qcontactdetail.html">QContactDetail</a> access constraints</li>
 <li><a href="qcontactdetail.html">QContactDetail</a> attribute keys</li>
 <li><a href="qcontactdetail.html">QContactDetail</a> context-attribute values</li>
@@ -61,8 +61,8 @@
 <p>These &quot;default&quot; schema entries may or may not be supported by any particular backend. Indeed, most backend implementations will use the default schema as a base, and then modify it (for example, by restricting certain definitions to be unique per contact) or extend it (for example, by creating new &quot;standard&quot; definitions and <a href="qcontactdetail.html">QContactDetail</a> leaf-classes) to provide clients with the best user-experience on the target platform.</p>
 <a name="immutable-schema"></a>
 <h3>Immutable Schema</h3>
-<a name="qcontactmanagerfunctionality-features"></a>
-<h4>QContactManagerFunctionality features</h4>
+<a name="qcontactmanagerinfo-features"></a>
+<h4>QContactManagerInfo features</h4>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Feature Identifier</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>&quot;Groups&quot;</td><td>This backend supports all <a href="qcontactgroup.html">QContactGroup</a> related operations, and emits the appropriate signals</td></tr>
