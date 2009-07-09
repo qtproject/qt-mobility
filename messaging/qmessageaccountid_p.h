@@ -35,6 +35,7 @@
 class QMessageAccountIdPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountId)
+
 public:
     QMessageAccountIdPrivate(QMessageAccountId *accountId)
         :q_ptr(accountId)

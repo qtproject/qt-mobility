@@ -34,6 +34,8 @@
 
 class QMessageFilterKeyPrivate
 {
+    Q_DECLARE_PUBLIC(QMessageFilterKey)
+
 public:
     QMessageFilterKeyPrivate(QMessageFilterKey *messageFilterKey)
         :q_ptr(messageFilterKey)

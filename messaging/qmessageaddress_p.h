@@ -35,6 +35,7 @@
 class QMessageAddressPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAddress)
+
 public:
     QMessageAddressPrivate(QMessageAddress *address)
         :q_ptr(address)

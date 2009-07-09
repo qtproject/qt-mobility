@@ -40,6 +40,7 @@ class QMessageFolderIdPrivate;
 class QMessageFolderId 
 {
     Q_DECLARE_PRIVATE(QMessageFolderId)
+
 public:
     QMessageFolderId();
     QMessageFolderId(const QMessageFolderId &other);

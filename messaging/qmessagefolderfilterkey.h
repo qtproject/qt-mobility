@@ -43,6 +43,7 @@ class QMessageFolderFilterKeyPrivate;
 class QMessageFolderFilterKey
 {
     Q_DECLARE_PRIVATE(QMessageFolderFilterKey)
+
 public:
     void setOptions(QMessageDataComparator::Options options);
     QMessageDataComparator::Options options();

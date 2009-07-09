@@ -38,6 +38,7 @@ class QMessageSortKeyPrivate;
 
 class QMessageSortKey {
     Q_DECLARE_PRIVATE(QMessageSortKey)
+
 public:
     QMessageSortKey();
     bool isEmpty() const;

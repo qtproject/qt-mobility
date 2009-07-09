@@ -38,6 +38,7 @@ class QMessageAccountSortKeyPrivate;
 
 class QMessageAccountSortKey {
     Q_DECLARE_PRIVATE(QMessageAccountSortKey)
+
 public:
     QMessageAccountSortKey();
     bool isEmpty() const;

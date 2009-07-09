@@ -34,6 +34,8 @@
 
 class QMessageSortKeyPrivate
 {
+    Q_DECLARE_PUBLIC(QMessageSortKey)
+
 public:
     QMessageSortKeyPrivate(QMessageSortKey *messageSortKey)
         :q_ptr(messageSortKey)

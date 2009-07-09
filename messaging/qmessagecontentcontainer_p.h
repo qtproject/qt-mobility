@@ -35,6 +35,7 @@
 class QMessageContentContainerPrivate
 {
     Q_DECLARE_PUBLIC(QMessageContentContainer)
+
 public:
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
         :q_ptr(contentContainer)

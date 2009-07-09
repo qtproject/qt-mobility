@@ -39,6 +39,7 @@ class QMessageAccountPrivate;
 
 class QMessageAccount {
     Q_DECLARE_PRIVATE(QMessageAccount)
+
 public:
     QMessageAccount();
     QMessageAccount(const QMessageAccountId &id);

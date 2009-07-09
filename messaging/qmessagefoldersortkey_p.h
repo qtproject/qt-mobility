@@ -34,6 +34,8 @@
 
 class QMessageFolderSortKeyPrivate
 {
+    Q_DECLARE_PUBLIC(QMessageFolderSortKey)
+
 public:
     QMessageFolderSortKeyPrivate(QMessageFolderSortKey *folderSortKey)
         :q_ptr(folderSortKey)

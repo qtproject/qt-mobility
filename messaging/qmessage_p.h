@@ -35,6 +35,7 @@
 class QMessagePrivate
 {
     Q_DECLARE_PUBLIC(QMessage)
+
 public:
     QMessagePrivate(QMessage *message)
         :q_ptr(message)

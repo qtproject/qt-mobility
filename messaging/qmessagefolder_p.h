@@ -35,6 +35,7 @@
 class QMessageFolderPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolder)
+
 public:
     QMessageFolderPrivate(QMessageFolder *folder)
         :q_ptr(folder)

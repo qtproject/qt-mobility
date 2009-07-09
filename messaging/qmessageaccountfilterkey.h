@@ -40,6 +40,7 @@ class QMessageAccountFilterKeyPrivate;
 class QMessageAccountFilterKey
 {
     Q_DECLARE_PRIVATE(QMessageAccountFilterKey)
+
 public:
     void setOptions(QMessageDataComparator::Options options);
     QMessageDataComparator::Options options();

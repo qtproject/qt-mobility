@@ -41,6 +41,7 @@ class QMessageContentContainerPrivate;
 
 class QMessageContentContainer {
     Q_DECLARE_PRIVATE(QMessageContentContainer)
+
 public:
     QMessageContentContainer();
     virtual ~QMessageContentContainer();

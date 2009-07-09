@@ -39,6 +39,7 @@ class QMessageAddressPrivate;
 
 class QMessageAddress {
     Q_DECLARE_PRIVATE(QMessageAddress)
+
 public:
     enum Type {
         System = 1,

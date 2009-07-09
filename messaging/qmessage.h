@@ -44,6 +44,7 @@ class QMessagePrivate;
 
 class QMessage : public QMessageContentContainer {
     Q_DECLARE_PRIVATE(QMessage)
+
 public:
     enum Type
     {
