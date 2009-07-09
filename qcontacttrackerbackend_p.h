@@ -63,10 +63,35 @@ public:
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
 
+    /**
+     * Get a LiveNode from a list of nodes based on the type of the LiveNode.
+     * This is handy especially if you have for example a a set of nodes
+     * representing phone numbers (nco::Contact->getHasPhoneNumbers) and you
+     * are interested in a specific phone number type i.e. CellPhoneNumber.
+     *
+     * \param contactMediums A list nodes representing contact mediums of a
+     *        nco:Contact.
+     * \return A LiveNode representing the given type of node. If no such type
+     *         was found in the list, an empty LiveNode is returned (that is not
+     *         live, that is !node.isLive().
+     */
     template <class T>
     Live<T> nodeByClasstype(QList<Live<nco::ContactMedium> > contactMediums) const;
 
-    Live<nco::Contact> getContactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
+    /**
+     * Return a nco::Contact that is either a nco::OrganizationContact or
+     * nco::PersonContact depending on the context for the given contact detail.
+     *
+     * \param det The contact detail that we are currently interested in and which
+     *            context we are examining.
+     * \param ncoContact The nco::PersonContact that we want to store the contact
+     *                    detail for.
+     * \return Returns a nco::OrganizationContact is the QContactDetail context is
+     *         work. Otherwise returns nco::PersonContact.
+     */
+    Live<nco::Contact> contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
+
+private:
     ContactContext::Location locationContext(const QContactDetail& det) const;
 };
 
