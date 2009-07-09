@@ -46,6 +46,7 @@ class QMediaPlayerControl;
 class QMediaPlaylist;
 
 class QWmpMetaData;
+class QWmpPlaceholderWidget;
 class QWmpPlayerControl;
 class QWmpPlaylist;
 
@@ -53,6 +54,8 @@ class QWmpPlayerService
     : public QMediaPlayerService
     , public QWmpEvents
     , public IOleClientSite
+    , public IOleInPlaceSite
+    , public IOleInPlaceFrame
     , public IServiceProvider
     , public IWMPRemoteMediaServices
 {
@@ -76,6 +79,8 @@ public:
 
     QObject *createEndpoint(const char *iid);
 
+    bool eventFilter(QObject *object, QEvent *event);
+
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
     ULONG STDMETHODCALLTYPE AddRef();
@@ -87,7 +92,6 @@ public:
     void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
     void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
 
-
     // IOleClientSite
     HRESULT STDMETHODCALLTYPE SaveObject();
     HRESULT STDMETHODCALLTYPE GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker, IMoniker **ppmk);
@@ -95,6 +99,42 @@ public:
     HRESULT STDMETHODCALLTYPE ShowObject();
     HRESULT STDMETHODCALLTYPE OnShowWindow(BOOL fShow);
     HRESULT STDMETHODCALLTYPE RequestNewObjectLayout();
+
+    // IOleWindow
+    HRESULT STDMETHODCALLTYPE GetWindow(HWND *phwnd);
+    HRESULT STDMETHODCALLTYPE ContextSensitiveHelp(BOOL fEnterMode);
+
+    // IOleInPlaceSite
+    HRESULT STDMETHODCALLTYPE CanInPlaceActivate();
+    HRESULT STDMETHODCALLTYPE OnInPlaceActivate();
+    HRESULT STDMETHODCALLTYPE OnUIActivate();
+    HRESULT STDMETHODCALLTYPE GetWindowContext(
+            IOleInPlaceFrame **ppFrame,
+            IOleInPlaceUIWindow **ppDoc,
+            LPRECT lprcPosRect,
+            LPRECT lprcClipRect,
+            LPOLEINPLACEFRAMEINFO lpFrameInfo);
+    HRESULT STDMETHODCALLTYPE Scroll(SIZE scrollExtant);
+    HRESULT STDMETHODCALLTYPE OnUIDeactivate(BOOL fUndoable);
+    HRESULT STDMETHODCALLTYPE OnInPlaceDeactivate();
+    HRESULT STDMETHODCALLTYPE DiscardUndoState();
+    HRESULT STDMETHODCALLTYPE DeactivateAndUndo();
+    HRESULT STDMETHODCALLTYPE OnPosRectChange(LPCRECT lprcPosRect);
+
+    // IOleInPlaceUIWindow
+    HRESULT STDMETHODCALLTYPE GetBorder(LPRECT lprectBorder);
+    HRESULT STDMETHODCALLTYPE RequestBorderSpace(LPCBORDERWIDTHS pborderwidths);
+    HRESULT STDMETHODCALLTYPE SetBorderSpace(LPCBORDERWIDTHS pborderwidths);
+    HRESULT STDMETHODCALLTYPE SetActiveObject(
+            IOleInPlaceActiveObject *pActiveObject, LPCOLESTR pszObjName);
+
+    // IOleInPlaceFrame
+    HRESULT STDMETHODCALLTYPE InsertMenus(HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths);
+    HRESULT STDMETHODCALLTYPE SetMenu(HMENU hmenuShared, HOLEMENU holemenu, HWND hwndActiveObject);
+    HRESULT STDMETHODCALLTYPE RemoveMenus(HMENU hmenuShared);
+    HRESULT STDMETHODCALLTYPE SetStatusText(LPCOLESTR pszStatusText);
+    HRESULT STDMETHODCALLTYPE EnableModeless(BOOL fEnable);
+    HRESULT STDMETHODCALLTYPE TranslateAccelerator(LPMSG lpmsg, WORD wID);
 
     // IServiceProvider
     HRESULT STDMETHODCALLTYPE QueryService(REFGUID guidService, REFIID riid, void **ppvObject);
@@ -109,7 +149,9 @@ private:
     volatile LONG m_ref;
     EmbedMode m_embedMode;
     IWMPPlayer4 *m_player;
-    QObject *m_videoOutput;
+    IOleObject *m_oleObject;
+    IOleInPlaceObject *m_inPlaceObject;
+    QWmpPlaceholderWidget *m_placeholderWidget;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
     IConnectionPoint *m_connectionPoint;
