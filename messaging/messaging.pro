@@ -22,7 +22,19 @@ HEADERS += draft-api.h \
            qmessage_p.h \ 
            qmessage.h \
            qmessagefolder_p.h \ 
-           qmessagefolder.h
+           qmessagefolder.h \
+           qmessageaccountfilterkey \
+           qmessageaccountfilterkey_p.h \
+           qmessageaccountsortkey \
+           qmessageaccountsortkey_p.h \
+           qmessagefolderfilterkey \
+           qmessagefolderfilterkey_p.h \
+           qmessagefoldersortkey \
+           qmessagefoldersortkey_p.h \
+           qmessagefilterkey \
+           qmessagefilterkey_p.h \
+           qmessagesortkey \
+           qmessagesortkey_p.h 
 
 SOURCES += draft-api.cpp \
            qmessageid.cpp \
@@ -32,4 +44,10 @@ SOURCES += draft-api.cpp \
            qmessagecontentcontainer.cpp \
            qmessageaddress.cpp \
            qmessage.cpp \
-           qmessagefolder.cpp
+           qmessagefolder.cpp \
+           qmessageaccountfilterkey.cpp \
+           qmessageaccountsortkey.cpp \
+           qmessagefolderfilterkey.cpp \
+           qmessagefoldersortkey.cpp \
+           qmessagefilterkey.cpp \
+           qmessagesortkey.cpp
