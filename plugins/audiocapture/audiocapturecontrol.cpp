@@ -34,8 +34,9 @@
 
 #include "audiocapturecontrol.h"
 #include "audiocaptureservice.h"
-
+#include "audiocapturesession.h"
 #include "qmediasource.h"
+#include "qiodeviceendpoint.h"
 
 #include <QtCore/qdebug.h>
 
@@ -52,39 +53,52 @@ AudioCaptureControl::AudioCaptureControl(QObject *parent)
 AudioCaptureControl::AudioCaptureControl(AudioCaptureService *service, QObject *parent)
    :QAudioCaptureControl(parent), m_service(service)
 {
+    m_session = new AudioCaptureSession(this);
 }
 
 AudioCaptureControl::~AudioCaptureControl()
 {
 }
 
-void AudioCaptureControl::start()
-{
 #ifdef AUDIOSERVICES
-    QAudioInput* input = qobject_cast<QAudioInput*>(m_service->audioInput());
-
-    input->start(qobject_cast<QIODevice*>(m_service->audioOutput()));
-#endif
+QAudioFormat AudioCaptureControl::inputFormat() const
+{
+    return m_inputFormat;
 }
 
-void AudioCaptureControl::stop()
+bool AudioCaptureControl::setInputFormat(const QAudioFormat &format)
 {
-#ifdef AUDIOSERVICES
-    QAudioInput* input = qobject_cast<QAudioInput*>(m_service->audioInput());
+    m_inputFormat = format;
 
-    input->stop();
-#endif
-}
-#ifdef AUDIOSERVICES
-QAudioFormat AudioCaptureControl::format() const
-{
-    return m_format;
+    return true;
 }
 
-bool AudioCaptureControl::setFormat(const QAudioFormat &format)
+QAudioFormat AudioCaptureControl::outputFormat() const
 {
-    m_format = format;
+    return m_outputFormat;
+}
+
+bool AudioCaptureControl::setOutputFormat(const QAudioFormat &format)
+{
+    m_outputFormat = format;
 
     return true;
 }
 #endif
+
+void AudioCaptureControl::setInputDevice(QIODevice *device)
+{
+    QIODeviceEndpoint* dev = qobject_cast<QIODeviceEndpoint*>(m_service->createEndpoint("QIODevice"));
+    dev->setDevice(device);
+    m_service->setAudioInput(dev);
+    m_session->setInputDevice(device);
+    connect(device,SIGNAL(readyRead()),m_session,SLOT(dataReady()));
+}
+
+void AudioCaptureControl::setOutputDevice(QIODevice *device)
+{
+    QIODeviceEndpoint* dev = qobject_cast<QIODeviceEndpoint*>(m_service->createEndpoint("QIODevice"));
+    dev->setDevice(device);
+    m_service->setAudioOutput(dev);
+    m_session->setOutputDevice(device);
+}

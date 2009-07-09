@@ -45,6 +45,7 @@
 #include "qmediasource.h"
 
 class AudioCaptureService;
+class AudioCaptureSession;
 
 class AudioCaptureControl : public QAudioCaptureControl
 {
@@ -54,19 +55,22 @@ public:
     AudioCaptureControl(AudioCaptureService *service, QObject *parent = 0);
     ~AudioCaptureControl();
 
-    void start();
-    void stop();
-
 #ifdef AUDIOSERVICES
-    QAudioFormat format() const;
-    bool setFormat(const QAudioFormat &format);
+    QAudioFormat inputFormat() const;
+    bool setInputFormat(const QAudioFormat &format);
+    QAudioFormat outputFormat() const;
+    bool setOutputFormat(const QAudioFormat &format);
 #endif
+    void setInputDevice(QIODevice *device);
+    void setOutputDevice(QIODevice *device);
 
 private:
     AudioCaptureService *m_service;
+    AudioCaptureSession *m_session;
 
 #ifdef AUDIOSERVICES
-    QAudioFormat m_format;
+    QAudioFormat m_inputFormat;
+    QAudioFormat m_outputFormat;;
 #endif
 };
 

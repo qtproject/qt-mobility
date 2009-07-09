@@ -45,6 +45,7 @@
 #include <qaudiocapture.h>
 
 class QComboBox;
+class QLabel;
 
 class Recorder : public QMainWindow
 {
@@ -67,11 +68,13 @@ private:
     QAudioFormat   format;
     QAudioInput*   audioInput;
 #endif
-    QAudioCapture* recorder;
+    QAudioCapture* audioCapture;
     QComboBox*     deviceBox;
     QPushButton*   button;
+    QLabel*        recTime;
     QFile*         file;
     bool           active;
+    int            currentTime;
 };
 
 #endif

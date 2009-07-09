@@ -83,53 +83,83 @@ QAudioCapture::~QAudioCapture()
 {
 }
 
-/*!
-    Start recording audio
-*/
-
-void QAudioCapture::start()
-{
-    if(d_func()->control)
-        d_func()->control->start();
-}
-
-/*!
-    Stop recording audio
-*/
-
-void QAudioCapture::stop()
-{
-    if(d_func()->control)
-        d_func()->control->stop();
-}
-
 #ifdef AUDIOSERVICES
 /*!
-    Returns the audio format being used.
+    Returns true if able to set format of input audio to \a format
 */
 
-QAudioFormat QAudioCapture::format() const
+bool QAudioCapture::setInputFormat(const QAudioFormat &format)
+{
+    Q_D(QAudioCapture);
+
+    if(d->control)
+        return d->control->setInputFormat(format);
+    else
+        return false;
+}
+
+/*!
+    Returns the input audio format being used.
+*/
+
+QAudioFormat QAudioCapture::inputFormat() const
 {
     if(d_func()->control)
-        return d_func()->control->format();
+        return d_func()->control->inputFormat();
     else
         return QAudioFormat();
 }
 
 /*!
-    Returns true if the \a format can be used.
+    Returns true if able to set format of output audio to \a format
 */
 
-bool QAudioCapture::setFormat(const QAudioFormat &format)
+bool QAudioCapture::setOutputFormat(const QAudioFormat &format)
 {
     Q_D(QAudioCapture);
 
     if(d->control)
-        return d->control->setFormat(format);
+        return d->control->setOutputFormat(format);
     else
         return false;
 }
+
+/*!
+    Returns the output audio format being used.
+*/
+
+QAudioFormat QAudioCapture::outputFormat() const
+{
+    if(d_func()->control)
+        return d_func()->control->outputFormat();
+    else
+        return QAudioFormat();
+}
 #endif
+
+/*!
+    Set input device to \a device.
+*/
+
+void QAudioCapture::setInputDevice(QIODevice *device)
+{
+    Q_D(QAudioCapture);
+
+    if(d->control)
+        d->control->setInputDevice(device);
+}
+
+/*!
+    Set output device to \a device.
+*/
+
+void QAudioCapture::setOutputDevice(QIODevice *device)
+{
+    Q_D(QAudioCapture);
+
+    if(d->control)
+        d->control->setOutputDevice(device);
+}
 
 /*!
     Returns the session object being controlled by this recorder.

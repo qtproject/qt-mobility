@@ -32,48 +32,38 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
-
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
+#include <QDebug>
 #include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
-{
-    m_control = new AudioCaptureControl(this, this);
-}
-
-AudioCaptureService::~AudioCaptureService()
+AudioCaptureSession::AudioCaptureSession(QObject *parent)
+    : QObject(parent)
 {
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
+AudioCaptureSession::~AudioCaptureSession()
 {
-    return m_control;
 }
 
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
+void AudioCaptureSession::dataReady()
 {
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
+    // for now just pass through
+    int len = 4096;
+    if(len > 0) {
+        char* data = new char[16384];
+        if(len > 16384) len = 16384;
+        qint64 l = input->read(data,len);
+        if(l > 0)
+            output->write(data,l);
+        delete data;
+    }
 }
 
-QObject *AudioCaptureService::createEndpoint(const char *interface)
+void AudioCaptureSession::setOutputDevice(QIODevice* device)
 {
-    return new QIODeviceEndpoint;
+    output = device;
 }
 
-
-
+void AudioCaptureSession::setInputDevice(QIODevice* device)
+{
+    input = device;
+}

@@ -64,19 +64,16 @@ public:
     ~QAudioCapture();
 
 #ifdef AUDIOSERVICES
-    QAudioFormat format() const;
-    bool setFormat(const QAudioFormat &format);
+    QAudioFormat inputFormat() const;
+    bool setInputFormat(const QAudioFormat &format);
+    QAudioFormat outputFormat() const;
+    bool setOutputFormat(const QAudioFormat &format);
 #endif
+
+    void setInputDevice(QIODevice *device);
+    void setOutputDevice(QIODevice *device);
+
     QAbstractMediaService* service() const;
-
-public Q_SLOTS:
-    void start();
-    void stop();
-
-#ifdef AUDIOSERVICES
-Q_SIGNALS:
-    void stateChanged(QAudio::State newState);
-#endif
 
 private:
     Q_DISABLE_COPY(QAudioCapture)

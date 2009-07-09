@@ -50,16 +50,15 @@ class QAudioCaptureControl : public QAbstractMediaControl
 public:
     ~QAudioCaptureControl();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-
 #ifdef AUDIOSERVICES
-    virtual QAudioFormat format() const = 0;
-    virtual bool setFormat(const QAudioFormat &format) = 0;
-
-Q_SIGNALS:
-    void stateChanged(QAudio::State newState);
+    virtual QAudioFormat inputFormat() const = 0;
+    virtual bool setInputFormat(const QAudioFormat &format) = 0;
+    virtual QAudioFormat outputFormat() const = 0;
+    virtual bool setOutputFormat(const QAudioFormat &format) = 0;
 #endif
+
+    virtual void setInputDevice(QIODevice *device) = 0;
+    virtual void setOutputDevice(QIODevice *device) = 0;
 
 protected:
     QAudioCaptureControl(QObject* parent);
