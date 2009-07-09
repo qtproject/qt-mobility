@@ -2742,7 +2742,7 @@ void ApplicationLayer::triggerTodo()
 {
     if(todoTimer || !valid)
         return;
-    qDebug() << "Trigger todo";
+    //qDebug() << "Trigger todo";
     todoTimer = startTimer(0);
 }
 
@@ -3232,7 +3232,7 @@ QVariant ApplicationLayer::fromDatum(const NodeDatum * data)
             Q_ASSERT(8 == data->len);
             return QVariant((*(double*)data->data));
         case NodeDatum::Char:
-            Q_ASSERT(4 == data->len);
+            Q_ASSERT(2 == data->len);
             return QVariant(QChar((unsigned short)(0xFFFF & (*(unsigned int*)data->data))));
         case NodeDatum::String:
             return QVariant(QString((QChar *)data->data,

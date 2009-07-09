@@ -739,11 +739,22 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(base.d);
 
-    if("/" == md->path)
-        d = new QValueSpaceItemPrivateData(md->path + path.toUtf8());
-    else
-        d = new QValueSpaceItemPrivateData(md->path + "/" + path.toUtf8());
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    if(path == QLatin1String("/")) {
+        if(QValueSpaceItemPrivate::Data == base.d->type) {
+            d = md;
+        } else {
+            d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(base.d));
+        }
+        md->AddRef();
+    } else {
+        if("/" == md->path) {
+            d = new QValueSpaceItemPrivateData(md->path + path.toUtf8());
+        } else  {
+            d = new QValueSpaceItemPrivateData(md->path + "/" + path.toUtf8());
+        }
+        
+        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    }
 }
 
 /*!
@@ -761,11 +772,20 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(base.d);
 
-    if("/" == md->path)
-        d = new QValueSpaceItemPrivateData(md->path + QByteArray(path));
-    else
-        d = new QValueSpaceItemPrivateData(md->path + "/" + QByteArray(path));
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    if(1 == strlen(path) && '/' == *path) {
+        if(QValueSpaceItemPrivate::Data == base.d->type) {
+            d = md;
+        } else {
+            d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(base.d));
+        }
+        md->AddRef();
+    } else {
+        if("/" == md->path)
+            d = new QValueSpaceItemPrivateData(md->path + QByteArray(path));
+        else
+            d = new QValueSpaceItemPrivateData(md->path + "/" + QByteArray(path));
+        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    }
 }
 
 /*!
@@ -778,11 +798,22 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
 {
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(base.d);
-    if("/" == md->path)
-        d = new QValueSpaceItemPrivateData(md->path + path);
-    else
-        d = new QValueSpaceItemPrivateData(md->path + "/" + path);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+
+    if(path == "/") {
+        if(QValueSpaceItemPrivate::Data == base.d->type) {
+            d = md;
+        } else {
+            d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(base.d));
+        }
+        md->AddRef();
+    } else {
+        
+        if("/" == md->path)
+            d = new QValueSpaceItemPrivateData(md->path + path);
+        else
+            d = new QValueSpaceItemPrivateData(md->path + "/" + path);
+        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    }
 }
 
 /*!
