@@ -30,7 +30,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "draft-api.h"
+#ifndef QMESSAGESERVICEACTION_H
+#define QMESSAGESERVICEACTION_H
+#include <QObject>
+#include "qmessage.h"
 
+class QMessageServiceActionPrivate;
 
-//#include "draft-api.moc"
+class QMessageServiceAction : public QObject
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QMessageAddress)
+
+public:
+    enum Activity {
+        Pending = 0,
+        InProgress,
+        Successful,
+        Failed
+    };
+
+    QMessageServiceAction(QObject *parent = 0);
+    ~QMessageServiceAction();
+
+    void send(const QMessage &message, const QMessageAccountId &accountId);
+    void compose(const QMessage &message);
+    void retrieve(const QMessageId &id);
+    void retrieve(const QMessageContentContainerId &id);
+    void show(const QMessageId &id);
+    void exportUpdates();
+    Activity activity() const;
+    QString lastErrorString() const;
+
+public slots:
+    void cancelOperation();
+
+signals:
+    void activityChanged(QMessageServiceAction::Activity a);
+
+private:
+    QMessageServiceActionPrivate *d_ptr;
+};
+#endif

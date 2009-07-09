@@ -30,7 +30,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "draft-api.h"
+#include "qmessageserviceaction.h"
 
+class QMessageServiceActionPrivate
+{
+    Q_DECLARE_PUBLIC(QMessageServiceAction)
 
-//#include "draft-api.moc"
+public:
+    QMessageServiceActionPrivate(QMessageServiceAction *serviceAction)
+        :q_ptr(serviceAction)
+    {
+    }
+
+    QMessageServiceAction *q_ptr;
+};

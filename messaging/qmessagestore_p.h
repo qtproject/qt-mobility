@@ -30,7 +30,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "draft-api.h"
+#include "qmessagestore.h"
 
+class QMessageStorePrivate
+{
+    Q_DECLARE_PUBLIC(QMessageStore)
 
-//#include "draft-api.moc"
+public:
+    QMessageStorePrivate(QMessageStore *store)
+        :q_ptr(store)
+    {
+    }
+
+    QMessageStore *q_ptr;
+};

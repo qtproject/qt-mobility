@@ -6,8 +6,7 @@ include(../common.pri)
 
 #Input
 
-HEADERS += draft-api.h \
-           qmessageid.h \
+HEADERS += qmessageid.h \
            qmessageid_p.h \
            qmessagecontentcontainerid.h \
            qmessagecontentcontainerid_p.h \
@@ -23,21 +22,24 @@ HEADERS += draft-api.h \
            qmessage.h \
            qmessagefolder_p.h \ 
            qmessagefolder.h \
-           qmessageaccountfilterkey \
+           qmessageaccountfilterkey.h \
            qmessageaccountfilterkey_p.h \
-           qmessageaccountsortkey \
+           qmessageaccountsortkey.h \
            qmessageaccountsortkey_p.h \
-           qmessagefolderfilterkey \
+           qmessagefolderfilterkey.h \
            qmessagefolderfilterkey_p.h \
-           qmessagefoldersortkey \
+           qmessagefoldersortkey.h \
            qmessagefoldersortkey_p.h \
-           qmessagefilterkey \
+           qmessagefilterkey.h \
            qmessagefilterkey_p.h \
-           qmessagesortkey \
-           qmessagesortkey_p.h 
+           qmessagesortkey.h \
+           qmessagesortkey_p.h \
+           qmessagestore.h \
+           qmessagestore_p.h \
+           qmessageserviceaction.h \
+           qmessageserviceaction_p.h
 
-SOURCES += draft-api.cpp \
-           qmessageid.cpp \
+SOURCES += qmessageid.cpp \
            qmessagecontentcontainerid.cpp \
            qmessagefolderid.cpp \
            qmessageaccountid.cpp \
@@ -50,4 +52,6 @@ SOURCES += draft-api.cpp \
            qmessagefolderfilterkey.cpp \
            qmessagefoldersortkey.cpp \
            qmessagefilterkey.cpp \
-           qmessagesortkey.cpp
+           qmessagesortkey.cpp \
+           qmessagestore.cpp \
+           qmessageserviceaction.cpp
