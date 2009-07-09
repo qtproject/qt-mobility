@@ -109,7 +109,7 @@ public:
     void deref();
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts() const;
+    QList<QUniqueId> contacts(QContactManager::Error& error) const;
     QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;

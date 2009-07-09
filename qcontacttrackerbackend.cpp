@@ -108,9 +108,20 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactTrackerEngine::contacts() const
+QList<QUniqueId> QContactTrackerEngine::contacts(QContactManager::Error& error) const
 {
-    return QList<QUniqueId>();
+    QList<QUniqueId> ids;
+    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFSelect query;
+
+    query.addColumn("contact_uri", RDFContact);
+    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
+    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+
+    for(int i=0; i<ncoContacts->rowCount(); i++) {
+        ids.append(ncoContacts->index(i, 1).data().toInt());
+    }
+    return ids;
 }
 
 QList<QUniqueId> QContactTrackerEngine::contactsWithDetail(const QString& definitionId, const QVariant& value) const
