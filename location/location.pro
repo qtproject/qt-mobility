@@ -5,6 +5,7 @@ QT = core
 include(../common.pri)
 
 symbian {
+    TARGET.UID3 = 0xEEA0E2D0
     TARGET.CAPABILITY = ALL -TCB
 }
 

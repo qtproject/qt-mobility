@@ -30,6 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "../qlocationtestutils_p.h"
+
 #include <qgeocoordinate.h>
 #include <qtest.h>
 
@@ -209,6 +211,60 @@ private slots:
 
         QTest::newRow("latitude, longitude, altitude arguments too high latitude & longitude") << QGeoCoordinate(90.1, 180.1, DBL_MAX);
         QTest::newRow("latitude, longitude, altitude arguments too low latitude & longitude") << QGeoCoordinate(-90.1, -180.1, DBL_MAX);
+    }
+
+    void destructor()
+    {
+        QGeoCoordinate *coordinate;
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate();
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(0.0, 0.0);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(0.0, 0.0, 0.0);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(90.0, 180.0);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(-90.0, -180.0);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(90.1, 180.1);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+
+        QLocationTestUtils::uheap_mark();
+        coordinate = new QGeoCoordinate(-90.1, -180.1);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+    }
+
+    void destructor2()
+    {
+        QFETCH(QGeoCoordinate, c);
+        QLocationTestUtils::uheap_mark();
+        QGeoCoordinate *coordinate = new QGeoCoordinate(c);
+        delete coordinate;
+        QLocationTestUtils::uheap_mark_end();
+    }
+
+    void destructor2_data()
+    {
+        copy_constructor_data();
     }
 
     void assign()

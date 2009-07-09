@@ -7,10 +7,13 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-SOURCES += tst_qgeocoordinate.cpp
+HEADERS += ../qlocationtestutils_p.h
+SOURCES += tst_qgeocoordinate.cpp \
+           ../qlocationtestutils.cpp
 
 LIBS += -lQtLocation
 
 symbian {
-        TARGET.CAPABILITY = ALL -TCB
+    INCLUDEPATH += /epoc32/include/osextensions
+    TARGET.CAPABILITY = ALL -TCB
 }
