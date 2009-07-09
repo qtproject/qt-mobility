@@ -78,6 +78,8 @@ void MpdMetadata::setMetadata(QString const &name, QVariant const &value)
 
 void MpdMetadata::playlistItemChanged(int position)
 {
+    const bool wasEmpty = saved.isEmpty();
+
     saved.clear();
 
     bool ok = false;
@@ -92,5 +94,8 @@ void MpdMetadata::playlistItemChanged(int position)
         }
     }
 
-    emit metadataAvailabilityChanged(!saved.isEmpty());
+    if (wasEmpty != saved.isEmpty())
+        emit metadataAvailabilityChanged(!saved.isEmpty());
+
+    emit metadataChanged();
 }

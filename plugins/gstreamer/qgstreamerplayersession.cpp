@@ -53,6 +53,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_volume(100),
      m_muted(false),
      m_videoAvailable(false),
+     m_seekable(false),
      m_lastPosition(0),
      m_duration(-1)
 {
@@ -150,6 +151,11 @@ bool QGstreamerPlayerSession::isVideoAvailable() const
     return m_videoAvailable;
 }
 
+bool QGstreamerPlayerSession::isSeekable() const
+{
+    return m_seekable;
+}
+
 void QGstreamerPlayerSession::play()
 {
     if (m_playbin) {
@@ -240,6 +246,14 @@ static void addTagToMap(const GstTagList *list,
     g_value_unset(&val);
 }
 
+void QGstreamerPlayerSession::setSeekable(bool seekable)
+{
+    if (seekable != m_seekable) {        
+        m_seekable = seekable;
+        emit seekableChanged(m_seekable);
+    }
+}
+
 void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
@@ -283,10 +297,25 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
                     case GST_STATE_READY:
+                        setSeekable(false);
                         break;
                     case GST_STATE_PAUSED:
                         if (m_state != QMediaPlayer::PausedState)
                             emit stateChanged(m_state = QMediaPlayer::PausedState);
+
+                        //check for seekable
+                        if (oldState == GST_STATE_READY) {
+                            GstFormat   format = GST_FORMAT_TIME;
+                            gint64      position = 0;
+
+                            bool seekable = false;
+                            if (gst_element_query_position(m_playbin, &format, &position)) {
+                                seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
+                            }
+
+                            setSeekable(seekable);
+                        }
+
                         break;
                     case GST_STATE_PLAYING:
                         if (oldState == GST_STATE_PAUSED)

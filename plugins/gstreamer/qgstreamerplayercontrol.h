@@ -168,6 +168,8 @@ public:
     bool isVideoAvailable() const;
     void setVideoOutput(QObject *output);
 
+    bool isSeekable() const;
+
 public Q_SLOTS:
     void setPlaylistPosition(int playlistPosition);
     void advance();
@@ -196,7 +198,7 @@ signals:
 
 private slots:
     void play(const QMediaSource&);
-    void updateState(QMediaPlayer::State state);
+    void updateState(QMediaPlayer::State state);    
 
 private:    
     QGstreamerPlayerSession *m_session;

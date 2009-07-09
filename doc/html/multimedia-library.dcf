@@ -92,6 +92,7 @@
         <keyword ref="qaudiodeviceendpoint.html#name">name</keyword>
         <keyword ref="qaudiodeviceendpoint.html#roles">roles</keyword>
         <keyword ref="qaudiodeviceendpoint.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudiodeviceendpoint.html#QAudioDeviceEndpoint_iid">QAudioDeviceEndpoint_iid</keyword>
         <section ref="qaudiodeviceendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qaudiorendererendpoint.html" title="QAudioRendererEndpoint Class Reference">
@@ -103,18 +104,18 @@
         <keyword ref="qaudiorendererendpoint.html#sampleSize-prop">sampleSize</keyword>
         <keyword ref="qaudiorendererendpoint.html#sampleSize-prop">setSampleSize</keyword>
         <keyword ref="qaudiorendererendpoint.html#device">device</keyword>
-        <keyword ref="qaudiorendererendpoint.html#direction">direction</keyword>
         <keyword ref="qaudiorendererendpoint.html#setDevice">setDevice</keyword>
         <keyword ref="qaudiorendererendpoint.html#supportedChannels">supportedChannels</keyword>
         <keyword ref="qaudiorendererendpoint.html#supportedFrequencies">supportedFrequencies</keyword>
         <keyword ref="qaudiorendererendpoint.html#supportedSampleSizes">supportedSampleSizes</keyword>
+        <keyword ref="qaudiorendererendpoint.html#QAudioRendererEndpoint_iid">QAudioRendererEndpoint_iid</keyword>
         <section ref="qaudiorendererendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qiodeviceendpoint.html" title="QIODeviceEndpoint Class Reference">
         <keyword ref="qiodeviceendpoint.html">QIODeviceEndpoint</keyword>
         <keyword ref="qiodeviceendpoint.html#device-prop">device</keyword>
         <keyword ref="qiodeviceendpoint.html#device-prop">setDevice</keyword>
-        <keyword ref="qiodeviceendpoint.html#direction">direction</keyword>
+        <keyword ref="qiodeviceendpoint.html#QIODeviceEndpoint_iid">QIODeviceEndpoint_iid</keyword>
         <section ref="qiodeviceendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qmediaendpointinterface.html" title="QMediaEndpointInterface Class Reference">
@@ -124,6 +125,7 @@
         <keyword ref="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Output</keyword>
         <keyword ref="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::InputOutput</keyword>
         <keyword ref="qmediaendpointinterface.html#direction">direction</keyword>
+        <keyword ref="qmediaendpointinterface.html#Q_MEDIA_DECLARE_ENDPOINT">Q_MEDIA_DECLARE_ENDPOINT</keyword>
         <section ref="qmediaendpointinterface-members.html" title="List of all members"/>
     </section>
     <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
@@ -337,7 +339,7 @@
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">fullscreen</keyword>
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">isFullscreen</keyword>
         <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">setFullscreen</keyword>
-        <keyword ref="qmediawidgetendpoint.html#direction">direction</keyword>
+        <keyword ref="qmediawidgetendpoint.html#QMediaWidgetEndpoint_iid">QMediaWidgetEndpoint_iid</keyword>
         <section ref="qmediawidgetendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qmetadataprovider.html" title="QMetadataProvider Class Reference">
@@ -410,7 +412,7 @@
         <keyword ref="qvideorendererendpoint.html">QVideoRendererEndpoint</keyword>
         <keyword ref="qvideorendererendpoint.html#surface-prop">surface</keyword>
         <keyword ref="qvideorendererendpoint.html#surface-prop">setSurface</keyword>
-        <keyword ref="qvideorendererendpoint.html#direction">direction</keyword>
+        <keyword ref="qvideorendererendpoint.html#QVideoRendererEndpoint_iid">QVideoRendererEndpoint_iid</keyword>
         <section ref="qvideorendererendpoint-members.html" title="List of all members"/>
     </section>
 </section>

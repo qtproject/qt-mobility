@@ -51,7 +51,8 @@ public:
         :QSharedData(other),
          mimeType(other.mimeType),
          url(other.url),
-         duration(other.duration)
+         duration(other.duration),
+         alternativeRepresentations(other.alternativeRepresentations)
     {}
 
     ~QMediaSourcePrivate() {}
@@ -59,6 +60,7 @@ public:
     QString mimeType;
     QVariant url;
     int duration;
+    QList<QMediaSource> alternativeRepresentations;
 };
 
 Q_GLOBAL_STATIC(QMediaSourcePrivate, qt_sharedMediaSource)
@@ -74,6 +76,7 @@ Q_GLOBAL_STATIC(QMediaSourcePrivate, qt_sharedMediaSource)
 */
 
 /*!
+  Construct an empty media source object.
 */
 QMediaSource::QMediaSource()
     :d(qt_sharedMediaSource())
@@ -81,6 +84,7 @@ QMediaSource::QMediaSource()
 }
 
 /*!
+  Construct a media source by passing \a mimeType and \a url.
 */
 QMediaSource::QMediaSource(const QString &mimeType, const QVariant &url)
     :d(new QMediaSourcePrivate(mimeType, url))
@@ -88,6 +92,7 @@ QMediaSource::QMediaSource(const QString &mimeType, const QVariant &url)
 }
 
 /*!
+  Constructs a copy of \a other.
 */
 QMediaSource::QMediaSource(const QMediaSource &other)
     :d(other.d)
@@ -95,6 +100,7 @@ QMediaSource::QMediaSource(const QMediaSource &other)
 }
 
 /*!
+  Assigns the specified media source to this object.
 */
 QMediaSource &QMediaSource::operator =(const QMediaSource &other)
 {
@@ -103,12 +109,14 @@ QMediaSource &QMediaSource::operator =(const QMediaSource &other)
 }
 
 /*!
+  Destroys the media source.
 */
 QMediaSource::~QMediaSource()
 {
 }
 
 /*!
+  Returns true if this media source is null; otherwise returns false.
 */
 bool QMediaSource::isNull() const
 {
@@ -116,6 +124,7 @@ bool QMediaSource::isNull() const
 }
 
 /*!
+  Returns the mime type of this media source if available; otherwise returns an empty string.
 */
 QString QMediaSource::mimeType() const
 {
@@ -123,6 +132,7 @@ QString QMediaSource::mimeType() const
 }
 
 /*!
+  Set the mime type of this media source to \a mimeType.
 */
 void QMediaSource::setMimeType(QString const& mimeType)
 {
@@ -130,13 +140,16 @@ void QMediaSource::setMimeType(QString const& mimeType)
 }
 
 /*!
+  Returns the data location of this media source.
 */
 QVariant QMediaSource::dataLocation() const
 {
     return d->url;
 }
 
-/*!
+/*!  
+  Set the data location of this media source to \a url.
+  \sa dataLocation()
 */
 void QMediaSource::setDataLocation(QVariant const& url)
 {
@@ -153,7 +166,8 @@ int QMediaSource::duration() const
 }
 
 /*!
-  Set the duration of media in miliseconds.  
+  Set the duration of media in miliseconds.
+  \sa duration()
 */
 void QMediaSource::setDuration(int ms)
 {
@@ -161,6 +175,23 @@ void QMediaSource::setDuration(int ms)
 }
 
 /*!
+  Returns list of alternative representations of this media source.
+*/
+QList<QMediaSource> QMediaSource::alternativeRepresentations() const
+{
+    return d->alternativeRepresentations;
+}
+
+/*!
+  Set the list of alternative representations of this media source.
+*/
+void QMediaSource::setAlternativeRepresentations(const QList<QMediaSource> &sources)
+{
+    d->alternativeRepresentations = sources;
+}
+
+/*!
+  Returns true if this media source and the given source are equal; otherwise returns false.
 */
 bool QMediaSource::operator ==(const QMediaSource& other) const
 {
@@ -168,6 +199,7 @@ bool QMediaSource::operator ==(const QMediaSource& other) const
 }
 
 /*!
+  Returns true if this media source and the given source are not equal; otherwise returns false.
 */
 bool QMediaSource::operator !=(const QMediaSource& other) const
 {

@@ -73,6 +73,8 @@ public:
 
     bool isVideoAvailable() const;
 
+    bool isSeekable() const;
+
     void play();
     void pause();
     void stop();

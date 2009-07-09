@@ -60,7 +60,8 @@ public:
     void setMetadata(QString const &name, QVariant const &value);
 
 Q_SIGNALS:
-    void metadataAvailabilityChanged(bool metaDataAvailable);
+    void metadataChanged();
+    void metadataAvailabilityChanged(bool available);
     void readOnlyChanged(bool readOnly);
 
 private:

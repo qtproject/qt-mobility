@@ -37,6 +37,7 @@
 
 #include <QString>
 #include <QVariant>
+#include <QList>
 #include <QSharedDataPointer>
 
 #include "qmultimediaglobal.h"
@@ -61,6 +62,9 @@ public:
 
     int duration() const;
     void setDuration(int ms);
+
+    QList<QMediaSource> alternativeRepresentations() const;
+    void setAlternativeRepresentations(const QList<QMediaSource> &sources);
 
     bool operator ==(const QMediaSource& other) const;
     bool operator !=(const QMediaSource& other) const;

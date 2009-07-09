@@ -39,9 +39,20 @@
     \preliminary
     \brief The QMediaWidgetEndpoint class provides a QWidget media output.
 
-    \codeline QAbstractMediaService::createEndpoint<QMediaWidgetEndpoint *>();
+    The interface name of QMediaWidgetEndpoint is \c com.nokia.Qt.QMediaWidgetEndpoint/1.0 as
+    defined in QMediaWidgetEndpoint_iid.
 
     \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
+*/
+
+/*!
+    \macro QMediaWidgetEndpoint_iid
+
+    \c com.nokia.Qt.QMediaWidgetEndpoint/1.0
+
+    Defines the interface name of QIODeviceEndpoint.
+
+    \relates QMediaWidgetEndpoint
 */
 
 /*!

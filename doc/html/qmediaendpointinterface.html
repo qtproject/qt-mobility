@@ -13,34 +13,37 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaEndpointInterface Class Reference</h1>
-<p>The QMediaEnpointInterface class provides a common interface for media service inputs and outputs. <a href="#details">More...</a></p>
+<p>The QMediaEndpointInterface class provides a common interface for media service inputs and outputs. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaEndpointInterface&gt;</pre><p>Inherited by <a href="qaudiodeviceendpoint.html">QAudioDeviceEndpoint</a>, <a href="qaudiorendererendpoint.html">QAudioRendererEndpoint</a>, <a href="qiodeviceendpoint.html">QIODeviceEndpoint</a>, <a href="qmediawidgetendpoint.html">QMediaWidgetEndpoint</a>, and <a href="qvideorendererendpoint.html">QVideoRendererEndpoint</a>.</p>
 <ul>
 <li><a href="qmediaendpointinterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaendpointinterface.html#Direction-enum">Direction</a></b> { Input, Output, InputOutput }</td></tr>
-</table>
-<hr />
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"/>enum <b><a href="qmediaendpointinterface.html#Direction-enum">Direction</a></b> { Input, Output, InputOutput }</li>
+</ul>
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaendpointinterface.html#dtor.QMediaEndpointInterface">~QMediaEndpointInterface</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual Direction </td><td class="memItemRight" valign="bottom"><b><a href="qmediaendpointinterface.html#direction">direction</a></b> () const = 0</td></tr>
-</table>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/>virtual <b><a href="qmediaendpointinterface.html#dtor.QMediaEndpointInterface">~QMediaEndpointInterface</a></b> ()</li>
+<li><div class="fn"/>virtual Direction <b><a href="qmediaendpointinterface.html#direction">direction</a></b> () const = 0</li>
+</ul>
+<a name="macros"></a>
+<h3>Macros</h3>
+<ul>
+<li><div class="fn"/><b><a href="qmediaendpointinterface.html#Q_MEDIA_DECLARE_ENDPOINT">Q_MEDIA_DECLARE_ENDPOINT</a></b> (  <i>Type</i>,  <i>IId</i> )</li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QMediaEnpointInterface class provides a common interface for media service inputs and outputs.</p>
+<p>The QMediaEndpointInterface class provides a common interface for media service inputs and outputs.</p>
 <p>A media end point is an object that can be set as an input or output of a <a href="qabstractmediaservice.html">QAbstractMediaService</a>. End points inherit from both QObject, and QMediaEndpointInterface and are not instantiated directly, instead they are constructed using the <a href="qabstractmediaservice.html#createEndpoint">QAbstractMediaService::createEndpoint</a>() function of the service they intended to be used with.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Direction-enum"></a>enum QMediaEndpointInterface::Direction</h3>
 <p>Identifies if an end point can be used as a media service input or output.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaEndpointInterface::Input</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The end point can be used as a media service input.</td></tr>
 <tr><td valign="top"><tt>QMediaEndpointInterface::Output</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">The end point can be used as a media service output.</td></tr>
@@ -52,6 +55,10 @@
 <p>Destroys a media end point.</p>
 <h3 class="fn"><a name="direction"></a><a href="qmediaendpointinterface.html#Direction-enum">Direction</a> QMediaEndpointInterface::direction () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns whether an end point is an input, output or both.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="Q_MEDIA_DECLARE_ENDPOINT"></a>Q_MEDIA_DECLARE_ENDPOINT (  <i>Type</i>,  <i>IId</i> )</h3>
+<p>Declares <i>Type</i> as a media end point with the given <i>IId</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

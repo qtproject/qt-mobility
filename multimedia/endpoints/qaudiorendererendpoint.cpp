@@ -59,7 +59,20 @@ public:
     \brief The QAudioRendererEndpoint class provides a media end point that renders audio to a
     QIODevice
 
+    The interface name of QAudioRendererEndpoint is \c com.nokia.Qt.QAudioRendererEndpoint/1.0 as
+    defined in QAudioRendererEndpoint_iid.
+
     \sa QAbstractMediaService::setAudioOutput()
+*/
+
+/*!
+    \macro QAudioRendererEndpoint_iid
+
+    \c com.nokia.Qt.QAudioRendererEndpoint/1.0
+
+    Defines the interface name of QAudioRendererEndpoint.
+
+    \relates QAudioRendererEndpoint
 */
 
 /*!

@@ -84,6 +84,8 @@ public:
     void setVideoRenderer(QObject *renderer);
     bool isVideoAvailable() const;
 
+    bool isSeekable() const;
+
     QMap<QString,QVariant> tags() const { return m_tags; }
     QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
@@ -112,10 +114,12 @@ signals:
     void playbackFinished();
     void tagsChanged();
     void streamsChanged();
+    void seekableChanged(bool);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
     void getStreamsInfo();
+    void setSeekable(bool);
 
 private:
     QUrl m_url;
@@ -132,6 +136,7 @@ private:
     int m_volume;
     bool m_muted;
     bool m_videoAvailable;
+    bool m_seekable;
 
     qint64 m_lastPosition;
     qint64 m_duration;

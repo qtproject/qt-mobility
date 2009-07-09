@@ -83,9 +83,15 @@ QMetadataProvider::~QMetadataProvider()
 */
 
 /*!
-    \fn void QMetadataProvider::metadataAvailabilityChanged(bool metadataAvailable)
+    \fn void QMetadataProvider::metadataChanged()
 
-    Signal the availability of metadata has changed, \a metadataAvailable will
+    Signal the changes of metadata.
+*/
+
+/*!
+    \fn void QMediaMetadata::metadataAvailablilityChanged(bool available)
+
+    Signal the availability of metadata has changed, \a available will
     be true if the multimedia object has metadata.
 */
 
