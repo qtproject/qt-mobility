@@ -112,7 +112,9 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
+#ifdef BEARER_ENGINE
     QHash<QString, QNetworkSessionEngine *> configurationEngine;
+#endif
     bool firstUpdate;
 
 public slots:
