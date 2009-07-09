@@ -210,7 +210,7 @@ private slots:
     \value StorageAccessError The service data storage is not accessible. This could be because the caller does not have the required permissions.
     \value InvalidServiceLocation The service was not found at its specified \l{QServiceInterfaceDescriptor::Location}{location}.
     \value InvalidServiceXml The XML defining the service metadata is invalid.
-    \value InvalidServiceInterfaceDescriptor The service interface descriptor is invalid.
+    \value InvalidServiceInterfaceDescriptor The service interface descriptor is invalid, or refers to an interface implementation that cannot be accessed in the current scope.
     \value ServiceAlreadyExists Another service has previously been registered with the same \l{QServiceInterfaceDescriptor::Location}{location}.
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
@@ -552,6 +552,9 @@ bool QServiceManager::removeService(const QString& serviceName)
     default.
 
     Returns true if the operation succeeded, and false otherwise.
+
+    \bold {Note:} When in system scope, the \a service must be a system-wide
+    service rather than a user-specific service; otherwise, this will fail.
 */
 bool QServiceManager::setInterfaceDefault(const QString &service, const QString &interfaceName)
 {
@@ -577,6 +580,10 @@ bool QServiceManager::setInterfaceDefault(const QString &service, const QString 
     descriptor.
 
     Returns true if the operation succeeded, and false otherwise.
+
+    \bold {Note:} When in system scope, the \a descriptor must refer to a
+    system-wide service rather than a user-specific service; otherwise, this
+    will fail.
 */
 bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& descriptor)
 {

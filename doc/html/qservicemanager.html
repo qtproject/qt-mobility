@@ -69,7 +69,7 @@
 <tr><td valign="top"><tt>QServiceManager::StorageAccessError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service data storage is not accessible. This could be because the caller does not have the required permissions.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::InvalidServiceLocation</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The service was not found at its specified <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::InvalidServiceXml</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The XML defining the service metadata is invalid.</td></tr>
-<tr><td valign="top"><tt>QServiceManager::InvalidServiceInterfaceDescriptor</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The service interface descriptor is invalid.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::InvalidServiceInterfaceDescriptor</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The service interface descriptor is invalid, or refers to an interface implementation that cannot be accessed in the current scope.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::ServiceAlreadyExists</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Another service has previously been registered with the same <a href="qserviceinterfacedescriptor.html#PropertyKey-enum">location</a>.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::ImplementationAlreadyExists</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Another service that implements the same interface version has previously been registered.</td></tr>
 <tr><td valign="top"><tt>QServiceManager::PluginLoadingFailed</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The service plugin cannot be loaded.</td></tr>
@@ -80,7 +80,7 @@
 <h3 class="fn"><a name="Scope-enum"></a>enum QServiceManager::Scope</h3>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QServiceManager::UserScope</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">When adding and removing services, use a storage location specific to the current user (e.g&#x2e; in the user's home directory). When searching for services and interface implementations, first search in the user-specific location; if the service or interface implementation is not found, search in the system-wide storage location.</td></tr>
+<tr><td valign="top"><tt>QServiceManager::UserScope</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">When adding and removing services, use a storage location specific to the current user (e.g&#x2e; in the user's home directory). When searching for services and interface implementations, first search in the user-specific location; if the service or interface implementation is not found, search in the system-wide storage location (if the user has sufficient permissions to do so).</td></tr>
 <tr><td valign="top"><tt>QServiceManager::SystemScope</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">When adding and removing services, use a system-wide storage location accessible to all users. When searching for services and interface implementations, search only in the system-wide storage location.</td></tr>
 </table></p>
 <hr />
@@ -123,7 +123,7 @@
 <p>If the <i>serviceDescriptor</i> is not valid the returned pointer will be null.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <h3 class="fn"><a name="interfaceDefault"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::interfaceDefault ( const QString &amp; <i>interfaceName</i> ) const</h3>
-<p>Returns the default interface for the given <i>interfaceName</i>.</p>
+<p>Returns the default interface implementation for the given <i>interfaceName</i>.</p>
 <p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
 <h3 class="fn"><a name="loadInterface"></a>QObject * QServiceManager::loadInterface ( const QString &amp; <i>interfaceName</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i> = 0, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> = 0 )</h3>
 <p>Loads and returns the interface specified by <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
@@ -153,11 +153,13 @@
 <p>Sets the default interface implementation for <i>interfaceName</i> to the matching interface implementation provided by <i>service</i>.</p>
 <p>If <i>service</i> provides more than one interface implementation for <i>interfaceName</i>, the newest version of the interface is set as the default.</p>
 <p>Returns true if the operation succeeded, and false otherwise.</p>
+<p><b>Note:</b> When in system scope, the <i>service</i> must be a system-wide service rather than a user-specific service; otherwise, this will fail.</p>
 <p>See also <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
 <h3 class="fn"><a name="setInterfaceDefault-2"></a>bool QServiceManager::setInterfaceDefault ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Sets the interface implementation specified by <i>descriptor</i> to be the default implementation for the particular interface specified in the descriptor.</p>
 <p>Returns true if the operation succeeded, and false otherwise.</p>
+<p><b>Note:</b> When in system scope, the <i>descriptor</i> must refer to a system-wide service rather than a user-specific service; otherwise, this will fail.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
