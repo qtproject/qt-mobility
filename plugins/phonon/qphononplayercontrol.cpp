@@ -187,12 +187,12 @@ void QPhononPlayerControl::stop()
 
 void QPhononPlayerControl::setVolume(int volume)
 {
-    //m_session->setVolume(volume);
+    m_audioOutput->setVolume(volume/100.0);
 }
 
 void QPhononPlayerControl::setMuted(bool muted)
 {
-    //m_session->setMuted(muted);
+    m_audioOutput->setMuted(muted);
 }
 
 void QPhononPlayerControl::play(const QMediaSource &src)
@@ -229,6 +229,7 @@ bool QPhononPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
 
 void QPhononPlayerControl::setVideoOutput(QObject *output)
 {
+    Q_UNUSED(output);
     //m_session->setVideoRenderer(output);
 }
 

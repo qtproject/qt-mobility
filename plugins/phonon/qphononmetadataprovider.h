@@ -30,6 +30,7 @@ private slots:
 
 private:
     Phonon::MediaObject *m_session;
+    bool m_metadataAvailable;
 };
 
 #endif // QGSTREAMERMETADATAPROVIDER_H
