@@ -68,10 +68,9 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     d->service = mediaObject->service();
     d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetadataControl"));
 
-    Q_ASSERT(d->provider != 0);
-
     if (d->provider != 0) {
         connect(d->provider, SIGNAL(metadataChanged()), SIGNAL(metadataChanged()));
+        connect(d->provider, SIGNAL(metadataAvailabilityChanged(bool)), SIGNAL(metadataAvailabilityChanged(bool)));
         connect(d->provider, SIGNAL(readOnlyChanged(bool)), SIGNAL(readOnlyChanged(bool)));
     } else {
         qWarning() << "No provider for media metadata";
@@ -161,6 +160,13 @@ void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
     \fn void QMediaMetadata::metadataChanged()
 
     Signal the metadata has changed.
+*/
+
+/*!
+    \fn void QMediaMetadata::metadataAvailablilityChanged(bool available)
+
+    Signal the availability of metadata has changed, \a available will
+    be true if the multimedia object has metadata.
 */
 
 /*!

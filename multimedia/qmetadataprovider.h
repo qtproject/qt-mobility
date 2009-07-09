@@ -55,6 +55,7 @@ public:
 
 Q_SIGNALS:
     void metadataChanged();
+    void metadataAvailabilityChanged(bool available);
     void readOnlyChanged(bool readOnly);
 
 protected:

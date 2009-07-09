@@ -45,7 +45,7 @@ class QMediaMetadataPrivate;
 class Q_MEDIA_EXPORT QMediaMetadata : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataChanged)
+    Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)
     Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged);
 
 public:
@@ -61,6 +61,7 @@ public:
 
 Q_SIGNALS:
     void metadataChanged();
+    void metadataAvailabilityChanged(bool available);
     void readOnlyChanged(bool readOnly);
 
 private:

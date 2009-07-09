@@ -89,6 +89,13 @@ QMetadataProvider::~QMetadataProvider()
 */
 
 /*!
+    \fn void QMediaMetadata::metadataAvailablilityChanged(bool available)
+
+    Signal the availability of metadata has changed, \a available will
+    be true if the multimedia object has metadata.
+*/
+
+/*!
     \fn void QMetadataProvider::readOnlyChanged(bool readOnly)
 
     Signal a change in the read only status of meta data, \a readOnly will be
