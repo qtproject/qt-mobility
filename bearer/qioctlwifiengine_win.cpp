@@ -51,7 +51,7 @@ QIoctlWifiEngine::QIoctlWifiEngine(QObject *parent)
 {
     // poll for changes in available WLANs
     connect(&pollTimer, SIGNAL(timeout()), this, SIGNAL(configurationsChanged()));
-    pollTimer.start(10000);
+    pollTimer.setInterval(10000);
 }
 
 QIoctlWifiEngine::~QIoctlWifiEngine()
@@ -147,7 +147,7 @@ QList<QNetworkConfigurationPrivate *> QIoctlWifiEngine::getConfigurations(bool *
     if (ok)
         *ok = true;
 
-    pollTimer.start(10000);
+    pollTimer.start();
 
     return foundConfigurations;
 }

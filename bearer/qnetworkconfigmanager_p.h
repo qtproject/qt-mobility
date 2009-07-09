@@ -53,6 +53,7 @@
 QT_BEGIN_NAMESPACE
 
 #ifdef BEARER_ENGINE
+class QNetworkSessionEngine;
 class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
@@ -111,10 +112,12 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
+    QHash<QString, QNetworkSessionEngine *> configurationEngine;
     bool firstUpdate;
 
 public slots:
     void updateConfigurations();
+
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
     void configurationRemoved(const QNetworkConfiguration& config);
@@ -124,17 +127,7 @@ Q_SIGNALS:
 
 private:
 #ifdef BEARER_ENGINE
-    void updateAccessPointConfiguration(QNetworkConfigurationPrivate *cpPriv, QList<QString> &knownConfigs);
-    void updateGenericConfigurations(QList<QString> &knownConfigs);
-#ifdef Q_OS_WIN
-    void updateNlaConfigurations(QList<QString> &knownConfigs);
-#ifndef Q_OS_WINCE
-    bool updateWlanNativeConfigurations(QList<QString> &knownConfigs);
-    void updateWlanIoctlConfigurations(QList<QString> &knownConfigs);
-    void updateWlanConfigurations(QList<QString> &knownConfigs);
-#endif
-#endif
-    void updateInternetServiceConfiguration(QList<QString> &knownConfigs);
+    void updateInternetServiceConfiguration();
 
     void abort();
 #endif
@@ -191,7 +184,13 @@ private:
 
     EngineUpdateState updateState;
 #endif
-private slots:
+
+private Q_SLOTS:
+#ifdef BEARER_ENGINE
+    void configurationAdded(QNetworkConfigurationPrivate *cpPriv, QNetworkSessionEngine *engine);
+    void configurationRemoved(const QString &id);
+    void configurationChanged(QNetworkConfigurationPrivate *cpPriv);
+#endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
     void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
     void accessPointAdded(const QString &, QDBusObjectPath );
@@ -199,12 +198,9 @@ private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void updateAccessPointState(const QString &, quint32);
 #endif
-
-
 };
-
-
 
 QT_END_NAMESPACE
 
 #endif //QNETWORKCONFIGURATIONMANAGERPRIVATE_H
+

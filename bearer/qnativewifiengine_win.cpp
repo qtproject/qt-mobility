@@ -155,7 +155,7 @@ QNativeWifiEngine::QNativeWifiEngine(QObject *parent)
     // On Windows XP SP2 and SP3 only connection and disconnection notifications are available.
     // We need to poll for changes in available wireless networks.
     connect(&pollTimer, SIGNAL(timeout()), this, SIGNAL(configurationsChanged()));
-    pollTimer.start(10000);
+    pollTimer.setInterval(10000);
 }
 
 QNativeWifiEngine::~QNativeWifiEngine()
@@ -244,7 +244,7 @@ QList<QNetworkConfigurationPrivate *> QNativeWifiEngine::getConfigurations(bool 
     if (ok)
         *ok = true;
 
-    pollTimer.start(10000);
+    pollTimer.start();
 
     return foundConfigurations;
 }
