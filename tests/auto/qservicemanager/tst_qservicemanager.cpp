@@ -1169,9 +1169,14 @@ void tst_QServiceManager::serviceAdded()
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
 
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyAdd.count(), 1);
+
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyAdd.count(), 0);
+    } else {
+        QTRY_COMPARE(spyAdd.count(), 1);
+    }
+
     if (expectSignal) {
         QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
         QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
@@ -1179,9 +1184,13 @@ void tst_QServiceManager::serviceAdded()
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyRemove.count(), 1);
+    
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyRemove.count(), 0);
+    } else {
+        QTRY_COMPARE(spyRemove.count(), 1);
+    }
 
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
@@ -1191,9 +1200,12 @@ void tst_QServiceManager::serviceAdded()
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyAdd.count(), 1);
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyAdd.count(), 0);
+    } else {
+        QTRY_COMPARE(spyAdd.count(), 1);
+    }
     if (expectSignal) {
         QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
         QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
@@ -1250,15 +1262,21 @@ void tst_QServiceManager::serviceRemoved()
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QServiceManager::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyAdd.count(), 1);
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyAdd.count(), 0);
+    } else {
+        QTRY_COMPARE(spyAdd.count(), 1);
+    }
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyRemove.count(), 1);
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyRemove.count(), 0);
+    } else {
+        QTRY_COMPARE(spyRemove.count(), 1);
+    }
     if (expectSignal) {
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
         QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
@@ -1272,15 +1290,21 @@ void tst_QServiceManager::serviceRemoved()
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyAdd.count(), 1);
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyAdd.count(), 0);
+    } else {
+        QTRY_COMPARE(spyAdd.count(), 1);
+    }
 
     spyRemove.clear();
     QVERIFY(mgr_modify.removeService(serviceName));
-    if (!expectSignal)
-        QEXPECT_FAIL("", "Should not receive signal", Continue);
-    QTRY_COMPARE(spyRemove.count(), 1);
+    if (!expectSignal) {
+        QTest::qWait(2000);
+        QCOMPARE(spyRemove.count(), 0);
+    } else {
+        QTRY_COMPARE(spyRemove.count(), 1);
+    }
     if (expectSignal) {
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
         QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
