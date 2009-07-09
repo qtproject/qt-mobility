@@ -34,6 +34,7 @@
 #define QMESSAGEACCONT_H
 #include <QString>
 #include <QList>
+#include "qmessage.h"
 
 class QMessageAccountPrivate;
 

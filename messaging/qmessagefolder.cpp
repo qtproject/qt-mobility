@@ -57,9 +57,6 @@
     has no path, no parent folder and no parent account. An invalid folder does not exist in 
     the database and has an invalid id.
 */
-QMessageFolder::QMessageFolder()
-{
-}
 
 /*!
     \fn QMessageFolder::QMessageFolder(const QMessageFolderId &id)
@@ -68,19 +65,12 @@ QMessageFolder::QMessageFolder()
     specified by the QMessageFolderId \a id. If the folder does not exist in the messaging  
     store, then this constructor will create an empty and invalid QMessageFolder.
 */
-QMessageFolder::QMessageFolder(const QMessageFolderId &id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn QMessageFolder::~QMessageFolder()
     
     Destroys the QMessageFolder object.
 */
-QMessageFolder::~QMessageFolder()
-{
-}
 
 /*!
     \fn QMessageFolder::id() const
@@ -88,10 +78,6 @@ QMessageFolder::~QMessageFolder()
     Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid 
     identifier does not yet exist in the messaging store.
 */
-QMessageFolderId QMessageFolder::id() const
-{
-    return QMessageFolderId(); // stub
-}
 
 /*!
     \fn QMessageFolder::parentAccountId() const
@@ -99,10 +85,6 @@ QMessageFolderId QMessageFolder::id() const
     Returns the identifier of the parent account of the folder. If the folder is not linked to 
     an account an invalid identifier is returned.
 */
-QMessageAccountId QMessageFolder::parentAccountId() const
-{
-    return QMessageAccountId(); // stub
-}
 
 /*!
     \fn QMessageFolder::parentFolderId() const
@@ -110,27 +92,15 @@ QMessageAccountId QMessageFolder::parentAccountId() const
     Returns the identifier of the parent folder. This folder is a root folder if the parent 
     identifier is invalid.
 */
-QMessageFolderId QMessageFolder::parentFolderId() const
-{
-    return QMessageFolderId(); // stub
-}
 
 /*!
     \fn QMessageFolder::displayName() const
     
     Returns the display name of the folder suitable for viewing in a user interface.
 */
-QString QMessageFolder::displayName() const
-{
-    return QString::null; // stub
-}
 
 /*!
     \fn QMessageFolder::path() const
     
     Returns the path of the folder.
 */
-QString QMessageFolder::path() const
-{
-    return QString::null; // stub
-}

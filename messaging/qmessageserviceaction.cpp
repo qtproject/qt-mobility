@@ -80,19 +80,12 @@
     
     The \a parent is passed to the QObject constructor.
 */
-QMessageServiceAction::QMessageServiceAction(QObject *parent)
-    : QObject(parent)
-{
-}
 
 /*!
     \fn QMessageServiceAction::~QMessageServiceAction()
   
     Destroys the message service action.
 */
-QMessageServiceAction::~QMessageServiceAction()
-{
-}
 
 /*!
     \fn QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
@@ -101,11 +94,6 @@ QMessageServiceAction::~QMessageServiceAction()
   
     \sa QMessage, QMessageAccountId
 */
-void QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
-{
-    Q_UNUSED(message)
-    Q_UNUSED(accountId)
-}
 
 /*!
     \fn QMessageServiceAction::compose(const QMessage &message)
@@ -116,10 +104,6 @@ void QMessageServiceAction::send(const QMessage &message, const QMessageAccountI
   
     \sa QMessage::type()
 */
-void QMessageServiceAction::compose(const QMessage &message)
-{
-    Q_UNUSED(message)
-}
 
 /*!
     \fn QMessageServiceAction::retrieve(const QMessageId& id)
@@ -134,10 +118,6 @@ void QMessageServiceAction::compose(const QMessage &message)
     \sa QMessageId, QMessage::Removed
 
 */
-void QMessageServiceAction::retrieve(const QMessageId& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
@@ -147,10 +127,6 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
     
     \sa QMessageContentContainerId
 */
-void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn QMessageServiceAction::show(const QMessageId& id)
@@ -161,10 +137,6 @@ void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 
     \sa QMessageId, QMessage::type()
 */
-void QMessageServiceAction::show(const QMessageId& id)
-{
-    Q_UNUSED(id)
-}
     
 /*!
     \fn QMessageServiceAction::exportUpdates()
@@ -173,9 +145,6 @@ void QMessageServiceAction::show(const QMessageId& id)
 
     \sa QMessageStore::addMessage(), QMessageStore::updateMessage(), QMessageStore::removeMessage(), QMessageStore::removeMessages()
 */
-void QMessageServiceAction::exportUpdates()
-{
-}
     
 /*!
     \fn QMessageServiceAction::activity() const
@@ -184,19 +153,12 @@ void QMessageServiceAction::exportUpdates()
 
     \sa activityChanged()
 */
-QMessageServiceAction::Activity QMessageServiceAction::activity() const
-{
-    return Pending; // stub
-}
 
 /*!
     \fn QMessageServiceAction::cancelOperation()
   
     Attempts to cancel the last requested operation.
 */
-void QMessageServiceAction::cancelOperation()
-{
-}
 
 /*!
     \fn QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
@@ -213,8 +175,4 @@ void QMessageServiceAction::cancelOperation()
     Returns a string indicating the last error condition reported by the action if any; 
     otherwise returns a null string.
 */
-QString QMessageServiceAction::lastErrorString() const
-{
-    return QString::null;
-}
 

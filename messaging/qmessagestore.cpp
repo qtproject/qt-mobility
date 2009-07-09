@@ -120,30 +120,18 @@
     
     \sa instance()
 */
-QMessageStore::QMessageStore(QObject *parent)
-    : QObject(parent)
-{
-    Q_ASSERT(instance() != 0);
-}
 
 /*!
     \fn QMessageStore::~QMessageStore()
     
     Destroys the messaging store.
 */
-QMessageStore::~QMessageStore()
-{
-}
 
 /*!
     \fn QMessageStore::lastError() const
     
     Returns the code of the last error condition reported by the messaging store.
 */
-QMessageStore::ErrorCode QMessageStore::lastError() const
-{
-    return NotYetImplemented;
-}
 
 /*!
     \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
@@ -159,14 +147,6 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     
     \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
-{
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
-}
 
 /*!
     \fn QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
@@ -182,14 +162,6 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     
     \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
-{
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
-}
 
 /*!
     \fn QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
@@ -205,14 +177,6 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
     
     \sa lastError(), countMessages(), setMaximumWorkingMemory()
 */
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
-{
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageAccountIdList(); // stub
-}
 
 /*!
     \fn QMessageStore::countMessages(const QMessageFilterKey& key) const
@@ -223,11 +187,6 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     
     \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
-int QMessageStore::countMessages(const QMessageFilterKey& key) const
-{
-    Q_UNUSED(key)
-    return 0; // stub
-}
 
 /*!
     \fn QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
@@ -238,11 +197,6 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     
     \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
-int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
-{
-    Q_UNUSED(key)
-    return 0; // stub
-}
 
 /*!
     \fn QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
@@ -253,11 +207,6 @@ int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
     
     \sa lastError(), queryMessages(), setMaximumWorkingMemory()
 */
-int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
-{
-    Q_UNUSED(key)
-    return 0; // stub
-}
 
 /*!
     \fn QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
@@ -273,12 +222,6 @@ int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 
     \sa removeMessages(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
-bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
-{
-    Q_UNUSED(id)
-    Q_UNUSED(option)
-    return false; // stub
-}
 
 /*!
     \fn QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
@@ -307,12 +250,6 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 
     \sa removeMessage(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
-bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
-{
-    Q_UNUSED(key)
-    Q_UNUSED(option)
-    return true; // stub
-}
 
 /*!
     \fn QMessageStore::addMessage(QMessage *m)
@@ -325,11 +262,6 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
 
     \sa message(), updateMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
 */
-bool QMessageStore::addMessage(QMessage *m)
-{
-    Q_UNUSED(m)
-    return true; // stub
-}
 
 /*!
     \fn QMessageStore::updateMessage(QMessage *m)
@@ -342,44 +274,24 @@ bool QMessageStore::addMessage(QMessage *m)
     
     \sa addMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
 */
-bool QMessageStore::updateMessage(QMessage *m)
-{
-    Q_UNUSED(m)
-    return true; // stub
-}
 
 /*!
     \fn QMessageStore::message(const QMessageId& id) const
     
    Returns the QMessage identified by \a id from the store.
 */
-QMessage QMessageStore::message(const QMessageId& id) const
-{
-    Q_UNUSED(id)
-    return QMessage(); // stub
-}
 
 /*!
     \fn QMessageStore::folder(const QMessageFolderId& id) const
     
    Returns the QMessageFolder identified by \a id from the store.
 */
-QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
-{
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
-}
 
 /*!
     \fn QMessageStore::account(const QMessageAccountId& id) const
     
    Returns the QMessageAccount identified by \a id from the store.
 */
-QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
-{
-    Q_UNUSED(id)
-    return QMessageAccount(); // stub
-}
 
 /*!
     \fn QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
@@ -399,10 +311,6 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
    
    \sa maximumWorkingMemory(), ErrorCode, countMessages(), queryMessages(), lastError()
 */
-void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
-{
-    Q_UNUSED(maximumBytes)
-}
 
 /*!
     \fn QMessageStore::maximumWorkingMemory()
@@ -415,10 +323,6 @@ void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
    
    \sa setMaximumWorkingMemory(), ErrorCode, countMessages(), queryMessages()
 */
-uint QMessageStore::maximumWorkingMemory()
-{
-    return 0; // stub
-}
 
 /*!
     \fn QMessageStore::instance()
@@ -427,11 +331,7 @@ uint QMessageStore::maximumWorkingMemory()
 
     If necessary, the store will be instantiated and initialized.
 */
-QMessageStore* QMessageStore::instance()
-{
-    return 0;
-}
-    
+
 /*!
     \fn void QMessageStore::messagesAdded(const QMessageIdList& ids)
 
@@ -467,10 +367,6 @@ QMessageStore* QMessageStore::instance()
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
 */
-void QMessageStore::startNotifications(const QMessageFilterKey &key)
-{
-    Q_UNUSED(key)    
-}
 
 /*!
     \fn QMessageStore::stopNotifications(const QMessageFilterKey &key)
@@ -480,7 +376,3 @@ void QMessageStore::startNotifications(const QMessageFilterKey &key)
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
 */
-void QMessageStore::stopNotifications(const QMessageFilterKey &key)
-{
-    Q_UNUSED(key)    
-}

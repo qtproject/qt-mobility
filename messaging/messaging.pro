@@ -56,4 +56,8 @@ SOURCES += qmessageid.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
 
-SOURCES += qmessage_win.cpp
+SOURCES += qmessage_win.cpp \
+           qmessageaccount_win.cpp \
+           qmessagefolder_win.cpp \
+           qmessagestore_win.cpp \
+           qmessageserviceaction_win.cpp 

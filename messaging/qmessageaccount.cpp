@@ -57,9 +57,6 @@
     
     Creates an empty and invalid account object.
 */
-QMessageAccount::QMessageAccount()
-{
-}
 
 /*!
     \fn QMessageAccount::QMessageAccount(const QMessageAccountId &id)
@@ -71,59 +68,36 @@ QMessageAccount::QMessageAccount()
     
     \sa QMessageStore::account()
 */
-QMessageAccount::QMessageAccount(const QMessageAccountId &id)
-{
-    Q_UNUSED(id)
-}
 
 /*!
     \fn QMessageAccount::~QMessageAccount()
     
     Destroys the account object.
 */
-QMessageAccount::~QMessageAccount()
-{
-}
 
 /*!
     \fn QMessageAccount::id() const
     
     Returns the identifier for this account.
 */
-QMessageAccountId QMessageAccount::id() const
-{
-    return QMessageAccountId();  // stub
-}
 
 /*!
     \fn QMessageAccount::name() const
     
     Returns the name of the account for display purposes.
 */
-QString QMessageAccount::name() const
-{
-    return QString(); // stub
-}
 
 /*!
     \fn QMessageAccount::fromAddress() const
     
     Returns the address from which the account's outgoing messages should be reported as originating.
 */
-QMessageAddress QMessageAccount::fromAddress() const
-{
-    return QMessageAddress(); // stub
-}
 
 /*!
     \fn QMessageAccount::types() const
     
     Returns the types of messages this account deals with.
 */
-QMessage::TypeFlags QMessageAccount::types() const
-{
-    return QMessage::None; // stub
-}
 
 /*!
     \fn QMessageAccount::signature() const
@@ -131,18 +105,9 @@ QMessage::TypeFlags QMessageAccount::types() const
     Return the signature for the account if one exists and is enabled; otherwise returns an empty 
     string.
 */
-QString QMessageAccount::signature() const
-{
-    return QString(); // stub
-}
 
 /*!
     \fn QMessageAccount::defaultAccount(QMessage::Type type)
     
     Returns the default account for messages of type \a type.
 */
-QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
-{
-    Q_UNUSED(type)
-    return QMessageAccountId(); // stub
-}
