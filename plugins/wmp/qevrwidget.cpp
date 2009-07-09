@@ -247,7 +247,7 @@ bool QEvrWidget::event(QEvent *event)
         m_display->SetVideoWindow(effectiveWinId());
     }
 
-    return QWidget::event(event);
+    return QMediaWidgetEndpoint::event(event);
 }
 
 void QEvrWidget::setDisplayControl(IMFVideoDisplayControl *control)
