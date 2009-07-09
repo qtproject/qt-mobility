@@ -140,8 +140,10 @@ public:
             case DBError::NotFound:
                 error = QServiceManager::ComponentNotFound;
                 break;
-            case DBError::SqlError:
             case DBError::InvalidDescriptorScope:
+                error = QServiceManager::InvalidServiceInterfaceDescriptor;
+                break;
+            case DBError::SqlError:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
                 break;
