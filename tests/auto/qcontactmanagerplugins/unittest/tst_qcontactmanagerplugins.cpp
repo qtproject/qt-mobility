@@ -44,13 +44,13 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
-class tst_QContactManagerEngine : public QObject
+class tst_QContactManagerPlugins : public QObject
 {
 Q_OBJECT
 
 public:
-    tst_QContactManagerEngine();
-    virtual ~tst_QContactManagerEngine();
+    tst_QContactManagerPlugins();
+    virtual ~tst_QContactManagerPlugins();
 
 public slots:
     void init();
@@ -144,15 +144,15 @@ Q_EXPORT_PLUGIN2(contacts_testboring, BoringFactory);
 Q_IMPORT_PLUGIN(contacts_testboring);
 
 
-tst_QContactManagerEngine::tst_QContactManagerEngine()
+tst_QContactManagerPlugins::tst_QContactManagerPlugins()
 {
 }
 
-tst_QContactManagerEngine::~tst_QContactManagerEngine()
+tst_QContactManagerPlugins::~tst_QContactManagerPlugins()
 {
 }
 
-void tst_QContactManagerEngine::init()
+void tst_QContactManagerPlugins::init()
 {
     /* Add a path to our plugin path */
     QString path = QApplication::applicationDirPath() + "/dummyplugin";
@@ -160,11 +160,11 @@ void tst_QContactManagerEngine::init()
     QApplication::addLibraryPath("/"); // strictly to test a cdUp :/
 }
 
-void tst_QContactManagerEngine::cleanup()
+void tst_QContactManagerPlugins::cleanup()
 {
 }
 
-void tst_QContactManagerEngine::testDummy()
+void tst_QContactManagerPlugins::testDummy()
 {
     QVERIFY(QContactManager::availableManagers().contains("testdummy"));
     QVERIFY(QContactManager::availableManagers().contains("teststaticdummy"));
@@ -177,5 +177,5 @@ void tst_QContactManagerEngine::testDummy()
     QVERIFY(m2.managerId() == "testdummy");
 }
 
-QTEST_MAIN(tst_QContactManagerEngine)
-#include "tst_qcontactmanagerengine.moc"
+QTEST_MAIN(tst_QContactManagerPlugins)
+#include "tst_qcontactmanagerplugins.moc"

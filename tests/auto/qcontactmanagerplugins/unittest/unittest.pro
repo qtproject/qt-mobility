@@ -1,11 +1,11 @@
 QT += testlib
 TEMPLATE=app
-TARGET=tst_qcontactmanagerengine
+TARGET=tst_qcontactmanagerplugins
 CONFIG+=testcase
 
 include(../../../../common.pri)
 
-SOURCES  += tst_qcontactmanagerengine.cpp
+SOURCES  += tst_qcontactmanagerplugins.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/contacts
 
