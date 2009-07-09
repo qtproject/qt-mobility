@@ -64,6 +64,7 @@ private slots:
         void defaultServiceCornerCases();
 #endif
         void nonWritableSystemDb();
+        void CWRTXmlCompatability();
         void cleanupTestCase();
 private:
        bool compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -1180,6 +1181,50 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     QFile::setPermissions(systemDbFilePath, systemPermsSet);
 
     clean();
+}
+
+void DatabaseManagerUnitTest::CWRTXmlCompatability()
+{
+    m_dbm = new DatabaseManager;
+    ServiceMetaData parser("");
+
+    QStringList userServiceFiles;
+    userServiceFiles << "ServiceTest.xml" << "ServiceTest1.xml";
+    foreach (const QString &serviceFile, userServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    }
+
+    QString test("Test");
+    for(int i = 0; i <= 10; ++i) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(test + QString::number(i) + QLatin1String(".xml"))));
+        if (i == 6)
+            QVERIFY(parser.extractMetadata());
+        else
+            QVERIFY(!parser.extractMetadata());
+    }
+
+    QStringList systemServiceFiles;
+    systemServiceFiles << "ServiceTest2.xml" << "ServiceTest3.xml";
+    foreach (const QString &serviceFile, systemServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        if (serviceFile == "ServiceTest3.xml") {
+            QVERIFY(!parser.extractMetadata());//versions less than 1.0 are not allowed
+            continue;
+        }
+        else
+            QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    }
+
+    QServiceFilter filter;
+    filter.setInterface("com.nokia.ILocation");
+    QList<QServiceInterfaceDescriptor> descriptors;
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptors[0], "com.nokia.ILocation", "TestService", 1,0));
+    QVERIFY(compareDescriptor(descriptors[1], "com.nokia.ILocation", "TestService1", 1,1));
+    QVERIFY(compareDescriptor(descriptors[2], "com.nokia.ILocation", "TestService2", 1,2));
 }
 
 void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,

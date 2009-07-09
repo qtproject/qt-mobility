@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+  <name>TestServices</name>
+  <filepath>.\testserviceplugin.dll</filepath>
+  <description>Test service description</description>
+  <version>1.0.456</version>
+  <interface>
+    <name>com.nokia.IDownloader</name>
+    <version>1.0</version>
+    <capabilities>ReadUserData,WriteUserData</capabilities>
+  </interface>
+  <test>value</test>
+</service>
+
+
