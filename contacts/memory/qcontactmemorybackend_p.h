@@ -89,7 +89,7 @@ public:
     QUniqueId m_nextContactId;
     QUniqueId m_nextGroupId;
 
-    static QContactManagerFunctionalityPrivate* m_caps;
+    static QContactManagerInfoPrivate* m_caps;
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine

@@ -311,7 +311,7 @@ void tst_QContact::actions()
 
 void tst_QContact::preferences()
 {
-#if 0 // functionality under test not implemented yet (requires QSFW)
+#if 0 // information() under test not implemented yet (requires QSFW)
     QContact c;
 
     // test first set

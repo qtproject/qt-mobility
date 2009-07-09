@@ -32,37 +32,42 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTMANAGERFUNCTIONALITY_H
-#define QCONTACTMANAGERFUNCTIONALITY_H
+#ifndef QCONTACTMANAGERCAPABILITIES_P_H
+#define QCONTACTMANAGERCAPABILITIES_P_H
 
-#include <QVariant>
-#include <QStringList>
-#include <QSharedDataPointer>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qtcontactsglobal.h"
+#include <QSharedData>
+#include <QPointer>
+#include <QWeakPointer>
+#include "qcontactmanager_p.h"
 
-class QContactManagerFunctionalityPrivate;
-class QTCONTACTS_EXPORT QContactManagerFunctionality
+class QContactManagerInfoPrivate : public QSharedData
 {
 public:
-    ~QContactManagerFunctionality();
+    QContactManagerInfoPrivate() : m_engine(0)
+    {
+    }
 
-    QContactManagerFunctionality(const QContactManagerFunctionality& other);
-    QContactManagerFunctionality& operator=(const QContactManagerFunctionality& other);
+    QContactManagerInfoPrivate(const QContactManagerInfoPrivate& other)
+        : QSharedData(other),
+        m_managerdata(other.m_managerdata),
+        m_engine(other.m_engine)
+    {
 
-    QStringList capabilities() const;
-    QStringList fastFilterableDefinitions() const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    }
 
-private:
-    bool operator==(const QContactManagerFunctionality& other) const;
-    bool operator!=(const QContactManagerFunctionality& other) const;
-
-private:
-    friend class QContactManager;
-    QContactManagerFunctionality();
-    QSharedDataPointer<QContactManagerFunctionalityPrivate> d;
+    QWeakPointer<QContactManagerData> m_managerdata;
+    QContactManagerEngine* m_engine; // protected by m_managerdata above
 };
 
 #endif
-

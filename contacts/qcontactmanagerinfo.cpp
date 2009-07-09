@@ -31,46 +31,47 @@
 **
 ****************************************************************************/
 
-#include "qcontactmanagerfunctionality.h"
-#include "qcontactmanagerfunctionality_p.h"
+#include "qcontactmanagerinfo.h"
+#include "qcontactmanagerinfo_p.h"
 
 #include "qcontactmanager_p.h"
 
 /*!
- * \class QContactManagerFunctionality
+ * \class QContactManagerInfo
  *
- * \brief The QContactManagerFunctionality class provides access to the supported functionality of a particular QContactManager.
+ * \brief The QContactManagerInfo class provides information about a particular QContactManager.
  *
- * This class allows managers to report their supported functionality to clients.  The supported functionality
- * of a manager includes which data types the backend supports, which definitions are natively filterable in the backend (and thus
- * are high performance), and what capabilities the manager supports.
+ * This class allows managers to report information about their supported functionality to clients.
+ * The supported functionality of a manager includes which data types the backend supports,
+ * which definitions are natively filterable in the backend (and thus are high performance),
+ * and what capabilities the manager supports.
  *
- * If the manager that provided a functionality object is subsequently destroyed, the
- * QContactManagerFunctionality object will report default, empty functionality.
+ * If the manager that provided an information object is subsequently destroyed, the
+ * QContactManagerInfo object will report empty information.
  *
  * \sa QContactManager
  */
 
-/*! Constructs a new, empty functionality object */
-QContactManagerFunctionality::QContactManagerFunctionality()
-    : d(new QContactManagerFunctionalityPrivate)
+/*! Constructs a new, empty QContactManagerInfo object */
+QContactManagerInfo::QContactManagerInfo()
+    : d(new QContactManagerInfoPrivate)
 {
 }
 
 /*! Frees the memory used by this instance */
-QContactManagerFunctionality::~QContactManagerFunctionality()
+QContactManagerInfo::~QContactManagerInfo()
 {
 }
 
-/*! Constructs a new functionality object from the existing \a other object. */
-QContactManagerFunctionality::QContactManagerFunctionality(const QContactManagerFunctionality& other)
+/*! Constructs a new QContactManagerInfo object from the existing \a other object. */
+QContactManagerInfo::QContactManagerInfo(const QContactManagerInfo& other)
     : d(other.d)
 {
 
 }
 
-/*! Assigns the existing functionality object \a other to this object */
-QContactManagerFunctionality& QContactManagerFunctionality::operator=(const QContactManagerFunctionality& other)
+/*! Assigns the existing QContactManagerInfo object \a other to this object */
+QContactManagerInfo& QContactManagerInfo::operator=(const QContactManagerInfo& other)
 {
     if (this != &other) {
         d = other.d;
@@ -84,7 +85,7 @@ QContactManagerFunctionality& QContactManagerFunctionality::operator=(const QCon
  *
  * TODO add link to schema.
  */
-QStringList QContactManagerFunctionality::capabilities() const
+QStringList QContactManagerInfo::capabilities() const
 {
     if (d->m_managerdata)
         return d->m_engine->capabilities();
@@ -95,7 +96,7 @@ QStringList QContactManagerFunctionality::capabilities() const
  * Returns a list of definition identifiers which are natively (fast) filterable
  * by the manager associated with this object.
  */
-QStringList QContactManagerFunctionality::fastFilterableDefinitions() const
+QStringList QContactManagerInfo::fastFilterableDefinitions() const
 {
     if (d->m_managerdata)
         return d->m_engine->fastFilterableDefinitions();
@@ -106,7 +107,7 @@ QStringList QContactManagerFunctionality::fastFilterableDefinitions() const
  * Returns the list of data types supported by the manager
  * associated with this object.
  */
-QList<QVariant::Type> QContactManagerFunctionality::supportedDataTypes() const
+QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 {
     if (d->m_managerdata)
         return d->m_engine->supportedDataTypes();

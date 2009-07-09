@@ -59,7 +59,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactdetaildefinition.h"
-#include "qcontactmanagerfunctionality.h"
+#include "qcontactmanagerinfo.h"
 
 #include <QDebug>
 
