@@ -121,6 +121,8 @@ QList<QUniqueId> QContactTrackerEngine::contacts(QContactManager::Error& error) 
     for(int i=0; i<ncoContacts->rowCount(); i++) {
         ids.append(ncoContacts->index(i, 1).data().toInt());
     }
+
+    error = QContactManager::NoError;
     return ids;
 }
 
@@ -260,17 +262,33 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
 bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
 {
-    QUrl url = QUrl("contact:"+QString::number(contactId));
-    qDebug() << url.toString();
-    Live<nco::PersonContact> ncoContact = ::tracker()->liveNode(url);
-    ncoContact->remove();
+     error = QContactManager::NoError;
 
-    error = QContactManager::NoError;
+    // TODO: Do with LiveNodes when they support strict querying.
+    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFContact.property<nco::contactUID>() = LiteralValue(contactId);
+    RDFSelect query;
+
+    query.addColumn("contact_uri", RDFContact);
+    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+    if(ncoContacts.value().isEmpty()) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    Live<nco::PersonContact> ncoContact = ncoContacts.value().first(); // Should contain only one item
+    LiveNodes contactMediums = ncoContact->getHasContactMediums();
+    foreach(Live<nco::ContactMedium> media, contactMediums) {
+        media->remove();
+    }
+    ncoContact->remove();
+    
     if (!batch) {
         QList<QUniqueId> removed;
         removed.append(contactId);
         emit contactsRemoved(removed);
     }
+    
     return true;
 }
 
