@@ -1,3 +1,0 @@
--Implement multiple database scheme to allow for userscope and systemscope services
--need to correctly implement transactions
--implement signal notification when services are added/removed
