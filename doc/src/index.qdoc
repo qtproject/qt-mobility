@@ -9,7 +9,7 @@
 
 \section1 Introduction
 
-The Qt Service framework provides a set of APIs that allows clients to discover and instanciate arbitrary services. 
+The Qt Service framework provides a set of APIs that allows clients to discover and instantiate arbitrary services. 
 This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms.
 Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection
 it may even be used to unify and access multiple platform specific service implementations via the same Qt-based 
@@ -43,7 +43,7 @@ Future versions of this framework may also enable access to out-of-process servi
 This section assumes that the user wants to access the \i FileManager service which offers an implementation for the \i com.nokia.qt.examples.FileStorage interface
 The service framework enables multiple ways of accessing those implementations. 
 
-QServiceManager is the main class to lookup and instanciate services. Services can be found by constraining the search via service meta data or
+QServiceManager is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or
 by using the default lookup mechanism.
 
 \section2 Verbose lookup
@@ -57,7 +57,7 @@ The client code has precise knowledge of the service and its interfaces.
     QList<QServiceInterfaceDescriptor> objs = manager->findInterfaces(filter);
     Q_ASSERT(objs.count());
 
-    //instanciate the FileStorage object
+    //instantiate the FileStorage object
     QObject* service = manager->loadInterface(objs.at(0));
 \endcode
 
