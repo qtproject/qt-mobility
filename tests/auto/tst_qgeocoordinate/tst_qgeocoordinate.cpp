@@ -521,60 +521,60 @@ private slots:
 
         QTest::newRow("empty, dd, no hemisphere")
                 << empty << QGeoCoordinate::DecimalDegrees
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("empty, dd, hemisphere")
                 << empty << QGeoCoordinate::DecimalDegreesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("empty, dm, no hemisphere")
                 << empty << QGeoCoordinate::DegreesMinutes
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("empty, dm, hemisphere")
                 << empty << QGeoCoordinate::DegreesMinutesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("empty, dms, no hemisphere")
                 << empty << QGeoCoordinate::DegreesMinutesSeconds
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("empty, dms, hemisphere")
                 << empty << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
 
         QTest::newRow("too low, dd, no hemisphere")
                 << toolow << QGeoCoordinate::DecimalDegrees
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too low, dd, hemisphere")
                 << toolow << QGeoCoordinate::DecimalDegreesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too low, dm, no hemisphere")
                 << toolow << QGeoCoordinate::DegreesMinutes
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too low, dm, hemisphere")
                 << toolow << QGeoCoordinate::DegreesMinutesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too low, dms, no hemisphere")
                 << toolow << QGeoCoordinate::DegreesMinutesSeconds
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too low, dms, hemisphere")
                 << toolow << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
 
         QTest::newRow("too high, dd, no hemisphere")
                 << toohigh << QGeoCoordinate::DecimalDegrees
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too high, dd, hemisphere")
                 << toohigh << QGeoCoordinate::DecimalDegreesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too high, dm, no hemisphere")
                 << toohigh << QGeoCoordinate::DegreesMinutes
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too high, dm, hemisphere")
                 << toohigh << QGeoCoordinate::DegreesMinutesWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too high, dms, no hemisphere")
                 << toohigh << QGeoCoordinate::DegreesMinutesSeconds
-                << QString("<Invalid coordinate>");
+                << QString();
         QTest::newRow("too high, dms, hemisphere")
                 << toohigh << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
-                << QString("<Invalid coordinate>");
+                << QString();
 
         QTest::newRow("allzero, dd, no hemisphere")
                 << allzero << QGeoCoordinate::DecimalDegrees

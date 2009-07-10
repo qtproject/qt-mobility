@@ -392,11 +392,13 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
         \o \l DegreesMinutesSecondsWithHemisphere
         \o 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E
     \endtable
+
+    If the coordinate is valid, an empty string is returned.
 */
 QString QGeoCoordinate::toString(CoordinateFormat format) const
 {
     if (type() == QGeoCoordinate::InvalidCoordinate)
-        return QObject::tr("<Invalid coordinate>");
+        return QString();
 
     QString latStr;
     QString longStr;
