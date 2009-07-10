@@ -56,6 +56,7 @@ SOURCES += qmessageid.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
 
+win32: {
 SOURCES += qmessageid_win.cpp \
            qmessagecontentcontainerid_win.cpp \
            qmessagefolderid_win.cpp \
@@ -66,3 +67,15 @@ SOURCES += qmessageid_win.cpp \
            qmessageaccount_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
+} else {
+SOURCES += qmessageid_qmf.cpp \
+           qmessagecontentcontainerid_qmf.cpp \
+           qmessagefolderid_qmf.cpp \
+           qmessageaccountid_qmf.cpp \
+           qmessagecontentcontainer_qmf.cpp \
+           qmessage_qmf.cpp \
+           qmessagefolder_qmf.cpp \
+           qmessageaccount_qmf.cpp \
+           qmessagestore_qmf.cpp \
+           qmessageserviceaction_qmf.cpp 
+}
