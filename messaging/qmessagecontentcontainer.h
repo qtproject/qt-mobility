@@ -49,13 +49,9 @@ public:
     virtual QMessageContentContainerId containerId() const;
     virtual QMessageId messageId() const;
 
-    virtual void setContentType(const QByteArray &data);
     virtual QByteArray contentType() const;
-    virtual void setContentSubType(const QByteArray &data);
     virtual QByteArray contentSubType() const;
-    virtual void setContentCharset(const QByteArray &data);
     virtual QByteArray contentCharset() const;
-    virtual void setContentFileName(const QByteArray &data);
     virtual QByteArray contentFileName() const;
 
     virtual bool contentAvailable() const;
@@ -66,39 +62,47 @@ public:
     virtual QString decodedContentFileName() const;
     virtual void writeContentTo(QDataStream &out) const;
 
-    virtual void setContent(const QString &text);
-    virtual void setContent(const QByteArray &data);
-    virtual void setContentFromFile(const QString &fileName);
-    virtual void readContentFrom(QDataStream &in);
-
-    virtual QMessageContentContainerId appendContent(const QMessageContentContainer &content);
-    virtual void replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content);
-    virtual void clearContents();
     virtual QMessageContentContainerIdList contentIds() const;
 
     virtual const QMessageContentContainer container(const QMessageContentContainerId) const;
     virtual QMessageContentContainer container(const QMessageContentContainerId);
 
-    virtual void appendHeaderField(const QByteArray &name, const QString &value);
-    virtual void setHeaderField(const QByteArray &name, const QString &value);
     virtual QString headerField(const QByteArray &name) const;
     virtual QList<QString> headerFieldValues(const QByteArray &name) const;
     virtual QList<QByteArray> headerFields() const;
-    virtual void appendHeaderField(const QByteArray &name, const QByteArray &value);
-    virtual void setHeaderField(const QByteArray &name, const QByteArray &value);
 
     static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
     static QList<QByteArray> preferredCharsets();
+
+#ifdef QMESSAGING_OPTIONAL
+    virtual void setContentType(const QByteArray &data);
+    virtual void setContentSubType(const QByteArray &data);
+    virtual void setContentCharset(const QByteArray &data);
+    virtual void setContentFileName(const QByteArray &data);
+    virtual void setContent(const QString &text);
+    virtual void setContent(const QByteArray &data);
+    virtual void setContentFromFile(const QString &fileName);
+    virtual void readContentFrom(QDataStream &in);
+    virtual QMessageContentContainerId appendContent(const QMessageContentContainer &content);
+    virtual void replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content);
+    virtual void clearContents();
+    virtual void appendHeaderField(const QByteArray &name, const QString &value);
+    virtual void setHeaderField(const QByteArray &name, const QString &value);
+    virtual void appendHeaderField(const QByteArray &name, const QByteArray &value);
+    virtual void setHeaderField(const QByteArray &name, const QByteArray &value);
     virtual bool containerDataModified() const;
 
 protected:
     virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);
+#endif
 
 private:
     friend class QMessageStore;
 
     virtual void setContainerId(const QMessageContentContainerId &id);
+#ifdef QMESSAGING_OPTIONAL
     virtual void setContainerDataModified(bool modified);
+#endif
     virtual void setContentAvailable(bool available);
     virtual void setIndicativeSize(uint size);
 
