@@ -143,6 +143,8 @@ public:
                 error = QServiceManager::InvalidServiceInterfaceDescriptor;
                 break;
             case DBError::SqlError:
+            case DBError::IfaceIDNotExternal:
+            case DBError::ExternalIfaceIDFound:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
                 break;
