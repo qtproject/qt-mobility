@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilterkey.h"
 
 class QMessageFolderFilterKeyPrivate
@@ -43,3 +44,4 @@ public:
 
     QMessageFolderFilterKey *q_ptr;
 };
+#endif

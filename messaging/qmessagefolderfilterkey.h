@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERFILTERKEY_H
 #define QMESSAGEFOLDERFILTERKEY_H
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagedatacomparator.h"
 #include "qmessageid.h"
 #include "qmessageaccountid.h"
@@ -81,4 +82,5 @@ public:
 private:
     QMessageFolderFilterKeyPrivate *d_ptr;
 };
+#endif
 #endif

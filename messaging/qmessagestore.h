@@ -72,10 +72,14 @@ public:
     QMessageStore::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit = 0, uint offset = 0) const;
+#endif
     QMessageAccountIdList queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit = 0, uint offset = 0) const;
     int countMessages(const QMessageFilterKey &key) const;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     int countFolders(const QMessageFolderFilterKey &key) const;
+#endif
     int countAccounts(const QMessageAccountFilterKey &key) const;
 
     bool addMessage(QMessage *m);
@@ -84,7 +88,9 @@ public:
     bool removeMessages(const QMessageFilterKey &key, RemovalOption option = NoRemovalRecord);
 
     QMessage message(const QMessageId &id) const;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolder folder(const QMessageFolderId &id) const;
+#endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
     void setMaximumWorkingMemory(uint maximumBytes);

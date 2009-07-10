@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefoldersortkey.h"
 
 class QMessageFolderSortKeyPrivate
@@ -44,3 +45,4 @@ public:
 
     QMessageFolderSortKey *q_ptr;
 };
+#endif

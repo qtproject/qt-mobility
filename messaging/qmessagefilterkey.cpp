@@ -502,6 +502,7 @@ QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilter
     return QMessageFilterKey(); // stub
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 /*!
     Returns a key matching messages whose parent folder's identifier matches \a id, according to 
     \a cmp.
@@ -553,4 +554,5 @@ QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilte
     Q_UNUSED(cmp)
     return QMessageFilterKey(); // stub
 }
+#endif
 

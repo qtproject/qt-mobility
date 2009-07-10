@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERSORTKEY_H
 #define QMESSAGEFOLDERSORTKEY_H
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <Qt>
 
 class QMessageFolderSortKeyPrivate;
@@ -55,4 +56,5 @@ public:
 private:
     QMessageFolderSortKeyPrivate *d_ptr;
 };
+#endif
 #endif

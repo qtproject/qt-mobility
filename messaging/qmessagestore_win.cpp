@@ -56,6 +56,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     return QMessageIdList(); // stub
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
 {
     Q_UNUSED(key)
@@ -64,6 +65,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
     Q_UNUSED(offset)
     return QMessageFolderIdList(); // stub
 }
+#endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
 {
@@ -80,11 +82,13 @@ int QMessageStore::countMessages(const QMessageFilterKey& key) const
     return 0; // stub
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
 {
     Q_UNUSED(key)
     return 0; // stub
 }
+#endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 {
@@ -124,11 +128,13 @@ QMessage QMessageStore::message(const QMessageId& id) const
     return QMessage(); // stub
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     Q_UNUSED(id)
     return QMessageFolder(); // stub
 }
+#endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {

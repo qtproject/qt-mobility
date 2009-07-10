@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolder.h"
 
 class QMessageFolderPrivate
@@ -44,3 +45,5 @@ public:
 
     QMessageFolder *q_ptr;
 };
+#endif
+

@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefoldersortkey.h"
 #include "qmessagefoldersortkey_p.h"
 
@@ -134,3 +135,4 @@ QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageFolderSortKey(); // stub
 }
+#endif
