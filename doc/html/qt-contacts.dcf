@@ -259,7 +259,6 @@
         <keyword ref="qcontactmanager.html#saveGroup">saveGroup</keyword>
         <keyword ref="qcontactmanager.html#splitUri">splitUri</keyword>
         <keyword ref="qcontactmanager.html#storeUri">storeUri</keyword>
-        <keyword ref="qcontactmanager.html#operator-eq">operator=</keyword>
         <section ref="qcontactmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
@@ -313,7 +312,6 @@
         <keyword ref="qcontactmanagerinfo.html#capabilities">capabilities</keyword>
         <keyword ref="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
         <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
-        <keyword ref="qcontactmanagerinfo.html#operator-eq">operator=</keyword>
         <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">

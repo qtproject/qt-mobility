@@ -24,8 +24,7 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</li>
-<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QContactManager &amp; <i>other</i> )</li>
+<li><div class="fn"/><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"/><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</li>
 <li><div class="fn"/>QContact <b><a href="qcontactmanager.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i> ) const</li>
 <li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#contacts">contacts</a></b> () const</li>
@@ -54,7 +53,6 @@
 <li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i> )</li>
 <li><div class="fn"/>bool <b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i> )</li>
 <li><div class="fn"/>QString <b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const</li>
-<li><div class="fn"/>QContactManager &amp; <b><a href="qcontactmanager.html#operator-eq">operator=</a></b> ( const QContactManager &amp; <i>other</i> )</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
@@ -71,7 +69,7 @@
 <ul>
 <li><div class="fn"/>QStringList <b><a href="qcontactmanager.html#availableManagers">availableManagers</a></b> ()</li>
 <li><div class="fn"/>QString <b><a href="qcontactmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerId</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i> )</li>
-<li><div class="fn"/>QContactManager <b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i> )</li>
+<li><div class="fn"/>QContactManager * <b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i>, QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"/>bool <b><a href="qcontactmanager.html#splitUri">splitUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</li>
 </ul>
 <a name="details"></a>
@@ -98,10 +96,10 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0 )</h3>
-<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation is identified by <i>managerId</i> with the given <i>parameters</i></p>
-<h3 class="fn"><a name="QContactManager-2"></a>QContactManager::QContactManager ( const QContactManager &amp; <i>other</i> )</h3>
-<p>Create a copy of <i>other</i></p>
+<h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const QString &amp; <i>managerId</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation is identified by <i>managerId</i> with the given <i>parameters</i>.</p>
+<p>The <i>parent</i> QObject will be used as the parent of this <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>If an empty <i>managerId</i> is specified, the default implementation for the platform will be used.</p>
 <h3 class="fn"><a name="dtor.QContactManager"></a>QContactManager::~QContactManager ()</h3>
 <p>Frees the memory used by the <a href="qcontactmanager.html">QContactManager</a></p>
 <h3 class="fn"><a name="availableManagers"></a>QStringList QContactManager::availableManagers ()&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -134,8 +132,8 @@
 <p>Returns a map of identifier to detail definition for the registered detail definitions which are valid for the contacts in this store</p>
 <h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactManager::error () const</h3>
 <p>Return the error code of the most recent operation</p>
-<h3 class="fn"><a name="fromUri"></a>QContactManager QContactManager::fromUri ( const QString &amp; <i>storeUri</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation, store and parameters are specified in the given <i>storeUri</i></p>
+<h3 class="fn"><a name="fromUri"></a>QContactManager * QContactManager::fromUri ( const QString &amp; <i>storeUri</i>, QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation, store and parameters are specified in the given <i>storeUri</i>, and whose parent object is <i>parent</i>.</p>
 <h3 class="fn"><a name="group"></a><a href="qcontactgroup.html">QContactGroup</a> QContactManager::group ( const QUniqueId &amp; <i>groupId</i> ) const</h3>
 <p>Returns the group which is identified by the given <i>groupId</i>, or a default-constructed group if no such group exists</p>
 <h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManager::groups () const</h3>
@@ -185,8 +183,6 @@
 <p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
 <h3 class="fn"><a name="storeUri"></a>QString QContactManager::storeUri () const</h3>
 <p>Return the uri describing this <a href="qcontactmanager.html">QContactManager</a>, including managerId, managerStoreId and any parameters.</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactManager &amp; QContactManager::operator= ( const QContactManager &amp; <i>other</i> )</h3>
-<p>Assigns this <a href="qcontactmanager.html">QContactManager</a> to <i>other</i></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
