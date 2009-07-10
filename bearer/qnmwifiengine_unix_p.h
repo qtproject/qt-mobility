@@ -124,6 +124,7 @@ private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void addDevice(QDBusObjectPath path);
     void removeDevice(QDBusObjectPath path);
+    void newConnectionAdded(QDBusObjectPath);
 
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
