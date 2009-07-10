@@ -73,9 +73,9 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
     connect(m_session, SIGNAL(totalTimeChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
 
-    connect(m_audioOutput, SIGNAL(mutedChaned(bool)),
+    connect(m_audioOutput, SIGNAL(mutedChanged(bool)),
             this, SIGNAL(mutingChanged(bool)));
-    connect(m_session, SIGNAL(volumeChanged(qreal)),
+    connect(m_audioOutput, SIGNAL(volumeChanged(qreal)),
             this, SLOT(updateVolume()));
 
     connect(m_session, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
@@ -137,7 +137,7 @@ int QPhononPlayerControl::bufferStatus() const
 
 int QPhononPlayerControl::volume() const
 {
-    return 100;//m_session->volume();
+    return int(m_audioOutput->volume()*100);
 }
 
 bool QPhononPlayerControl::isMuted() const
@@ -225,12 +225,6 @@ bool QPhononPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
 {
     m_navigator->setPlaylist(playlist);
     return true;
-}
-
-void QPhononPlayerControl::setVideoOutput(QObject *output)
-{
-    Q_UNUSED(output);
-    //m_session->setVideoRenderer(output);
 }
 
 bool QPhononPlayerControl::isVideoAvailable() const

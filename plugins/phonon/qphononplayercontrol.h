@@ -75,8 +75,7 @@ public:
     QMediaPlaylist *mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *);
 
-    bool isVideoAvailable() const;
-    void setVideoOutput(QObject *output);
+    bool isVideoAvailable() const;    
 
     bool isSeekable() const;
 
