@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERID_H
 #define QMESSAGEFOLDERID_H
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <QString>
 #include <QList>
 
@@ -56,4 +57,5 @@ private:
 };
 
 typedef QList<QMessageFolderId> QMessageFolderIdList;
+#endif
 #endif

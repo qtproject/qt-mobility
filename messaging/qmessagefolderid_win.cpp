@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
 
 QMessageFolderId::QMessageFolderId()
@@ -67,6 +68,4 @@ bool QMessageFolderId::isValid() const
 {
     return false; // stub
 }
-
-
-
+#endif

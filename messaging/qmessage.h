@@ -99,7 +99,9 @@ public:
     virtual void setType(Type t);
 
     virtual QMessageAccountId parentAccountId() const;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     virtual QMessageFolderId parentFolderId() const;
+#endif
 
     virtual StandardFolder standardFolder() const;
     virtual void setStandardFolder(StandardFolder sf);
@@ -167,7 +169,9 @@ private:
     void setId(const QMessageId &id);
     void setDataModified(bool modified);
     void setParentAccountId(const QMessageAccountId &accountId);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     void setParentFolderId(const QMessageFolderId &folderId);
+#endif
     void setSize(uint size);
 
     QMessagePrivate *d_ptr;

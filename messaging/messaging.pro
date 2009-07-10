@@ -6,6 +6,9 @@ include(../common.pri)
 
 #Input
 
+#DEFINES += QMESSAGING_OPTIONAL_FOLDER
+#DEFINES += QMESSAGING_OPTIONAL
+
 HEADERS += qmessageid.h \
            qmessageid_p.h \
            qmessagecontentcontainerid.h \

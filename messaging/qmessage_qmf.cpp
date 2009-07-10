@@ -99,6 +99,7 @@ void QMessage::setParentAccountId(const QMessageAccountId &accountId)
     Q_UNUSED(accountId)
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
     return QMessageFolderId(); // stub
@@ -108,6 +109,7 @@ void QMessage::setParentFolderId(const QMessageFolderId &folderId)
 {
     Q_UNUSED(folderId)
 }
+#endif
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
