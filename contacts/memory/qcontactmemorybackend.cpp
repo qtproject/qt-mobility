@@ -348,6 +348,85 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
     return success;
 }
 
+/*!
+ * Returns true if the given \a feature is supported by this engine
+ */
+bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+{
+    switch (feature) {
+        case QContactManagerInfo::Groups:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::Locking:
+        {
+            return false;
+        }
+        break;
+
+        case QContactManagerInfo::Batch:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::ActionPreferences:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::ReadOnlyDetails:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::CreateOnlyDetails:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::MutableDefinitions:
+        {
+            return true;
+        }
+        break;
+
+        case QContactManagerInfo::NativeFiltering:
+        {
+            return false;
+        }
+        break;
+
+        case QContactManagerInfo::NativeSorting:
+        {
+            return false;
+        }
+        break;
+
+        case QContactManagerInfo::Asynchronous:
+        {
+            return false;
+        }
+        break;
+
+        case QContactManagerInfo::Synchronous:
+        {
+            return true;
+        }
+        break;
+
+        default:
+        return false;
+    }
+
+    return false;
+}
+
 /*! Returns the capabilities of the in-memory engine. */
 QStringList QContactMemoryEngine::capabilities() const
 {

@@ -391,6 +391,15 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
  */
 
 /*!
+ * Returns true if the given \a feature is supported by this engine
+ */
+bool QContactManagerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+{
+    Q_UNUSED(feature);
+    return false;
+}
+
+/*!
  * Returns a list of definition identifiers which are natively (fast) filterable
  * by this engine.
  */

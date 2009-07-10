@@ -124,6 +124,7 @@ public:
     virtual QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
+    virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     virtual QStringList capabilities() const = 0;
     virtual QStringList fastFilterableDefinitions() const;
     virtual QList<QVariant::Type> supportedDataTypes() const;

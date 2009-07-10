@@ -100,7 +100,9 @@ QContactManagerInfo& QContactManagerInfo::operator=(const QContactManagerInfo& o
  */
 bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    return d->m_features.contains(feature);
+    if (d->m_managerdata)
+        return d->m_engine->hasFeature(feature);
+    return false;
 }
 
 /*!

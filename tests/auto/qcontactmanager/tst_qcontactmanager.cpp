@@ -406,7 +406,7 @@ void tst_QContactManager::groups()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    if (cm->information().capabilities().contains("Groups")) {
+    if (cm->information().hasFeature(QContactManagerInfo::Groups)) {
         /* Positive testing */
 
         /* Test adding a null doesn't crash, before we do anything else */
@@ -949,10 +949,20 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Capabilities */
-    QContactManagerInfo caps = manager.information();
-    QVERIFY(caps.fastFilterableDefinitions().count() == 0);
-    QVERIFY(caps.supportedDataTypes().count() == 0);
-    QVERIFY(caps.capabilities().count() == 0);
+    QContactManagerInfo info = manager.information();
+    QVERIFY(info.fastFilterableDefinitions().count() == 0);
+    QVERIFY(info.supportedDataTypes().count() == 0);
+    QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
+    QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
 }
 
 void tst_QContactManager::memoryManager()
@@ -1032,18 +1042,240 @@ void tst_QContactManager::referenceCounting()
     /* Now check retrieving the capabilities doesn't cause problems */
     if (true) {
         QContactManager *heapCopy = new QContactManager(managerId);
-        QContactManagerInfo cap = heapCopy->information();
+        QContactManagerInfo info = heapCopy->information();
 
         if (managerId != "invalid") {
-            QVERIFY(cap.capabilities() != QStringList());
-            QVERIFY(cap.supportedDataTypes() != QList<QVariant::Type>());
-            QVERIFY(cap.fastFilterableDefinitions().count() || true); // don't care about return type
+            // it has to support _something_.
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups)
+                    || info.hasFeature(QContactManagerInfo::Locking)
+                    || info.hasFeature(QContactManagerInfo::Batch)
+                    || info.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info.hasFeature(QContactManagerInfo::Synchronous)
+                    || info.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info.fastFilterableDefinitions().count() || true); // don't care about return type
         }
         delete heapCopy;
         /* Now the manager has gone, we shouldn't crash, and get empty caps */
-        QVERIFY(cap.capabilities() == QStringList());
-        QVERIFY(cap.supportedDataTypes() == QList<QVariant::Type>());
-        QVERIFY(cap.fastFilterableDefinitions().count() == 0);
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
+        QVERIFY(info.supportedDataTypes() == QList<QVariant::Type>());
+        QVERIFY(info.fastFilterableDefinitions().count() == 0);
+    }
+
+    /* test cloning an existing manager as well */
+    if (true) {
+        QContactManager *heapCopy = new QContactManager(manager);
+        QContactManagerInfo info = heapCopy->information();
+
+        if (managerId != "invalid") {
+            // it has to support _something_.
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups)
+                    || info.hasFeature(QContactManagerInfo::Locking)
+                    || info.hasFeature(QContactManagerInfo::Batch)
+                    || info.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info.hasFeature(QContactManagerInfo::Synchronous)
+                    || info.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info.fastFilterableDefinitions().count() || true); // don't care about return type
+        }
+        delete heapCopy;
+        /* Now the manager has gone, we shouldn't crash, and get empty caps */
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
+        QVERIFY(info.supportedDataTypes() == QList<QVariant::Type>());
+        QVERIFY(info.fastFilterableDefinitions().count() == 0);
+    }
+
+<<<<<<< HEAD:tests/auto/qcontactmanager/tst_qcontactmanager.cpp
+=======
+    if (true) {
+        /* Test a stack based manager, retrieve caps, then assign the manager elsewhere */
+        QContactManager m1(managerId);
+        QContactManagerInfo info(m1.information());
+
+        if (managerId != "invalid") {
+            // it has to support _something_.
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups)
+                    || info.hasFeature(QContactManagerInfo::Locking)
+                    || info.hasFeature(QContactManagerInfo::Batch)
+                    || info.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info.hasFeature(QContactManagerInfo::Synchronous)
+                    || info.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info.fastFilterableDefinitions().count() || true); // don't care about return type
+        }
+
+        m1 = QContactManager("invalid");
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
+        QVERIFY(info.supportedDataTypes() == QList<QVariant::Type>());
+        QVERIFY(info.fastFilterableDefinitions().count() == 0);
+
+        /* Retrieve the caps again */
+        m1 = QContactManager(managerId);
+        QContactManagerInfo info2 = m1.information();
+        info = info2;
+
+        if (managerId != "invalid") {
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups)
+                    || info.hasFeature(QContactManagerInfo::Locking)
+                    || info.hasFeature(QContactManagerInfo::Batch)
+                    || info.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info.hasFeature(QContactManagerInfo::Synchronous)
+                    || info.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info.fastFilterableDefinitions().count() || true); // don't care about return type
+            QVERIFY(info2.hasFeature(QContactManagerInfo::Groups)
+                    || info2.hasFeature(QContactManagerInfo::Locking)
+                    || info2.hasFeature(QContactManagerInfo::Batch)
+                    || info2.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info2.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info2.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info2.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info2.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info2.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info2.hasFeature(QContactManagerInfo::Synchronous)
+                    || info2.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info2.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info2.fastFilterableDefinitions().count() || true); // don't care about return type
+
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups) == info2.hasFeature(QContactManagerInfo::Groups));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Locking) == info2.hasFeature(QContactManagerInfo::Locking));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Batch) == info2.hasFeature(QContactManagerInfo::Batch));
+            QVERIFY(info.hasFeature(QContactManagerInfo::ActionPreferences) == info2.hasFeature(QContactManagerInfo::ActionPreferences));
+            QVERIFY(info.hasFeature(QContactManagerInfo::ReadOnlyDetails) == info2.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+            QVERIFY(info.hasFeature(QContactManagerInfo::CreateOnlyDetails) == info2.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+            QVERIFY(info.hasFeature(QContactManagerInfo::MutableDefinitions) == info2.hasFeature(QContactManagerInfo::MutableDefinitions));
+            QVERIFY(info.hasFeature(QContactManagerInfo::NativeFiltering) == info2.hasFeature(QContactManagerInfo::NativeFiltering));
+            QVERIFY(info.hasFeature(QContactManagerInfo::NativeSorting) == info2.hasFeature(QContactManagerInfo::NativeSorting));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Synchronous) == info2.hasFeature(QContactManagerInfo::Synchronous));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Asynchronous) == info2.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() == info2.supportedDataTypes());
+            QVERIFY(info.fastFilterableDefinitions() == info2.fastFilterableDefinitions());
+        }
+
+        /* Self assignment as well */
+        info = info;
+        if (managerId != "invalid") {
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups)
+                    || info.hasFeature(QContactManagerInfo::Locking)
+                    || info.hasFeature(QContactManagerInfo::Batch)
+                    || info.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info.hasFeature(QContactManagerInfo::Synchronous)
+                    || info.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info.fastFilterableDefinitions().count() || true); // don't care about return type
+            QVERIFY(info2.hasFeature(QContactManagerInfo::Groups)
+                    || info2.hasFeature(QContactManagerInfo::Locking)
+                    || info2.hasFeature(QContactManagerInfo::Batch)
+                    || info2.hasFeature(QContactManagerInfo::ActionPreferences)
+                    || info2.hasFeature(QContactManagerInfo::ReadOnlyDetails)
+                    || info2.hasFeature(QContactManagerInfo::CreateOnlyDetails)
+                    || info2.hasFeature(QContactManagerInfo::MutableDefinitions)
+                    || info2.hasFeature(QContactManagerInfo::NativeFiltering)
+                    || info2.hasFeature(QContactManagerInfo::NativeSorting)
+                    || info2.hasFeature(QContactManagerInfo::Synchronous)
+                    || info2.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info2.supportedDataTypes() != QList<QVariant::Type>());
+            QVERIFY(info2.fastFilterableDefinitions().count() || true); // don't care about return type
+
+            QVERIFY(info.hasFeature(QContactManagerInfo::Groups) == info2.hasFeature(QContactManagerInfo::Groups));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Locking) == info2.hasFeature(QContactManagerInfo::Locking));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Batch) == info2.hasFeature(QContactManagerInfo::Batch));
+            QVERIFY(info.hasFeature(QContactManagerInfo::ActionPreferences) == info2.hasFeature(QContactManagerInfo::ActionPreferences));
+            QVERIFY(info.hasFeature(QContactManagerInfo::ReadOnlyDetails) == info2.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+            QVERIFY(info.hasFeature(QContactManagerInfo::CreateOnlyDetails) == info2.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+            QVERIFY(info.hasFeature(QContactManagerInfo::MutableDefinitions) == info2.hasFeature(QContactManagerInfo::MutableDefinitions));
+            QVERIFY(info.hasFeature(QContactManagerInfo::NativeFiltering) == info2.hasFeature(QContactManagerInfo::NativeFiltering));
+            QVERIFY(info.hasFeature(QContactManagerInfo::NativeSorting) == info2.hasFeature(QContactManagerInfo::NativeSorting));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Synchronous) == info2.hasFeature(QContactManagerInfo::Synchronous));
+            QVERIFY(info.hasFeature(QContactManagerInfo::Asynchronous) == info2.hasFeature(QContactManagerInfo::Asynchronous));
+            QVERIFY(info.supportedDataTypes() == info2.supportedDataTypes());
+            QVERIFY(info.fastFilterableDefinitions() == info2.fastFilterableDefinitions());
+        }
+
+        /* Clear the manager again, and both should be invalid */
+        m1 = QContactManager("invalid");
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
+        QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
+        QVERIFY(info.supportedDataTypes() == QList<QVariant::Type>());
+        QVERIFY(info.fastFilterableDefinitions().count() == 0);
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::Groups));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::Locking));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::Batch));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::ActionPreferences));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::ReadOnlyDetails));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::CreateOnlyDetails));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::MutableDefinitions));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::NativeFiltering));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::NativeSorting));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::Synchronous));
+        QVERIFY(!info2.hasFeature(QContactManagerInfo::Asynchronous));
+        QVERIFY(info2.supportedDataTypes() == QList<QVariant::Type>());
+        QVERIFY(info2.fastFilterableDefinitions().count() == 0);
+
     }
 
     /* Clean up */
@@ -1355,14 +1587,14 @@ void tst_QContactManager::detailDefinitions()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    QContactManagerInfo caps = cm->information();
-    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+    QContactManagerInfo info = cm->information();
+    QMap<QString, QContactDetailDefinition> defs = cm.detailDefinitions();
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
     QContactDetailDefinition::Field field;
     QMap<QString, QContactDetailDefinition::Field> fields;
-    field.dataType = caps.supportedDataTypes().value(0);
+    field.dataType = info.supportedDataTypes().value(0);
     fields.insert("New Value", field);
     newDef.setId("New Definition");
     newDef.setFields(fields);
@@ -1418,7 +1650,7 @@ void tst_QContactManager::detailDefinitions()
 
     /* XXX Multiply defined fields.. depends on semantics. */
 
-    if (caps.capabilities().contains("MutableDefinitions")) {
+    if (info.hasFeature(QContactManagerInfo::MutableDefinitions)) {
         /* First do some negative testing */
 
         /* Bad add class */
