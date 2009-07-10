@@ -133,13 +133,18 @@ public:
     virtual uint size() const;
 
     virtual QMessageContentContainerId body() const;
+#ifdef QMESSAGING_OPTIONAL
     virtual void setBody(const QString &body);
     virtual void setBodyFromFile(const QString &fileName);
-
+#else
+    virtual void setBody(const QString &body, const QByteArray &charSet = QByteArray());
+    virtual void setBodyFromFile(const QString &fileName, const QByteArray &charset = QByteArray());
+#endif
     virtual QMessageContentContainerIdList attachments() const;
     virtual void appendAttachments(const QStringList &fileNames);
     virtual void clearAttachments();
 
+#ifdef QMESSAGING_OPTIONAL
     virtual void setOriginatorPort(uint port);
     virtual uint originatorPort();
     virtual void setDestinationPort(uint port);
@@ -148,6 +153,7 @@ public:
     virtual QString customField(const QString &name) const;
     virtual void setCustomField(const QString &name, const QString &value);
     virtual QList<QString> customFields() const;
+#endif
 
     virtual bool dataModified() const;
 
