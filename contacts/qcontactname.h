@@ -54,17 +54,17 @@ public:
     static const QString FieldLast;
     static const QString FieldSuffix;
 
-    QString prefix() const {return value("Prefix");}
-    QString first() const {return value("First");}
-    QString middle() const {return value("Middle");}
-    QString last() const {return value("Last");}
-    QString suffix() const {return value("Suffix");}
+    QString prefix() const {return value(FieldPrefix);}
+    QString first() const {return value(FieldFirst);}
+    QString middle() const {return value(FieldMiddle);}
+    QString last() const {return value(FieldLast);}
+    QString suffix() const {return value(FieldSuffix);}
 
-    void setPrefix(const QString& prefix) {setValue("Prefix", prefix);}
-    void setFirst(const QString& first) {setValue("First", first);}
-    void setMiddle(const QString& middle) {setValue("Middle", middle);}
-    void setLast(const QString& last) {setValue("Last", last);}
-    void setSuffix(const QString& suffix) {setValue("Suffix", suffix);}
+    void setPrefix(const QString& prefix) {setValue(FieldPrefix, prefix);}
+    void setFirst(const QString& first) {setValue(FieldFirst, first);}
+    void setMiddle(const QString& middle) {setValue(FieldMiddle, middle);}
+    void setLast(const QString& last) {setValue(FieldLast, last);}
+    void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
 };
 
 #endif

@@ -89,7 +89,7 @@
 QStringList QContactManager::availableManagers()
 {
     QStringList ret;
-    ret << "memory" << "invalid"; // XXX make dynamic and plat specific
+    ret << QLatin1String("memory") << QLatin1String("invalid");
     QContactManagerData::loadFactories();
     ret.append(QContactManagerData::m_engines.keys());
     return ret;
@@ -107,10 +107,10 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     // 3) hence, do we assume that the prefix, managerid and storeid cannot contain `:'
     // 4) similarly, that neither keys nor values can contain `=' or `&'
 
-    QStringList colonSplit = uri.split(":");
+    QStringList colonSplit = uri.split(QLatin1Char(':'));
     QString prefix = colonSplit.value(0);
 
-    if (prefix != "qtcontacts")
+    if (prefix != QLatin1String("qtcontacts"))
         return false;
 
     QString managerName = colonSplit.value(1);
@@ -118,29 +118,29 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     if (managerName.trimmed().isEmpty())
         return false;
 
-    QString firstParts = prefix + ":" + managerName + ":";
+    QString firstParts = prefix + QLatin1Char(':') + managerName + QLatin1Char(':');
     QString paramString = uri.mid(firstParts.length());
 
     QMap<QString, QString> outParams;
 
     // Now we have to decode each parameter
     if (!paramString.isEmpty()) {
-        QStringList params = paramString.split(QRegExp("&(?!(amp;|equ;))"), QString::KeepEmptyParts);
+        QStringList params = paramString.split(QRegExp(QLatin1String("&(?!(amp;|equ;))")), QString::KeepEmptyParts);
         // If we have an empty string for paramstring, we get one entry in params,
         // so skip that case.
         for(int i = 0; i < params.count(); i++) {
             /* This should be something like "foo&amp;bar&equ;=grob&amp;" */
-            QStringList paramChunk = params.value(i).split("=", QString::KeepEmptyParts);
+            QStringList paramChunk = params.value(i).split(QLatin1String("="), QString::KeepEmptyParts);
 
             if (paramChunk.count() != 2)
                 return false;
 
             QString arg = paramChunk.value(0);
             QString param = paramChunk.value(1);
-            arg.replace("&equ;", "=");
-            arg.replace("&amp;", "&");
-            param.replace("&equ;", "=");
-            param.replace("&amp;", "&");
+            arg.replace(QLatin1String("&equ;"), QLatin1String("="));
+            arg.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            param.replace(QLatin1String("&equ;"), QLatin1String("="));
+            param.replace(QLatin1String("&amp;"), QLatin1String("&"));
             if (arg.isEmpty())
                 return false;
             outParams.insert(arg, param);
@@ -157,21 +157,21 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
 /*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName and \a params */
 QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params)
 {
-    QString ret("qtcontacts:%1:%2");
+    QString ret(QLatin1String("qtcontacts:%1:%2"));
     // we have to escape each param
     QStringList escapedParams;
     QStringList keys = params.keys();
     for (int i=0; i < keys.size(); i++) {
         QString key = keys.at(i);
         QString arg = params.value(key);
-        arg = arg.replace('&', "&amp;");
-        arg = arg.replace('=', "&equ;");
-        key = key.replace('&', "&amp;");
-        key = key.replace('=', "&equ;");
-        key = key + "=" + arg;
+        arg = arg.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        arg = arg.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        key = key.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key + QLatin1Char('=') + arg;
         escapedParams.append(key);
     }
-    return ret.arg(managerName, escapedParams.join("&"));
+    return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
 }
 
 /*!
@@ -189,7 +189,7 @@ QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* pare
             return new QContactManager(id, parameters, parent);
         } else {
             // invalid
-            return new QContactManager("invalid", QMap<QString, QString>(), parent);
+            return new QContactManager(QLatin1String("invalid"), QMap<QString, QString>(), parent);
         }
     }
 }

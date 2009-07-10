@@ -76,7 +76,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 {
     m_managerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
 
-    if (m_managerName == "memory")
+    if (m_managerName == QLatin1String("memory"))
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
         /* Look for a factory */
@@ -89,7 +89,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
             m_engine = 0;
 
         if (!m_engine) {
-            m_managerName = "invalid";
+            m_managerName = QLatin1String("invalid");
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
             m_engine = new QContactInvalidEngine(); // XXX share
@@ -118,7 +118,7 @@ void QContactManagerData::loadFactories()
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Static: found a" << f << "with name" << name;
-                if (name != "memory" && name != "invalid" && !name.isEmpty()) {
+                if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
                         m_engines.insert(name, f);
                     } else {
@@ -147,16 +147,16 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < paths.count(); i++) {
             QDir pluginsDir(paths.at(i));
 #if defined(Q_OS_WIN)
-             if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+             if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))
                  pluginsDir.cdUp();
 #elif defined(Q_OS_MAC)
-             if (pluginsDir.dirName() == "MacOS") {
+             if (pluginsDir.dirName() == QLatin1String("MacOS")) {
                  pluginsDir.cdUp();
                  pluginsDir.cdUp();
                  pluginsDir.cdUp();
              }
 #endif
-            if (pluginsDir.cd("plugins") || (pluginsDir.cdUp() && pluginsDir.cd("plugins"))) {
+            if (pluginsDir.cd(QLatin1String("plugins")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins")))) {
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {
@@ -173,7 +173,7 @@ void QContactManagerData::loadFactories()
                 QString name = f->managerName();
                 qDebug() << "Dynamic: found a" << f << "with name" << name;
 
-                if (name != "memory" && name != "invalid" && !name.isEmpty()) {
+                if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
                         m_engines.insert(name, f);
                     } else {
@@ -642,7 +642,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     // gender
     fields.clear();
     f.dataType = QVariant::String;
-    f.allowableValues = QVariantList() << QString("Male") << QString("Female") << QString("Unspecified");
+    f.allowableValues = QVariantList() << QString(QLatin1String("Male")) << QString(QLatin1String("Female")) << QString(QLatin1String("Unspecified"));
     d.setId(QContactGender::DefinitionId);
     fields.insert(QContactGender::FieldGender, f);
     d.setFields(fields);

@@ -543,35 +543,42 @@ QString QContactAddress::displayLabel() const
     QString rg = region();
     QString pc = postcode();
     QString cn = country();
-    QString result = "";
+    QString result;
 
     if (!st.trimmed().isEmpty()) {
-       result += st + "\n";
+       result.append(st);
+       result.append(QLatin1Char('\n'));
     }
 
     if (!lc.trimmed().isEmpty()) {
-        result += lc + "\n";
+       result.append(lc);
+       result.append(QLatin1Char('\n'));
     }
 
     bool skipPostcode = false;
     if (!rg.trimmed().isEmpty()) {
         skipPostcode = true;
         if (!pc.trimmed().isEmpty()) {
-            result += rg + ", " + pc + "\n";
+            result.append(rg);
+            result.append(QLatin1String(", "));
+            result.append(pc);
+            result.append(QLatin1Char('\n'));
         } else {
-            result += rg + "\n";
+            result.append(rg);
+            result.append(QLatin1Char('\n'));
         }
     }
 
     if (!skipPostcode && !pc.trimmed().isEmpty()) {
-        result += pc + "\n";
+        result.append(pc);
+        result.append(QLatin1Char('\n'));
     }
 
     if (!cn.trimmed().isEmpty()) {
         result += cn;
     }
 
-    if (result.endsWith('\n'))
+    if (result.endsWith(QLatin1Char('\n')))
         result.chop(1);
 
     return result;

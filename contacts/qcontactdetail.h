@@ -129,7 +129,7 @@ private:
     className(const QContactDetail& field) : QContactDetail(field, staticType()) {} \
     className& operator=(const QContactDetail& other) {assign(other, staticType()); return *this;} \
     \
-    static QString staticType() {return QString(definitionNameString);}
+    static QString staticType() {return QString(QLatin1String(definitionNameString));}
 
 #endif
 
