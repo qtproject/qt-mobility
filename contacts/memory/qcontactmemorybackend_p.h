@@ -95,7 +95,6 @@ class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
 {
 public:
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
-    QContactManagerEngine* clone();
     void deref();
 
     /* Contacts - Accessors and Mutators */

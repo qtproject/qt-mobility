@@ -84,8 +84,6 @@ class QTCONTACTS_EXPORT QContactManagerEngine : public QObject
 
 public:
     QContactManagerEngine() {}
-    virtual ~QContactManagerEngine() {}
-    virtual QContactManagerEngine* clone() = 0;
     virtual void deref() = 0;
 
     /* Contacts - Accessors and Mutators */
@@ -152,19 +150,6 @@ public:
     {
     }
 
-    QContactManagerData(const QContactManagerData& other)
-        : m_engine(other.m_engine->clone()),
-        m_managerId(other.m_managerId),
-        m_params(other.m_params),
-        m_uri(other.m_uri),
-        m_error(QContactManager::NoError),
-        m_info(0)
-    {
-        // paranoid check instead:
-        // if(other.m_engine) m_engine = other.m_engine->clone();
-        // else m_engine = new QContactManagerEngine;
-    }
-
     ~QContactManagerData()
     {
         if (m_engine)
@@ -188,6 +173,9 @@ public:
     static QMap<QString, QContactManagerEngineFactory*> m_engines;
     static bool m_discovered;
     static void loadFactories();
+
+private:
+    Q_DISABLE_COPY(QContactManagerData);
 };
 
 #endif

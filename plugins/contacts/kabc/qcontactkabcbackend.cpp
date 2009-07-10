@@ -137,13 +137,6 @@ QContactKabcEngine::~QContactKabcEngine()
 {
 }
 
-QContactManagerEngine* QContactKabcEngine::clone()
-{
-    // this engine allows sharing - so we increase the reference count.
-    d->m_refCount.ref();
-    return this;
-}
-
 void QContactKabcEngine::deref()
 {
     if (!d->m_refCount.deref())

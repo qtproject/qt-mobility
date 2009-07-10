@@ -59,7 +59,6 @@ class QContactInvalidEngine : public QContactManagerEngine
 {
 public:
     QContactInvalidEngine();
-    QContactManagerEngine* clone();
     void deref();
     /* Capabilities reporting */
     QStringList capabilities() const;

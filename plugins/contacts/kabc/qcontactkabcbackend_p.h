@@ -116,7 +116,6 @@ public:
     QContactKabcEngine(const QContactKabcEngine& other);
     ~QContactKabcEngine();
     QContactKabcEngine& operator=(const QContactKabcEngine& other);
-    QContactManagerEngine* clone();
     void deref();
 
     /* Contacts - Accessors and Mutators */

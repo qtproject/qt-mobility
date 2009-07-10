@@ -103,14 +103,6 @@ QContactMemoryEngine::QContactMemoryEngine(const QMap<QString, QString>& paramet
 }
 
 /*! \reimp */
-QContactManagerEngine* QContactMemoryEngine::clone()
-{
-    // this engine allows sharing - so we increase the reference count.
-    d->m_refCount.ref();
-    return this;
-}
-
-/*! \reimp */
 void QContactMemoryEngine::deref()
 {
     if (!d->m_refCount.deref()) {

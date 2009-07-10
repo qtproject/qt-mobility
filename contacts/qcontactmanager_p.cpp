@@ -268,19 +268,6 @@ void QContactManagerData::loadFactories()
  */
 
 /*!
- * \fn QContactManagerEngine::clone()
- * Returns a clone of this manager engine.  The caller takes ownership
- * of the newly allocated engine, and thus must call
- * QContactManagerEngine::deref() on the acquired engine when finished.
- *
- * If the engine can be shared between multiple managers safely, this
- * function can simply implement an internal reference count and
- * return itself after adding a reference.
- *
- * \sa deref()
- */
-
-/*!
  * \fn QContactManagerEngine::deref()
  *
  * Notifies the engine that it is no longer required.  If this
@@ -288,9 +275,9 @@ void QContactManagerData::loadFactories()
  * engine to delete itself in this function.
  *
  * If the engine implementation can be shared, this function can use a
- * reference count and track lifetime that way.
- *
- * \sa clone()
+ * reference count and track lifetime that way.  The factory that
+ * returns an instance of this engine should increment the reference
+ * count in this case.
  */
 
 

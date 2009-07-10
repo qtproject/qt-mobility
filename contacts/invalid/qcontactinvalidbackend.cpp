@@ -46,14 +46,7 @@ QContactInvalidEngine::QContactInvalidEngine()
 {
 }
 
-/*! Creates a clone of this invalid engine.  The caller takes ownership of the newly allocated engine */
-QContactManagerEngine* QContactInvalidEngine::clone()
-{
-    // this engine does not allow sharing - we create a new one.
-    return new QContactInvalidEngine();
-}
-
-/*! Reduces the reference count on this manager engine.  If no managers reference this engine, it will delete itself */
+/*! \reimp */
 void QContactInvalidEngine::deref()
 {
     delete this;
