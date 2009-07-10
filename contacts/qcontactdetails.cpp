@@ -165,6 +165,18 @@ const QString QContactAnniversary::DefinitionId("Anniversary");
  */
 const QString QContactGender::DefinitionId("Gender");
 
+/*!
+ * \variable QContactOrganisation::DefinitionId
+ * The constant string which identifies the definition of details which identify the organisation to which a contact belongs in a given context
+ */
+const QString QContactOrganisation::DefinitionId("Organisation");
+
+/*!
+ * \variable QContactDisplayLabel::DefinitionId
+ * The constant string which identifies the definition of details which contain a display label of a contact
+ */
+const QString QContactDisplayLabel::DefinitionId("DisplayLabel");
+
 
 
 /*!
@@ -196,12 +208,6 @@ const QString QContactSyncTarget::FieldSyncTarget("SyncTarget");
  * The constant key for which the path the avatar value is stored in details of the QContactAvatar type
  */
 const QString QContactAvatar::FieldAvatar("Avatar");
-
-/*!
- * \variable QContactName::FieldDisplayName
- * The constant key for which the display name value is stored in details of the QContactName type
- */
-const QString QContactName::FieldDisplayName("DisplayName");
 
 /*!
  * \variable QContactName::FieldPrefix
@@ -310,6 +316,24 @@ const QString QContactAnniversary::FieldCalendarId("CalendarId");
  * The constant key for which the gender value is stored in details of the QContactGender type
  */
 const QString QContactGender::FieldGender("Gender");
+
+/*!
+ * \variable QContactOrganisation::FieldDisplayLabel
+ * The constant key for which the display label value is stored in details of the QContactOrganisation type
+ */
+const QString QContactOrganisation::FieldDisplayLabel("DisplayLabel");
+
+/*!
+ * \variable QContactOrganisation::FieldLogo
+ * The constant key for which the logo path value is stored in details of the QContactOrganisation type
+ */
+const QString QContactOrganisation::FieldLogo("Logo");
+
+/*!
+ * \variable QContactDisplayLabel::FieldDisplayLabel
+ * The constant key for which the display label value is stored in details of the QContactDisplayLabel type
+ */
+const QString QContactDisplayLabel::FieldDisplayLabel("DisplayLabel");
 
 
 /*!
@@ -501,43 +525,6 @@ const QString QContactAnniversary::AttributeSubTypeMemorial("Memorial");
 
 
 /* Functions that are platform specific or don't operate on strings */
-
-QString QContactName::displayName() const
-{
-    if (!value(QContactName::FieldDisplayName).isNull())
-        return value(QContactName::FieldDisplayName);
-
-    QString result;
-    if (!value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-       result += value(QContactName::FieldPrefix);
-    }
-
-    if (!value(QContactName::FieldFirst).trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += " ";
-        result += value(QContactName::FieldFirst);
-    }
-
-    if (!value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += " ";
-        result += value(QContactName::FieldMiddle);
-    }
-
-    if (!value(QContactName::FieldLast).trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += " ";
-        result += value(QContactName::FieldLast);
-    }
-
-    if (!value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-        if (!result.isEmpty())
-            result += " ";
-        result += value(QContactName::FieldSuffix);
-    }
-
-    return result;
-}
 
 QString QContactAddress::displayLabel() const
 {
@@ -754,17 +741,6 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactGuid::setGuid(const QString& guid)
  * Sets the globally unique identifier which is stored in this detail to \a guid
- */
-
-/*!
- * \fn QContactName::displayName() const
- * Returns the display (formatted) name stored in this detail.  If the display name
- * has not been explicitly set, a platform-specific synthesised display name is returned.
- */
-
-/*!
- * \fn QContactName::setDisplayName(const QString& displayName)
- * Sets the display name stored in this detail to \a displayName
  */
 
 /*!

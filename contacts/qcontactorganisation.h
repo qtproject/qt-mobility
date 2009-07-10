@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTNAME_H
-#define QCONTACTNAME_H
+#ifndef QCONTACTORGANISATION_H
+#define QCONTACTORGANISATION_H
 
 #include <QString>
 
@@ -41,30 +41,21 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
-class QTCONTACTS_EXPORT QContactName : public QContactDetail
+/* Leaf class */
+class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
 
-    static const QString DefinitionId; // == staticType() == "Name"
+    static const QString DefinitionId; // == staticType() == "Organisation"
 
-    static const QString FieldPrefix;
-    static const QString FieldFirst;
-    static const QString FieldMiddle;
-    static const QString FieldLast;
-    static const QString FieldSuffix;
+    static const QString FieldDisplayLabel;
+    static const QString FieldLogo;
 
-    QString prefix() const {return value("Prefix");}
-    QString first() const {return value("First");}
-    QString middle() const {return value("Middle");}
-    QString last() const {return value("Last");}
-    QString suffix() const {return value("Suffix");}
-
-    void setPrefix(const QString& prefix) {setValue("Prefix", prefix);}
-    void setFirst(const QString& first) {setValue("First", first);}
-    void setMiddle(const QString& middle) {setValue("Middle", middle);}
-    void setLast(const QString& last) {setValue("Last", last);}
-    void setSuffix(const QString& suffix) {setValue("Suffix", suffix);}
+    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
+    QString displayLabel() const {return value(FieldDisplayLabel);}
+    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
+    QString logo() const {return value(FieldLogo);}
 };
 
 #endif

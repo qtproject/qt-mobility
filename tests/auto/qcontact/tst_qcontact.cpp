@@ -50,7 +50,6 @@ public slots:
     void init();
     void cleanup();
 private slots:
-    void name();
     void details();
     void actions();
     void preferences();
@@ -70,40 +69,6 @@ void tst_QContact::init()
 
 void tst_QContact::cleanup()
 {
-}
-
-
-void tst_QContact::name()
-{
-    QContact c;
-    const QContact& cref = c;
-
-    // Basic name operations
-    c.name().setFirst("First");
-    c.name().setLast("Last");
-
-    QVERIFY(c.name().first() == "First");
-    QVERIFY(c.name().last() == "Last");
-
-    // Const accessor
-    QVERIFY(cref.name() == c.name());
-
-    // Try to remove the name
-    QVERIFY(c.removeDetail(&c.name()) == false);
-    QVERIFY(c.error() == QContact::PermissionsError);
-
-    // Add a new name (overwrites)
-    QContactName n = c.name();
-    n.setLast("Alternate Last");
-
-    QCOMPARE(c.name().last(), QString("Last"));
-    QCOMPARE(n.last(), QString("Alternate Last"));
-    QVERIFY(c.saveDetail(&n) == true);
-    QVERIFY(c.error() == QContact::NoError);
-
-    // check that it overwrote
-    QCOMPARE(c.name().last(), QString("Alternate Last"));
-    QCOMPARE(c.name(), n);
 }
 
 void tst_QContact::details()

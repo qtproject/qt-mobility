@@ -456,93 +456,40 @@ void tst_QContactDetails::name()
     QVERIFY(n2.isEmpty());
 
     // test property set
-    QCOMPARE(n1.displayName(), QString());
+    n1.setPrefix("Dr");
     n1.setFirst("Freddy");
+    n1.setMiddle("William Preston");
     n1.setLast("Gumboots");
-    QCOMPARE(n1.displayName(), QString("Freddy Gumboots"));
+    n1.setSuffix("Esquire");
+    QCOMPARE(n1.prefix(), QString("Dr"));
     QCOMPARE(n1.first(), QString("Freddy"));
-    n1.setDisplayName("1234");
-    QCOMPARE(n1.displayName(), QString("1234"));
+    QCOMPARE(n1.middle(), QString("William Preston"));
+    QCOMPARE(n1.last(), QString("Gumboots"));
+    QCOMPARE(n1.suffix(), QString("Esquire"));
 
     // test property add
     QVERIFY(c.saveDetail(&n1));
     QCOMPARE(c.details(QContactName::DefinitionId).count(), 1);
-    QCOMPARE(QContactName(c.details(QContactName::DefinitionId).value(0)).displayName(), n1.displayName());
-    QVERIFY(c.saveDetail(&n1)); // we shoudl be able to "add" a new name; but, it should update
-    QCOMPARE(c.details(QContactName::DefinitionId).count(), 1); // so count remains the same.
+    n2.setFirst("Billy");
+    n2.setLast("Galoshes");
+    QVERIFY(c.saveDetail(&n2));
+    QCOMPARE(c.details(QContactName::DefinitionId).count(), 2);
 
     // test property update
     n1.setValue("label","label1");
-    n1.setDisplayName("12345");
     QVERIFY(c.saveDetail(&n1));
 
     // test property remove
-    QVERIFY(!c.removeDetail(&n1));
+    QVERIFY(c.removeDetail(&n1)); // remove
     QCOMPARE(c.details(QContactName::DefinitionId).count(), 1);
-    QVERIFY(c.saveDetail(&n2));
+    QVERIFY(c.saveDetail(&n2));   // save but already added; count remains the same.
     QCOMPARE(c.details(QContactName::DefinitionId).count(), 1);
-    QVERIFY(!c.removeDetail(&n2));
-    QCOMPARE(c.details(QContactName::DefinitionId).count(), 1); // cannot remove the name
-    QVERIFY(!c.removeDetail(&n2));
-    QVERIFY(c.error() == QContact::PermissionsError);
+    QVERIFY(c.removeDetail(&n2)); // remove it
+    QCOMPARE(c.details(QContactName::DefinitionId).count(), 0);
+    QVERIFY(!c.removeDetail(&n2));// remove now fails
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+    QVERIFY(c.saveDetail(&n1));   // save the original name
     QCOMPARE(c.details(QContactName::DefinitionId).count(), 1);
-
-    // test displayName permutations
-    QContactName n3;
-    QCOMPARE(n3.displayName(), QString());
-
-    // set prefix
-    n3.setPrefix("Test");
-    QCOMPARE(n3.displayName(), QString("Test"));
-    n3.setPrefix("");
-    QCOMPARE(n3.displayName(), QString());
-
-    // set first
-    n3.setFirst("Test");
-    QCOMPARE(n3.displayName(), QString("Test"));
-    n3.setFirst("");
-    QCOMPARE(n3.displayName(), QString());
-
-    // set middle
-    n3.setMiddle("Test");
-    QCOMPARE(n3.displayName(), QString("Test"));
-    n3.setMiddle("");
-    QCOMPARE(n3.displayName(), QString());
-
-    // set last
-    n3.setLast("Test");
-    QCOMPARE(n3.displayName(), QString("Test"));
-    n3.setLast("");
-    QCOMPARE(n3.displayName(), QString());
-
-    // set suffix
-    n3.setSuffix("Test");
-    QCOMPARE(n3.displayName(), QString("Test"));
-    n3.setSuffix("");
-    QCOMPARE(n3.displayName(), QString());
-
-    // prefix + first
-    n3.setPrefix("Test");
-    n3.setFirst("Test");
-    QCOMPARE(n3.displayName(), QString("Test Test"));
-    n3.setPrefix("");
-
-    // first + middle
-    n3.setMiddle("Test");
-    QCOMPARE(n3.displayName(), QString("Test Test"));
-    n3.setFirst("");
-
-    // middle + last
-    n3.setMiddle("Test");
-    n3.setLast("Test");
-    QCOMPARE(n3.displayName(), QString("Test Test"));
-    n3.setMiddle("");
-    n3.setLast("");
-
-    // first + suffix
-    n3.setFirst("Test");
-    n3.setSuffix("Test");
-    QCOMPARE(n3.displayName(), QString("Test Test"));
 }
 
 void tst_QContactDetails::phoneNumber()

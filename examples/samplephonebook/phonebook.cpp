@@ -245,7 +245,19 @@ void PhoneBook::populateList(const QContact& currentContact)
     foreach (const QContact& contact, contacts) {
         bool inserted = false;
         for (int i = 0; i < sorted.size(); i++) {
-            if (contact.name().displayName().toLower() < sorted.at(i).name().displayName().toLower()) {
+            // first, retrieve the display labels from each contact
+            QContact sortedContact = sorted.at(i);
+            QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionId);
+            QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionId);
+
+            // if none set, ask the backend to synthesise them for us.
+            if (cdl.isEmpty())
+                cdl.setDisplayLabel(cm->synthesiseDisplayLabel(contact));
+            if (sdl.isEmpty())
+                sdl.setDisplayLabel(cm->synthesiseDisplayLabel(sortedContact));
+
+            // compare the display labels, and insert into list.
+            if (cdl.displayLabel().toLower() < sdl.displayLabel().toLower()) {
                 sorted.insert(i, contact);
                 inserted = true;
                 break;
@@ -263,7 +275,10 @@ void PhoneBook::populateList(const QContact& currentContact)
     // and repopulate the list widget.
     contactsList->clear();
     foreach (const QContact& contact, contacts) {
-        new QListWidgetItem(contact.name().displayName(), contactsList);
+        QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionId);
+        if (cdl.isEmpty())
+            cdl.setDisplayLabel(cm->synthesiseDisplayLabel(contact));
+        new QListWidgetItem(cdl.displayLabel(), contactsList);
     }
 
     // now find out what our new current index is
@@ -283,7 +298,9 @@ QContact PhoneBook::buildContact() const
 {
     // builds the contact from the current index / current UI.
     QContact c;
-    c.name().setDisplayName(nameLine->text());
+    QContactDisplayLabel cdl;
+    cdl.setDisplayLabel(nameLine->text());
+    c.saveDetail(&cdl);
 
     QContactEmailAddress emailAddress;
     emailAddress.setEmailAddress(emailLine->text());
@@ -321,7 +338,11 @@ void PhoneBook::displayContact()
     c = cm->contact(c.id()); // this removes any unsaved information.
 
     // display the name
-    nameLine->setText(c.name().displayName());
+    QContactDisplayLabel cdl = c.detail(QContactDisplayLabel::DefinitionId);
+    if (cdl.isEmpty())
+        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(c));
+    nameLine->setText(cdl.displayLabel());
+
 
     // display the email address
     emailLine->setText(c.detail(QContactEmailAddress::DefinitionId).value(QContactEmailAddress::FieldEmailAddress));
@@ -422,7 +443,11 @@ void PhoneBook::saveContact()
 
 void PhoneBook::removeContact()
 {
-    QString contactName = contacts.at(currentIndex).name().displayName();
+    QContact current = contacts.at(currentIndex);
+    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+    if (cdl.isEmpty())
+        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
+    QString contactName = cdl.displayLabel();
     int button = QMessageBox::question(this,
         tr("Confirm Remove"),
         tr("Are you sure you want to remove \"%1\"?").arg(contactName),
@@ -464,7 +489,11 @@ void PhoneBook::findContact()
         QString contactName = dialog->getFindText();
         // XXX TODO: use QContactManager::contactsWithDetail
         for (int i = 0; i < contacts.size(); i++) {
-            if (contacts.at(i).name().displayName() == contactName) {
+            QContact current = contacts.at(i);
+            QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+            if (cdl.isEmpty())
+                cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
+            if (cdl.displayLabel() == contactName) {
                 contactsList->setCurrentRow(i);
                 contactSelected(i);
                 found = true;
@@ -537,9 +566,13 @@ void PhoneBook::exportAsVCard()
     QStringList vcardLines = Serialiser::convertContact(currentContact);
 
     QFile file(newName);
+    QContact current = contacts.at(currentIndex);
+    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+    if (cdl.isEmpty())
+        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::information(this, tr("Unable to export"),
-            tr("Unable to export contact \"%1\"!").arg(contacts.at(currentIndex).name().displayName()));
+            tr("Unable to export contact \"%1\"!").arg(cdl.displayLabel()));
         return;
     }
 
@@ -549,5 +582,5 @@ void PhoneBook::exportAsVCard()
     file.close();
 
     QMessageBox::information(this, tr("Contact Exported"),
-        tr("Successfully exported contact \"%1\" as \"%2\"!").arg(contacts.at(currentIndex).name().displayName()).arg(newName));
+        tr("Successfully exported contact \"%1\" as \"%2\"!").arg(cdl.displayLabel()).arg(newName));
 }

@@ -366,6 +366,17 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
 }
 
 /*!
+ * Synthesises the display label of the given \a contact in a platform specific manner.
+ * Returns the synthesised display label.
+ */
+QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+{
+    Q_UNUSED(contact);
+    error = QContactManager::NotSupportedError;
+    return QString();
+}
+
+/*!
  * Returns true if the given \a feature is supported by this engine
  */
 bool QContactManagerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
@@ -424,12 +435,35 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.id(), d);
 
+    // display label
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setId(QContactDisplayLabel::DefinitionId);
+    fields.insert(QContactDisplayLabel::FieldDisplayLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::Any);
+    retn.insert(d.id(), d);
+
     // email address
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     d.setId(QContactEmailAddress::DefinitionId);
     fields.insert(QContactEmailAddress::FieldEmailAddress, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::Any);
+    retn.insert(d.id(), d);
+
+    // organisation
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setId(QContactOrganisation::DefinitionId);
+    fields.insert(QContactOrganisation::FieldLogo, f);
+    fields.insert(QContactOrganisation::FieldDisplayLabel, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -534,45 +568,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.id(), d);
 
 #if 0 // leaf class not yet accepted into master
-    // image
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    d.setId(QContactImage::DefinitionId);
-    fields.insert(QContactImage::FieldImage, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
-    retn.insert(d.id(), d);
-#endif
-
-#if 0 // leaf class not yet accepted into master
-    // audio
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    d.setId(QContactAudio::DefinitionId);
-    fields.insert(QContactAudio::FieldAudio, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
-    retn.insert(d.id(), d);
-#endif
-
-#if 0 // leaf class not yet accepted into master
-    // video
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    d.setId(QContactVideo::DefinitionId);
-    fields.insert(QContactVideo::FieldVideo, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
-    retn.insert(d.id(), d);
-#endif
-
-#if 0 // leaf class not yet accepted into master
     // geolocation
     fields.clear();
     f.dataType = QVariant::String;
@@ -619,9 +614,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactName::FieldMiddle, f);
     fields.insert(QContactName::FieldLast, f);
     fields.insert(QContactName::FieldSuffix, f);
-    fields.insert(QContactName::FieldDisplayName, f);
     d.setFields(fields);
-    d.setUnique(true); // only one name allowed.
+    d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.id(), d);
 

@@ -103,6 +103,9 @@ public:
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
 
+    /* Synthesise the display label of a contact */
+    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups(QContactManager::Error& error) const;
     QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;

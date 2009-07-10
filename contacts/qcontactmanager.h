@@ -100,6 +100,9 @@ public:
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);  // batch API - remove
 
+    /* Synthesise the display label of a contact */
+    QString synthesiseDisplayLabel(const QContact& contact) const;
+
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
     QContactGroup group(const QUniqueId& groupId) const;

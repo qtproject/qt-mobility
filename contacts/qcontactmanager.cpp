@@ -331,6 +331,12 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* 
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
+/*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */
+QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
+{
+    return d->m_engine->synthesiseDisplayLabel(contact, d->m_error);
+}
+
 /*! Return the list of added group ids */
 QList<QUniqueId> QContactManager::groups() const
 {

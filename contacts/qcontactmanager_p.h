@@ -96,6 +96,9 @@ public:
     virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     virtual QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
+    /* Synthesise the display label of a contact */
+    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;

@@ -24,11 +24,13 @@ HEADERS += \
         qcontactdetaildefinition.h \
         qcontactdetaildefinition_p.h \
         qcontactdetails.h \
+        qcontactdisplaylabel.h \
         qcontactguid.h \
         qcontactgender.h \
         qcontactgroup.h \
         qcontactgroup_p.h \
         qcontactname.h \
+        qcontactorganisation.h \
         qcontactphonenumber.h \
         qcontactemailaddress.h \
         qcontactaddress.h \

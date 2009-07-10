@@ -137,20 +137,6 @@ bool QContact::setId(const QUniqueId& id)
     return true;
 }
 
-/*! Returns the name of the contact */
-QContactName& QContact::name()
-{
-    QContactData::setError(d, QContact::NoError);
-    return (QContactName&)d->m_details[0];
-}
-
-/*! Returns the name of the contact */
-const QContactName& QContact::name() const
-{
-    QContactData::setError(d, QContact::NoError);
-    return (QContactName&)d->m_details[0];
-}
-
 /*! Returns the first detail stored in the contact which is of the given \a definitionName */
 QContactDetail QContact::detail(const QString& definitionName) const
 {
@@ -200,18 +186,7 @@ QContact::Error QContact::error() const
 /*! Saves the given \a detail in the list of stored details, and sets its Id.  If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten.  Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.  Returns true if the detail was saved successfully, otherwise returns false */
 bool QContact::saveDetail(QContactDetail* detail)
 {
-    // unique details are a special case; there is only and always one unique field.
-    // ### name is always unique... but we don't know what store we're in for other checking XXX
-    if (detail->definitionName() == "Name") {
-        QContactData::setError(d, QContact::NoError);
-        d->m_details.removeAt(0);
-        QContactName name = *detail;
-        name.d->m_id = 1; // the name field's id
-        d->m_details.insert(0, name); // replace the name.
-        return true;
-    }
-
-    // now we try to find the "old version" of this field
+    // try to find the "old version" of this field
     // ie, the one with the same type and id, but different value or attributes.
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail curr = d->m_details.at(i);
@@ -233,12 +208,6 @@ bool QContact::saveDetail(QContactDetail* detail)
 /*! Removes the \a detail from the contact.  Any preference for the given field is removed, also.  The Id of the \a detail is removed, to signify that it is no longer part of the contact.  Returns true if the detail was removed successfully, false if an error occurred */
 bool QContact::removeDetail(QContactDetail* detail)
 {
-    // name details are a special case; there is only and always one name field.
-    if (detail->definitionName() == "Name") {
-        QContactData::setError(d, QContact::PermissionsError);
-        return false;
-    }
-
     if (!d->m_details.contains(*detail)) {
         QContactData::setError(d, QContact::DetailDoesNotExistError);
         return false;

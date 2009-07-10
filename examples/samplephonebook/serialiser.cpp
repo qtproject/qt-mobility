@@ -392,38 +392,24 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                     det.setValue(QContactAddress::FieldCountry, fieldValues.value(6));
                     vcardDetails.insert("ADR", det);
                 } else if (defId == QContactName::DefinitionId) {
-                    if (det.value(QContactName::FieldDisplayName) == "positive") {
-                        // it was a displayName.
-                        if (vcardDetails.contains("N")) {
-                            // modify the existing name
-                            QContactDetail currName = vcardDetails.value("N");
-                            currName.setValue(QContactName::FieldDisplayName, parseValue(line));
-                            vcardDetails.replace("N", currName);
-                        } else {
-                            // create a new name if no existing name stored.
-                            det.setValue(QContactName::FieldDisplayName, parseValue(line));
-                            vcardDetails.insert("N", det);
-                        }
-                   } else {
-                        QStringList fieldValues = parseValue(line).split(";");
-                        if (vcardDetails.contains("N")) {
-                            // modify the existing name
-                            QContactDetail currName = vcardDetails.value("N");
-                            currName.setValue(QContactName::FieldPrefix, fieldValues.value(3));
-                            currName.setValue(QContactName::FieldFirst, fieldValues.value(1));
-                            currName.setValue(QContactName::FieldMiddle, fieldValues.value(2));
-                            currName.setValue(QContactName::FieldLast, fieldValues.value(0));
-                            currName.setValue(QContactName::FieldSuffix, fieldValues.value(4));
-                            vcardDetails.replace("N", currName);
-                        } else {
-                            // create a new name if no existing name stored.
-                            det.setValue(QContactName::FieldPrefix, fieldValues.value(3));
-                            det.setValue(QContactName::FieldFirst, fieldValues.value(1));
-                            det.setValue(QContactName::FieldMiddle, fieldValues.value(2));
-                            det.setValue(QContactName::FieldLast, fieldValues.value(0));
-                            det.setValue(QContactName::FieldSuffix, fieldValues.value(4));
-                            vcardDetails.insert("N", det);
-                        }
+                    QStringList fieldValues = parseValue(line).split(";");
+                    if (vcardDetails.contains("N")) {
+                        // modify the existing name
+                        QContactDetail currName = vcardDetails.value("N");
+                        currName.setValue(QContactName::FieldPrefix, fieldValues.value(3));
+                        currName.setValue(QContactName::FieldFirst, fieldValues.value(1));
+                        currName.setValue(QContactName::FieldMiddle, fieldValues.value(2));
+                        currName.setValue(QContactName::FieldLast, fieldValues.value(0));
+                        currName.setValue(QContactName::FieldSuffix, fieldValues.value(4));
+                        vcardDetails.replace("N", currName);
+                    } else {
+                        // create a new name if no existing name stored.
+                        det.setValue(QContactName::FieldPrefix, fieldValues.value(3));
+                        det.setValue(QContactName::FieldFirst, fieldValues.value(1));
+                        det.setValue(QContactName::FieldMiddle, fieldValues.value(2));
+                        det.setValue(QContactName::FieldLast, fieldValues.value(0));
+                        det.setValue(QContactName::FieldSuffix, fieldValues.value(4));
+                        vcardDetails.insert("N", det);
                     }
                 } else {
                     // we don't know how to map this value type.  Ignore the line.
@@ -559,9 +545,8 @@ QContactDetail Serialiser::parsePropertyType(const QString& line)
             QContactName name;
             return name;
         } else if (colonSplit.at(0) == "FN") {
-            QContactName name;
-            name.setDisplayName("positive");
-            return name;
+            QContactDisplayLabel label;
+            return label;
         }
     }
 
@@ -726,20 +711,17 @@ QStringList Serialiser::convertContact(const QContact& contact)
                 saved = true;
             }
 
-            // only one formatted name is allowed
-            if (!vcardFieldsWithValues.contains("FN")) {
-                entry = "FN:" + det.value(QContactName::FieldDisplayName);
-                vcard << entry;
-                vcardFieldsWithValues << "FN";
-                if (!saved) {
-                    saved = true;
-                    customVcardFields << convertDetail(contact, det, "FN");
-                }
-            }
-
             // if not already saved, save as a generic custom field.
             if (!saved) {
                 customVcardFields << convertDetail(contact, det);
+            }
+        } else if (definitionName == QContactDisplayLabel::DefinitionId) {
+            // only one formatted name is allowed
+            if (!vcardFieldsWithValues.contains("FN")) {
+                entry = "FN:" + det.value(QContactDisplayLabel::FieldDisplayLabel);
+                vcard << entry;
+                vcardFieldsWithValues << "FN";
+                customVcardFields << convertDetail(contact, det, "FN");
             }
         } else if (definitionName == QContactAddress::DefinitionId) {
             // any number of address fields are allowed.

@@ -83,9 +83,6 @@ public:
     QUniqueId id() const;
     bool setId(const QUniqueId& id);
 
-    QContactName& name();
-    const QContactName& name() const;
-
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;

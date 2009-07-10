@@ -104,8 +104,10 @@ void tst_QContactGroup::members()
 {
     QContact c;
     c.setId(QUniqueId(224));
-    c.name().setFirst("John");
-    c.name().setLast("Citizen");
+    QContactName n;
+    n.setFirst("John");
+    n.setLast("Citizen");
+    c.saveDetail(&n);
 
     // create a new group
     QContactGroup g;
