@@ -9,7 +9,7 @@ TARGET = QtContacts
 
 include(../common.pri)
 
-DEFINES += BUILD_QTCONTACTS
+DEFINES += BUILD_QTCONTACTS QT_ASCII_CAST_WARNINGS
 
 # Input
 HEADERS += \
