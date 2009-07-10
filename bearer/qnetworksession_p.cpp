@@ -516,7 +516,8 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
             break;
         }
     }
-
+if(serviceName.isEmpty())
+    return;
     QNetworkManagerSettings *settingsiface;
     settingsiface = new QNetworkManagerSettings(serviceName);
     QList<QDBusObjectPath> list = settingsiface->listConnections();
