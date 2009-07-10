@@ -652,7 +652,9 @@ NMDeviceType QNetworkManagerSettingsConnection::getType()
             if (devType == "802-11-wireless") {
                 return 	DEVICE_TYPE_802_11_WIRELESS;
             }
+            ii++;
         }
+        i++;
     }
     return 	DEVICE_TYPE_UNKNOWN;
 }
@@ -665,7 +667,9 @@ bool QNetworkManagerSettingsConnection::isAutoConnect()
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("autoconnect");
         while (ii != innerMap.end() && ii.key() == "autoconnect") {
             return ii.value().toBool();
+            ii++;
         }
+        i++;
     }
     return false;
 }
