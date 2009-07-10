@@ -174,26 +174,37 @@ QString QContactManager::buildUri(const QString& managerId, const QMap<QString, 
     return ret.arg(managerId, escapedParams.join("&"));
 }
 
-/*! Constructs a QContactManager whose implementation, store and parameters are specified in the given \a storeUri */
-QContactManager QContactManager::fromUri(const QString& storeUri)
+/*!
+ * Constructs a QContactManager whose implementation, store and parameters are specified in the given \a storeUri,
+ * and whose parent object is \a parent.
+ */
+QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* parent)
 {
     if (storeUri.isEmpty()) {
-        return QContactManager();
+        return new QContactManager(QString(), QMap<QString, QString>(), parent);
     } else {
         QString id;
         QMap<QString, QString> parameters;
         if (splitUri(storeUri, &id, &parameters)) {
-            return QContactManager(id, parameters);
+            return new QContactManager(id, parameters, parent);
         } else {
             // invalid
-            return QContactManager("invalid", QMap<QString, QString>());
+            return new QContactManager("invalid", QMap<QString, QString>(), parent);
         }
     }
 }
 
-/*! Constructs a QContactManager whose implementation is identified by \a managerId with the given \a parameters */
-QContactManager::QContactManager(const QString& managerId, const QMap<QString, QString>& parameters)
-    : d(new QContactManagerData)
+/*!
+ * Constructs a QContactManager whose implementation is identified by \a managerId with the given \a parameters.
+ *
+ * The \a parent QObject will be used as the parent of this QContactManager.
+ *
+ * If an empty \a managerId is specified, the default implementation for the platform will
+ * be used.
+ */
+QContactManager::QContactManager(const QString& managerId, const QMap<QString, QString>& parameters, QObject* parent)
+    : QObject(parent),
+    d(new QContactManagerData)
 {
     d->createEngine(managerId, parameters);
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
@@ -202,35 +213,6 @@ QContactManager::QContactManager(const QString& managerId, const QMap<QString, Q
     connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
-}
-
-/*! Create a copy of \a other */
-QContactManager::QContactManager(const QContactManager& other)
-    : QObject(), d(new QContactManagerData(*other.d))
-{
-    connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
-}
-
-/*! Assigns this QContactManager to \a other */
-QContactManager& QContactManager::operator=(const QContactManager& other)
-{
-    if (this != &other) {
-        disconnect(d->m_engine, 0, 0, 0);
-        d.clear();
-        d = QSharedPointer<QContactManagerData>(new QContactManagerData(*other.d));
-        connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
-        connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
-        connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-        connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
-        connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
-        connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
-    }
-    return *this;
 }
 
 /*! Frees the memory used by the QContactManager */

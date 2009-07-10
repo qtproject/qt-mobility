@@ -48,7 +48,6 @@ public:
     ~QContactManagerInfo();
 
     QContactManagerInfo(const QContactManagerInfo& other);
-    QContactManagerInfo& operator=(const QContactManagerInfo& other);
 
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
@@ -61,6 +60,7 @@ private:
 private:
     friend class QContactManager;
     QContactManagerInfo();
+    QContactManagerInfo& operator=(const QContactManagerInfo& other);
     QSharedDataPointer<QContactManagerInfoPrivate> d;
 };
 

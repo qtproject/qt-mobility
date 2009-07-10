@@ -56,17 +56,13 @@ class QTCONTACTS_EXPORT QContactManager : public QObject
 
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
-    QContactManager(const QString& managerId = QString(), const QMap<QString, QString>& parameters = 0);
+    QContactManager(const QString& managerId = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QContactManager(const QString& managerId = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()));
+    QContactManager(const QString& managerId = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
 
-    static QContactManager fromUri(const QString& uri);
-
+    static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QContactManager();                     // dtor
-
-    QContactManager(const QContactManager& other);
-    QContactManager& operator=(const QContactManager& other);
 
     QString managerId() const;                         // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
@@ -138,6 +134,7 @@ signals:
     void groupsRemoved(const QList<QUniqueId>& groupIds);
 
 private:
+    Q_DISABLE_COPY(QContactManager)
     // private data pointer
     QSharedPointer<QContactManagerData> d;
 };
