@@ -37,8 +37,42 @@
 #include <QDebug>
 #include <QTest>
 
+#include <float.h>
+#include <limits.h>
+
 Q_DECLARE_METATYPE(QSatelliteInfo)
 Q_DECLARE_METATYPE(QSatelliteInfo::Property)
+
+QList<qreal> tst_qsatelliteinfo_qrealTestValues()
+{
+    QList<qreal> values;
+    if (qreal(DBL_MIN) == DBL_MIN)
+        values << DBL_MIN;
+
+    values << FLT_MIN;
+    values << -1.0 << 0.0 << 1.0;
+    values << FLT_MAX;
+
+    if (qreal(DBL_MAX) == DBL_MAX)
+        values << DBL_MAX;
+    return values;
+}
+
+QList<int> tst_qsatelliteinfo_intTestValues()
+{
+    QList<int> values;
+    values << INT_MIN << -100 << 0 << 100 << INT_MAX;
+    return values;
+}
+
+QList<QSatelliteInfo::Property> tst_qsatelliteinfo_getProperties()
+{
+    QList<QSatelliteInfo::Property> properties;
+    properties << QSatelliteInfo::Elevation
+            << QSatelliteInfo::Azimuth;
+    return properties;
+}
+
 
 class tst_QSatelliteInfo : public QObject
 {
@@ -52,23 +86,42 @@ private:
         return info;
     }
 
-    void addtestdata_update()
+    void addTestData_update()
     {
         QTest::addColumn<QSatelliteInfo>("info");
 
-        QSatelliteInfo info1;
-        info1.setPrnNumber(10);
-        QTest::newRow("prn") << info1;
+        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        for (int i=0; i<intValues.count(); i++) {
+            QSatelliteInfo info;
+            info.setPrnNumber(intValues[i]);
+            QTest::newRow("prn") << info;
+        }
 
-        QSatelliteInfo info2;
-        info2.setSignalStrength(99);
-        QTest::newRow("signal strength") << info2; 
+        for (int i=0; i<intValues.count(); i++) {
+            QSatelliteInfo info;
+            info.setSignalStrength(intValues[i]);
+            QTest::newRow("signal strength") << info;
+        }
 
-        QTest::newRow("Elevation") << updateWithProperty(QSatelliteInfo::Elevation, 0.0);
-        QTest::newRow("Azimuth") << updateWithProperty(QSatelliteInfo::Azimuth, 0.0);
+        QList<QSatelliteInfo::Property> properties = tst_qsatelliteinfo_getProperties();
+        QList<qreal> qrealValues = tst_qsatelliteinfo_qrealTestValues();
+        for (int i=0; i<properties.count(); i++) {
+            QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(qrealValues[i])))
+                    << updateWithProperty(properties[i], qrealValues[i]);
+        }
     }
 
 private slots:
+    void constructor()
+    {
+        QSatelliteInfo info;
+        QCOMPARE(info.prnNumber(), -1);
+        QCOMPARE(info.signalStrength(), -1);
+        QList<QSatelliteInfo::Property> properties = tst_qsatelliteinfo_getProperties();
+        for (int i=0; i<properties.count(); i++)
+            QCOMPARE(info.property(properties[i]), qreal(-1.0));
+    }
+
     void constructor_copy()
     {
         QFETCH(QSatelliteInfo, info);
@@ -78,7 +131,7 @@ private slots:
 
     void constructor_copy_data()
     {
-        addtestdata_update();
+        addTestData_update();
     }
 
     void operator_comparison()
@@ -95,7 +148,20 @@ private slots:
 
     void operator_comparison_data()
     {
-        addtestdata_update();
+        addTestData_update();
+    }
+
+    void operator_assign()
+    {
+        QFETCH(QSatelliteInfo, info);
+
+        QSatelliteInfo info2 = info;
+        QCOMPARE(info2, info);
+    }
+
+    void operator_assign_data()
+    {
+        addTestData_update();
     }
 
     void setPrnNumber()
@@ -112,10 +178,10 @@ private slots:
     void setPrnNumber_data()
     {
         QTest::addColumn<int>("prn");
-        QTest::newRow("-10") << -10;
-        QTest::newRow("zero") << 0;
-        QTest::newRow("100") << 100;
-        QTest::newRow("100000") << 100000;
+
+        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        for (int i=0; i<intValues.count(); i++)
+            QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
 
     void setSignalStrength()
@@ -132,36 +198,28 @@ private slots:
     void setSignalStrength_data()
     {
         QTest::addColumn<int>("signal");
-        QTest::newRow("-10") << -10;
-        QTest::newRow("zero") << 0;
-        QTest::newRow("100") << 100;
-        QTest::newRow("100000") << 100000;
+
+        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        for (int i=0; i<intValues.count(); i++)
+            QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
 
-    void setProperty()
+    void property()
     {
         QFETCH(QSatelliteInfo::Property, property);
         QFETCH(qreal, value);
 
         QSatelliteInfo u;
-
-        QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.property(property), qreal(-1.0));
-
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
         QCOMPARE(u.property(property), qreal(-1.0));
 
         u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
         QCOMPARE(u.property(property), value);
 
         u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
         QCOMPARE(u.property(property), qreal(-1.0));
     }
 
-    void setProperty_data()
+    void property_data()
     {
         QTest::addColumn<QSatelliteInfo::Property>("property");
         QTest::addColumn<qreal>("value");
@@ -174,6 +232,49 @@ private slots:
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(0.0);
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(1.0);
         }
+    }
+
+    void hasProperty()
+    {
+        QFETCH(QSatelliteInfo::Property, property);
+        QFETCH(qreal, value);
+
+        QSatelliteInfo u;
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+
+        u.removeProperty(property);
+        QVERIFY(!u.hasProperty(property));
+    }
+
+    void hasProperty_data()
+    {
+        property_data();
+    }
+
+    void removeProperty()
+    {
+        QFETCH(QSatelliteInfo::Property, property);
+        QFETCH(qreal, value);
+
+        QSatelliteInfo u;
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+
+        u.removeProperty(property);
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+    }
+
+    void removeProperty_data()
+    {
+        property_data();
     }
 };
 
