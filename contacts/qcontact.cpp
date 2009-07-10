@@ -35,7 +35,6 @@
 #include "qcontact.h"
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
-#include "qcontactname.h"
 
 /*!
  * \class QContact
@@ -72,9 +71,9 @@ QContact::QContact()
     : d(new QContactData)
 {
     // insert the contact's name field.
-    QContactName contactName;
-    contactName.d->m_id = 1;
-    d->m_details.insert(0, QContactName());
+    QContactDisplayLabel contactLabel;
+    contactLabel.d->m_id = 1;
+    d->m_details.insert(0, contactLabel);
 }
 
 /*! Initializes this QContact from \a other */
@@ -115,6 +114,17 @@ QUniqueId QContact::id() const
 {
     QContactData::setError(d, QContact::NoError);
     return d->m_id;
+}
+
+/*!
+ * Returns the display label of the contact.  Every contact has exactly one display label
+ * which is either set manually (by saving a modified copy of the QContactDisplayLabel
+ * in the contact) or synthesised by the manager from which the contact is retrieved.
+ */
+QContactDisplayLabel QContact::displayLabel() const
+{
+    QContactData::setError(d, QContact::NoError);
+    return d->m_details.at(0);
 }
 
 /*!

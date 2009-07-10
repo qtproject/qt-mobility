@@ -718,7 +718,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
         } else if (definitionName == QContactDisplayLabel::DefinitionId) {
             // only one formatted name is allowed
             if (!vcardFieldsWithValues.contains("FN")) {
-                entry = "FN:" + det.value(QContactDisplayLabel::FieldDisplayLabel);
+                entry = "FN:" + det.value(QContactDisplayLabel::FieldLabel);
                 vcard << entry;
                 vcardFieldsWithValues << "FN";
                 customVcardFields << convertDetail(contact, det, "FN");

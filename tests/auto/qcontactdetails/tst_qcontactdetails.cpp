@@ -103,7 +103,7 @@ void tst_QContactDetails::address()
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
-    QCOMPARE(c.details(QContactName::DefinitionId).count(), 1);
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionId).count(), 1);
     QCOMPARE(QContactAddress(c.details(QContactAddress::DefinitionId).value(0)).displayLabel(), a1.displayLabel());
     a2.setStreet("Test");
     QVERIFY(c.saveDetail(&a2));

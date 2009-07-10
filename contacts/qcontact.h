@@ -46,6 +46,7 @@
 
 #include "qcontactdetail.h"
 #include "qcontactdetaildefinition.h"
+#include "qcontactdisplaylabel.h"
 
 class QContactManager;
 class QContactData;
@@ -82,6 +83,9 @@ public:
     /* Local ID */
     QUniqueId id() const;
     bool setId(const QUniqueId& id);
+
+    /* The (possibly synthesised) display label of the contact */
+    QContactDisplayLabel displayLabel() const;
 
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;

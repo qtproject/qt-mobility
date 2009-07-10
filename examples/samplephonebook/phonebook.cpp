@@ -252,12 +252,12 @@ void PhoneBook::populateList(const QContact& currentContact)
 
             // if none set, ask the backend to synthesise them for us.
             if (cdl.isEmpty())
-                cdl.setDisplayLabel(cm->synthesiseDisplayLabel(contact));
+                cdl.setLabel(cm->synthesiseDisplayLabel(contact));
             if (sdl.isEmpty())
-                sdl.setDisplayLabel(cm->synthesiseDisplayLabel(sortedContact));
+                sdl.setLabel(cm->synthesiseDisplayLabel(sortedContact));
 
             // compare the display labels, and insert into list.
-            if (cdl.displayLabel().toLower() < sdl.displayLabel().toLower()) {
+            if (cdl.label().toLower() < sdl.label().toLower()) {
                 sorted.insert(i, contact);
                 inserted = true;
                 break;
@@ -275,10 +275,7 @@ void PhoneBook::populateList(const QContact& currentContact)
     // and repopulate the list widget.
     contactsList->clear();
     foreach (const QContact& contact, contacts) {
-        QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionId);
-        if (cdl.isEmpty())
-            cdl.setDisplayLabel(cm->synthesiseDisplayLabel(contact));
-        new QListWidgetItem(cdl.displayLabel(), contactsList);
+        new QListWidgetItem(contact.displayLabel().label(), contactsList);
     }
 
     // now find out what our new current index is
@@ -299,7 +296,7 @@ QContact PhoneBook::buildContact() const
     // builds the contact from the current index / current UI.
     QContact c;
     QContactDisplayLabel cdl;
-    cdl.setDisplayLabel(nameLine->text());
+    cdl.setLabel(nameLine->text());
     c.saveDetail(&cdl);
 
     QContactEmailAddress emailAddress;
@@ -338,10 +335,7 @@ void PhoneBook::displayContact()
     c = cm->contact(c.id()); // this removes any unsaved information.
 
     // display the name
-    QContactDisplayLabel cdl = c.detail(QContactDisplayLabel::DefinitionId);
-    if (cdl.isEmpty())
-        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(c));
-    nameLine->setText(cdl.displayLabel());
+    nameLine->setText(c.displayLabel().label());
 
 
     // display the email address
@@ -446,8 +440,8 @@ void PhoneBook::removeContact()
     QContact current = contacts.at(currentIndex);
     QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
     if (cdl.isEmpty())
-        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
-    QString contactName = cdl.displayLabel();
+        cdl.setLabel(cm->synthesiseDisplayLabel(current));
+    QString contactName = cdl.label();
     int button = QMessageBox::question(this,
         tr("Confirm Remove"),
         tr("Are you sure you want to remove \"%1\"?").arg(contactName),
@@ -492,8 +486,8 @@ void PhoneBook::findContact()
             QContact current = contacts.at(i);
             QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
             if (cdl.isEmpty())
-                cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
-            if (cdl.displayLabel() == contactName) {
+                cdl.setLabel(cm->synthesiseDisplayLabel(current));
+            if (cdl.label() == contactName) {
                 contactsList->setCurrentRow(i);
                 contactSelected(i);
                 found = true;
@@ -569,10 +563,10 @@ void PhoneBook::exportAsVCard()
     QContact current = contacts.at(currentIndex);
     QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
     if (cdl.isEmpty())
-        cdl.setDisplayLabel(cm->synthesiseDisplayLabel(current));
+        cdl.setLabel(cm->synthesiseDisplayLabel(current));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::information(this, tr("Unable to export"),
-            tr("Unable to export contact \"%1\"!").arg(cdl.displayLabel()));
+            tr("Unable to export contact \"%1\"!").arg(cdl.label()));
         return;
     }
 
@@ -582,5 +576,5 @@ void PhoneBook::exportAsVCard()
     file.close();
 
     QMessageBox::information(this, tr("Contact Exported"),
-        tr("Successfully exported contact \"%1\" as \"%2\"!").arg(cdl.displayLabel()).arg(newName));
+        tr("Successfully exported contact \"%1\" as \"%2\"!").arg(cdl.label()).arg(newName));
 }

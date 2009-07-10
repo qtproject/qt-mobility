@@ -330,10 +330,16 @@ const QString QContactOrganisation::FieldDisplayLabel("DisplayLabel");
 const QString QContactOrganisation::FieldLogo("Logo");
 
 /*!
- * \variable QContactDisplayLabel::FieldDisplayLabel
+ * \variable QContactDisplayLabel::FieldLabel
  * The constant key for which the display label value is stored in details of the QContactDisplayLabel type
  */
-const QString QContactDisplayLabel::FieldDisplayLabel("DisplayLabel");
+const QString QContactDisplayLabel::FieldLabel("Label");
+
+/*!
+ * \variable QContactDisplayLabel::FieldSynthesised
+ * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesised by a QContactManager or set manually.
+ */
+const QString QContactDisplayLabel::FieldSynthesised("Synthesised");
 
 
 /*!

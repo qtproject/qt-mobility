@@ -82,9 +82,9 @@ void tst_QContact::details()
     QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
-    // Test retrieving the first detail (the name)
+    // Test retrieving the first detail (the display label)
     QContactDetail detail = c.detail(QString());
-    QVERIFY(detail.definitionName() == QContactName::staticType());
+    QVERIFY(detail.definitionName() == QContactDisplayLabel::staticType());
 
     detail = c.detail("nonexistent");
     QVERIFY(detail.isEmpty());

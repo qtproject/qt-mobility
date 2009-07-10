@@ -49,10 +49,13 @@ public:
 
     static const QString DefinitionId; // == staticType() == "DisplayLabel"
 
-    static const QString FieldDisplayLabel;
+    static const QString FieldLabel;
+    static const QString FieldSynthesised;
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
-    QString displayLabel() const {return value(FieldDisplayLabel);}
+    void setLabel(const QString& label) {setValue(FieldLabel, label); setValue(FieldSynthesised, false);}
+    QString label() const {return value(FieldLabel);}
+    void setSynthesised(bool synthesised) {setValue(FieldSynthesised, synthesised);}
+    bool isSynthesised() const {return variantValue(FieldSynthesised).toBool();}
 };
 
 #endif

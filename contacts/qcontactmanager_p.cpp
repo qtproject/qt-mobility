@@ -440,7 +440,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     d.setId(QContactDisplayLabel::DefinitionId);
-    fields.insert(QContactDisplayLabel::FieldDisplayLabel, f);
+    fields.insert(QContactDisplayLabel::FieldLabel, f);
+    f.dataType = QVariant::Bool;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactDisplayLabel::FieldSynthesised, f);
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::Any);
