@@ -235,7 +235,6 @@ QMessageContentContainerId QMessage::body() const
     return QMessageContentContainerId(); // stub
 }
 
-#ifdef QMESSAGING_OPTIONAL
 void QMessage::setBody(const QString &body)
 {
     // Implementation note, this should be platform independent. Will require a member variable 
@@ -249,19 +248,6 @@ void QMessage::setBodyFromFile(const QString &fileName)
     // for the body id. Will need to use prepend for multipart messages.
     Q_UNUSED(fileName)
 }
-#else
-void QMessage::setBody(const QString &body, const QByteArray &charset)
-{
-    Q_UNUSED(body)
-    Q_UNUSED(charset)
-}
-
-void QMessage::setBodyFromFile(const QString &fileName, const QByteArray &charset)
-{
-    Q_UNUSED(fileName)
-    Q_UNUSED(charset)
-}
-#endif
 
 QMessageContentContainerIdList QMessage::attachments() const
 {

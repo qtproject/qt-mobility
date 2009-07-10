@@ -135,13 +135,9 @@ public:
     virtual uint size() const;
 
     virtual QMessageContentContainerId body() const;
-#ifdef QMESSAGING_OPTIONAL
     virtual void setBody(const QString &body);
     virtual void setBodyFromFile(const QString &fileName);
-#else
-    virtual void setBody(const QString &body, const QByteArray &charSet = QByteArray());
-    virtual void setBodyFromFile(const QString &fileName, const QByteArray &charset = QByteArray());
-#endif
+
     virtual QMessageContentContainerIdList attachments() const;
     virtual void appendAttachments(const QStringList &fileNames);
     virtual void clearAttachments();
