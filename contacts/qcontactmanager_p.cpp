@@ -262,12 +262,6 @@ void QContactManagerData::loadFactories()
  */
 
 /*!
- * \fn QContactManagerEngine::~QContactManagerEngine()
- *
- * A default, empty destructor.
- */
-
-/*!
  * \fn QContactManagerEngine::deref()
  *
  * Notifies the engine that it is no longer required.  If this
