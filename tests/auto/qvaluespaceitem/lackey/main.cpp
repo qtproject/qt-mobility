@@ -37,7 +37,7 @@
 #include <QFile>
 #include <QTimer>
 #include <stdio.h>
-#include <QDebug>
+//#include <QDebug>
 
 class Controller : public QObject
 {
@@ -52,28 +52,20 @@ public:
         QTimer::singleShot(1000, this, SLOT(proceed()));
     }
 
-    void sendWaitSignal()
-    {
-        QFile file(QLatin1String("wait_signal.txt"));
-        file.open(QIODevice::WriteOnly);
-        file.write("Listening\n");
-        file.flush();
-        file.close();
-    }
 private slots:
     void proceed() {
 
         switch(index) {
             case 0:
-                qDebug() << "Setting 101";
+                //qDebug() << "Setting 101";
                 object->setAttribute("value", 101);
                 break;
             case 1:
-                qDebug() << "Removing";
+                //qDebug() << "Removing";
                 object->removeAttribute("value");
                 break;
             case 2:
-                qDebug() << "Setting 102";
+                //qDebug() << "Setting 102";
                 object->setAttribute("value", 102);
                 break;
         }
@@ -94,9 +86,8 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
     Controller controler;
-    qDebug() << "Starting lackey";
+    //qDebug() << "Starting lackey";
     return app.exec();
-    printf("Quitting lackey\n");
 }
 
 #include "main.moc"

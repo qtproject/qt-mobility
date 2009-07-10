@@ -2152,7 +2152,7 @@ void ApplicationLayer::readyRead()
 
     QPacket pack = protocol->read();
     if(Client == type) {
-        qDebug() << "Client" << protocol << "woken";
+        //qDebug() << "Client" << protocol << "woken";
         if(pack.isEmpty())
             return;
 
