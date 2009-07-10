@@ -37,9 +37,52 @@
 #include <QDebug>
 #include <QTest>
 
+#include <float.h>
+
 Q_DECLARE_METATYPE(QGeoCoordinate)
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoPositionInfo::Property)
+
+QByteArray tst_qgeopositioninfo_debug;
+
+void tst_qgeopositioninfo_messageHandler(QtMsgType type, const char *msg)
+{
+    switch(type) {
+        case QtDebugMsg :
+            tst_qgeopositioninfo_debug = QByteArray(msg);
+            break;
+        default:
+            break;
+    }
+}
+
+QList<qreal> tst_qgeopositioninfo_qrealTestValues()
+{
+    QList<qreal> values;
+    if (qreal(DBL_MIN) == DBL_MIN)
+        values << DBL_MIN;
+
+    values << FLT_MIN;
+    values << -1.0 << 0.0 << 1.0;
+    values << FLT_MAX;
+
+    if (qreal(DBL_MAX) == DBL_MAX)
+        values << DBL_MAX;
+    return values;
+}
+
+QList<QGeoPositionInfo::Property> tst_qgeopositioninfo_getProperties()
+{
+    QList<QGeoPositionInfo::Property> properties;
+    properties << QGeoPositionInfo::Heading
+            << QGeoPositionInfo::GroundSpeed
+            << QGeoPositionInfo::VerticalSpeed
+            << QGeoPositionInfo::MagneticVariation
+            << QGeoPositionInfo::HorizontalAccuracy
+            << QGeoPositionInfo::VerticalAccuracy;
+    return properties;
+}
+
 
 class tst_QGeoPositionInfo : public QObject
 {
@@ -57,18 +100,15 @@ private:
     {
         QTest::addColumn<QGeoPositionInfo>("u");
 
-        QDateTime dt = QDateTime::currentDateTime();
+        QTest::newRow("coord") << QGeoPositionInfo(QGeoCoordinate(-27.3422,150.2342), QDateTime());
+        QTest::newRow("datetime") << QGeoPositionInfo(QGeoCoordinate(), QDateTime::currentDateTime());
 
-        QTest::newRow("coord") << QGeoPositionInfo(QGeoCoordinate(1,1,1), QDateTime());
-        QTest::newRow("datetime") << QGeoPositionInfo(QGeoCoordinate(), dt);
-
-        QTest::newRow("Heading") << updateWithProperty(QGeoPositionInfo::Heading, 0.0);
-        QTest::newRow("GroundSpeed") << updateWithProperty(QGeoPositionInfo::GroundSpeed, 0.0);
-        QTest::newRow("VerticalSpeed") << updateWithProperty(QGeoPositionInfo::VerticalSpeed, 0.0);
-        QTest::newRow("MagneticVariation") << updateWithProperty(QGeoPositionInfo::MagneticVariation, 0.0);
-        QTest::newRow("HorizontalAccuracy") << updateWithProperty(QGeoPositionInfo::HorizontalAccuracy, 0.0);
-        QTest::newRow("VerticalAccuracy") << updateWithProperty(QGeoPositionInfo::VerticalAccuracy, 0.0);
-
+        QList<QGeoPositionInfo::Property> properties = tst_qgeopositioninfo_getProperties();
+        QList<qreal> values = tst_qgeopositioninfo_qrealTestValues();
+        for (int i=0; i<properties.count(); i++) {
+            QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(values[i])))
+                    << updateWithProperty(properties[i], values[i]);
+        }
     }
 
 private slots:
@@ -170,46 +210,75 @@ private slots:
         QTest::newRow("valid") << QGeoCoordinate(30,30);
     }
 
-    void setProperty()
+    void property()
     {
         QFETCH(QGeoPositionInfo::Property, property);
         QFETCH(qreal, value);
 
         QGeoPositionInfo u;
-        
-        QVERIFY(!u.hasProperty(property));
-        QCOMPARE(u.property(property), qreal(-1.0));
-
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
         QCOMPARE(u.property(property), qreal(-1.0));
 
         u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
         QCOMPARE(u.property(property), value);
 
         u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
         QCOMPARE(u.property(property), qreal(-1.0));
     }
 
-    void setProperty_data()
+    void property_data()
     {
         QTest::addColumn<QGeoPositionInfo::Property>("property");
         QTest::addColumn<qreal>("value");
 
-        QList<QGeoPositionInfo::Property> props;
-        props << QGeoPositionInfo::Heading
-              << QGeoPositionInfo::GroundSpeed
-              << QGeoPositionInfo::VerticalSpeed
-              << QGeoPositionInfo::MagneticVariation
-              << QGeoPositionInfo::HorizontalAccuracy
-              << QGeoPositionInfo::VerticalSpeed;
-        for (int i=0; i<props.count(); i++) {
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(-1.0);
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(0.0);
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(1.0);
+        QList<QGeoPositionInfo::Property> properties = tst_qgeopositioninfo_getProperties();
+        QList<qreal> values = tst_qgeopositioninfo_qrealTestValues();
+        for (int i=0; i<properties.count(); i++) {
+            QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(values[i])))
+                    << properties[i] << values[i];
         }
+    }
+
+    void hasProperty()
+    {
+        QFETCH(QGeoPositionInfo::Property, property);
+        QFETCH(qreal, value);
+
+        QGeoPositionInfo u;
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+
+        u.removeProperty(property);
+        QVERIFY(!u.hasProperty(property));
+    }
+
+    void hasProperty_data()
+    {
+        property_data();
+    }
+
+    void removeProperty()
+    {
+        QFETCH(QGeoPositionInfo::Property, property);
+        QFETCH(qreal, value);
+
+        QGeoPositionInfo u;
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+
+        u.removeProperty(property);
+        QVERIFY(!u.hasProperty(property));
+
+        u.setProperty(property, value);
+        QVERIFY(u.hasProperty(property));
+    }
+
+    void removeProperty_data()
+    {
+        property_data();
     }
 
     void datastream()
@@ -229,6 +298,42 @@ private slots:
     void datastream_data()
     {
         addTestData_update();
+    }
+
+    void debug()
+    {
+        QFETCH(QGeoPositionInfo, info);
+        QFETCH(QByteArray, debugStringEnd);
+
+        qInstallMsgHandler(tst_qgeopositioninfo_messageHandler);
+        qDebug() << info;
+        qInstallMsgHandler(0);
+
+        // use endsWith() so we don't depend on QDateTime's debug() implementation
+        QVERIFY(tst_qgeopositioninfo_debug.endsWith(debugStringEnd));
+    }
+
+    void debug_data()
+    {
+        QTest::addColumn<QGeoPositionInfo>("info");
+        QTest::addColumn<QByteArray>("debugStringEnd");
+
+        QTest::newRow("no values") << QGeoPositionInfo()
+                << QString("QGeoCoordinate(?, ?))").toLatin1();
+
+        QGeoCoordinate coord(1, 1);
+        QTest::newRow("coord, time") << QGeoPositionInfo(coord, QDateTime::currentDateTime())
+                << QByteArray("QGeoCoordinate(1, 1))");
+
+        QGeoPositionInfo info;
+        info.setProperty(QGeoPositionInfo::Heading, 1.1);
+        info.setProperty(QGeoPositionInfo::GroundSpeed, 2.1);
+        info.setProperty(QGeoPositionInfo::VerticalSpeed, 3.1);
+        info.setProperty(QGeoPositionInfo::MagneticVariation, 4.1);
+        info.setProperty(QGeoPositionInfo::HorizontalAccuracy, 5.1);
+        info.setProperty(QGeoPositionInfo::VerticalAccuracy, 6.1);
+        QTest::newRow("all properties") << info
+                << QByteArray("QGeoCoordinate(?, ?), Heading=1.1, GroundSpeed=2.1, VerticalSpeed=3.1, MagneticVariation=4.1, HorizontalAccuracy=5.1, VerticalAccuracy=6.1)");
     }
 };
 
