@@ -236,6 +236,7 @@ void QNetworkConfigurationManagerPrivate::updateInternetServiceConfiguration()
 
 void QNetworkConfigurationManagerPrivate::updateConfigurations()
 {
+    qWarning() << Q_FUNC_INFO;
     if (firstUpdate) {
         updateState = NotUpdating;
         onlineConfigurations = 0;

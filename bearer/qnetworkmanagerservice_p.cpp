@@ -732,10 +732,7 @@ QString QNetworkManagerSettingsConnection::getSsid()
 
 QString QNetworkManagerSettingsConnection::getMacAddress()
 {
-    qWarning() << Q_FUNC_INFO;
-
     if(getType() == DEVICE_TYPE_802_3_ETHERNET) {
-    qWarning() << Q_FUNC_INFO;
         QNmSettingsMap::const_iterator i = d->settingsMap.find("802-3-ethernet");
         while (i != d->settingsMap.end() && i.key() == "802-3-ethernet") {
             QMap<QString,QVariant> innerMap = i.value();

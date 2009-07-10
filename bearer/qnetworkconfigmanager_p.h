@@ -153,7 +153,6 @@ private:
 #endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && defined(BEARER_ENGINE)
     QNmWifiEngine *nmWifi;
-//    void updateNmConfigurations(QList<QString> &knownConfigs);
 #endif
 
 private Q_SLOTS:

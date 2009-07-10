@@ -93,6 +93,7 @@ public:
     quint64 receivedDataForId(const QString &id) const;
 
 private:
+    bool updated;
     QString activatingConnectionPath;
     QStringList activeConnectionPaths;
 

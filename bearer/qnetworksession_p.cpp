@@ -449,6 +449,8 @@ void QNetworkSessionPrivate::networkConfigurationsChanged()
 
 void QNetworkSessionPrivate::configurationChanged(const QNetworkConfiguration &config)
 {
+    qWarning() << Q_FUNC_INFO;
+
     if (serviceConfig.isValid() && (config == serviceConfig || config == activeConfig))
         updateStateFromServiceNetwork();
     else if (config == activeConfig)
@@ -496,6 +498,7 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
     QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
 
     QString path;
+    QString serviceName;
     QNetworkManagerInterface * ifaceD;
     ifaceD = new QNetworkManagerInterface();
     QList<QDBusObjectPath> connections = ifaceD->activeConnections();
@@ -503,7 +506,7 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
         QNetworkManagerConnectionActive *conDetails;
         conDetails = new QNetworkManagerConnectionActive(conpath.path());
         QDBusObjectPath connection = conDetails->connection();
-
+        serviceName = conDetails->serviceName();
         QList<QDBusObjectPath> so = conDetails->devices();
         foreach(QDBusObjectPath device, so) {
 
@@ -514,41 +517,15 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
         }
     }
 
-    QStringList connectionServices;
-    connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
-    connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
-    qDBusRegisterMetaType<QNmSettingsMap>();
-
-    foreach (QString service, connectionServices) {
-        QNetworkManagerSettings *settingsiface;
-        settingsiface = new QNetworkManagerSettings(service);
-        QList<QDBusObjectPath> list = settingsiface->listConnections();
-        foreach(QDBusObjectPath path, list) {
-            QNetworkManagerSettingsConnection *sysIface;
-            sysIface = new QNetworkManagerSettingsConnection(service, path.path());
-            QNmSettingsMap map = sysIface->getSettings();
-
-            bool tmOk = false;
-            QMap< QString, QMap<QString,QVariant> >::const_iterator i = map.find("connection");
-            while (i != map.end() && i.key() == "connection") {
-                QMap<QString,QVariant> innerMap = i.value();
-                QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
-                while (ii != innerMap.end() && ii.key() == "id") {
-                    if(ii.value().toString() == q->configuration().name()) {
-                        tmOk = true;
-                    } else
-                        tmOk = false;
-                    ii++;
-                }
-                while (ii != innerMap.end() && ii.key() == "timestamp" && tmOk) {
-                    startTime = QDateTime::fromTime_t(ii.value().toUInt());
-                    //                    isActive = (publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
-                    ii++;
-                    break;
-                }
-                i++;
-            }
-        }
+    QNetworkManagerSettings *settingsiface;
+    settingsiface = new QNetworkManagerSettings(serviceName);
+    QList<QDBusObjectPath> list = settingsiface->listConnections();
+    foreach(QDBusObjectPath path, list) {
+        QNetworkManagerSettingsConnection *sysIface;
+        sysIface = new QNetworkManagerSettingsConnection(serviceName, path.path());
+        bool tmOk = false;
+        startTime = QDateTime::fromTime_t(sysIface->getTimestamp());
+        //                    isActive = (publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
     }
     if(startTime.isNull())
         startTime = QDateTime::currentDateTime();
