@@ -47,6 +47,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+//! [0]
 BearerCloud::BearerCloud(QObject *parent)
 :   QGraphicsScene(parent), timerId(0)
 {
@@ -91,6 +92,7 @@ BearerCloud::BearerCloud(QObject *parent)
 
     QTimer::singleShot(0, this, SLOT(updateConfigurations()));
 }
+//! [0]
 
 BearerCloud::~BearerCloud()
 {
@@ -123,6 +125,7 @@ void BearerCloud::timerEvent(QTimerEvent *)
     }
 }
 
+//! [2]
 void BearerCloud::configurationAdded(const QNetworkConfiguration &config)
 {
     const QNetworkConfiguration::StateFlags state = config.state();
@@ -141,7 +144,9 @@ void BearerCloud::configurationAdded(const QNetworkConfiguration &config)
 
     addItem(item);
 }
+//! [2]
 
+//! [3]
 void BearerCloud::configurationRemoved(const QNetworkConfiguration &config)
 {
     foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
@@ -152,7 +157,9 @@ void BearerCloud::configurationRemoved(const QNetworkConfiguration &config)
     item->setFinalScale(0.0);
     item->setDeleteAfterAnimation(true);
 }
+//! [3]
 
+//! [4]
 void BearerCloud::configurationChanged(const QNetworkConfiguration &config)
 {
     foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
@@ -160,7 +167,9 @@ void BearerCloud::configurationChanged(const QNetworkConfiguration &config)
 
     configStates.insert(config.state(), config.identifier());
 }
+//! [4]
 
+//! [1]
 void BearerCloud::updateConfigurations()
 {
     QList<QNetworkConfiguration> allConfigurations = manager.allConfigurations();
@@ -170,4 +179,5 @@ void BearerCloud::updateConfigurations()
 
     cloudMoved();
 }
+//! [1]
 

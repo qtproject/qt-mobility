@@ -126,5 +126,11 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QNetworkSession}
 \endlist
 
+\section2 Examples
+
+\list
+   \o \l{bearercloud}{Bearer Cloud}
+   \o \l{bearermonitor}{Bearer Monitor}
+\endlist
 
 */

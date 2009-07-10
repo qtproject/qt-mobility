@@ -22,6 +22,10 @@ base                    = file:./doc/html
 defines                 = Q_QDOC \
                           __cplusplus
 
+examples.fileextensions = "*.cpp *.h *.svg"
+exampledirs             = ../../examples \
+                          ../..
+
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
                           QM_EXPORT_DNS \

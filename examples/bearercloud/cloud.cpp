@@ -48,6 +48,7 @@
 
 static QMap<QString, QSvgRenderer *> svgCache;
 
+//! [0]
 Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 :   QGraphicsItem(parent), configuration(config), deleteAfterAnimation(false)
 {
@@ -70,6 +71,7 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 
     newConfigurationActivated();
 }
+//! [0]
 
 Cloud::~Cloud()
 {
@@ -194,6 +196,7 @@ void Cloud::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
 }
 
+//! [4]
 QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     switch (change) {
@@ -206,7 +209,9 @@ QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVari
 
     return QGraphicsItem::itemChange(change, value);
 }
+//! [4]
 
+//! [3]
 void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
@@ -218,7 +223,9 @@ void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         event->accept();
     }
 }
+//! [3]
 
+//! [2]
 void Cloud::stateChanged(QNetworkSession::State state)
 {
     if (configuration.name().isEmpty())
@@ -284,7 +291,9 @@ void Cloud::stateChanged(QNetworkSession::State state)
 
     setToolTip(tooltip);
 }
+//! [2]
 
+//! [1]
 void Cloud::newConfigurationActivated()
 {
     const QString bearerName = session->bearerName();
@@ -317,6 +326,7 @@ void Cloud::newConfigurationActivated()
 
     stateChanged(session->state());
 }
+//! [1]
 
 qreal Cloud::getRadiusForState(QNetworkConfiguration::StateFlags state)
 {
