@@ -36,8 +36,10 @@
 #include "qnetworksessionengine_p.h"
 #include "qgenericengine_p.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include "qnlaengine_win_p.h"
+#endif
+#ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
 #include "qioctlwifiengine_win_p.h"
 #endif
