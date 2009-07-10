@@ -81,6 +81,9 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         friend class DatabaseFileWatcher;
         DatabaseFileWatcher *m_fileWatcher;
         QServiceInterfaceDescriptor latestDescriptor(const QList<QServiceInterfaceDescriptor> &descriptors);
+
+        bool m_hasAccessedUserDb;
+        bool m_alreadyWarnedOpenError;
 };
 
 

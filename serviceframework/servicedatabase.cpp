@@ -105,8 +105,7 @@ void DBError::setError(ErrorCode error, const QString &text)
         case(IfaceIDNotExternal):
         case(InvalidDatabaseFile):
         case(NoWritePermissions):
-        case(CannotOpenSystemDb):
-        case(CannotOpenUserDb):
+        case(CannotOpenServiceDb):
             m_text = text;
             break;
         default:

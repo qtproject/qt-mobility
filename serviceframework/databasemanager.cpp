@@ -235,7 +235,9 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
 DatabaseManager::DatabaseManager()
     : m_userDb(new ServiceDatabase),
       m_systemDb(new ServiceDatabase),
-      m_fileWatcher(0)
+      m_fileWatcher(0),
+      m_hasAccessedUserDb(false),
+      m_alreadyWarnedOpenError(false)
 {
     initDbPath(UserScope);
     initDbPath(SystemScope);
@@ -405,9 +407,6 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
             //openDb() should already have handled lastError
             descriptors.clear();
             return descriptors;
-        } else { //scope ==UserScope
-            qWarning() << "Service Framework: search operation could not be performed on system scope database:"
-                << qPrintable(m_systemDb->databasePath());
         }
     }
 
@@ -458,9 +457,6 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
             //openDb() should have already handled lastError
             serviceNames.clear();
             return serviceNames;
-        } else { //scope == UserScope
-            qWarning() << "Service Framework: search operation could not be performed on system scope database:"
-                << qPrintable(m_systemDb->databasePath());
         }
     }
 
@@ -662,7 +658,6 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
     }
 }
 
-
 /*
     Opens a database connection with the database at a specific \a scope.
 
@@ -674,45 +669,59 @@ bool DatabaseManager::openDb(DbScope scope)
         delete m_systemDb;
         m_systemDb = new ServiceDatabase;
         initDbPath(SystemScope);
+        m_alreadyWarnedOpenError = false;
     } else if (scope != SystemScope && m_userDb->isOpen() && !QFile::exists(m_userDb->databasePath())) {
         delete m_userDb;
         m_userDb = new ServiceDatabase;
         initDbPath(UserScope);
+        m_alreadyWarnedOpenError = false;
     }
 
     ServiceDatabase *db;
-    if (scope == SystemScope)
+    if (scope == SystemScope) {
         db = m_systemDb;
-    else
+    }
+    else {
         db = m_userDb;
+        m_hasAccessedUserDb = true;
+    }
 
     if (db->isOpen())
         return true;
 
     bool isOpen = db->open();
     if (!isOpen) {
-        if (db->lastError().code() == DBError::InvalidDatabaseFile) {
-            qWarning() << "Service Framework:- Database file is corrupt or invalid:" << db->databasePath();
-            m_lastError = db->lastError();
-        } else {
-            DBError::ErrorCode errorType;
-            if (scope == SystemScope) {
-                errorType = DBError::CannotOpenSystemDb;
-            }
-            else {
-                qWarning() << "Service Framework:- Unable to open or create user scope database at: "
-                    << db->databasePath() << ".  The problem is most likely a permissions issue.";
-                errorType = DBError::CannotOpenUserDb;
-            }
-
-            QString errorText("Unable to open service framework database: %1");
-            m_lastError.setError(errorType,
-                        errorText.arg(db->databasePath()));
-        }
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "DatabaseManger::openDb():-"
                     << "Problem:" << qPrintable(m_lastError.text());
 #endif
+        if (scope == SystemScope && m_hasAccessedUserDb == true) {
+                if (QFile::exists(m_systemDb->databasePath()) && !m_alreadyWarnedOpenError)
+                    qWarning() << "Service Framework:- Unable to access system database for a user scope "
+                        "operation; resorting to using only the user database.  Future operations "
+                        "will attempt to access the system database but no further warnings will be issued";
+        }
+
+        QString warning;
+        if (db->lastError().code() == DBError::InvalidDatabaseFile) {
+            warning = QString("Service Framework:- Database file is corrupt or invalid: ") + db->databasePath();
+            m_lastError = db->lastError();
+        } else {
+            warning = QString("Service Framework:- Unable to open or create database at: ") +  db->databasePath();
+            QString errorText("Unable to open service framework database: %1");
+            m_lastError.setError(DBError::CannotOpenServiceDb,
+                errorText.arg(db->databasePath()));
+        }
+
+        if (m_alreadyWarnedOpenError
+                || (scope == SystemScope && m_hasAccessedUserDb && !QFile::exists(m_systemDb->databasePath()))) {
+            //do nothing, don't output warning if already warned or we're accessing the system database
+            //from user scope and the system database doesn't exist
+        } else {
+            qWarning() << qPrintable(warning);
+            m_alreadyWarnedOpenError = true;
+        }
+
         return false;
     }
 

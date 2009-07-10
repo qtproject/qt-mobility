@@ -125,8 +125,7 @@ public:
             case DBError::DatabaseNotOpen:
             case DBError::InvalidDatabaseConnection:
             case DBError::CannotCreateDbDir:
-            case DBError::CannotOpenSystemDb:
-            case DBError::CannotOpenUserDb:
+            case DBError::CannotOpenServiceDb:
             case DBError::NoWritePermissions:
             case DBError::InvalidDatabaseFile:
                 error = QServiceManager::StorageAccessError;

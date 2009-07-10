@@ -59,8 +59,7 @@ class DBError
             SqlError,               //An Sql error occurred.
             IfaceIDNotExternal,     //InterfaceID does not refer to an external interface implementation
             CannotCreateDbDir,      //Directory to contain database could not be created(usu a permissions issue)
-            CannotOpenSystemDb,     //system database cannot be opened(usually a permissions issue)
-            CannotOpenUserDb,       //user database cannot be opened (usually a permissions issue)
+            CannotOpenServiceDb,     //service database cannot be opened(usually a permissions issue)
             ExternalIfaceIDFound,   //Notification for interfaceDefault() on a user scope database
                                     //  to indicate that a default refers to an interface implementation in the
                                     //  system scope database
