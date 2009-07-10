@@ -52,7 +52,23 @@
  * \sa QContactManager
  */
 
-/*! Constructs a new, empty QContactManagerInfo object */
+/*!
+ * \enum QContactManagerInfo::ManagerFeature
+ * This enum describes the possible features that a particular manager may support
+ * \value Synchronous The manager supports the synchronous API
+ * \value Asynchronous The manager supports the asynchronous API
+ * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+ * \value Locking The manager supports database locking and unlocking operations
+ * \value Batch The manager supports batch contact saving, and emits the appropriate signals
+ * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value ReadOnlyDetails The manager supports the creation of details which are then read-only, and performs validation on such details on save
+ * \value CreateOnlyDetails The manager supports the creation of details which are create-only, and performs validation on such details on save
+ * \value MutableDefinitions The manager suppotrs saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
+ * \value NativeFiltering The manager supports native filtering of some description
+ * \value NativeSorting The manager supports native sorting of some description
+ */
+
+/*! Constructs a new, empty information object */
 QContactManagerInfo::QContactManagerInfo()
     : d(new QContactManagerInfoPrivate)
 {
@@ -80,16 +96,11 @@ QContactManagerInfo& QContactManagerInfo::operator=(const QContactManagerInfo& o
 }
 
 /*!
- * Returns a list of supported capabilities which are supported by
- * the manager associated with this object.
- *
- * TODO add link to schema.
+ * Returns true if the given \a feature is supported by the manager from whom this information object was received.
  */
-QStringList QContactManagerInfo::capabilities() const
+bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    if (d->m_managerdata)
-        return d->m_engine->capabilities();
-    return QStringList();
+    return d->m_features.contains(feature);
 }
 
 /*!

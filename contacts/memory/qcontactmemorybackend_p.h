@@ -57,6 +57,7 @@
 #include "qcontactmanager.h"
 #include "qcontactdetaildefinition.h"
 
+class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
 {
 public:

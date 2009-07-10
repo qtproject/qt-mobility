@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+
 #ifndef QCONTACTMANAGER_H
 #define QCONTACTMANAGER_H
 

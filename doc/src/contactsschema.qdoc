@@ -54,46 +54,46 @@ leaf-classes) to provide clients with the best user-experience on the target pla
 \section3 QContactManagerInfo features
 \table
 \header
-    \o Feature Identifier
+    \o QContactManagerInfo::ManagerFeature
     \o Description
 \row
-    \o "Groups"
+    \o QContactManagerInfo::Groups
     \o This backend supports all QContactGroup related operations, and emits the appropriate signals
 \row
-    \o "Locking"
+    \o QContactManagerInfo::Locking
     \o This backend supports database locking and unlocking operations
 \row
-    \o "Batch"
+    \o QContactManagerInfo::Batch
     \o This backend supports batch contact saving and loading, and emits the appropriate signals
 \row
-    \o "ReadOnly"
+    \o QContactManagerInfo::ReadOnlyDetails
     \o This backend supports read-only contact details, and performs validation on such details on save
 \row
-    \o "CreateOnly"
+    \o QContactManagerInfo::CreateOnlyDetails
     \o This backend supports create-only contact details, and performs validation on such details on save
 \row
-    \o "MutableDefinitions"
+    \o QContactManagerInfo::MutableDefinitions
     \o This backend supports saving, updating or removing detail definitions.  Some built in definitions may still be immutable.
 \row
-    \o "Filtering"
+    \o QContactManagerInfo::NativeFiltering
     \o This backend supports native filtering of some form
 \row
-    \o "Sorting"
+    \o QContactManagerInfo::NativeSorting
     \o This backend supports native sorting of some form
 \row
-    \o "Preferences"
+    \o QContactManagerInfo::ActionPreferences
     \o This backend supports saving preferred details per action per contact
 \row
-    \o "Asynchronous"
+    \o QContactManagerInfo::Asynchronous
     \o This backend supports the asynchronous API
 \row
-    \o "Synchronous"
+    \o QContactManagerInfo::Synchronous
     \o This backend supports the synchronous API
 \endtable
-Note that if a backend completely supports the feature set identified by the feature string,
-it should include the feature string in its list of supported features, but if a backend
-does not completely support the feature set identified by the feature string it must not
-include the feature string in its list of supported features.
+Note that if a backend completely supports the feature set identified by the QContactManagerInfo::ManagerFeature,
+it should include the feature in its list of supported features, but if a backend
+does not completely support the feature set identified by the QContactManagerInfo::ManagerFeature then it must not
+include the feature in its list of supported features.
 
 \section3 Access constraints
 \table
