@@ -87,6 +87,9 @@ public:
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
 
+    /* Is this an empty contact? */
+    bool isEmpty() const;
+
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;

@@ -82,6 +82,18 @@ QContact::QContact(const QContact& other)
 {
 }
 
+/*!
+ * Returns true if this QContact is empty, false if not.
+ *
+ * An empty QContact has no fields.
+ */
+bool QContact::isEmpty() const
+{
+    if (d->m_details.count() == 0)
+        return true;
+    return false;
+}
+
 /*! Replace the contents of this QContact with \a other */
 QContact& QContact::operator=(const QContact& other)
 {
