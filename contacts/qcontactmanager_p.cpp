@@ -372,12 +372,6 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
 }
 
 /*!
- * \fn QContactManagerEngine::capabilities() const
- *
- * Returns the capability flags of this engine as a stringlist.
- */
-
-/*!
  * Returns true if the given \a feature is supported by this engine
  */
 bool QContactManagerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const

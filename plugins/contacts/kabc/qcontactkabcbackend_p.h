@@ -140,7 +140,6 @@ public:
     bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
 
     /* Capabilities reporting */
-    QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
 

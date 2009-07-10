@@ -60,8 +60,6 @@ class QContactInvalidEngine : public QContactManagerEngine
 public:
     QContactInvalidEngine();
     void deref();
-    /* Capabilities reporting */
-    QStringList capabilities() const;
 };
 
 #endif

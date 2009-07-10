@@ -419,16 +419,6 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
     return false;
 }
 
-/*! Returns the capabilities of the in-memory engine. */
-QStringList QContactMemoryEngine::capabilities() const
-{
-    QStringList caplist;
-    caplist << "Groups" << "Locking" << "Batch" << "MutableDefinitions" << "Filtering" << "Sorting" << "Preferences";
-    // ie, doesn't support: Changelog, Volatile, Asynchronous.
-    return caplist;
-}
-
-
 /*!
  * Returns a list of definition identifiers which are natively (fast) filterable
  * on the default backend store managed by the manager from which the capabilities object was accessed

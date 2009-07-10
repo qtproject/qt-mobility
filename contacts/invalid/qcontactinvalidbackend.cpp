@@ -51,9 +51,3 @@ void QContactInvalidEngine::deref()
 {
     delete this;
 }
-
-/*! Returns the capabilities of the invalid engine, which is always an empty list */
-QStringList QContactInvalidEngine::capabilities() const
-{
-    return QStringList();
-}

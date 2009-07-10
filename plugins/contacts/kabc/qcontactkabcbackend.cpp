@@ -618,16 +618,6 @@ bool QContactKabcEngine::removeDetailDefinition(const QContactDetailDefinition& 
     return success;
 }
 
-
-/*! Returns the capabilities of the in-memory engine. */
-QStringList QContactKabcEngine::capabilities() const
-{
-    QStringList caplist;
-    caplist << "Locking" << "Batch" << "MutableDefinitions" << "Filtering" << "Sorting" << "Preferences";
-    // ie, doesn't support: Changelog, Volatile, Asynchronous.
-    return caplist;
-}
-
 /*!
  * Returns a list of definition identifiers which are natively (fast) filterable
  * on the default backend store managed by the manager from which the capabilities object was accessed
