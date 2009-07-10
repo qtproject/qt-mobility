@@ -33,6 +33,7 @@
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <QVariant>
+#include <QProcess>
 #include "qvaluespace.h"
 #include <unistd.h>
 
@@ -83,6 +84,7 @@ private slots:
     void contentsChanged_data();
     void contentsChanged();
     void value();
+    void ipcTests();
 };
 
 void tst_QValueSpaceItem::initTestCase()
@@ -650,6 +652,21 @@ void tst_QValueSpaceItem::contentsChanged()
     QTRY_COMPARE(spy.count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
+    spy.clear();
+
+    //removing the item triggers signal
+    busy->removeAttribute("alex/busy");
+    busy->sync();
+    QTRY_COMPARE(spy.count(), should_emit_signal);
+    QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
+
+    spy.clear();
+    busy->setAttribute("alex/busy", new_value);
+    busy->sync();
+
+    QTRY_COMPARE(spy.count(), should_emit_signal);
+    QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
+
     delete listener;
 }
 
@@ -692,5 +709,41 @@ void tst_QValueSpaceItem::value()
 
 }
 
+void tst_QValueSpaceItem::ipcTests()
+{
+#if defined(QT_NO_PROCESS)
+    QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
+#else
+    QValueSpaceItem item ("/usr/lackey/subdir/value");
+    ChangeListener* listener = new ChangeListener();
+    QSignalSpy spy(listener, SIGNAL(baseChanged()));
+    connect(&item, SIGNAL(contentsChanged()),listener, SIGNAL(baseChanged()));
+
+    QProcess process;
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    process.start("./vsiTestLackey");
+    QVERIFY(process.waitForStarted());
+
+    //lackey sets 100 as part of its startup
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(item.value("", 99).toInt(), 100);
+    spy.clear();
+
+    //lackey sets 101
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(item.value("", 99).toInt(), 101);
+    spy.clear();
+
+    //item was removed -> returns default
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(item.value("", 99).toInt(), 99);
+    spy.clear();
+
+    //lackey sets 102
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(item.value("", 99).toInt(), 102);
+    spy.clear();
+#endif
+}
 QTEST_MAIN(tst_QValueSpaceItem)
 #include "tst_qvaluespaceitem.moc"
