@@ -41,14 +41,10 @@
 
 #include "qtcontactsglobal.h"
 
-class QContactManagerInfoPrivate;
+class QContactManagerData;
 class QTCONTACTS_EXPORT QContactManagerInfo
 {
 public:
-    ~QContactManagerInfo();
-
-    QContactManagerInfo(const QContactManagerInfo& other);
-
     enum ManagerFeature {
         Synchronous = 0,
         Asynchronous,
@@ -68,14 +64,19 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:
+    /* Can't instantiate apart from through manager */
+    QContactManagerInfo();
+    Q_DISABLE_COPY(QContactManagerInfo);
+
+    /* Can't delete except via the manager either */
+    ~QContactManagerInfo();
+
+    /* can't compare either */
     bool operator==(const QContactManagerInfo& other) const;
     bool operator!=(const QContactManagerInfo& other) const;
 
-private:
     friend class QContactManager;
-    QContactManagerInfo();
-    QContactManagerInfo& operator=(const QContactManagerInfo& other);
-    QSharedDataPointer<QContactManagerInfoPrivate> d;
+    QContactManagerData * d;
 };
 
 #endif

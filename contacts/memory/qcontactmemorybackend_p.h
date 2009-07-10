@@ -89,8 +89,6 @@ public:
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
     QUniqueId m_nextContactId;
     QUniqueId m_nextGroupId;
-
-    static QContactManagerInfoPrivate* m_caps;
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine

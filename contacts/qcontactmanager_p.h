@@ -147,7 +147,8 @@ class QContactManagerData
 public:
     QContactManagerData()
         : m_engine(0),
-        m_error(QContactManager::NoError)
+        m_error(QContactManager::NoError),
+        m_info(0)
     {
     }
 
@@ -156,7 +157,8 @@ public:
         m_managerId(other.m_managerId),
         m_params(other.m_params),
         m_uri(other.m_uri),
-        m_error(QContactManager::NoError)
+        m_error(QContactManager::NoError),
+        m_info(0)
     {
         // paranoid check instead:
         // if(other.m_engine) m_engine = other.m_engine->clone();
@@ -167,6 +169,7 @@ public:
     {
         if (m_engine)
             m_engine->deref();
+        // We rely on the owning manager to delete m_info
     }
 
     void createEngine(const QString& managerId, const QMap<QString, QString>& parameters);
@@ -177,6 +180,9 @@ public:
     QString m_uri;
 
     QContactManager::Error m_error;
+
+    /* Information object */
+    QContactManagerInfo *m_info;
 
     /* Manager plugins */
     static QMap<QString, QContactManagerEngineFactory*> m_engines;

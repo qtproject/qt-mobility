@@ -36,7 +36,6 @@ HEADERS += \
         qcontactmanager.h \
         qcontactmanager_p.h \
         qcontactmanagerinfo.h \
-        qcontactmanagerinfo_p.h \
         qcontacts_p.h \
         qcontactsynctarget.h \
         qcontacturl.h \

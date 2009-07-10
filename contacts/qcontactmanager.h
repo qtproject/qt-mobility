@@ -121,7 +121,7 @@ public:
     QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp) const;
 
     /* Functionality reporting */
-    QContactManagerInfo information() const;
+    QContactManagerInfo* information() const;
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
@@ -137,7 +137,7 @@ signals:
 private:
     Q_DISABLE_COPY(QContactManager)
     // private data pointer
-    QSharedPointer<QContactManagerData> d;
+    QContactManagerData* d;
 };
 
 #endif

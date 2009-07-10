@@ -404,7 +404,7 @@ void tst_QContactManager::groups()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    if (cm->information().hasFeature(QContactManagerInfo::Groups)) {
+    if (cm->information()->hasFeature(QContactManagerInfo::Groups)) {
         /* Positive testing */
 
         /* Test adding a null doesn't crash, before we do anything else */
@@ -947,20 +947,20 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Capabilities */
-    QContactManagerInfo info = manager.information();
-    QVERIFY(info.fastFilterableDefinitions().count() == 0);
-    QVERIFY(info.supportedDataTypes().count() == 0);
-    QVERIFY(!info.hasFeature(QContactManagerInfo::Groups));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::Locking));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::Batch));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::ActionPreferences));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::ReadOnlyDetails));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::CreateOnlyDetails));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::MutableDefinitions));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::NativeFiltering));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::NativeSorting));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::Synchronous));
-    QVERIFY(!info.hasFeature(QContactManagerInfo::Asynchronous));
+    QContactManagerInfo* info = manager.information();
+    QVERIFY(info->fastFilterableDefinitions().count() == 0);
+    QVERIFY(info->supportedDataTypes().count() == 0);
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Groups));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Locking));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Batch));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::ActionPreferences));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::ReadOnlyDetails));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::CreateOnlyDetails));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::MutableDefinitions));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeFiltering));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Synchronous));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
 }
 
 void tst_QContactManager::memoryManager()
@@ -1326,14 +1326,14 @@ void tst_QContactManager::detailDefinitions()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    QContactManagerInfo info = cm->information();
+    QContactManagerInfo* info = cm->information();
     QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
     QContactDetailDefinition::Field field;
     QMap<QString, QContactDetailDefinition::Field> fields;
-    field.dataType = info.supportedDataTypes().value(0);
+    field.dataType = info->supportedDataTypes().value(0);
     fields.insert("New Value", field);
     newDef.setId("New Definition");
     newDef.setFields(fields);
@@ -1389,7 +1389,7 @@ void tst_QContactManager::detailDefinitions()
 
     /* XXX Multiply defined fields.. depends on semantics. */
 
-    if (info.hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (info->hasFeature(QContactManagerInfo::MutableDefinitions)) {
         /* First do some negative testing */
 
         /* Bad add class */

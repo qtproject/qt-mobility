@@ -32,7 +32,6 @@
 ****************************************************************************/
 
 #include "qcontactmanagerinfo.h"
-#include "qcontactmanagerinfo_p.h"
 
 #include "qcontactmanager_p.h"
 
@@ -47,7 +46,7 @@
  * and what capabilities the manager supports.
  *
  * If the manager that provided an information object is subsequently destroyed, the
- * QContactManagerInfo object will report empty information.
+ * returned QContactManagerInfo object will be invalid.
  *
  * \sa QContactManager
  */
@@ -68,31 +67,14 @@
  * \value NativeSorting The manager supports native sorting of some description
  */
 
-/*! Constructs a new, empty information object */
-QContactManagerInfo::QContactManagerInfo()
-    : d(new QContactManagerInfoPrivate)
-{
-}
-
 /*! Frees the memory used by this instance */
 QContactManagerInfo::~QContactManagerInfo()
 {
 }
 
-/*! Constructs a new QContactManagerInfo object from the existing \a other object. */
-QContactManagerInfo::QContactManagerInfo(const QContactManagerInfo& other)
-    : d(other.d)
+/*! \internal */
+QContactManagerInfo::QContactManagerInfo()
 {
-
-}
-
-/*! Assigns the existing QContactManagerInfo object \a other to this object */
-QContactManagerInfo& QContactManagerInfo::operator=(const QContactManagerInfo& other)
-{
-    if (this != &other) {
-        d = other.d;
-    }
-    return *this;
 }
 
 /*!
@@ -100,9 +82,7 @@ QContactManagerInfo& QContactManagerInfo::operator=(const QContactManagerInfo& o
  */
 bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    if (d->m_managerdata)
-        return d->m_engine->hasFeature(feature);
-    return false;
+    return d->m_engine->hasFeature(feature);
 }
 
 /*!
@@ -111,9 +91,7 @@ bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature
  */
 QStringList QContactManagerInfo::fastFilterableDefinitions() const
 {
-    if (d->m_managerdata)
-        return d->m_engine->fastFilterableDefinitions();
-    return QStringList();
+    return d->m_engine->fastFilterableDefinitions();
 }
 
 /*!
@@ -122,7 +100,5 @@ QStringList QContactManagerInfo::fastFilterableDefinitions() const
  */
 QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 {
-    if (d->m_managerdata)
-        return d->m_engine->supportedDataTypes();
-    return QList<QVariant::Type>();
+    return d->m_engine->supportedDataTypes();
 }

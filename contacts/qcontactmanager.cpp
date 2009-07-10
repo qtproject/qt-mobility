@@ -39,7 +39,6 @@
 #include "qcontactmanager_p.h"
 
 #include "qcontactmanagerinfo.h"
-#include "qcontactmanagerinfo_p.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -218,6 +217,8 @@ QContactManager::QContactManager(const QString& managerId, const QMap<QString, Q
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
+    delete d->m_info;
+    delete d;
 }
 
 /*!
@@ -393,12 +394,13 @@ bool QContactManager::removeDetailDefinition(const QString& definitionId)
 
     \sa QContactManagerInfo
  */
-QContactManagerInfo QContactManager::information() const
+QContactManagerInfo* QContactManager::information() const
 {
-    QContactManagerInfo caps;
-    caps.d->m_managerdata = d; // Tie the lifetime of the caps to our d pointer
-    caps.d->m_engine = d->m_engine;
-    return caps;
+    if (!d->m_info) {
+        d->m_info = new QContactManagerInfo;
+        d->m_info->d = d;
+    }
+    return d->m_info;
 }
 
 /*! Returns the manager id for this QContactManager */
