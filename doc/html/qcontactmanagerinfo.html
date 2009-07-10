@@ -17,13 +17,16 @@
 <pre>    #include &lt;QContactManagerInfo&gt;</pre><ul>
 <li><a href="qcontactmanagerinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"/>enum <b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Synchronous, Asynchronous, Groups, Locking, ..., NativeSorting }</li>
+</ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qcontactmanagerinfo.html#QContactManagerInfo">QContactManagerInfo</a></b> ( const QContactManagerInfo &amp; <i>other</i> )</li>
-<li><div class="fn"/><b><a href="qcontactmanagerinfo.html#dtor.QContactManagerInfo">~QContactManagerInfo</a></b> ()</li>
-<li><div class="fn"/>QStringList <b><a href="qcontactmanagerinfo.html#capabilities">capabilities</a></b> () const</li>
 <li><div class="fn"/>QStringList <b><a href="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qcontactmanagerinfo.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
 <li><div class="fn"/>QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
 </ul>
 <a name="details"></a>
@@ -31,19 +34,32 @@
 <h2>Detailed Description</h2>
 <p>The QContactManagerInfo class provides information about a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>This class allows managers to report information about their supported functionality to clients. The supported functionality of a manager includes which data types the backend supports, which definitions are natively filterable in the backend (and thus are high performance), and what capabilities the manager supports.</p>
-<p>If the manager that provided an information object is subsequently destroyed, the QContactManagerInfo object will report empty information.</p>
+<p>If the manager that provided an information object is subsequently destroyed, the returned QContactManagerInfo object will be invalid.</p>
 <p>See also <a href="qcontactmanager.html">QContactManager</a>.</p>
 <hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="ManagerFeature-enum"></a>enum QContactManagerInfo::ManagerFeature</h3>
+<p>This enum describes the possible features that a particular manager may support</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Synchronous</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports the synchronous API</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Asynchronous</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager supports the asynchronous API</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Groups</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports all <a href="qcontactgroup.html">QContactGroup</a> related operations, and emits the appropriate signals</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Locking</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports database locking and unlocking operations</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Batch</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager supports batch contact saving, and emits the appropriate signals</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ActionPreferences</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The manager supports saving preferred details per action per contact</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ReadOnlyDetails</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The manager supports the creation of details which are then read-only, and performs validation on such details on save</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::CreateOnlyDetails</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The manager supports the creation of details which are create-only, and performs validation on such details on save</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::MutableDefinitions</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The manager suppotrs saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::NativeFiltering</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The manager supports native filtering of some description</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::NativeSorting</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">The manager supports native sorting of some description</td></tr>
+</table></p>
+<hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactManagerInfo"></a>QContactManagerInfo::QContactManagerInfo ( const QContactManagerInfo &amp; <i>other</i> )</h3>
-<p>Constructs a new <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> object from the existing <i>other</i> object.</p>
-<h3 class="fn"><a name="dtor.QContactManagerInfo"></a>QContactManagerInfo::~QContactManagerInfo ()</h3>
-<p>Frees the memory used by this instance</p>
-<h3 class="fn"><a name="capabilities"></a>QStringList QContactManagerInfo::capabilities () const</h3>
-<p>Returns a list of supported capabilities which are supported by the manager associated with this object.</p>
-<p>TODO add link to schema.</p>
 <h3 class="fn"><a name="fastFilterableDefinitions"></a>QStringList QContactManagerInfo::fastFilterableDefinitions () const</h3>
 <p>Returns a list of definition identifiers which are natively (fast) filterable by the manager associated with this object.</p>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactManagerInfo::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const</h3>
+<p>Returns true if the given <i>feature</i> is supported by the manager from whom this information object was received.</p>
 <h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerInfo::supportedDataTypes () const</h3>
 <p>Returns the list of data types supported by the manager associated with this object.</p>
 <p /><address><hr /><div align="center">

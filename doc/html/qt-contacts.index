@@ -37,9 +37,6 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidEngine" href="qcontactinvalidengine.html" location="qcontactinvalidbackend_p.h" bases="QContactManagerEngine" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidEngine" fullname="QContactInvalidEngine::QContactInvalidEngine" href="qcontactinvalidengine.html#QContactInvalidEngine" location="qcontactinvalidbackend_p.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactInvalidEngine()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clone" fullname="QContactInvalidEngine::clone" href="qcontactinvalidengine.html#clone" location="qcontactinvalidbackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="clone()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="deref" fullname="QContactInvalidEngine::deref" href="qcontactinvalidengine.html#deref" location="qcontactinvalidbackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="deref()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QContactInvalidEngine::capabilities" href="qcontactinvalidengine.html#capabilities" location="qcontactinvalidbackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"></function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGuid" href="qcontactguid.html" location="qcontactguid.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionId" fullname="QContactGuid::DefinitionId" href="qcontactguid.html#DefinitionId-var" location="qcontactguid.h" type="const QString" static="true"></variable>
@@ -150,7 +147,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="groupsRemovedSince" fullname="QContactManager::groupsRemovedSince" href="qcontactmanager.html#groupsRemovedSince" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="groupsRemovedSince(const QDateTime &amp; timestamp) const">
                 <parameter left="const QDateTime &amp;" right="" name="timestamp" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="information" fullname="QContactManager::information" href="qcontactmanager.html#information" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactManagerInfo" signature="information() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="information" fullname="QContactManager::information" href="qcontactmanager.html#information" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactManagerInfo *" signature="information() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="availableManagers" fullname="QContactManager::availableManagers" href="qcontactmanager.html#availableManagers" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableManagers()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactsAdded" fullname="QContactManager::contactsAdded" href="qcontactmanager.html#contactsAdded" location="qcontactmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contactsAdded(const QList&lt;QUniqueId&gt; &amp; contactIds)">
                 <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="contactIds" default=""></parameter>
@@ -220,11 +217,22 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactManagerInfo" href="qcontactmanagerinfo.html" location="qcontactmanagerinfo.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerInfo" fullname="QContactManagerInfo::~QContactManagerInfo" href="qcontactmanagerinfo.html#dtor.QContactManagerInfo" location="qcontactmanagerinfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerInfo()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactManagerInfo" fullname="QContactManagerInfo::QContactManagerInfo" href="qcontactmanagerinfo.html#QContactManagerInfo" location="qcontactmanagerinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactManagerInfo(const QContactManagerInfo &amp; other)">
-                <parameter left="const QContactManagerInfo &amp;" right="" name="other" default=""></parameter>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ManagerFeature" fullname="QContactManagerInfo::ManagerFeature" href="qcontactmanagerinfo.html#ManagerFeature-enum" location="qcontactmanagerinfo.h">
+                <value name="Synchronous" value="0"></value>
+                <value name="Asynchronous" value="1"></value>
+                <value name="Groups" value="2"></value>
+                <value name="Locking" value="3"></value>
+                <value name="Batch" value="4"></value>
+                <value name="ActionPreferences" value="5"></value>
+                <value name="ReadOnlyDetails" value="6"></value>
+                <value name="CreateOnlyDetails" value="7"></value>
+                <value name="MutableDefinitions" value="8"></value>
+                <value name="NativeFiltering" value="9"></value>
+                <value name="NativeSorting" value="10"></value>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactManagerInfo::hasFeature" href="qcontactmanagerinfo.html#hasFeature" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManagerInfo::ManagerFeature feature) const">
+                <parameter left="QContactManagerInfo::ManagerFeature" right="" name="feature" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QContactManagerInfo::capabilities" href="qcontactmanagerinfo.html#capabilities" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="fastFilterableDefinitions" fullname="QContactManagerInfo::fastFilterableDefinitions" href="qcontactmanagerinfo.html#fastFilterableDefinitions" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="fastFilterableDefinitions() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactManagerInfo::supportedDataTypes" href="qcontactmanagerinfo.html#supportedDataTypes" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"></function>
         </class>
@@ -331,7 +339,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="createMemoryEngine" fullname="QContactMemoryEngine::createMemoryEngine" href="qcontactmemoryengine.html#createMemoryEngine" location="qcontactmemorybackend_p.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactMemoryEngine *" signature="createMemoryEngine(const QMap&lt;QString, QString&gt; &amp; parameters)">
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QContactMemoryEngine::capabilities" href="qcontactmemoryengine.html#capabilities" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactMemoryEngine::hasFeature" href="qcontactmemoryengine.html#hasFeature" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManagerInfo::ManagerFeature feature) const">
+                <parameter left="QContactManagerInfo::ManagerFeature" right="" name="feature" default=""></parameter>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="fastFilterableDefinitions" fullname="QContactMemoryEngine::fastFilterableDefinitions" href="qcontactmemoryengine.html#fastFilterableDefinitions" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="fastFilterableDefinitions() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactMemoryEngine::supportedDataTypes" href="qcontactmemoryengine.html#supportedDataTypes" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"></function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QContactMemoryEngine" fullname="QContactMemoryEngine::QContactMemoryEngine" href="qcontactmemoryengine.html#QContactMemoryEngine" location="qcontactmemorybackend_p.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactMemoryEngine(const QMap&lt;QString, QString&gt; &amp; parameters)">
@@ -485,8 +495,6 @@
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngine" href="qcontactmanagerengine.html" location="qcontactmanager_p.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactManagerEngine" fullname="QContactManagerEngine::QContactManagerEngine" href="qcontactmanagerengine.html#QContactManagerEngine" location="qcontactmanager_p.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactManagerEngine()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerEngine" fullname="QContactManagerEngine::~QContactManagerEngine" href="qcontactmanagerengine.html#dtor.QContactManagerEngine" location="qcontactmanager_p.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerEngine()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clone" fullname="QContactManagerEngine::clone" href="qcontactmanagerengine.html#clone" location="qcontactmanager_p.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="clone()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="deref" fullname="QContactManagerEngine::deref" href="qcontactmanagerengine.html#deref" location="qcontactmanager_p.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="deref()"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QContactManagerEngine::contacts" href="qcontactmanagerengine.html#contacts" location="qcontactmanager_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="contacts(QContactManager::Error &amp; error) const">
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""></parameter>
@@ -585,7 +593,9 @@
                 <parameter left="const QDateTime &amp;" right="" name="timestamp" default=""></parameter>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""></parameter>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QContactManagerEngine::capabilities" href="qcontactmanagerengine.html#capabilities" location="qcontactmanager_p.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactManagerEngine::hasFeature" href="qcontactmanagerengine.html#hasFeature" location="qcontactmanager_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManagerInfo::ManagerFeature feature) const">
+                <parameter left="QContactManagerInfo::ManagerFeature" right="" name="feature" default=""></parameter>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="fastFilterableDefinitions" fullname="QContactManagerEngine::fastFilterableDefinitions" href="qcontactmanagerengine.html#fastFilterableDefinitions" location="qcontactmanager_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="fastFilterableDefinitions() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactManagerEngine::supportedDataTypes" href="qcontactmanagerengine.html#supportedDataTypes" location="qcontactmanager_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="schemaDefinitions" fullname="QContactManagerEngine::schemaDefinitions" href="qcontactmanagerengine.html#schemaDefinitions" location="qcontactmanager_p.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMap&lt;QString, QContactDetailDefinition&gt;" signature="schemaDefinitions()"></function>
@@ -720,7 +730,7 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
-            <contents name="functionality-reporting" title="Functionality reporting" level="2"></contents>
+            <contents name="manager-information-and-functionality-reporting" title="Manager information and functionality reporting" level="2"></contents>
             <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"></contents>
             <contents name="examples" title="Examples" level="2"></contents>
         </page>

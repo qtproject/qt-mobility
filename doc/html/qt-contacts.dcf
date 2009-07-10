@@ -203,9 +203,6 @@
     </section>
     <section ref="qcontactinvalidengine.html" title="QContactInvalidEngine Class Reference">
         <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
-        <keyword ref="qcontactinvalidengine.html#capabilities">capabilities</keyword>
-        <keyword ref="qcontactinvalidengine.html#clone">clone</keyword>
-        <keyword ref="qcontactinvalidengine.html#deref">deref</keyword>
         <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanager.html" title="QContactManager Class Reference">
@@ -263,8 +260,6 @@
     </section>
     <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
         <keyword ref="qcontactmanagerengine.html">QContactManagerEngine</keyword>
-        <keyword ref="qcontactmanagerengine.html#capabilities">capabilities</keyword>
-        <keyword ref="qcontactmanagerengine.html#clone">clone</keyword>
         <keyword ref="qcontactmanagerengine.html#contact">contact</keyword>
         <keyword ref="qcontactmanagerengine.html#contacts">contacts</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsAdded">contactsAdded</keyword>
@@ -287,6 +282,7 @@
         <keyword ref="qcontactmanagerengine.html#groupsModifiedSince">groupsModifiedSince</keyword>
         <keyword ref="qcontactmanagerengine.html#groupsRemoved">groupsRemoved</keyword>
         <keyword ref="qcontactmanagerengine.html#groupsRemovedSince">groupsRemovedSince</keyword>
+        <keyword ref="qcontactmanagerengine.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmanagerengine.html#removeContact">removeContact</keyword>
         <keyword ref="qcontactmanagerengine.html#removeContacts">removeContacts</keyword>
         <keyword ref="qcontactmanagerengine.html#removeDetailDefinition">removeDetailDefinition</keyword>
@@ -309,16 +305,28 @@
     </section>
     <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
         <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
-        <keyword ref="qcontactmanagerinfo.html#capabilities">capabilities</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Asynchronous</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::CreateOnlyDetails</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Batch</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeFiltering</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeSorting</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ReadOnlyDetails</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Synchronous</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Locking</keyword>
         <keyword ref="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
+        <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
         <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
-        <keyword ref="qcontactmemoryengine.html#capabilities">capabilities</keyword>
         <keyword ref="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</keyword>
         <keyword ref="qcontactmemoryengine.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
+        <keyword ref="qcontactmemoryengine.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
     </section>

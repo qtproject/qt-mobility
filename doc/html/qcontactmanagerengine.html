@@ -23,9 +23,6 @@
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"/><b><a href="qcontactmanagerengine.html#QContactManagerEngine">QContactManagerEngine</a></b> ()</li>
-<li><div class="fn"/>virtual <b><a href="qcontactmanagerengine.html#dtor.QContactManagerEngine">~QContactManagerEngine</a></b> ()</li>
-<li><div class="fn"/>virtual QStringList <b><a href="qcontactmanagerengine.html#capabilities">capabilities</a></b> () const = 0</li>
-<li><div class="fn"/>virtual QContactManagerEngine * <b><a href="qcontactmanagerengine.html#clone">clone</a></b> () = 0</li>
 <li><div class="fn"/>virtual QContact <b><a href="qcontactmanagerengine.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contacts">contacts</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
@@ -42,6 +39,7 @@
 <li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
 <li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i>, bool <i>batch</i>, QContactManager::Error &amp; <i>error</i> )</li>
 <li><div class="fn"/>virtual QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanagerengine.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>contactIds</i>, QContactManager::Error &amp; <i>error</i> )</li>
 <li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, QContactManager::Error &amp; <i>error</i> )</li>
@@ -81,14 +79,6 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QContactManagerEngine"></a>QContactManagerEngine::QContactManagerEngine ()</h3>
 <p>A default, empty constructor.</p>
-<h3 class="fn"><a name="dtor.QContactManagerEngine"></a>QContactManagerEngine::~QContactManagerEngine ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>A default, empty destructor.</p>
-<h3 class="fn"><a name="capabilities"></a>QStringList QContactManagerEngine::capabilities () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the capability flags of this engine as a stringlist.</p>
-<h3 class="fn"><a name="clone"></a>QContactManagerEngine * QContactManagerEngine::clone ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a clone of this manager engine. The caller takes ownership of the newly allocated engine, and thus must call <a href="qcontactmanagerengine.html#deref">QContactManagerEngine::deref</a>() on the acquired engine when finished.</p>
-<p>If the engine can be shared between multiple managers safely, this function can simply implement an internal reference count and return itself after adding a reference.</p>
-<p>See also <a href="qcontactmanagerengine.html#deref">deref</a>().</p>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManagerEngine::contact ( const QUniqueId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the contact in the database identified by <i>contactId</i></p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
@@ -121,8 +111,7 @@
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="deref"></a>void QContactManagerEngine::deref ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Notifies the engine that it is no longer required. If this engine can not be shared between managers, it is safe for the engine to delete itself in this function.</p>
-<p>If the engine implementation can be shared, this function can use a reference count and track lifetime that way.</p>
-<p>See also <a href="qcontactmanagerengine.html#clone">clone</a>().</p>
+<p>If the engine implementation can be shared, this function can use a reference count and track lifetime that way. The factory that returns an instance of this engine should increment the reference count in this case.</p>
 <h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManagerEngine::detailDefinition ( const QString &amp; <i>definitionId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the definition identified by the given <i>definitionId</i> that is valid for contacts in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
@@ -155,6 +144,8 @@
 <h3 class="fn"><a name="groupsRemovedSince"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groupsRemovedSince ( const QDateTime &amp; <i>timestamp</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of group ids that have been removed in this manager since the given <i>timestamp</i>.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactManagerEngine::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns true if the given <i>feature</i> is supported by this engine</p>
 <h3 class="fn"><a name="removeContact"></a>bool QContactManagerEngine::removeContact ( const QUniqueId &amp; <i>contactId</i>, bool <i>batch</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Remove the contact identified by <i>contactId</i> from the database. Returns true if the contact was removed successfully, otherwise returns false.</p>
 <p>The default implementation of QContactManagerEngine::removeContacts will call this function with <i>batch</i> set to <tt>true</tt>. All other calls to this function will pass <tt>false</tt> for <i>batch</i>.</p>

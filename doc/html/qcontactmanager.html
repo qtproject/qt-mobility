@@ -41,7 +41,7 @@
 <li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
 <li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
 <li><div class="fn"/>QList&lt;QUniqueId&gt; <b><a href="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i> ) const</li>
-<li><div class="fn"/>QContactManagerInfo <b><a href="qcontactmanager.html#information">information</a></b> () const</li>
+<li><div class="fn"/>QContactManagerInfo * <b><a href="qcontactmanager.html#information">information</a></b> () const</li>
 <li><div class="fn"/>QString <b><a href="qcontactmanager.html#managerId">managerId</a></b> () const</li>
 <li><div class="fn"/>QMap&lt;QString, QString&gt; <b><a href="qcontactmanager.html#managerParameters">managerParameters</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i> )</li>
@@ -150,7 +150,7 @@
 <p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been removed from a datastore managed by this manager</p>
 <h3 class="fn"><a name="groupsRemovedSince"></a>QList&lt;QUniqueId&gt; QContactManager::groupsRemovedSince ( const QDateTime &amp; <i>timestamp</i> ) const</h3>
 <p>Returns a list of group ids that have been modified in this manager since the given <i>timestamp</i>.</p>
-<h3 class="fn"><a name="information"></a><a href="qcontactmanagerinfo.html">QContactManagerInfo</a> QContactManager::information () const</h3>
+<h3 class="fn"><a name="information"></a><a href="qcontactmanagerinfo.html">QContactManagerInfo</a> * QContactManager::information () const</h3>
 <p>Returns an object describing the supported functionality of this <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>See also <a href="qcontactmanagerinfo.html">QContactManagerInfo</a>.</p>
 <h3 class="fn"><a name="managerId"></a>QString QContactManager::managerId () const</h3>
