@@ -577,6 +577,7 @@ public:
     QDBusInterface *connectionInterface;
     QString path;
     QString service;
+    QNmSettingsMap settingsMap;
 };
 
 QNetworkManagerSettingsConnection::QNetworkManagerSettingsConnection(const QString &settingsService, const QString &connectionObjectPath, QObject *parent)
@@ -593,7 +594,8 @@ QNetworkManagerSettingsConnection::QNetworkManagerSettingsConnection(const QStri
         qWarning() << "Could not find NetworkManagerSettingsConnection";
         return;
     }
-
+    QDBusReply< QNmSettingsMap > rep = d->connectionInterface->call("GetSettings");
+    d->settingsMap = rep.value();
 }
 
 QNetworkManagerSettingsConnection::~QNetworkManagerSettingsConnection()
@@ -632,15 +634,14 @@ QDBusInterface *QNetworkManagerSettingsConnection::connectionInterface() const
 QNmSettingsMap QNetworkManagerSettingsConnection::getSettings()
 {
     QDBusReply< QNmSettingsMap > rep = d->connectionInterface->call("GetSettings");
-    return rep.value();
-// QMap< QString, QMap<QString,QVariant> > map
+    d->settingsMap = rep.value();
+    return d->settingsMap;
 }
 
 NMDeviceType QNetworkManagerSettingsConnection::getType()
 {
-    QNmSettingsMap map = getSettings();
-    QNmSettingsMap::const_iterator i = map.find("connection");
-    while (i != map.end() && i.key() == "connection") {
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("connection");
+    while (i != d->settingsMap.end() && i.key() == "connection") {
         QMap<QString,QVariant> innerMap = i.value();
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("type");
         while (ii != innerMap.end() && ii.key() == "type") {
@@ -658,9 +659,8 @@ NMDeviceType QNetworkManagerSettingsConnection::getType()
 
 bool QNetworkManagerSettingsConnection::isAutoConnect()
 {
-    QNmSettingsMap map = getSettings();
-    QNmSettingsMap::const_iterator i = map.find("connection");
-    while (i != map.end() && i.key() == "connection") {
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("connection");
+    while (i != d->settingsMap.end() && i.key() == "connection") {
         QMap<QString,QVariant> innerMap = i.value();
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("autoconnect");
         while (ii != innerMap.end() && ii.key() == "autoconnect") {
@@ -672,41 +672,92 @@ bool QNetworkManagerSettingsConnection::isAutoConnect()
 
 quint64 QNetworkManagerSettingsConnection::getTimestamp()
 {
-    QNmSettingsMap map = getSettings();
-    QNmSettingsMap::const_iterator i = map.find("connection");
-    while (i != map.end() && i.key() == "connection") {
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("connection");
+    while (i != d->settingsMap.end() && i.key() == "connection") {
         QMap<QString,QVariant> innerMap = i.value();
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("timestamp");
         while (ii != innerMap.end() && ii.key() == "timestamp") {
             return ii.value().toUInt();
+            ii++;
         }
+        i++;
     }
     return 	0;
 }
 
 QString QNetworkManagerSettingsConnection::getId()
 {
-    QNmSettingsMap map = getSettings();
-    QNmSettingsMap::const_iterator i = map.find("connection");
-    while (i != map.end() && i.key() == "connection") {
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("connection");
+    while (i != d->settingsMap.end() && i.key() == "connection") {
         QMap<QString,QVariant> innerMap = i.value();
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("id");
         while (ii != innerMap.end() && ii.key() == "id") {
             return ii.value().toString();
+            ii++;
         }
+        i++;
     }
     return 	QString();
 }
 
 QString QNetworkManagerSettingsConnection::getUuid()
 {
-    QNmSettingsMap map = getSettings();
-    QNmSettingsMap::const_iterator i = map.find("connection");
-    while (i != map.end() && i.key() == "connection") {
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("connection");
+    while (i != d->settingsMap.end() && i.key() == "connection") {
         QMap<QString,QVariant> innerMap = i.value();
         QMap<QString,QVariant>::const_iterator ii = innerMap.find("uuid");
         while (ii != innerMap.end() && ii.key() == "uuid") {
             return ii.value().toString();
+            ii++;
+        }
+        i++;
+    }
+    return 	QString();
+}
+
+QString QNetworkManagerSettingsConnection::getSsid()
+{
+    QNmSettingsMap::const_iterator i = d->settingsMap.find("802-11-wireless");
+    while (i != d->settingsMap.end() && i.key() == "802-11-wireless") {
+        QMap<QString,QVariant> innerMap = i.value();
+        QMap<QString,QVariant>::const_iterator ii = innerMap.find("ssid");
+        while (ii != innerMap.end() && ii.key() == "ssid") {
+            return ii.value().toString();
+            ii++;
+        }
+        i++;
+    }
+    return 	QString();
+}
+
+QString QNetworkManagerSettingsConnection::getMacAddress()
+{
+    qWarning() << Q_FUNC_INFO;
+
+    if(getType() == DEVICE_TYPE_802_3_ETHERNET) {
+    qWarning() << Q_FUNC_INFO;
+        QNmSettingsMap::const_iterator i = d->settingsMap.find("802-3-ethernet");
+        while (i != d->settingsMap.end() && i.key() == "802-3-ethernet") {
+            QMap<QString,QVariant> innerMap = i.value();
+            QMap<QString,QVariant>::const_iterator ii = innerMap.find("mac-address");
+            while (ii != innerMap.end() && ii.key() == "mac-address") {
+                return ii.value().toString();
+                ii++;
+            }
+            i++;
+        }
+    }
+
+    else if(getType() == DEVICE_TYPE_802_11_WIRELESS) {
+        QNmSettingsMap::const_iterator i = d->settingsMap.find("802-11-wireless");
+        while (i != d->settingsMap.end() && i.key() == "802-11-wireless") {
+            QMap<QString,QVariant> innerMap = i.value();
+            QMap<QString,QVariant>::const_iterator ii = innerMap.find("mac-address");
+            while (ii != innerMap.end() && ii.key() == "mac-address") {
+                return ii.value().toString();
+                ii++;
+            }
+            i++;
         }
     }
     return 	QString();

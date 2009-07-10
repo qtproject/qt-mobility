@@ -305,6 +305,8 @@ public:
     quint64 getTimestamp();
     QString getId();
     QString getUuid();
+    QString getSsid();
+    QString getMacAddress();
 
 Q_SIGNALS:
     
