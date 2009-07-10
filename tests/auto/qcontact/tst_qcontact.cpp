@@ -119,11 +119,11 @@ void tst_QContact::details()
 
     // Test retrieving the first detail (the name)
     QContactDetail detail = c.detail(QString());
-    QVERIFY(detail.definitionId() == QContactName::staticType());
+    QVERIFY(detail.definitionName() == QContactName::staticType());
 
     detail = c.detail("nonexistent");
     QVERIFY(detail.isEmpty());
-    QVERIFY(detail.definitionId().isEmpty());
+    QVERIFY(detail.definitionName().isEmpty());
 
     QVERIFY(c.details("nonexistent").count() == 0);
 

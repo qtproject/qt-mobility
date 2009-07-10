@@ -66,7 +66,7 @@ class DummyStaticEngineFactory : public QObject, public QContactManagerEngineFac
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-        QString managerId() const {return "teststaticdummy";}
+        QString managerName() const {return "teststaticdummy";}
 };
 
 QContactManagerEngine* DummyStaticEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
@@ -90,7 +90,7 @@ class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactor
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
-        QString managerId() const {return "memory";}
+        QString managerName() const {return "memory";}
 };
 
 Q_EXPORT_PLUGIN2(contacts_testimpostordummy, ImpostorEngineFactory);
@@ -103,7 +103,7 @@ class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFacto
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
-        QString managerId() const {return "invalid";}
+        QString managerName() const {return "invalid";}
 };
 
 
@@ -117,7 +117,7 @@ class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
-        QString managerId() const {return QString();}
+        QString managerName() const {return QString();}
 };
 
 Q_EXPORT_PLUGIN2(contacts_teststaticemptydummy, EmptyEngineFactory);
@@ -170,11 +170,11 @@ void tst_QContactManagerPlugins::testDummy()
     QVERIFY(QContactManager::availableManagers().contains("teststaticdummy"));
 
     QContactManager m1("teststaticdummy"); // should fail
-    QVERIFY(m1.managerId() == "invalid");
+    QVERIFY(m1.managerName() == "invalid");
     QVERIFY(m1.error() == QContactManager::LockedError);
 
     QContactManager m2("testdummy");
-    QVERIFY(m2.managerId() == "testdummy");
+    QVERIFY(m2.managerName() == "testdummy");
 }
 
 QTEST_MAIN(tst_QContactManagerPlugins)

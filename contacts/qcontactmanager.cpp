@@ -112,12 +112,12 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     if (prefix != "qtcontacts")
         return false;
 
-    QString managerId = colonSplit.value(1);
+    QString managerName = colonSplit.value(1);
 
-    if (managerId.trimmed().isEmpty())
+    if (managerName.trimmed().isEmpty())
         return false;
 
-    QString firstParts = prefix + ":" + managerId + ":";
+    QString firstParts = prefix + ":" + managerName + ":";
     QString paramString = uri.mid(firstParts.length());
 
     QMap<QString, QString> outParams;
@@ -149,12 +149,12 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     if (pParams)
         *pParams = outParams;
     if (pManagerId)
-        *pManagerId = managerId;
+        *pManagerId = managerName;
     return true;
 }
 
-/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerId and \a params */
-QString QContactManager::buildUri(const QString& managerId, const QMap<QString, QString>& params)
+/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName and \a params */
+QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params)
 {
     QString ret("qtcontacts:%1:%2");
     // we have to escape each param
@@ -170,7 +170,7 @@ QString QContactManager::buildUri(const QString& managerId, const QMap<QString, 
         key = key + "=" + arg;
         escapedParams.append(key);
     }
-    return ret.arg(managerId, escapedParams.join("&"));
+    return ret.arg(managerName, escapedParams.join("&"));
 }
 
 /*!
@@ -194,18 +194,18 @@ QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* pare
 }
 
 /*!
- * Constructs a QContactManager whose implementation is identified by \a managerId with the given \a parameters.
+ * Constructs a QContactManager whose implementation is identified by \a managerName with the given \a parameters.
  *
  * The \a parent QObject will be used as the parent of this QContactManager.
  *
- * If an empty \a managerId is specified, the default implementation for the platform will
+ * If an empty \a managerName is specified, the default implementation for the platform will
  * be used.
  */
-QContactManager::QContactManager(const QString& managerId, const QMap<QString, QString>& parameters, QObject* parent)
+QContactManager::QContactManager(const QString& managerName, const QMap<QString, QString>& parameters, QObject* parent)
     : QObject(parent),
     d(new QContactManagerData)
 {
-    d->createEngine(managerId, parameters);
+    d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
@@ -404,9 +404,9 @@ QContactManagerInfo* QContactManager::information() const
 }
 
 /*! Returns the manager id for this QContactManager */
-QString QContactManager::managerId() const
+QString QContactManager::managerName() const
 {
-    return d->m_managerId;
+    return d->m_managerName;
 }
 
 /*! Return the parameters supplied to this QContactManager */
@@ -417,7 +417,7 @@ QMap<QString, QString>QContactManager::managerParameters() const
 
 /*!
  * Return the uri describing this QContactManager, including
- * managerId, managerStoreId and any parameters.
+ * managerName, managerStoreId and any parameters.
  */
 QString QContactManager::storeUri() const
 {

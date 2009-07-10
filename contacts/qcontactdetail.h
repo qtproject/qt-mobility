@@ -45,7 +45,7 @@ class QTCONTACTS_EXPORT QContactDetail
 {
 public:
     QContactDetail();
-    QContactDetail(const QString& definitionId);
+    QContactDetail(const QString& definitionName);
     virtual ~QContactDetail();
 
     QContactDetail(const QContactDetail& other);
@@ -71,7 +71,7 @@ public:
     bool operator==(const QContactDetail& other) const;
     bool operator!=(const QContactDetail& other) const {return !(other == *this);}
 
-    QString definitionId() const;
+    QString definitionName() const;
     bool isEmpty() const;
 
     QMap<QString, QString> attributes() const;
@@ -124,12 +124,12 @@ private:
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 
-#define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionIdString) \
+#define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
     className() : QContactDetail(staticType()) {} \
     className(const QContactDetail& field) : QContactDetail(field, staticType()) {} \
     className& operator=(const QContactDetail& other) {assign(other, staticType()); return *this;} \
     \
-    static QString staticType() {return QString(definitionIdString);}
+    static QString staticType() {return QString(definitionNameString);}
 
 #endif
 

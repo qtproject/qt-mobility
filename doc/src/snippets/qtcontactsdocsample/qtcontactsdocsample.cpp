@@ -150,10 +150,10 @@ void viewDetails(QContactManager* cm)
     QList<QContactDetail> allDetails = a.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
-        QContactDetailDefinition currentDefinition = cm->detailDefinition(detail.definitionId());
+        QContactDetailDefinition currentDefinition = cm->detailDefinition(detail.definitionName());
         QMap<QString, QContactDetailDefinition::Field> fields = currentDefinition.fields();
 
-        qDebug("\tDetail #%d (%s):", i, detail.definitionId().toAscii().constData());
+        qDebug("\tDetail #%d (%s):", i, detail.definitionName().toAscii().constData());
         foreach (const QString& fieldKey, fields.keys()) {
             qDebug() << "\t\t" << fieldKey << "(" << fields.value(fieldKey).dataType << ") =" << detail.value(fieldKey);
         }

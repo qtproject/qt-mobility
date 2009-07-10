@@ -89,8 +89,8 @@ public:
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(const QString& actionId) const;
-    QList<QContactDetail> detailsWithAction(const QString& actionId);
+    QContactDetail detailWithAction(const QString& actionName) const;
+    QList<QContactDetail> detailsWithAction(const QString& actionName);
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const
@@ -115,9 +115,9 @@ public:
     QStringList availableActions() const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) */
-    bool setPreferredDetail(const QString& actionId, const QContactDetail& preferredDetail);
-    bool isPreferredDetail(const QString& actionId, const QContactDetail& detail) const;
-    QContactDetail preferredDetail(const QString& actionId) const;
+    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
+    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
+    QContactDetail preferredDetail(const QString& actionName) const;
 
 private:
     friend class QContactManager;

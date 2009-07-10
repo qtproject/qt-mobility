@@ -73,7 +73,7 @@ class Q_DECL_EXPORT DummyEngineFactory : public QObject, public QContactManagerE
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-        QString managerId() const;
+        QString managerName() const;
 };
 
 QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
@@ -81,7 +81,7 @@ QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& 
     return new DummyEngine(parameters, error);
 }
 
-QString DummyEngineFactory::managerId() const
+QString DummyEngineFactory::managerName() const
 {
     return QString(DUMMYPLUGINNAME);
 }

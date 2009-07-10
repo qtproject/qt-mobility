@@ -70,7 +70,7 @@ class QTCONTACTS_EXPORT QContactManagerEngineFactory
     public:
     virtual ~QContactManagerEngineFactory() {}
     virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
-    virtual QString managerId() const = 0;
+    virtual QString managerName() const = 0;
 };
 
 #define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
@@ -156,10 +156,10 @@ public:
         // We rely on the owning manager to delete m_info
     }
 
-    void createEngine(const QString& managerId, const QMap<QString, QString>& parameters);
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
 
     QContactManagerEngine* m_engine;
-    QString m_managerId;
+    QString m_managerName;
     QMap<QString, QString> m_params;
     QString m_uri;
 

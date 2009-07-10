@@ -151,11 +151,11 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     aDetails = a.details();
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
-        qDebug() << "A contact had extra detail:" << d.definitionId() << d.attributes() << d.values();
+        qDebug() << "A contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
-        qDebug() << "B contact had extra detail:" << d.definitionId() << d.attributes() << d.values();
+        qDebug() << "B contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
     }
 
     QCOMPARE(b, a);
@@ -166,7 +166,7 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     qDebug() << "Contact: " << contact.id() << "(" << contact.name().displayName() << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
-        qDebug() << "  " << d.definitionId() << ":";
+        qDebug() << "  " << d.definitionName() << ":";
         qDebug() << "    Attr:" << d.attributes();
         qDebug() << "    Vals:" << d.values();
     }
@@ -375,12 +375,12 @@ void tst_QContactManager::ctors()
     QVERIFY(em.storeUri() != em6->storeUri());
 
     /* now the components */
-    QCOMPARE(em.managerId(), QString("invalid"));
-    QCOMPARE(em2.managerId(), QString("invalid"));
-    QCOMPARE(em3.managerId(), QString("invalid"));
-    QCOMPARE(em4->managerId(), QString("invalid"));
-    QCOMPARE(em5->managerId(), QString("invalid"));
-    QCOMPARE(em6->managerId(), QString("invalid"));
+    QCOMPARE(em.managerName(), QString("invalid"));
+    QCOMPARE(em2.managerName(), QString("invalid"));
+    QCOMPARE(em3.managerName(), QString("invalid"));
+    QCOMPARE(em4->managerName(), QString("invalid"));
+    QCOMPARE(em5->managerName(), QString("invalid"));
+    QCOMPARE(em6->managerName(), QString("invalid"));
     QCOMPARE(em.managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em2.managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em3.managerParameters(), randomParameters);
@@ -851,7 +851,7 @@ void tst_QContactManager::invalidManager()
 {
     /* Create an invalid manager */
     QContactManager manager("this should never work");
-    QVERIFY(manager.managerId() == "invalid");
+    QVERIFY(manager.managerName() == "invalid");
 
     /* Now test that all the operations fail */
     QVERIFY(manager.contacts().count() == 0);

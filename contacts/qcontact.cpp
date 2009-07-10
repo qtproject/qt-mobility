@@ -151,13 +151,13 @@ const QContactName& QContact::name() const
     return (QContactName&)d->m_details[0];
 }
 
-/*! Returns the first detail stored in the contact which is of the given \a definitionId */
-QContactDetail QContact::detail(const QString& definitionId) const
+/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+QContactDetail QContact::detail(const QString& definitionName) const
 {
     // build the sub-list of matching details.
     for (int i = 0; i < d->m_details.size(); i++) {
         const QContactDetail& existing = d->m_details.at(i);
-        if (definitionId.isEmpty() || definitionId == existing.definitionId()) {
+        if (definitionName.isEmpty() || definitionName == existing.definitionName()) {
             QContactData::setError(d, QContact::NoError);
             return existing;
         }
@@ -167,19 +167,19 @@ QContactDetail QContact::detail(const QString& definitionId) const
     return QContactDetail();
 }
 
-/*! Returns a list of details of the given \a definitionId */
-QList<QContactDetail> QContact::details(const QString& definitionId) const
+/*! Returns a list of details of the given \a definitionName */
+QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
     QList<QContactDetail> sublist;
 
     // special case
-    if (definitionId.isEmpty()) {
+    if (definitionName.isEmpty()) {
         sublist = d->m_details;
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
             const QContactDetail& existing = d->m_details.at(i);
-            if (definitionId == existing.definitionId()) {
+            if (definitionName == existing.definitionName()) {
                 sublist.append(existing);
                 QContactData::setError(d, QContact::NoError);
             }
@@ -202,7 +202,7 @@ bool QContact::saveDetail(QContactDetail* detail)
 {
     // unique details are a special case; there is only and always one unique field.
     // ### name is always unique... but we don't know what store we're in for other checking XXX
-    if (detail->definitionId() == "Name") {
+    if (detail->definitionName() == "Name") {
         QContactData::setError(d, QContact::NoError);
         d->m_details.removeAt(0);
         QContactName name = *detail;
@@ -215,7 +215,7 @@ bool QContact::saveDetail(QContactDetail* detail)
     // ie, the one with the same type and id, but different value or attributes.
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail curr = d->m_details.at(i);
-        if (detail->d->m_definitionId == curr.d->m_definitionId && detail->d->m_id == curr.d->m_id) {
+        if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
             // Found the old version.  Replace it with this one.
             d->m_details[i] = *detail;
             QContactData::setError(d, QContact::NoError);
@@ -234,7 +234,7 @@ bool QContact::saveDetail(QContactDetail* detail)
 bool QContact::removeDetail(QContactDetail* detail)
 {
     // name details are a special case; there is only and always one name field.
-    if (detail->definitionId() == "Name") {
+    if (detail->definitionName() == "Name") {
         QContactData::setError(d, QContact::PermissionsError);
         return false;
     }
@@ -260,20 +260,20 @@ bool QContact::operator==(const QContact& other) const
 }
 
 
-/*! Retrieve the first detail for which the given \a actionId is available */
-QContactDetail QContact::detailWithAction(const QString& actionId) const
+/*! Retrieve the first detail for which the given \a actionName is available */
+QContactDetail QContact::detailWithAction(const QString& actionName) const
 {
     // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionId);
+    Q_UNUSED(actionName);
     QContactData::setError(d, QContact::DetailDoesNotExistError);
     return QContactDetail();
 }
 
-/*! Retrieve any details for which the given \a actionId is available */
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionId)
+/*! Retrieve any details for which the given \a actionName is available */
+QList<QContactDetail> QContact::detailsWithAction(const QString& actionName)
 {
     // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionId);
+    Q_UNUSED(actionName);
     QContactData::setError(d, QContact::DetailDoesNotExistError);
     return QList<QContactDetail>();
 }
@@ -286,31 +286,31 @@ QStringList QContact::availableActions() const
     return QStringList();
 }
 
-/*! Set a particular detail as the \a preferredDetail for a given \a actionId.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionId, otherwise returns false  */
-bool QContact::setPreferredDetail(const QString& actionId, const QContactDetail& preferredDetail)
+/*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
+bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
     // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionId);
+    Q_UNUSED(actionName);
     Q_UNUSED(preferredDetail);
     QContactData::setError(d, QContact::UnspecifiedError);
     return false;
 }
 
-/*! Returns true if the given \a detail is a preferred detail for the given \a actionId, or for any action if the \a actionId is empty */
-bool QContact::isPreferredDetail(const QString& actionId, const QContactDetail& detail) const
+/*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
+bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
     // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
     Q_UNUSED(detail);
-    Q_UNUSED(actionId);
+    Q_UNUSED(actionName);
     QContactData::setError(d, QContact::UnspecifiedError);
     return false;
 }
 
-/*! Returns the preferred detail for a given \a actionId */
-QContactDetail QContact::preferredDetail(const QString& actionId) const
+/*! Returns the preferred detail for a given \a actionName */
+QContactDetail QContact::preferredDetail(const QString& actionName) const
 {
     // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionId);
+    Q_UNUSED(actionName);
     QContactData::setError(d, QContact::UnspecifiedError);
     return QContactDetail();
 }

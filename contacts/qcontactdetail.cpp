@@ -90,27 +90,27 @@ const QString QContactDetail::AttributeContextWork("Work");
  * QContactPhoneNumber number;
  * number.setNumber("555-1212");
  * // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
- * // number.definitionId() == QContactPhoneNumber::staticType()
+ * // number.definitionName() == QContactPhoneNumber::staticType()
  *
  * QContactDetail detail = number;
  * // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
- * // detail.definitionId() == QContactPhoneNumber::staticType()
+ * // detail.definitionName() == QContactPhoneNumber::staticType()
  *
  * QContactPhoneNumber otherNumber = detail;
  * // otherNumber.number() == "555-1212";
- * // otherNumber.definitionId() == QContactPhoneNumber::staticType()
+ * // otherNumber.definitionName() == QContactPhoneNumber::staticType()
  *
  * QContactAddress address = detail;
  * // address is now a default constructed QContactAddress
  * // address.error() == QContactDetail::IncompatibleAssignmentError
  * // address.value(QContactPhoneNumber::FieldNumber) is empty
- * // address.definitionId() == QContactAddress::staticType()
+ * // address.definitionName() == QContactAddress::staticType()
  *
  * QContactAddress otherAddress = number;
  * // otherAddress is now a default constructed QContactAddress
  * // otherAddress.error() == QContactDetail::IncompatibleAssignmentError
  * // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
- * // otherAddress.definitionId() == QContactAddress::staticType()
+ * // otherAddress.definitionName() == QContactAddress::staticType()
  * \endcode
  *
  * \sa QContact, QContactDetailDefinition, Q_DECLARE_CUSTOM_CONTACT_DETAIL
@@ -158,7 +158,7 @@ QContactDetail::QContactDetail()
 QContactDetail::QContactDetail(const QString& thisDefinitionId)
     : d(new QContactDetailPrivate)
 {
-    d->m_definitionId = thisDefinitionId;
+    d->m_definitionName = thisDefinitionId;
 }
 
 /*! Constructs a detail that is a copy of \a other */
@@ -171,12 +171,12 @@ QContactDetail::QContactDetail(const QContactDetail& other)
 /*! Constructs a detail that is a copy of \a other if \a other is of the expected definition identified by \a expectedDefinitionId, else constructs a new, empty detail of the definition identified by the \a expectedDefinitionId */
 QContactDetail::QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId)
 {
-    if (other.definitionId() == expectedDefinitionId) {
+    if (other.definitionName() == expectedDefinitionId) {
         d = other.d;
         QContactDetailPrivate::setError(d, QContactDetail::NoError);
     } else {
         d = new QContactDetailPrivate;
-        d->m_definitionId = expectedDefinitionId;
+        d->m_definitionName = expectedDefinitionId;
         d->m_error = QContactDetail::IncompatibleAssignmentError;
     }
 }
@@ -195,12 +195,12 @@ QContactDetail& QContactDetail::operator=(const QContactDetail& other)
 QContactDetail& QContactDetail::assign(const QContactDetail& other, const QString& expectedDefinitionId)
 {
     if (this != &other) {
-        if (other.definitionId() == expectedDefinitionId) {
+        if (other.definitionName() == expectedDefinitionId) {
             d = other.d;
             QContactDetailPrivate::setError(d, QContactDetail::NoError);
         } else {
             d = new QContactDetailPrivate;
-            d->m_definitionId = expectedDefinitionId;
+            d->m_definitionName = expectedDefinitionId;
             d->m_error = QContactDetail::IncompatibleAssignmentError;
         }
     }
@@ -229,16 +229,16 @@ QContactDetail::Error QContactDetail::error() const
     return d.constData()->m_error;
 }
 
-/*! Returns the identifier of the definition which defines the semantics and structure of this detail */
-QString QContactDetail::definitionId() const
+/*! Returns the (unique) name of the definition which defines the semantics and structure of this detail */
+QString QContactDetail::definitionName() const
 {
-    return d.constData()->m_definitionId;
+    return d.constData()->m_definitionName;
 }
 
 /*! Compares this detail to \a other.  Returns true if the definition, attributes and values of \a other are equal to those of this detail */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
-    if (d.constData()->m_definitionId != other.d.constData()->m_definitionId)
+    if (d.constData()->m_definitionName != other.d.constData()->m_definitionName)
         return false;
 
     if (d.constData()->m_attributes != other.d.constData()->m_attributes)

@@ -68,16 +68,16 @@ static void qContactsCleanEngines()
     QContactManagerData::m_engines.clear();
 }
 
-void QContactManagerData::createEngine(const QString& managerId, const QMap<QString, QString>& parameters)
+void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
-    m_managerId = managerId.isEmpty() ? QContactManager::availableManagers().value(0) : managerId;
+    m_managerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
 
-    if (m_managerId == "memory")
+    if (m_managerName == "memory")
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
         /* Look for a factory */
         loadFactories();
-        QContactManagerEngineFactory *factory = m_engines.value(managerId);
+        QContactManagerEngineFactory *factory = m_engines.value(managerName);
         m_error = QContactManager::NoError;
         if (factory)
             m_engine = factory->engine(parameters, m_error);
@@ -85,14 +85,14 @@ void QContactManagerData::createEngine(const QString& managerId, const QMap<QStr
             m_engine = 0;
 
         if (!m_engine) {
-            m_managerId = "invalid";
+            m_managerName = "invalid";
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
             m_engine = new QContactInvalidEngine(); // XXX share
         }
     }
     m_params = parameters;
-    m_uri = QContactManager::buildUri(m_managerId, parameters);
+    m_uri = QContactManager::buildUri(m_managerName, parameters);
 }
 
 /* Plugin loader */
@@ -112,7 +112,7 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
             if (f) {
-                QString name = f->managerId();
+                QString name = f->managerName();
                 qDebug() << "Static: found a" << f << "with name" << name;
                 if (name != "memory" && name != "invalid" && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
@@ -166,7 +166,7 @@ void QContactManagerData::loadFactories()
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
             if (f) {
-                QString name = f->managerId();
+                QString name = f->managerName();
                 qDebug() << "Dynamic: found a" << f << "with name" << name;
 
                 if (name != "memory" && name != "invalid" && !name.isEmpty()) {
@@ -194,7 +194,7 @@ void QContactManagerData::loadFactories()
  *
  * This class provides a simple interface for the creation of
  * manager engine instances.  Each factory has a specific id
- * associated with it, which forms the \c managerId parameter
+ * associated with it, which forms the \c managerName parameter
  * when creating \l QContactManager objects.
  *
  * More information on writing a contacts engine plugin is TODO.
@@ -223,7 +223,7 @@ void QContactManagerData::loadFactories()
  */
 
 /*!
- * \fn QContactManagerEngineFactory::managerId() const
+ * \fn QContactManagerEngineFactory::managerName() const
  *
  * This function should return a unique string that identifies
  * the engines provided by this factory.
@@ -688,7 +688,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     for (int i=0; i < contact.details().count(); i++) {
         const QContactDetail& d = contact.details().at(i);
         QVariantMap values = d.values();
-        QContactDetailDefinition def = detailDefinition(d.definitionId(), error);
+        QContactDetailDefinition def = detailDefinition(d.definitionName(), error);
 
         // check that the definition is supported
         if (error != QContactManager::NoError) {
@@ -889,21 +889,21 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions
 }
 
 /*!
- * Returns the definition identified by the given \a definitionId that
+ * Returns the definition identified by the given \a definitionName that
  * is valid for contacts in this store, or a default-constructed QContactDetailDefinition
  * if no such definition exists
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
+QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, QContactManager::Error& error) const
 {
-    Q_UNUSED(definitionId);
+    Q_UNUSED(definitionName);
 
     QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(error);
-    if (definitions.contains(definitionId))  {
+    if (definitions.contains(definitionName))  {
         error = QContactManager::NoError;
-        return definitions.value(definitionId);
+        return definitions.value(definitionName);
     } else {
         error = QContactManager::DoesNotExistError;
         return QContactDetailDefinition();
@@ -926,16 +926,16 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
 }
 
 /*!
- * Removes the definition identified by the given \a definitionId from the database.
+ * Removes the definition identified by the given \a definitionName from the database.
  *
  * Returns true if the definition was removed successfully, otherwise returns false.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeDetailDefinition(const QString& definitionId, QContactManager::Error& error)
+bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, QContactManager::Error& error)
 {
-    Q_UNUSED(definitionId);
+    Q_UNUSED(definitionName);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1139,12 +1139,12 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqu
 }
 
 /*!
- * Returns a list of contacts which have a detail of the given \a definitionId with the specified \a value.
+ * Returns a list of contacts which have a detail of the given \a definitionName with the specified \a value.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-QList<QUniqueId> QContactManagerEngine::contactsWithDetail(const QString& definitionId, const QVariant& value, QContactManager::Error& error) const
+QList<QUniqueId> QContactManagerEngine::contactsWithDetail(const QString& definitionName, const QVariant& value, QContactManager::Error& error) const
 {
     QList<QUniqueId> retn;
     error = QContactManager::NoError;
@@ -1153,7 +1153,7 @@ QList<QUniqueId> QContactManagerEngine::contactsWithDetail(const QString& defini
     QList<QUniqueId> allContacts = contacts(error);
     for (int i = 0; i < allContacts.count(); i++) {
         QContact current = contact(allContacts.at(i), error);
-        QList<QContactDetail> cdets = current.details(definitionId);
+        QList<QContactDetail> cdets = current.details(definitionName);
         if (value.isNull()) {
             if (cdets.count() > 0)
                 retn.append(allContacts.at(i));
