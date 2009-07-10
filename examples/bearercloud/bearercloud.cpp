@@ -48,7 +48,7 @@
 #endif
 
 BearerCloud::BearerCloud(QObject *parent)
-:   QGraphicsScene(parent), updateTriggered(false), timerId(0)
+:   QGraphicsScene(parent), timerId(0)
 {
     setSceneRect(-300, -300, 600, 600);
 
@@ -82,15 +82,14 @@ BearerCloud::BearerCloud(QObject *parent)
     orbit->setPen(QColor(Qt::lightGray));
     addItem(orbit);
 
-    triggerUpdate();
-
-    connect(&manager, SIGNAL(updateCompleted()), this, SLOT(updateConfigurations()));
     connect(&manager, SIGNAL(configurationAdded(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationAdded(QNetworkConfiguration)));
     connect(&manager, SIGNAL(configurationRemoved(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationRemoved(QNetworkConfiguration)));
     connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationChanged(QNetworkConfiguration)));
+
+    QTimer::singleShot(0, this, SLOT(updateConfigurations()));
 }
 
 BearerCloud::~BearerCloud()
@@ -124,68 +123,51 @@ void BearerCloud::timerEvent(QTimerEvent *)
     }
 }
 
-void BearerCloud::updateConfigurations()
+void BearerCloud::configurationAdded(const QNetworkConfiguration &config)
 {
-    // find and delete removed configurations
-    QList<QNetworkConfiguration> allConfigurations = manager.allConfigurations();
+    const QNetworkConfiguration::StateFlags state = config.state();
 
-    QMultiMap<QNetworkConfiguration::StateFlags, QString> configStates;
+    configStates.insert(state, config.identifier());
 
-    QList<QString> previousIds = configurations.keys();
-    for (int i = 0; i < allConfigurations.count(); ++i) {
-        const QNetworkConfiguration &config = allConfigurations.at(i);
+    const qreal radius = Cloud::getRadiusForState(state);
+    const int count = configStates.count(state);
+    const qreal angle = 2 * M_PI / count;
 
-        if (configurations.contains(config.identifier())) {
-            // configurations updated
-            previousIds.removeOne(config.identifier());
+    Cloud *item = new Cloud(config);
+    configurations.insert(config.identifier(), item);
 
-            configStates.insert(config.state(), config.identifier());
-        } else {
-            // new configuration
-            configStates.insert(config.state(), config.identifier());
-        }
-    }
+    item->setPos(radius * cos((count-1) * angle + offset[state]),
+                 radius * sin((count-1) * angle + offset[state]));
 
-    while (!previousIds.isEmpty()) {
-        // delete configuration
-        Cloud *item = configurations.take(previousIds.takeFirst());
-        item->setFinalScale(0.0);
-        item->setDeleteAfterAnimation(true);
-    }
-
-    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys()) {
-        const qreal radius = Cloud::getRadiusForState(state);
-        const qreal angle = 2 * M_PI / configStates.count(state);
-
-        QList<QString> identifiers = configStates.values(state);
-        for (int i = 0, j = configStates.count(state) - 1; i < identifiers.count(); ++i) {
-            if (!configurations.contains(identifiers.at(i))) {
-                QNetworkConfiguration config =
-                    manager.configurationFromIdentifier(identifiers.at(i));
-                Cloud *item = new Cloud(config);
-
-                configurations.insert(identifiers.at(i), item);
-
-                item->setPos(radius * cos(j * angle + offset[state]),
-                             radius * sin(j * angle + offset[state]));
-
-                addItem(item);
-
-                --j;
-            }
-        }
-    }
-
-    updateTriggered = false;
-
-    cloudMoved();
+    addItem(item);
 }
 
-void BearerCloud::triggerUpdate()
+void BearerCloud::configurationRemoved(const QNetworkConfiguration &config)
 {
-    if (!updateTriggered) {
-        QTimer::singleShot(0, this, SLOT(updateConfigurations()));
-        updateTriggered = true;
-    }
+    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
+        configStates.remove(state, config.identifier());
+
+    Cloud *item = configurations.take(config.identifier());
+
+    item->setFinalScale(0.0);
+    item->setDeleteAfterAnimation(true);
+}
+
+void BearerCloud::configurationChanged(const QNetworkConfiguration &config)
+{
+    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
+        configStates.remove(state, config.identifier());
+
+    configStates.insert(config.state(), config.identifier());
+}
+
+void BearerCloud::updateConfigurations()
+{
+    QList<QNetworkConfiguration> allConfigurations = manager.allConfigurations();
+
+    while (!allConfigurations.isEmpty())
+        configurationAdded(allConfigurations.takeFirst());
+
+    cloudMoved();
 }
 
