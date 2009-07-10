@@ -49,7 +49,21 @@ public:
 
     QContactManagerInfo(const QContactManagerInfo& other);
 
-    QStringList capabilities() const;
+    enum ManagerFeature {
+        Synchronous = 0,
+        Asynchronous,
+        Groups,
+        Locking,
+        Batch,
+        ActionPreferences,
+        ReadOnlyDetails,
+        CreateOnlyDetails,
+        MutableDefinitions,
+        NativeFiltering,
+        NativeSorting
+    };
+
+    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
 
