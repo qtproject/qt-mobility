@@ -39,14 +39,14 @@
 class QGeoPositionInfoPrivate
 {
 public:
-    QDateTime updateTime;
+    QDateTime dateTime;
     QGeoCoordinate coord;
     QHash<int, qreal> doubleProps;
 };
 
 /*!
     \class QGeoPositionInfo
-    \brief The QGeoPositionInfo class contains information gathered on one's global position, direction and velocity at a particular point in time.
+    \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
 
     A QGeoPositionInfo contains, at a minimum, a geographical coordinate and
     a timestamp. It may also have heading and speed measurements as well as
@@ -57,7 +57,7 @@ public:
 
 /*!
     \enum QGeoPositionInfo::Property
-    Defines the properties for a position update.
+    Defines the properties for positional information.
 
     \value Heading The bearing to true north, in degrees.
     \value GroundSpeed The ground speed, in metres/sec.
@@ -68,7 +68,7 @@ public:
 */
 
 /*!
-    Creates a null update.
+    Creates an invalid QGeoPositionInfo object.
 
     \sa isValid()
 */
@@ -78,17 +78,17 @@ QGeoPositionInfo::QGeoPositionInfo()
 }
 
 /*!
-    Creates an update with the given \a coordinate and \a updateTime.
+    Creates a QGeoPositionInfo for the given \a coordinate and \a dateTime.
 */
-QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime)
+QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &dateTime)
     : d(new QGeoPositionInfoPrivate)
 {
-    d->updateTime = updateTime;
+    d->dateTime = dateTime;
     d->coord = coordinate;
 }
 
 /*!
-    Creates an update with the values of \a other.
+    Creates a QGeoPositionInfo with the values of \a other.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
     : d(new QGeoPositionInfoPrivate)
@@ -97,7 +97,7 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
 }
 
 /*!
-    Destroys an update.
+    Destroys a QGeoPositionInfo object.
 */
 QGeoPositionInfo::~QGeoPositionInfo()
 {
@@ -105,14 +105,14 @@ QGeoPositionInfo::~QGeoPositionInfo()
 }
 
 /*!
-    Assigns the values from \a other to this update.
+    Assigns the values from \a other to this QGeoPositionInfo.
 */
 QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 {
     if (this == &other)
         return *this;
 
-    d->updateTime = other.d->updateTime;
+    d->dateTime = other.d->dateTime;
     d->coord = other.d->coord;
     d->doubleProps = other.d->doubleProps;
 
@@ -120,12 +120,12 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 }
 
 /*!
-    Returns true if all of this update's values are the same as those of
+    Returns true if all of this object's values are the same as those of
     \a other.
 */
 bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
-    return d->updateTime == other.d->updateTime
+    return d->dateTime == other.d->dateTime
             && d->coord == other.d->coord
             && d->doubleProps == other.d->doubleProps;
 }
@@ -133,46 +133,46 @@ bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 /*!
     \fn bool QGeoPositionInfo::operator!=(const QGeoPositionInfo &other) const
 
-    Returns true if any of this update's values are not the same as those of
+    Returns true if any of this object's values are not the same as those of
     \a other.
 */
 
 /*!
-    Returns true if the update's updateTime() and coordinate() values are both valid.
+    Returns true if the dateTime() and coordinate() values are both valid.
 
     \sa QGeoCoordinate::isValid(), QDateTime::isValid()
 */
 bool QGeoPositionInfo::isValid() const
 {
-    return d->updateTime.isValid() && d->coord.isValid();
+    return d->dateTime.isValid() && d->coord.isValid();
 }
 
 /*!
-    Sets the date and time at which this update was received to \a updateTime.
+    Sets the date and time at which this position was reported to \a dateTime.
 
-    The \a updateTime must be in UTC time.
+    The \a dateTime must be in UTC time.
 
-    \sa updateTime()
+    \sa dateTime()
 */
-void QGeoPositionInfo::setUpdateTime(const QDateTime &updateTime)
+void QGeoPositionInfo::setDateTime(const QDateTime &dateTime)
 {
-    d->updateTime = updateTime;
+    d->dateTime = dateTime;
 }
 
 /*!
-    Returns the date and time at which this update was received, in UTC time.
+    Returns the date and time at which this position was reported, in UTC time.
 
     Returns an invalid QDateTime if no date/time value has been set.
 
-    \sa setUpdateTime()
+    \sa setDateTime()
 */
-QDateTime QGeoPositionInfo::updateTime() const
+QDateTime QGeoPositionInfo::dateTime() const
 {
-    return d->updateTime;
+    return d->dateTime;
 }
 
 /*!
-    Sets the coordinate for this update to \a coordinate.
+    Sets the coordinate for this position to \a coordinate.
 
     \sa coordinate()
 */
@@ -182,7 +182,7 @@ void QGeoPositionInfo::setCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    Returns the coordinate for this update.
+    Returns the coordinate for this position.
 
     Returns an invalid coordinate if no coordinate has been set.
 
@@ -226,7 +226,8 @@ void QGeoPositionInfo::removeProperty(Property property)
 }
 
 /*!
-    Returns true if the specified \a property is present in this update.
+    Returns true if the specified \a property is present for this
+    QGeoPositionInfo object.
 */
 bool QGeoPositionInfo::hasProperty(Property property) const
 {
@@ -236,7 +237,7 @@ bool QGeoPositionInfo::hasProperty(Property property) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
 {
-    dbg.nospace() << "QGeoPositionInfo(" << update.d->updateTime;
+    dbg.nospace() << "QGeoPositionInfo(" << update.d->dateTime;
     dbg.nospace() << ", ";
     dbg.nospace() << update.d->coord;
 
@@ -273,7 +274,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update)
 {
-    stream << update.d->updateTime;
+    stream << update.d->dateTime;
     stream << update.d->coord;
     stream << update.d->doubleProps;
     return stream;
@@ -283,7 +284,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update)
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update)
 {
-    stream >> update.d->updateTime;
+    stream >> update.d->dateTime;
     stream >> update.d->coord;
     stream >> update.d->doubleProps;
     return stream;

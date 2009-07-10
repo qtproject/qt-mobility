@@ -62,7 +62,7 @@ public:
         - RMC reports date with a two-digit year so in this case the year
           is assumed to be after the year 2000.
     */
-    Q_AUTOTEST_EXPORT static bool getUpdateFromNmea(const char *data, int size, QGeoPositionInfo *update, bool *hasFix);
+    Q_AUTOTEST_EXPORT static bool getInfoFromNmea(const char *data, int size, QGeoPositionInfo *update, bool *hasFix);
 
     /*
         Returns true if the given NMEA sentence has a valid checksum.

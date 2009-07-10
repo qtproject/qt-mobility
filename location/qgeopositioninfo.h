@@ -70,8 +70,8 @@ public:
 
     bool isValid() const;
 
-    void setUpdateTime(const QDateTime &updateTime);
-    QDateTime updateTime() const;
+    void setDateTime(const QDateTime &dateTime);
+    QDateTime dateTime() const;
 
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate() const;

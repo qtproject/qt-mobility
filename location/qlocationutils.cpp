@@ -57,7 +57,7 @@ static double qlocationutils_nmeaDegreesToDecimal(double nmeaDegrees)
     return deg + (min / 60.0);
 }
 
-static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -69,7 +69,7 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[1], &time))
-            update->setUpdateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 5 && parts[3].count() == 1 && parts[5].count() == 1) {
@@ -89,10 +89,10 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
     }
 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
-        update->setCoordinate(coord);
+        info->setCoordinate(coord);
 }
 
-static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -104,7 +104,7 @@ static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 5 && parts[5].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[5], &time))
-            update->setUpdateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 4 && parts[2].count() == 1 && parts[4].count() == 1) {
@@ -117,10 +117,10 @@ static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo 
     }
 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
-        update->setCoordinate(coord);
+        info->setCoordinate(coord);
 }
 
-static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -156,12 +156,12 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            update->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
+            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
     }
     if (parts.count() > 8 && parts[8].count() > 0) {
         value = parts[8].toDouble(&parsed);
         if (parsed)
-            update->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
     }
     if (parts.count() > 11 && parts[11].count() == 1
             && (parts[11][0] == 'E' || parts[11][0] == 'W') ) {
@@ -169,17 +169,17 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
         if (parsed) {
             if (parts[11][0] == 'W')
                 value *= -1;
-            update->setProperty(QGeoPositionInfo::MagneticVariation, qreal(value));
+            info->setProperty(QGeoPositionInfo::MagneticVariation, qreal(value));
         }
     }
 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
-        update->setCoordinate(coord);
+        info->setCoordinate(coord);
 
-    update->setUpdateTime(QDateTime(date, time, Qt::UTC));
+    info->setDateTime(QDateTime(date, time, Qt::UTC));
 }
 
-static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     *hasFix = false;
 
@@ -191,16 +191,16 @@ static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         value = parts[1].toDouble(&parsed);
         if (parsed)
-            update->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
     }
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            update->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
+            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
     }
 }
 
-static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     *hasFix = false;
 
@@ -222,12 +222,12 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
             date.setDate(year, month, day);
     }
 
-    update->setUpdateTime(QDateTime(date, time, Qt::UTC));
+    info->setDateTime(QDateTime(date, time, Qt::UTC));
 }
 
-bool QLocationUtils::getUpdateFromNmea(const char *data, int size, QGeoPositionInfo *update, bool *hasFix)
+bool QLocationUtils::getInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
-    if (!update || !hasFix)
+    if (!info || !hasFix)
         return false;
 
     *hasFix = false;
@@ -236,31 +236,31 @@ bool QLocationUtils::getUpdateFromNmea(const char *data, int size, QGeoPositionI
 
     if (data[3] == 'G' && data[4] == 'G' && data[5] == 'A') {
         // "$--GGA" sentence.
-        qlocationutils_readGga(data, size, update, hasFix);
+        qlocationutils_readGga(data, size, info, hasFix);
         return true;
     }
 
     if (data[3] == 'G' && data[4] == 'L' && data[5] == 'L') {
         // "$--GLL" sentence.
-        qlocationutils_readGll(data, size, update, hasFix);
+        qlocationutils_readGll(data, size, info, hasFix);
         return true;
     }
 
     if (data[3] == 'R' && data[4] == 'M' && data[5] == 'C') {
         // "$--RMC" sentence.
-        qlocationutils_readRmc(data, size, update, hasFix);
+        qlocationutils_readRmc(data, size, info, hasFix);
         return true;
     }
 
     if (data[3] == 'V' && data[4] == 'T' && data[5] == 'G') {
         // "$--VTG" sentence.
-        qlocationutils_readVtg(data, size, update, hasFix);
+        qlocationutils_readVtg(data, size, info, hasFix);
         return true;
     }
 
     if (data[3] == 'Z' && data[4] == 'D' && data[5] == 'A') {
         // "$--ZDA" sentence.
-        qlocationutils_readZda(data, size, update, hasFix);
+        qlocationutils_readZda(data, size, info, hasFix);
         return true;
     }
 

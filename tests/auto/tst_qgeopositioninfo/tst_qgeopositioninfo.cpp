@@ -89,16 +89,16 @@ class tst_QGeoPositionInfo : public QObject
     Q_OBJECT
 
 private:
-    QGeoPositionInfo updateWithProperty(QGeoPositionInfo::Property property, qreal value)
+    QGeoPositionInfo infoWithProperty(QGeoPositionInfo::Property property, qreal value)
     {
-        QGeoPositionInfo u;
-        u.setProperty(property, value);
-        return u;
+        QGeoPositionInfo info;
+        info.setProperty(property, value);
+        return info;
     }
 
-    void addTestData_update()
+    void addTestData_info()
     {
-        QTest::addColumn<QGeoPositionInfo>("u");
+        QTest::addColumn<QGeoPositionInfo>("info");
 
         QTest::newRow("coord") << QGeoPositionInfo(QGeoCoordinate(-27.3422,150.2342), QDateTime());
         QTest::newRow("datetime") << QGeoPositionInfo(QGeoCoordinate(), QDateTime::currentDateTime());
@@ -107,17 +107,17 @@ private:
         QList<qreal> values = tst_qgeopositioninfo_qrealTestValues();
         for (int i=0; i<properties.count(); i++) {
             QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(values[i])))
-                    << updateWithProperty(properties[i], values[i]);
+                    << infoWithProperty(properties[i], values[i]);
         }
     }
 
 private slots:
     void isValid()
     {
-        QGeoPositionInfo u;
-        QVERIFY(!u.isValid());
-        QVERIFY(!u.coordinate().isValid());
-        QVERIFY(u.updateTime().isNull());
+        QGeoPositionInfo info;
+        QVERIFY(!info.isValid());
+        QVERIFY(!info.coordinate().isValid());
+        QVERIFY(info.dateTime().isNull());
     }
 
     void constructor_coord_dateTime()
@@ -125,9 +125,9 @@ private slots:
         QFETCH(QGeoCoordinate, coord);
         QFETCH(QDateTime, dateTime);
 
-        QGeoPositionInfo u(coord, dateTime);
-        QCOMPARE(u.coordinate(), coord);
-        QCOMPARE(u.updateTime(), dateTime);
+        QGeoPositionInfo info(coord, dateTime);
+        QCOMPARE(info.coordinate(), coord);
+        QCOMPARE(info.dateTime(), dateTime);
     }
 
     void constructor_coord_dateTime_data()
@@ -143,53 +143,53 @@ private slots:
 
     void constructor_copy()
     {
-        QFETCH(QGeoPositionInfo, u);
+        QFETCH(QGeoPositionInfo, info);
 
-        QCOMPARE(QGeoPositionInfo(u), u);
+        QCOMPARE(QGeoPositionInfo(info), info);
     }
 
     void constructor_copy_data()
     {
-        addTestData_update();
+        addTestData_info();
     }
 
     void operator_comparison()
     {
-        QFETCH(QGeoPositionInfo, u);
+        QFETCH(QGeoPositionInfo, info);
 
-        QVERIFY(u == u); 
-        QCOMPARE(u != u, false); 
-        QCOMPARE(u == QGeoPositionInfo(), false);
-        QCOMPARE(u != QGeoPositionInfo(), true);
+        QVERIFY(info == info); 
+        QCOMPARE(info != info, false); 
+        QCOMPARE(info == QGeoPositionInfo(), false);
+        QCOMPARE(info != QGeoPositionInfo(), true);
 
         QVERIFY(QGeoPositionInfo() == QGeoPositionInfo());
     }
 
     void operator_comparison_data()
     {
-        addTestData_update();
+        addTestData_info();
     }
 
-    void setUpdateTime()
+    void setDateTime()
     {
         QFETCH(QDateTime, dateTime);
 
-        QGeoPositionInfo u;
-        u.setUpdateTime(dateTime);
-        QCOMPARE(u.updateTime(), dateTime);
+        QGeoPositionInfo info;
+        info.setDateTime(dateTime);
+        QCOMPARE(info.dateTime(), dateTime);
     }
 
-    void setUpdateTime_data()
+    void setDateTime_data()
     {
         QTest::addColumn<QDateTime>("dateTime");
         QTest::newRow("invalid") << QDateTime();
         QTest::newRow("now") << QDateTime::currentDateTime();
     }
 
-    void updateTime()
+    void dateTime()
     {
-        QGeoPositionInfo u;
-        QVERIFY(u.updateTime().isNull());
+        QGeoPositionInfo info;
+        QVERIFY(info.dateTime().isNull());
     }
 
     void setCoordinate()
@@ -197,9 +197,9 @@ private slots:
 
         QFETCH(QGeoCoordinate, coord);
 
-        QGeoPositionInfo u;
-        u.setCoordinate(coord);
-        QCOMPARE(u.coordinate(), coord);
+        QGeoPositionInfo info;
+        info.setCoordinate(coord);
+        QCOMPARE(info.coordinate(), coord);
     }
 
     void setCoordinate_data()
@@ -215,14 +215,14 @@ private slots:
         QFETCH(QGeoPositionInfo::Property, property);
         QFETCH(qreal, value);
 
-        QGeoPositionInfo u;
-        QCOMPARE(u.property(property), qreal(-1.0));
+        QGeoPositionInfo info;
+        QCOMPARE(info.property(property), qreal(-1.0));
 
-        u.setProperty(property, value);
-        QCOMPARE(u.property(property), value);
+        info.setProperty(property, value);
+        QCOMPARE(info.property(property), value);
 
-        u.removeProperty(property);
-        QCOMPARE(u.property(property), qreal(-1.0));
+        info.removeProperty(property);
+        QCOMPARE(info.property(property), qreal(-1.0));
     }
 
     void property_data()
@@ -243,14 +243,14 @@ private slots:
         QFETCH(QGeoPositionInfo::Property, property);
         QFETCH(qreal, value);
 
-        QGeoPositionInfo u;
-        QVERIFY(!u.hasProperty(property));
+        QGeoPositionInfo info;
+        QVERIFY(!info.hasProperty(property));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        info.setProperty(property, value);
+        QVERIFY(info.hasProperty(property));
 
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
+        info.removeProperty(property);
+        QVERIFY(!info.hasProperty(property));
     }
 
     void hasProperty_data()
@@ -263,17 +263,17 @@ private slots:
         QFETCH(QGeoPositionInfo::Property, property);
         QFETCH(qreal, value);
 
-        QGeoPositionInfo u;
-        QVERIFY(!u.hasProperty(property));
+        QGeoPositionInfo info;
+        QVERIFY(!info.hasProperty(property));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        info.setProperty(property, value);
+        QVERIFY(info.hasProperty(property));
 
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
+        info.removeProperty(property);
+        QVERIFY(!info.hasProperty(property));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        info.setProperty(property, value);
+        QVERIFY(info.hasProperty(property));
     }
 
     void removeProperty_data()
@@ -283,21 +283,21 @@ private slots:
 
     void datastream()
     {
-        QFETCH(QGeoPositionInfo, u);
+        QFETCH(QGeoPositionInfo, info);
 
         QByteArray ba;
         QDataStream out(&ba, QIODevice::WriteOnly);
-        out << u;
+        out << info;
 
         QDataStream in(&ba, QIODevice::ReadOnly);
-        QGeoPositionInfo inUpdate;
-        in >> inUpdate;
-        QCOMPARE(inUpdate, u);
+        QGeoPositionInfo inInfo;
+        in >> inInfo;
+        QCOMPARE(inInfo, info);
     }
 
     void datastream_data()
     {
-        addTestData_update();
+        addTestData_info();
     }
 
     void debug()
