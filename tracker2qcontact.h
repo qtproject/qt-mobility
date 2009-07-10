@@ -18,7 +18,7 @@ class QContact;
 class Tracker2QContact
 {
  public:
-    static void copyContactData(const SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact, QContact& qcontact );
+    static bool copyContactData(const SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact, QContact& qcontact );
 };
 
 #endif

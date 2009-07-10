@@ -137,32 +137,33 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
     error = QContactManager::NoError;
 
     // TODO: Do with LiveNodes when they support strict querying.
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFContact.property<nco::contactUID>() = LiteralValue(QString::number(contactId));
+    RDFVariable rDFContact = RDFVariable::fromType<nco::PersonContact>();
+
+    rDFContact.property<nco::contactUID>() = LiteralValue(QString::number(contactId));
+
     RDFSelect query;
+    query.addColumn("contact_id", rDFContact);
 
-    query.addColumn("contact_uri", RDFContact);
     LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-    if(ncoContacts.value().isEmpty()) {
+
+    Q_ASSERT( ncoContacts.value().size() <= 1 );
+
+    if(ncoContacts->rowCount() == 0) {
         error = QContactManager::DoesNotExistError;
         return QContact();
     }
 
-    Live<nco::PersonContact> ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contactId)));
-
-    if( ncoContact->getContactUID() == QString() ) {
-        error = QContactManager::DoesNotExistError;
-        return QContact();
-    }
+    // Contact exists! Then continue with the contact loading.
+    Live<nco::PersonContact> ncoContact = ncoContacts->liveNode(0); // We only have one node in the list
+                                                                    // and we have checked already that it exists.
 
     QContact contact;
-    Tracker2QContact::copyContactData( ncoContact, contact );
-
-    return contact;
+    return Tracker2QContact::copyContactData( ncoContact, contact ) ? contact : QContact();
 }
 
 bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
 {
+    //::tracker()->setVerbosity(3);
     Q_UNUSED(batch);
 
     if(contact == 0) {
@@ -254,6 +255,11 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
                 liveEmail = contact->addHasEmailAddress();
             }
             liveEmail->setEmailAddress(email);
+        } else if(definition == QContactAvatar::DefinitionId) {
+            QUrl avatar = det.value(QContactAvatar::FieldAvatar);
+            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nie::DataObject> fdo = ::tracker()->liveNode( avatar );
+            contact->setPhoto(fdo);
         }
     }
 
@@ -282,16 +288,13 @@ bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch
 
     query.addColumn("contact_uri", RDFContact);
     LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-    QList< Live<nco::PersonContact> > personList = ncoContacts;
-    if(personList.isEmpty()) {
+    if(ncoContacts->rowCount() == 0) {
         error = QContactManager::DoesNotExistError;
         return false;
     }
 
-    // TODO: We should be able to (??) use personList.first() but it segfaults.
-    // We would also like to get the strictLive i.e. get me a contact if it exists,
-    // but do not create it if it doesn't.
-    Live< nco::PersonContact> ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contactId)));
+
+    Live< nco::PersonContact> ncoContact = ncoContacts->liveNode(0);
     LiveNodes contactMediums = ncoContact->getHasContactMediums();
     foreach(Live<nco::ContactMedium> media, contactMediums) {
         media->remove();
