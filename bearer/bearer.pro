@@ -51,7 +51,7 @@ symbian: {
                qnetworksession_p.h
 
     win32:DEFINES += BEARER_ENGINE
-    !mac:unix:contains(QT_CONFIG,dbus):DEFINES += BEARER_ENGINE
+    !mac:unix:DEFINES += BEARER_ENGINE
 
     contains(DEFINES, BEARER_ENGINE) {
         HEADERS += qnetworksessionengine_p.h \
