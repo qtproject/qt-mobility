@@ -2,6 +2,43 @@
 <!DOCTYPE QDOCINDEX>
 <INDEX url="" title="Bearer Management Library Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html" location="qnetworkconfigmanager.h" bases="" module="QtNetwork">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlag" fullname="QNetworkConfigurationManager::CapabilityFlag" href="qnetworkconfigurationmanager.html#CapabilityFlag-enum" location="qnetworkconfigmanager.h" typedef="QNetworkConfigurationManager::CapabilityFlags">
+                <value name="BearerManagement" value="0x00000001"></value>
+                <value name="DirectConnectionRouting" value="0x00000002"></value>
+                <value name="SystemSessionSupport" value="0x00000004"></value>
+                <value name="ApplicationLevelRoaming" value="0x00000008"></value>
+                <value name="ForcedRoaming" value="0x00000010"></value>
+                <value name="DataStatistics" value="0x00000020"></value>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlags" fullname="QNetworkConfigurationManager::CapabilityFlags" href="qnetworkconfigurationmanager.html#CapabilityFlags-typedef" location="qnetworkconfigmanager.h" enum="QNetworkConfigurationManager::CapabilityFlag"></typedef>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfigurationManager(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::~QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#dtor.QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfigurationManager()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QNetworkConfigurationManager::capabilities" href="qnetworkconfigurationmanager.html#capabilities" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfigurationManager::CapabilityFlags" signature="capabilities() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultConfiguration" fullname="QNetworkConfigurationManager::defaultConfiguration" href="qnetworkconfigurationmanager.html#defaultConfiguration" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="defaultConfiguration() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="allConfigurations" fullname="QNetworkConfigurationManager::allConfigurations" href="qnetworkconfigurationmanager.html#allConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="allConfigurations(QFlags&lt;QNetworkConfiguration::StateFlag&gt; filter) const">
+                <parameter left="QFlags&lt;QNetworkConfiguration::StateFlag&gt;" right="" name="filter" default="0"></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="configurationFromIdentifier" fullname="QNetworkConfigurationManager::configurationFromIdentifier" href="qnetworkconfigurationmanager.html#configurationFromIdentifier" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="configurationFromIdentifier(const QString &amp; identifier) const">
+                <parameter left="const QString &amp;" right="" name="identifier" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateConfigurations" fullname="QNetworkConfigurationManager::updateConfigurations" href="qnetworkconfigurationmanager.html#updateConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="updateConfigurations()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="configurationAdded" fullname="QNetworkConfigurationManager::configurationAdded" href="qnetworkconfigurationmanager.html#configurationAdded" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationAdded(const QNetworkConfiguration &amp; config)">
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="configurationRemoved" fullname="QNetworkConfigurationManager::configurationRemoved" href="qnetworkconfigurationmanager.html#configurationRemoved" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationRemoved(const QNetworkConfiguration &amp; configuration)">
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="configuration" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="configurationChanged" fullname="QNetworkConfigurationManager::configurationChanged" href="qnetworkconfigurationmanager.html#configurationChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationChanged(const QNetworkConfiguration &amp; config)">
+                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="onlineStateChanged" fullname="QNetworkConfigurationManager::onlineStateChanged" href="qnetworkconfigurationmanager.html#onlineStateChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="onlineStateChanged(bool isOnline)">
+                <parameter left="bool" right="" name="isOnline" default=""></parameter>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"></function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" href="qnetworkconfiguration.html" location="qnetworkconfiguration.h" bases="" module="QtNetwork">
             <contents name="configuration-states" title="Configuration states" level="1"></contents>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" fullname="QNetworkConfiguration::QNetworkConfiguration" href="qnetworkconfiguration.html#QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfiguration()"></function>
@@ -45,43 +82,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="QNetworkConfiguration::children" href="qnetworkconfiguration.html#children" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="children() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QNetworkConfiguration::name" href="qnetworkconfiguration.html#name" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"></function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QNetworkConfiguration::isValid" href="qnetworkconfiguration.html#isValid" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html" location="qnetworkconfigmanager.h" bases="" module="QtNetwork">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlag" fullname="QNetworkConfigurationManager::CapabilityFlag" href="qnetworkconfigurationmanager.html#CapabilityFlag-enum" location="qnetworkconfigmanager.h" typedef="QNetworkConfigurationManager::CapabilityFlags">
-                <value name="BearerManagement" value="0x00000001"></value>
-                <value name="DirectConnectionRouting" value="0x00000002"></value>
-                <value name="SystemSessionSupport" value="0x00000004"></value>
-                <value name="ApplicationLevelRoaming" value="0x00000008"></value>
-                <value name="ForcedRoaming" value="0x00000010"></value>
-                <value name="DataStatistics" value="0x00000020"></value>
-            </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlags" fullname="QNetworkConfigurationManager::CapabilityFlags" href="qnetworkconfigurationmanager.html#CapabilityFlags-typedef" location="qnetworkconfigmanager.h" enum="QNetworkConfigurationManager::CapabilityFlag"></typedef>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfigurationManager(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QNetworkConfigurationManager" fullname="QNetworkConfigurationManager::~QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html#dtor.QNetworkConfigurationManager" location="qnetworkconfigmanager.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNetworkConfigurationManager()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QNetworkConfigurationManager::capabilities" href="qnetworkconfigurationmanager.html#capabilities" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfigurationManager::CapabilityFlags" signature="capabilities() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultConfiguration" fullname="QNetworkConfigurationManager::defaultConfiguration" href="qnetworkconfigurationmanager.html#defaultConfiguration" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="defaultConfiguration() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="allConfigurations" fullname="QNetworkConfigurationManager::allConfigurations" href="qnetworkconfigurationmanager.html#allConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QNetworkConfiguration&gt;" signature="allConfigurations(QFlags&lt;QNetworkConfiguration::StateFlag&gt; filter) const">
-                <parameter left="QFlags&lt;QNetworkConfiguration::StateFlag&gt;" right="" name="filter" default="0"></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="configurationFromIdentifier" fullname="QNetworkConfigurationManager::configurationFromIdentifier" href="qnetworkconfigurationmanager.html#configurationFromIdentifier" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkConfiguration" signature="configurationFromIdentifier(const QString &amp; identifier) const">
-                <parameter left="const QString &amp;" right="" name="identifier" default=""></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateConfigurations" fullname="QNetworkConfigurationManager::updateConfigurations" href="qnetworkconfigurationmanager.html#updateConfigurations" location="qnetworkconfigmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="updateConfigurations()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="configurationAdded" fullname="QNetworkConfigurationManager::configurationAdded" href="qnetworkconfigurationmanager.html#configurationAdded" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationAdded(const QNetworkConfiguration &amp; config)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="configurationRemoved" fullname="QNetworkConfigurationManager::configurationRemoved" href="qnetworkconfigurationmanager.html#configurationRemoved" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationRemoved(const QNetworkConfiguration &amp; configuration)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="configuration" default=""></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="configurationChanged" fullname="QNetworkConfigurationManager::configurationChanged" href="qnetworkconfigurationmanager.html#configurationChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="configurationChanged(const QNetworkConfiguration &amp; config)">
-                <parameter left="const QNetworkConfiguration &amp;" right="" name="config" default=""></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="onlineStateChanged" fullname="QNetworkConfigurationManager::onlineStateChanged" href="qnetworkconfigurationmanager.html#onlineStateChanged" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="onlineStateChanged(bool isOnline)">
-                <parameter left="bool" right="" name="isOnline" default=""></parameter>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"></function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" href="qnetworksession.html" location="qnetworksession.h" bases="" module="QtNetwork">
             <contents name="roaming" title="Roaming" level="1"></contents>
@@ -143,6 +143,28 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="newConfigurationActivated" fullname="QNetworkSession::newConfigurationActivated" href="qnetworksession.html#newConfigurationActivated" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConfigurationActivated()"></function>
         </class>
+        <page access="public" status="commendable" name="bearercloud" href="bearercloud.html" subtype="example" title="Bearer Cloud Example" fulltitle="Bearer Cloud Example" subtitle="" location="bearercloud.qdoc">
+            <contents name="setting-the-scene" title="Setting the scene" level="1"></contents>
+            <contents name="responding-to-changes" title="Responding to changes" level="1"></contents>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.cpp" href="bearercloud-bearercloud-cpp.html" subtype="file" title="" fulltitle="bearercloud.cpp Example File" subtitle="bearercloud/bearercloud.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.h" href="bearercloud-bearercloud-h.html" subtype="file" title="" fulltitle="bearercloud.h Example File" subtitle="bearercloud/bearercloud.h" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/cloud.cpp" href="bearercloud-cloud-cpp.html" subtype="file" title="" fulltitle="cloud.cpp Example File" subtitle="bearercloud/cloud.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/cloud.h" href="bearercloud-cloud-h.html" subtype="file" title="" fulltitle="cloud.h Example File" subtitle="bearercloud/cloud.h" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/lan.svg" href="bearercloud-lan-svg.html" subtype="file" title="" fulltitle="lan.svg Example File" subtitle="bearercloud/lan.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/unknown.svg" href="bearercloud-unknown-svg.html" subtype="file" title="" fulltitle="unknown.svg Example File" subtitle="bearercloud/unknown.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/wlan.svg" href="bearercloud-wlan-svg.html" subtype="file" title="" fulltitle="wlan.svg Example File" subtitle="bearercloud/wlan.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/main.cpp" href="bearercloud-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearercloud/main.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.pro" href="bearercloud-bearercloud-pro.html" subtype="file" title="" fulltitle="bearercloud.pro Example File" subtitle="bearercloud/bearercloud.pro" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/icons.qrc" href="bearercloud-icons-qrc.html" subtype="file" title="" fulltitle="icons.qrc Example File" subtitle="bearercloud/icons.qrc" location=""></page>
+        </page>
+        <page access="public" status="commendable" name="bearermonitor" href="bearermonitor.html" subtype="example" title="Bearer Monitor Example" fulltitle="Bearer Monitor Example" subtitle="" location="bearermonitor.qdoc">
+            <page access="public" status="commendable" name="bearermonitor/bearerdialog.cpp" href="bearermonitor-bearerdialog-cpp.html" subtype="file" title="" fulltitle="bearerdialog.cpp Example File" subtitle="bearermonitor/bearerdialog.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/bearerdialog.h" href="bearermonitor-bearerdialog-h.html" subtype="file" title="" fulltitle="bearerdialog.h Example File" subtitle="bearermonitor/bearerdialog.h" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/sessionwidget.cpp" href="bearermonitor-sessionwidget-cpp.html" subtype="file" title="" fulltitle="sessionwidget.cpp Example File" subtitle="bearermonitor/sessionwidget.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/sessionwidget.h" href="bearermonitor-sessionwidget-h.html" subtype="file" title="" fulltitle="sessionwidget.h Example File" subtitle="bearermonitor/sessionwidget.h" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/main.cpp" href="bearermonitor-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearermonitor/main.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/bearermonitor.pro" href="bearermonitor-bearermonitor-pro.html" subtype="file" title="" fulltitle="bearermonitor.pro Example File" subtitle="bearermonitor/bearermonitor.pro" location=""></page>
+        </page>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Bearer Management Library Developer Resources" fulltitle="Bearer Management Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="introduction" title="Introduction" level="1"></contents>
             <contents name="the-api-in-details" title="The API in details" level="1"></contents>
@@ -153,6 +175,7 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
+            <contents name="examples" title="Examples" level="2"></contents>
         </page>
     </namespace>
 </INDEX>
