@@ -51,6 +51,9 @@ public:
 
     QMessageAddress();
     QMessageAddress(const QString &recipient, Type type);
+    QMessageAddress(const QMessageAddress &other);
+    const QMessageAddress& operator=(const QMessageAddress &other);
+
     virtual ~QMessageAddress();
     QString recipient() const;
     void setRecipient(const QString &recipient);

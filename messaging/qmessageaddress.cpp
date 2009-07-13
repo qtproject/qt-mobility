@@ -76,6 +76,25 @@ QMessageAddress::QMessageAddress(const QString &recipient, Type type)
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageAddress::QMessageAddress(const QMessageAddress &other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
+    Assign the value of the QMessageAddress \a other to this.
+*/
+const QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+/*!
     Destroys the message address.
 */
 QMessageAddress::~QMessageAddress()

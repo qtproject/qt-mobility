@@ -45,6 +45,9 @@ class QMessageFolder {
 public:
     QMessageFolder();
     QMessageFolder(const QMessageFolderId & id);
+    QMessageFolder(const QMessageFolder &other);
+    const QMessageFolder& operator=(const QMessageFolder &other);
+
     virtual ~QMessageFolder();
 
     QMessageFolderId id() const;

@@ -68,6 +68,20 @@
 */
 
 /*!
+    \fn QMessageFolder::QMessageFolder(const QMessageFolder &other)
+
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+
+/*!
+    \fn QMessageFolder::operator=(const QMessageFolder& other)
+  
+    Assign the value of the QMessageFolder \a other to this.
+*/
+
+/*!
     \fn QMessageFolder::~QMessageFolder()
     
     Destroys the QMessageFolder object.

@@ -70,6 +70,20 @@
 */
 
 /*!
+    \fn QMessageAccount::QMessageAccount(const QMessageAccount &other)
+
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+
+/*!
+    \fn QMessageAccount::operator=(const QMessageAccount& other)
+  
+    Assign the value of the QMessageAccount \a other to this.
+*/
+
+/*!
     \fn QMessageAccount::~QMessageAccount()
     
     Destroys the account object.

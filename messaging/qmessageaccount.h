@@ -44,6 +44,8 @@ class QMessageAccount {
 public:
     QMessageAccount();
     QMessageAccount(const QMessageAccountId &id);
+    QMessageAccount(const QMessageAccount &other);
+    const QMessageAccount& operator=(const QMessageAccount &other);
     virtual ~QMessageAccount();
 
     QMessageAccountId id() const;

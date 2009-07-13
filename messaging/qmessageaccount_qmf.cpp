@@ -41,6 +41,17 @@ QMessageAccount::QMessageAccount(const QMessageAccountId &id)
     Q_UNUSED(id)
 }
 
+QMessageAccount::QMessageAccount(const QMessageAccount &other)
+{
+    Q_UNUSED(other)
+}
+
+const QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 QMessageAccount::~QMessageAccount()
 {
 }

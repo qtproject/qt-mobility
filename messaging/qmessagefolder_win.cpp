@@ -42,6 +42,17 @@ QMessageFolder::QMessageFolder(const QMessageFolderId &id)
     Q_UNUSED(id)
 }
 
+QMessageFolder::QMessageFolder(const QMessageFolder &other)
+{
+    Q_UNUSED(other)
+}
+
+const QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 QMessageFolder::~QMessageFolder()
 {
 }
