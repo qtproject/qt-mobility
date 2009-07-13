@@ -47,15 +47,15 @@ class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
 
-    static const QString DefinitionId; // == staticType() == "Organisation"
+    static const char DefinitionId[]; // == staticType() == "Organisation"
 
-    static const QString FieldDisplayLabel;
-    static const QString FieldLogo;
+    static const char FieldDisplayLabel[];
+    static const char FieldLogo[];
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
-    QString displayLabel() const {return value(FieldDisplayLabel);}
-    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
-    QString logo() const {return value(FieldLogo);}
+    void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
+    QString displayLabel() const {return value(QLatin1String(FieldDisplayLabel));}
+    void setLogo(const QString& logo) {setValue(QLatin1String(FieldLogo), logo);}
+    QString logo() const {return value(QLatin1String(FieldLogo));}
 };
 
 #endif

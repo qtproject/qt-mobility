@@ -60,11 +60,11 @@ public:
     };
 
     // Predefined attribute names and values
-    static const QString AttributeContext;
-    static const QString AttributeSubType;
-    static const QString AttributeContextHome;
-    static const QString AttributeContextWork;
-    static const QString AttributeContextOther;
+    static const char AttributeContext[];
+    static const char AttributeSubType[];
+    static const char AttributeContextHome[];
+    static const char AttributeContextWork[];
+    static const char AttributeContextOther[];
 
     QContactDetail::Error error() const;
 
@@ -96,22 +96,22 @@ public:
 
     void setSubTypeAttribute(const QString& subType)
     {
-        setAttribute(QContactDetail::AttributeSubType, subType);
+        setAttribute(QLatin1String(AttributeSubType), subType);
     }
 
     QString subTypeAttribute() const
     {
-        return attribute(QContactDetail::AttributeSubType);
+        return attribute(QLatin1String(AttributeSubType));
     }
 
     void setContextAttribute(const QString& context)
     {
-        setAttribute(QContactDetail::AttributeContext, context);
+        setAttribute(QLatin1String(AttributeContext), context);
     }
 
     QString contextAttribute() const
     {
-        return attribute(QContactDetail::AttributeContext);
+        return attribute(QLatin1String(AttributeContext));
     }
 
 

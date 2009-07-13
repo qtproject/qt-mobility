@@ -46,25 +46,25 @@
 class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
 
-    static const QString DefinitionId; // == staticType() == "PhoneNumber"
+    static const char DefinitionId[]; // == staticType() == "PhoneNumber"
 
-    static const QString FieldNumber;
+    static const char FieldNumber[];
 
-    static const QString AttributeSubTypeLandline;
-    static const QString AttributeSubTypeMobile;
-    static const QString AttributeSubTypeFacsimile;
-    static const QString AttributeSubTypePager;
-    static const QString AttributeSubTypeVoice;
-    static const QString AttributeSubTypeModem;
-    static const QString AttributeSubTypeVideo;
-    static const QString AttributeSubTypeCar;
-    static const QString AttributeSubTypeBulletinBoardSystem;
-    static const QString AttributeSubTypeMessagingCapable;
+    static const char AttributeSubTypeLandline[];
+    static const char AttributeSubTypeMobile[];
+    static const char AttributeSubTypeFacsimile[];
+    static const char AttributeSubTypePager[];
+    static const char AttributeSubTypeVoice[];
+    static const char AttributeSubTypeModem[];
+    static const char AttributeSubTypeVideo[];
+    static const char AttributeSubTypeCar[];
+    static const char AttributeSubTypeBulletinBoardSystem[];
+    static const char AttributeSubTypeMessagingCapable[];
 
-    void setNumber(const QString& number) {setValue(FieldNumber, number);}
-    QString number() const {return value(FieldNumber);}
+    void setNumber(const QString& number) {setValue(QLatin1String(FieldNumber), number);}
+    QString number() const {return value(QLatin1String(FieldNumber));}
 };
 //! [0]
 

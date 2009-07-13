@@ -44,27 +44,27 @@
 class QTCONTACTS_EXPORT QContactName : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
 
-    static const QString DefinitionId; // == staticType() == "Name"
+    static const char DefinitionId[]; // == staticType() == "Name"
 
-    static const QString FieldPrefix;
-    static const QString FieldFirst;
-    static const QString FieldMiddle;
-    static const QString FieldLast;
-    static const QString FieldSuffix;
+    static const char FieldPrefix[];
+    static const char FieldFirst[];
+    static const char FieldMiddle[];
+    static const char FieldLast[];
+    static const char FieldSuffix[];
 
-    QString prefix() const {return value(FieldPrefix);}
-    QString first() const {return value(FieldFirst);}
-    QString middle() const {return value(FieldMiddle);}
-    QString last() const {return value(FieldLast);}
-    QString suffix() const {return value(FieldSuffix);}
+    QString prefix() const {return value(QLatin1String(FieldPrefix));}
+    QString first() const {return value(QLatin1String(FieldFirst));}
+    QString middle() const {return value(QLatin1String(FieldMiddle));}
+    QString last() const {return value(QLatin1String(FieldLast));}
+    QString suffix() const {return value(QLatin1String(FieldSuffix));}
 
-    void setPrefix(const QString& prefix) {setValue(FieldPrefix, prefix);}
-    void setFirst(const QString& first) {setValue(FieldFirst, first);}
-    void setMiddle(const QString& middle) {setValue(FieldMiddle, middle);}
-    void setLast(const QString& last) {setValue(FieldLast, last);}
-    void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
+    void setPrefix(const QString& prefix) {setValue(QLatin1String(FieldPrefix), prefix);}
+    void setFirst(const QString& first) {setValue(QLatin1String(FieldFirst), first);}
+    void setMiddle(const QString& middle) {setValue(QLatin1String(FieldMiddle), middle);}
+    void setLast(const QString& last) {setValue(QLatin1String(FieldLast), last);}
+    void setSuffix(const QString& suffix) {setValue(QLatin1String(FieldSuffix), suffix);}
 };
 
 #endif

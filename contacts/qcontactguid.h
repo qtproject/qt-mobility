@@ -45,17 +45,17 @@
 class QTCONTACTS_EXPORT QContactGuid : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid")
 
-    static const QString DefinitionId; // == staticType() == "Guid"
+    static const char DefinitionId[]; // == staticType() == "Guid"
 
-    static const QString FieldGuid;
+    static const char FieldGuid[];
 
-    static const QString AttributeSubTypeSync;
-    static const QString AttributeSubTypeOther;
+    static const char AttributeSubTypeSync[];
+    static const char AttributeSubTypeOther[];
 
-    void setGuid(const QString& guid) {setValue(FieldGuid, guid);}
-    QString guid() const {return value(FieldGuid);}
+    void setGuid(const QString& guid) {setValue(QLatin1String(FieldGuid), guid);}
+    QString guid() const {return value(QLatin1String(FieldGuid));}
 };
 
 #endif

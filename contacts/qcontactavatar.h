@@ -44,18 +44,18 @@
 class QTCONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
 
-    static const QString DefinitionId; // == staticType() == "Avatar"
+    static const char DefinitionId[]; // == staticType() == "Avatar"
 
-    static const QString FieldAvatar;
+    static const char FieldAvatar[];
 
-    static const QString AttributeSubTypeImage;
-    static const QString AttributeSubTypeVideo;
-    static const QString AttributeSubTypeTexturedMesh;
+    static const char AttributeSubTypeImage[];
+    static const char AttributeSubTypeVideo[];
+    static const char AttributeSubTypeTexturedMesh[];
 
-    void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
-    QString avatar() const {return value(FieldAvatar);}
+    void setAvatar(const QString& avatarPath) {setValue(QLatin1String(FieldAvatar), avatarPath);}
+    QString avatar() const {return value(QLatin1String(FieldAvatar));}
 };
 
 #endif

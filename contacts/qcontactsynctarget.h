@@ -45,14 +45,14 @@
 class QTCONTACTS_EXPORT QContactSyncTarget : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget")
 
-    static const QString DefinitionId; // == staticType() == "SyncTarget"
+    static const char DefinitionId[]; // == staticType() == "SyncTarget"
 
-    static const QString FieldSyncTarget;
+    static const char FieldSyncTarget[];
 
-    void setSyncTarget(const QString& syncTarget) {setValue(FieldSyncTarget, syncTarget);}
-    QString syncTarget() const {return value(FieldSyncTarget);}
+    void setSyncTarget(const QString& syncTarget) {setValue(QLatin1String(FieldSyncTarget), syncTarget);}
+    QString syncTarget() const {return value(QLatin1String(FieldSyncTarget));}
 };
 
 #endif

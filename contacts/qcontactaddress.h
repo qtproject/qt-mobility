@@ -45,34 +45,34 @@
 class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
 
-    static const QString DefinitionId; // == staticType() == "StreetAddress"
+    static const char DefinitionId[]; // == staticType() == "StreetAddress"
 
-    static const QString FieldDisplayLabel;
-    static const QString FieldStreet;
-    static const QString FieldLocality;
-    static const QString FieldRegion;
-    static const QString FieldPostcode;
-    static const QString FieldCountry;
+    static const char FieldDisplayLabel[];
+    static const char FieldStreet[];
+    static const char FieldLocality[];
+    static const char FieldRegion[];
+    static const char FieldPostcode[];
+    static const char FieldCountry[];
 
-    static const QString AttributeSubTypeParcel;
-    static const QString AttributeSubTypePostal;
-    static const QString AttributeSubTypeDomestic;
-    static const QString AttributeSubTypeInternational;
+    static const char AttributeSubTypeParcel[];
+    static const char AttributeSubTypePostal[];
+    static const char AttributeSubTypeDomestic[];
+    static const char AttributeSubTypeInternational[];
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
+    void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
     QString displayLabel() const;
-    void setStreet(const QString& street) {setValue(FieldStreet, street);}
-    QString street() const {return value(FieldStreet);}
-    void setLocality(const QString& locality) {setValue(FieldLocality, locality);}
-    QString locality() const {return value(FieldLocality);}
-    void setRegion(const QString& region) {setValue(FieldRegion, region);}
-    QString region() const {return value(FieldRegion);}
-    void setPostcode(const QString& postcode) {setValue(FieldPostcode, postcode);}
-    QString postcode() const {return value(FieldPostcode);}
-    void setCountry(const QString& country) {setValue(FieldCountry, country);}
-    QString country() const {return value(FieldCountry);}
+    void setStreet(const QString& street) {setValue(QLatin1String(FieldStreet), street);}
+    QString street() const {return value(QLatin1String(FieldStreet));}
+    void setLocality(const QString& locality) {setValue(QLatin1String(FieldLocality), locality);}
+    QString locality() const {return value(QLatin1String(FieldLocality));}
+    void setRegion(const QString& region) {setValue(QLatin1String(FieldRegion), region);}
+    QString region() const {return value(QLatin1String(FieldRegion));}
+    void setPostcode(const QString& postcode) {setValue(QLatin1String(FieldPostcode), postcode);}
+    QString postcode() const {return value(QLatin1String(FieldPostcode));}
+    void setCountry(const QString& country) {setValue(QLatin1String(FieldCountry), country);}
+    QString country() const {return value(QLatin1String(FieldCountry));}
 };
 
 #endif

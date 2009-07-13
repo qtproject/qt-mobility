@@ -44,26 +44,26 @@
 class QTCONTACTS_EXPORT QContactAnniversary : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
 
-    static const QString DefinitionId; // == staticType() == "Anniversary"
+    static const char DefinitionId[]; // == staticType() == "Anniversary"
 
-    static const QString FieldCalendarId;
-    static const QString FieldOriginalDate;
-    static const QString FieldEvent;
+    static const char FieldCalendarId[];
+    static const char FieldOriginalDate[];
+    static const char FieldEvent[];
 
-    static const QString AttributeSubTypeWedding;
-    static const QString AttributeSubTypeEngagement;
-    static const QString AttributeSubTypeHouse;
-    static const QString AttributeSubTypeEmployment;
-    static const QString AttributeSubTypeMemorial;
+    static const char AttributeSubTypeWedding[];
+    static const char AttributeSubTypeEngagement[];
+    static const char AttributeSubTypeHouse[];
+    static const char AttributeSubTypeEmployment[];
+    static const char AttributeSubTypeMemorial[];
 
-    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
-    QDate originalDate() const {return value<QDate>(FieldOriginalDate);}
-    void setCalendarId(const QString& calendarId) {setValue(FieldCalendarId, calendarId);}
-    QString calendarId() const {return value(FieldCalendarId);}
-    void setEvent(const QString& event) {setValue(FieldEvent, event);}
-    QString event() const {return value(FieldEvent);}
+    void setOriginalDate(const QDate& date) {setValue(QLatin1String(FieldOriginalDate), date);}
+    QDate originalDate() const {return value<QDate>(QLatin1String(FieldOriginalDate));}
+    void setCalendarId(const QString& calendarId) {setValue(QLatin1String(FieldCalendarId), calendarId);}
+    QString calendarId() const {return value(QLatin1String(FieldCalendarId));}
+    void setEvent(const QString& event) {setValue(QLatin1String(FieldEvent), event);}
+    QString event() const {return value(QLatin1String(FieldEvent));}
 };
 
 #endif

@@ -44,14 +44,14 @@
 class QTCONTACTS_EXPORT QContactGender : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender")
 
-    static const QString DefinitionId; // == staticType() == "Gender"
+    static const char DefinitionId[]; // == staticType() == "Gender"
 
-    static const QString FieldGender;
+    static const char FieldGender[];
 
-    void setGender(const QString& gender) {setValue(FieldGender, gender);}
-    QString gender() const {return value(FieldGender);}
+    void setGender(const QString& gender) {setValue(QLatin1String(FieldGender), gender);}
+    QString gender() const {return value(QLatin1String(FieldGender));}
 };
 
 #endif

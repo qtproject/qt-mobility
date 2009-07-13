@@ -44,14 +44,14 @@
 class QTCONTACTS_EXPORT QContactBirthday : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
 
-    static const QString DefinitionId; // == staticType() == "Birthday"
+    static const char DefinitionId[]; // == staticType() == "Birthday"
 
-    static const QString FieldBirthday;
+    static const char FieldBirthday[];
 
-    void setDate(const QDate& date) {setValue(FieldBirthday, date);}
-    QDate date() const {return value<QDate>(FieldBirthday);}
+    void setDate(const QDate& date) {setValue(QLatin1String(FieldBirthday), date);}
+    QDate date() const {return value<QDate>(QLatin1String(FieldBirthday));}
 };
 
 #endif

@@ -44,18 +44,18 @@
 class QTCONTACTS_EXPORT QContactUrl : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
 
-    static const QString DefinitionId; // == staticType() == "Url"
+    static const char DefinitionId[]; // == staticType() == "Url"
 
-    static const QString FieldUrl;
+    static const char FieldUrl[];
 
-    static const QString AttributeSubTypeHomePage;
-    static const QString AttributeSubTypeFavourite;
-    static const QString AttributeSubTypeSocialNetworking;
+    static const char AttributeSubTypeHomePage[];
+    static const char AttributeSubTypeFavourite[];
+    static const char AttributeSubTypeSocialNetworking[];
 
-    void setUrl(const QString& url) {setValue(FieldUrl, url);}
-    QString url() const {return value(FieldUrl);}
+    void setUrl(const QString& url) {setValue(QLatin1String(FieldUrl), url);}
+    QString url() const {return value(QLatin1String(FieldUrl));}
 };
 
 #endif

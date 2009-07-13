@@ -45,16 +45,16 @@
 class QTCONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
 
-    static const QString DefinitionId; // == staticType() == "EmailAddress"
+    static const char DefinitionId[]; // == staticType() == "EmailAddress"
 
-    static const QString FieldEmailAddress;
+    static const char FieldEmailAddress[];
 
-    static const QString AttributeSubTypeInternet;
+    static const char AttributeSubTypeInternet[];
 
-    void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
-    QString emailAddress() const {return value(FieldEmailAddress);}
+    void setEmailAddress(const QString& emailAddress) {setValue(QLatin1String(FieldEmailAddress), emailAddress);}
+    QString emailAddress() const {return value(QLatin1String(FieldEmailAddress));}
 };
 
 #endif
