@@ -64,11 +64,14 @@ class QNmDBusHelper: public QObject, protected QDBusContext
     void slotAccessPointAdded( QDBusObjectPath );
     void slotAccessPointRemoved( QDBusObjectPath );
     void slotPropertiesChanged( QMap<QString,QVariant>);
+    void slotSettingsRemoved();
+
 Q_SIGNALS:
     void pathForStateChanged(const QString &, quint32);
     void pathForAccessPointAdded(const QString &,  QDBusObjectPath );
     void pathForAccessPointRemoved(const QString &,  QDBusObjectPath );
     void pathForPropertiesChanged(const QString &, QMap<QString,QVariant>);
+    void pathForSettingsRemoved(const QString &);
 };
 #endif
 

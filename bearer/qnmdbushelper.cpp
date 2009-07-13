@@ -96,3 +96,11 @@ void QNmDBusHelper::slotPropertiesChanged(QMap<QString,QVariant> map)
         }
     }
 }
+
+void QNmDBusHelper::slotSettingsRemoved()
+{
+    QDBusMessage msg = this->message();
+    emit pathForSettingsRemoved(msg.path());
+}
+
+

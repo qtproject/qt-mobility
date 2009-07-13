@@ -449,8 +449,6 @@ void QNetworkSessionPrivate::networkConfigurationsChanged()
 
 void QNetworkSessionPrivate::configurationChanged(const QNetworkConfiguration &config)
 {
-    qWarning() << Q_FUNC_INFO;
-
     if (serviceConfig.isValid() && (config == serviceConfig || config == activeConfig))
         updateStateFromServiceNetwork();
     else if (config == activeConfig)
@@ -524,7 +522,6 @@ if(serviceName.isEmpty())
     foreach(QDBusObjectPath path, list) {
         QNetworkManagerSettingsConnection *sysIface;
         sysIface = new QNetworkManagerSettingsConnection(serviceName, path.path());
-        bool tmOk = false;
         startTime = QDateTime::fromTime_t(sysIface->getTimestamp());
         //                    isActive = (publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
     }
