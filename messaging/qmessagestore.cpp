@@ -75,7 +75,7 @@
     Defines whether or not a message will be removed from the originating server.
 
     \value RemoveLocalCopyOnly        Do not remove the message from the originating server.
-    \value RemoveOnOriginatingServer  Remove the message from the originating server.
+    \value RemoveOnOriginatingServer  Remove the message both from the local store and from the originating server if any.
 */
 
 /*
@@ -212,8 +212,9 @@
     \fn QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     
     Removes the message with QMessageId \a id from the messaging store. If \a option is 
-    QMessageStore::RemoveOnOriginatingServer then the message should be removed from the 
-    originating server when synchronization is performed with that server.
+    QMessageStore::RemoveOnOriginatingServer then when synchronization is performed the 
+    message should be removed from both the local message store and the originating server  
+    if any.
 
     Returns \c true if the operation successfully updates the store; otherwise returns \c false.
     
@@ -227,8 +228,8 @@
     \fn QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
     
     Removes all messages identified by the key \a key from the messaging store.
-    If \a option is QMessageStore::RemoveOnOriginatingServer then removal records will be 
-    created for each removed message.
+    If \a option is QMessageStore::RemoveOnOriginatingServer then when synchronization is performed the 
+    messages should be removed from both the local message store and the originating server if any.
 
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
