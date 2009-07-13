@@ -73,6 +73,7 @@ QContact::QContact()
     // insert the contact's name field.
     QContactDisplayLabel contactLabel;
     contactLabel.d->m_id = 1;
+    contactLabel.setSynthesised(true);
     d->m_details.insert(0, contactLabel);
 }
 
@@ -85,13 +86,17 @@ QContact::QContact(const QContact& other)
 /*!
  * Returns true if this QContact is empty, false if not.
  *
- * An empty QContact has no fields.
+ * An empty QContact has an empty label and no extra details.
  */
 bool QContact::isEmpty() const
 {
-    if (d->m_details.count() == 0)
-        return true;
-    return false;
+    /* Every contact has a display label field.. */
+    if (d->m_details.count() > 1)
+        return false;
+
+    /* We know we have one detail (a display label) */
+    const QContactDisplayLabel& label = d->m_details.at(0);
+    return label.label().isEmpty();
 }
 
 /*! Replace the contents of this QContact with \a other */
@@ -115,8 +120,7 @@ QContact::~QContact()
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
  * \value DetailDoesNotExistError The most recent operation failed because the requested detail does not exist
  * \value DetailAlreadyExistsError The most recent operation failed because the specified detail already exists
- * \value DetailLimitReachedError The most recent operation failed because no more details may be stored in this contact
- * \value DetailOfThisTypeLimitReachedError The most recent operation failed because no more details of this definition type may be stored in this contact
+ * \value BadArgumentError The most recent operation failed because a bad argument was supplied
  * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
  * \value UnspecifiedError The most recent operation failed for an undocumented reason
  */
@@ -131,12 +135,47 @@ QUniqueId QContact::id() const
 /*!
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
- * in the contact) or synthesised by the manager from which the contact is retrieved.
+ * in the contact, or by calling \l setDisplayLabel()) or synthesised by the manager from
+ * which the contact is retrieved.
+ *
+ * \sa setDisplayLabel()
  */
 QContactDisplayLabel QContact::displayLabel() const
 {
     QContactData::setError(d, QContact::NoError);
     return d->m_details.at(0);
+}
+
+/*!
+ * Set the display label of the contact to \a label.
+ *
+ * The corresponding "synthesised" flag in this contact will be
+ * cleared.
+ *
+ * Returns true on success, false otherwise.
+ */
+bool QContact::setDisplayLabel(const QContactDisplayLabel& label)
+{
+    QContactData::setError(d, QContact::NoError);
+    d->m_details[0] = label;
+    return true;
+}
+
+/*!
+ * Set the display label of the contact to \a label.
+ *
+ * The corresponding "synthesised" flag in this contact will be
+ * cleared.
+ *
+ * Returns true on success, false otherwise.
+ */
+bool QContact::setDisplayLabel(const QString& label)
+{
+    QContactData::setError(d, QContact::NoError);
+    QContactDisplayLabel dl = d->m_details[0];
+    dl.setLabel(label);
+    d->m_details[0] = dl;
+    return true;
 }
 
 /*!
@@ -205,13 +244,37 @@ QContact::Error QContact::error() const
     return d->m_error;
 }
 
-/*! Saves the given \a detail in the list of stored details, and sets its Id.  If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten.  Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.  Returns true if the detail was saved successfully, otherwise returns false */
+/*!
+ * Saves the given \a detail in the list of stored details, and sets its Id.
+ * If another detail of the same type and Id has been previously saved in
+ * this contact, that detail is overwritten.  Otherwise, a new Id is generated
+ * and set in the detail, and the detail is added to the list.
+ *
+ * If \a detail is a contact display label, the existing display label will
+ * be overwritten with \a detail.  There is never more than one display label
+ * in a contact.
+ *
+ * Returns true if the detail was saved successfully, otherwise returns false
+ */
 bool QContact::saveDetail(QContactDetail* detail)
 {
+    if (!detail) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return false;
+    }
+
+    /* Handle display labels specially */
+    if (detail->definitionName() == QLatin1String(QContactDisplayLabel::DefinitionId)) {
+        d->m_details[0] = *detail;
+        detail->d->m_id = 1;
+        QContactData::setError(d, QContact::NoError);
+        return true;
+    }
+
     // try to find the "old version" of this field
     // ie, the one with the same type and id, but different value or attributes.
     for (int i = 0; i < d->m_details.size(); i++) {
-        QContactDetail curr = d->m_details.at(i);
+        const QContactDetail& curr = d->m_details.at(i);
         if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
             // Found the old version.  Replace it with this one.
             d->m_details[i] = *detail;
@@ -227,15 +290,41 @@ bool QContact::saveDetail(QContactDetail* detail)
     return true;
 }
 
-/*! Removes the \a detail from the contact.  Any preference for the given field is removed, also.  The Id of the \a detail is removed, to signify that it is no longer part of the contact.  Returns true if the detail was removed successfully, false if an error occurred */
+/*!
+ * Removes the \a detail from the contact.
+ *
+ * Any preference for the given field is also removed.
+ * The Id of the \a detail is removed, to signify that it is no longer
+ * part of the contact.
+ *
+ * If the detail is the display label for this contact, the display
+ * label will be reset to an empty state, and the function will return success.
+ *
+ * Returns true if the detail was removed successfully, false if an error occurred
+ */
 bool QContact::removeDetail(QContactDetail* detail)
 {
+    if (!detail) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return false;
+    }
+
     if (!d->m_details.contains(*detail)) {
         QContactData::setError(d, QContact::DetailDoesNotExistError);
         return false;
     }
 
+    // Check if this a display label
+    if (detail->d->m_definitionName == QLatin1String(QContactDisplayLabel::DefinitionId)) {
+        QContactData::setError(d, QContact::NoError);
+        QContactDisplayLabel l = d->m_details[0];
+        l.setLabel(QString());
+        d->m_details[0] = l;
+        return true;
+    }
+
     // TODO: remove preference if exists - relies on QSFW code.
+
 
     d->m_details.removeOne(*detail);
     detail->d->m_id = 0;

@@ -70,6 +70,7 @@ private slots:
     void batch();
     void signalEmission();
     void detailDefinitions();
+    void displayName();
 
     /* Tests that take no data */
     void contactValidation();
@@ -88,6 +89,7 @@ private slots:
     void batch_data() {addManagers();}
     void signalEmission_data() {addManagers();}
     void detailDefinitions_data() {addManagers();}
+    void displayName_data() {addManagers();}
 };
 
 /* A class that no backend can support */
@@ -292,6 +294,7 @@ void tst_QContactManager::nullIdOperations()
 
     QContact c = cm->contact(QUniqueId());
     QVERIFY(c.id() == 0);
+    QVERIFY(c.isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
     delete cm;
 }
@@ -815,10 +818,13 @@ void tst_QContactManager::batch()
 
     /* Make sure the contacts really don't exist any more */
     QVERIFY(cm->contact(a.id()).id() == 0);
+    QVERIFY(cm->contact(a.id()).isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
     QVERIFY(cm->contact(b.id()).id() == 0);
+    QVERIFY(cm->contact(b.id()).isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
     QVERIFY(cm->contact(c.id()).id() == 0);
+    QVERIFY(cm->contact(c.id()).isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
     /* Now try removing with all invalid ids (e.g. the ones we just removed) */
@@ -926,6 +932,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.contacts().count() == 0);
 
     QVERIFY(manager.contact(foo.id()).id() == 0);
+    QVERIFY(manager.contact(foo.id()).isEmpty());
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(manager.removeContact(foo.id()) == false);
@@ -1559,6 +1566,62 @@ void tst_QContactManager::detailDefinitions()
     delete cm;
 }
 
+void tst_QContactManager::displayName()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
 
+
+    /*
+     * Very similar to the tst_QContact functions, except we test
+     * saving and retrieving contacts updates the display label
+     */
+
+    /* Try to make this a bit more consistent by using a single name */
+    QContact d;
+    QContactName name;
+    name.setFirst("Wesley");
+
+    QVERIFY(d.displayLabel().label().isEmpty());
+    QVERIFY(d.saveDetail(&name));
+
+    QVERIFY(cm->saveContact(&d));
+
+    QString synth = cm->synthesiseDisplayLabel(d);
+
+    /*
+     * The display label is not updated until you save the contact, or
+     * do it manually.
+     */
+    d = cm->contact(d.id());
+    QVERIFY(!d.isEmpty());
+
+    QCOMPARE(d.displayLabel().label(), synth);
+    QVERIFY(d.displayLabel().isSynthesised() == true);
+
+    /* Set something else */
+    QVERIFY(d.setDisplayLabel("The grand old duchess"));
+    QVERIFY(d.displayLabel().label() == "The grand old duchess");
+    QVERIFY(d.displayLabel().isSynthesised() == false);
+
+    /* Remove the detail via removeDetail */
+    QContactDisplayLabel old = d.displayLabel();
+    QVERIFY(d.details().count() == 2);
+    QVERIFY(d.removeDetail(&old));
+    QVERIFY(d.isEmpty() == false);
+    QVERIFY(d.details().count() == 2); // it should not be removed, only cleared (!)
+
+    /* Save the contact again */
+    QVERIFY(cm->saveContact(&d));
+    d = cm->contact(d.id());
+    QVERIFY(!d.isEmpty());
+
+    /* Make sure we go back to the old synth version */
+    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QCOMPARE(d.displayLabel().label(), synth);
+
+    /* And delete the contact */
+    QVERIFY(cm->removeContact(d.id()));
+}
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

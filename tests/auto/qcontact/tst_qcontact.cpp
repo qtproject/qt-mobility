@@ -46,13 +46,12 @@ public:
     tst_QContact();
     virtual ~tst_QContact();
 
-public slots:
-    void init();
-    void cleanup();
 private slots:
     void details();
     void actions();
     void preferences();
+    void displayName();
+    void emptiness();
 };
 
 tst_QContact::tst_QContact()
@@ -63,19 +62,12 @@ tst_QContact::~tst_QContact()
 {
 }
 
-void tst_QContact::init()
-{
-}
-
-void tst_QContact::cleanup()
-{
-}
-
 void tst_QContact::details()
 {
     QContact c;
 
     // Test there are no details (apart from the name :/) by default
+    QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details().count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
@@ -97,6 +89,7 @@ void tst_QContact::details()
     p.setNumber("12345678");
     QVERIFY(c.saveDetail(&p));
     QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isEmpty() == false);
 
     QVERIFY(c.details().count() == 2);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
@@ -109,6 +102,7 @@ void tst_QContact::details()
     QVERIFY(c.removeDetail(&p));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 1);
+    QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
@@ -121,6 +115,7 @@ void tst_QContact::details()
     // Add again, and remove a different way (retrieved copy)
     QVERIFY(c.saveDetail(&p));
     QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isEmpty() == false);
     QVERIFY(c.details().count() == 2);
     QContactPhoneNumber p2 = c.detail(QContactPhoneNumber::staticType());
     QCOMPARE(p, p2);
@@ -128,6 +123,7 @@ void tst_QContact::details()
     QVERIFY(c.removeDetail(&p2));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 1);
+    QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
@@ -155,10 +151,12 @@ void tst_QContact::details()
     // Now try adding a detail to multiple contacts
 
     QContact c2;
+    QVERIFY(c2.isEmpty() == true);
     QVERIFY(c.saveDetail(&p));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c2.saveDetail(&p));
     QVERIFY(c2.error() == QContact::NoError);
+    QVERIFY(c2.isEmpty() == false);
 
     QVERIFY(c.details().count() == 2);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
@@ -179,6 +177,7 @@ void tst_QContact::details()
     QVERIFY(c.error() == QContact::NoError);
 
     // Make sure it's gone from the first contact
+    QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details().count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
@@ -186,6 +185,7 @@ void tst_QContact::details()
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     // but not the second
+    QVERIFY(c2.isEmpty() == false);
     QVERIFY(c2.details().count() == 2);
     QVERIFY(c2.details(QContactPhoneNumber::staticType()).count() == 1);
     QVERIFY(c2.details<QContactPhoneNumber>().count() == 1);
@@ -267,6 +267,14 @@ void tst_QContact::details()
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
+
+    // Null pointer tests
+    QVERIFY(c.saveDetail(0) == false);
+    QVERIFY(c.error() == QContact::BadArgumentError);
+
+    QVERIFY(c.removeDetail(0) == false);
+    QVERIFY(c.error() == QContact::BadArgumentError);
+
 }
 
 void tst_QContact::actions()
@@ -304,6 +312,97 @@ void tst_QContact::preferences()
     QCOMPARE(c.setPreferredDetail("nonexistentAction", det3), false);
     QCOMPARE(c.preferredDetail("nonexistentAction", det2); // shouldn't have changed.
 #endif
+}
+
+void tst_QContact::displayName()
+{
+    QContact c;
+    QContactManager cm("memory"); // for formatting names
+
+    QContactDisplayLabel label = c.displayLabel();
+    QVERIFY(label.label().isEmpty());
+    QVERIFY(c.displayLabel().isSynthesised() == true);
+
+    label.setLabel("Wesley Wentworth Worrier");
+    QVERIFY(label.isEmpty() == false);
+    QVERIFY(label.label().isEmpty() == false);
+    QVERIFY(label.isSynthesised() == false);
+
+    label.setSynthesised(true);
+
+    QVERIFY(c.setDisplayLabel(label));
+    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
+    QVERIFY(c.displayLabel().isSynthesised() == true);
+
+    //label.setLabel(QString());
+    //QVERIFY(label.isSynthesised() == true);
+
+    /* Clear the label again */
+    QVERIFY(c.setDisplayLabel(QString()));
+    QVERIFY(c.displayLabel().label().isEmpty());
+    QVERIFY(c.displayLabel().isSynthesised() == true);
+
+    /* Use the string mutator */
+    QVERIFY(c.setDisplayLabel("Wesley Wentworth Worrier"));
+    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
+    QVERIFY(c.displayLabel().isSynthesised() == false);
+
+    /* Try to make this a bit more consistent by using a single name */
+    QContact d;
+    QContactName name;
+    name.setFirst("Wesley");
+
+    QVERIFY(d.displayLabel().label().isEmpty());
+    QVERIFY(d.saveDetail(&name));
+
+    /*
+     * The display label is not updated until you save the contact, or
+     * do it manually.
+     */
+    QString synth = cm.synthesiseDisplayLabel(d);
+
+    QVERIFY(d.displayLabel().label().isEmpty());
+    QVERIFY(d.displayLabel().isSynthesised() == true);
+
+    QVERIFY(synth == name.first()); // XXX Perhaps not guaranteed
+
+    /* Set something else */
+    QVERIFY(d.setDisplayLabel("The grand old duchess"));
+    QVERIFY(d.displayLabel().label() == "The grand old duchess");
+    QVERIFY(d.displayLabel().isSynthesised() == false);
+
+    /* Remove the detail via removeDetail */
+    QContactDisplayLabel old = d.displayLabel();
+    QVERIFY(d.details().count() == 2);
+    QVERIFY(d.removeDetail(&old));
+    QVERIFY(d.isEmpty() == false);
+    QVERIFY(d.details().count() == 2); // it should not be removed, only cleared (!)
+
+    /* Make sure we go back to the old synth version */
+    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QVERIFY(d.displayLabel().label().isEmpty());
+}
+
+void tst_QContact::emptiness()
+{
+    QContact c;
+    QVERIFY(c.isEmpty() == true);
+
+    QContactDisplayLabel label = c.displayLabel();
+    QVERIFY(label.label().isEmpty());
+
+    label.setLabel("Wesley Wentworth Worrier");
+    QVERIFY(label.isEmpty() == false);
+    QVERIFY(label.label().isEmpty() == false);
+
+    QVERIFY(c.setDisplayLabel(label));
+    QVERIFY(c.isEmpty() == false);
+
+    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
+    QVERIFY(c.displayLabel().isSynthesised() == false);
+
+    QVERIFY(c.setDisplayLabel(QString()));
+    QVERIFY(c.isEmpty() == true);
 }
 
 QTEST_MAIN(tst_QContact)

@@ -71,8 +71,7 @@ public:
         OutOfMemoryError,
         DetailDoesNotExistError,
         DetailAlreadyExistsError,
-        DetailLimitReachedError,
-        DetailOfThisTypeLimitReachedError,
+        BadArgumentError,
         PermissionsError,
         UnspecifiedError
     };
@@ -86,6 +85,8 @@ public:
 
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
+    bool setDisplayLabel(const QContactDisplayLabel& label);
+    bool setDisplayLabel(const QString& label);
 
     /* Is this an empty contact? */
     bool isEmpty() const;

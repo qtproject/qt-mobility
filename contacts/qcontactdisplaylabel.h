@@ -45,14 +45,18 @@
 class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
 
     static const char DefinitionId[]; // == staticType() == "DisplayLabel"
 
     static const char FieldLabel[];
     static const char FieldSynthesised[];
 
-    void setLabel(const QString& label) {setValue(QLatin1String(FieldLabel), label); setValue(QLatin1String(FieldSynthesised), false);}
+    void setLabel(const QString& label)
+    {
+        setValue(QLatin1String(FieldLabel), label);
+        setValue(QLatin1String(FieldSynthesised), label.isEmpty() ? true : false);
+    }
     QString label() const {return value(QLatin1String(FieldLabel));}
     void setSynthesised(bool synthesised) {setValue(QLatin1String(FieldSynthesised), synthesised);}
     bool isSynthesised() const {return variantValue(QLatin1String(FieldSynthesised)).toBool();}

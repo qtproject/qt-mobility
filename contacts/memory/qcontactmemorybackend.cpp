@@ -137,10 +137,10 @@ QContact QContactMemoryEngine::contact(const QUniqueId& contactId, QContactManag
         error = QContactManager::NoError;
         QContact retn = d->m_contacts.at(index);
         QContactDisplayLabel dl = retn.detail(QLatin1String(QContactDisplayLabel::DefinitionId));
-        if (dl.isEmpty()) {
+        if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            dl.setSynthesised(true);
             dl.setLabel(synthesiseDisplayLabel(retn, synthError));
+            dl.setSynthesised(true);
             retn.saveDetail(&dl);
         }
 
