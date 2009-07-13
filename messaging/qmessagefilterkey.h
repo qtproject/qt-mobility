@@ -51,6 +51,7 @@ public:
     QMessageDataComparator::Options options();
 
     QMessageFilterKey();
+    QMessageFilterKey(const QMessageFilterKey &other);
     bool isEmpty() const;
 
     QMessageFilterKey operator~() const;

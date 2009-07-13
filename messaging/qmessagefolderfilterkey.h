@@ -50,6 +50,7 @@ public:
     QMessageDataComparator::Options options();
 
     QMessageFolderFilterKey();
+    QMessageFolderFilterKey(const QMessageFolderFilterKey &other);
     bool isEmpty() const;
 
     QMessageFolderFilterKey operator~() const;

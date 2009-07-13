@@ -86,6 +86,16 @@ QMessageAccountFilterKey::QMessageAccountFilterKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKey &other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false. 
 
     An empty key matches all accounts.

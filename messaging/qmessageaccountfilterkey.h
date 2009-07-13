@@ -46,6 +46,7 @@ public:
     QMessageDataComparator::Options options();
 
     QMessageAccountFilterKey();
+    QMessageAccountFilterKey(const QMessageAccountFilterKey &other);
     bool isEmpty() const;
 
     QMessageAccountFilterKey operator~() const;

@@ -64,6 +64,15 @@ QMessageFolderSortKey::QMessageFolderSortKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
+{
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageFolderSortKey::isEmpty() const

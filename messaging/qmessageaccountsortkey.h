@@ -41,6 +41,7 @@ class QMessageAccountSortKey {
 
 public:
     QMessageAccountSortKey();
+    QMessageAccountSortKey(const QMessageAccountSortKey &other);
     bool isEmpty() const;
 
     bool operator==(const QMessageAccountSortKey &other) const;

@@ -87,6 +87,16 @@ QMessageFolderFilterKey::QMessageFolderFilterKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false. 
 
     An empty key matches all folders.

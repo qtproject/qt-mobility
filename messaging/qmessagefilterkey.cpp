@@ -95,6 +95,16 @@ QMessageFilterKey::QMessageFilterKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageFilterKey::QMessageFilterKey(const QMessageFilterKey &other)
+{
+    Q_UNUSED(other)
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false. 
 
     An empty key matches all messages.

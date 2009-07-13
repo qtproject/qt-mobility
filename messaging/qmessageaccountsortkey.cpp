@@ -63,6 +63,15 @@ QMessageAccountSortKey::QMessageAccountSortKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
+{
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageAccountSortKey::isEmpty() const

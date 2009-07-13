@@ -41,6 +41,7 @@ class QMessageSortKey {
 
 public:
     QMessageSortKey();
+    QMessageSortKey(const QMessageSortKey &other);
     bool isEmpty() const;
 
     QMessageSortKey operator+(const QMessageSortKey &other) const;

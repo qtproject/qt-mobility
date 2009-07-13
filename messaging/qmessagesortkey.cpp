@@ -70,6 +70,15 @@ QMessageSortKey::QMessageSortKey()
 }
 
 /*!
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
+{
+}
+
+/*!
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageSortKey::isEmpty() const
