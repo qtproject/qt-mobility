@@ -150,10 +150,15 @@ Player::~Player()
 
 void Player::open()
 {
-    QString fileName = QFileDialog::getOpenFileName();
+    QStringList fileNames = QFileDialog::getOpenFileNames();
 
-    if (!fileName.isNull()) {
-        player->mediaPlaylist()->append(QMediaSource("", QLatin1String("file:///") + fileName));
+	if (!fileNames.isEmpty()) {
+		QList<QMediaSource>	sources;
+
+		foreach (QString const &fileName, fileNames)
+			sources << QMediaSource("", QLatin1String("file://") + fileName);
+
+		player->mediaPlaylist()->append(sources);
     }
 }
 
@@ -171,8 +176,8 @@ void Player::metadataChanged()
 {
     qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
     if (metaData->metadataAvailable())
-        setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("artist")).toString()).
-                                          arg(metaData->metadata(QLatin1String("title")).toString()));
+        setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
+                                          arg(metaData->metadata(QLatin1String("Title")).toString()));
 }
 
 void Player::jump(const QModelIndex &index)
