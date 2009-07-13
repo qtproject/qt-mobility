@@ -231,7 +231,7 @@ private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIntersectionFilter);
 };
 
-const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
 
 class QContactUnionFilterPrivate;
 class QTCONTACTS_EXPORT QContactUnionFilter : public QContactFilter
@@ -256,6 +256,6 @@ private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactUnionFilter);
 };
 
-const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
 
 #endif

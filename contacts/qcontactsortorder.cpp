@@ -9,6 +9,20 @@ QContactSortOrder::~QContactSortOrder()
 {
 }
 
+QContactSortOrder::QContactSortOrder(const QContactSortOrder& other)
+    : d(other.d)
+{
+
+}
+QContactSortOrder& QContactSortOrder::operator=(const QContactSortOrder& other)
+{
+    if (this != &other) {
+        d = other.d;
+    }
+    return *this;
+}
+
+
 void QContactSortOrder::setType(QContactSortOrder::Type type)
 {
     d->m_type = type;

@@ -54,6 +54,9 @@ public:
     QContactSortOrder();
     ~QContactSortOrder();
 
+    QContactSortOrder(const QContactSortOrder& other);
+    QContactSortOrder& operator=(const QContactSortOrder& other);
+
     enum Type {
         Unsorted = 0,
         Detail,
