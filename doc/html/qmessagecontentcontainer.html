@@ -23,6 +23,7 @@
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"></div><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmessagecontentcontainer.html#QMessageContentContainer-2">QMessageContentContainer</a></b> ( const QMessageContentContainer &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</li>
 <li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#appendContent">appendContent</a></b> ( const QMessageContentContainer &amp; <i>content</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
@@ -58,6 +59,7 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
+<li><div class="fn"></div>const QMessageContentContainer &amp; <b><a href="qmessagecontentcontainer.html#operator-eq">operator=</a></b> ( const QMessageContentContainer &amp; <i>other</i> )</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -93,6 +95,9 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMessageContentContainer"></a>QMessageContentContainer::QMessageContentContainer ()</h3>
 <p>Constructs an empty container object.</p>
+<h3 class="fn"><a name="QMessageContentContainer-2"></a>QMessageContentContainer::QMessageContentContainer ( const QMessageContentContainer &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessagecontentcontainer.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageContentContainer"></a>QMessageContentContainer::~QMessageContentContainer ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the container object.</p>
 <h3 class="fn"><a name="appendContent"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessageContentContainer::appendContent ( const QMessageContentContainer &amp; <i>content</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -218,6 +223,8 @@
 <h3 class="fn"><a name="writeContentTo"></a>void QMessageContentContainer::writeContentTo ( QDataStream &amp; <i>out</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>For a non multipart container writes the content as would be returned by <a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a>() into the stream <i>out</i>; otherwise for a multipart container does nothing.</p>
 <p>See also <a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a>().</p>
+<h3 class="fn"><a name="operator-eq"></a>const QMessageContentContainer &amp; QMessageContentContainer::operator= ( const QMessageContentContainer &amp; <i>other</i> )</h3>
+<p>Assign the value of the <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> <i>other</i> to this.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -34,6 +34,7 @@
 <ul>
 <li><div class="fn"></div><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div><b><a href="qmessage.html#QMessage-3">QMessage</a></b> ( const QMessage &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#appendAttachments">appendAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
 <li><div class="fn"></div>virtual QMessageContentContainerIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
@@ -81,9 +82,10 @@
 <li><div class="fn"></div>virtual QByteArray <b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 <li><div class="fn"></div>virtual Type <b><a href="qmessage.html#type">type</a></b> () const</li>
+<li><div class="fn"></div>const QMessage &amp; <b><a href="qmessage.html#operator-eq">operator=</a></b> ( const QMessage &amp; <i>other</i> )</li>
 </ul>
 <ul>
-<li><div class="fn"></div>34 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
+<li><div class="fn"></div>35 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -169,6 +171,9 @@
 <h3 class="fn"><a name="QMessage-2"></a>QMessage::QMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Constructs a message from data stored in the messaging store with identifier <i>id</i>.</p>
 <p>See also <a href="qmessagestore.html">QMessageStore</a>.</p>
+<h3 class="fn"><a name="QMessage-3"></a>QMessage::QMessage ( const QMessage &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessage.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message.</p>
 <h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const QStringList &amp; <i>fileNames</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -330,6 +335,8 @@
 <h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the Type of the message.</p>
 <p>See also <a href="qmessage.html#setType">setType</a>() and <a href="qmessagefilterkey.html#type">QMessageFilterKey::type</a>().</p>
+<h3 class="fn"><a name="operator-eq"></a>const QMessage &amp; QMessage::operator= ( const QMessage &amp; <i>other</i> )</h3>
+<p>Assign the value of the <a href="qmessage.html">QMessage</a> <i>other</i> to this.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

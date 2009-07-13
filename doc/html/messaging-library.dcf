@@ -73,6 +73,7 @@
         <keyword ref="qmessage.html#to">to</keyword>
         <keyword ref="qmessage.html#toTransmissionFormat">toTransmissionFormat</keyword>
         <keyword ref="qmessage.html#type">type</keyword>
+        <keyword ref="qmessage.html#operator-eq">operator=</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageaccount.html" title="QMessageAccount Class Reference">
@@ -83,6 +84,7 @@
         <keyword ref="qmessageaccount.html#name">name</keyword>
         <keyword ref="qmessageaccount.html#signature">signature</keyword>
         <keyword ref="qmessageaccount.html#types">types</keyword>
+        <keyword ref="qmessageaccount.html#operator-eq">operator=</keyword>
         <section ref="qmessageaccount-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageaccountfilterkey.html" title="QMessageAccountFilterKey Class Reference">
@@ -129,6 +131,7 @@
         <keyword ref="qmessageaddress.html#setRecipient">setRecipient</keyword>
         <keyword ref="qmessageaddress.html#setType">setType</keyword>
         <keyword ref="qmessageaddress.html#type">type</keyword>
+        <keyword ref="qmessageaddress.html#operator-eq">operator=</keyword>
         <section ref="qmessageaddress-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
@@ -166,6 +169,7 @@
         <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
         <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
+        <keyword ref="qmessagecontentcontainer.html#operator-eq">operator=</keyword>
         <section ref="qmessagecontentcontainer-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagecontentcontainerid.html" title="QMessageContentContainerId Class Reference">
@@ -230,6 +234,7 @@
         <keyword ref="qmessagefolder.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessagefolder.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessagefolder.html#path">path</keyword>
+        <keyword ref="qmessagefolder.html#operator-eq">operator=</keyword>
         <section ref="qmessagefolder-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagefolderfilterkey.html" title="QMessageFolderFilterKey Class Reference">

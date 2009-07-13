@@ -57,6 +57,12 @@
                 <parameter left="const QString &amp;" right="" name="recipient" default=""/>
                 <parameter left="Type" right="" name="type" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress-3" location="qmessageaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMessageAddress(const QMessageAddress &amp; other)">
+                <parameter left="const QMessageAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageAddress::operator=" href="qmessageaddress.html#operator=" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageAddress &amp;" signature="operator=(const QMessageAddress &amp; other)">
+                <parameter left="const QMessageAddress &amp;" right="" name="other" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageAddress" fullname="QMessageAddress::~QMessageAddress" href="qmessageaddress.html#dtor.QMessageAddress" location="qmessageaddress.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageAddress()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="recipient" fullname="QMessageAddress::recipient" href="qmessageaddress.html#recipient" location="qmessageaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="recipient() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRecipient" fullname="QMessageAddress::setRecipient" href="qmessageaddress.html#setRecipient" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRecipient(const QString &amp; recipient)">
@@ -245,6 +251,12 @@
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessage" fullname="QMessage::~QMessage" href="qmessage.html#dtor.QMessage" location="qmessage_qmf.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessage()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessage" fullname="QMessage::QMessage" href="qmessage.html#QMessage-3" location="qmessage_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMessage(const QMessage &amp; other)">
+                <parameter left="const QMessage &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessage::operator=" href="qmessage.html#operator=" location="qmessage_qmf.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessage &amp;" signature="operator=(const QMessage &amp; other)">
+                <parameter left="const QMessage &amp;" right="" name="other" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="fromTransmissionFormat" fullname="QMessage::fromTransmissionFormat" href="qmessage.html#fromTransmissionFormat" location="qmessage_qmf.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessage" signature="fromTransmissionFormat(Type t, const QByteArray &amp; ba)">
                 <parameter left="Type" right="" name="t" default=""/>
                 <parameter left="const QByteArray &amp;" right="" name="ba" default=""/>
@@ -414,6 +426,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" fullname="QMessageAccount::QMessageAccount" href="qmessageaccount.html#QMessageAccount" location="qmessageaccount_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccount()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" fullname="QMessageAccount::QMessageAccount" href="qmessageaccount.html#QMessageAccount-2" location="qmessageaccount_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAccount(const QMessageAccountId &amp; id)">
                 <parameter left="const QMessageAccountId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" fullname="QMessageAccount::QMessageAccount" href="qmessageaccount.html#QMessageAccount-3" location="qmessageaccount_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMessageAccount(const QMessageAccount &amp; other)">
+                <parameter left="const QMessageAccount &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageAccount::operator=" href="qmessageaccount.html#operator=" location="qmessageaccount_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageAccount &amp;" signature="operator=(const QMessageAccount &amp; other)">
+                <parameter left="const QMessageAccount &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageAccount" fullname="QMessageAccount::~QMessageAccount" href="qmessageaccount.html#dtor.QMessageAccount" location="qmessageaccount_win.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageAccount()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QMessageAccount::id" href="qmessageaccount.html#id" location="qmessageaccount_win.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageAccountId" signature="id() const"/>
@@ -749,6 +767,12 @@
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainer" href="qmessagecontentcontainer.html" location="qmessagecontentcontainer.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" fullname="QMessageContentContainer::QMessageContentContainer" href="qmessagecontentcontainer.html#QMessageContentContainer" location="qmessagecontentcontainer_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainer()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" fullname="QMessageContentContainer::QMessageContentContainer" href="qmessagecontentcontainer.html#QMessageContentContainer-2" location="qmessagecontentcontainer_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageContentContainer(const QMessageContentContainer &amp; other)">
+                <parameter left="const QMessageContentContainer &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageContentContainer::operator=" href="qmessagecontentcontainer.html#operator=" location="qmessagecontentcontainer_qmf.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageContentContainer &amp;" signature="operator=(const QMessageContentContainer &amp; other)">
+                <parameter left="const QMessageContentContainer &amp;" right="" name="other" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageContentContainer" fullname="QMessageContentContainer::~QMessageContentContainer" href="qmessagecontentcontainer.html#dtor.QMessageContentContainer" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageContentContainer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QMessageContentContainer::containerId" href="qmessagecontentcontainer.html#containerId" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageContentContainerId" signature="containerId() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="messageId" fullname="QMessageContentContainer::messageId" href="qmessagecontentcontainer.html#messageId" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageId" signature="messageId() const"/>
@@ -857,6 +881,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder" location="qmessagefolder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder-2" location="qmessagefolder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolder(const QMessageFolderId &amp; id)">
                 <parameter left="const QMessageFolderId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder-3" location="qmessagefolder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMessageFolder(const QMessageFolder &amp; other)">
+                <parameter left="const QMessageFolder &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMessageFolder::operator=" href="qmessagefolder.html#operator=" location="qmessagefolder_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QMessageFolder &amp;" signature="operator=(const QMessageFolder &amp; other)">
+                <parameter left="const QMessageFolder &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMessageFolder" fullname="QMessageFolder::~QMessageFolder" href="qmessagefolder.html#dtor.QMessageFolder" location="qmessagefolder_win.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMessageFolder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QMessageFolder::id" href="qmessagefolder.html#id" location="qmessagefolder_win.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageFolderId" signature="id() const"/>

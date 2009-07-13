@@ -28,11 +28,13 @@
 <ul>
 <li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress">QMessageAddress</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress-2">QMessageAddress</a></b> ( const QString &amp; <i>recipient</i>, Type <i>type</i> )</li>
+<li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress-3">QMessageAddress</a></b> ( const QMessageAddress &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessageaddress.html#dtor.QMessageAddress">~QMessageAddress</a></b> ()</li>
 <li><div class="fn"></div>QString <b><a href="qmessageaddress.html#recipient">recipient</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessageaddress.html#setRecipient">setRecipient</a></b> ( const QString &amp; <i>recipient</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageaddress.html#setType">setType</a></b> ( Type <i>type</i> )</li>
 <li><div class="fn"></div>Type <b><a href="qmessageaddress.html#type">type</a></b> () const</li>
+<li><div class="fn"></div>const QMessageAddress &amp; <b><a href="qmessageaddress.html#operator-eq">operator=</a></b> ( const QMessageAddress &amp; <i>other</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -57,6 +59,9 @@
 <p>Constructs an empty message address.</p>
 <h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( const QString &amp; <i>recipient</i>, <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i> )</h3>
 <p>Constructs a message address with the given recipient <i>recipient</i> and type <i>type</i>.</p>
+<h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessageaddress.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message address.</p>
 <h3 class="fn"><a name="recipient"></a>QString QMessageAddress::recipient () const</h3>
@@ -71,6 +76,8 @@
 <h3 class="fn"><a name="type"></a><a href="qmessageaddress.html#Type-enum">Type</a> QMessageAddress::type () const</h3>
 <p>Returns the type of the message address.</p>
 <p>See also <a href="qmessageaddress.html#setType">setType</a>().</p>
+<h3 class="fn"><a name="operator-eq"></a>const QMessageAddress &amp; QMessageAddress::operator= ( const QMessageAddress &amp; <i>other</i> )</h3>
+<p>Assign the value of the <a href="qmessageaddress.html">QMessageAddress</a> <i>other</i> to this.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
