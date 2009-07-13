@@ -162,7 +162,6 @@ void QMessageStore::startNotifications(const QMessageFilterKey &key)
     Q_UNUSED(key)    
 }
 
-void QMessageStore::stopNotifications(const QMessageFilterKey &key)
+void QMessageStore::stopNotifications()
 {
-    Q_UNUSED(key)    
 }

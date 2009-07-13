@@ -369,10 +369,9 @@
 */
 
 /*!
-    \fn QMessageStore::stopNotifications(const QMessageFilterKey &key)
+    \fn QMessageStore::stopNotifications()
     
-    Stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
-    for messages that match \a key.
+    Stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
 */

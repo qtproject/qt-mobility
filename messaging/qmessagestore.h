@@ -105,7 +105,7 @@ signals:
 
 public slots:
     void startNotifications(const QMessageFilterKey &key);
-    void stopNotifications(const QMessageFilterKey &key);
+    void stopNotifications();
 
 private:
     QMessageStorePrivate *d_ptr;
