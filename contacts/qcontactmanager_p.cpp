@@ -360,6 +360,7 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactSortOrder& sortOr
 
 /*!
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrder.
+ * Any error that occurs will be stored in \a error.
  *
  * The default implementation will retrieve all contacts and test them with testFilter.
  */
@@ -397,6 +398,7 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
 
 /*!
  * Synthesises the display label of the given \a contact in a platform specific manner.
+ * Any error that occurs will be stored in \a error.
  * Returns the synthesised display label.
  */
 QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const

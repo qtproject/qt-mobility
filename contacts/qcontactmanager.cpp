@@ -246,7 +246,7 @@ QContactManager::Error QContactManager::error() const
     return d->m_error;
 }
 
-/*! Return the list of added contact ids */
+/*! Return the list of added contact ids, sorted according to the given \a sortOrder */
 QList<QUniqueId> QContactManager::contacts(const QContactSortOrder& sortOrder) const
 {
     return d->m_engine->contacts(sortOrder, d->m_error);
@@ -344,7 +344,7 @@ QList<QUniqueId> QContactManager::groups() const
 }
 
 /*!
- * Returns a list of group ids that match the given \a filter, sorted according to the given \a sortOrder.
+ * Returns a list of group ids that match the given \a filter
  */
 QList<QUniqueId> QContactManager::groups(const QContactFilter& filter) const
 {

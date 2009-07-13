@@ -99,7 +99,7 @@ QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
  * Returns true if the given \a filter is supported natively by the
  * manager, and false if the filter behaviour would be emulated.
  *
- * \note In some cases, the behaviour of an unsupported filter
+ * Note: In some cases, the behaviour of an unsupported filter
  * cannot be emulated.  For example, a filter that requests contacts
  * that have changed since a given time depends on having that information
  * available.  In these cases, the filter will fail.
