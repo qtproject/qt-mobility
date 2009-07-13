@@ -326,8 +326,8 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
-        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</keyword>
-        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::NoRemovalRecord</keyword>
+        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveLocalCopyOnly</keyword>
+        <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</keyword>
         <keyword ref="qmessagestore.html#account">account</keyword>
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>

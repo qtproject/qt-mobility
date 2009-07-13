@@ -22,7 +22,7 @@
 <h3>Public Types</h3>
 <ul>
 <li><div class="fn"></div>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingMemoryOverflow }</li>
-<li><div class="fn"></div>enum <b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { NoRemovalRecord, CreateRemovalRecord }</li>
+<li><div class="fn"></div>enum <b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { RemoveLocalCopyOnly, RemoveOnOriginatingServer }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
@@ -41,8 +41,8 @@
 <li><div class="fn"></div>QMessageAccountIdList <b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i>, const QMessageAccountSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>QMessageFolderIdList <b><a href="qmessagestore.html#queryFolders">queryFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i>, const QMessageFolderSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
 <li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, const QMessageSortKey &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = NoRemovalRecord )</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</li>
 <li><div class="fn"></div>void <b><a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a></b> ( uint <i>maximumBytes</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</li>
 </ul>
@@ -93,8 +93,8 @@
 <p>Defines whether or not a message will be removed from the originating server.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMessageStore::NoRemovalRecord</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Do not remove the message from the originating server.</td></tr>
-<tr><td valign="top"><tt>QMessageStore::CreateRemovalRecord</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remove the message from the originating server.</td></tr>
+<tr><td valign="top"><tt>QMessageStore::RemoveLocalCopyOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Do not remove the message from the originating server.</td></tr>
+<tr><td valign="top"><tt>QMessageStore::RemoveOnOriginatingServer</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remove the message from the originating server.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -151,13 +151,13 @@
 <h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i>, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
-<h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
-<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then a removal record will be created for the removed message, and the message should be removed from the originating server.</p>
+<h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
+<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then the message should be removed from the originating server when synchronization is performed with that server.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
-<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
-<h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = NoRemovalRecord )</h3>
-<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::CreateRemovalRecord</a> then removal records will be created for each removed message.</p>
+<h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
+<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then removal records will be created for each removed message.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>For example:</p>

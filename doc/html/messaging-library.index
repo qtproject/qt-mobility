@@ -415,8 +415,8 @@
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageStore" href="qmessagestore.html" location="qmessagestore.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="RemovalOption" fullname="QMessageStore::RemovalOption" href="qmessagestore.html#RemovalOption-enum" location="qmessagestore.h">
-                <value name="NoRemovalRecord" value="1"/>
-                <value name="CreateRemovalRecord" value="2"/>
+                <value name="RemoveLocalCopyOnly" value="1"/>
+                <value name="RemoveOnOriginatingServer" value="2"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QMessageStore::ErrorCode" href="qmessagestore.html#ErrorCode-enum" location="qmessagestore.h">
                 <value name="NoError" value="0"/>
@@ -467,11 +467,11 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeMessage" fullname="QMessageStore::removeMessage" href="qmessagestore.html#removeMessage" location="qmessagestore_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessage(const QMessageId &amp; id, RemovalOption option)">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
-                <parameter left="RemovalOption" right="" name="option" default="NoRemovalRecord"/>
+                <parameter left="RemovalOption" right="" name="option" default="RemoveOnOriginatingServer"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeMessages" fullname="QMessageStore::removeMessages" href="qmessagestore.html#removeMessages" location="qmessagestore_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMessages(const QMessageFilterKey &amp; key, RemovalOption option)">
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
-                <parameter left="RemovalOption" right="" name="option" default="NoRemovalRecord"/>
+                <parameter left="RemovalOption" right="" name="option" default="RemoveOnOriginatingServer"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="message" fullname="QMessageStore::message" href="qmessagestore.html#message" location="qmessagestore_win.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessage" signature="message(const QMessageId &amp; id) const">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
