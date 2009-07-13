@@ -32,48 +32,56 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#include "radio.h"
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include <qabstractmediaservice.h>
 
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
+#include <QtGui>
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+Radio::Radio()
 {
-    m_control = new AudioCaptureControl(this, this);
+    player = new QRadioPlayer();
+
+    QWidget *window = new QWidget;
+    QVBoxLayout* layout = new QVBoxLayout;
+
+    freq = new QLabel;
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    layout->addWidget(freq);
+
+    left = new QPushButton;
+    left->setText(tr("Freq Down"));
+    connect(left,SIGNAL(clicked()),SLOT(freqDown()));
+    layout->addWidget(left);
+
+    right = new QPushButton;
+    connect(right,SIGNAL(clicked()),SLOT(freqUp()));
+    right->setText(tr("Freq Up"));
+    layout->addWidget(right);
+
+    window->setLayout(layout);
+    setCentralWidget(window);
+    window->show();
 }
 
-AudioCaptureService::~AudioCaptureService()
+Radio::~Radio()
 {
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
+void Radio::freqUp()
 {
-    return m_control;
+    qWarning()<<"freqUp f="<<player->frequency();
+    int f = player->frequency();
+    f = f + 5000;
+    player->setFrequency(f);
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
 }
 
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
+void Radio::freqDown()
 {
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
+    qWarning()<<"freqDown f="<<player->frequency();
+    int f = player->frequency();
+    f = f - 5000;
+    player->setFrequency(f);
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
 }
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-

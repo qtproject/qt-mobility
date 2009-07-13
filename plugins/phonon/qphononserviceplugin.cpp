@@ -32,48 +32,43 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
+#include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include "qphononserviceplugin.h"
+#include "qphononplayerservice.h"
 
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
+#include <qmediaserviceprovider.h>
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+
+class QPhononProvider : public QMediaServiceProvider
 {
-    m_control = new AudioCaptureControl(this, this);
+    Q_OBJECT
+public:
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+            return new QPhononPlayerService;
+
+        return 0;
+    }
+};
+
+QStringList QPhononServicePlugin::keys() const
+{
+    return QStringList() << "mediaplayer";
 }
 
-AudioCaptureService::~AudioCaptureService()
+QMediaServiceProvider* QPhononServicePlugin::create(QString const& key)
 {
+    if (key == "mediaplayer")
+        return new QPhononProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
+#include "qphononserviceplugin.moc"
 
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
+Q_EXPORT_PLUGIN2(gst_serviceplugin, QPhononServicePlugin);
 

@@ -32,48 +32,16 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#include "radio.h"
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include <QtGui>
 
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+int main(int argc, char *argv[])
 {
-    m_control = new AudioCaptureControl(this, this);
-}
+    QApplication app(argc, argv);
 
-AudioCaptureService::~AudioCaptureService()
-{
-}
+    Radio radio;
+    radio.show();
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-
+    return app.exec();
+};

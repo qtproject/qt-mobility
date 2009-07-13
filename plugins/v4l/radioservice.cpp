@@ -37,43 +37,22 @@
 #include <QtGui/qwidget.h>
 #include <QtCore/qfile.h>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include "radioservice.h"
+#include "radiocontrol.h"
 
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+RadioService::RadioService(QObject *parent)
+    : QRadioService(parent)
 {
-    m_control = new AudioCaptureControl(this, this);
+    m_control = new RadioControl(this);
 }
 
-AudioCaptureService::~AudioCaptureService()
+RadioService::~RadioService()
 {
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
+QAbstractMediaControl *RadioService::control(const char* name) const
 {
     return m_control;
 }
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
 
 

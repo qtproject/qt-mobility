@@ -14,8 +14,10 @@ INCLUDEPATH += . \
 # Input
 HEADERS += audiocapturecontrol.h \
     audiocaptureservice.h \
-    audiocaptureserviceplugin.h
+    audiocaptureserviceplugin.h \
+    audiocapturesession.h
 
 SOURCES += audiocapturecontrol.cpp \
     audiocaptureservice.cpp \
-    audiocaptureserviceplugin.cpp
+    audiocaptureserviceplugin.cpp \
+    audiocapturesession.cpp

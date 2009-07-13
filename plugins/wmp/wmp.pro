@@ -7,7 +7,7 @@ DEFINES += QWMP_EVR
 DESTDIR = $$OUT_PWD/../../lib
 DLLDESTDIR = $$OUT_PWD/../../bin/mediaservice
 
-LIBS += -L$$OUT_PWD/../../lib -lQtMedia -lstrmiids -lole32 -lOleaut32
+LIBS += -L$$OUT_PWD/../../lib -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
@@ -17,6 +17,7 @@ HEADERS = \
     qwmpevents.h \
     qwmpglobal.h \
     qwmpmetadata.h \
+    qwmpplaceholderwidget.h \
     qwmpplayercontrol.h \
     qwmpplayerservice.h \
     qwmpplaylist.h \
@@ -29,6 +30,7 @@ SOURCES = \
     qwmpevents.cpp \
     qwmpglobal.cpp \
     qwmpmetadata.cpp \
+    qwmpplaceholderwidget.cpp \
     qwmpplayercontrol.cpp \
     qwmpplayerservice.cpp \
     qwmpplaylist.cpp \

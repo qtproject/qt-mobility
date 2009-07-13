@@ -32,48 +32,46 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#ifndef QGSTREAMERPLAYERSERVICE_H
+#define QGSTREAMERPLAYERSERVICE_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <QtCore/qobject.h>
+#include <phonon>
+
+#include "qmediaplayerservice.h"
+
+
+class QMediaMetaData;
+class QMediaPlayerControl;
+class QMediaPlaylist;
+
+class QPhononMetaData;
+class QPhononPlayerControl;
+class QPhononPlayerSession;
+class QPhononMetadataProvider;
+
+class QMediaPlaylistNavigator;
+
+class QPhononPlayerService : public QMediaPlayerService
+{
+    Q_OBJECT
+public:
+    QPhononPlayerService(QObject *parent = 0);
+    ~QPhononPlayerService();
+
+    void setVideoOutput(QObject *output);
+
+    QList<QByteArray> supportedEndpointInterfaces(
+            QMediaEndpointInterface::Direction direction) const;
+
+    QObject *createEndpoint(const char *interface);
+
+    QAbstractMediaControl *control(const char *name) const;    
+private:
+    Phonon::MediaObject *m_mediaObject;
+    Phonon::VideoWidget *m_videoWidget;
+    QPhononPlayerControl *m_control;
+    QPhononMetadataProvider *m_metadata;
+};
+
 #endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
-{
-    m_control = new AudioCaptureControl(this, this);
-}
-
-AudioCaptureService::~AudioCaptureService()
-{
-}
-
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-

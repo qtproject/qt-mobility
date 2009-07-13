@@ -32,48 +32,33 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#include "qwmpplaceholderwidget.h"
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+QWmpPlaceholderWidget::QWmpPlaceholderWidget(QWidget *parent)
+    : QMediaWidgetEndpoint(parent)
 {
-    m_control = new AudioCaptureControl(this, this);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
-AudioCaptureService::~AudioCaptureService()
+QWmpPlaceholderWidget::~QWmpPlaceholderWidget()
 {
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
+void QWmpPlaceholderWidget::setFullscreen(bool fullscreen)
 {
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
+    Q_UNUSED(fullscreen);
 }
 
 
+QSize QWmpPlaceholderWidget::sizeHint() const
+{
+    return m_sizeHint.isValid() ? m_sizeHint : QMediaWidgetEndpoint::sizeHint();
+}
 
+void QWmpPlaceholderWidget::setSizeHint(const QSize &size)
+{
+    m_sizeHint = size;
+
+    updateGeometry();
+}

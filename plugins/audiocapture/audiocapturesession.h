@@ -32,48 +32,28 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#ifndef AUDIOCAPTURESESSION_H
+#define AUDIOCAPTURESESSION_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qiodevice.h>
+
+class AudioCaptureSession : public QObject
+{
+    Q_OBJECT
+public:
+    AudioCaptureSession(QObject *parent = 0);
+    ~AudioCaptureSession();
+
+    void setOutputDevice(QIODevice *device);
+    void setInputDevice(QIODevice *device);
+
+public slots:
+    void dataReady();
+
+private:
+    QIODevice* input;
+    QIODevice* output;
+};
+
 #endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
-{
-    m_control = new AudioCaptureControl(this, this);
-}
-
-AudioCaptureService::~AudioCaptureService()
-{
-}
-
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-

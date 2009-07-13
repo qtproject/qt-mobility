@@ -32,48 +32,43 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
+#include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include "radioserviceplugin.h"
+#include "radioservice.h"
 
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
+#include <qmediaserviceprovider.h>
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+
+class RadioProvider : public QMediaServiceProvider
 {
-    m_control = new AudioCaptureControl(this, this);
+    Q_OBJECT
+public:
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
+            return new RadioService;
+
+        return 0;
+    }
+};
+
+QStringList RadioServicePlugin::keys() const
+{
+    return QStringList() << "radio";
 }
 
-AudioCaptureService::~AudioCaptureService()
+QMediaServiceProvider* RadioServicePlugin::create(QString const& key)
 {
+    if (key == "radio")
+        return new RadioProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
+#include "radioserviceplugin.moc"
 
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
+Q_EXPORT_PLUGIN2(radioserviceplugin, RadioServicePlugin);
 

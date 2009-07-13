@@ -36,6 +36,7 @@
 #define QWMPPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
+#include <phonon>
 
 #include "qmediasource.h"
 #include "qmediaplayercontrol.h"
@@ -44,18 +45,18 @@
 
 class QMediaPlaylist;
 
-class QGstreamerPlayerSession;
-class QGstreamerPlayerService;
+class QPhononPlayerSession;
+class QPhononPlayerService;
 class QMediaPlaylistNavigator;
 
 
-class QGstreamerPlayerControl : public QMediaPlayerControl
+class QPhononPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
 public:
-    QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
-    ~QGstreamerPlayerControl();
+    QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent = 0);
+    ~QPhononPlayerControl();
 
     int state() const;
 
@@ -74,13 +75,9 @@ public:
     QMediaPlaylist *mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *);
 
-    bool isVideoAvailable() const;
-    void setVideoOutput(QObject *output);
+    bool isVideoAvailable() const;    
 
     bool isSeekable() const;
-
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
 
 public Q_SLOTS:
     void setPlaylistPosition(int playlistPosition);
@@ -110,10 +107,12 @@ signals:
 
 private slots:
     void play(const QMediaSource&);
-    void updateState(QMediaPlayer::State state);    
+    void updateState();
+    void updateVolume();
 
 private:    
-    QGstreamerPlayerSession *m_session;
+    Phonon::MediaObject *m_session;
+    Phonon::AudioOutput *m_audioOutput;
     QMediaPlaylistNavigator *m_navigator;
 };
 

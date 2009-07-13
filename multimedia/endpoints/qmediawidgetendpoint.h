@@ -46,8 +46,12 @@ class Q_MEDIA_EXPORT QMediaWidgetEndpoint : public QWidget, public QMediaEndpoin
     Q_OBJECT
     Q_INTERFACES(QMediaEndpointInterface)
     Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
-    Q_DECLARE_PRIVATE(QMediaWidgetEndpoint)
+    Q_PROPERTY(AspectRatio aspectRatio READ aspectRatio WRITE setAspectRatio)
+    Q_PROPERTY(QSize customAspectRatio READ customAspectRatio WRITE setCustomAspectRatio)
+    Q_DECLARE_PRIVATE(QMediaWidgetEndpoint)    
 public:
+    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
+
     QMediaWidgetEndpoint(QWidget *parent = 0);
     ~QMediaWidgetEndpoint();
 
@@ -55,8 +59,13 @@ public:
 
     bool isFullscreen() const;
 
+    AspectRatio aspectRatio() const;
+    QSize customAspectRatio() const;
+
 public Q_SLOTS:
     virtual void setFullscreen(bool fullscreen);
+    virtual void setAspectRatio(AspectRatio ratio);
+    virtual void setCustomAspectRatio(const QSize &customRatio);
 
 protected:
     QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWidget *parent);

@@ -32,48 +32,47 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#ifndef RADIOCONTROL_H
+#define RADIOCONTROL_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <QtCore/qobject.h>
+
+#include "qradiotuner.h"
+#include "qmediasource.h"
+
+#include "linux/videodev2.h"
+
+class RadioService;
+
+class RadioControl : public QRadioTuner
+{
+    Q_OBJECT
+public:
+    RadioControl(QObject *parent = 0);
+    ~RadioControl();
+
+    void setBand(int b);
+    int frequency() const;
+    void setFrequency(int frequency);
+    void setStereo(bool stereo);
+    void setSignalStrength(int strength);
+    void setDuration(qint64 duration);
+    void setVolume(int volume);
+    void setMuted(bool muted);
+    void searchForward();
+    void searchBackward();
+
+private:
+    bool initRadio();
+
+    int fd;
+
+    bool low;
+    bool available;
+    int  tuners;
+    qint64 freqMin;
+    qint64 freqMax;
+    qint64 currentFreq;
+};
+
 #endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
-{
-    m_control = new AudioCaptureControl(this, this);
-}
-
-AudioCaptureService::~AudioCaptureService()
-{
-}
-
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-

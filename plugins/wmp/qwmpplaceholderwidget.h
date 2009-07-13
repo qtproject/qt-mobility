@@ -32,48 +32,27 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#ifndef QWMPPLACEHOLDERWIDGET_H
+#define QWMPPLACEHOLDERWIDGET_H
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include "qmediawidgetendpoint.h"
+
+class QWmpPlaceholderWidget : public QMediaWidgetEndpoint
+{
+    Q_OBJECT
+public:
+    QWmpPlaceholderWidget(QWidget *parent = 0);
+    ~QWmpPlaceholderWidget();
+
+public:
+    QSize sizeHint() const;
+    void setSizeHint(const QSize &size);
+
+public Q_SLOTS:
+    void setFullscreen(bool fullscreen);
+
+private:
+    QSize m_sizeHint;
+};
+
 #endif
-
-#include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
-#include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
-
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
-{
-    m_control = new AudioCaptureControl(this, this);
-}
-
-AudioCaptureService::~AudioCaptureService()
-{
-}
-
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list << "QIODevice";
-    return list;
-}
-
-QObject *AudioCaptureService::createEndpoint(const char *interface)
-{
-    return new QIODeviceEndpoint;
-}
-
-
-
