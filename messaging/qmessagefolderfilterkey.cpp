@@ -54,6 +54,8 @@
 */
 
 /*!
+    \fn QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
+  
     Set the options for the search key to \a options.
 
     \sa options()
@@ -64,6 +66,8 @@ void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options
 }
 
 /*!
+    \fn QMessageDataComparator::Options QMessageFolderFilterKey::options()
+  
     Return the options for the search key.
     
     Default is no options set.
@@ -76,6 +80,8 @@ QMessageDataComparator::Options QMessageFolderFilterKey::options()
 }
 
 /*!
+    \fn QMessageFolderFilterKey::QMessageFolderFilterKey()
+  
     Creates a QMessageFolderFilterKey without specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) matches all folders. 
@@ -87,6 +93,8 @@ QMessageFolderFilterKey::QMessageFolderFilterKey()
 }
 
 /*!
+    \fn QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &other)
+  
     Constructs a copy of \a other.
     
     \sa operator=()
@@ -97,6 +105,8 @@ QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &
 }
 
 /*!
+    \fn QMessageFolderFilterKey::isEmpty() const
+  
     Returns true if the key remains empty after default construction; otherwise returns false. 
 
     An empty key matches all folders.
@@ -112,6 +122,8 @@ bool QMessageFolderFilterKey::isEmpty() const
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator~() const
+  
     Returns a key that is the logical NOT of the value of this key.
 
     If this key is empty, the result will be a non-matching key; if this key is 
@@ -125,6 +137,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::operator~() const
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator&(const QMessageFolderFilterKey& other) const
+  
     Returns a key that is the logical AND of this key and the value of key \a other.
 */
 QMessageFolderFilterKey QMessageFolderFilterKey::operator&(const QMessageFolderFilterKey& other) const
@@ -134,6 +148,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::operator&(const QMessageFolderF
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator|(const QMessageFolderFilterKey& other) const
+  
     Returns a key that is the logical OR of this key and the value of key \a other.
 */
 QMessageFolderFilterKey QMessageFolderFilterKey::operator|(const QMessageFolderFilterKey& other) const
@@ -143,6 +159,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::operator|(const QMessageFolderF
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator&=(const QMessageFolderFilterKey& other)
+  
     Performs a logical AND with this key and the key \a other and assigns the result
     to this key.
 */
@@ -153,6 +171,8 @@ const QMessageFolderFilterKey& QMessageFolderFilterKey::operator&=(const QMessag
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator|=(const QMessageFolderFilterKey& other)
+  
     Performs a logical OR with this key and the key \a other and assigns the result
     to this key.
 */
@@ -163,6 +183,8 @@ const QMessageFolderFilterKey& QMessageFolderFilterKey::operator|=(const QMessag
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator==(const QMessageFolderFilterKey& other) const
+  
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
@@ -173,6 +195,8 @@ bool QMessageFolderFilterKey::operator==(const QMessageFolderFilterKey& other) c
 }
 
 /*!
+    \fn QMessageFolderFilterKey::operator=(const QMessageFolderFilterKey& other)
+  
     Assign the value of the QMessageFolderFilterKey \a other to this.
 */
 const QMessageFolderFilterKey& QMessageFolderFilterKey::operator=(const QMessageFolderFilterKey& other)
@@ -182,6 +206,8 @@ const QMessageFolderFilterKey& QMessageFolderFilterKey::operator=(const QMessage
 }
 
 /*!
+    \fn QMessageFolderFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+  
     Returns a key matching folders whose identifier matches \a id, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -194,6 +220,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageId &id, QMessa
 }
 
 /*!
+    \fn QMessageFolderFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose identifier is a member of \a ids, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -206,6 +234,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageIdList &ids, Q
 }
 
 /*!
+    \fn QMessageFolderFilterKey::id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose identifier is a member of the set yielded by \a key, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -218,6 +248,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderFilterKe
 }
 
 /*!
+    \fn QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+  
     Returns a key matching folders whose display name matches \a value, according to \a cmp.
 
     \sa QMessageFolder::displayName()
@@ -230,6 +262,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &valu
 }
 
 /*!
+    \fn QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose display name matches the substring \a value, according to \a cmp.
 
     \sa QMessageFolder::displayName()
@@ -242,6 +276,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &valu
 }
 
 /*!
+    \fn QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+  
     Returns a key matching folders whose path matches \a value, according to \a cmp.
 
     \sa QMessageFolder::path()
@@ -254,6 +290,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMes
 }
 
 /*!
+    \fn QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose path matches the substring \a value, according to \a cmp.
 
     \sa QMessageFolder::path()
@@ -266,6 +304,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMes
 }
 
 /*!
+    \fn QMessageFolderFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+  
     Returns a key matching folders whose parent account identifier matches \a id, according to \a cmp.
 
     \sa QMessageAccount::id()
@@ -278,6 +318,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageA
 }
 
 /*!
+    \fn QMessageFolderFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose parent account identifier is a member of the set yielded by \a key, according to \a cmp.
 
     \sa QMessageAccount::id()
@@ -290,6 +332,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageA
 }
 
 /*!
+    \fn QMessageFolderFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+  
     Returns a key matching folders whose parent folder identifier matches \a id, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -302,6 +346,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFo
 }
 
 /*!
+    \fn QMessageFolderFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose parent folder identifier is a member of the set yielded by \a key, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -314,6 +360,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFo
 }
 
 /*!
+    \fn QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose ancestor folders' identifiers contain \a id, according to \a cmp.
 
     \sa QMessageFolder::id()
@@ -326,6 +374,8 @@ QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessag
 }
 
 /*!
+    \fn QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+  
     Returns a key matching folders whose ancestor folders' identifiers contain a member of the set yielded by \a key, according to \a cmp.
 
     \sa QMessageFolder::id()

@@ -49,6 +49,8 @@
 */
 
 /*!
+    \fn QMessageAccountSortKey::QMessageAccountSortKey()
+  
     Create a QMessageAccountSortKey with specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) sorts no accounts. 
@@ -63,6 +65,8 @@ QMessageAccountSortKey::QMessageAccountSortKey()
 }
 
 /*!
+    \fn QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
+  
     Constructs a copy of \a other.
     
     \sa operator=()
@@ -73,6 +77,8 @@ QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &oth
 }
 
 /*!
+    \fn QMessageAccountSortKey::isEmpty() const
+  
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageAccountSortKey::isEmpty() const
@@ -81,6 +87,8 @@ bool QMessageAccountSortKey::isEmpty() const
 }
 
 /*!
+    \fn QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
+  
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
@@ -91,6 +99,8 @@ bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) con
 }
 
 /*!
+    \fn QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
+  
     Assign the value of the QMessageAccountSortKey \a other to this.
 */
 const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
@@ -100,6 +110,8 @@ const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAc
 }
     
 /*!
+    \fn QMessageAccountSortKey::name(Qt::SortOrder order)
+  
     Returns a key that sorts accounts by name, according to \a order.
 
     \sa QMessageAccount::name()

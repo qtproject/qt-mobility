@@ -50,6 +50,8 @@
 */
 
 /*!
+    \fn QMessageFolderSortKey::QMessageFolderSortKey()
+  
     Create a QMessageFolderSortKey with specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) sorts no folders. 
@@ -64,6 +66,8 @@ QMessageFolderSortKey::QMessageFolderSortKey()
 }
 
 /*!
+    \fn QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
+  
     Constructs a copy of \a other.
     
     \sa operator=()
@@ -73,6 +77,8 @@ QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
 }
 
 /*!
+    \fn QMessageFolderSortKey::isEmpty() const
+  
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageFolderSortKey::isEmpty() const
@@ -81,6 +87,8 @@ bool QMessageFolderSortKey::isEmpty() const
 }
 
 /*!
+    \fn QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
+  
     Returns a key that which is the result of concatenating the vaue of this key and the value 
     of key \a other.
     
@@ -93,6 +101,8 @@ QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortK
 }
 
 /*!
+    \fn QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
+  
     Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
     
@@ -105,6 +115,8 @@ QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSor
 }
 
 /*!
+    \fn QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
+  
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
@@ -115,6 +127,8 @@ bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
 }
 
 /*!
+    \fn QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
+  
     Assign the value of the QMessageFolderSortKey \a other to this.
 */
 const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
@@ -124,6 +138,8 @@ const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFold
 }
     
 /*!
+    \fn QMessageFolderSortKey::displayName(Qt::SortOrder order)
+  
     Returns a key that sorts folders by display name, according to \a order.
 
     \sa QMessageFolder::displayName()
@@ -135,6 +151,8 @@ QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageFolderSortKey::path(Qt::SortOrder order)
+  
     Returns a key that sorts messages by path according to \a order.
 
     \sa QMessageFolder::path()

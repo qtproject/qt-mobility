@@ -56,6 +56,8 @@
 */
 
 /*!
+    \fn QMessageSortKey::QMessageSortKey()
+  
     Create a QMessageSortKey with specifying matching parameters.
 
     A default-constructed key (one for which isEmpty() returns true) sorts no messages. 
@@ -70,6 +72,8 @@ QMessageSortKey::QMessageSortKey()
 }
 
 /*!
+    \fn QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
+  
     Constructs a copy of \a other.
     
     \sa operator=()
@@ -80,6 +84,8 @@ QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
 }
 
 /*!
+    \fn QMessageSortKey::isEmpty() const
+  
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
 bool QMessageSortKey::isEmpty() const
@@ -88,6 +94,8 @@ bool QMessageSortKey::isEmpty() const
 }
 
 /*!
+    \fn QMessageSortKey::operator+(const QMessageSortKey& other) const
+  
     Returns a key that which is the result of concatenating the vaue of this key and the value 
     of key \a other.
 
@@ -100,6 +108,8 @@ QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 }
 
 /*!
+    \fn QMessageSortKey::operator+=(const QMessageSortKey& other)
+  
     Appends the value of the key \a other with the value of this key and assigns the result
     to this key.
 
@@ -112,6 +122,8 @@ QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 }
 
 /*!
+    \fn QMessageSortKey::operator==(const QMessageSortKey& other) const
+  
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
@@ -122,6 +134,8 @@ bool QMessageSortKey::operator==(const QMessageSortKey& other) const
 }
 
 /*!
+    \fn QMessageSortKey::operator=(const QMessageSortKey& other)
+  
     Assign the value of the QMessageSortKey \a other to this.
 */
 const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
@@ -131,6 +145,8 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 }
     
 /*!
+    \fn QMessageSortKey::type(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their message type, according to \a order.
 
     \sa QMessage::type()
@@ -142,6 +158,8 @@ QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::sender(Qt::SortOrder order)
+  
     Returns a key that sorts messages by the address from which they were sent, according to \a order.
 
     \sa QMessage::from()
@@ -153,6 +171,8 @@ QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::recipients(Qt::SortOrder order)
+  
     Returns a key that sorts messages by the addresses to which they were sent, according to \a order.
 
     \sa QMessage::to()
@@ -164,6 +184,8 @@ QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::subject(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their subject, according to \a order.
 
     \sa QMessage::subject()
@@ -175,6 +197,8 @@ QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::timeStamp(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their origination timestamp, according to \a order.
 
     \sa QMessage::date()
@@ -186,6 +210,8 @@ QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their reception timestamp, according to \a order.
 
     \sa QMessage::receivedDate()
@@ -197,6 +223,8 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::status(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their status values, according to \a order.
 
     \sa QMessage::status()
@@ -208,6 +236,8 @@ QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::priority(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their priority, according to \a order.
 
     \sa QMessage::priority()
@@ -219,6 +249,8 @@ QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 }
 
 /*!
+    \fn QMessageSortKey::size(Qt::SortOrder order)
+  
     Returns a key that sorts messages by their size, according to \a order.
 
     \sa QMessage::size()
