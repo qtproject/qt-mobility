@@ -108,7 +108,7 @@
 <p>Returns the <a href="qmessageaccount.html">QMessageAccount</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="addMessage"></a>bool QMessageStore::addMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
 <p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
-<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>See also <a href="qmessagestore.html#message">message</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), <a href="qmessagestore.html#removeMessage">removeMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="countAccounts"></a>int QMessageStore::countAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the count of the number of messages which match the filtering criteria defined in <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
@@ -159,7 +159,7 @@
 <h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
 <p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then removal records will be created for each removed message.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
-<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>For example:</p>
 <p>To implement a function to remove a list messages identified by QMessageIds from the messaging store.</p>
 <pre>    bool removeMessages(const QMessageIdList&amp; ids)
@@ -181,7 +181,7 @@
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
 <h3 class="fn"><a name="updateMessage"></a>bool QMessageStore::updateMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
 <p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
-<p>To ensure the change is propogated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>See also <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#removeMessage">removeMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
