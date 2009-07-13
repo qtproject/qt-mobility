@@ -94,7 +94,7 @@
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageStore::RemoveLocalCopyOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Do not remove the message from the originating server.</td></tr>
-<tr><td valign="top"><tt>QMessageStore::RemoveOnOriginatingServer</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remove the message from the originating server.</td></tr>
+<tr><td valign="top"><tt>QMessageStore::RemoveOnOriginatingServer</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remove the message both from the local store and from the originating server if any.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -152,12 +152,12 @@
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise all message identifiers will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>(), <a href="qmessagestore.html#countMessages">countMessages</a>(), and <a href="qmessagestore.html#setMaximumWorkingMemory">setMaximumWorkingMemory</a>().</p>
 <h3 class="fn"><a name="removeMessage"></a>bool QMessageStore::removeMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
-<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then the message should be removed from the originating server when synchronization is performed with that server.</p>
+<p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then when synchronization is performed the message should be removed from both the local message store and the originating server if any.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
-<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then removal records will be created for each removed message.</p>
+<p>Removes all messages identified by the key <i>key</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then when synchronization is performed the messages should be removed from both the local message store and the originating server if any.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
 <p>For example:</p>
