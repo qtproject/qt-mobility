@@ -50,7 +50,7 @@
 <h3>Public Slots</h3>
 <ul>
 <li><div class="fn"></div>void <b><a href="qmessagestore.html#startNotifications">startNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ()</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
@@ -176,8 +176,8 @@
 <h3 class="fn"><a name="startNotifications"></a>void QMessageStore::startNotifications ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Starts emission of <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() and <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() signals for messages that match <i>key</i>.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#stopNotifications">stopNotifications</a>().</p>
-<h3 class="fn"><a name="stopNotifications"></a>void QMessageStore::stopNotifications ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Stops emission of <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() and <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() signals for messages that match <i>key</i>.</p>
+<h3 class="fn"><a name="stopNotifications"></a>void QMessageStore::stopNotifications ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Stops emission of <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() and <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() signals.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
 <h3 class="fn"><a name="updateMessage"></a>bool QMessageStore::updateMessage ( <a href="qmessage.html">QMessage</a> * <i>m</i> )</h3>
 <p>Updates the existing <a href="qmessage.html">QMessage</a> <i>m</i> on the messaging store. Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
