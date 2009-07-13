@@ -51,8 +51,8 @@ class QMessageStore : public QObject
 public:
     enum RemovalOption
     {
-        NoRemovalRecord = 1,
-        CreateRemovalRecord
+        RemoveLocalCopyOnly = 1,
+        RemoveOnOriginatingServer
     };
 
     enum ErrorCode
@@ -84,8 +84,8 @@ public:
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
-    bool removeMessage(const QMessageId &id, RemovalOption option = NoRemovalRecord);
-    bool removeMessages(const QMessageFilterKey &key, RemovalOption option = NoRemovalRecord);
+    bool removeMessage(const QMessageId &id, RemovalOption option = RemoveOnOriginatingServer);
+    bool removeMessages(const QMessageFilterKey &key, RemovalOption option = RemoveOnOriginatingServer);
 
     QMessage message(const QMessageId &id) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
