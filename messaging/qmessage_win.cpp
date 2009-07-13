@@ -42,6 +42,7 @@ QMessage::QMessage(const QMessageId& id)
 }
 
 QMessage::QMessage(const QMessage &other)
+    :QMessageContentContainer(other)
 {
     Q_UNUSED(other)
 }

@@ -108,6 +108,20 @@
 */
 
 /*!
+    \fn QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
+
+    Constructs a copy of \a other.
+    
+    \sa operator=()
+*/
+
+/*!
+    \fn QMessageContentContainer::operator=(const QMessageContentContainer& other)
+  
+    Assign the value of the QMessageContentContainer \a other to this.
+*/
+
+/*!
     \fn QMessageContentContainer::~QMessageContentContainer()
     
     Destroys the container object.

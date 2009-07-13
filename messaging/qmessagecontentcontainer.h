@@ -44,6 +44,8 @@ class QMessageContentContainer {
 
 public:
     QMessageContentContainer();
+    QMessageContentContainer(const QMessageContentContainer &other);
+    const QMessageContentContainer& operator=(const QMessageContentContainer &other);
     virtual ~QMessageContentContainer();
 
     virtual QMessageContentContainerId containerId() const;

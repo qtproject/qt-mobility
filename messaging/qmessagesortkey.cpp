@@ -76,6 +76,7 @@ QMessageSortKey::QMessageSortKey()
 */
 QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
 {
+    Q_UNUSED(other)
 }
 
 /*!

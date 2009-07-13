@@ -36,6 +36,17 @@ QMessageContentContainer::QMessageContentContainer()
 {
 }
 
+QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
+{
+    Q_UNUSED(other)
+}
+
+const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 QMessageContentContainer::~QMessageContentContainer()
 {
 }

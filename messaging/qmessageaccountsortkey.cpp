@@ -69,6 +69,7 @@ QMessageAccountSortKey::QMessageAccountSortKey()
 */
 QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
 {
+    Q_UNUSED(other)
 }
 
 /*!
