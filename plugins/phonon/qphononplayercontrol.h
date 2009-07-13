@@ -79,6 +79,9 @@ public:
 
     bool isSeekable() const;
 
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
+
 public Q_SLOTS:
     void setPlaylistPosition(int playlistPosition);
     void advance();
