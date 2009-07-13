@@ -80,6 +80,11 @@ void tst_QNetworkConfigurationManager::allConfigurations()
     QNetworkConfigurationManager manager;
     QList<QNetworkConfiguration> preScanConfigs = manager.allConfigurations();
 
+    foreach(QNetworkConfiguration c, preScanConfigs)
+    {
+        QVERIFY2(c.type()!=QNetworkConfiguration::UserChoice, "allConfiguration must not return UserChoice configs");
+    }
+
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations(); //initiate scans
     QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
@@ -93,6 +98,7 @@ void tst_QNetworkConfigurationManager::allConfigurations()
         QVERIFY(p.isValid());
         printConfigurationDetails(p);
         QVERIFY(p.type() != QNetworkConfiguration::Invalid);
+        QVERIFY(p.type() != QNetworkConfiguration::UserChoice);
     }
 
     configs = manager.allConfigurations(QNetworkConfiguration::Undefined);
