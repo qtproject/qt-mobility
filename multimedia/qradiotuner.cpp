@@ -49,74 +49,9 @@
 QRadioTuner::QRadioTuner(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-//    addPropertyWatch("duration");
 }
 
 QRadioTuner::~QRadioTuner()
-{
-}
-
-int QRadioTuner::band() const
-{
-    return property("band").toInt();
-}
-
-void QRadioTuner::setBand(int b)
-{
-}
-
-int QRadioTuner::frequency() const
-{
-    return property("frequency").toInt();
-}
-
-void QRadioTuner::setFrequency(int frequency)
-{
-}
-
-bool QRadioTuner::isStereo() const
-{
-    return property("stereo").toBool();
-}
-
-void QRadioTuner::setStereo(bool stereo)
-{
-}
-
-int QRadioTuner::signalStrength() const
-{
-    return property("signalStrength").toInt();
-}
-
-void QRadioTuner::setSignalStrength(int ss)
-{
-}
-
-
-qint64 QRadioTuner::duration() const
-{
-    return qvariant_cast<qint64>(property("duration"));
-}
-
-void QRadioTuner::setDuration(qint64 duration)
-{
-}
-
-int QRadioTuner::volume() const
-{
-    return qvariant_cast<int>(property("volume"));
-}
-
-void QRadioTuner::setVolume(int volume)
-{
-}
-
-bool QRadioTuner::isMuted() const
-{
-    return property("muted").toBool();
-}
-
-void QRadioTuner::setMuted(bool muted)
 {
 }
 

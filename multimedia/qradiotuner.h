@@ -42,32 +42,34 @@ class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
     Q_OBJECT
 
 public:
-    QRadioTuner(QObject *parent = 0);
     ~QRadioTuner();
 
-    int band() const;
-    virtual void setBand(int b);
+    virtual int band() const = 0;
+    virtual void setBand(int b) = 0;
 
-    virtual int frequency() const;
-    virtual void setFrequency(int frequency);
+    virtual int frequency() const = 0;
+    virtual void setFrequency(int frequency) = 0;
 
-    bool isStereo() const;
-    virtual void setStereo(bool stereo);
+    virtual bool isStereo() const = 0;
+    virtual void setStereo(bool stereo) = 0;
 
-    int signalStrength() const;
-    virtual void setSignalStrength(int strength);
+    virtual int signalStrength() const = 0;
+    virtual void setSignalStrength(int strength) = 0;
 
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
+    virtual qint64 duration() const = 0;
+    virtual void setDuration(qint64 duration) = 0;
 
-    int volume() const;
-    virtual void setVolume(int volume);
+    virtual int volume() const = 0;
+    virtual void setVolume(int volume) = 0;
 
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
+    virtual bool isMuted() const = 0;
+    virtual void setMuted(bool muted) = 0;
 
     virtual void searchForward() = 0;
     virtual void searchBackward() = 0;
+
+protected:
+    QRadioTuner(QObject *parent = 0);
 };
 
 #endif  // QRADIOTUNER_H

@@ -64,7 +64,9 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     Q_D(QRadioPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QRadioTuner *>(service->control("radio"));
+    d->control = qobject_cast<QRadioTuner *>(service->control("com.nokia.qt.RadioPlayerControl"));
+
+    addPropertyWatch("duration");
 }
 
 QRadioPlayer::~QRadioPlayer()
