@@ -50,6 +50,7 @@ private:
     void dumpContactDifferences(const QContact& a, const QContact& b);
     void dumpContact(const QContact &c);
     void dumpContacts();
+    bool isSuperset(const QContact& ca, const QContact& cb);
 
     void addManagers(); // add standard managers to the data
 public slots:
@@ -161,6 +162,38 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     }
 
     QCOMPARE(b, a);
+}
+
+bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
+{
+    // returns true if contact ca is a superset of contact cb
+    // we use this test instead of equality because dynamic information
+    // such as presence/location, and synthesised information such as
+    // display label, may differ between a contact in memory and the
+    // contact in the managed store.
+
+    QContact a(ca);
+    QContact b(cb);
+    QList<QContactDetail> aDetails = a.details();
+    QList<QContactDetail> bDetails = b.details();
+
+    // They can be in any order, so loop
+    // First remove any matches
+    foreach(QContactDetail d, aDetails) {
+        foreach(QContactDetail d2, bDetails) {
+            if(d == d2) {
+                a.removeDetail(&d);
+                b.removeDetail(&d2);
+                break;
+            }
+        }
+    }
+
+    // Now check to see if b has any details remaining; if so, a is not a superset.
+    // Note that the DisplayLabel can never be removed.
+    if (b.details().size() > 1 || (b.details().size() == 1 && b.details().value(0).definitionName() != QContactDisplayLabel::DefinitionId))
+        return false;
+    return true;
 }
 
 void tst_QContactManager::dumpContact(const QContact& contact)
@@ -578,7 +611,7 @@ void tst_QContactManager::add()
     QVERIFY(added.id() != 0);
     QVERIFY(added.id() == alice.id());
 
-    if (added != alice) {
+    if (!isSuperset(added, alice)) {
         dumpContacts();
         dumpContactDifferences(added, alice);
     }

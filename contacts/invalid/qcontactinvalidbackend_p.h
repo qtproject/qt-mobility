@@ -60,6 +60,7 @@ class QContactInvalidEngine : public QContactManagerEngine
 public:
     QContactInvalidEngine();
     void deref();
+    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 };
 
 #endif

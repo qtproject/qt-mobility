@@ -125,76 +125,20 @@ QContact QContactMemoryEngine::contact(const QUniqueId& contactId, QContactManag
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
         error = QContactManager::NoError;
-        return d->m_contacts.at(index);
+        QContact retn = d->m_contacts.at(index);
+        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionId);
+        if (dl.isEmpty()) {
+            QContactManager::Error synthError;
+            dl.setSynthesised(true);
+            dl.setLabel(synthesiseDisplayLabel(retn, synthError));
+            retn.saveDetail(&dl);
+        }
+
+        return retn;
     }
 
     error = QContactManager::DoesNotExistError;
     return QContact();
-}
-
-/*! \reimp */
-QString QContactMemoryEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
-{
-    // synthesise the display name from the name of the contact, or, failing that, the organisation of the contact.
-    error = QContactManager::NoError;
-    QList<QContactDetail> allOrgs = contact.details(QContactOrganisation::DefinitionId);
-    QList<QContactDetail> allNames = contact.details(QContactName::DefinitionId);
-
-    // first, check to see whether or not there is a name or org to synthesise from.
-    if (allNames.isEmpty()) {
-        if (allOrgs.isEmpty()) {
-            error = QContactManager::UnspecifiedError;
-            return QString();
-        }
-
-        foreach (const QContactOrganisation& org, allOrgs) {
-            if (!org.displayLabel().isEmpty()) {
-                return org.displayLabel();
-            }
-        }
-
-        error = QContactManager::UnspecifiedError;
-        return QString();
-    }
-
-    // synthesise the display label from the name.
-    foreach (const QContactName& name, allNames) {
-        QString result;
-        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-           result += name.value(QContactName::FieldPrefix);
-        }
-
-        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += " ";
-            result += name.value(QContactName::FieldFirst);
-        }
-
-        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += " ";
-            result += name.value(QContactName::FieldMiddle);
-        }
-
-        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += " ";
-            result += name.value(QContactName::FieldLast);
-        }
-
-        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += " ";
-            result += name.value(QContactName::FieldSuffix);
-        }
-
-        if (!result.isEmpty()) {
-            return result;
-        }
-    }
-
-    error = QContactManager::UnspecifiedError;
-    return QString();
 }
 
 /*! \reimp */

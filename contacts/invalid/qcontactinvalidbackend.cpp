@@ -51,3 +51,11 @@ void QContactInvalidEngine::deref()
 {
     delete this;
 }
+
+/*! \reimp */
+QString QContactInvalidEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+{
+    Q_UNUSED(contact);
+    error = QContactManager::NotSupportedError;
+    return QString();
+}
