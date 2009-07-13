@@ -22,6 +22,7 @@
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"></div><b><a href="qmessagefoldersortkey.html#QMessageFolderSortKey">QMessageFolderSortKey</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmessagefoldersortkey.html#QMessageFolderSortKey-2">QMessageFolderSortKey</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagefoldersortkey.html#isEmpty">isEmpty</a></b> () const</li>
 <li><div class="fn"></div>QMessageFolderSortKey <b><a href="qmessagefoldersortkey.html#operator-2b">operator+</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>QMessageFolderSortKey &amp; <b><a href="qmessagefoldersortkey.html#operator-2b-eq">operator+=</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</li>
@@ -47,6 +48,9 @@
 <p>A default-constructed key (one for which <a href="qmessagefoldersortkey.html#isEmpty">isEmpty</a>() returns true) sorts no folders.</p>
 <p>The result of combining an empty key with a non-empty key is the same as the original non-empty key.</p>
 <p>The result of combining two empty keys is an empty key.</p>
+<h3 class="fn"><a name="QMessageFolderSortKey-2"></a>QMessageFolderSortKey::QMessageFolderSortKey ( const QMessageFolderSortKey &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessagefoldersortkey.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="displayName"></a>QMessageFolderSortKey QMessageFolderSortKey::displayName ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts folders by display name, according to <i>order</i>.</p>
 <p>See also <a href="qmessagefolder.html#displayName">QMessageFolder::displayName</a>().</p>

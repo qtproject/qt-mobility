@@ -22,6 +22,7 @@
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"></div><b><a href="qmessagefilterkey.html#QMessageFilterKey">QMessageFilterKey</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmessagefilterkey.html#QMessageFilterKey-2">QMessageFilterKey</a></b> ( const QMessageFilterKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagefilterkey.html#isEmpty">isEmpty</a></b> () const</li>
 <li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessagefilterkey.html#options">options</a></b> ()</li>
 <li><div class="fn"></div>void <b><a href="qmessagefilterkey.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</li>
@@ -85,6 +86,9 @@
 <p>Creates a <a href="qmessagefilterkey.html">QMessageFilterKey</a> without specifying matching parameters.</p>
 <p>A default-constructed key (one for which <a href="qmessagefilterkey.html#isEmpty">isEmpty</a>() returns true) matches all messages.</p>
 <p>See also <a href="qmessagefilterkey.html#isEmpty">isEmpty</a>().</p>
+<h3 class="fn"><a name="QMessageFilterKey-2"></a>QMessageFilterKey::QMessageFilterKey ( const QMessageFilterKey &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessagefilterkey.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="ancestorFolderIds"></a>QMessageFilterKey QMessageFilterKey::ancestorFolderIds ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching messages whose ancestor folders' identifiers contain <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentFolderId">QMessage::parentFolderId</a>().</p>
