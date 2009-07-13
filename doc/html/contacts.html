@@ -54,9 +54,14 @@
         QContact alice;
 
         <span class="comment">/* Set the contact's name */</span>
-        alice.name().setFirst(&quot;Alice&quot;);
-        alice.name().setLast(&quot;Jones&quot;);
-        alice.name().setDisplayName(&quot;Ally Jones&quot;);
+        QContactName aliceName;
+        aliceName.setFirst(&quot;Alice&quot;);
+        aliceName.setLast(&quot;Jones&quot;);
+        alice.saveDetail(&amp;aliceName);
+
+        QContactDisplayLabel aliceDisplay;
+        aliceDisplay.setLabel(&quot;Ally Jones&quot;);
+        alice.saveDetail(&amp;aliceDisplay);
 
         <span class="comment">/* Add a phone number */</span>
         QContactPhoneNumber number;
@@ -81,12 +86,22 @@
 <p>The client utilises a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
-        QList&lt;QUniqueId&gt; matchingContacts = cm-&gt;contactsWithDetail(&quot;PhoneNumber&quot;, incomingCallNbr);
+        QContactDetailFilter phoneFilter;
+        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;);
+        phoneFilter.setDetailFieldName(&quot;Number&quot;);
+        phoneFilter.setValue(incomingCallNbr);
+        phoneFilter.setMatchFlags(Qt::MatchExactly);
+
+        QList&lt;QUniqueId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
         if (matchingContacts.size() == 0) {
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
+            QContact match = cm-&gt;contact(matchingContacts.at(0));
+            QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionId);
+            if (cdl.isEmpty())
+                cdl.setLabel(cm-&gt;synthesiseDisplayLabel(match));
             qDebug() &lt;&lt; &quot;Incoming call from&quot;
-                     &lt;&lt; cm-&gt;contact(matchingContacts.at(0)).name().displayName()
+                     &lt;&lt; cdl.label()
                      &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         }
     }</pre>
@@ -97,7 +112,10 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; a.name().displayName()
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        if (cdl.isEmpty())
+            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
+        qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
                  &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;Number&quot;);
     }</pre>
 <a name="viewing-all-of-the-details-of-a-contact"></a>
@@ -107,15 +125,18 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; a.name().displayName();
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        if (cdl.isEmpty())
+            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
+        qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; cdl.label();
 
         QList&lt;QContactDetail&gt; allDetails = a.details();
         for (int i = 0; i &lt; allDetails.size(); i++) {
             QContactDetail detail = allDetails.at(i);
-            QContactDetailDefinition currentDefinition = cm-&gt;detailDefinition(detail.definitionId());
+            QContactDetailDefinition currentDefinition = cm-&gt;detailDefinition(detail.definitionName());
             QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = currentDefinition.fields();
 
-            qDebug(&quot;\tDetail #%d (%s):&quot;, i, detail.definitionId().toAscii().constData());
+            qDebug(&quot;\tDetail #%d (%s):&quot;, i, detail.definitionName().toAscii().constData());
             foreach (const QString&amp; fieldKey, fields.keys()) {
                 qDebug() &lt;&lt; &quot;\t\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType &lt;&lt; &quot;) =&quot; &lt;&lt; detail.value(fieldKey);
             }
@@ -153,7 +174,10 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; a.name().displayName();
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        if (cdl.isEmpty())
+            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
+        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; cdl.label();
 
         <span class="comment">/* Change the first phone number */</span>
         QList&lt;QContactDetail&gt; numbers = a.details(&quot;PhoneNumber&quot;);
@@ -184,7 +208,10 @@
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
-            qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; a.name().displayName();
+            QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+            if (cdl.isEmpty())
+                cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
+            qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; cdl.label();
         } else {
             qDebug() &lt;&lt; &quot;This manager contains no contacts&quot;;
         }

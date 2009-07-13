@@ -22,50 +22,57 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qcontactmanagerengine.html#QContactManagerEngine">QContactManagerEngine</a></b> ()</li>
-<li><div class="fn"/>virtual QContact <b><a href="qcontactmanagerengine.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contacts">contacts</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsModifiedSince">contactsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsRemovedSince">contactsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsWithAction">contactsWithAction</a></b> ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsWithDetail">contactsWithDetail</a></b> ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual void <b><a href="qcontactmanagerengine.html#deref">deref</a></b> () = 0</li>
-<li><div class="fn"/>virtual QContactDetailDefinition <b><a href="qcontactmanagerengine.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QStringList <b><a href="qcontactmanagerengine.html#fastFilterableDefinitions">fastFilterableDefinitions</a></b> () const</li>
-<li><div class="fn"/>virtual QContactGroup <b><a href="qcontactmanagerengine.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups">groups</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i>, bool <i>batch</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanagerengine.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>contactIds</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i>, bool <i>batch</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanagerengine.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contacts</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i>, QContactManager::Error &amp; <i>error</i> )</li>
-<li><div class="fn"/>virtual QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#validateContact">validateContact</a></b> ( const QContact &amp; <i>contact</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmanagerengine.html#validateDefinition">validateDefinition</a></b> ( const QContactDetailDefinition &amp; <i>definition</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div><b><a href="qcontactmanagerengine.html#QContactManagerEngine">QContactManagerEngine</a></b> ()</li>
+<li><div class="fn"></div>virtual QContact <b><a href="qcontactmanagerengine.html#contact">contact</a></b> ( const QUniqueId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contacts">contacts</a></b> ( const QContactFilter &amp; <i>filter</i>, const QContactSortOrder &amp; <i>sortOrder</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contacts-2">contacts</a></b> ( const QContactSortOrder &amp; <i>sortOrder</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsAddedSince">contactsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsModifiedSince">contactsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#contactsRemovedSince">contactsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual void <b><a href="qcontactmanagerengine.html#deref">deref</a></b> () = 0</li>
+<li><div class="fn"></div>virtual QContactDetailDefinition <b><a href="qcontactmanagerengine.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionName</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</li>
+<li><div class="fn"></div>virtual QContactGroup <b><a href="qcontactmanagerengine.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups">groups</a></b> ( const QContactFilter &amp; <i>filter</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups-2">groups</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i>, bool <i>batch</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanagerengine.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * <i>contactIds</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionName</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i>, bool <i>batch</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual QList&lt;QContactManager::Error&gt; <b><a href="qcontactmanagerengine.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contacts</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i>, QContactManager::Error &amp; <i>error</i> )</li>
+<li><div class="fn"></div>virtual QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
+<li><div class="fn"></div>virtual QString <b><a href="qcontactmanagerengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</a></b> ( const QContact &amp; <i>contact</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#testFilter">testFilter</a></b> ( const QContactFilter &amp; <i>filter</i>, const QContact &amp; <i>contact</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#validateContact">validateContact</a></b> ( const QContact &amp; <i>contact</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#validateDefinition">validateDefinition</a></b> ( const QContactDetailDefinition &amp; <i>definition</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
-<li><div class="fn"/>void <b><a href="qcontactmanagerengine.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanagerengine.html#schemaDefinitions">schemaDefinitions</a></b> ()</li>
+<li><div class="fn"></div>QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanagerengine.html#schemaDefinitions">schemaDefinitions</a></b> ()</li>
+</ul>
+<a name="static-protected-members"></a>
+<h3>Static Protected Members</h3>
+<ul>
+<li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#addSorted">addSorted</a></b> ( QList&lt;QContact&gt; * <i>sorted</i>, const QContact &amp; <i>toAdd</i>, const QContactSortOrder &amp; <i>sortOrder</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -79,11 +86,16 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QContactManagerEngine"></a>QContactManagerEngine::QContactManagerEngine ()</h3>
 <p>A default, empty constructor.</p>
+<h3 class="fn"><a name="addSorted"></a>void QContactManagerEngine::addSorted ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>sorted</i>, const <a href="qcontact.html">QContact</a> &amp; <i>toAdd</i>, const QContactSortOrder &amp; <i>sortOrder</i> )&nbsp;&nbsp;<tt> [static protected]</tt></h3>
+<p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrder</i></p>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManagerEngine::contact ( const QUniqueId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the contact in the database identified by <i>contactId</i></p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="contacts"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contacts ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Return the list of contact ids present in this engine.</p>
+<h3 class="fn"><a name="contacts"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contacts ( const QContactFilter &amp; <i>filter</i>, const QContactSortOrder &amp; <i>sortOrder</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns a list of the ids of contacts that match the supplied <i>filter</i>, sorted according to the given <i>sortOrder</i>. Any error that occurs will be stored in <i>error</i>.</p>
+<p>The default implementation will retrieve all contacts and test them with testFilter.</p>
+<h3 class="fn"><a name="contacts-2"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contacts ( const QContactSortOrder &amp; <i>sortOrder</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Return the list of contact ids present in this engine, sorted according to the given <i>sortOrder</i>.</p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManagerEngine::contactsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been added to this engine. As it is possible that other processes (or other devices) may have added the contacts, the timing cannot be determined.</p>
@@ -103,27 +115,24 @@
 <h3 class="fn"><a name="contactsRemovedSince"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contactsRemovedSince ( const QDateTime &amp; <i>timestamp</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of contact ids that have been removed in this manager since the given <i>timestamp</i>.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="contactsWithAction"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contactsWithAction ( const QString &amp; <i>actionId</i>, const QVariant &amp; <i>value</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns a list of contacts which have a detail with the given <i>value</i> for which the specified <i>actionId</i> is available.</p>
-<p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="contactsWithDetail"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::contactsWithDetail ( const QString &amp; <i>definitionId</i>, const QVariant &amp; <i>value</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns a list of contacts which have a detail of the given <i>definitionId</i> with the specified <i>value</i>.</p>
-<p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="deref"></a>void QContactManagerEngine::deref ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Notifies the engine that it is no longer required. If this engine can not be shared between managers, it is safe for the engine to delete itself in this function.</p>
 <p>If the engine implementation can be shared, this function can use a reference count and track lifetime that way. The factory that returns an instance of this engine should increment the reference count in this case.</p>
-<h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManagerEngine::detailDefinition ( const QString &amp; <i>definitionId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the definition identified by the given <i>definitionId</i> that is valid for contacts in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
+<h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManagerEngine::detailDefinition ( const QString &amp; <i>definitionName</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the definition identified by the given <i>definitionName</i> that is valid for contacts in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="detailDefinitions"></a>QMap&lt;QString, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManagerEngine::detailDefinitions ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the registered detail definitions which are valid for contacts in this engine.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="fastFilterableDefinitions"></a>QStringList QContactManagerEngine::fastFilterableDefinitions () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns a list of definition identifiers which are natively (fast) filterable by this engine.</p>
+<h3 class="fn"><a name="filterSupported"></a>bool QContactManagerEngine::filterSupported ( const QContactFilter &amp; <i>filter</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns a whether the supplied <i>filter</i> can be implemented natively by this engine. If not, the base class implementation will emulate the functionality.</p>
 <h3 class="fn"><a name="group"></a><a href="qcontactgroup.html">QContactGroup</a> QContactManagerEngine::group ( const QUniqueId &amp; <i>groupId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the group which is identified by the given <i>groupId</i>, or a default-constructed group if no such group exists</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( const QContactFilter &amp; <i>filter</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Return the list of group ids present in this manager which fulfil the criteria specified in the given <i>filter</i>.</p>
+<p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<h3 class="fn"><a name="groups-2"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Return the list of group ids present in this manager.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="groupsAdded"></a>void QContactManagerEngine::groupsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -158,8 +167,8 @@
 <p>At some stage after completion of the operation, the backend must emit the <tt>QContactManagerEngine::contactsRemoved</tt> signal if any contacts were successfully removed. If the operation fails, no such signal may be emitted as a direct result of the operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
-<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManagerEngine::removeDetailDefinition ( const QString &amp; <i>definitionId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Removes the definition identified by the given <i>definitionId</i> from the database.</p>
+<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManagerEngine::removeDetailDefinition ( const QString &amp; <i>definitionName</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Removes the definition identified by the given <i>definitionName</i> from the database.</p>
 <p>Returns true if the definition was removed successfully, otherwise returns false.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="removeGroup"></a>bool QContactManagerEngine::removeGroup ( const QUniqueId &amp; <i>groupId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -191,6 +200,11 @@
 <p>Returns the base schema definitions</p>
 <h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of data types supported by this engine.</p>
+<h3 class="fn"><a name="synthesiseDisplayLabel"></a>QString QContactManagerEngine::synthesiseDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Synthesises the display label of the given <i>contact</i> in a platform specific manner. Any error that occurs will be stored in <i>error</i>. Returns the synthesised display label.</p>
+<h3 class="fn"><a name="testFilter"></a>bool QContactManagerEngine::testFilter ( const QContactFilter &amp; <i>filter</i>, const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns true if the supplied <i>filter</i> matches the supplied <i>contact</i>.</p>
+<p>The default implementation of this function will test each condition in the filter, possibly recursing.</p>
 <h3 class="fn"><a name="validateContact"></a>bool QContactManagerEngine::validateContact ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Checks that the given contact <i>contact</i> does not have details which don't conform to a valid definition, violate uniqueness constraints, or contain values for nonexistent fields, and that the values contained are of the correct type for each field, and are allowable values for that field.</p>
 <p>Note that this function is unable to ensure that the access constraints (such as CreateOnly and ReadOnly) are observed; backend specific code must be written if you wish to enforce these constraints.</p>

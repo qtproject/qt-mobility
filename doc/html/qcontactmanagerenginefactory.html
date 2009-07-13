@@ -21,15 +21,15 @@
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/>virtual <b><a href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory">~QContactManagerEngineFactory</a></b> ()</li>
-<li><div class="fn"/>virtual QContactManagerEngine * <b><a href="qcontactmanagerenginefactory.html#engine">engine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QContactManager::Error &amp; <i>error</i> ) = 0</li>
-<li><div class="fn"/>virtual QString <b><a href="qcontactmanagerenginefactory.html#managerId">managerId</a></b> () const = 0</li>
+<li><div class="fn"></div>virtual <b><a href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory">~QContactManagerEngineFactory</a></b> ()</li>
+<li><div class="fn"></div>virtual QContactManagerEngine * <b><a href="qcontactmanagerenginefactory.html#engine">engine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QContactManager::Error &amp; <i>error</i> ) = 0</li>
+<li><div class="fn"></div>virtual QString <b><a href="qcontactmanagerenginefactory.html#managerName">managerName</a></b> () const = 0</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>This class is the interface for plugins that implement <a href="qcontactmanagerengine.html">QContactManagerEngine</a> functionality.</p>
-<p>This class provides a simple interface for the creation of manager engine instances. Each factory has a specific id associated with it, which forms the <tt>managerId</tt> parameter when creating <a href="qcontactmanager.html">QContactManager</a> objects.</p>
+<p>This class provides a simple interface for the creation of manager engine instances. Each factory has a specific id associated with it, which forms the <tt>managerName</tt> parameter when creating <a href="qcontactmanager.html">QContactManager</a> objects.</p>
 <p>More information on writing a contacts engine plugin is TODO.</p>
 <p>See also <a href="qcontactmanager.html">QContactManager</a> and <a href="qcontactmanagerengine.html">QContactManagerEngine</a>.</p>
 <hr />
@@ -40,7 +40,7 @@
 <p>This function is called by the <a href="qcontactmanager.html">QContactManager</a> implementation to create an instance of the engine provided by this factory.</p>
 <p>The <i>parameters</i> supplied can be ignored or interpreted as desired.</p>
 <p>If a supplied parameter results in an unfulfillable request, or some other error occurs, this function may return a null pointer, and the client developer will get an invalid <a href="qcontactmanager.html">QContactManager</a> in return. Any error should be stored in the supplied <i>error</i> reference.</p>
-<h3 class="fn"><a name="managerId"></a>QString QContactManagerEngineFactory::managerId () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="managerName"></a>QString QContactManagerEngineFactory::managerName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This function should return a unique string that identifies the engines provided by this factory.</p>
 <p>Typically this would be of the form &quot;com.nokia.qt.contacts.engines.memory&quot;, with the appropriate domain and engine name substituted.</p>
 <p /><address><hr /><div align="center">

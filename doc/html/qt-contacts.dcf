@@ -23,10 +23,10 @@
         <keyword ref="qcontact.html#detailWithAction">detailWithAction</keyword>
         <keyword ref="qcontact.html#details">details</keyword>
         <keyword ref="qcontact.html#detailsWithAction">detailsWithAction</keyword>
+        <keyword ref="qcontact.html#displayLabel">displayLabel</keyword>
         <keyword ref="qcontact.html#error">error</keyword>
         <keyword ref="qcontact.html#id">id</keyword>
         <keyword ref="qcontact.html#isPreferredDetail">isPreferredDetail</keyword>
-        <keyword ref="qcontact.html#name">name</keyword>
         <keyword ref="qcontact.html#preferredDetail">preferredDetail</keyword>
         <keyword ref="qcontact.html#removeDetail">removeDetail</keyword>
         <keyword ref="qcontact.html#saveDetail">saveDetail</keyword>
@@ -113,7 +113,7 @@
         <keyword ref="qcontactdetail.html#attribute">attribute</keyword>
         <keyword ref="qcontactdetail.html#attributes">attributes</keyword>
         <keyword ref="qcontactdetail.html#contextAttribute">contextAttribute</keyword>
-        <keyword ref="qcontactdetail.html#definitionId">definitionId</keyword>
+        <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
         <keyword ref="qcontactdetail.html#error">error</keyword>
         <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
         <keyword ref="qcontactdetail.html#removeAttribute">removeAttribute</keyword>
@@ -229,8 +229,6 @@
         <keyword ref="qcontactmanager.html#contactsModifiedSince">contactsModifiedSince</keyword>
         <keyword ref="qcontactmanager.html#contactsRemoved">contactsRemoved</keyword>
         <keyword ref="qcontactmanager.html#contactsRemovedSince">contactsRemovedSince</keyword>
-        <keyword ref="qcontactmanager.html#contactsWithAction">contactsWithAction</keyword>
-        <keyword ref="qcontactmanager.html#contactsWithDetail">contactsWithDetail</keyword>
         <keyword ref="qcontactmanager.html#detailDefinition">detailDefinition</keyword>
         <keyword ref="qcontactmanager.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmanager.html#error">error</keyword>
@@ -244,7 +242,7 @@
         <keyword ref="qcontactmanager.html#groupsRemoved">groupsRemoved</keyword>
         <keyword ref="qcontactmanager.html#groupsRemovedSince">groupsRemovedSince</keyword>
         <keyword ref="qcontactmanager.html#information">information</keyword>
-        <keyword ref="qcontactmanager.html#managerId">managerId</keyword>
+        <keyword ref="qcontactmanager.html#managerName">managerName</keyword>
         <keyword ref="qcontactmanager.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanager.html#removeContact">removeContact</keyword>
         <keyword ref="qcontactmanager.html#removeContacts">removeContacts</keyword>
@@ -256,10 +254,12 @@
         <keyword ref="qcontactmanager.html#saveGroup">saveGroup</keyword>
         <keyword ref="qcontactmanager.html#splitUri">splitUri</keyword>
         <keyword ref="qcontactmanager.html#storeUri">storeUri</keyword>
+        <keyword ref="qcontactmanager.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
         <section ref="qcontactmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
         <keyword ref="qcontactmanagerengine.html">QContactManagerEngine</keyword>
+        <keyword ref="qcontactmanagerengine.html#addSorted">addSorted</keyword>
         <keyword ref="qcontactmanagerengine.html#contact">contact</keyword>
         <keyword ref="qcontactmanagerengine.html#contacts">contacts</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsAdded">contactsAdded</keyword>
@@ -268,12 +268,10 @@
         <keyword ref="qcontactmanagerengine.html#contactsModifiedSince">contactsModifiedSince</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsRemoved">contactsRemoved</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsRemovedSince">contactsRemovedSince</keyword>
-        <keyword ref="qcontactmanagerengine.html#contactsWithAction">contactsWithAction</keyword>
-        <keyword ref="qcontactmanagerengine.html#contactsWithDetail">contactsWithDetail</keyword>
         <keyword ref="qcontactmanagerengine.html#deref">deref</keyword>
         <keyword ref="qcontactmanagerengine.html#detailDefinition">detailDefinition</keyword>
         <keyword ref="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</keyword>
-        <keyword ref="qcontactmanagerengine.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
+        <keyword ref="qcontactmanagerengine.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerengine.html#group">group</keyword>
         <keyword ref="qcontactmanagerengine.html#groups">groups</keyword>
         <keyword ref="qcontactmanagerengine.html#groupsAdded">groupsAdded</keyword>
@@ -293,6 +291,8 @@
         <keyword ref="qcontactmanagerengine.html#saveGroup">saveGroup</keyword>
         <keyword ref="qcontactmanagerengine.html#schemaDefinitions">schemaDefinitions</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmanagerengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <keyword ref="qcontactmanagerengine.html#testFilter">testFilter</keyword>
         <keyword ref="qcontactmanagerengine.html#validateContact">validateContact</keyword>
         <keyword ref="qcontactmanagerengine.html#validateDefinition">validateDefinition</keyword>
         <section ref="qcontactmanagerengine-members.html" title="List of all members"/>
@@ -300,7 +300,7 @@
     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
         <keyword ref="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#engine">engine</keyword>
-        <keyword ref="qcontactmanagerenginefactory.html#managerId">managerId</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#managerName">managerName</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
@@ -317,7 +317,7 @@
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ReadOnlyDetails</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Synchronous</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Locking</keyword>
-        <keyword ref="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
+        <keyword ref="qcontactmanagerinfo.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
         <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
@@ -325,19 +325,14 @@
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
         <keyword ref="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</keyword>
-        <keyword ref="qcontactmemoryengine.html#fastFilterableDefinitions">fastFilterableDefinitions</keyword>
-        <keyword ref="qcontactmemoryengine.html#hasFeature">hasFeature</keyword>
-        <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactname.html" title="QContactName Class Reference">
         <keyword ref="qcontactname.html">QContactName</keyword>
-        <keyword ref="qcontactname.html#displayName">displayName</keyword>
         <keyword ref="qcontactname.html#first">first</keyword>
         <keyword ref="qcontactname.html#last">last</keyword>
         <keyword ref="qcontactname.html#middle">middle</keyword>
         <keyword ref="qcontactname.html#prefix">prefix</keyword>
-        <keyword ref="qcontactname.html#setDisplayName">setDisplayName</keyword>
         <keyword ref="qcontactname.html#setFirst">setFirst</keyword>
         <keyword ref="qcontactname.html#setLast">setLast</keyword>
         <keyword ref="qcontactname.html#setMiddle">setMiddle</keyword>
@@ -345,7 +340,6 @@
         <keyword ref="qcontactname.html#setSuffix">setSuffix</keyword>
         <keyword ref="qcontactname.html#suffix">suffix</keyword>
         <keyword ref="qcontactname.html#DefinitionId-var">DefinitionId</keyword>
-        <keyword ref="qcontactname.html#FieldDisplayName-var">FieldDisplayName</keyword>
         <keyword ref="qcontactname.html#FieldFirst-var">FieldFirst</keyword>
         <keyword ref="qcontactname.html#FieldLast-var">FieldLast</keyword>
         <keyword ref="qcontactname.html#FieldMiddle-var">FieldMiddle</keyword>

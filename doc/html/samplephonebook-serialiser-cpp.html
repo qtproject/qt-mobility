@@ -71,14 +71,14 @@
     QString Serialiser::convertDetail(const QContact&amp; contact, const QContactDetail&amp; detail, const QString&amp; vcardField)
     {
         <span class="comment">// the format of the converted detail will be:</span>
-        <span class="comment">// X-com-nokia-mobility-contacts-vcard-detail-UUID;vcardField;definitionId;key=value,key=value;attr=bute,attr=bute;preferredFor=actionId,actionId</span>
+        <span class="comment">// X-com-nokia-mobility-contacts-vcard-detail-UUID;vcardField;definitionName;key=value,key=value;attr=bute,attr=bute;preferredFor=actionId,actionId</span>
         <span class="comment">// where each of the elements are escaped strings.</span>
         QString retn = &quot;X-com-nokia-mobility-contacts-vcard-detail-&quot;;
         retn += escaped(QUuid::createUuid().toString());
         retn += &quot;:&quot;;
         retn += escaped(vcardField);
         retn += &quot;;&quot;;
-        retn += escaped(detail.definitionId());
+        retn += escaped(detail.definitionName());
         retn += &quot;;&quot;;
 
         QVariantMap vals = detail.values();
@@ -208,8 +208,8 @@
             }
         }
 
-        <span class="comment">// then, we parse the definitionId from the string.</span>
-        QString definitionId = &quot;&quot;;
+        <span class="comment">// then, we parse the definitionName from the string.</span>
+        QString definitionName = &quot;&quot;;
         for (int i = nextSection; i &lt; customString.length(); i++) {
             QChar currChar = customString.at(i);
             if (currChar == ';') {
@@ -219,7 +219,7 @@
                 <span class="comment">// the next character is escaped.</span>
                 i += 1;
             }
-            definitionId += customString.at(i);
+            definitionName += customString.at(i);
         }
 
         <span class="comment">// check to see whether this custom string was built by us</span>
@@ -338,8 +338,8 @@
             return QContactDetail();
         }
 
-        <span class="comment">// having parsed the definitionId, values, attributes, and preferences we build the detail.</span>
-        QContactDetail retn(definitionId);
+        <span class="comment">// having parsed the definitionName, values, attributes, and preferences we build the detail.</span>
+        QContactDetail retn(definitionName);
         retn.setValues(values);
         retn.setAttributes(attrs);
         return retn;
@@ -375,7 +375,7 @@
                 }
             } else {
                 QContactDetail det = parsePropertyType(line);
-                QString defId = det.definitionId();
+                QString defId = det.definitionName();
                 if (defId.isEmpty()) {
                     <span class="comment">// this must be another program's custom field.  ignore it.</span>
                 } else {
@@ -407,38 +407,24 @@
                         det.setValue(QContactAddress::FieldCountry, fieldValues.value(6));
                         vcardDetails.insert(&quot;ADR&quot;, det);
                     } else if (defId == QContactName::DefinitionId) {
-                        if (det.value(QContactName::FieldDisplayName) == &quot;positive&quot;) {
-                            <span class="comment">// it was a displayName.</span>
-                            if (vcardDetails.contains(&quot;N&quot;)) {
-                                <span class="comment">// modify the existing name</span>
-                                QContactDetail currName = vcardDetails.value(&quot;N&quot;);
-                                currName.setValue(QContactName::FieldDisplayName, parseValue(line));
-                                vcardDetails.replace(&quot;N&quot;, currName);
-                            } else {
-                                <span class="comment">// create a new name if no existing name stored.</span>
-                                det.setValue(QContactName::FieldDisplayName, parseValue(line));
-                                vcardDetails.insert(&quot;N&quot;, det);
-                            }
-                       } else {
-                            QStringList fieldValues = parseValue(line).split(&quot;;&quot;);
-                            if (vcardDetails.contains(&quot;N&quot;)) {
-                                <span class="comment">// modify the existing name</span>
-                                QContactDetail currName = vcardDetails.value(&quot;N&quot;);
-                                currName.setValue(QContactName::FieldPrefix, fieldValues.value(3));
-                                currName.setValue(QContactName::FieldFirst, fieldValues.value(1));
-                                currName.setValue(QContactName::FieldMiddle, fieldValues.value(2));
-                                currName.setValue(QContactName::FieldLast, fieldValues.value(0));
-                                currName.setValue(QContactName::FieldSuffix, fieldValues.value(4));
-                                vcardDetails.replace(&quot;N&quot;, currName);
-                            } else {
-                                <span class="comment">// create a new name if no existing name stored.</span>
-                                det.setValue(QContactName::FieldPrefix, fieldValues.value(3));
-                                det.setValue(QContactName::FieldFirst, fieldValues.value(1));
-                                det.setValue(QContactName::FieldMiddle, fieldValues.value(2));
-                                det.setValue(QContactName::FieldLast, fieldValues.value(0));
-                                det.setValue(QContactName::FieldSuffix, fieldValues.value(4));
-                                vcardDetails.insert(&quot;N&quot;, det);
-                            }
+                        QStringList fieldValues = parseValue(line).split(&quot;;&quot;);
+                        if (vcardDetails.contains(&quot;N&quot;)) {
+                            <span class="comment">// modify the existing name</span>
+                            QContactDetail currName = vcardDetails.value(&quot;N&quot;);
+                            currName.setValue(QContactName::FieldPrefix, fieldValues.value(3));
+                            currName.setValue(QContactName::FieldFirst, fieldValues.value(1));
+                            currName.setValue(QContactName::FieldMiddle, fieldValues.value(2));
+                            currName.setValue(QContactName::FieldLast, fieldValues.value(0));
+                            currName.setValue(QContactName::FieldSuffix, fieldValues.value(4));
+                            vcardDetails.replace(&quot;N&quot;, currName);
+                        } else {
+                            <span class="comment">// create a new name if no existing name stored.</span>
+                            det.setValue(QContactName::FieldPrefix, fieldValues.value(3));
+                            det.setValue(QContactName::FieldFirst, fieldValues.value(1));
+                            det.setValue(QContactName::FieldMiddle, fieldValues.value(2));
+                            det.setValue(QContactName::FieldLast, fieldValues.value(0));
+                            det.setValue(QContactName::FieldSuffix, fieldValues.value(4));
+                            vcardDetails.insert(&quot;N&quot;, det);
                         }
                     } else {
                         <span class="comment">// we don't know how to map this value type.  Ignore the line.</span>
@@ -509,7 +495,7 @@
             <span class="comment">//}</span>
 
             <span class="comment">// old:</span>
-            <span class="comment">//foreach (const QString&amp; actionId, QContactManager::availableActions(det.definitionId())) {</span>
+            <span class="comment">//foreach (const QString&amp; actionId, QContactManager::availableActions(det.definitionName())) {</span>
             <span class="comment">//    retn.setPreferredDetail(actionId, det);</span>
             <span class="comment">//}</span>
         <span class="comment">//}</span>
@@ -574,9 +560,8 @@
                 QContactName name;
                 return name;
             } else if (colonSplit.at(0) == &quot;FN&quot;) {
-                QContactName name;
-                name.setDisplayName(&quot;positive&quot;);
-                return name;
+                QContactDisplayLabel label;
+                return label;
             }
         }
 
@@ -728,8 +713,8 @@
             <span class="comment">// if the detail can be mapped to a non-singular vcard field, we create the vcard entry and the custom entry</span>
             <span class="comment">// if the detail can be mapped to a singular vcard field, we check to see that another detail which also</span>
             <span class="comment">//     maps to the same vcard field hasn't been saved as the vcard entry before doing the above.</span>
-            QString definitionId = det.definitionId();
-            if (definitionId == QContactName::DefinitionId) {
+            QString definitionName = det.definitionName();
+            if (definitionName == QContactName::DefinitionId) {
                 bool saved = false;
 
                 <span class="comment">// only one name is allowed</span>
@@ -741,22 +726,19 @@
                     saved = true;
                 }
 
-                <span class="comment">// only one formatted name is allowed</span>
-                if (!vcardFieldsWithValues.contains(&quot;FN&quot;)) {
-                    entry = &quot;FN:&quot; + det.value(QContactName::FieldDisplayName);
-                    vcard &lt;&lt; entry;
-                    vcardFieldsWithValues &lt;&lt; &quot;FN&quot;;
-                    if (!saved) {
-                        saved = true;
-                        customVcardFields &lt;&lt; convertDetail(contact, det, &quot;FN&quot;);
-                    }
-                }
-
                 <span class="comment">// if not already saved, save as a generic custom field.</span>
                 if (!saved) {
                     customVcardFields &lt;&lt; convertDetail(contact, det);
                 }
-            } else if (definitionId == QContactAddress::DefinitionId) {
+            } else if (definitionName == QContactDisplayLabel::DefinitionId) {
+                <span class="comment">// only one formatted name is allowed</span>
+                if (!vcardFieldsWithValues.contains(&quot;FN&quot;)) {
+                    entry = &quot;FN:&quot; + det.value(QContactDisplayLabel::FieldLabel);
+                    vcard &lt;&lt; entry;
+                    vcardFieldsWithValues &lt;&lt; &quot;FN&quot;;
+                    customVcardFields &lt;&lt; convertDetail(contact, det, &quot;FN&quot;);
+                }
+            } else if (definitionName == QContactAddress::DefinitionId) {
                 <span class="comment">// any number of address fields are allowed.</span>
                 entry = &quot;ADR;TYPE=&quot;;
                 QString typestr = &quot;&quot;;
@@ -775,13 +757,13 @@
                 vcardFieldsWithValues &lt;&lt; &quot;ADR&quot;;
                 vcardFieldsWithValues &lt;&lt; &quot;LABEL&quot;;
                 customVcardFields &lt;&lt; convertDetail(contact, det, &quot;ADR&quot;);
-            } else if (definitionId == &quot;Url&quot;) {
+            } else if (definitionName == &quot;Url&quot;) {
                 <span class="comment">// any number of Url fields are allowed.</span>
                 entry = &quot;URL:&quot; + det.value(&quot;Url&quot;);
                 vcard &lt;&lt; entry;
                 vcardFieldsWithValues &lt;&lt; &quot;URL&quot;;
                 customVcardFields &lt;&lt; convertDetail(contact, det, &quot;URL&quot;);
-            } else if (definitionId == QContactEmailAddress::DefinitionId) {
+            } else if (definitionName == QContactEmailAddress::DefinitionId) {
                 <span class="comment">// any number of email address fields are allowed.</span>
                 entry = &quot;EMAIL;TYPE=internet&quot;;
                 if (detailIsPreferredForAnything(contact, det)) entry += &quot;,pref&quot;;
@@ -789,7 +771,7 @@
                 vcard &lt;&lt; entry;
                 vcardFieldsWithValues &lt;&lt; &quot;EMAIL&quot;;
                 customVcardFields &lt;&lt; convertDetail(contact, det, &quot;EMAIL&quot;);
-            } else if (definitionId == QContactPhoneNumber::DefinitionId) {
+            } else if (definitionName == QContactPhoneNumber::DefinitionId) {
                 <span class="comment">// any number of telephone fields are allowed.</span>
                 entry = &quot;TEL;TYPE=&quot;;
                 QString typeStr = &quot;&quot;;
@@ -809,7 +791,7 @@
                 vcard &lt;&lt; entry;
                 vcardFieldsWithValues &lt;&lt; &quot;TEL&quot;;
                 customVcardFields &lt;&lt; convertDetail(contact, det, &quot;TEL&quot;);
-            } else if (definitionId == QContactAvatar::DefinitionId) {
+            } else if (definitionName == QContactAvatar::DefinitionId) {
                 <span class="comment">// only one photo field is allowed per vcard, according to the spec</span>
                 if (vcardFieldsWithValues.contains(&quot;PHOTO&quot;)) {
                     <span class="comment">// vcard already contains a photo field; save this one as a custom field only.</span>
@@ -820,7 +802,7 @@
                     entry = &quot;PHOTO;VALUE=uri:&quot; + det.value(QContactAvatar::FieldAvatar);
                     customVcardFields &lt;&lt; convertDetail(contact, det, &quot;PHOTO&quot;);
                 }
-            } else if (definitionId == QContactGuid::DefinitionId) {
+            } else if (definitionName == QContactGuid::DefinitionId) {
                 <span class="comment">// only one UID field is allowed per vcard, according to the spec</span>
                 if (vcardFieldsWithValues.contains(&quot;UID&quot;)) {
                     <span class="comment">// vcard already contains a photo field; save this one as a custom field only.</span>

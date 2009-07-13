@@ -20,14 +20,14 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>enum <b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Synchronous, Asynchronous, Groups, Locking, ..., NativeSorting }</li>
+<li><div class="fn"></div>enum <b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Synchronous, Asynchronous, Groups, Locking, ..., NativeSorting }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/>QStringList <b><a href="qcontactmanagerinfo.html#fastFilterableDefinitions">fastFilterableDefinitions</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qcontactmanagerinfo.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
-<li><div class="fn"/>QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerinfo.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</li>
+<li><div class="fn"></div>bool <b><a href="qcontactmanagerinfo.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
+<li><div class="fn"></div>QList&lt;QVariant::Type&gt; <b><a href="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -56,8 +56,9 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="fastFilterableDefinitions"></a>QStringList QContactManagerInfo::fastFilterableDefinitions () const</h3>
-<p>Returns a list of definition identifiers which are natively (fast) filterable by the manager associated with this object.</p>
+<h3 class="fn"><a name="filterSupported"></a>bool QContactManagerInfo::filterSupported ( const QContactFilter &amp; <i>filter</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns true if the given <i>filter</i> is supported natively by the manager, and false if the filter behaviour would be emulated.</p>
+<p>Note: In some cases, the behaviour of an unsupported filter cannot be emulated. For example, a filter that requests contacts that have changed since a given time depends on having that information available. In these cases, the filter will fail.</p>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactManagerInfo::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const</h3>
 <p>Returns true if the given <i>feature</i> is supported by the manager from whom this information object was received.</p>
 <h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerInfo::supportedDataTypes () const</h3>

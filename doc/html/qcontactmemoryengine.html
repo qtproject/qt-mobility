@@ -18,32 +18,24 @@
 <ul>
 <li><a href="qcontactmemoryengine-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"/>virtual QStringList <b><a href="qcontactmemoryengine.html#fastFilterableDefinitions">fastFilterableDefinitions</a></b> () const</li>
-<li><div class="fn"/>virtual bool <b><a href="qcontactmemoryengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</li>
-<li><div class="fn"/>virtual QList&lt;QVariant::Type&gt; <b><a href="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</a></b> () const</li>
-</ul>
-<ul>
-<li><div class="fn"/>28 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
-</ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
 <ul>
-<li><div class="fn"/>QContactMemoryEngine * <b><a href="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</li>
+<li><div class="fn"></div>QContactMemoryEngine * <b><a href="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</li>
 </ul>
 <ul>
-<li><div class="fn"/>1 static public member inherited from <a href="qcontactmanagerengine.html#static-public-members">QContactManagerEngine</a></li>
+<li><div class="fn"></div>1 static public member inherited from <a href="qcontactmanagerengine.html#static-public-members">QContactManagerEngine</a></li>
 </ul>
 <a name="protected-functions"></a>
 <h3>Protected Functions</h3>
 <ul>
-<li><div class="fn"/><b><a href="qcontactmemoryengine.html#QContactMemoryEngine">QContactMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</li>
+<li><div class="fn"></div><b><a href="qcontactmemoryengine.html#QContactMemoryEngine">QContactMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"/>6 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
+<li><div class="fn"></div>30 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div class="fn"></div>6 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
+<li><div class="fn"></div>1 static protected member inherited from <a href="qcontactmanagerengine.html#static-protected-members">QContactManagerEngine</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -61,15 +53,6 @@
 <h3 class="fn"><a name="createMemoryEngine"></a>QContactMemoryEngine * QContactMemoryEngine::createMemoryEngine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Factory function for creating a new in-memory backend, based on the given <i>parameters</i>.</p>
 <p>The same engine will be returned for multiple calls with the same value for the &quot;id&quot; parameter, while one of them is in scope.</p>
-<h3 class="fn"><a name="fastFilterableDefinitions"></a>QStringList QContactMemoryEngine::fastFilterableDefinitions () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns a list of definition identifiers which are natively (fast) filterable on the default backend store managed by the manager from which the capabilities object was accessed</p>
-<p>Reimplemented from <a href="qcontactmanagerengine.html#fastFilterableDefinitions">QContactManagerEngine</a>.</p>
-<h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns true if the given <i>feature</i> is supported by this engine</p>
-<p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine</a>.</p>
-<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactMemoryEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the list of data types supported by this engine.</p>
-<p>Reimplemented from <a href="qcontactmanagerengine.html#supportedDataTypes">QContactManagerEngine</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
