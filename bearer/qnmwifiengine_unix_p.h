@@ -88,7 +88,8 @@ public:
     inline void emitConfigurationsChanged() { emit configurationsChanged(); }
     QNetworkConfigurationPrivate * addAccessPoint(const QString &, QDBusObjectPath );
 
-    QString getConnectionPathForId(const QString &name = QString());
+    QStringList getConnectionPathForId(const QString &uuid);
+    //QString getConnectionPathForId(const QString &name = QString());
     quint64 sentDataForId(const QString &id) const;
     quint64 receivedDataForId(const QString &id) const;
 
@@ -97,14 +98,21 @@ private:
     QString activatingConnectionPath;
     QStringList activeConnectionPaths;
 
+
+    QMap<QString,QDBusObjectPath> availableAccessPoints;
+    void scanForAccessPoints();
+
+    QStringList devicePaths;
+
     void getActiveConnectionsPaths();
     void getKnownSsids();
     void accessPointConnections();
     void knownConnections();
     void findConnections();
+    QString deviceConnectionPath(const QString &mac);
 
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
-    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > allConfigurations;
+	//    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > allConfigurations;
 
     QNetworkManagerInterface *iface;
 
@@ -114,12 +122,14 @@ private:
     QString getActiveConnectionPath(const QString &identifier);
     QString getNameForConfiguration(QNetworkManagerInterfaceDevice *devIface);
 
-    QNetworkConfiguration::StateFlags getStateForConnection(const QString &conPath);
+    QNetworkConfiguration::StateFlags getStateForId(const QString &id);
+
     QNetworkInterface getBestInterface(quint32 type, const QString &conPath);
 
     QMap<QString, QString> configurationInterface;
 
     bool isAddressOfConnection(const QString &conPath, quint32 ipaddress);
+
 private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void addDevice(QDBusObjectPath path);
@@ -129,13 +139,15 @@ private slots:
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
     void updateAccessPointState(const QString &, quint32);
-    void slotActivationFinished(QDBusPendingCallWatcher*);
+//    void slotActivationFinished(QDBusPendingCallWatcher*);
 
 private slots:
     void accessPointAdded( const QString &aPath, QDBusObjectPath oPath);
     void accessPointRemoved( const QString &aPath, QDBusObjectPath oPath);
     void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
-
+    void newConnection(QDBusObjectPath);
+    void settingsConnectionRemoved(const QString &);
+    void slotActivationFinished(QDBusPendingCallWatcher*);
 };
 
 QT_END_NAMESPACE
