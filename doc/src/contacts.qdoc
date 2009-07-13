@@ -138,11 +138,7 @@ To build the library, run \tt qmake and \tt make.
 Different backends have different capabilities and offer different functionality.
 In order to allow clients to query the provided functionality at runtime, every
 backend must be capable of reporting their functionality.  The functionality is
-<<<<<<< HEAD:doc/src/contacts.qdoc
 reported in an instance of a \l{QContactManagerInfo} object.
-=======
-reported in a \l{QContactManagerInfo} instance.
->>>>>>> Rename QContactManagerFunctionality to QContactManagerInfo, removed capabilities(), added hasFeature(..) with enum.:doc/src/contacts.qdoc
 
 \section2 Detail leaf classes
 
