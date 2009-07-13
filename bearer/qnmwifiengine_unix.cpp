@@ -114,8 +114,8 @@ QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
 
         scanForAccessPoints();
         getActiveConnectionsPaths();
-        findConnections();
         knownConnections();
+
         accessPointConnections();
 
 //        findConnections();
@@ -134,6 +134,7 @@ void QNmWifiEngine::findConnections()
 
         //// eth
         switch (devIface->deviceType()) {
+//            qWarning() << devIface->connectionInterface()->path();
 
         case DEVICE_TYPE_802_3_ETHERNET:
             {
@@ -1100,6 +1101,8 @@ QStringList QNmWifiEngine::getConnectionPathForId(const QString &uuid)
     }
     return QStringList();
 }
+
+
 
 QT_END_NAMESPACE
 
