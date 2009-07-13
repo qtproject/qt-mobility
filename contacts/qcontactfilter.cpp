@@ -119,59 +119,93 @@ QUniqueId QContactGroupMembershipFilter::groupId() const
 
 /* ====================================================================== */
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactBooleanFilter);
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIntersectionFilter);
 
-QContactBooleanFilter::QContactBooleanFilter(OperationType type)
-    : QContactFilter(new QContactBooleanFilterPrivate(type))
+QContactIntersectionFilter::QContactIntersectionFilter()
+    : QContactFilter(new QContactIntersectionFilterPrivate)
 {
 }
 
-void QContactBooleanFilter::setOperationType(OperationType type)
+void QContactIntersectionFilter::setFilters(const QList<QContactFilter>& filters)
 {
-    Q_D(QContactBooleanFilter);
-    d->m_type = type;
-}
-
-void QContactBooleanFilter::setFilters(const QList<QContactFilter>& filters)
-{
-    Q_D(QContactBooleanFilter);
+    Q_D(QContactIntersectionFilter);
     d->m_filters = filters;
 }
 
-void QContactBooleanFilter::prepend(const QContactFilter& filter)
+void QContactIntersectionFilter::prepend(const QContactFilter& filter)
 {
-    Q_D(QContactBooleanFilter);
+    Q_D(QContactIntersectionFilter);
     d->m_filters.prepend(filter);
 }
 
-void QContactBooleanFilter::append(const QContactFilter& filter)
+void QContactIntersectionFilter::append(const QContactFilter& filter)
 {
-    Q_D(QContactBooleanFilter);
+    Q_D(QContactIntersectionFilter);
     d->m_filters.append(filter);
 }
 
-void QContactBooleanFilter::remove(const QContactFilter& filter)
+void QContactIntersectionFilter::remove(const QContactFilter& filter)
 {
-    Q_D(QContactBooleanFilter);
+    Q_D(QContactIntersectionFilter);
     d->m_filters.removeAll(filter);
 }
 
-QContactBooleanFilter& QContactBooleanFilter::operator<<(const QContactFilter& filter)
+QContactIntersectionFilter& QContactIntersectionFilter::operator<<(const QContactFilter& filter)
 {
-    Q_D(QContactBooleanFilter);
+    Q_D(QContactIntersectionFilter);
     d->m_filters << filter;
     return *this;
 }
 
-QContactBooleanFilter::OperationType QContactBooleanFilter::operationType() const
+QList<QContactFilter> QContactIntersectionFilter::filters() const
 {
-    Q_D(const QContactBooleanFilter);
-    return d->m_type;
+    Q_D(const QContactIntersectionFilter);
+    return d->m_filters;
 }
 
-QList<QContactFilter> QContactBooleanFilter::filters() const
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactUnionFilter);
+
+QContactUnionFilter::QContactUnionFilter()
+    : QContactFilter(new QContactUnionFilterPrivate)
 {
-    Q_D(const QContactBooleanFilter);
+}
+
+void QContactUnionFilter::setFilters(const QList<QContactFilter>& filters)
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters = filters;
+}
+
+void QContactUnionFilter::prepend(const QContactFilter& filter)
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters.prepend(filter);
+}
+
+void QContactUnionFilter::append(const QContactFilter& filter)
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters.append(filter);
+}
+
+void QContactUnionFilter::remove(const QContactFilter& filter)
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters.removeAll(filter);
+}
+
+QContactUnionFilter& QContactUnionFilter::operator<<(const QContactFilter& filter)
+{
+    Q_D(QContactUnionFilter);
+    d->m_filters << filter;
+    return *this;
+}
+
+QList<QContactFilter> QContactUnionFilter::filters() const
+{
+    Q_D(const QContactUnionFilter);
     return d->m_filters;
 }
 
@@ -372,27 +406,47 @@ QVariant QContactActionFilter::value() const
 
 const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
 {
-    if (left.type() == QContactFilter::Boolean) {
-        QContactBooleanFilter bf(left);
-        if (bf.operationType() == QContactBooleanFilter::And) {
-            /* we can just add the right to this one */
-            bf.append(right);
-            return bf;
-        }
+    if (left.type() == QContactFilter::Intersection) {
+        QContactIntersectionFilter bf(left);
+        /* we can just add the right to this one */
+        bf.append(right);
+        return bf;
     }
 
-    if (right.type() == QContactFilter::Boolean) {
-        QContactBooleanFilter bf(right);
-        if (bf.operationType() == QContactBooleanFilter::And) {
-            /* we can prepend the left to this one */
-            bf.prepend(left);
-            return bf;
-        }
+    if (right.type() == QContactFilter::Intersection) {
+        QContactIntersectionFilter bf(right);
+        /* we can prepend the left to this one */
+        bf.prepend(left);
+        return bf;
     }
 
     /* usual fallback case */
-    QContactBooleanFilter nbf(QContactBooleanFilter::And);
-    nbf << left << right;
-    return nbf;
+    QContactIntersectionFilter nif;
+    nif << left << right;
+    return nif;
+}
+
+/* ====================================================================== */
+
+const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
+{
+    if (left.type() == QContactFilter::Union) {
+        QContactUnionFilter bf(left);
+        /* we can just add the right to this one */
+        bf.append(right);
+        return bf;
+    }
+
+    if (right.type() == QContactFilter::Union) {
+        QContactUnionFilter bf(right);
+        /* we can prepend the left to this one */
+        bf.prepend(left);
+        return bf;
+    }
+
+    /* usual fallback case */
+    QContactUnionFilter nif;
+    nif << left << right;
+    return nif;
 }
 

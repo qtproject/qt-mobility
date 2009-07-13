@@ -1497,29 +1497,37 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::Boolean:
+        case QContactFilter::Intersection:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
-                const QContactBooleanFilter bf(filter);
+                const QContactIntersectionFilter bf(filter);
                 const QList<QContactFilter>& terms = bf.filters();
                 if (terms.count() > 0) {
-                    switch(bf.operationType()) {
-                        case QContactBooleanFilter::And:
-                            for(int j = 0; j < terms.count(); j++) {
-                                if (!testFilter(terms.at(j), contact))
-                                    return false;
-                            }
+                    for(int j = 0; j < terms.count(); j++) {
+                        if (!testFilter(terms.at(j), contact)) {
                             return false;
-
-                        case QContactBooleanFilter::Or:
-                            for(int j = 0; j < terms.count(); j++) {
-                                if (testFilter(terms.at(j), contact))
-                                    return true;
-                            }
-                            return false;
+                        }
                     }
+                    return true;
                 }
             }
+            break;
+
+        case QContactFilter::Union:
+            {
+                /* XXX In theory we could reorder the terms to put the native tests first */
+                const QContactUnionFilter bf(filter);
+                const QList<QContactFilter>& terms = bf.filters();
+                if (terms.count() > 0) {
+                    for(int j = 0; j < terms.count(); j++) {
+                        if (testFilter(terms.at(j), contact)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+            break;
     }
     return false;
 }

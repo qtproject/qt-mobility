@@ -41,12 +41,14 @@
 #ifndef QCONTACTSORTORDER_H
 #define QCONTACTSORTORDER_H
 
+#include "qtcontactsglobal.h"
+
 #include <QString>
 #include <QSharedData>
 
 // TODO: sort by most recently changed, etc.
 class QContactSortOrderPrivate;
-class QContactSortOrder
+class QTCONTACTS_EXPORT QContactSortOrder
 {
 public:
     QContactSortOrder();

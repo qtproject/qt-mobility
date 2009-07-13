@@ -56,7 +56,7 @@
     friend class Class##Private;
 
 class QContactFilterPrivate;
-class QContactFilter
+class QTCONTACTS_EXPORT QContactFilter
 {
 public:
     virtual ~QContactFilter();
@@ -70,7 +70,8 @@ public:
         ChangeLog,
         Action,
         GroupMembership,
-        Boolean
+        Intersection,
+        Union
     };
 
     FilterType type() const;
@@ -90,7 +91,7 @@ private:
 };
 
 class QContactDetailFilterPrivate;
-class QContactDetailFilter : public QContactFilter
+class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
 {
 public:
     QContactDetailFilter();
@@ -116,7 +117,7 @@ private:
 };
 
 class QContactDetailRangeFilterPrivate;
-class QContactDetailRangeFilter : public QContactFilter
+class QTCONTACTS_EXPORT QContactDetailRangeFilter : public QContactFilter
 {
 public:
     QContactDetailRangeFilter();
@@ -153,7 +154,7 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetailRangeFilter::RangeFlags)
 
 class QContactChangeLogFilterPrivate;
-class QContactChangeLogFilter: public QContactFilter
+class QTCONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
 {
 public:
     enum ChangeType {
@@ -176,7 +177,7 @@ private:
 };
 
 class QContactActionFilterPrivate;
-class QContactActionFilter : public QContactFilter
+class QTCONTACTS_EXPORT QContactActionFilter : public QContactFilter
 {
 public:
     QContactActionFilter();
@@ -194,7 +195,7 @@ private:
 };
 
 class QContactGroupMembershipFilterPrivate;
-class QContactGroupMembershipFilter : public QContactFilter
+class QTCONTACTS_EXPORT QContactGroupMembershipFilter : public QContactFilter
 {
 public:
     QContactGroupMembershipFilter();
@@ -207,35 +208,54 @@ private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);
 };
 
-class QContactBooleanFilterPrivate;
-class QContactBooleanFilter : public QContactFilter
+class QContactIntersectionFilterPrivate;
+class QTCONTACTS_EXPORT QContactIntersectionFilter : public QContactFilter
 {
 public:
-    enum OperationType {
-        And,
-        Or
-    };
 
-    QContactBooleanFilter(OperationType type = And);
-    QContactBooleanFilter(const QContactFilter& other);
+    QContactIntersectionFilter();
+    QContactIntersectionFilter(const QContactFilter& other);
 
-    void setOperationType(OperationType type);
     void setFilters(const QList<QContactFilter>& filters);
 
     void prepend(const QContactFilter& filter);
     void append(const QContactFilter& filter);
     void remove(const QContactFilter& filter);
 
-    QContactBooleanFilter& operator<<(const QContactFilter& filter);
+    QContactIntersectionFilter& operator<<(const QContactFilter& filter);
 
     /* Accessors */
-    OperationType operationType() const;
     QList<QContactFilter> filters() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactBooleanFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIntersectionFilter);
 };
 
 const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
+
+class QContactUnionFilterPrivate;
+class QTCONTACTS_EXPORT QContactUnionFilter : public QContactFilter
+{
+public:
+
+    QContactUnionFilter();
+    QContactUnionFilter(const QContactFilter& other);
+
+    void setFilters(const QList<QContactFilter>& filters);
+
+    void prepend(const QContactFilter& filter);
+    void append(const QContactFilter& filter);
+    void remove(const QContactFilter& filter);
+
+    QContactUnionFilter& operator<<(const QContactFilter& filter);
+
+    /* Accessors */
+    QList<QContactFilter> filters() const;
+
+private:
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactUnionFilter);
+};
+
+const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
 
 #endif

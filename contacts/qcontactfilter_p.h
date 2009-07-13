@@ -108,19 +108,17 @@ public:
     QUniqueId m_id;
 };
 
-class QContactBooleanFilterPrivate : public QContactFilterPrivate
+class QContactIntersectionFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactBooleanFilterPrivate(QContactBooleanFilter::OperationType type = QContactBooleanFilter::And)
-       : QContactFilterPrivate(QContactFilter::Boolean),
-       m_type(type)
+    QContactIntersectionFilterPrivate()
+       : QContactFilterPrivate(QContactFilter::Intersection)
     {
 
     }
 
-    QContactBooleanFilterPrivate(const QContactBooleanFilterPrivate& other)
+    QContactIntersectionFilterPrivate(const QContactIntersectionFilterPrivate& other)
        : QContactFilterPrivate(other),
-       m_type(other.m_type),
        m_filters(other.m_filters)
     {
 
@@ -128,17 +126,43 @@ public:
 
     virtual bool compare(const QContactFilterPrivate* other) const
     {
-        const QContactBooleanFilterPrivate *od = static_cast<const QContactBooleanFilterPrivate*>(other);
-        if (m_type != od->m_type)
-            return false;
+        const QContactIntersectionFilterPrivate *od = static_cast<const QContactIntersectionFilterPrivate*>(other);
         if (m_filters != od->m_filters)
             return false;
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactBooleanFilter, QContactFilter::Boolean)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIntersectionFilter, QContactFilter::Intersection)
 
-    QContactBooleanFilter::OperationType m_type;
+    QList<QContactFilter> m_filters;
+};
+
+class QContactUnionFilterPrivate : public QContactFilterPrivate
+{
+public:
+    QContactUnionFilterPrivate()
+       : QContactFilterPrivate(QContactFilter::Union)
+    {
+
+    }
+
+    QContactUnionFilterPrivate(const QContactUnionFilterPrivate& other)
+       : QContactFilterPrivate(other),
+       m_filters(other.m_filters)
+    {
+
+    }
+
+    virtual bool compare(const QContactFilterPrivate* other) const
+    {
+        const QContactUnionFilterPrivate *od = static_cast<const QContactUnionFilterPrivate*>(other);
+        if (m_filters != od->m_filters)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactUnionFilter, QContactFilter::Union)
+
     QList<QContactFilter> m_filters;
 };
 
