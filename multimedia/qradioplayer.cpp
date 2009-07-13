@@ -65,7 +65,6 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
 
     d->service = service;
     d->control = qobject_cast<QRadioTuner *>(service->control());
-    d->control->setNotifyObject(this);
 }
 
 QRadioPlayer::~QRadioPlayer()

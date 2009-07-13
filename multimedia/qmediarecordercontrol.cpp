@@ -41,12 +41,10 @@ QMediaRecorderControl::QMediaRecorderControl(QObject *parent)
 
 int QMediaRecorderControl::state() const
 {
-    return property("state").toInt();
 }
 
 void QMediaRecorderControl::setState(int state)
 {
-    changePropertyValue("state", state);
 }
 
 QMediaSink *QMediaRecorderControl::sink() const

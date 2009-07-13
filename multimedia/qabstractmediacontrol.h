@@ -46,32 +46,13 @@ class QAbstractMediaControlPrivate;
 class Q_MEDIA_EXPORT QAbstractMediaControl : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
 
 public:
     ~QAbstractMediaControl();
 
-    virtual void setNotifyObject(QObject* userObject);
-
-    int notifyInterval() const;
-    void setNotifyInterval(int milliSeconds);
-
-    void addPropertyWatch(QString const& name);
-    void removePropertyWatch(QString const& name);
-
-Q_SIGNALS:
-    void notifyIntervalChanged(int milliSeconds);
-
 protected:
     QAbstractMediaControl(QObject *parent = 0);
     QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent = 0);
-
-    virtual void changePropertyValue(const char *name, QVariant const &value);
-    virtual bool propertyValueChanged(const char *name, QVariant const &value);
-    virtual void notifyPropertyValueChanged(const char* name, QVariant const &value);
-
-private Q_SLOTS:
-    void notifyCheck();
 
 private:
     Q_DECLARE_PRIVATE(QAbstractMediaControl)

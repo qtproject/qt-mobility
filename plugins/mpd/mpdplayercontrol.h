@@ -75,6 +75,9 @@ public:
 
     bool isSeekable() const;
 
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
+
     void play();
     void pause();
     void stop();

@@ -207,6 +207,15 @@ void QWmpPlayerControl::setVideoAvailable(bool available)
         emit this->videoAvailabilityChanged(m_videoAvailable = available);
 }
 
+float QWmpPlayerControl::playbackRate() const
+{
+    return 1;
+}
+
+void QWmpPlayerControl::setPlaybackRate(float rate)
+{
+}
+
 void QWmpPlayerControl::play()
 {
     if (m_controls)

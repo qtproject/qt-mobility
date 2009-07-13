@@ -32,6 +32,8 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qtimer.h>
+
 #include "qmediaplayer.h"
 
 #include "qabstractmediaobject_p.h"
@@ -53,11 +55,26 @@
 
 class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QMediaPlayer)
+
 public:
     QMediaPlayerService* service;
     QMediaPlayerControl* control;
+
+    void _q_stateChanged(QMediaPlayer::State state);
 };
 
+void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State state)
+{
+    Q_Q(QMediaPlayer);
+
+    if (state == QMediaPlayer::PlayingState)
+        q->beginWatch();
+    else
+        q->endWatch(); //
+
+    emit q->stateChanged(state);
+}
 
 /*!
     Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
@@ -72,18 +89,18 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
 
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
-    d->control->setNotifyObject(this);
-//    d->control->setNotifyInterval(250);
-//    d->control->addPropertyWatch("position");
+
+    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
 
     connect(d->control, SIGNAL(bufferingChanged(bool)), SIGNAL(bufferingChanged(bool)));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));
-    connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
     connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
+
+    addPropertyWatch("position");
 }
 
 /*!
@@ -207,6 +224,11 @@ bool QMediaPlayer::isSeekable() const
     return d_func()->control->isSeekable();
 }
 
+float QMediaPlayer::playbackRate() const
+{
+    return d_func()->control->playbackRate();
+}
+
 /*!
     Returns the session object being controlled by this Player.
 */
@@ -293,6 +315,12 @@ void QMediaPlayer::setPlaylistPosition(int playlistPosition)
 {
     d_func()->control->setPlaylistPosition(playlistPosition);
 }
+
+void QMediaPlayer::setPlaybackRate(float rate)
+{
+    d_func()->control->setPlaybackRate(rate);
+}
+
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
@@ -383,6 +411,16 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 */
 
 /*!
+    \property QMediaPlayer::seekable
+    \brief true if the currently playing content is seekable; otherwise false.
+*/
+
+/*!
+    \property QMediaPlayer::playbackRate
+    \brieft Adjust the rate of playback
+*/
+
+/*!
     \property QMediaPlayer::state
     \brief the State of the Player object.
 */
@@ -456,4 +494,4 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
     Signal the amount of the local buffer filled as a percentage by \a percentFilled.
 */
 
-
+#include "moc_qmediaplayer.cpp"

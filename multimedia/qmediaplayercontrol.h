@@ -74,6 +74,9 @@ public:
 
     virtual bool isSeekable() const = 0;
 
+    virtual float playbackRate() const = 0;
+    virtual void setPlaybackRate(float rate) = 0;
+
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;

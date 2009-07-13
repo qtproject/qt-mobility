@@ -77,6 +77,9 @@ public:
     bool isVideoAvailable() const;
     void setVideoAvailable(bool available);
 
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
+
     void play();
     void pause();
     void stop();

@@ -63,7 +63,6 @@ int QRadioTuner::band() const
 
 void QRadioTuner::setBand(int b)
 {
-    changePropertyValue("band", b);
 }
 
 int QRadioTuner::frequency() const
@@ -73,7 +72,6 @@ int QRadioTuner::frequency() const
 
 void QRadioTuner::setFrequency(int frequency)
 {
-    changePropertyValue("frequency", frequency);
 }
 
 bool QRadioTuner::isStereo() const
@@ -83,7 +81,6 @@ bool QRadioTuner::isStereo() const
 
 void QRadioTuner::setStereo(bool stereo)
 {
-    changePropertyValue("stereo", stereo);
 }
 
 int QRadioTuner::signalStrength() const
@@ -93,7 +90,6 @@ int QRadioTuner::signalStrength() const
 
 void QRadioTuner::setSignalStrength(int ss)
 {
-    changePropertyValue("signaStrength", ss);
 }
 
 
@@ -104,7 +100,6 @@ qint64 QRadioTuner::duration() const
 
 void QRadioTuner::setDuration(qint64 duration)
 {
-    changePropertyValue("duration", duration);
 }
 
 int QRadioTuner::volume() const
@@ -114,7 +109,6 @@ int QRadioTuner::volume() const
 
 void QRadioTuner::setVolume(int volume)
 {
-    changePropertyValue("volume", volume);
 }
 
 bool QRadioTuner::isMuted() const
@@ -124,6 +118,5 @@ bool QRadioTuner::isMuted() const
 
 void QRadioTuner::setMuted(bool muted)
 {
-    changePropertyValue("muted", muted);
 }
 

@@ -62,7 +62,8 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailablityChanged)
-    // Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
+    Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
+    Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
     Q_ENUMS(State)
@@ -72,8 +73,6 @@ public:
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
-
-    State state() const;
 
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
@@ -94,6 +93,10 @@ public:
 
     bool isSeekable() const;
 
+    float playbackRate() const;
+
+    State state() const;
+
     QAbstractMediaService* service() const;
 
 public Q_SLOTS:
@@ -108,6 +111,7 @@ public Q_SLOTS:
     void advance();
     void back();
     void setPlaylistPosition(int playListPosition);
+    void setPlaybackRate(float rate);
 
 Q_SIGNALS:
     void durationChanged(qint64 duration);
@@ -121,10 +125,12 @@ Q_SIGNALS:
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool seekable);
+    void playbackRateChanged(float rate);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
 };
 
 #endif  // QMEDIAPLAYER_H

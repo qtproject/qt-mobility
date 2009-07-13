@@ -154,6 +154,15 @@ bool MpdPlayerControl::isSeekable() const
     return true;
 }
 
+float MpdPlayerControl::playbackRate() const
+{
+    return 1;
+}
+
+void MpdPlayerControl::setPlaybackRate(float rate)
+{
+}
+
 void MpdPlayerControl::play()
 {
     daemon->send("play");

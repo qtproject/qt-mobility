@@ -32,8 +32,33 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qmetaobject.h>
 
 #include "qabstractmediaobject_p.h"
+
+
+
+void QAbstractMediaObjectPrivate::_q_notify()
+{
+    Q_Q(QAbstractMediaObject);
+
+    const int len = notifyProperties.length();
+
+    for (int i = 0; i < len; ++i) {
+        const char *name = notifyProperties.at(i).constData();
+
+        const QMetaObject* m = q->metaObject();
+
+        int pi = m->indexOfProperty(name);
+        if (pi == -1)
+            continue;
+
+        QMetaProperty p = m->property(pi);
+        if (p.hasNotifySignal())
+            p.notifySignal().invoke(q, QGenericArgument(QMetaType::typeName(p.userType()),
+                                                        p.read(q).data()));
+    }
+}
 
 
 /*!
@@ -52,6 +77,30 @@
     Returns the media service that provide the functionality for the Multimedia object.
 */
 
+
+QAbstractMediaObject::~QAbstractMediaObject()
+{
+}
+
+int QAbstractMediaObject::notifyInterval() const
+{
+    return d_func()->notifyInterval;
+}
+
+void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->notifyInterval != milliSeconds) {
+        d->notifyInterval = milliSeconds;
+
+        if (d->notifyTimer->isActive())
+            d->notifyTimer->start(d->notifyInterval);
+
+        emit notifyIntervalChanged(d->notifyInterval);
+    }
+}
+
 /*!
     Construct a QAbstractMediaObject with \a parent. This class is meant as a
     base class for Multimedia objects so this constructor is protected.
@@ -62,7 +111,6 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
 {
 }
 
-
 /*!
     \internal
 */
@@ -71,3 +119,45 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     QObject(dd, parent)
 {
 }
+
+void QAbstractMediaObject::beginWatch()
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->notifyTimer != 0)
+        d->notifyTimer = new QTimer(this);
+
+    d->notifyTimer->start(d->notifyInterval);
+}
+
+void QAbstractMediaObject::endWatch()
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->notifyTimer != 0)
+        d->notifyTimer->stop();
+}
+
+void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
+{
+    Q_D(QAbstractMediaObject);
+
+    const bool restart = d->notifyProperties.isEmpty();
+
+    d->notifyProperties << name;
+
+    if (restart && d->notifyTimer != 0)
+        d->notifyTimer->start(notifyInterval());
+}
+
+void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
+{
+    Q_D(QAbstractMediaObject);
+
+    d->notifyProperties.removeAll(name);
+
+    if (d->notifyProperties.isEmpty() && d->notifyTimer != 0)
+        d->notifyTimer->stop();
+}
+
+#include "moc_qabstractmediaobject.cpp"
