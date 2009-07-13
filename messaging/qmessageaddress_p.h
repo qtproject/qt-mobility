@@ -38,9 +38,12 @@ class QMessageAddressPrivate
 
 public:
     QMessageAddressPrivate(QMessageAddress *address)
-        :q_ptr(address)
+        :q_ptr(address), type(QMessageAddress::System)
     {
     }
 
     QMessageAddress *q_ptr;
+
+    QMessageAddress::Type type;
+    QString recipient;
 };

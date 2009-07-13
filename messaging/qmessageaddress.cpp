@@ -62,6 +62,7 @@
 */
 QMessageAddress::QMessageAddress()
 {
+    d_ptr = new QMessageAddressPrivate(this);
 }
 
 /*!
@@ -69,8 +70,9 @@ QMessageAddress::QMessageAddress()
 */
 QMessageAddress::QMessageAddress(const QString &recipient, Type type)
 {
-    Q_UNUSED(recipient);
-    Q_UNUSED(type);
+    d_ptr = new QMessageAddressPrivate(this);
+    d_ptr->recipient = recipient;
+    d_ptr->type = type;
 }
 
 /*!
@@ -78,6 +80,8 @@ QMessageAddress::QMessageAddress(const QString &recipient, Type type)
 */
 QMessageAddress::~QMessageAddress()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 /*!
@@ -87,7 +91,7 @@ QMessageAddress::~QMessageAddress()
 */
 QString QMessageAddress::recipient() const
 {
-    return QString(); // stub
+    return d_ptr->recipient;
 }
 
 /*!
@@ -97,7 +101,7 @@ QString QMessageAddress::recipient() const
 */
 void QMessageAddress::setRecipient(const QString &recipient)
 {
-    Q_UNUSED(recipient);
+    d_ptr->recipient = recipient;
 }
 
 /*!
@@ -107,7 +111,7 @@ void QMessageAddress::setRecipient(const QString &recipient)
 */
 QMessageAddress::Type QMessageAddress::type() const
 {
-    return System; // stub
+    return d_ptr->type;
 }
 
 /*!
@@ -117,7 +121,7 @@ QMessageAddress::Type QMessageAddress::type() const
 */
 void QMessageAddress::setType(Type type)
 {
-    Q_UNUSED(type);
+    d_ptr->type = type;
 }
 
 
