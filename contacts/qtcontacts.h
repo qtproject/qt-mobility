@@ -38,11 +38,13 @@
 // provided by the Qt Contacts API
 
 #include "qtcontactsglobal.h"                   // global exports
-#include "qcontact.h"                           // contact
 #include "qcontactmanager.h"                    // manager
+#include "qcontact.h"                           // contact
+#include "qcontactgroup.h"                      // group
 #include "qcontactdetaildefinition.h"           // definition
 #include "qcontactdetail.h"                     // detail
 #include "qcontactdetails.h"                    // leaf-details
-#include "qcontactgroup.h"                      // group
+#include "qcontactfilter.h"                     // contact filtering
+#include "qcontactsortorder.h"                  // contact sorting
 
 #endif

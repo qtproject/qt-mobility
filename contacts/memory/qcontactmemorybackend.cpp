@@ -113,10 +113,20 @@ void QContactMemoryEngine::deref()
 }
 
 /*! \reimp */
-QList<QUniqueId> QContactMemoryEngine::contacts(QContactManager::Error& error) const
+QList<QUniqueId> QContactMemoryEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    return d->m_contactIds;
+    if (sortOrder.type() == QContactSortOrder::Unsorted)
+        return d->m_contactIds;
+
+    // TODO: this needs to be done properly...
+    QList<QUniqueId> sortedIds;
+    QList<QContact> sortedContacts;
+    foreach (const QContact& c, d->m_contacts)
+        QContactManagerEngine::addSorted(&sortedContacts, c, sortOrder);
+    foreach (const QContact& c, sortedContacts)
+        sortedIds.append(c.id());
+    return sortedIds;
 }
 
 /*! \reimp */
@@ -350,7 +360,7 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 }
 
 /*!
- * Returns true if the given \a feature is supported by this engine
+ * \reimp
  */
 bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
@@ -429,18 +439,7 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
 }
 
 /*!
- * Returns a list of definition identifiers which are natively (fast) filterable
- * on the default backend store managed by the manager from which the capabilities object was accessed
- */
-QStringList QContactMemoryEngine::fastFilterableDefinitions() const
-{
-    QStringList fastlist;
-    fastlist << "Name::First" << "Name::Last" << "PhoneNumber::PhoneNumber" << "EmailAddress::EmailAddress";
-    return fastlist;
-}
-
-/*!
- * Returns the list of data types supported by this engine.
+ * \reimp
  */
 QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 {
@@ -456,3 +455,14 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 
     return st;
 }
+
+/*!
+ * \reimp
+ */
+bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
+{
+    Q_UNUSED(filter);
+    // Until we add hashes for common stuff, fall back to slow code
+    return false;
+}
+

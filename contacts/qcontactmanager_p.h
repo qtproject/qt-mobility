@@ -63,6 +63,9 @@
 
 #include <QDebug>
 
+class QContactFilter;
+class QContactSortOrder;
+
 /* Backend plugin API interface, creates engines for us */
 class QContactManagerEngine;
 class QTCONTACTS_EXPORT QContactManagerEngineFactory
@@ -86,10 +89,13 @@ public:
     QContactManagerEngine() {}
     virtual void deref() = 0;
 
+    /* Filtering */
+    virtual bool testFilter(const QContactFilter& filter, const QContact& contact) const;
+    virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
+    virtual QList<QUniqueId> groups(const QContactFilter& filter, QContactManager::Error& error) const;
+
     /* Contacts - Accessors and Mutators */
-    virtual QList<QUniqueId> contacts(QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsWithAction(const QString& actionId, const QVariant& value, QContactManager::Error& error) const;
+    virtual QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
     virtual bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     virtual bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
@@ -126,7 +132,7 @@ public:
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    virtual QStringList fastFilterableDefinitions() const;
+    virtual bool filterSupported(const QContactFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
 
     /* Reports the built-in definitions from the schema */
@@ -139,6 +145,9 @@ signals:
     void groupsAdded(const QList<QUniqueId>& groupIds);
     void groupsChanged(const QList<QUniqueId>& groupIds);
     void groupsRemoved(const QList<QUniqueId>& groupIds);
+
+protected:
+    static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder);
 };
 
 /* Data and stuff that is shared amongst all backends */

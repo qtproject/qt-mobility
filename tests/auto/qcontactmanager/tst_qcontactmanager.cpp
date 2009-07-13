@@ -1008,7 +1008,6 @@ void tst_QContactManager::invalidManager()
 
     /* Capabilities */
     QContactManagerInfo* info = manager.information();
-    QVERIFY(info->fastFilterableDefinitions().count() == 0);
     QVERIFY(info->supportedDataTypes().count() == 0);
     QVERIFY(!info->hasFeature(QContactManagerInfo::Groups));
     QVERIFY(!info->hasFeature(QContactManagerInfo::Locking));

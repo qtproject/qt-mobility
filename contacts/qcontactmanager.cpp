@@ -34,6 +34,7 @@
 #include "qcontactmanager.h"
 
 #include "qcontact_p.h"
+#include "qcontactfilter.h"
 #include "qcontactgroup_p.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
@@ -246,21 +247,20 @@ QContactManager::Error QContactManager::error() const
 }
 
 /*! Return the list of added contact ids */
-QList<QUniqueId> QContactManager::contacts() const
+QList<QUniqueId> QContactManager::contacts(const QContactSortOrder& sortOrder) const
 {
-    return d->m_engine->contacts(d->m_error);
+    return d->m_engine->contacts(sortOrder, d->m_error);
 }
 
-/*! Returns a list of contacts which have a detail with the given \a value for which the specified \a actionId is available */
-QList<QUniqueId> QContactManager::contactsWithAction(const QString& actionId, const QVariant& value) const
+/*!
+ * Returns a list of contact ids that match the given \a filter, sorted according to the given \a sortOrder.
+ *
+ * Depending on the backend, this filtering operation may involve retrieving all the
+ * contacts.
+ */
+QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const QContactSortOrder& sortOrder) const
 {
-    return d->m_engine->contactsWithAction(actionId, value, d->m_error);
-}
-
-/*! Returns a list of contacts which have a detail of the given \a definitionId with the specified \a value */
-QList<QUniqueId> QContactManager::contactsWithDetail(const QString& definitionId, const QVariant& value) const
-{
-    return d->m_engine->contactsWithDetail(definitionId, value, d->m_error);
+    return d->m_engine->contacts(filter, sortOrder, d->m_error);
 }
 
 /*! Returns the contact in the database identified by \a contactId */
@@ -341,6 +341,14 @@ QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
 QList<QUniqueId> QContactManager::groups() const
 {
     return d->m_engine->groups(d->m_error);
+}
+
+/*!
+ * Returns a list of group ids that match the given \a filter, sorted according to the given \a sortOrder.
+ */
+QList<QUniqueId> QContactManager::groups(const QContactFilter& filter) const
+{
+    return d->m_engine->groups(filter, d->m_error);
 }
 
 /*! Returns the group which is identified by the given \a groupId, or a default-constructed group if no such group exists */

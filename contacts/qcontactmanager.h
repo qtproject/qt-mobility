@@ -49,6 +49,9 @@
 #include "qcontact.h"
 #include "qcontactgroup.h"
 #include "qcontactmanagerinfo.h"
+#include "qcontactsortorder.h"
+
+class QContactFilter;
 
 class QContactManagerData;
 class QTCONTACTS_EXPORT QContactManager : public QObject
@@ -91,9 +94,8 @@ public:
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts() const;                   // retrieve contact ids
-    QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value = QVariant()) const;
-    QList<QUniqueId> contactsWithAction(const QString& actionId, const QVariant& value = QVariant()) const;
+    QList<QUniqueId> contacts(const QContactSortOrder& sortOrder = QContactSortOrder()) const;    // retrieve contact ids
+    QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder = QContactSortOrder()) const; // retrieve ids of contacts matching the filter
     QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId + storeUri)
     bool removeContact(const QUniqueId& contactId);      // remove the contact from the persistent store
@@ -105,6 +107,7 @@ public:
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
+    QList<QUniqueId> groups(const QContactFilter& filter) const; // doesn't like all filters
     QContactGroup group(const QUniqueId& groupId) const;
     bool saveGroup(QContactGroup* group);
     bool removeGroup(const QUniqueId& groupId);

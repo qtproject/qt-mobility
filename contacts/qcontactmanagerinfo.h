@@ -41,6 +41,8 @@
 
 #include "qtcontactsglobal.h"
 
+class QContactFilter;
+
 class QContactManagerData;
 class QTCONTACTS_EXPORT QContactManagerInfo
 {
@@ -60,7 +62,7 @@ public:
     };
 
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    QStringList fastFilterableDefinitions() const;
+    virtual bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:

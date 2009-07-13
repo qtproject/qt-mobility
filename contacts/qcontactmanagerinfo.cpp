@@ -34,6 +34,7 @@
 #include "qcontactmanagerinfo.h"
 
 #include "qcontactmanager_p.h"
+#include "qcontactfilter.h"
 
 /*!
  * \class QContactManagerInfo
@@ -86,19 +87,26 @@ bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature
 }
 
 /*!
- * Returns a list of definition identifiers which are natively (fast) filterable
- * by the manager associated with this object.
- */
-QStringList QContactManagerInfo::fastFilterableDefinitions() const
-{
-    return d->m_engine->fastFilterableDefinitions();
-}
-
-/*!
  * Returns the list of data types supported by the manager
  * associated with this object.
  */
 QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 {
     return d->m_engine->supportedDataTypes();
+}
+
+/*!
+ * Returns true if the given \a filter is supported natively by the
+ * manager, and false if the filter behaviour would be emulated.
+ *
+ * \note In some cases, the behaviour of an unsupported filter
+ * cannot be emulated.  For example, a filter that requests contacts
+ * that have changed since a given time depends on having that information
+ * available.  In these cases, the filter will fail.
+ */
+bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
+{
+    if (d->m_engine)
+        return d->m_engine->filterSupported(filter);
+    return false;
 }

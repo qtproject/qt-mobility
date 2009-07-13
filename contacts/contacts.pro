@@ -25,6 +25,8 @@ HEADERS += \
         qcontactdetaildefinition_p.h \
         qcontactdetails.h \
         qcontactdisplaylabel.h \
+        qcontactfilter.h \
+        qcontactfilter_p.h \
         qcontactguid.h \
         qcontactgender.h \
         qcontactgroup.h \
@@ -39,6 +41,8 @@ HEADERS += \
         qcontactmanager_p.h \
         qcontactmanagerinfo.h \
         qcontacts_p.h \
+        qcontactsortorder.h \
+        qcontactsortorder_p.h \
         qcontactsynctarget.h \
         qcontacturl.h \
         qtcontactsglobal.h \
@@ -50,10 +54,12 @@ SOURCES += \
         qcontactdetail.cpp \
         qcontactdetaildefinition.cpp \
         qcontactdetails.cpp \
+        qcontactfilter.cpp \
         qcontactgroup.cpp \
         qcontactmanager_p.cpp \
         qcontactmanager.cpp \
-        qcontactmanagerinfo.cpp
+        qcontactmanagerinfo.cpp \
+        qcontactsortorder.cpp
 
 # invalid backend (nonoptional)
 HEADERS += ./invalid/qcontactinvalidbackend_p.h

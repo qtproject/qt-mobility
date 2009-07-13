@@ -33,12 +33,16 @@
 
 
 #include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
+
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetails.h"
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
-#include "qcontactmanager_p.h"
+
+#include "qcontactfilter.h"
+#include "qcontactsortorder.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -343,14 +347,40 @@ void QContactManagerData::loadFactories()
  */
 
 /*!
- * Return the list of contact ids present in this engine.
+ * Return the list of contact ids present in this engine, sorted according to the given \a sortOrder.
  *
  * Any errors encountered should be stored to \a error.
  */
-QList<QUniqueId> QContactManagerEngine::contacts(QContactManager::Error& error) const
+QList<QUniqueId> QContactManagerEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
 {
+    Q_UNUSED(sortOrder);
     error = QContactManager::NotSupportedError;
     return QList<QUniqueId>();
+}
+
+/*!
+ * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrder.
+ *
+ * The default implementation will retrieve all contacts and test them with testFilter.
+ */
+QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const
+{
+    /* Slow way */
+    QList<QUniqueId> ret;
+
+    /* Try to do some early out, just in case */
+    if (filter.type() != QContactFilter::Invalid) {
+        /* Retrieve each contact.. . . */
+        const QList<QUniqueId>& all = contacts(sortOrder, error);
+        if (error != QContactManager::NoError)
+            return ret;
+        for (int j = 0; j < all.count(); j++) {
+            if (testFilter(filter, contact(all.at(j), error)))
+                ret << all.at(j);
+        }
+    }
+
+    return ret;
 }
 
 /*!
@@ -443,12 +473,14 @@ bool QContactManagerEngine::hasFeature(QContactManagerInfo::ManagerFeature featu
 }
 
 /*!
- * Returns a list of definition identifiers which are natively (fast) filterable
- * by this engine.
+ * Returns a whether the supplied \a filter can be implemented
+ * natively by this engine.  If not, the base class implementation
+ * will emulate the functionality.
  */
-QStringList QContactManagerEngine::fastFilterableDefinitions() const
+bool QContactManagerEngine::filterSupported(const QContactFilter& filter) const
 {
-    return QStringList();
+    Q_UNUSED(filter);
+    return false;
 }
 
 /*!
@@ -883,6 +915,20 @@ QList<QUniqueId> QContactManagerEngine::groups(QContactManager::Error& error) co
 }
 
 /*!
+ * Return the list of group ids present in this manager which fulfil the criteria
+ * specified in the given \a filter.
+ *
+ * Any errors encountered during this operation should be stored to
+ * \a error.
+ */
+QList<QUniqueId> QContactManagerEngine::groups(const QContactFilter& filter, QContactManager::Error& error) const
+{
+    Q_UNUSED(filter);
+    error = QContactManager::NotSupportedError;
+    return QList<QUniqueId>();
+}
+
+/*!
  * Returns the group which is identified by the given \a groupId,
  * or a default-constructed group if no such group exists
  *
@@ -1193,65 +1239,315 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqu
 }
 
 /*!
- * Returns a list of contacts which have a detail of the given \a definitionName with the specified \a value.
+ * Returns true if the supplied \a filter matches the supplied \a contact.
  *
- * Any errors encountered during this operation should be stored to
- * \a error.
+ * The default implementation of this function will test each condition in
+ * the filter, possibly recursing.
  */
-QList<QUniqueId> QContactManagerEngine::contactsWithDetail(const QString& definitionName, const QVariant& value, QContactManager::Error& error) const
+bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QContact &contact) const
 {
-    QList<QUniqueId> retn;
-    error = QContactManager::NoError;
+    switch(filter.type()) {
+        case QContactFilter::Invalid:
+            return false;
+            break;
 
-    // use our default (slow) implementation
-    QList<QUniqueId> allContacts = contacts(error);
-    for (int i = 0; i < allContacts.count(); i++) {
-        QContact current = contact(allContacts.at(i), error);
-        QList<QContactDetail> cdets = current.details(definitionName);
-        if (value.isNull()) {
-            if (cdets.count() > 0)
-                retn.append(allContacts.at(i));
-        } else {
-            for (int j = 0; j < cdets.count(); j++) {
-                if (cdets.value(j).values().values().contains(value)) {
-                    retn.append(allContacts.at(j));
+        case QContactFilter::ContactDetail:
+            {
+                const QContactDetailFilter cdf(filter);
+                if (cdf.detailDefinitionName().isEmpty())
+                    return false;
+
+                /* See if this contact has one of these details in it */
+                const QList<QContactDetail>& details = contact.details(cdf.detailDefinitionName());
+
+                if (details.count() == 0)
+                    return false; /* can't match */
+
+                /* See if we need to check the values */
+                if (cdf.detailFieldName().isEmpty())
+                    return true;                    /* just testing for the presence of one of these details */
+
+                /* Now figure out what tests we are doing */
+                const bool valueTest = cdf.value().isValid();
+                const bool presenceTest = !valueTest;
+
+                /* See if we need to test any values at all */
+                if (presenceTest) {
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        if (detail.values().contains(cdf.detailFieldName()))
+                            return true;
+                    }
+                    return false;
+                }
+
+                /* Case sensitivity, for those parts that use it */
+                Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+
+                /* See what flags are requested, since we're looking at a value */
+                if (cdf.matchFlags() & (Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains | Qt::MatchFixedString)) {
+                    /* We're strictly doing string comparisons here */
+                    bool matchStarts = (cdf.matchFlags() & 7) == Qt::MatchStartsWith;
+                    bool matchEnds = (cdf.matchFlags() & 7) == Qt::MatchEndsWith;
+                    bool matchContains = (cdf.matchFlags() & 7) == Qt::MatchContains;
+
+                    /* Value equality test */
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        const QString& var = detail.value(cdf.detailFieldName());
+                        const QString& needle = cdf.value().toString();
+                        if (matchStarts && var.startsWith(needle, cs))
+                            return true;
+                        if (matchEnds && var.endsWith(needle, cs))
+                            return true;
+                        if (matchContains && var.contains(needle, cs))
+                            return true;
+                        if (QString::compare(var, needle, cs) == 0)
+                            return true;
+                    }
+                    return false;
+                } else {
+                    /* Nope, testing the values as a variant */
+                    /* Value equality test */
+                    // XXX value test should use cs
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        if (detail.variantValue(cdf.detailFieldName()) == cdf.value())
+                            return true;
+                    }
                 }
             }
-        }
-    }
+            break;
 
-    if (retn.isEmpty() && error == QContactManager::NoError)
-        error = QContactManager::DoesNotExistError;
-    return retn;
+        case QContactFilter::ContactDetailRange:
+            {
+                const QContactDetailRangeFilter cdf(filter);
+                if (cdf.detailDefinitionName().isEmpty() || cdf.detailFieldName().isEmpty())
+                    return false; /* we do not know which field to check */
+
+                /* Now figure out what tests we are doing */
+                if (!cdf.minValue().isValid() && !cdf.maxValue().isValid())
+                    return false; // invalid range limits.
+
+                /* See if this contact has one of these details in it */
+                const QList<QContactDetail>& details = contact.details(cdf.detailDefinitionName());
+
+                if (details.count() == 0)
+                    return false; /* can't match */
+
+                /* open or closed interval testing support */
+                // relies on QString::compare returning an int, and '<= 0' is equivalent to '< 1'
+                // int testing is also ok.
+                // double testing is not ok - have to use conditional comparison.
+                const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
+                const int maxComp = cdf.rangeFlags() & QContactDetailRangeFilter::IncludeUpper ? 1 : 0;
+
+                /* Case sensitivity, for those parts that use it */
+                Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+
+                /* See what flags are requested, since we're looking at a value */
+                if (cdf.matchFlags() & (Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains | Qt::MatchFixedString)) {
+                    /* We're strictly doing string comparisons here */
+                    //bool matchStarts = (cdf.matchFlags() & 7) == Qt::MatchStartsWith;
+                    bool matchEnds = (cdf.matchFlags() & 7) == Qt::MatchEndsWith;
+                    bool matchContains = (cdf.matchFlags() & 7) == Qt::MatchContains;
+
+                    /* Min/Max and contains do not make sense */
+                    if (matchContains)
+                        return false;
+
+                    bool testMin = cdf.minValue().isValid();
+                    bool testMax = cdf.maxValue().isValid();
+
+                    QString minVal = cdf.minValue().toString();
+                    QString maxVal = cdf.maxValue().toString();
+
+                    /* Starts with is the normal compare case, endsWith is a bit trickier */
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        const QString& var = detail.value(cdf.detailFieldName());
+                        if (!matchEnds) {
+                            // MatchStarts, or MatchFixedString
+                            if ((!testMin || QString::compare(var, minVal, cs) >= minComp)
+                                && (!testMax || QString::compare(var, maxVal, cs) < maxComp))
+                                return true;
+                        } else {
+                            /* Have to test the length of min & max */
+                            if ((!testMin || QString::compare(var.right(minVal.length()), minVal, cs) >= minComp)
+                                && (!testMax || QString::compare(var.right(maxVal.length()), maxVal, cs) < maxComp))
+                                return true;
+                        }
+                    }
+
+                    return false;
+                } else {
+                    /* Nope, testing the values as a variant */
+                    bool testMin = cdf.minValue().isValid();
+                    bool testMax = cdf.maxValue().isValid();
+
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        const QVariant var = detail.variantValue(cdf.detailFieldName());
+
+                        /* uggh.. we only handle some types of min/max */
+                        switch(var.type()) {
+                            case QVariant::Int:
+                            {
+                                if ((!testMin || (var.toInt() - cdf.minValue().toInt()) >= minComp)
+                                 && (!testMax || (var.toInt() - cdf.maxValue().toInt()) < maxComp))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::LongLong:
+                            {
+                                if ((!testMin || (var.toLongLong() - cdf.minValue().toLongLong()) >= minComp)
+                                 && (!testMax || (var.toLongLong() - cdf.maxValue().toLongLong()) < maxComp))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::Bool:
+                            case QVariant::Char:
+                            case QVariant::UInt:
+                            {
+                                if ((!testMin || long(var.toUInt() - cdf.minValue().toUInt()) >= minComp)
+                                 && (!testMax || long(var.toUInt() - cdf.maxValue().toUInt()) < maxComp))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::ULongLong:
+                            {
+                                if ((!testMin || ((long long)(var.toULongLong() - cdf.minValue().toULongLong())) >= minComp)
+                                 && (!testMax || ((long long)(var.toULongLong() - cdf.maxValue().toULongLong())) < maxComp))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::DateTime:
+                            {
+                                const QDateTime& dtvar = var.toDateTime();
+                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDateTime() : dtvar >= cdf.minValue().toDateTime()))
+                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDateTime() : dtvar < cdf.maxValue().toDateTime())))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::Date:
+                            {
+                                const QDate& dtvar = var.toDate();
+                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDate() : dtvar >= cdf.minValue().toDate()))
+                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDate() : dtvar < cdf.maxValue().toDate())))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::Double:
+                            {
+                                const double dtvar = var.toDouble();
+                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDouble() : dtvar >= cdf.minValue().toDouble()))
+                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDouble() : dtvar < cdf.maxValue().toDouble())))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::Time:
+                            {
+                                const QTime& dtvar = var.toTime();
+                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toTime() : dtvar >= cdf.minValue().toTime()))
+                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toTime() : dtvar < cdf.maxValue().toTime())))
+                                    return true;
+                                break;
+                            }
+
+                            case QVariant::String:
+                            {
+                                if ((!testMin || QString::compare(var.toString(), cdf.minValue().toString(), cs) >= minComp)
+                                    && (!testMax || QString::compare(var.toString(), cdf.maxValue().toString(), cs) < maxComp))
+                                    return true;
+                                break;
+                            }
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            break;
+
+        case QContactFilter::GroupMembership:
+            {
+
+            }
+            break;
+
+        case QContactFilter::ChangeLog:
+            {
+
+            }
+            break;
+
+        case QContactFilter::Action:
+            {
+
+            }
+            break;
+
+        case QContactFilter::Boolean:
+            {
+                /* XXX In theory we could reorder the terms to put the native tests first */
+                const QContactBooleanFilter bf(filter);
+                const QList<QContactFilter>& terms = bf.filters();
+                if (terms.count() > 0) {
+                    switch(bf.operationType()) {
+                        case QContactBooleanFilter::And:
+                            for(int j = 0; j < terms.count(); j++) {
+                                if (!testFilter(terms.at(j), contact))
+                                    return false;
+                            }
+                            return false;
+
+                        case QContactBooleanFilter::Or:
+                            for(int j = 0; j < terms.count(); j++) {
+                                if (testFilter(terms.at(j), contact))
+                                    return true;
+                            }
+                            return false;
+                    }
+                }
+            }
+    }
+    return false;
 }
 
 /*!
- * Returns a list of contacts which have a detail with the given \a value for which the specified \a actionId is available.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
+ * Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrder
  */
-QList<QUniqueId> QContactManagerEngine::contactsWithAction(const QString& actionId, const QVariant& value, QContactManager::Error& error) const
+void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder)
 {
-    QList<QUniqueId> retn;
-    QList<QUniqueId> allContacts = contacts(error);
-    for (int i = 0; i < allContacts.count(); i++) {
-        QContact current = contact(allContacts.at(i), error);
-        QList<QContactDetail> cdets = current.detailsWithAction(actionId);
-        if (value.isNull()) {
-            if (cdets.count() > 0)
-                retn.append(allContacts.at(i));
-        } else {
-            for (int j = 0; j < cdets.count(); j++) {
-                if (cdets.value(j).values().values().contains(value)) {
-                    retn.append(allContacts.at(j));
-                }
+    for (int i = 0; i < sorted->size(); i++) {
+        QContact curr = sorted->at(i);
+        if (sortOrder.type() == QContactSortOrder::Unsorted) {
+            sorted->insert(i, toAdd);
+            return;
+        } else if (sortOrder.type() == QContactSortOrder::Temporal) {
+            if (sortOrder.direction() == Qt::AscendingOrder) {
+                // if toAdd.addedDate < curr.addedDate, sorted->insert(i, toAdd); return;
+            }
+            // if toAdd.addedDate >= curr.addedDate, sorted->insert(i, toAdd); return;
+        } else if (sortOrder.type() == QContactSortOrder::Detail) {
+            if (toAdd.detail(sortOrder.detailDefinitionId()).value(sortOrder.detailFieldId())
+                < curr.detail(sortOrder.detailDefinitionId()).value(sortOrder.detailFieldId())) {
+                sorted->insert(i, toAdd);
+                return;
             }
         }
     }
 
-    error = QContactManager::NoError;
-    if (retn.isEmpty())
-        error = QContactManager::DoesNotExistError;
-    return retn;
+    // couldn't find anywhere for it to go.  put it at the end.
+    sorted->append(toAdd);
 }
+
+

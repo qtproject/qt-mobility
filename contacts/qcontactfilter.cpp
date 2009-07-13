@@ -1,0 +1,398 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtMobility module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at http://www.qtsoftware.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+#include "qcontactfilter.h"
+#include "qcontactfilter_p.h"
+#include "qcontactmanager.h"
+
+/* ====================================================================== */
+
+template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+{
+    return d->clone();
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(QContactFilter)
+
+QContactFilter::QContactFilter()
+    : d_ptr(0)
+{
+}
+
+QContactFilter::QContactFilter(const QContactFilter& other)
+    : d_ptr(other.d_ptr)
+{
+}
+
+QContactFilter& QContactFilter::operator=(const QContactFilter& other)
+{
+    if (this != &other) {
+        d_ptr = other.d_ptr;
+    }
+    return *this;
+}
+
+QContactFilter::~QContactFilter()
+{
+}
+
+QContactFilter::FilterType QContactFilter::type() const
+{
+    return d_ptr ? d_ptr->m_type : QContactFilter::Invalid;
+}
+
+bool QContactFilter::operator==(const QContactFilter& other) const
+{
+    Q_D(const QContactFilter);
+    if (other.type() != type())
+        return false;
+    if (!d_ptr && !other.d_ptr)
+        return true; // both invalid
+    return d->compare(other.d_ptr);
+}
+
+QContactFilter::QContactFilter(QContactFilterPrivate *d)
+    : d_ptr(d)
+{
+    Q_ASSERT(d);
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);
+
+QContactGroupMembershipFilter::QContactGroupMembershipFilter()
+    : QContactFilter(new QContactGroupMembershipFilterPrivate)
+{
+}
+
+void QContactGroupMembershipFilter::setGroupId(const QUniqueId& id)
+{
+    Q_D(QContactGroupMembershipFilter);
+    d->m_id = id;
+}
+
+QUniqueId QContactGroupMembershipFilter::groupId() const
+{
+    Q_D(const QContactGroupMembershipFilter);
+    return d->m_id;
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactBooleanFilter);
+
+QContactBooleanFilter::QContactBooleanFilter(OperationType type)
+    : QContactFilter(new QContactBooleanFilterPrivate(type))
+{
+}
+
+void QContactBooleanFilter::setOperationType(OperationType type)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_type = type;
+}
+
+void QContactBooleanFilter::setFilters(const QList<QContactFilter>& filters)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_filters = filters;
+}
+
+void QContactBooleanFilter::prepend(const QContactFilter& filter)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_filters.prepend(filter);
+}
+
+void QContactBooleanFilter::append(const QContactFilter& filter)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_filters.append(filter);
+}
+
+void QContactBooleanFilter::remove(const QContactFilter& filter)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_filters.removeAll(filter);
+}
+
+QContactBooleanFilter& QContactBooleanFilter::operator<<(const QContactFilter& filter)
+{
+    Q_D(QContactBooleanFilter);
+    d->m_filters << filter;
+    return *this;
+}
+
+QContactBooleanFilter::OperationType QContactBooleanFilter::operationType() const
+{
+    Q_D(const QContactBooleanFilter);
+    return d->m_type;
+}
+
+QList<QContactFilter> QContactBooleanFilter::filters() const
+{
+    Q_D(const QContactBooleanFilter);
+    return d->m_filters;
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+
+QContactDetailFilter::QContactDetailFilter()
+    : QContactFilter(new QContactDetailFilterPrivate)
+{
+}
+
+void QContactDetailFilter::setDetailDefinitionName(const QString& definition)
+{
+    Q_D(QContactDetailFilter);
+    d->m_defId = definition;
+}
+
+void QContactDetailFilter::setDetailFieldName(const QString& field)
+{
+    Q_D(QContactDetailFilter);
+    d->m_fieldId = field;
+}
+
+void QContactDetailFilter::setValue(const QVariant& value)
+{
+    Q_D(QContactDetailFilter);
+    d->m_exactValue = value;
+}
+
+void QContactDetailFilter::setMatchFlags(Qt::MatchFlags flags)
+{
+    Q_D(QContactDetailFilter);
+    d->m_flags = flags;
+}
+
+Qt::MatchFlags QContactDetailFilter::matchFlags() const
+{
+    Q_D(const QContactDetailFilter);
+    return d->m_flags;
+}
+
+QString QContactDetailFilter::detailDefinitionName() const
+{
+    Q_D(const QContactDetailFilter);
+    return d->m_defId;
+}
+
+QString QContactDetailFilter::detailFieldName() const
+{
+    Q_D(const QContactDetailFilter);
+    return d->m_fieldId;
+}
+
+QVariant QContactDetailFilter::value() const
+{
+    Q_D(const QContactDetailFilter);
+    return d->m_exactValue;
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter);
+
+QContactDetailRangeFilter::QContactDetailRangeFilter()
+    : QContactFilter(new QContactDetailRangeFilterPrivate)
+{
+}
+
+void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& max, RangeFlags flags)
+{
+    Q_D(QContactDetailRangeFilter);
+    d->m_minValue = min;
+    d->m_maxValue = max;
+    d->m_rangeflags = flags;
+}
+
+void QContactDetailRangeFilter::setMatchFlags(Qt::MatchFlags flags)
+{
+    Q_D(QContactDetailRangeFilter);
+    d->m_flags = flags;
+}
+
+void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definition)
+{
+    Q_D(QContactDetailRangeFilter);
+    d->m_defId = definition;
+}
+
+void QContactDetailRangeFilter::setDetailFieldName(const QString& field)
+{
+    Q_D(QContactDetailRangeFilter);
+    d->m_fieldId = field;
+}
+
+Qt::MatchFlags QContactDetailRangeFilter::matchFlags() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_flags;
+}
+
+QString QContactDetailRangeFilter::detailDefinitionName() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_defId;
+}
+
+QString QContactDetailRangeFilter::detailFieldName() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_fieldId;
+}
+
+QVariant QContactDetailRangeFilter::minValue() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_minValue;
+}
+
+QVariant QContactDetailRangeFilter::maxValue() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_maxValue;
+}
+
+QContactDetailRangeFilter::RangeFlags QContactDetailRangeFilter::rangeFlags() const
+{
+    Q_D(const QContactDetailRangeFilter);
+    return d->m_rangeflags;
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
+
+QContactChangeLogFilter::QContactChangeLogFilter(ChangeType type)
+    : QContactFilter(new QContactChangeLogFilterPrivate(type))
+{
+}
+
+void QContactChangeLogFilter::setChangeType(ChangeType type)
+{
+    Q_D(QContactChangeLogFilter);
+    d->m_changeType = type;
+}
+
+void QContactChangeLogFilter::setSince(const QDateTime& since)
+{
+    Q_D(QContactChangeLogFilter);
+    d->m_since = since;
+}
+
+QDateTime QContactChangeLogFilter::since() const
+{
+    Q_D(const QContactChangeLogFilter);
+    return d->m_since;
+}
+
+QContactChangeLogFilter::ChangeType QContactChangeLogFilter::type() const
+{
+    Q_D(const QContactChangeLogFilter);
+    return d->m_changeType;
+}
+
+/* ====================================================================== */
+
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactActionFilter);
+
+QContactActionFilter::QContactActionFilter()
+    : QContactFilter(new QContactActionFilterPrivate)
+{
+}
+
+void QContactActionFilter::setActionId(const QString& action)
+{
+    Q_D(QContactActionFilter);
+    d->m_action = action;
+}
+void QContactActionFilter::setValue(const QVariant& value)
+{
+    Q_D(QContactActionFilter);
+    d->m_value = value;
+}
+
+QString QContactActionFilter::actionId() const
+{
+    Q_D(const QContactActionFilter);
+    return d->m_action;
+}
+
+QVariant QContactActionFilter::value() const
+{
+    Q_D(const QContactActionFilter);
+    return d->m_value;
+}
+
+/* ====================================================================== */
+
+const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
+{
+    if (left.type() == QContactFilter::Boolean) {
+        QContactBooleanFilter bf(left);
+        if (bf.operationType() == QContactBooleanFilter::And) {
+            /* we can just add the right to this one */
+            bf.append(right);
+            return bf;
+        }
+    }
+
+    if (right.type() == QContactFilter::Boolean) {
+        QContactBooleanFilter bf(right);
+        if (bf.operationType() == QContactBooleanFilter::And) {
+            /* we can prepend the left to this one */
+            bf.prepend(left);
+            return bf;
+        }
+    }
+
+    /* usual fallback case */
+    QContactBooleanFilter nbf(QContactBooleanFilter::And);
+    nbf << left << right;
+    return nbf;
+}
+

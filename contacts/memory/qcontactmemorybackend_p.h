@@ -98,7 +98,7 @@ public:
     void deref();
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(QContactManager::Error& error) const;
+    QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
@@ -116,7 +116,7 @@ public:
 
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    QStringList fastFilterableDefinitions() const;
+    virtual bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 protected:

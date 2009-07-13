@@ -124,7 +124,13 @@ void callContact(QContactManager* cm)
 //! [Filtering by definition and value]
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 {
-    QList<QUniqueId> matchingContacts = cm->contactsWithDetail("PhoneNumber", incomingCallNbr);
+    QContactDetailFilter phoneFilter;
+    phoneFilter.setDetailDefinitionName("PhoneNumber");
+    phoneFilter.setDetailFieldName("Number");
+    phoneFilter.setValue(incomingCallNbr);
+    phoneFilter.setMatchFlags(Qt::MatchExactly);
+
+    QList<QUniqueId> matchingContacts = cm->contacts(phoneFilter);
     if (matchingContacts.size() == 0) {
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
