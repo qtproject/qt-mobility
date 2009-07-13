@@ -68,6 +68,12 @@ SOURCES += qmessageid_win.cpp \
            qmessage_win.cpp \
            qmessagefolder_win.cpp \
            qmessageaccount_win.cpp \
+           qmessageaccountfilterkey_win.cpp \
+           qmessageaccountsortkey_win.cpp \
+           qmessagefolderfilterkey_win.cpp \
+           qmessagefoldersortkey_win.cpp \
+           qmessagefilterkey_win.cpp \
+           qmessagesortkey_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 } else {
@@ -79,6 +85,12 @@ SOURCES += qmessageid_qmf.cpp \
            qmessage_qmf.cpp \
            qmessagefolder_qmf.cpp \
            qmessageaccount_qmf.cpp \
+           qmessageaccountfilterkey_qmf.cpp \
+           qmessageaccountsortkey_qmf.cpp \
+           qmessagefolderfilterkey_qmf.cpp \
+           qmessagefoldersortkey_qmf.cpp \
+           qmessagefilterkey_qmf.cpp \
+           qmessagesortkey_qmf.cpp \
            qmessagestore_qmf.cpp \
            qmessageserviceaction_qmf.cpp 
 }

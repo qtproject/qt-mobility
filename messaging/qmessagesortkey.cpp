@@ -67,9 +67,6 @@
 
     The result of combining two empty keys is an empty key.
 */
-QMessageSortKey::QMessageSortKey()
-{
-}
 
 /*!
     \fn QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
@@ -78,20 +75,12 @@ QMessageSortKey::QMessageSortKey()
     
     \sa operator=()
 */
-QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageSortKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
-bool QMessageSortKey::isEmpty() const
-{
-    return false; // stub
-}
 
 /*!
     \fn QMessageSortKey::operator+(const QMessageSortKey& other) const
@@ -101,11 +90,6 @@ bool QMessageSortKey::isEmpty() const
 
     This function determines sorting precedence.
 */
-QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
-{
-    Q_UNUSED(other)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::operator+=(const QMessageSortKey& other)
@@ -115,11 +99,6 @@ QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 
     This function determines sorting precedence.
 */
-QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn QMessageSortKey::operator==(const QMessageSortKey& other) const
@@ -127,22 +106,12 @@ QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
-bool QMessageSortKey::operator==(const QMessageSortKey& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageSortKey::operator=(const QMessageSortKey& other)
   
     Assign the value of the QMessageSortKey \a other to this.
 */
-const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
     
 /*!
     \fn QMessageSortKey::type(Qt::SortOrder order)
@@ -151,11 +120,6 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 
     \sa QMessage::type()
 */
-QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::sender(Qt::SortOrder order)
@@ -164,11 +128,6 @@ QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
 
     \sa QMessage::from()
 */
-QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::recipients(Qt::SortOrder order)
@@ -177,11 +136,6 @@ QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 
     \sa QMessage::to()
 */
-QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::subject(Qt::SortOrder order)
@@ -190,11 +144,6 @@ QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 
     \sa QMessage::subject()
 */
-QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::timeStamp(Qt::SortOrder order)
@@ -203,11 +152,6 @@ QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 
     \sa QMessage::date()
 */
-QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
@@ -216,11 +160,6 @@ QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 
     \sa QMessage::receivedDate()
 */
-QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::status(Qt::SortOrder order)
@@ -229,11 +168,6 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 
     \sa QMessage::status()
 */
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::priority(Qt::SortOrder order)
@@ -242,11 +176,6 @@ QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 
     \sa QMessage::priority()
 */
-QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}
 
 /*!
     \fn QMessageSortKey::size(Qt::SortOrder order)
@@ -255,8 +184,3 @@ QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 
     \sa QMessage::size()
 */
-QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
-}

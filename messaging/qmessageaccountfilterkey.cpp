@@ -59,10 +59,6 @@
 
     \sa options()
 */
-void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
-{
-    Q_UNUSED(options)
-}
 
 /*!
     \fn QMessageDataComparator::Options QMessageAccountFilterKey::options()
@@ -73,10 +69,6 @@ void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options option
 
     \sa setOptions()
 */
-QMessageDataComparator::Options QMessageAccountFilterKey::options()
-{
-    return 0;
-}
 
 /*!
     \fn QMessageAccountFilterKey::QMessageAccountFilterKey()
@@ -87,9 +79,6 @@ QMessageDataComparator::Options QMessageAccountFilterKey::options()
 
     \sa isEmpty()
 */
-QMessageAccountFilterKey::QMessageAccountFilterKey()
-{
-}
 
 /*!
     \fn QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKey &other)
@@ -98,10 +87,6 @@ QMessageAccountFilterKey::QMessageAccountFilterKey()
     
     \sa operator=()
 */
-QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKey &other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageAccountFilterKey::isEmpty() const
@@ -115,10 +100,6 @@ QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKe
 
     The result of combining two empty keys is an empty key.
 */
-bool QMessageAccountFilterKey::isEmpty() const
-{
-    return false; // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator~() const
@@ -130,32 +111,18 @@ bool QMessageAccountFilterKey::isEmpty() const
 
     \sa isEmpty()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::operator~() const
-{
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator&(const QMessageAccountFilterKey& other) const
   
     Returns a key that is the logical AND of this key and the value of key \a other.
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::operator&(const QMessageAccountFilterKey& other) const
-{
-    Q_UNUSED(other)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator|(const QMessageAccountFilterKey& other) const
   
     Returns a key that is the logical OR of this key and the value of key \a other.
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::operator|(const QMessageAccountFilterKey& other) const
-{
-    Q_UNUSED(other)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator&=(const QMessageAccountFilterKey& other)
@@ -163,11 +130,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::operator|(const QMessageAccou
     Performs a logical AND with this key and the key \a other and assigns the result
     to this key.
 */
-const QMessageAccountFilterKey& QMessageAccountFilterKey::operator&=(const QMessageAccountFilterKey& other)
-{
-    Q_UNUSED(other)
-    return *this;
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator|=(const QMessageAccountFilterKey& other)
@@ -175,11 +137,6 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator&=(const QMess
     Performs a logical OR with this key and the key \a other and assigns the result
     to this key.
 */
-const QMessageAccountFilterKey& QMessageAccountFilterKey::operator|=(const QMessageAccountFilterKey& other)
-{
-    Q_UNUSED(other)
-    return *this;
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator==(const QMessageAccountFilterKey& other) const
@@ -187,22 +144,12 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator|=(const QMess
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
-bool QMessageAccountFilterKey::operator==(const QMessageAccountFilterKey& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::operator=(const QMessageAccountFilterKey& other)
   
     Assign the value of the QMessageAccountFilterKey \a other to this.
 */
-const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessageAccountFilterKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
@@ -211,12 +158,6 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessa
 
     \sa QMessageAccount::id()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
@@ -225,12 +166,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageId &id, QMes
 
     \sa QMessageAccount::id()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(ids)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
@@ -239,12 +174,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageIdList &ids,
 
     \sa QMessageAccount::id()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(key)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
@@ -253,12 +182,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountFilte
 
     \sa QMessageAccount::fromAddress()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
@@ -267,12 +190,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &va
 
     \sa QMessageAccount::fromAddress()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
@@ -281,12 +198,6 @@ QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &va
 
     \sa QMessageAccount::name()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}
 
 /*!
     \fn QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
@@ -295,9 +206,3 @@ QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QM
 
     \sa QMessageAccount::name()
 */
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilterKey(); // stub
-}

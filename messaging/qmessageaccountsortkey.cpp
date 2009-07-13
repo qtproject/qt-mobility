@@ -60,9 +60,6 @@
 
     The result of combining two empty keys is an empty key.
 */
-QMessageAccountSortKey::QMessageAccountSortKey()
-{
-}
 
 /*!
     \fn QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
@@ -71,20 +68,12 @@ QMessageAccountSortKey::QMessageAccountSortKey()
     
     \sa operator=()
 */
-QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
-{
-    Q_UNUSED(other)
-}
 
 /*!
     \fn QMessageAccountSortKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
-bool QMessageAccountSortKey::isEmpty() const
-{
-    return false; // stub
-}
 
 /*!
     \fn QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
@@ -92,22 +81,12 @@ bool QMessageAccountSortKey::isEmpty() const
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
-bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
   
     Assign the value of the QMessageAccountSortKey \a other to this.
 */
-const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
     
 /*!
     \fn QMessageAccountSortKey::name(Qt::SortOrder order)
@@ -116,8 +95,3 @@ const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAc
 
     \sa QMessageAccount::name()
 */
-QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageAccountSortKey(); // stub
-}

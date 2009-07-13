@@ -61,9 +61,6 @@
 
     The result of combining two empty keys is an empty key.
 */
-QMessageFolderSortKey::QMessageFolderSortKey()
-{
-}
 
 /*!
     \fn QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
@@ -72,19 +69,12 @@ QMessageFolderSortKey::QMessageFolderSortKey()
     
     \sa operator=()
 */
-QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
-{
-}
 
 /*!
     \fn QMessageFolderSortKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false.
 */
-bool QMessageFolderSortKey::isEmpty() const
-{
-    return false; // stub
-}
 
 /*!
     \fn QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
@@ -94,11 +84,6 @@ bool QMessageFolderSortKey::isEmpty() const
     
     This function determines sorting precedence.
 */
-QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
-{
-    Q_UNUSED(other)
-    return QMessageFolderSortKey(); // stub
-}
 
 /*!
     \fn QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
@@ -108,11 +93,6 @@ QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortK
     
     This function determines sorting precedence.
 */
-QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
 
 /*!
     \fn QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
@@ -120,22 +100,12 @@ QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSor
     Returns \c true if the value of this key is the same as the key \a other. Returns 
     \c false otherwise.
 */
-bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
 
 /*!
     \fn QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
   
     Assign the value of the QMessageFolderSortKey \a other to this.
 */
-const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
     
 /*!
     \fn QMessageFolderSortKey::displayName(Qt::SortOrder order)
@@ -144,11 +114,6 @@ const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFold
 
     \sa QMessageFolder::displayName()
 */
-QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
-}
 
 /*!
     \fn QMessageFolderSortKey::path(Qt::SortOrder order)
@@ -157,9 +122,4 @@ QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
 
     \sa QMessageFolder::path()
 */
-QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
-}
 #endif
