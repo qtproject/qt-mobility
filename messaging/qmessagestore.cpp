@@ -213,7 +213,7 @@
     
     Removes the message with QMessageId \a id from the messaging store. If \a option is 
     QMessageStore::CreateRemovalRecord then a removal record will be created for the
-    removed message.
+    removed message, and the message should be removed from the originating server.
 
     Returns \c true if the operation successfully updates the store; otherwise returns \c false.
     
