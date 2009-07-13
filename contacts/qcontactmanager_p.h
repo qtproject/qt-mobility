@@ -92,7 +92,6 @@ public:
     /* Filtering */
     virtual bool testFilter(const QContactFilter& filter, const QContact& contact) const;
     virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> groups(const QContactFilter& filter, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
     virtual QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;

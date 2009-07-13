@@ -107,7 +107,6 @@ public:
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
-    QList<QUniqueId> groups(const QContactFilter& filter) const; // doesn't like all filters
     QContactGroup group(const QUniqueId& groupId) const;
     bool saveGroup(QContactGroup* group);
     bool removeGroup(const QUniqueId& groupId);

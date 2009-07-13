@@ -343,14 +343,6 @@ QList<QUniqueId> QContactManager::groups() const
     return d->m_engine->groups(d->m_error);
 }
 
-/*!
- * Returns a list of group ids that match the given \a filter
- */
-QList<QUniqueId> QContactManager::groups(const QContactFilter& filter) const
-{
-    return d->m_engine->groups(filter, d->m_error);
-}
-
 /*! Returns the group which is identified by the given \a groupId, or a default-constructed group if no such group exists */
 QContactGroup QContactManager::group(const QUniqueId& groupId) const
 {

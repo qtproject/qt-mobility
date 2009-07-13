@@ -917,20 +917,6 @@ QList<QUniqueId> QContactManagerEngine::groups(QContactManager::Error& error) co
 }
 
 /*!
- * Return the list of group ids present in this manager which fulfil the criteria
- * specified in the given \a filter.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QList<QUniqueId> QContactManagerEngine::groups(const QContactFilter& filter, QContactManager::Error& error) const
-{
-    Q_UNUSED(filter);
-    error = QContactManager::NotSupportedError;
-    return QList<QUniqueId>();
-}
-
-/*!
  * Returns the group which is identified by the given \a groupId,
  * or a default-constructed group if no such group exists
  *
