@@ -232,7 +232,7 @@
 
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
-    To ensure the change is propogated to any affected external server
+    To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
 
 
@@ -257,7 +257,7 @@
     Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
-    To ensure the change is propogated to any affected external server
+    To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
 
     \sa message(), updateMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
@@ -269,7 +269,7 @@
     Updates the existing QMessage \a m on the messaging store.
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
 
-    To ensure the change is propogated to any affected external server 
+    To ensure the change is propagated to any affected external server 
     QMessageServiceAction::exportUpdates() should be subsequently called.
     
     \sa addMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
