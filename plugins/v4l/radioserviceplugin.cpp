@@ -32,42 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOTUNER_H
-#define QRADIOTUNER_H
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#include "qabstractmediacontrol.h"
+#include "radioserviceplugin.h"
+#include "radioservice.h"
 
-class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
+#include <qmediaserviceprovider.h>
+
+
+class RadioProvider : public QMediaServiceProvider
 {
     Q_OBJECT
-
 public:
-    QRadioTuner(QObject *parent = 0);
-    ~QRadioTuner();
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
+            return new RadioService;
 
-    int band() const;
-    virtual void setBand(int b);
-
-    virtual int frequency() const;
-    virtual void setFrequency(int frequency);
-
-    bool isStereo() const;
-    virtual void setStereo(bool stereo);
-
-    int signalStrength() const;
-    virtual void setSignalStrength(int strength);
-
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
-
-    int volume() const;
-    virtual void setVolume(int volume);
-
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
-
-    virtual void searchForward() = 0;
-    virtual void searchBackward() = 0;
+        return 0;
+    }
 };
 
-#endif  // QRADIOTUNER_H
+QStringList RadioServicePlugin::keys() const
+{
+    return QStringList() << "radio";
+}
+
+QMediaServiceProvider* RadioServicePlugin::create(QString const& key)
+{
+    if (key == "radio")
+        return new RadioProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
+}
+
+#include "radioserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(radioserviceplugin, RadioServicePlugin);
+

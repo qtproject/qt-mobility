@@ -32,42 +32,25 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOTUNER_H
-#define QRADIOTUNER_H
+#ifndef RADIOSERVICE_H
+#define RADIOSERVICE_H
 
-#include "qabstractmediacontrol.h"
+#include <QtCore/qobject.h>
 
-class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
+#include "qradioservice.h"
+
+class RadioControl;
+
+class RadioService : public QRadioService
 {
     Q_OBJECT
-
 public:
-    QRadioTuner(QObject *parent = 0);
-    ~QRadioTuner();
+    RadioService(QObject *parent = 0);
+    ~RadioService();
 
-    int band() const;
-    virtual void setBand(int b);
-
-    virtual int frequency() const;
-    virtual void setFrequency(int frequency);
-
-    bool isStereo() const;
-    virtual void setStereo(bool stereo);
-
-    int signalStrength() const;
-    virtual void setSignalStrength(int strength);
-
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
-
-    int volume() const;
-    virtual void setVolume(int volume);
-
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
-
-    virtual void searchForward() = 0;
-    virtual void searchBackward() = 0;
+    QAbstractMediaControl *control(const char* name) const;
+private:
+    RadioControl *m_control;
 };
 
-#endif  // QRADIOTUNER_H
+#endif

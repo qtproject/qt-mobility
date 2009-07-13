@@ -32,42 +32,56 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOTUNER_H
-#define QRADIOTUNER_H
+#include "radio.h"
 
-#include "qabstractmediacontrol.h"
+#include <qabstractmediaservice.h>
 
-class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
+#include <QtGui>
+
+Radio::Radio()
 {
-    Q_OBJECT
+    player = new QRadioPlayer();
 
-public:
-    QRadioTuner(QObject *parent = 0);
-    ~QRadioTuner();
+    QWidget *window = new QWidget;
+    QVBoxLayout* layout = new QVBoxLayout;
 
-    int band() const;
-    virtual void setBand(int b);
+    freq = new QLabel;
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    layout->addWidget(freq);
 
-    virtual int frequency() const;
-    virtual void setFrequency(int frequency);
+    left = new QPushButton;
+    left->setText(tr("Freq Down"));
+    connect(left,SIGNAL(clicked()),SLOT(freqDown()));
+    layout->addWidget(left);
 
-    bool isStereo() const;
-    virtual void setStereo(bool stereo);
+    right = new QPushButton;
+    connect(right,SIGNAL(clicked()),SLOT(freqUp()));
+    right->setText(tr("Freq Up"));
+    layout->addWidget(right);
 
-    int signalStrength() const;
-    virtual void setSignalStrength(int strength);
+    window->setLayout(layout);
+    setCentralWidget(window);
+    window->show();
+}
 
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
+Radio::~Radio()
+{
+}
 
-    int volume() const;
-    virtual void setVolume(int volume);
+void Radio::freqUp()
+{
+    qWarning()<<"freqUp f="<<player->frequency();
+    int f = player->frequency();
+    f = f + 5000;
+    player->setFrequency(f);
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+}
 
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
-
-    virtual void searchForward() = 0;
-    virtual void searchBackward() = 0;
-};
-
-#endif  // QRADIOTUNER_H
+void Radio::freqDown()
+{
+    qWarning()<<"freqDown f="<<player->frequency();
+    int f = player->frequency();
+    f = f - 5000;
+    player->setFrequency(f);
+    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+}
