@@ -51,7 +51,7 @@ template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clo
 
 /* ====================================================================== */
 
-Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(QContactFilter)
+//Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(QContactFilter)
 
 QContactFilter::QContactFilter()
     : d_ptr(0)
@@ -82,18 +82,19 @@ QContactFilter::FilterType QContactFilter::type() const
 
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
-    Q_D(const QContactFilter);
     if (other.type() != type())
         return false;
     if (!d_ptr && !other.d_ptr)
         return true; // both invalid
-    return d->compare(other.d_ptr);
+    if (!d_ptr)
+        return false;
+    return d_ptr->compare(other.d_ptr);
 }
 
 QContactFilter::QContactFilter(QContactFilterPrivate *d)
     : d_ptr(d)
 {
-    Q_ASSERT(d);
+
 }
 
 /* ====================================================================== */
@@ -218,16 +219,11 @@ QContactDetailFilter::QContactDetailFilter()
 {
 }
 
-void QContactDetailFilter::setDetailDefinitionName(const QString& definition)
+void QContactDetailFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
     Q_D(QContactDetailFilter);
-    d->m_defId = definition;
-}
-
-void QContactDetailFilter::setDetailFieldName(const QString& field)
-{
-    Q_D(QContactDetailFilter);
-    d->m_fieldId = field;
+    d->m_defId = definitionName;
+    d->m_fieldId = fieldName;
 }
 
 void QContactDetailFilter::setValue(const QVariant& value)
@@ -289,16 +285,11 @@ void QContactDetailRangeFilter::setMatchFlags(Qt::MatchFlags flags)
     d->m_flags = flags;
 }
 
-void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definition)
+void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
     Q_D(QContactDetailRangeFilter);
-    d->m_defId = definition;
-}
-
-void QContactDetailRangeFilter::setDetailFieldName(const QString& field)
-{
-    Q_D(QContactDetailRangeFilter);
-    d->m_fieldId = field;
+    d->m_defId = definitionName;
+    d->m_fieldId = fieldName;
 }
 
 Qt::MatchFlags QContactDetailRangeFilter::matchFlags() const
@@ -364,7 +355,7 @@ QDateTime QContactChangeLogFilter::since() const
     return d->m_since;
 }
 
-QContactChangeLogFilter::ChangeType QContactChangeLogFilter::type() const
+QContactChangeLogFilter::ChangeType QContactChangeLogFilter::changeType() const
 {
     Q_D(const QContactChangeLogFilter);
     return d->m_changeType;

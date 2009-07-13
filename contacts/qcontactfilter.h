@@ -80,14 +80,12 @@ public:
     bool operator!=(const QContactFilter& other) const {return !operator==(other);}
 
 protected:
-    QContactFilter();
     QContactFilter(QContactFilterPrivate* d);
+    QContactFilter();
 
 protected:
+    friend class QContactFilterPrivate;
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactFilter);
 };
 
 class QContactDetailFilterPrivate;
@@ -98,8 +96,7 @@ public:
     QContactDetailFilter(const QContactFilter& other);
 
     /* Mutators */
-    void setDetailDefinitionName(const QString& definition);
-    void setDetailFieldName(const QString& field);
+    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
     void setMatchFlags(Qt::MatchFlags flags);
 
     /* Filter Criterion */
@@ -132,8 +129,7 @@ public:
     Q_DECLARE_FLAGS(RangeFlags, RangeFlag);
 
     /* Mutators */
-    void setDetailDefinitionName(const QString& definition);
-    void setDetailFieldName(const QString& field);
+    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
     void setMatchFlags(Qt::MatchFlags flags);
 
     /* Filter Criterion */
@@ -163,14 +159,14 @@ public:
         Removed
     };
 
-    QContactChangeLogFilter(ChangeType type);
+    explicit QContactChangeLogFilter(ChangeType type = Added);
     QContactChangeLogFilter(const QContactFilter& other);
 
     void setChangeType(ChangeType type);
     void setSince(const QDateTime& since);
 
     QDateTime since() const;
-    ChangeType type() const;
+    ChangeType changeType() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);

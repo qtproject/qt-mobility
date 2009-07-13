@@ -59,8 +59,13 @@ public slots:
     void cleanup();
 private slots:
     void classHierarchy();
-    void intersection();
-    void unionfilter();
+    void intersectionFilter();
+    void unionFilter();
+    void detailFilter();
+    void detailRangeFilter();
+    void changeLogFilter();
+    void actionFilter();
+    void groupMembershipFilter();
 };
 
 tst_QContactFilter::tst_QContactFilter()
@@ -79,13 +84,17 @@ void tst_QContactFilter::cleanup()
 {
 }
 
+class BadFilter : public QContactFilter
+{
+public:
+    BadFilter() {}
+};
+
 void tst_QContactFilter::classHierarchy()
 {
-    qDebug() << 1;
     QContactDetailRangeFilter drf;
     QVERIFY(drf.type() == QContactFilter::ContactDetailRange);
-    drf.setDetailDefinitionName("Frog");
-    drf.setDetailFieldName("Croak");
+    drf.setDetailDefinitionName("Frog", "Croak");
     drf.setRange(1, 20);
 
     QContactFilter f = drf;
@@ -119,9 +128,14 @@ void tst_QContactFilter::classHierarchy()
     QVERIFY(drf2.detailFieldName() == "Croak");
     QVERIFY(drf2.maxValue() == 20);
     QVERIFY(drf2.minValue() == 1);
+
+    /* Try creating a bad filter and making sure we don't break */
+    BadFilter bad;
+
+    QVERIFY(bad.type() == QContactDetailFilter::Invalid);
 }
 
-void tst_QContactFilter::intersection()
+void tst_QContactFilter::intersectionFilter()
 {
     /* Test boolean ops */
     QContactDetailFilter df;
@@ -168,7 +182,7 @@ void tst_QContactFilter::intersection()
     QVERIFY(bf2.filters().at(2) == df3);
 }
 
-void tst_QContactFilter::unionfilter()
+void tst_QContactFilter::unionFilter()
 {
     /* Test boolean ops */
     QContactDetailFilter df;
@@ -213,6 +227,185 @@ void tst_QContactFilter::unionfilter()
     QVERIFY(bf2.filters().at(0) == df);
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
+}
+
+void tst_QContactFilter::actionFilter()
+{
+    QContactActionFilter af;
+
+    /* Test initial conditions */
+    QVERIFY(af.type() == QContactFilter::Action);
+    QVERIFY(af.actionId().isEmpty());
+    QVERIFY(af.value().isNull());
+
+
+    af.setActionId("Action Id");
+    QVERIFY(af.actionId() == "Action Id");
+
+    af.setActionId(QString());
+    QVERIFY(af.actionId().isEmpty());
+
+    af.setValue(5);
+    QVERIFY(af.value() == 5);
+
+    af.setValue("This is a string");
+    QVERIFY(af.value() == "This is a string");
+}
+
+void tst_QContactFilter::changeLogFilter()
+{
+    QContactChangeLogFilter cf;
+    QContactChangeLogFilter cfadded(QContactChangeLogFilter::Added);
+    QContactChangeLogFilter cfchanged(QContactChangeLogFilter::Changed);
+    QContactChangeLogFilter cfremoved(QContactChangeLogFilter::Removed);
+
+    QVERIFY(cf.type() == QContactFilter::ChangeLog);
+    QVERIFY(cf.changeType() == QContactChangeLogFilter::Added);
+
+    QVERIFY(cfadded.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfadded.changeType() == QContactChangeLogFilter::Added);
+
+    QVERIFY(cfchanged.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfchanged.changeType() == QContactChangeLogFilter::Changed);
+
+    QVERIFY(cfremoved.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfremoved.changeType() == QContactChangeLogFilter::Removed);
+
+
+    /* Just to break the naming scheme */
+    cfchanged.setChangeType(QContactChangeLogFilter::Added);
+    QVERIFY(cfchanged.changeType() == QContactChangeLogFilter::Added);
+
+    QVERIFY(cf.since() == QDateTime());
+
+    QDateTime now = QDateTime::currentDateTime();
+    cf.setSince(now);
+
+    QVERIFY(cf.since() == now);
+
+    cf.setSince(QDateTime());
+    QVERIFY(cf.since() == QDateTime());
+}
+
+void tst_QContactFilter::detailFilter()
+{
+    QContactDetailFilter df;
+
+    QVERIFY(df.type() == QContactFilter::ContactDetail);
+
+    QVERIFY(df.detailDefinitionName().isEmpty());
+    QVERIFY(df.detailFieldName().isEmpty());
+    QVERIFY(df.matchFlags() == 0);
+    QVERIFY(df.value().isNull());
+
+    df.setDetailDefinitionName("Definition");
+    QVERIFY(df.detailDefinitionName() == "Definition");
+    QVERIFY(df.detailFieldName().isEmpty());
+    QVERIFY(df.matchFlags() == 0);
+    QVERIFY(df.value().isNull());
+
+    df.setDetailDefinitionName("Definition", "Field");
+    QVERIFY(df.detailDefinitionName() == "Definition");
+    QVERIFY(df.detailFieldName() == "Field");
+    QVERIFY(df.matchFlags() == 0);
+    QVERIFY(df.value().isNull());
+
+    df.setMatchFlags(Qt::MatchExactly);
+    QVERIFY(df.matchFlags() == Qt::MatchExactly);
+
+    df.setValue(5);
+    QVERIFY(df.value() == 5);
+
+    df.setValue("String value");
+    QVERIFY(df.value() == "String value");
+}
+
+void tst_QContactFilter::detailRangeFilter()
+{
+    QContactDetailRangeFilter rf;
+
+    QVERIFY(rf.type() == QContactFilter::ContactDetailRange);
+
+    QVERIFY(rf.detailDefinitionName().isEmpty());
+    QVERIFY(rf.detailFieldName().isEmpty());
+    QVERIFY(rf.matchFlags() == 0);
+
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setDetailDefinitionName("Definition");
+    QVERIFY(rf.detailDefinitionName() == "Definition");
+    QVERIFY(rf.detailFieldName().isEmpty());
+    QVERIFY(rf.matchFlags() == 0);
+
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setDetailDefinitionName("Definition", "Field");
+    QVERIFY(rf.detailDefinitionName() == "Definition");
+    QVERIFY(rf.detailFieldName() == "Field");
+    QVERIFY(rf.matchFlags() == 0);
+
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setMatchFlags(Qt::MatchExactly);
+    QVERIFY(rf.matchFlags() == Qt::MatchExactly);
+
+    rf.setRange(5, 10);
+    QVERIFY(rf.minValue() == 5);
+    QVERIFY(rf.maxValue() == 10);
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setRange(QVariant(), 11);
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue() == 11);
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setRange(6, QVariant());
+    QVERIFY(rf.minValue() == 6);
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setRange(QVariant(), QVariant());
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setRange(5, 10, QContactDetailRangeFilter::ExcludeLower);
+    QVERIFY(rf.minValue() == 5);
+    QVERIFY(rf.maxValue() == 10);
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::ExcludeLower));
+
+    rf.setRange(QVariant(), 11, QContactDetailRangeFilter::IncludeUpper);
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue() == 11);
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::IncludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    rf.setRange(6, QVariant(), QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
+    QVERIFY(rf.minValue() == 6);
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::IncludeUpper | QContactDetailRangeFilter::ExcludeLower));
+
+    rf.setRange(QVariant(), QVariant(), QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower);
+    QVERIFY(rf.minValue().isNull());
+    QVERIFY(rf.maxValue().isNull());
+    QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+}
+
+void tst_QContactFilter::groupMembershipFilter()
+{
+    QContactGroupMembershipFilter gf;
+
+    QVERIFY(gf.type() == QContactFilter::GroupMembership);
+
+    QVERIFY(gf.groupId() == 0);
+
+    gf.setGroupId(546);
+    QVERIFY(gf.groupId() == 546);
 }
 
 QTEST_MAIN(tst_QContactFilter)

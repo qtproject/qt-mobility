@@ -125,8 +125,7 @@ void callContact(QContactManager* cm)
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 {
     QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName("PhoneNumber");
-    phoneFilter.setDetailFieldName("Number");
+    phoneFilter.setDetailDefinitionName("PhoneNumber", "Number");
     phoneFilter.setValue(incomingCallNbr);
     phoneFilter.setMatchFlags(Qt::MatchExactly);
 
