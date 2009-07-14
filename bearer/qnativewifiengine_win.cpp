@@ -475,4 +475,3 @@ QNativeWifiEngine *QNativeWifiEngine::instance()
 }
 
 QT_END_NAMESPACE
-
