@@ -370,7 +370,7 @@
 */
 
 /*!
-    \fn QMessageContentContainer::container(const QMessageContentContainerId id) const
+    \fn QMessageContentContainer::container(const QMessageContentContainerId &id) const
     
     If the container contains another container with identifier \a id either directly or 
     recursively then returns that other container; otherwise returns an empty container 
@@ -380,7 +380,7 @@
 */
 
 /*!
-    \fn QMessageContentContainer::container(const QMessageContentContainerId id)
+    \fn QMessageContentContainer::container(const QMessageContentContainerId &id)
     
     If the container contains another container with identifier \a id either directly or 
     recursively then returns that other container; otherwise returns an empty container 
