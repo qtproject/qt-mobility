@@ -50,13 +50,12 @@ class QTCONTACTS_EXPORT QContactAbstractActionFactory : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractActionFactory();
-    virtual ~QContactAbstractActionFactory();
+    virtual ~QContactAbstractActionFactory() = 0;
 
     virtual QString name() = 0;
-    virtual QStringList actionNames();
-    virtual QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
-    virtual QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    virtual QStringList actionNames() = 0;
+    virtual QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1) = 0;
+    virtual QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1) = 0;
 };
 #define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.abstractactionfactory/1.0"
 Q_DECLARE_INTERFACE(QContactAbstractActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);

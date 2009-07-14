@@ -49,21 +49,17 @@ class QTCONTACTS_EXPORT QContactAbstractAction : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractAction();
-    virtual ~QContactAbstractAction();
+    virtual ~QContactAbstractAction() = 0;
 
-    virtual QString actionName() const;                                 // name of action this instance implements
-    virtual QVariantMap metadata() const;                               // label, icon etc
-    virtual QString vendor() const;                                     // vendor identification string
-    virtual int implementationVersion() const;                          // (minor) implementation version
+    virtual QString actionName() const = 0;                                 // name of action this instance implements
+    virtual QVariantMap metadata() const = 0;                               // label, icon etc
+    virtual QString vendor() const = 0;                                     // vendor identification string
+    virtual int implementationVersion() const = 0;                          // (minor) implementation version
 
-    virtual QContactActionFilter contactFilter() const;                 // use for matching
-    virtual bool supportsDetail(const QContactDetail& detail) const;    // whether this implementation supports the given detail
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    virtual QContactActionFilter contactFilter() const = 0;                 // use for matching
+    virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
     virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
-
-private:
-    QSharedDataPointer<QContactAbstractActionData> d;
 };
 
 #endif

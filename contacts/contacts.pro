@@ -11,7 +11,6 @@ DEFINES += BUILD_QTCONTACTS \
 HEADERS += qcontact.h \
     qcontact_p.h \
     qcontactabstractaction.h \
-    qcontactabstractaction_p.h \
     qcontactabstractactionfactory.h \
     qcontactaddress.h \
     qcontactanniversary.h \
