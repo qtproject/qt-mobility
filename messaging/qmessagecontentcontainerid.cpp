@@ -50,8 +50,13 @@
     A QMessageContentContainerId instance can be tested for validity with isValid(), and compared 
     to other instances for equality.
     
-    If the object a QMessageContentContainerId identifies is removed then the identifier will not 
+    If the object a QMessageContentContainerId identifies is removed then the identifier may 
     be reused.
+    
+    If the QMessageContentContainerId refers to an object that has a parent container, and the 
+    contents of that parent container are modified by removing contents (i.e. attachments are 
+    removed) or the parent container itself is removed then the identifier may become invalid, 
+    or be reused to reference a different object entirely.
     
     \sa QMessageContentContainer
 */

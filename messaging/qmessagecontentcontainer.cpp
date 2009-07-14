@@ -134,12 +134,6 @@
 */
 
 /*!
-    \fn QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
-    
-    Sets the identifier of the container object to \a id.
-*/
-
-/*!
     \fn QMessageContentContainer::messageId() const
 
     Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 

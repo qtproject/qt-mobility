@@ -56,11 +56,6 @@ QMessageContentContainerId QMessageContentContainer::containerId() const
     return QMessageContentContainerId();
 }
 
-void QMessageContentContainer::setContainerId(const QMessageContentContainerId &id)
-{
-    Q_UNUSED(id)
-}
-
 QMessageId QMessageContentContainer::messageId() const
 {
     return QMessageId(); // stub

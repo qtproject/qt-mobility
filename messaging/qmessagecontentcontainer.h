@@ -101,7 +101,6 @@ protected:
 private:
     friend class QMessageStore;
 
-    virtual void setContainerId(const QMessageContentContainerId &id);
 #ifdef QMESSAGING_OPTIONAL
     virtual void setContainerDataModified(bool modified);
 #endif
