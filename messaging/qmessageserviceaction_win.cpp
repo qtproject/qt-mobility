@@ -57,6 +57,11 @@ void QMessageServiceAction::retrieve(const QMessageId& id)
     Q_UNUSED(id)
 }
 
+void QMessageServiceAction::retrieveBody(const QMessageId& id)
+{
+    Q_UNUSED(id)
+}
+
 void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
     Q_UNUSED(id)

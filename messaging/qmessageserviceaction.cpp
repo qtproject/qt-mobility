@@ -120,6 +120,17 @@
 */
 
 /*!
+    \fn QMessageServiceAction::retrieveBody(const QMessageId& id)
+  
+    Retrieve the body of the message identified by \a id.  
+
+    If the message can not be found on the originating server it will be marked as removed.
+
+    \sa QMessageId, QMessage::Removed
+
+*/
+
+/*!
     \fn QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
   
     Retrieve the container identified by \a id, the contents of the container should also be 

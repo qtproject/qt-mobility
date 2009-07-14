@@ -56,6 +56,7 @@ public:
     void send(const QMessage &message, const QMessageAccountId &accountId);
     void compose(const QMessage &message);
     void retrieve(const QMessageId &id);
+    void retrieveBody(const QMessageId &id);
     void retrieve(const QMessageContentContainerId &id);
     void show(const QMessageId &id);
     void exportUpdates();
