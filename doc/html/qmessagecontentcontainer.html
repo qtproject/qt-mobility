@@ -45,7 +45,6 @@
 <li><div class="fn"></div>virtual QString <b><a href="qmessagecontentcontainer.html#headerField">headerField</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
 <li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</li>
 <li><div class="fn"></div>virtual QList&lt;QByteArray&gt; <b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageId <b><a href="qmessagecontentcontainer.html#messageId">messageId</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a></b> ( QDataStream &amp; <i>in</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a></b> ( const QMessageContentContainerId &amp; <i>id</i>, const QMessageContentContainer &amp; <i>content</i> )</li>
@@ -58,6 +57,7 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setContentType">setContentType</a></b> ( const QByteArray &amp; <i>data</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
+<li><div class="fn"></div>virtual uint <b><a href="qmessagecontentcontainer.html#size">size</a></b> () const</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
 <li><div class="fn"></div>const QMessageContentContainer &amp; <b><a href="qmessagecontentcontainer.html#operator-eq">operator=</a></b> ( const QMessageContentContainer &amp; <i>other</i> )</li>
 </ul>
@@ -82,7 +82,7 @@
 <p>For non multipart content <a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a>() will return the content after decoding any transfer encoding used to represent binary data using 7-bit ASCII characters, such as quoted-printable and base64.</p>
 <p><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a>() will return the suggested filename for an attachment, when defined.</p>
 <p>The internet media (MIME) type of the container is returned by <a href="qmessagecontentcontainer.html#contentType">contentType</a>(), the content subtype is returned by <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>(), the content type charset parameter is returned by <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>(), and the content suggested filename by <a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a>(). The type of a container that contains multiple parts of content must be &quot;multipart&quot; (case insensitive).</p>
-<p>An indication of the size of the container and its contents on the originating server is given by <a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a>(). If the content is completely available on the device <a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a>() will return true.</p>
+<p>An indication of the size of the container and its contents on the originating server is given by indicativeSize(). If the content is completely available on the device <a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a>() will return true.</p>
 <p><a href="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</a>() will return the name of a local file containing the content, when available. Non multipart content can be serialized to a QDataStream using <a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a>(), and set using <a href="qmessagecontentcontainer.html#setContent">setContent</a>() or <a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a>().</p>
 <p>A part of content can be appended to the existing content of a container using <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(). Existing content may be replaced using <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>(). A list of identifiers for directly contained parts of content is returned by <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
 <p>The default container contains an empty string, with type &quot;text&quot;, subtype &quot;plain&quot;, and charset &quot;US-ASCII&quot;.</p>
@@ -166,8 +166,6 @@
 <h3 class="fn"><a name="headerFields"></a>QList&lt;QByteArray&gt; QMessageContentContainer::headerFields () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of names of header fields of the container.</p>
 <p>See also <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>(), <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>(), <a href="qmessagecontentcontainer.html#headerField">headerField</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
-<h3 class="fn"><a name="indicativeSize"></a>uint QMessageContentContainer::indicativeSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns an indication of the size of the container including contents.</p>
 <h3 class="fn"><a name="messageId"></a><a href="qmessageid.html">QMessageId</a> QMessageContentContainer::messageId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the containing (parent) message if any; otherwise returns an invalid message identifier.</p>
 <h3 class="fn"><a name="preferredCharsets"></a>QList&lt;QByteArray&gt; QMessageContentContainer::preferredCharsets ()&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -220,6 +218,8 @@
 <h3 class="fn"><a name="setPreferredCharsets"></a>void QMessageContentContainer::setPreferredCharsets ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the ordered by preference list of names of charsets to use when encoding unicode QString text with <a href="qmessagecontentcontainer.html#setContent">setContent</a>(), <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>() or <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>() to <i>charsetNames</i>.</p>
 <p>See also <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
+<h3 class="fn"><a name="size"></a>uint QMessageContentContainer::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>If the size of the container is known then returns an indication of the size of the container including contents; otherwise returns 0.</p>
 <h3 class="fn"><a name="writeContentTo"></a>void QMessageContentContainer::writeContentTo ( QDataStream &amp; <i>out</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>For a non multipart container writes the content as would be returned by <a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a>() into the stream <i>out</i>; otherwise for a multipart container does nothing.</p>
 <p>See also <a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a>().</p>

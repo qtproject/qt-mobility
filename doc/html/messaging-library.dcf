@@ -154,7 +154,6 @@
         <keyword ref="qmessagecontentcontainer.html#headerField">headerField</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
-        <keyword ref="qmessagecontentcontainer.html#indicativeSize">indicativeSize</keyword>
         <keyword ref="qmessagecontentcontainer.html#messageId">messageId</keyword>
         <keyword ref="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#prependContent">prependContent</keyword>
@@ -168,6 +167,7 @@
         <keyword ref="qmessagecontentcontainer.html#setContentType">setContentType</keyword>
         <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
         <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
+        <keyword ref="qmessagecontentcontainer.html#size">size</keyword>
         <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
         <keyword ref="qmessagecontentcontainer.html#operator-eq">operator=</keyword>
         <section ref="qmessagecontentcontainer-members.html" title="List of all members"/>
