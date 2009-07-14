@@ -101,7 +101,7 @@ QStringList QContactManager::availableManagers()
  * If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
  * any actions from the given \a vendor (regardless of implementation version) are returned.
  */
-QStringList availableActions(const QString& vendor, int implementationVersion)
+QStringList QContactManager::availableActions(const QString& vendor, int implementationVersion)
 {
     // SLOW naive implementation...
     QStringList ret;
@@ -133,7 +133,7 @@ QStringList availableActions(const QString& vendor, int implementationVersion)
  *
  * TODO: fix this.
  */
-QList<QContactAbstractAction*> actions(const QString& actionName, const QString& vendor, int implementationVersion)
+QList<QContactAbstractAction*> QContactManager::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
     // the caller takes ownership
     return QContactManagerData::actions(actionName, vendor, implementationVersion);
