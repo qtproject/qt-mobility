@@ -46,6 +46,10 @@ QMessageAccountId::QMessageAccountId(const QString& id)
     Q_UNUSED(id)
 }
 
+QMessageAccountId::~QMessageAccountId()
+{
+}
+
 bool QMessageAccountId::operator==(const QMessageAccountId& other) const
 {
     Q_UNUSED(other)

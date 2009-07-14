@@ -46,6 +46,8 @@ public:
     QMessageFolderId();
     QMessageFolderId(const QMessageFolderId &other);
     QMessageFolderId(const QString &id);
+    ~QMessageFolderId();
+
     bool operator==(const QMessageFolderId &other) const;
     QMessageFolderId& operator=(const QMessageFolderId &other);
 
