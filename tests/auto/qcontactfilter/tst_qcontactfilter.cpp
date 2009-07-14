@@ -86,6 +86,7 @@ void tst_QContactFilter::cleanup()
 {
 }
 
+/* The bad filter doesn't set the d_ptr, since it can't */
 class BadFilter : public QContactFilter
 {
 public:
@@ -94,6 +95,7 @@ public:
 
 void tst_QContactFilter::classHierarchy()
 {
+    /* Test "casting" up and down the hierarchy */
     QContactDetailRangeFilter drf;
     QVERIFY(drf.type() == QContactFilter::ContactDetailRange);
     drf.setDetailDefinitionName("Frog", "Croak");
@@ -132,9 +134,20 @@ void tst_QContactFilter::classHierarchy()
     QVERIFY(drf2.minValue() == 1);
 
     /* Try creating a bad filter and making sure we don't break */
-    BadFilter bad;
+    BadFilter bad, bad2;
 
-    QVERIFY(bad.type() == QContactDetailFilter::Invalid);
+    QVERIFY(bad.type() == QContactFilter::Invalid);
+    QVERIFY(bad != bad2);
+    QVERIFY(bad != drf2);
+    QVERIFY(drf2 != bad);
+
+    QContactFilter fbad = bad;
+    QVERIFY(fbad.type() == QContactFilter::Invalid);
+    QVERIFY(fbad != bad);
+    QVERIFY(fbad != bad2);
+
+    /* Now test some "cross casting" */
+
 }
 
 void tst_QContactFilter::intersectionFilter()
@@ -174,6 +187,9 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf2.filters().at(1) == df);
     QVERIFY(bf2.filters().at(2) == df2);
 
+    /* Save this list */
+    QList<QContactFilter> filterList = bf2.filters();
+
     f2 = df && df2 && df3;
     QVERIFY(f2.type() == QContactFilter::Intersection);
     bf2 = f2;
@@ -182,6 +198,25 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf2.filters().at(0) == df);
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
+
+    /* Test set filter */
+    bf2.setFilters(filterList);
+    QCOMPARE(bf2.filters().count(), 3);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df);
+    QVERIFY(bf2.filters().at(2) == df2);
+
+    /* Test remove */
+    bf2.remove(df);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df2);
+
+    /* Double remove, should do nothing */
+    bf2.remove(df);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df2);
 }
 
 void tst_QContactFilter::unionFilter()
@@ -221,6 +256,9 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(1) == df);
     QVERIFY(bf2.filters().at(2) == df2);
 
+    /* Save this list */
+    QList<QContactFilter> filterList = bf2.filters();
+
     f2 = df || df2 || df3;
     QVERIFY(f2.type() == QContactFilter::Union);
     bf2 = f2;
@@ -229,6 +267,25 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(0) == df);
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
+
+    /* Test set filter */
+    bf2.setFilters(filterList);
+    QCOMPARE(bf2.filters().count(), 3);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df);
+    QVERIFY(bf2.filters().at(2) == df2);
+
+    /* Test remove */
+    bf2.remove(df);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df2);
+
+    /* Double remove, should do nothing */
+    bf2.remove(df);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == df3);
+    QVERIFY(bf2.filters().at(1) == df2);
 }
 
 void tst_QContactFilter::actionFilter()
@@ -252,6 +309,13 @@ void tst_QContactFilter::actionFilter()
 
     af.setValue("This is a string");
     QVERIFY(af.value() == "This is a string");
+
+    /* Test op= */
+    QContactFilter f = af;
+    QVERIFY(f == af);
+
+    QContactActionFilter af2 = f;
+    QVERIFY(af2 == af);
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -287,6 +351,13 @@ void tst_QContactFilter::changeLogFilter()
 
     cf.setSince(QDateTime());
     QVERIFY(cf.since() == QDateTime());
+
+    /* Test op= */
+    QContactFilter f = cf;
+    QVERIFY(f == cf);
+
+    QContactChangeLogFilter cf2 = f;
+    QVERIFY(cf2 == cf);
 }
 
 void tst_QContactFilter::detailFilter()
@@ -320,6 +391,14 @@ void tst_QContactFilter::detailFilter()
 
     df.setValue("String value");
     QVERIFY(df.value() == "String value");
+
+    /* Test op= */
+    QContactFilter f = df;
+    QVERIFY(f == df);
+
+    QContactDetailFilter df2 = f;
+    QVERIFY(df2 == df);
+
 }
 
 void tst_QContactFilter::detailRangeFilter()
@@ -396,6 +475,13 @@ void tst_QContactFilter::detailRangeFilter()
     QVERIFY(rf.minValue().isNull());
     QVERIFY(rf.maxValue().isNull());
     QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
+
+    /* Test op= */
+    QContactFilter f = rf;
+    QVERIFY(f == rf);
+
+    QContactDetailRangeFilter rf2 = f;
+    QVERIFY(rf2 == rf);
 }
 
 void tst_QContactFilter::groupMembershipFilter()
@@ -408,6 +494,13 @@ void tst_QContactFilter::groupMembershipFilter()
 
     gf.setGroupId(546);
     QVERIFY(gf.groupId() == 546);
+
+    /* Test op= */
+    QContactFilter f = gf;
+    QVERIFY(f == gf);
+
+    QContactGroupMembershipFilter gf2 = f;
+    QVERIFY(gf2 == gf);
 }
 
 void tst_QContactFilter::sortObject()

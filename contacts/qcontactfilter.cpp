@@ -75,12 +75,15 @@ QContactFilter::FilterType QContactFilter::type() const
 
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
-    if (other.type() != type())
-        return false;
-    if (!d_ptr && !other.d_ptr)
-        return true; // both invalid
+    /* An invalid filter is not equal to anything, even other invalid filters */
     if (!d_ptr)
         return false;
+
+    /* Different types can't be equal */
+    if (other.type() != type())
+        return false;
+
+    /* Otherwise, use the virtual op == */
     return d_ptr->compare(other.d_ptr);
 }
 
