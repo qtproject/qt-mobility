@@ -242,7 +242,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
         generic = QGenericEngine::instance();
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-        if(!NetworkManagerAvailable())
+        if(!NetworkManagerAvailable()) {
+            usingNetworkManager = false;
 #endif
         if (generic) {
             connect(generic, SIGNAL(configurationsChanged()),
@@ -267,6 +268,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         }
 #endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    } else {
+            usingNetworkManager = true;
         nmWifi = QNmWifiEngine::instance();
         if (nmWifi) {
 
@@ -275,16 +278,17 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                         this, SLOT(updateConfigurations()));
             }
         }
+    }
 #endif
     }
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-       if(NetworkManagerAvailable())
+        if(usingNetworkManager) {
             if (engine == nmWifi)
                 updateState &= ~NmUpdating;
-       else
+        }   else
 #endif
         if (engine == generic)
             updateState &= ~GenericUpdating;
@@ -297,16 +301,19 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 #endif
 #endif
     }
-
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-        if (nmWifi)
-            engines << nmWifi;
-        else
+        if(usingNetworkManager) {
+            if (nmWifi) {
+                engines << nmWifi;
+            }
+        }else
 #endif
-        if (generic)
-            engines << generic;
+        {
+            if (generic)
+                engines << generic;
+        }
 #ifdef Q_OS_WIN
         if (nla)
             engines << nla;
@@ -403,9 +410,11 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
     updateState = Updating;
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    if (nmWifi) {
-        updateState |= NmUpdating;
-        nmWifi->requestUpdate();
+    if(usingNetworkManager) {
+        if (nmWifi) {
+            updateState |= NmUpdating;
+            nmWifi->requestUpdate();
+        }
     }
 #else
     if (generic) {
