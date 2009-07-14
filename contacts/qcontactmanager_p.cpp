@@ -150,7 +150,7 @@ void QContactManagerData::loadFactories()
             paths << QString::fromLocal8Bit(qgetenv("LD_LIBRARY_PATH"));
 #elif defined(Q_OS_WIN)
         if (qgetenv("PATH").size() > 0)
-            paths << QString::fromLocal8Bit(qgetenv("PATH")).split(';');
+            paths << QString::fromLocal8Bit(qgetenv("PATH")).split(QLatin1Char(';'));
 #endif
 
         /* Code from docs.. */
