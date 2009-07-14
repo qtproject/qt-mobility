@@ -434,26 +434,7 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
 {
     // synthesise the display name from the name of the contact, or, failing that, the organisation of the contact.
     error = QContactManager::NoError;
-    QList<QContactDetail> allOrgs = contact.details(QLatin1String(QContactOrganisation::DefinitionName));
     QList<QContactDetail> allNames = contact.details(QLatin1String(QContactName::DefinitionName));
-
-    // first, check to see whether or not there is a name or org to synthesise from.
-    if (allNames.isEmpty()) {
-        if (allOrgs.isEmpty()) {
-            error = QContactManager::UnspecifiedError;
-            return QString();
-        }
-
-        for (int i=0; i < allOrgs.size(); i++) {
-            const QContactOrganisation& org = allOrgs.at(i);
-            if (!org.displayLabel().isEmpty()) {
-                return org.displayLabel();
-            }
-        }
-
-        error = QContactManager::UnspecifiedError;
-        return QString();
-    }
 
     const QLatin1String space(" ");
 
@@ -492,6 +473,15 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
 
         if (!result.isEmpty()) {
             return result;
+        }
+    }
+
+    /* Well, we had no non empty names. if we have orgs, fall back to those */
+    QList<QContactDetail> allOrgs = contact.details(QLatin1String(QContactOrganisation::DefinitionName));
+    for (int i=0; i < allOrgs.size(); i++) {
+        const QContactOrganisation& org = allOrgs.at(i);
+        if (!org.displayLabel().isEmpty()) {
+            return org.displayLabel();
         }
     }
 

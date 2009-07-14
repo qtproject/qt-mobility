@@ -60,6 +60,7 @@ private slots:
 
     /* Special test with special data */
     void uriParsing();
+    void nameSynthesis();
 
     /* Tests that are run on all managers */
     void nullIdOperations();
@@ -83,6 +84,7 @@ private slots:
 
     /* data providers (mostly all engines) */
     void uriParsing_data(); // Special data
+    void nameSynthesis_data(); // Special data
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
     void update_data() {addManagers();}
@@ -1118,24 +1120,275 @@ void tst_QContactManager::memoryManager()
     QCOMPARE(m3.contacts().count(), 0);
     QCOMPARE(m4.contacts().count(), 0);
     QCOMPARE(m5.contacts().count(), 0);
+}
 
+void tst_QContactManager::nameSynthesis_data()
+{
+    QTest::addColumn<QString>("expected");
+
+    QTest::addColumn<bool>("addname");
+    QTest::addColumn<QString>("prefix");
+    QTest::addColumn<QString>("first");
+    QTest::addColumn<QString>("middle");
+    QTest::addColumn<QString>("last");
+    QTest::addColumn<QString>("suffix");
+
+    QTest::addColumn<bool>("addcompany");
+    QTest::addColumn<QString>("company");
+
+    QTest::addColumn<bool>("addname2");
+    QTest::addColumn<QString>("secondprefix");
+    QTest::addColumn<QString>("secondfirst");
+    QTest::addColumn<QString>("secondmiddle");
+    QTest::addColumn<QString>("secondlast");
+    QTest::addColumn<QString>("secondsuffix");
+
+    QTest::addColumn<bool>("addcompany2");
+    QTest::addColumn<QString>("secondcompany");
+
+    QString e; // empty string.. gets a work out
+
+    /* Various empty ones */
+    QTest::newRow("empty contact") << e
+            << false << e << e << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("empty name") << e
+            << true << e << e << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("empty names") << e
+            << true << e << e << e << e << e
+            << false << e
+            << true << e << e << e << e << e
+            << false << e;
+    QTest::newRow("empty org") << e
+            << false << e << e << e << e << e
+            << true << e
+            << false << e << e << e << e << e
+            << true << e;
+    QTest::newRow("empty orgs") << e
+            << false << e << e << e << e << e
+            << true << e
+            << false << e << e << e << e << e
+            << true << e;
+    QTest::newRow("empty orgs and names") << e
+            << true << e << e << e << e << e
+            << true << e
+            << true << e << e << e << e << e
+            << true << e;
+
+    /* Single values */
+    QTest::newRow("prefix") << "Prefix"
+            << true << "Prefix" << e << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("first") << "First"
+            << true << e << "First" << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("middle") << "Middle"
+            << true << e << e << "Middle" << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("last") << "Last"
+            << true << e << e << e << "Last" << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("suffix") << "Suffix"
+            << true << e << e << e << e << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+
+    /* Single values in the second name */
+    QTest::newRow("prefix in second") << "Prefix"
+            << false << "Prefix" << e << e << e << e
+            << false << e
+            << true << "Prefix" << e << e << e << e
+            << false << e;
+    QTest::newRow("first in second") << "First"
+            << false << e << "First" << e << e << e
+            << false << e
+            << true << e << "First" << e << e << e
+            << false << e;
+    QTest::newRow("middle in second") << "Middle"
+            << false << e << e << "Middle" << e << e
+            << false << e
+            << true << e << e << "Middle" << e << e
+            << false << e;
+    QTest::newRow("last in second") << "Last"
+            << false << e << e << e << "Last" << e
+            << false << e
+            << true << e << e << e << "Last" << e
+            << false << e;
+    QTest::newRow("suffix in second") << "Suffix"
+            << false << e << e << e << e << "Suffix"
+            << false << e
+            << true << e << e << e << e << "Suffix"
+            << false << e;
+
+    /* Multiple name values */
+    QTest::newRow("prefix first") << "Prefix First"
+            << true << "Prefix" << "First" << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("prefix middle") << "Prefix Middle"
+            << true << "Prefix" << e << "Middle" << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("prefix last") << "Prefix Last"
+            << true << "Prefix" << e << e << "Last" << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("prefix suffix") << "Prefix Suffix"
+            << true << "Prefix" << e << e << e << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("first middle") << "First Middle"
+            << true << e << "First" << "Middle" << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("first last") << "First Last"
+            << true << e << "First" << e << "Last" << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("first suffix") << "First Suffix"
+            << true << e << "First" << e << e << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("middle last") << "Middle Last"
+            << true << e << e << "Middle" << "Last" << e
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("middle suffix") << "Middle Suffix"
+            << true << e << e << "Middle" << e << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("last suffix") << "Last Suffix"
+            << true << e << e << e << "Last" << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+
+    /* Everything.. */
+    QTest::newRow("all name") << "Prefix First Middle Last Suffix"
+            << true << "Prefix" << "First" << "Middle" << "Last" << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("all name second") << "Prefix First Middle Last Suffix"
+            << false << "Prefix" << "First" << "Middle" << "Last" << "Suffix"
+            << false << e
+            << true << "Prefix" << "First" << "Middle" << "Last" << "Suffix"
+            << false << e;
+
+    /* Org */
+    QTest::newRow("org") << "Company"
+            << false << e << e << e << e << e
+            << true << "Company"
+            << false << e << e << e << e << e
+            << false << e;
+    QTest::newRow("second org") << "Company"
+            << false << e << e << e << e << e
+            << false << e
+            << false << e << e << e << e << e
+            << true << "Company";
+
+    /* Mix */
+    QTest::newRow("org and empty name") << "Company"
+            << true << e << e << e << e << e
+            << true << "Company"
+            << false << e << e << e << e << e
+            << false << e;
+
+    QTest::newRow("name and empty org") << "Prefix First Middle Last Suffix"
+            << true << "Prefix" << "First" << "Middle" << "Last" << "Suffix"
+            << false << e
+            << false << e << e << e << e << e
+            << false << e;
+
+    /* names are preferred to orgs */
+    QTest::newRow("name and org") << "Prefix First Middle Last Suffix"
+            << true << "Prefix" << "First" << "Middle" << "Last" << "Suffix"
+            << true << "Company"
+            << false << e << e << e << e << e
+            << false << e;
+
+}
+
+void tst_QContactManager::nameSynthesis()
+{
+    QContactManager cm("memory");
+
+    QFETCH(QString, expected);
+
+    QFETCH(QString, prefix);
+    QFETCH(QString, first);
+    QFETCH(QString, middle);
+    QFETCH(QString, last);
+    QFETCH(QString, suffix);
+    QFETCH(QString, company);
+
+    QFETCH(QString, secondprefix);
+    QFETCH(QString, secondfirst);
+    QFETCH(QString, secondmiddle);
+    QFETCH(QString, secondlast);
+    QFETCH(QString, secondsuffix);
+    QFETCH(QString, secondcompany);
+
+    QFETCH(bool, addname);
+    QFETCH(bool, addname2);
+    QFETCH(bool, addcompany);
+    QFETCH(bool, addcompany2);
 
     /* Test the default name synthesis code */
-    QContact empty;
-    QContact synth;
-    QContactName name;
+    QContact c;
 
-    QVERIFY(m1.synthesiseDisplayLabel(empty).isEmpty());
-    QVERIFY(m1.error() == QContactManager::UnspecifiedError);
+    QContactName name, name2;
+    QContactOrganisation org, org2;
 
-    QVERIFY(empty.saveDetail(&name));
-    QVERIFY(m1.synthesiseDisplayLabel(empty).isEmpty());
-    QVERIFY(m1.error() == QContactManager::UnspecifiedError);
+    name.setPrefix(prefix);
+    name.setFirst(first);
+    name.setMiddle(middle);
+    name.setLast(last);
+    name.setSuffix(suffix);
 
-    name.setFirst("First");
+    name2.setPrefix(secondprefix);
+    name2.setFirst(secondfirst);
+    name2.setMiddle(secondmiddle);
+    name2.setLast(secondlast);
+    name2.setSuffix(secondsuffix);
 
+    org.setDisplayLabel(company);
+    org2.setDisplayLabel(secondcompany);
 
+    if (addname)
+        c.saveDetail(&name);
+    if (addname2)
+        c.saveDetail(&name2);
+    if (addcompany)
+        c.saveDetail(&org);
+    if (addcompany2)
+        c.saveDetail(&org2);
 
+    // Finally!
+    QCOMPARE(cm.synthesiseDisplayLabel(c), expected);
 }
 
 void tst_QContactManager::contactValidation()
