@@ -94,7 +94,7 @@ void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
     if (d->notifyInterval != milliSeconds) {
         d->notifyInterval = milliSeconds;
 
-        if (d->notifyTimer->isActive())
+        if (d->watching && d->notifyTimer->isActive())
             d->notifyTimer->start(d->notifyInterval);
 
         emit notifyIntervalChanged(d->notifyInterval);
@@ -109,6 +109,9 @@ void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
 QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
     QObject(*new QAbstractMediaObjectPrivate, parent)
 {
+    Q_D(QAbstractMediaObject);
+    d->notifyTimer = new QTimer(this);
+    connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
 }
 
 /*!
@@ -118,36 +121,43 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
 QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent):
     QObject(dd, parent)
 {
+    Q_D(QAbstractMediaObject);
+    d->notifyTimer = new QTimer(this);
+    connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
 }
 
 void QAbstractMediaObject::beginWatch()
 {
     Q_D(QAbstractMediaObject);
 
-    if (d->notifyTimer != 0)
-        d->notifyTimer = new QTimer(this);
+    if (d->watching)
+        return;
 
-    d->notifyTimer->start(d->notifyInterval);
+    d->watching = true;
+
+    if (!d->notifyProperties.isEmpty())
+        d->notifyTimer->start(d->notifyInterval);
 }
 
 void QAbstractMediaObject::endWatch()
 {
     Q_D(QAbstractMediaObject);
 
-    if (d->notifyTimer != 0)
-        d->notifyTimer->stop();
+    if (!d->watching)
+        return;
+
+    d->watching = false;
+    d->notifyTimer->stop();
 }
 
 void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
 {
     Q_D(QAbstractMediaObject);
 
-    const bool restart = d->notifyProperties.isEmpty();
-
     d->notifyProperties << name;
 
-    if (restart && d->notifyTimer != 0)
-        d->notifyTimer->start(notifyInterval());
+    if (d->watching && !d->notifyTimer->isActive())
+        d->notifyTimer->start(d->notifyInterval);
 }
 
 void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
@@ -156,7 +166,7 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 
     d->notifyProperties.removeAll(name);
 
-    if (d->notifyProperties.isEmpty() && d->notifyTimer != 0)
+    if (d->notifyProperties.isEmpty())
         d->notifyTimer->stop();
 }
 

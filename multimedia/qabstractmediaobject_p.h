@@ -59,10 +59,11 @@ class QAbstractMediaObjectPrivate : public QObjectPrivate
 
 public:
     QAbstractMediaObjectPrivate():
-        notifyInterval(1000), notifyTimer(0) {}
+        watching(false), notifyInterval(1000) {}
 
     void _q_notify();
 
+    bool watching;
     int notifyInterval;
     QTimer* notifyTimer;
     QList<QByteArray>   notifyProperties;
