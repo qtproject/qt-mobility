@@ -81,7 +81,7 @@ private:
 
 private slots:
 
-    void getInfoFromNmea()
+    void getPosInfoFromNmea()
     {
         QFETCH(QString, nmea);
         QFETCH(QGeoPositionInfo, expectedInfo);
@@ -90,13 +90,13 @@ private slots:
 
         QGeoPositionInfo info;
         bool hasFix;
-        bool b = QLocationUtils::getInfoFromNmea(nmea.toAscii(), nmea.length(), &info, &hasFix);
+        bool b = QLocationUtils::getPosInfoFromNmea(nmea.toAscii(), nmea.length(), &info, &hasFix);
         QCOMPARE(b, expectedResult);
         QCOMPARE(hasFix, expectedHasFix);
         QCOMPARE(info, expectedInfo);
     }
 
-    void getInfoFromNmea_data()
+    void getPosInfoFromNmea_data()
     {
         QTest::addColumn<QString>("nmea");
         QTest::addColumn<QGeoPositionInfo>("expectedInfo");

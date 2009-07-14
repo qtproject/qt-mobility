@@ -209,9 +209,8 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
     QDate date;
     QTime time;
 
-    if (parts.count() > 1 && parts[1].count() > 0) {
+    if (parts.count() > 1 && parts[1].count() > 0)
         QLocationUtils::getNmeaTime(parts[1], &time);
-    }
 
     if (parts.count() > 4 && parts[2].count() > 0 && parts[3].count() > 0
             && parts[4].count() == 4) {     // must be full 4-digit year
@@ -225,7 +224,7 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
     info->setDateTime(QDateTime(date, time, Qt::UTC));
 }
 
-bool QLocationUtils::getInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
+bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
     if (!info || !hasFix)
         return false;

@@ -41,6 +41,17 @@
 #ifndef QLOCATIONUTILS_P_H
 #define QLOCATIONUTILS_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtGlobal>
 
 class QTime;
@@ -54,7 +65,7 @@ public:
     inline static bool isValidLong(double lng) { return lng >= -180 && lng <= 180; }
 
     /*
-        Converts a GGA, GLL, RMC, VTG or ZDA sentence to a QGeoPositionInfo.
+        Creates a QGeoPositionInfo from a GGA, GLL, RMC, VTG or ZDA sentence.
 
         Note:
         - GGA and GLL sentences have time but not date so the update's
@@ -62,7 +73,7 @@ public:
         - RMC reports date with a two-digit year so in this case the year
           is assumed to be after the year 2000.
     */
-    Q_AUTOTEST_EXPORT static bool getInfoFromNmea(const char *data, int size, QGeoPositionInfo *update, bool *hasFix);
+    Q_AUTOTEST_EXPORT static bool getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix);
 
     /*
         Returns true if the given NMEA sentence has a valid checksum.
