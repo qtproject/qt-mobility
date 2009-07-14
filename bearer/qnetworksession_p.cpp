@@ -41,7 +41,6 @@
 #endif
 #ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
-#include "qioctlwifiengine_win_p.h"
 #endif
 
 #include <QtCore/qstringlist.h>
@@ -82,10 +81,6 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
     QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
     if (nativeWifi && nativeWifi->hasIdentifier(id))
         return nativeWifi;
-
-    QIoctlWifiEngine *ioctlWifi = QIoctlWifiEngine::instance();
-    if (ioctlWifi && ioctlWifi->hasIdentifier(id))
-        return ioctlWifi;
 #endif
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
@@ -93,6 +88,7 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
     if (nmwiifi && nmwiifi->hasIdentifier(id))
         return nmwiifi;
 #endif
+
     QGenericEngine *generic = QGenericEngine::instance();
     if (generic && generic->hasIdentifier(id))
         return generic;

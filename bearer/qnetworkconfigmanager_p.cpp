@@ -39,7 +39,6 @@
 #endif
 #ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
-#include "qioctlwifiengine_win_p.h"
 #endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include <qnetworkmanagerservice_p.h>
@@ -266,12 +265,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
             capFlags |= QNetworkConfigurationManager::BearerManagement;
         }
-
-        ioctlWifi = QIoctlWifiEngine::instance();
-        if (ioctlWifi) {
-            connect(ioctlWifi, SIGNAL(configurationsChanged()),
-                    this, SLOT(updateConfigurations()));
-        }
 #endif
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
         nmWifi = QNmWifiEngine::instance();
@@ -301,8 +294,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 #ifdef Q_OS_WIN32
         else if (engine == nativeWifi)
             updateState &= ~NativeWifiUpdating;
-        else if (engine == ioctlWifi)
-            updateState &= ~IoctlWifiUpdating;
 #endif
 #endif
     }
@@ -322,8 +313,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 #ifdef Q_OS_WIN32
         if (nativeWifi)
             engines << nativeWifi;
-        if (!nativeWifi && ioctlWifi)
-            engines << ioctlWifi;
 #endif
 #endif
     } else if (engine) {
@@ -335,13 +324,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
         bool ok;
         QList<QNetworkConfigurationPrivate *> foundConfigurations = engine->getConfigurations(&ok);
-
-#ifdef Q_OS_WIN32
-        if (engine == nativeWifi && !ok && ioctlWifi) {
-            qWarning() << "Native Wifi not supported, falling back to ioctl wifi.";
-            engines << ioctlWifi;
-        }
-#endif
 
         // Find removed configurations.
         QList<QString> removedIdentifiers = configurationEngine.keys();
@@ -442,11 +424,6 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
     if (nativeWifi) {
         updateState |= NativeWifiUpdating;
         nativeWifi->requestUpdate();
-    }
-
-    if (ioctlWifi) {
-        updateState |= IoctlWifiUpdating;
-        ioctlWifi->requestUpdate();
     }
 #endif
 }

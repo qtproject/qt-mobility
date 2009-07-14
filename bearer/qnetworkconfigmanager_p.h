@@ -57,7 +57,6 @@ class QNetworkSessionEngine;
 class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
-class QIoctlWifiEngine;
 class QNmWifiEngine;
 #endif
 
@@ -132,7 +131,6 @@ private:
     QNlaEngine *nla;
 #ifndef Q_OS_WINCE
     QNativeWifiEngine *nativeWifi;
-    QIoctlWifiEngine *ioctlWifi;
 #endif
 #endif
 
@@ -144,7 +142,6 @@ private:
         GenericUpdating = 0x02,
         NlaUpdating = 0x04,
         NativeWifiUpdating = 0x08,
-        IoctlWifiUpdating = 0x10,
         NmUpdating = 0x20,
     };
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
@@ -166,4 +163,3 @@ private Q_SLOTS:
 QT_END_NAMESPACE
 
 #endif //QNETWORKCONFIGURATIONMANAGERPRIVATE_H
-

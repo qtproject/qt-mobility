@@ -77,13 +77,11 @@ symbian: {
     win32: {
         HEADERS += qnlaengine_win_p.h
 
-        !wince*:HEADERS += qnativewifiengine_win_p.h \
-                           qioctlwifiengine_win_p.h
+        !wince*:HEADERS += qnativewifiengine_win_p.h
 
         SOURCES += qnlaengine_win.cpp
 
-        !wince*:SOURCES += qnativewifiengine_win.cpp \
-                           qioctlwifiengine_win.cpp
+        !wince*:SOURCES += qnativewifiengine_win.cpp
 
         !wince*:LIBS += -lWs2_32
         wince*:LIBS += -lWs2
