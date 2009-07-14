@@ -373,7 +373,6 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
         case QContactManagerInfo::MutableDefinitions:
         case QContactManagerInfo::Synchronous:
             return true;
-
         default:
             return false;
     }
