@@ -444,7 +444,8 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
             return QString();
         }
 
-        foreach (const QContactOrganisation& org, allOrgs) {
+        for (int i=0; i < allOrgs.size(); i++) {
+            const QContactOrganisation& org = allOrgs.at(i);
             if (!org.displayLabel().isEmpty()) {
                 return org.displayLabel();
             }
@@ -457,7 +458,9 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
     const QLatin1String space(" ");
 
     // synthesise the display label from the name.
-    foreach (const QContactName& name, allNames) {
+    for (int i=0; i < allNames.size(); i++) {
+        const QContactName& name = allNames.at(i);
+
         QString result;
         if (!name.value(QLatin1String(QContactName::FieldPrefix)).trimmed().isEmpty()) {
            result += name.value(QLatin1String(QContactName::FieldPrefix));

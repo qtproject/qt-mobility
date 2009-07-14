@@ -1118,6 +1118,24 @@ void tst_QContactManager::memoryManager()
     QCOMPARE(m3.contacts().count(), 0);
     QCOMPARE(m4.contacts().count(), 0);
     QCOMPARE(m5.contacts().count(), 0);
+
+
+    /* Test the default name synthesis code */
+    QContact empty;
+    QContact synth;
+    QContactName name;
+
+    QVERIFY(m1.synthesiseDisplayLabel(empty).isEmpty());
+    QVERIFY(m1.error() == QContactManager::UnspecifiedError);
+
+    QVERIFY(empty.saveDetail(&name));
+    QVERIFY(m1.synthesiseDisplayLabel(empty).isEmpty());
+    QVERIFY(m1.error() == QContactManager::UnspecifiedError);
+
+    name.setFirst("First");
+
+
+
 }
 
 void tst_QContactManager::contactValidation()
@@ -1599,7 +1617,6 @@ void tst_QContactManager::displayName()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-
     /*
      * Very similar to the tst_QContact functions, except we test
      * saving and retrieving contacts updates the display label
@@ -1650,6 +1667,8 @@ void tst_QContactManager::displayName()
 
     /* And delete the contact */
     QVERIFY(cm->removeContact(d.id()));
+
+    delete cm;
 }
 
 
