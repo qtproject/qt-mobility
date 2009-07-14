@@ -918,7 +918,7 @@ QNetworkConfiguration::StateFlags QNmWifiEngine::getStateForId(const QString &id
         }
     }
 
-    return QNetworkConfiguration::Discovered; //not active, but we know this connection so just fake it
+    return QNetworkConfiguration::Defined; //not active, but we know this connection so just fake it
 }
 
 bool QNmWifiEngine::isAddressOfConnection(const QString &id, quint32 ipaddress)
