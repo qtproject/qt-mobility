@@ -142,7 +142,9 @@ QNativeWifiEngine::QNativeWifiEngine(QObject *parent)
 
     DWORD result = local_WlanOpenHandle(1, 0, &clientVersion, &handle);
     if (result != ERROR_SUCCESS) {
-        qWarning("%s: WlanOpenHandle failed with error %d\n", __FUNCTION__, result);
+        if (result != ERROR_SERVICE_NOT_ACTIVE)
+            qWarning("%s: WlanOpenHandle failed with error %d\n", __FUNCTION__, result);
+
         return;
     }
 
@@ -475,4 +477,3 @@ QNativeWifiEngine *QNativeWifiEngine::instance()
 }
 
 QT_END_NAMESPACE
-
