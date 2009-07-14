@@ -14,6 +14,16 @@ QString QContactAbstractAction::actionName() const
     return d->m_actionName;
 }
 
+QString QContactAbstractAction::vendor() const
+{
+    return d->m_vendor;
+}
+
+int QContactAbstractAction::implementationVersion() const
+{
+    return d->m_implementationVersion;
+}
+
 QVariantMap QContactAbstractAction::metadata() const
 {
     return d->m_metadata;

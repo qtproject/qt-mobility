@@ -46,15 +46,30 @@
 //
 
 #include "qcontactabstractaction.h"
+#include "qcontactabstractactionfactory.h"
 
 #include <QSharedData>
 #include <QString>
 #include <QVariantMap>
 
-class Q_DECL_EXPORT QContactSendEmailAction : public QContactAbstractAction
+class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactAbstractActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactAbstractAction)
+    Q_INTERFACES(QContactAbstractActionFactory)
+
+public:
+    QContactSendEmailActionFactory();
+    ~QContactSendEmailActionFactory();
+
+    QString name();
+    QStringList actionNames();
+    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+};
+
+class QContactSendEmailAction : public QContactAbstractAction
+{
+    Q_OBJECT
 
 public:
     QContactSendEmailAction();
@@ -62,6 +77,9 @@ public:
 
     QString actionName() const;
     QVariantMap metadata() const;
+    virtual QString vendor() const;
+    virtual int implementationVersion() const;
+
     QContactActionFilter contactFilter() const;
     bool supportsDetail(const QContactDetail& detail) const;
     QList<QContactDetail> supportedDetails(const QContact& contact) const;

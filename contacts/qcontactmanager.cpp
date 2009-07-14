@@ -39,6 +39,7 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 
+#include "qcontactabstractaction.h"
 #include "qcontactmanagerinfo.h"
 
 #include <QSharedData>
@@ -95,7 +96,48 @@ QStringList QContactManager::availableManagers()
     return ret;
 }
 
+/*!
+ * Returns a list of identifiers of the available actions which are provided by the given \a vendor and of the given \a implementationVersion.
+ * If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
+ * any actions from the given \a vendor (regardless of implementation version) are returned.
+ */
+QStringList availableActions(const QString& vendor, int implementationVersion)
+{
+    // SLOW naive implementation...
+    QStringList ret;
+    QList<QContactAbstractAction*> actionImpls = QContactManagerData::actions(QString(), vendor, implementationVersion);
+    for (int i = 0; i < actionImpls.size(); i++) {
+        QContactAbstractAction* actionImpl = actionImpls.at(i);
+        QString currAction = actionImpl->actionName();
+        if (!ret.contains(currAction)) {
+            ret.append(currAction);
+        }
 
+        // we took ownership; clean up.
+        // TODO: fix this.  currently, we don't take ownership, so don't delete.
+        //delete actionImpl;
+    }
+
+    return ret;
+}
+
+/*!
+ * Returns a list of QContactAbstractAction instances which implement the given \a actionName and is provided by the
+ * given \a vendor and is of the given \a implementationVersion.  If \a actionName is empty,
+ * implementations of all actions are returned; if \a vendor is empty, implementations provided by any vendor and
+ * of any implementation version are returned; if \a implementationVersion is empty, any implementations provided by the
+ * given \a vendor of the given \a actionName are returned.
+ *
+ * The caller DOES NOT take ownership of each instance returned in the list, and MUST NOT delete them when finished using them
+ * to avoid leaking memory as this will result in undefined behaviour.
+ *
+ * TODO: fix this.
+ */
+QList<QContactAbstractAction*> actions(const QString& actionName, const QString& vendor, int implementationVersion)
+{
+    // the caller takes ownership
+    return QContactManagerData::actions(actionName, vendor, implementationVersion);
+}
 
 
 /*! Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false */

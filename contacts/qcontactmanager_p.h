@@ -186,8 +186,8 @@ public:
     static void loadFactories();
 
     /* Action Implementations */
-    static QMultiMap<QString, QContactAbstractAction*> m_actionImplementations;
-    static QList<QContactAbstractAction*> actionImplementations(const QString& actionName = QString());
+    static QMultiMap<QString, QContactAbstractAction*> m_actionImplementations; // map of actionName to implementation.
+    static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
 private:
     Q_DISABLE_COPY(QContactManagerData);

@@ -45,6 +45,7 @@
 #include "qcontactsortorder.h"
 
 #include "qcontactabstractaction.h"
+#include "qcontactabstractactionfactory.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -118,7 +119,7 @@ void QContactManagerData::loadFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
-            QContactAbstractAction *g = qobject_cast<QContactAbstractAction*>(staticPlugins.at(i));
+            QContactAbstractActionFactory *g = qobject_cast<QContactAbstractActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Static: found an engine plugin" << f << "with name" << name;
@@ -132,9 +133,23 @@ void QContactManagerData::loadFactories()
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
                 }
             } else if (g) {
-                QString name = g->actionName();
-                qDebug() << "Static: found an action implementation" << g << "with name" << name;
-                m_actionImplementations.insert(name, g);
+                QString name = g->name();
+                qDebug() << "Static: found an action factory" << g << "with name" << name;
+
+                // option one: we own the action implementations; clients DO NOT delete them...
+                QList<QContactAbstractAction*> impls = g->instances();
+                for (int j = 0; j < impls.size(); j++) {
+                    QContactAbstractAction* impl = impls.at(j);
+                    m_actionImplementations.insert(impl->actionName(), impl);
+                }
+
+                // option two: we own the factory instances; clients own the action implementation instances!
+                // m_actionFactories.append(g);
+                // ... then in our "::actions(..)" functions:
+                // foreach (const QContactAbstactActionFactory* f, m_actionFactories) {
+                //     retn += f.instances();
+                // }
+
             } else {
                 qDebug() << "Static: plugin found is of unknown type!";
             }
@@ -179,7 +194,7 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < plugins.count(); i++) {
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
-            QContactAbstractAction *g = qobject_cast<QContactAbstractAction*>(qpl.instance());
+            QContactAbstractActionFactory *g = qobject_cast<QContactAbstractActionFactory*>(qpl.instance());
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
@@ -194,9 +209,22 @@ void QContactManagerData::loadFactories()
                     qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
                 }
             } else if (g) {
-                QString name = g->actionName();
-                qDebug() << "Dynamic: found an action implementation" << g << "with name" << name;
-                m_actionImplementations.insert(name, g);
+                QString name = g->name();
+                qDebug() << "Dynamic: found an action factory" << g << "with name" << name;
+
+                // option one: we own the action implementations; clients DO NOT delete them...
+                QList<QContactAbstractAction*> impls = g->instances();
+                for (int j = 0; j < impls.size(); j++) {
+                    QContactAbstractAction* impl = impls.at(j);
+                    m_actionImplementations.insert(impl->actionName(), impl);
+                }
+
+                // option two: we own the factory instances; clients own the action implementation instances!
+                // m_actionFactories.append(g);
+                // ... then in our "::actions(..)" functions:
+                // foreach (const QContactAbstactActionFactory* f, m_actionFactories) {
+                //     retn += f.instances();
+                // }
             } else {
                 qDebug() << "Dynamic: plugin found is of unknown type!";
                 qDebug() << "    qpl.instance() =" << qpl.instance();
@@ -208,14 +236,32 @@ void QContactManagerData::loadFactories()
     }
 }
 
-QList<QContactAbstractAction*> QContactManagerData::actionImplementations(const QString& actionName)
+QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
+    QList<QContactAbstractAction*> all;
+    QList<QContactAbstractAction*> retn;
     if (actionName.isEmpty()) {
-        // return the entire list of implementations.
-        return m_actionImplementations.values();
+        // return the entire list of implementations (which are from the given vendor and of the given impl. version)
+        all = m_actionImplementations.values();
+    } else {
+        // just get the list of actions of the specified name, then sort by vendor and impl. version.
+        all = m_actionImplementations.values(actionName);
     }
 
-    return m_actionImplementations.values(actionName);
+    // no vendor given, :. implVersion is meaningless; return all.
+    if (vendor.isEmpty()) {
+        return all;
+    }
+
+    // filter by vendor and (if supplied) impl. version.
+    foreach (QContactAbstractAction* impl, all) {
+        if (impl->vendor() == vendor && (implementationVersion == -1
+                || implementationVersion == impl->implementationVersion())) {
+            retn.append(impl);
+        }
+    }
+
+    return retn;
 }
 
 

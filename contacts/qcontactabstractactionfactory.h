@@ -32,54 +32,33 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTABSTRACTACTION_P_H
-#define QCONTACTABSTRACTACTION_P_H
+#ifndef QCONTACTABSTRACTACTIONFACTORY_H
+#define QCONTACTABSTRACTACTIONFACTORY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qtcontactsglobal.h"
 
-#include "qcontactfilter.h"
-
-#include <QVariantMap>
-#include <QString>
+#include <QtPlugin>
 #include <QSharedData>
+#include <QString>
+#include <QList>
+#include <QStringList>
 
-class QContactAbstractActionData : public QSharedData
+class QContactAbstractAction;
+class QContactAbstractActionFactoryData;
+class QTCONTACTS_EXPORT QContactAbstractActionFactory : public QObject
 {
+    Q_OBJECT
+
 public:
-    QContactAbstractActionData()
-            : QSharedData()
-            , m_implementationVersion(-1)
-    {
-    }
+    QContactAbstractActionFactory();
+    virtual ~QContactAbstractActionFactory();
 
-    ~QContactAbstractActionData()
-    {
-    }
-
-    QContactAbstractActionData(const QContactAbstractActionData& other)
-            : QSharedData()
-            , m_metadata(other.m_metadata)
-            , m_actionName(other.m_actionName)
-            , m_vendor(other.m_vendor)
-            , m_implementationVersion(other.m_implementationVersion)
-            , m_filter(other.m_filter)
-    {
-    }
-
-    QVariantMap m_metadata;
-    QString m_actionName;
-    QString m_vendor;
-    int m_implementationVersion;
-    QContactActionFilter m_filter;
+    virtual QString name() = 0;
+    virtual QStringList actionNames();
+    virtual QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    virtual QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 };
+#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.abstractactionfactory/1.0"
+Q_DECLARE_INTERFACE(QContactAbstractActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
 
 #endif

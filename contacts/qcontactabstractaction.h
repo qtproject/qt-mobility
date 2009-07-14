@@ -42,8 +42,6 @@
 #include "qcontact.h"
 
 #include <QSharedData>
-#include <QtPlugin>
-
 
 class QContactAbstractActionData;
 class QTCONTACTS_EXPORT QContactAbstractAction : public QObject
@@ -56,6 +54,9 @@ public:
 
     virtual QString actionName() const;                                 // name of action this instance implements
     virtual QVariantMap metadata() const;                               // label, icon etc
+    virtual QString vendor() const;                                     // vendor identification string
+    virtual int implementationVersion() const;                          // (minor) implementation version
+
     virtual QContactActionFilter contactFilter() const;                 // use for matching
     virtual bool supportsDetail(const QContactDetail& detail) const;    // whether this implementation supports the given detail
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
@@ -64,7 +65,5 @@ public:
 private:
     QSharedDataPointer<QContactAbstractActionData> d;
 };
-#define QT_CONTACTS_ACTION_INTERFACE "com.nokia.qt.mobility.contacts.abstractaction/1.0"
-Q_DECLARE_INTERFACE(QContactAbstractAction, QT_CONTACTS_ACTION_INTERFACE);
 
 #endif

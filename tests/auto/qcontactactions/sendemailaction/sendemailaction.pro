@@ -6,13 +6,13 @@
 
 TEMPLATE = lib
 CONFIG += plugin testcase
-TARGET = $$qtLibraryTarget(contacts_sendemailaction)
+TARGET = $$qtLibraryTarget(contacts_sendemailactionfactory)
 
 PLUGIN_SUBDIR=dummyplugin/plugins
 include(../../../../common.pri)
 
-DEFINES += ACTIONPLUGINTARGET=contacts_sendemailaction
-DEFINES += ACTIONPLUGINNAME=\\\"SendEmail\\\"
+DEFINES += ACTIONFACTORYPLUGINTARGET=contacts_sendemailactionfactory
+DEFINES += ACTIONFACTORYPLUGINNAME=\\\"SendEmailActionFactory\\\"
 
 INCLUDEPATH += ../../../../contacts
 

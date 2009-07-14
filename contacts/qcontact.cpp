@@ -362,7 +362,7 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName)
     // ascertain which details are supported by any implementation of the given action
     QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
-    QList<QContactAbstractAction*> implementations = QContactManagerData::actionImplementations(actionName);
+    QList<QContactAbstractAction*> implementations = QContactManagerData::actions(actionName);
     foreach (const QContactDetail& detail, d->m_details) {
         foreach (QContactAbstractAction* aptr, implementations) {
             if (aptr->supportsDetail(detail)) {
@@ -384,7 +384,7 @@ QStringList QContact::availableActions() const
     // check every action implementation to see if it supports me.
     QContactData::setError(d, QContact::NoError);
     QMap<QString, bool> supportMap;
-    QList<QContactAbstractAction*> implementations = QContactManagerData::actionImplementations();
+    QList<QContactAbstractAction*> implementations = QContactManagerData::actions();
     foreach (QContactAbstractAction* aptr, implementations) {
         QContact self = *this;
         if (!(aptr->supportedDetails(self).isEmpty()))

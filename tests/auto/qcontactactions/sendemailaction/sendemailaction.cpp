@@ -31,11 +31,11 @@
 **
 ****************************************************************************/
 
-#ifndef ACTIONPLUGINTARGET
-#define ACTIONPLUGINTARGET contacts_sendemailaction
+#ifndef ACTIONFACTORYPLUGINTARGET
+#define ACTIONFACTORYPLUGINTARGET contacts_sendemailactionfactory
 #endif
-#ifndef ACTIONPLUGINNAME
-#define ACTIONPLUGINNAME "SendEmail"
+#ifndef ACTIONFACTORYPLUGINNAME
+#define ACTIONFACTORYPLUGINNAME "SendEmailActionFactory"
 #endif
 
 #include "sendemailaction_p.h"
@@ -44,6 +44,69 @@
 #include "qcontactfilter.h"
 
 #include <QMessageBox>
+
+QContactSendEmailActionFactory::QContactSendEmailActionFactory()
+{
+}
+
+QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
+{
+}
+
+QString QContactSendEmailActionFactory::name()
+{
+    return QString(ACTIONFACTORYPLUGINNAME);
+}
+Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
+
+QStringList QContactSendEmailActionFactory::actionNames()
+{
+    return (QStringList() << "SendEmail");
+}
+
+QContactAbstractAction* QContactSendEmailActionFactory::instance(const QString& actionName, const QString& vendor, int implementationVersion)
+{
+    QContactSendEmailAction *sea = new QContactSendEmailAction;
+    if (!actionName.isEmpty() && actionName != "SendEmail") {
+        delete sea;
+        return 0;
+    }
+
+    if (!vendor.isEmpty() && vendor != sea->vendor()) {
+        delete sea;
+        return 0;
+    }
+
+    if (implementationVersion != -1 && implementationVersion != sea->implementationVersion()) {
+        delete sea;
+        return 0;
+    }
+
+    return sea;
+}
+
+QList<QContactAbstractAction*> QContactSendEmailActionFactory::instances(const QString& actionName, const QString& vendor, int implementationVersion)
+{
+    QContactSendEmailAction *sea = new QContactSendEmailAction;
+    if (!actionName.isEmpty() && actionName != "SendEmail") {
+        delete sea;
+        return QList<QContactAbstractAction*>();
+    }
+
+    if (!vendor.isEmpty() && vendor != sea->vendor()) {
+        delete sea;
+        return QList<QContactAbstractAction*>();
+    }
+
+    if (implementationVersion != -1 && implementationVersion != sea->implementationVersion()) {
+        delete sea;
+        return QList<QContactAbstractAction*>();
+    }
+
+    QList<QContactAbstractAction*> retn;
+    retn.append(sea);
+    return retn;
+}
 
 QContactSendEmailAction::QContactSendEmailAction() : QContactAbstractAction()
 {
@@ -55,13 +118,22 @@ QContactSendEmailAction::~QContactSendEmailAction()
 
 QString QContactSendEmailAction::actionName() const
 {
-    return QString(ACTIONPLUGINNAME);
+    return QString("SendEmail");
 }
-Q_EXPORT_PLUGIN2(ACTIONPLUGINTARGET, QContactSendEmailAction);
 
 QVariantMap QContactSendEmailAction::metadata() const
 {
     return QVariantMap();
+}
+
+QString QContactSendEmailAction::vendor() const
+{
+    return QString("Test");
+}
+
+int QContactSendEmailAction::implementationVersion() const
+{
+    return 1;
 }
 
 QContactActionFilter QContactSendEmailAction::contactFilter() const

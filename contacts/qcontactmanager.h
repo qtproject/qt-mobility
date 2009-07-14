@@ -52,6 +52,7 @@
 #include "qcontactsortorder.h"
 
 class QContactFilter;
+class QContactAbstractAction;
 
 class QContactManagerData;
 class QTCONTACTS_EXPORT QContactManager : public QObject
@@ -130,6 +131,10 @@ public:
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
+
+    /* return a list of actions which are available */
+    static QStringList availableActions(const QString& vendor = QString(), int implementationVersion = -1);
+    static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
 signals:
     void contactsAdded(const QList<QUniqueId>& contactIds);
