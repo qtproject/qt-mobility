@@ -73,6 +73,12 @@
 */
 
 /*!
+    \fn QMessageFolderId::~QMessageFolderId()
+    
+    Destroys the identifier.
+*/
+
+/*!
     \fn bool QMessageFolderId::operator==(const QMessageFolderId &other) const
 
     Returns true if this identifier and the \a other identifier are identical;

@@ -82,6 +82,12 @@
 */
 
 /*!
+    \fn QMessageContentContainerId::~QMessageContentContainerId()
+    
+    Destroys the identifier.
+*/
+
+/*!
     \fn bool QMessageContentContainerId::operator==(const QMessageContentContainerId &other) const
 
     Returns true if this identifier and the \a other identifier are identical;
