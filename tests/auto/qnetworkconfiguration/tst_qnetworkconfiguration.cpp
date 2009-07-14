@@ -147,13 +147,24 @@ void tst_QNetworkConfiguration::roamingAvailable()
     QNetworkConfigurationManager manager;
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
     
+    //force update to get maximum list
+    QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
+    manager.updateConfigurations(); //initiate scans
+    QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
+    
     foreach(QNetworkConfiguration c, configs)
     {
+        QVERIFY(QNetworkConfiguration::UserChoice != c.type());
+        QVERIFY(QNetworkConfiguration::Invalid != c.type());
         if ( c.type() == QNetworkConfiguration::ServiceNetwork ) {
             //cannot test flag as some SNAPs may not support roaming anyway
             //QVERIFY(c.roamingavailable())
             if ( c.children().count() <= 1 )
                 QVERIFY(!c.roamingAvailable());
+            foreach(QNetworkConfiguration child, c.children()) {
+                QVERIFY(QNetworkConfiguration::InternetAccessPoint == child.type());
+                QCOMPARE(child.children().count(), 0);
+            }
         } else {
             QVERIFY(!c.roamingAvailable());
         }
