@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactAvatar : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
 
-    static const char DefinitionId[]; // == staticType() == "Avatar"
+    static const char DefinitionName[]; // == staticType() == "Avatar"
 
     static const char FieldAvatar[];
 

@@ -9,8 +9,9 @@ TARGET =
 
 CONFIG += ordered
 
-SUBDIRS += qcontactdetail\
-            qcontact\
+SUBDIRS +=  qcontact\
+            qcontactactions\
+            qcontactdetail\
             qcontactdetaildefinition\
             qcontactdetails\
             qcontactfilter\

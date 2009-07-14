@@ -370,7 +370,7 @@ QContactActionFilter::QContactActionFilter()
 {
 }
 
-void QContactActionFilter::setActionId(const QString& action)
+void QContactActionFilter::setActionName(const QString& action)
 {
     Q_D(QContactActionFilter);
     d->m_action = action;
@@ -381,7 +381,7 @@ void QContactActionFilter::setValue(const QVariant& value)
     d->m_value = value;
 }
 
-QString QContactActionFilter::actionId() const
+QString QContactActionFilter::actionName() const
 {
     Q_D(const QContactActionFilter);
     return d->m_action;

@@ -247,8 +247,8 @@ void PhoneBook::populateList(const QContact& currentContact)
         for (int i = 0; i < sorted.size(); i++) {
             // first, retrieve the display labels from each contact
             QContact sortedContact = sorted.at(i);
-            QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionId);
-            QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionId);
+            QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionName);
+            QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionName);
 
             // if none set, ask the backend to synthesise them for us.
             if (cdl.isEmpty())
@@ -339,10 +339,10 @@ void PhoneBook::displayContact()
 
 
     // display the email address
-    emailLine->setText(c.detail(QContactEmailAddress::DefinitionId).value(QContactEmailAddress::FieldEmailAddress));
+    emailLine->setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
 
     // display the phone numbers
-    QList<QContactDetail> phns = c.details(QContactPhoneNumber::DefinitionId);
+    QList<QContactDetail> phns = c.details(QContactPhoneNumber::DefinitionName);
     bool foundHomePhone = false;
     bool foundWorkPhone = false;
     bool foundMobilePhone = false;
@@ -368,10 +368,10 @@ void PhoneBook::displayContact()
         mobilePhoneLine->setText("");
 
     // display the address
-    addressText->setText((QContactAddress(c.detail(QContactAddress::DefinitionId))).displayLabel());
+    addressText->setText((QContactAddress(c.detail(QContactAddress::DefinitionName))).displayLabel());
 
     // and build the avatar filename and display it if it exists.
-    QString avatarFile = c.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar);
+    QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);
     if (avatarFile.isNull() || avatarFile.isEmpty()) {
         avatarButton->setIcon(QIcon());
         avatarButton->setText("No image selected");
@@ -404,7 +404,7 @@ void PhoneBook::selectAvatar()
     QString selected = QFileDialog::getOpenFileName(this, "Select avatar image file", ".");
     if (!selected.isNull()) {
         QContact curr = contacts.at(currentIndex);
-        QContactAvatar av = curr.detail(QContactAvatar::DefinitionId);
+        QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
         av.setAvatar(selected);
         curr.saveDetail(&av);
         contacts.replace(currentIndex, curr);
@@ -426,7 +426,7 @@ void PhoneBook::saveContact()
 {
     QContact c = buildContact();
     c.setId(contacts.at(currentIndex).id());
-    QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionId);
+    QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionName);
     c.saveDetail(&av);
     if (!cm->saveContact(&c)) {
         QString errorCode = "Unable to save the contact in the database; error code:" + QString::number(cm->error());
@@ -438,7 +438,7 @@ void PhoneBook::saveContact()
 void PhoneBook::removeContact()
 {
     QContact current = contacts.at(currentIndex);
-    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(current));
     QString contactName = cdl.label();
@@ -484,7 +484,7 @@ void PhoneBook::findContact()
         // XXX TODO: use QContactManager::contactsWithDetail
         for (int i = 0; i < contacts.size(); i++) {
             QContact current = contacts.at(i);
-            QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+            QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
             if (cdl.isEmpty())
                 cdl.setLabel(cm->synthesiseDisplayLabel(current));
             if (cdl.label() == contactName) {
@@ -561,7 +561,7 @@ void PhoneBook::exportAsVCard()
 
     QFile file(newName);
     QContact current = contacts.at(currentIndex);
-    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+    QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(current));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

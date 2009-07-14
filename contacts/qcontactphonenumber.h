@@ -48,7 +48,7 @@ class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
 
-    static const char DefinitionId[]; // == staticType() == "PhoneNumber"
+    static const char DefinitionName[]; // == staticType() == "PhoneNumber"
 
     static const char FieldNumber[];
 

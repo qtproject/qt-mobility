@@ -1,7 +1,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactsortorder_p.h"
 
-QContactSortOrder::QContactSortOrder() : d(new QContactSortOrderPrivate())
+QContactSortOrder::QContactSortOrder() : d(new QContactSortOrderPrivate)
 {
 }
 

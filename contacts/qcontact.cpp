@@ -35,6 +35,8 @@
 #include "qcontact.h"
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
+#include "qcontactmanager_p.h"
+#include "qcontactabstractaction.h"
 
 /*!
  * \class QContact
@@ -323,9 +325,14 @@ bool QContact::removeDetail(QContactDetail* detail)
         return true;
     }
 
-    // TODO: remove preference if exists - relies on QSFW code.
+    // remove any preferences we may have stored for the detail.
+    foreach (const QString& prefKey, d->m_preferences.keys()) {
+        if (d->m_preferences.value(prefKey) == detail->d->m_id) {
+            d->m_preferences.remove(prefKey);
+        }
+    }
 
-
+    // then remove the detail.
     d->m_details.removeOne(*detail);
     detail->d->m_id = 0;
     QContactData::setError(d, QContact::NoError);
@@ -352,45 +359,126 @@ QContactDetail QContact::detailWithAction(const QString& actionName) const
 /*! Retrieve any details for which the given \a actionName is available */
 QList<QContactDetail> QContact::detailsWithAction(const QString& actionName)
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionName);
-    QContactData::setError(d, QContact::DetailDoesNotExistError);
-    return QList<QContactDetail>();
+    // ascertain which details are supported by any implementation of the given action
+    QContactData::setError(d, QContact::NoError);
+    QList<QContactDetail> retn;
+    QList<QContactAbstractAction*> implementations = QContactManagerData::actionImplementations(actionName);
+    foreach (const QContactDetail& detail, d->m_details) {
+        foreach (QContactAbstractAction* aptr, implementations) {
+            if (aptr->supportsDetail(detail)) {
+                retn.append(detail);
+                break;
+            }
+        }
+    }
+
+    if (retn.isEmpty())
+        QContactData::setError(d, QContact::DetailDoesNotExistError);
+
+    return retn;
 }
 
 /*! Return a list of actions available to be performed on this contact */
 QStringList QContact::availableActions() const
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    QContactData::setError(d, QContact::UnspecifiedError);
-    return QStringList();
+    // check every action implementation to see if it supports me.
+    QContactData::setError(d, QContact::NoError);
+    QMap<QString, bool> supportMap;
+    QList<QContactAbstractAction*> implementations = QContactManagerData::actionImplementations();
+    foreach (QContactAbstractAction* aptr, implementations) {
+        QContact self = *this;
+        if (!(aptr->supportedDetails(self).isEmpty()))
+            supportMap.insert(aptr->actionName(), true);
+
+        // alternative - requires access to an engine
+        //if (QContactManagerEngine::testFilter(aptr->contactFilter(), self))
+        //    supportMap.insert(aptr->actionName(), true);
+    }
+
+    // for each action name, if it is supported, add it to the return list.
+    QStringList retn;
+    QStringList keys = supportMap.keys();
+    foreach (const QString& key, keys) {
+        if (supportMap.value(key, false)) {
+            retn.append(key);
+        }
+    }
+
+    return retn;
 }
 
 /*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
 bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionName);
-    Q_UNUSED(preferredDetail);
-    QContactData::setError(d, QContact::UnspecifiedError);
-    return false;
+    // if the given action name is empty, bad argument.
+    if (actionName.isEmpty()) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return false;
+    }
+
+    // check to see whether the the given preferredDetail is saved in this contact
+    bool detailExists = false;
+    foreach (const QContactDetail& det, d->m_details) {
+        if (det == preferredDetail) {
+            detailExists = true;
+            break;
+        }
+    }
+
+    // if not, return error.
+    if (!detailExists) {
+        QContactData::setError(d, QContact::DetailDoesNotExistError);
+        return false;
+    }
+
+    // otherwise, save the preference.
+    d->m_preferences.insert(actionName, preferredDetail.d->m_id);
+    QContactData::setError(d, QContact::NoError);
+    return true;
 }
 
 /*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
 bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(detail);
-    Q_UNUSED(actionName);
-    QContactData::setError(d, QContact::UnspecifiedError);
+    QContactData::setError(d, QContact::NoError);
+    if (actionName.isEmpty()) {
+        if (d->m_preferences.values().contains(detail.d->m_id)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    if (d->m_preferences.value(actionName) == detail.d->m_id)
+        return true;
+
+
     return false;
 }
 
 /*! Returns the preferred detail for a given \a actionName */
 QContactDetail QContact::preferredDetail(const QString& actionName) const
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionName);
+    // if the given action name is empty, bad argument.
+    if (actionName.isEmpty()) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return QContactDetail();
+    }
+
+    if (!d->m_preferences.contains(actionName)) {
+        QContactData::setError(d, QContact::DetailDoesNotExistError);
+        return QContactDetail();
+    }
+
+    QContactData::setError(d, QContact::NoError);
+    quint32 detId = d->m_preferences.value(actionName);
+    foreach (const QContactDetail& det, d->m_details) {
+        if (det.d->m_id == detId) {
+            return det;
+        }
+    }
+
+    // some strange error occurred...
     QContactData::setError(d, QContact::UnspecifiedError);
     return QContactDetail();
 }

@@ -88,7 +88,7 @@ void addContact(QContactManager* cm)
     number.setAttribute("SubType", "Mobile");
     number.setNumber("12345678");
     alice.saveDetail(&number);
-    alice.setPreferredDetail("DialActionId", number);
+    alice.setPreferredDetail("DialAction", number);
 
     /* Add a second phone number */
     QContactPhoneNumber number2;
@@ -134,7 +134,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
         QContact match = cm->contact(matchingContacts.at(0));
-        QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm->synthesiseDisplayLabel(match));
         qDebug() << "Incoming call from"
@@ -149,7 +149,7 @@ void viewSpecificDetail(QContactManager* cm)
 {
     QList<QUniqueId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(a));
     qDebug() << "The first phone number of" << cdl.label()
@@ -162,7 +162,7 @@ void viewDetails(QContactManager* cm)
 {
     QList<QUniqueId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(a));
     qDebug() << "Viewing the details of" << cdl.label();
@@ -187,7 +187,7 @@ void addPlugin(QContactManager* cm)
 {
     /* Find the definition that we are modifying */
     QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
-    QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionId);
+    QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
     /* Make our modifications: we add a "Label" field to email addresses */
     QContactDetailDefinition::Field newField;
@@ -211,7 +211,7 @@ void editView(QContactManager* cm)
 {
     QList<QUniqueId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(a));
     qDebug() << "Modifying the details of" << cdl.label();
@@ -245,7 +245,7 @@ void loadManager()
     QList<QUniqueId> contactIds = cm->contacts();
     if (!contactIds.isEmpty()) {
         QContact a = cm->contact(contactIds.first());
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm->synthesiseDisplayLabel(a));
         qDebug() << "This manager contains" << cdl.label();

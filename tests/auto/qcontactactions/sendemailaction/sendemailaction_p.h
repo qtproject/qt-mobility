@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtMobility module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,23 +25,14 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTSORTORDER_P_H
-#define QCONTACTSORTORDER_P_H
+#ifndef QCONTACTSENDEMAILACTION_P_H
+#define QCONTACTSENDEMAILACTION_P_H
 
 //
 //  W A R N I N G
@@ -54,30 +45,27 @@
 // We mean it.
 //
 
-#include "qcontactsortorder.h"
+#include "qcontactabstractaction.h"
 
 #include <QSharedData>
+#include <QString>
+#include <QVariantMap>
 
-class QContactSortOrderPrivate : public QSharedData
+class Q_DECL_EXPORT QContactSendEmailAction : public QContactAbstractAction
 {
+    Q_OBJECT
+    Q_INTERFACES(QContactAbstractAction)
+
 public:
-    QContactSortOrderPrivate()
-            : QSharedData()
-            , m_type(QContactSortOrder::Unsorted)
-            , m_blankPolicy(QContactSortOrder::BlanksFirst)
-            , m_direction(Qt::AscendingOrder)
-    {
-    }
+    QContactSendEmailAction();
+    ~QContactSendEmailAction();
 
-    ~QContactSortOrderPrivate()
-    {
-    }
-
-    QContactSortOrder::Type m_type;
-    QContactSortOrder::BlankPolicy m_blankPolicy;
-    Qt::SortOrder m_direction;
-    QString m_definitionId;
-    QString m_fieldId;
+    QString actionName() const;
+    QVariantMap metadata() const;
+    QContactActionFilter contactFilter() const;
+    bool supportsDetail(const QContactDetail& detail) const;
+    QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
 };
 
 #endif

@@ -63,6 +63,7 @@
 
 #include <QDebug>
 
+class QContactAbstractAction;
 class QContactFilter;
 class QContactSortOrder;
 
@@ -183,6 +184,10 @@ public:
     static QMap<QString, QContactManagerEngineFactory*> m_engines;
     static bool m_discovered;
     static void loadFactories();
+
+    /* Action Implementations */
+    static QMultiMap<QString, QContactAbstractAction*> m_actionImplementations;
+    static QList<QContactAbstractAction*> actionImplementations(const QString& actionName = QString());
 
 private:
     Q_DISABLE_COPY(QContactManagerData);

@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
 
-    static const char DefinitionId[]; // == staticType() == "Organisation"
+    static const char DefinitionName[]; // == staticType() == "Organisation"
 
     static const char FieldDisplayLabel[];
     static const char FieldLogo[];

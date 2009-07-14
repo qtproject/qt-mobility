@@ -279,12 +279,22 @@ void tst_QContact::details()
 
 void tst_QContact::actions()
 {
-    
+    // set the correct path to look for plugins
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
+    QApplication::addLibraryPath(path);
+
+    QContactManager cm; // load the available action plugins.
+    QContact c;
+    QContactEmailAddress e;
+    e.setEmailAddress("test@nokia.com");
+    c.saveDetail(&e);
+
+    QStringList availableActions = c.availableActions();
+    QVERIFY(availableActions.contains("SendEmail"));
 }
 
 void tst_QContact::preferences()
 {
-#if 0 // information() under test not implemented yet (requires QSFW)
     QContact c;
 
     // test first set
@@ -310,8 +320,7 @@ void tst_QContact::preferences()
     QContactDetail det3("TestId");
     det3.setValue("test", QVariant("test3"));
     QCOMPARE(c.setPreferredDetail("nonexistentAction", det3), false);
-    QCOMPARE(c.preferredDetail("nonexistentAction", det2); // shouldn't have changed.
-#endif
+    QCOMPARE(c.preferredDetail("nonexistentAction"), det2); // shouldn't have changed.
 }
 
 void tst_QContact::displayName()

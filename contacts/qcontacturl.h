@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactUrl : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
 
-    static const char DefinitionId[]; // == staticType() == "Url"
+    static const char DefinitionName[]; // == staticType() == "Url"
 
     static const char FieldUrl[];
 

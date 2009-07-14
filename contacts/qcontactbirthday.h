@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactBirthday : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
 
-    static const char DefinitionId[]; // == staticType() == "Birthday"
+    static const char DefinitionName[]; // == staticType() == "Birthday"
 
     static const char FieldBirthday[];
 

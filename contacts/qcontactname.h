@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactName : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
 
-    static const char DefinitionId[]; // == staticType() == "Name"
+    static const char DefinitionName[]; // == staticType() == "Name"
 
     static const char FieldPrefix[];
     static const char FieldFirst[];

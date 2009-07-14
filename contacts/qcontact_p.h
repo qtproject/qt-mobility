@@ -69,6 +69,7 @@ public:
         m_error(other.m_error),
         m_id(other.m_id),
         m_details(other.m_details),
+        m_preferences(other.m_preferences),
         m_nextDetailId(other.m_nextDetailId)
     {
     }
@@ -88,6 +89,7 @@ public:
     QContact::Error m_error;
     QUniqueId m_id;
     QList<QContactDetail> m_details;
+    QMap<QString, quint32> m_preferences;
     quint32 m_nextDetailId;
 };
 

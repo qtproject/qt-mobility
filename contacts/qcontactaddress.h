@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
 
-    static const char DefinitionId[]; // == staticType() == "StreetAddress"
+    static const char DefinitionName[]; // == staticType() == "StreetAddress"
 
     static const char FieldDisplayLabel[];
     static const char FieldStreet[];

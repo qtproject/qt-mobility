@@ -32,28 +32,39 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTSYNCTARGET_H
-#define QCONTACTSYNCTARGET_H
-
-#include <QString>
+#ifndef QCONTACTABSTRACTACTION_H
+#define QCONTACTABSTRACTACTION_H
 
 #include "qtcontactsglobal.h"
+
+#include "qcontactfilter.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
-/* Leaf class */
-class QTCONTACTS_EXPORT QContactSyncTarget : public QContactDetail
+#include <QSharedData>
+#include <QtPlugin>
+
+
+class QContactAbstractActionData;
+class QTCONTACTS_EXPORT QContactAbstractAction : public QObject
 {
+    Q_OBJECT
+
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget")
+    QContactAbstractAction();
+    virtual ~QContactAbstractAction();
 
-    static const char DefinitionName[]; // == staticType() == "SyncTarget"
+    virtual QString actionName() const;                                 // name of action this instance implements
+    virtual QVariantMap metadata() const;                               // label, icon etc
+    virtual QContactActionFilter contactFilter() const;                 // use for matching
+    virtual bool supportsDetail(const QContactDetail& detail) const;    // whether this implementation supports the given detail
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
-    static const char FieldSyncTarget[];
-
-    void setSyncTarget(const QString& syncTarget) {setValue(QLatin1String(FieldSyncTarget), syncTarget);}
-    QString syncTarget() const {return value(QLatin1String(FieldSyncTarget));}
+private:
+    QSharedDataPointer<QContactAbstractActionData> d;
 };
+#define QT_CONTACTS_ACTION_INTERFACE "com.nokia.qt.mobility.contacts.abstractaction/1.0"
+Q_DECLARE_INTERFACE(QContactAbstractAction, QT_CONTACTS_ACTION_INTERFACE);
 
 #endif
-

@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactGender : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender")
 
-    static const char DefinitionId[]; // == staticType() == "Gender"
+    static const char DefinitionName[]; // == staticType() == "Gender"
 
     static const char FieldGender[];
 

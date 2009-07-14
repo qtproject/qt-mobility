@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactGuid : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid")
 
-    static const char DefinitionId[]; // == staticType() == "Guid"
+    static const char DefinitionName[]; // == staticType() == "Guid"
 
     static const char FieldGuid[];
 

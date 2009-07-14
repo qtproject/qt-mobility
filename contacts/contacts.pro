@@ -15,6 +15,8 @@ DEFINES += BUILD_QTCONTACTS QT_ASCII_CAST_WARNINGS
 HEADERS += \
         qcontact.h \
         qcontact_p.h \
+        qcontactabstractaction.h \
+        qcontactabstractaction_p.h \
         qcontactaddress.h \
         qcontactanniversary.h \
         qcontactavatar.h \
@@ -51,6 +53,7 @@ HEADERS += \
 
 SOURCES += \
         qcontact.cpp \
+        qcontactabstractaction.cpp \
         qcontactdetail.cpp \
         qcontactdetaildefinition.cpp \
         qcontactdetails.cpp \

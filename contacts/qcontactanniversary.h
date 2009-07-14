@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactAnniversary : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
 
-    static const char DefinitionId[]; // == staticType() == "Anniversary"
+    static const char DefinitionName[]; // == staticType() == "Anniversary"
 
     static const char FieldCalendarId[];
     static const char FieldOriginalDate[];

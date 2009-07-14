@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
 
-    static const char DefinitionId[]; // == staticType() == "EmailAddress"
+    static const char DefinitionName[]; // == staticType() == "EmailAddress"
 
     static const char FieldEmailAddress[];
 

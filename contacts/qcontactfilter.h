@@ -179,11 +179,11 @@ public:
     QContactActionFilter();
     QContactActionFilter(const QContactFilter& other);
 
-    void setActionId(const QString& action);
+    void setActionName(const QString& action);
     void setValue(const QVariant& value);
 
     /* Accessors */
-    QString actionId() const;
+    QString actionName() const;
     QVariant value() const;
 
 private:

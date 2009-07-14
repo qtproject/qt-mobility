@@ -44,6 +44,8 @@
 #include "qcontactfilter.h"
 #include "qcontactsortorder.h"
 
+#include "qcontactabstractaction.h"
+
 #include <QSharedData>
 #include <QPair>
 #include <QtPlugin>
@@ -59,6 +61,7 @@
 
 
 /* Shared QContactManager stuff here, default engine stuff below */
+QMultiMap<QString, QContactAbstractAction*> QContactManagerData::m_actionImplementations;
 QMap<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
 bool QContactManagerData::m_discovered;
 
@@ -115,9 +118,10 @@ void QContactManagerData::loadFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
+            QContactAbstractAction *g = qobject_cast<QContactAbstractAction*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
-                qDebug() << "Static: found a" << f << "with name" << name;
+                qDebug() << "Static: found an engine plugin" << f << "with name" << name;
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
                         m_engines.insert(name, f);
@@ -127,6 +131,12 @@ void QContactManagerData::loadFactories()
                 } else {
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
                 }
+            } else if (g) {
+                QString name = g->actionName();
+                qDebug() << "Static: found an action implementation" << g << "with name" << name;
+                m_actionImplementations.insert(name, g);
+            } else {
+                qDebug() << "Static: plugin found is of unknown type!";
             }
         }
 
@@ -169,9 +179,10 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < plugins.count(); i++) {
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
+            QContactAbstractAction *g = qobject_cast<QContactAbstractAction*>(qpl.instance());
             if (f) {
                 QString name = f->managerName();
-                qDebug() << "Dynamic: found a" << f << "with name" << name;
+                qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
 
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     if(!m_engines.contains(name)) {
@@ -182,11 +193,29 @@ void QContactManagerData::loadFactories()
                 } else {
                     qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
                 }
+            } else if (g) {
+                QString name = g->actionName();
+                qDebug() << "Dynamic: found an action implementation" << g << "with name" << name;
+                m_actionImplementations.insert(name, g);
+            } else {
+                qDebug() << "Dynamic: plugin found is of unknown type!";
+                qDebug() << "    qpl.instance() =" << qpl.instance();
             }
         }
 
-        qDebug() << "Found:" << m_engines.keys();
+        qDebug() << "Found engines:" << m_engines.keys();
+        qDebug() << "Found actions:" << m_actionImplementations.keys();
     }
+}
+
+QList<QContactAbstractAction*> QContactManagerData::actionImplementations(const QString& actionName)
+{
+    if (actionName.isEmpty()) {
+        // return the entire list of implementations.
+        return m_actionImplementations.values();
+    }
+
+    return m_actionImplementations.values(actionName);
 }
 
 
@@ -405,8 +434,8 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
 {
     // synthesise the display name from the name of the contact, or, failing that, the organisation of the contact.
     error = QContactManager::NoError;
-    QList<QContactDetail> allOrgs = contact.details(QLatin1String(QContactOrganisation::DefinitionId));
-    QList<QContactDetail> allNames = contact.details(QLatin1String(QContactName::DefinitionId));
+    QList<QContactDetail> allOrgs = contact.details(QLatin1String(QContactOrganisation::DefinitionName));
+    QList<QContactDetail> allNames = contact.details(QLatin1String(QContactName::DefinitionName));
 
     // first, check to see whether or not there is a name or org to synthesise from.
     if (allNames.isEmpty()) {
@@ -510,7 +539,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactSyncTarget::DefinitionId));
+    d.setId(QLatin1String(QContactSyncTarget::DefinitionName));
     fields.insert(QLatin1String(QContactSyncTarget::FieldSyncTarget), f);
     d.setFields(fields);
     d.setUnique(true);
@@ -521,7 +550,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactGuid::DefinitionId));
+    d.setId(QLatin1String(QContactGuid::DefinitionName));
     fields.insert(QLatin1String(QContactGuid::FieldGuid), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -532,7 +561,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactDisplayLabel::DefinitionId));
+    d.setId(QLatin1String(QContactDisplayLabel::DefinitionName));
     fields.insert(QLatin1String(QContactDisplayLabel::FieldLabel), f);
     f.dataType = QVariant::Bool;
     f.allowableValues = QVariantList();
@@ -546,7 +575,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactEmailAddress::DefinitionId));
+    d.setId(QLatin1String(QContactEmailAddress::DefinitionName));
     fields.insert(QLatin1String(QContactEmailAddress::FieldEmailAddress), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -557,7 +586,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactOrganisation::DefinitionId));
+    d.setId(QLatin1String(QContactOrganisation::DefinitionName));
     fields.insert(QLatin1String(QContactOrganisation::FieldLogo), f);
     fields.insert(QLatin1String(QContactOrganisation::FieldDisplayLabel), f);
     d.setFields(fields);
@@ -569,7 +598,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactPhoneNumber::DefinitionId));
+    d.setId(QLatin1String(QContactPhoneNumber::DefinitionName));
     fields.insert(QLatin1String(QContactPhoneNumber::FieldNumber), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -580,7 +609,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAnniversary::DefinitionId));
+    d.setId(QLatin1String(QContactAnniversary::DefinitionName));
     fields.insert(QLatin1String(QContactAnniversary::FieldOriginalDate), f);
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
@@ -597,7 +626,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactBirthday::DefinitionId));
+    d.setId(QLatin1String(QContactBirthday::DefinitionName));
     fields.insert(QLatin1String(QContactBirthday::FieldBirthday), f);
     d.setFields(fields);
     d.setUnique(true);
@@ -609,7 +638,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::DateTime;
     f.allowableValues = QVariantList();
-    d.setId(QContactMeeting::DefinitionId);
+    d.setId(QContactMeeting::DefinitionName);
     fields.insert(QContactMeeting::FieldMeeting, f);
     d.setFields(fields);
     d.setUnique(false);
@@ -622,7 +651,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QContactTag::DefinitionId);
+    d.setId(QContactTag::DefinitionName);
     fields.insert(QContactTag::FieldTag, f);
     d.setFields(fields);
     d.setUnique(false);
@@ -634,7 +663,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactUrl::DefinitionId));
+    d.setId(QLatin1String(QContactUrl::DefinitionName));
     fields.insert(QLatin1String(QContactUrl::FieldUrl), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -645,7 +674,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList() << QString(QLatin1String("Male")) << QString(QLatin1String("Female")) << QString(QLatin1String("Unspecified"));
-    d.setId(QLatin1String(QContactGender::DefinitionId));
+    d.setId(QLatin1String(QContactGender::DefinitionName));
     fields.insert(QLatin1String(QContactGender::FieldGender), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -656,7 +685,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAvatar::DefinitionId));
+    d.setId(QLatin1String(QContactAvatar::DefinitionName));
     fields.insert(QLatin1String(QContactAvatar::FieldAvatar), f);
     d.setFields(fields);
     d.setUnique(false);
@@ -668,7 +697,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QContactGeolocation::DefinitionId);
+    d.setId(QContactGeolocation::DefinitionName);
     fields.insert(QContactGeolocation::FieldLatitude, f);
     fields.insert(QContactGeolocation::FieldLongitude, f);
     fields.insert(QContactGeolocation::FieldAccuracy, f);
@@ -688,7 +717,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAddress::DefinitionId));
+    d.setId(QLatin1String(QContactAddress::DefinitionName));
     fields.insert(QLatin1String(QContactAddress::FieldStreet), f);
     fields.insert(QLatin1String(QContactAddress::FieldLocality), f);
     fields.insert(QLatin1String(QContactAddress::FieldRegion), f);
@@ -704,7 +733,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactName::DefinitionId));
+    d.setId(QLatin1String(QContactName::DefinitionName));
     fields.insert(QLatin1String(QContactName::FieldPrefix), f);
     fields.insert(QLatin1String(QContactName::FieldFirst), f);
     fields.insert(QLatin1String(QContactName::FieldMiddle), f);

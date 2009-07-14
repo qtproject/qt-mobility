@@ -367,22 +367,22 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                 // this is a built-in vcard supported field.  build the detail.
                 det.setAttribute(QContactDetail::AttributeContext, parseContext(line));
                 det.setAttribute(QContactDetail::AttributeSubType, parseAttributes(line));
-                if (defId == QContactPhoneNumber::DefinitionId) {
+                if (defId == QContactPhoneNumber::DefinitionName) {
                     det.setValue(QContactPhoneNumber::FieldNumber, parseValue(line));
                     vcardDetails.insert("TEL", det);
-                } else if (defId == QContactEmailAddress::DefinitionId) {
+                } else if (defId == QContactEmailAddress::DefinitionName) {
                     det.setValue(QContactEmailAddress::FieldEmailAddress, parseValue(line));
                     vcardDetails.insert("EMAIL", det);
                 } else if (defId == "Url") {
                     det.setValue("Url", parseValue(line));
                     vcardDetails.insert("URL", det);
-                } else if (defId == QContactAvatar::DefinitionId) {
+                } else if (defId == QContactAvatar::DefinitionName) {
                     det.setValue(QContactAvatar::FieldAvatar, parseValue(line));
                     vcardDetails.insert("PHOTO", det);
-                } else if (defId == QContactGuid::DefinitionId) {
+                } else if (defId == QContactGuid::DefinitionName) {
                     det.setValue(QContactGuid::FieldGuid, parseValue(line));
                     vcardDetails.insert("UID", det);
-                } else if (defId == QContactAddress::DefinitionId) {
+                } else if (defId == QContactAddress::DefinitionName) {
                     QStringList fieldValues = parseValue(line).split(";");
                     // ignore values 0 and 1 (extended and postal address) in this implementation
                     det.setValue(QContactAddress::FieldStreet, fieldValues.value(2));
@@ -391,7 +391,7 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                     det.setValue(QContactAddress::FieldPostcode, fieldValues.value(5));
                     det.setValue(QContactAddress::FieldCountry, fieldValues.value(6));
                     vcardDetails.insert("ADR", det);
-                } else if (defId == QContactName::DefinitionId) {
+                } else if (defId == QContactName::DefinitionName) {
                     QStringList fieldValues = parseValue(line).split(";");
                     if (vcardDetails.contains("N")) {
                         // modify the existing name
@@ -699,7 +699,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
         // if the detail can be mapped to a singular vcard field, we check to see that another detail which also
         //     maps to the same vcard field hasn't been saved as the vcard entry before doing the above.
         QString definitionName = det.definitionName();
-        if (definitionName == QContactName::DefinitionId) {
+        if (definitionName == QContactName::DefinitionName) {
             bool saved = false;
 
             // only one name is allowed
@@ -715,7 +715,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             if (!saved) {
                 customVcardFields << convertDetail(contact, det);
             }
-        } else if (definitionName == QContactDisplayLabel::DefinitionId) {
+        } else if (definitionName == QContactDisplayLabel::DefinitionName) {
             // only one formatted name is allowed
             if (!vcardFieldsWithValues.contains("FN")) {
                 entry = "FN:" + det.value(QContactDisplayLabel::FieldLabel);
@@ -723,7 +723,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
                 vcardFieldsWithValues << "FN";
                 customVcardFields << convertDetail(contact, det, "FN");
             }
-        } else if (definitionName == QContactAddress::DefinitionId) {
+        } else if (definitionName == QContactAddress::DefinitionName) {
             // any number of address fields are allowed.
             entry = "ADR;TYPE=";
             QString typestr = "";
@@ -748,7 +748,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             vcard << entry;
             vcardFieldsWithValues << "URL";
             customVcardFields << convertDetail(contact, det, "URL");
-        } else if (definitionName == QContactEmailAddress::DefinitionId) {
+        } else if (definitionName == QContactEmailAddress::DefinitionName) {
             // any number of email address fields are allowed.
             entry = "EMAIL;TYPE=internet";
             if (detailIsPreferredForAnything(contact, det)) entry += ",pref";
@@ -756,7 +756,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             vcard << entry;
             vcardFieldsWithValues << "EMAIL";
             customVcardFields << convertDetail(contact, det, "EMAIL");
-        } else if (definitionName == QContactPhoneNumber::DefinitionId) {
+        } else if (definitionName == QContactPhoneNumber::DefinitionName) {
             // any number of telephone fields are allowed.
             entry = "TEL;TYPE=";
             QString typeStr = "";
@@ -776,7 +776,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             vcard << entry;
             vcardFieldsWithValues << "TEL";
             customVcardFields << convertDetail(contact, det, "TEL");
-        } else if (definitionName == QContactAvatar::DefinitionId) {
+        } else if (definitionName == QContactAvatar::DefinitionName) {
             // only one photo field is allowed per vcard, according to the spec
             if (vcardFieldsWithValues.contains("PHOTO")) {
                 // vcard already contains a photo field; save this one as a custom field only.
@@ -787,7 +787,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
                 entry = "PHOTO;VALUE=uri:" + det.value(QContactAvatar::FieldAvatar);
                 customVcardFields << convertDetail(contact, det, "PHOTO");
             }
-        } else if (definitionName == QContactGuid::DefinitionId) {
+        } else if (definitionName == QContactGuid::DefinitionName) {
             // only one UID field is allowed per vcard, according to the spec
             if (vcardFieldsWithValues.contains("UID")) {
                 // vcard already contains a photo field; save this one as a custom field only.

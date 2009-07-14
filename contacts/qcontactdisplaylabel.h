@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
 
-    static const char DefinitionId[]; // == staticType() == "DisplayLabel"
+    static const char DefinitionName[]; // == staticType() == "DisplayLabel"
 
     static const char FieldLabel[];
     static const char FieldSynthesised[];
