@@ -1041,6 +1041,9 @@ void tst_QContactManager::invalidManager()
     QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
     QVERIFY(!info->hasFeature(QContactManagerInfo::Synchronous));
     QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
+
+    /* See if we get the same pointer */
+    QVERIFY(info == manager.information());
 }
 
 void tst_QContactManager::memoryManager()
@@ -1070,6 +1073,8 @@ void tst_QContactManager::memoryManager()
     QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
     QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
 
+    /* See if we get the same pointer */
+    QVERIFY(info == m1.information());
 
     // add a contact to each of m1, m2, m3
     QContact c;
