@@ -1549,7 +1549,7 @@ unsigned int FixedMemoryTree::version(unsigned int entry)
 }
 
 /*!
-  Creates a new ndoe of \a name (name length \a len) and sets a single \a watch
+  Creates a new node of \a name (name length \a len) and sets a single \a watch
   on it.
  */
 unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
@@ -2853,15 +2853,13 @@ bool ApplicationLayer::doRemove(const QByteArray &path)
     QList<NodeWatch> owners = watchers(path);
 
     QSet<unsigned long> written;
+    bool sendLocal = false;
 
     for(int ii = 0; ii < owners.count(); ++ii) {
         const NodeWatch & watch = owners.at(ii);
         if(0 == watch.data1) {
             // Local
-            if(!written.contains(watch.data2)) {
-                doClientRemove(path);
-                written.insert(watch.data2);
-            }
+            sendLocal = true;
         } else {
             // Remote
             if(!written.contains(watch.data1)) {
@@ -2871,6 +2869,8 @@ bool ApplicationLayer::doRemove(const QByteArray &path)
             }
         }
     }
+    if (sendLocal)
+        doClientRemove(path);
 
     return true;
 }
@@ -2880,15 +2880,13 @@ bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
     QList<NodeWatch> owners = watchers(path);
 
     QSet<unsigned long> written;
+    bool sendLocal = false;
 
     for(int ii = 0; ii < owners.count(); ++ii) {
         const NodeWatch & watch = owners.at(ii);
         if(0 == watch.data1) {
             // Local
-            if(!written.contains(watch.data2)) {
-                doClientWrite(path, val);
-                written.insert(watch.data2);
-            }
+            sendLocal = true;
         } else {
             // Remote
             if(!written.contains(watch.data1)) {
@@ -2898,6 +2896,8 @@ bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
             }
         }
     }
+    if (sendLocal) 
+        doClientWrite(path, val);
 
     return true;
 }
@@ -3343,7 +3343,6 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
     for(QSet<QValueSpaceObject *>::ConstIterator iter = objects.begin();
             iter != objects.end();
             ++iter) {
-
         QValueSpaceObject * obj = *iter;
 
         if(obj->d->path.length() < path.length()) {
