@@ -39,13 +39,15 @@
 #include "qmediasource.h"
 
 #include <QtCore/qstringlist.h>
-
+#include <QtCore/qurl.h>
 
 QWmpPlaylist::QWmpPlaylist(IWMPCore3 *player, QObject *parent)
     : QMediaPlaylistSource(parent)
     , m_player(player)
     , m_playlist(0)
 {
+    if (m_player)
+        m_player->get_currentPlaylist(&m_playlist);
 }
 
 QWmpPlaylist::~QWmpPlaylist()
@@ -105,9 +107,12 @@ QMediaSource QWmpPlaylist::itemAt(int pos) const
 
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(pos, &media) == S_OK) {
-        source.setDataLocation(QWmpMetaData::value(media, QLatin1String("URL"), 0));
-        source.setMimeType(QWmpMetaData::value(media, QLatin1String("MimeType"), 0).toString());
-
+        BSTR uri = 0;
+        if (media->get_sourceURL(&uri) == S_OK) {
+            source.setDataLocation(QUrl(
+                    QString::fromWCharArray(static_cast<const wchar_t *>(uri))));
+            ::SysFreeString(uri);
+        }
         media->Release();
     }
 
@@ -126,7 +131,9 @@ bool QWmpPlaylist::append(const QMediaSource &source)
     IWMPMedia *media = 0;
     if (m_playlist && m_player && m_player->newMedia(
             QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+        emit itemsAboutToBeInserted(size(), size());
         appended = m_playlist->appendItem(media) == S_OK;
+        emit itemsInserted();
 
         media->Release();
     }
@@ -150,7 +157,9 @@ bool QWmpPlaylist::insert(int pos, const QMediaSource &source)
     IWMPMedia *media = 0;
     if (m_playlist && m_player && m_player->newMedia(
             QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+        emit itemsAboutToBeInserted(pos, pos);
         inserted = m_playlist->insertItem(pos, media) == S_OK;
+        emit itemsInserted();
 
         media->Release();
     }

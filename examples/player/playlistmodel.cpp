@@ -142,9 +142,9 @@ void PlaylistModel::setPlaylist(QMediaPlaylist *playlist)
 {
     if (m_playlist) {
         disconnect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
-        disconnect(m_playlist, SIGNAL(itemsInserted()), this, SLOT(endInsertItems()));
+        disconnect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
         disconnect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
-        disconnect(m_playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));
+        disconnect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
         disconnect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
     }
 
@@ -152,9 +152,9 @@ void PlaylistModel::setPlaylist(QMediaPlaylist *playlist)
 
     if (m_playlist) {
         connect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
-        connect(m_playlist, SIGNAL(itemsInserted()), this, SLOT(endInsertItems()));
+        connect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
         connect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
-        connect(m_playlist, SIGNAL(itemsRemoved()), this, SLOT(endRemoveItems()));
+        connect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
         connect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
     }
 

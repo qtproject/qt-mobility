@@ -154,6 +154,7 @@ private:
     QWmpPlaceholderWidget *m_placeholderWidget;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
+    QWmpPlaylist *m_playlist;
     IConnectionPoint *m_connectionPoint;
     DWORD m_adviseCookie;
 

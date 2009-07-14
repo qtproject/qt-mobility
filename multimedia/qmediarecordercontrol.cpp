@@ -41,6 +41,7 @@ QMediaRecorderControl::QMediaRecorderControl(QObject *parent)
 
 int QMediaRecorderControl::state() const
 {
+    return 0;
 }
 
 void QMediaRecorderControl::setState(int state)

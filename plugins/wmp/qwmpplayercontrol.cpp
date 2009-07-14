@@ -34,20 +34,24 @@
 
 #include "qwmpplayercontrol.h"
 
-#include "qwmpplaylistproxy.h"
+#include "qwmpglobal.h"
+#include "qwmpmetadata.h"
+#include "qwmpplaylist.h"
 
 #include "qmediaplayer.h"
 #include "qmediaplaylist.h"
 
 #include <QtCore/qurl.h>
 
-QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
+QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpPlaylist *playlist, QObject *parent)
         : QMediaPlayerControl(parent)
         , m_player(player)
         , m_controls(0)
         , m_settings(0)
+        , m_playlistSource(playlist)
         , m_playlist(0)
-        , m_playlistProxy(0)
+        , m_proxiedPlaylist(0)
+        , m_proxyPlaylist(0)
         , m_state(QMediaPlayer::StoppedState)
         , m_duration(0)
         , m_buffering(false)
@@ -57,8 +61,7 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QObject *parent)
     m_player->get_settings(&m_settings);
     m_player->get_network(&m_network);
 
-    setMediaPlaylist(new QMediaPlaylist(0, this));
-
+    m_playlist = new QMediaPlaylist(m_playlistSource, this);
 }
 
 QWmpPlayerControl::~QWmpPlayerControl()
@@ -85,20 +88,69 @@ QMediaPlaylist *QWmpPlayerControl::mediaPlaylist() const
 
 bool QWmpPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
 {
-    m_playlist = playlist;
+    if (playlist == m_proxiedPlaylist || playlist == m_playlist)
+        return true;
 
-    delete m_playlistProxy;
-
-    if (m_playlist && m_player) {
-        m_playlistProxy = new QWmpPlaylistProxy(playlist, m_player);
-
-        m_player->put_currentPlaylist(m_playlistProxy->wmpPlaylist());
-    } else {
-        m_playlistProxy = 0;
-        m_player->put_currentPlaylist(0);
+    if (m_proxiedPlaylist) {
+        disconnect(m_proxiedPlaylist, SIGNAL(itemsInserted(int,int)),
+                   this, SLOT(proxiedItemsInserted(int,int)));
+        disconnect(m_proxiedPlaylist, SIGNAL(itemsRemoved(int,int)),
+                   this, SLOT(proxiedItemsRemoved(int,int)));
+        disconnect(m_proxiedPlaylist, SIGNAL(itemsChanged(int,int)),
+                   this, SLOT(proxiedItemsChanged(int,int)));
     }
 
-    return true;
+    m_proxiedPlaylist = playlist;
+
+    if (m_proxiedPlaylist) {
+        if (m_proxyPlaylist && m_proxyPlaylist->clear() != S_OK) {
+            m_proxyPlaylist->Release();
+            m_proxyPlaylist = 0;
+        }
+
+        if (!m_proxyPlaylist && m_player->newPlaylist(0, 0, &m_proxyPlaylist) != S_OK) {
+            m_proxiedPlaylist = 0;
+        } else {
+            proxiedItemsInserted(0, m_proxiedPlaylist->size() - 1);
+
+            if (m_player->put_currentPlaylist(m_proxyPlaylist) != S_OK) {
+                m_proxyPlaylist->Release();
+                m_proxyPlaylist = 0;
+                m_proxiedPlaylist = 0;
+            } else {
+                connect(m_proxiedPlaylist, SIGNAL(itemsInserted(int,int)),
+                           this, SLOT(proxiedItemsInserted(int,int)));
+                connect(m_proxiedPlaylist, SIGNAL(itemsRemoved(int,int)),
+                           this, SLOT(proxiedItemsRemoved(int,int)));
+                connect(m_proxiedPlaylist, SIGNAL(itemsChanged(int,int)),
+                           this, SLOT(proxiedItemsChanged(int,int)));
+            }
+        }
+    } else {
+
+    }
+
+    return m_proxiedPlaylist == playlist;
+}
+
+void QWmpPlayerControl::wmpPlaylistChanged(IWMPPlaylist *playlist)
+{
+    if (playlist != m_proxyPlaylist) {
+        if (m_proxyPlaylist) {
+            disconnect(m_proxiedPlaylist, SIGNAL(itemsInserted(int,int)),
+                       this, SLOT(proxiedItemsInserted(int,int)));
+            disconnect(m_proxiedPlaylist, SIGNAL(itemsRemoved(int,int)),
+                       this, SLOT(proxiedItemsRemoved(int,int)));
+            disconnect(m_proxiedPlaylist, SIGNAL(itemsChanged(int,int)),
+                       this, SLOT(proxiedItemsChanged(int,int)));
+
+            m_proxyPlaylist->Release();
+            m_proxyPlaylist = 0;
+            m_proxiedPlaylist = 0;
+        }
+    } else {
+        m_playlistSource->setPlaylist(playlist);
+    }
 }
 
 qint64 QWmpPlayerControl::duration() const
@@ -129,18 +181,30 @@ void QWmpPlayerControl::setPosition(qint64 position)
 
 int QWmpPlayerControl::playlistPosition() const
 {
-    return 0;
+    int position = 0;
+
+    IWMPMedia *media = 0;
+    if (m_player->get_currentMedia(&media) == S_OK) {
+        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+
+        media->Release();
+    }
+
+    return position;
 }
 
 void QWmpPlayerControl::setPlaylistPosition(int position)
 {
-    if (m_controls && m_playlistProxy && m_playlistProxy->wmpPlaylist()) {
+
+    IWMPPlaylist *playlist = 0;
+    if (m_controls && m_player->get_currentPlaylist(&playlist) == S_OK) {
         IWMPMedia *media = 0;
-        if (m_playlistProxy->wmpPlaylist()->get_item(position, &media) == S_OK) {
+        if (playlist->get_item(position, &media) == S_OK) {
             m_controls->put_currentItem(media);
 
             media->Release();
         }
+        playlist->Release();
     }
 }
 
@@ -207,13 +271,26 @@ void QWmpPlayerControl::setVideoAvailable(bool available)
         emit this->videoAvailabilityChanged(m_videoAvailable = available);
 }
 
+bool QWmpPlayerControl::isSeekable() const
+{
+    return true;
+}
+
+
 float QWmpPlayerControl::playbackRate() const
 {
-    return 1;
+    double rate = 0.;
+
+    if (m_settings)
+        m_settings->get_rate(&rate);
+
+    return rate;
 }
 
 void QWmpPlayerControl::setPlaybackRate(float rate)
 {
+    if (m_settings)
+        m_settings->put_rate(rate);
 }
 
 void QWmpPlayerControl::play()
@@ -246,6 +323,34 @@ void QWmpPlayerControl::back()
         m_controls->previous();
 }
 
+void QWmpPlayerControl::proxiedItemsInserted(int start, int end)
+{
+    for (int i = start; i <= end; ++i) {
+        QMediaSource source = m_proxiedPlaylist->itemAt(i);
+
+        IWMPMedia *media = 0;
+        if (m_player->newMedia(QAutoBStr(source.dataLocation().toString()), &media) == S_OK)
+            m_proxyPlaylist->appendItem(media);
+    }
+}
+
+void QWmpPlayerControl::proxiedItemsRemoved(int start, int end)
+{
+    for (int i = start; i <= end; ++i) {
+        IWMPMedia *media = 0;
+        if (m_proxyPlaylist->get_item(start, &media) == S_OK)
+            m_proxyPlaylist->removeItem(media);
+        else
+           ++start;
+    }
+}
+
+void QWmpPlayerControl::proxiedItemsChanged(int start, int end)
+{
+    proxiedItemsInserted(start, end);
+    proxiedItemsRemoved(start, end);
+}
+
 QUrl QWmpPlayerControl::url() const
 {
     BSTR string;
@@ -270,5 +375,3 @@ void QWmpPlayerControl::setUrl(const QUrl &url)
         SysFreeString(string);
     }
 }
-
-
