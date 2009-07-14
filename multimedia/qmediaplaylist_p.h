@@ -48,6 +48,7 @@
 
 #include <QtCore/private/qobject_p.h>
 #include "qmediasource.h"
+#include "qmediaplaylist.h"
 
 class QMediaPlaylistSource;
 class QMediaPlaylistReader;
@@ -55,11 +56,32 @@ class QMediaPlaylistWritter;
 
 class QMediaPlaylistPrivate : public QObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
+    QMediaPlaylistPrivate()
+        : source(0)
+        , startPendingInsert(-1)
+        , endPendingInsert(-1)
+        , startPendingRemove(-1)
+        , endPendingRemove(-1)
+    {
+    }
+
     QMediaPlaylistSource *source;
+
+    int startPendingInsert;
+    int endPendingInsert;
+    int startPendingRemove;
+    int endPendingRemove;
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWritter *writter);
+
+    void _q_itemsAboutToBeInserted(int start, int end);
+    void _q_itemsInserted();
+    void _q_itemsAboutToBeRemoved(int start, int end);
+    void _q_itemsRemoved();
+
 };
 
 

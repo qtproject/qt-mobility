@@ -21,7 +21,6 @@ HEADERS = \
     qwmpplayercontrol.h \
     qwmpplayerservice.h \
     qwmpplaylist.h \
-    qwmpplaylistproxy.h \
     qwmpserviceprovider.h
 
 SOURCES = \
@@ -34,6 +33,5 @@ SOURCES = \
     qwmpplayercontrol.cpp \
     qwmpplayerservice.cpp \
     qwmpplaylist.cpp \
-    qwmpplaylistproxy.cpp \
     qwmpserviceprovider.cpp
 

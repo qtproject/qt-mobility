@@ -26,6 +26,7 @@ HEADERS = \
     qmediaplayercontrol.h \
     qmediaplayerservice.h \
     qmediaplaylist.h \
+    qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistmodel.h \
     qmediaplaylistsource.h \

@@ -46,6 +46,57 @@
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
 
+
+void QMediaPlaylistPrivate::_q_itemsAboutToBeInserted(int start, int end)
+{
+    Q_ASSERT(startPendingInsert == -1);
+    Q_ASSERT(endPendingInsert == -1);
+
+    startPendingInsert = start;
+    endPendingInsert = end;
+
+    emit q_func()->itemsAboutToBeInserted(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsInserted()
+{
+    Q_ASSERT(startPendingInsert != -1);
+    Q_ASSERT(endPendingInsert != -1);
+
+    int start = startPendingInsert;
+    int end = endPendingInsert;
+
+    startPendingInsert = -1;
+    endPendingInsert = -1;
+
+    emit q_func()->itemsInserted(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsAboutToBeRemoved(int start, int end)
+{
+    Q_ASSERT(startPendingRemove == -1);
+    Q_ASSERT(endPendingRemove == -1);
+
+    startPendingRemove = start;
+    endPendingRemove = end;
+
+    emit q_func()->itemsRemoved(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsRemoved()
+{
+    Q_ASSERT(startPendingRemove != -1);
+    Q_ASSERT(endPendingRemove != -1);
+
+    int start = startPendingRemove;
+    int end = endPendingRemove;
+
+    startPendingRemove = -1;
+    endPendingRemove = -1;
+
+    emit q_func()->itemsAboutToBeRemoved(start, end);
+}
+
 /*!
     \class QMediaPlaylist
     \ingroup multimedia
@@ -77,10 +128,10 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
     }
 
     connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
-    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
+    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(_q_itemsAboutToBeInserted(int,int)));
+    connect(d->source, SIGNAL(itemsInserted()), this, SLOT(_q_itemsInserted()));
+    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(_q_itemsAboutToBeRemoved(int,int)));
+    connect(d->source, SIGNAL(itemsRemoved()), this, SLOT(_q_itemsRemoved()));
 }
 
 /*!
@@ -89,13 +140,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
     :QObject(dd, parent)
 {
-    Q_D(QMediaPlaylist);
-
-    connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
-    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
 }
 
 /*!
@@ -369,3 +413,5 @@ void QMediaPlaylist::shuffle()
     This signal is emitted after media sources have been changed in the playlist
     between start and end positions inclusive.
  */
+
+#include "moc_qmediaplaylist.cpp"
