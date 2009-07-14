@@ -106,6 +106,7 @@
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
 <h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
 <p>Transmit <i>message</i> using the account identified by <i>accountId</i>.</p>
+<p>The message should be placed in the standard outbox folder for the account before sending, and if the sending is successful moved to the sent folder for the account.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessageaccountid.html">QMessageAccountId</a>.</p>
 <h3 class="fn"><a name="show"></a>void QMessageServiceAction::show ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Show the message identified by <i>id</i>.</p>
