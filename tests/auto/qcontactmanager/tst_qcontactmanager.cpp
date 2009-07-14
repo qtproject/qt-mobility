@@ -934,6 +934,9 @@ void tst_QContactManager::invalidManager()
     nf.setLast("Lastname");
     foo.saveDetail(&nf);
 
+    QVERIFY(manager.synthesiseDisplayLabel(foo).isEmpty());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+
     QVERIFY(manager.saveContact(&foo) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
     QVERIFY(foo.id() == 0);
@@ -1048,6 +1051,22 @@ void tst_QContactManager::memoryManager()
     QContactManager m4("memory", params);
     params.insert("id", QString(""));
     QContactManager m5("memory", params); // should be another anonymous
+
+    QContactManagerInfo* info = m1.information();
+
+    QVERIFY(info->hasFeature(QContactManagerInfo::Groups));
+    QVERIFY(info->hasFeature(QContactManagerInfo::Batch));
+    QVERIFY(info->hasFeature(QContactManagerInfo::ActionPreferences));
+    QVERIFY(info->hasFeature(QContactManagerInfo::ReadOnlyDetails));
+    QVERIFY(info->hasFeature(QContactManagerInfo::CreateOnlyDetails));
+    QVERIFY(info->hasFeature(QContactManagerInfo::MutableDefinitions));
+    QVERIFY(info->hasFeature(QContactManagerInfo::Synchronous));
+
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Locking));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeFiltering));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
+    QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
+
 
     // add a contact to each of m1, m2, m3
     QContact c;
