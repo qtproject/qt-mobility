@@ -79,6 +79,7 @@ private slots:
     void invalidManager();
     void memoryManager();
     void filtering(); // XXX should take all
+    void sorting(); // XXX should take all
 
     /* data providers (mostly all engines) */
     void uriParsing_data(); // Special data
@@ -2108,6 +2109,148 @@ void tst_QContactManager::filtering()
     delete cm;
 }
 
+void tst_QContactManager::sorting()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    /* Make sure it's empty */
+    QList<QUniqueId> ids = cm->contacts();
+    cm->removeContacts(&ids);
+
+    /* Register an int detail */
+    QContactDetailDefinition def;
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field field;
+    def.setId("Integer");
+    field.dataType = QVariant::Int;
+    fields.insert("value", field);
+    def.setFields(fields);
+
+    QVERIFY(cm->saveDetailDefinition(def));
+
+    def.setId("DateTime");
+    fields.clear();
+    field.dataType = QVariant::DateTime;
+    fields.insert("value", field);
+    def.setFields(fields);
+
+    QVERIFY(cm->saveDetailDefinition(def));
+
+    /* add some contacts */
+    QContact a, b, c;
+    QContactName aName, bName, cName;
+    aName.setFirst("Aaron");
+    aName.setLast("Aaronson");
+    a.saveDetail(&aName);
+    QContactPhoneNumber number;
+    number.setNumber("555-1212");
+    a.saveDetail(&number);
+
+    QContactDetail integer("Integer");
+    integer.setValue("value", 10);
+    a.saveDetail(&integer);
+
+    QContactDetail datetime("DateTime");
+    datetime.setValue("value", QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0)));
+    a.saveDetail(&datetime);
+
+    bName.setFirst("Bob");
+    bName.setLast("Aaronsen");
+    b.saveDetail(&bName);
+    number.setNumber("555-3456");
+    b.saveDetail(&number);
+
+    integer.setValue("value", 20);
+    b.saveDetail(&integer);
+
+    cName.setFirst("Boris");
+    cName.setLast("Aaronsun");
+    c.saveDetail(&cName);
+
+    datetime.setValue("value", QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0)));
+    c.saveDetail(&datetime);
+
+    QVERIFY(cm->saveContact(&a));
+    QVERIFY(cm->saveContact(&b));
+    QVERIFY(cm->saveContact(&c));
+
+    QCOMPARE(cm->contacts().count(), 3);
+
+    /* Reload the contacts to pick up any changes */
+    a = cm->contact(a.id());
+    b = cm->contact(b.id());
+    c = cm->contact(c.id());
+
+    /* Now try some different sort orders */
+    QContactSortOrder so;
+    so.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldFirst);
+
+    /* First ascending */
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == a.id());
+    QVERIFY(ids[1] == b.id());
+    QVERIFY(ids[2] == c.id());
+
+    so.setDirection(Qt::DescendingOrder);
+
+    /* First descending */
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == c.id());
+    QVERIFY(ids[1] == b.id());
+    QVERIFY(ids[2] == a.id());
+
+    /* Last descending */
+    so.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldLast);
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == c.id());
+    QVERIFY(ids[1] == a.id());
+    QVERIFY(ids[2] == b.id());
+
+    /* Last ascending */
+    so.setDirection(Qt::AscendingOrder);
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == b.id());
+    QVERIFY(ids[1] == a.id());
+    QVERIFY(ids[2] == c.id());
+
+    /* Integer ascending, blanks last */
+    so.setDetailDefinitionName("Integer", "value");
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == a.id());
+    QVERIFY(ids[1] == b.id());
+    QVERIFY(ids[2] == c.id());
+
+    /* Descending, blanks last */
+    so.setDirection(Qt::DescendingOrder);
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == b.id());
+    QVERIFY(ids[1] == a.id());
+    QVERIFY(ids[2] == c.id());
+
+    /* Descending, blanks first */
+    so.setBlankPolicy(QContactSortOrder::BlanksFirst);
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == c.id());
+    QVERIFY(ids[1] == b.id());
+    QVERIFY(ids[2] == a.id());
+
+    /* Ascending, blanks first */
+    so.setDirection(Qt::AscendingOrder);
+    ids = cm->contacts(so);
+    QVERIFY(ids.count() == 3);
+    QVERIFY(ids[0] == c.id());
+    QVERIFY(ids[1] == a.id());
+    QVERIFY(ids[2] == b.id());
+
+    delete cm;
+}
 
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

@@ -1554,18 +1554,35 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder)
 {
-
     if (!sortOrder.isValid()) {
         sorted->append(toAdd);
     } else {
-        for (int i = 0; i < sorted->size(); i++) {
-            QContact curr = sorted->at(i);
+        const QString& newValue = toAdd.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName());
 
-            // XXX this uses string compare
-            if (toAdd.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName())
-                < curr.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName())) {
-                sorted->insert(i, toAdd);
-                return;
+        if (newValue.isEmpty()) {
+            if (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst)
+                sorted->prepend(toAdd);
+            else
+                sorted->append(toAdd);
+            return;
+        }
+
+        for (int i = 0; i < sorted->size(); i++) {
+            const QContact& curr = sorted->at(i);
+
+            // XXX this uses string compare, and is messy.
+            // also, multiple details of the same type are broken.
+            const QString& currValue = curr.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName());
+            if (sortOrder.direction() == Qt::AscendingOrder) {
+                if (newValue < currValue) {
+                    sorted->insert(i, toAdd);
+                    return;
+                }
+            } else {
+                if (newValue > currValue) {
+                    sorted->insert(i, toAdd);
+                    return;
+                }
             }
         }
     }
