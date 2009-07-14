@@ -117,7 +117,9 @@ void tst_QContactActions::testSendEmail()
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->vendor(), QString("Test"));
         QCOMPARE(impls.at(i)->implementationVersion(), 1);
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -128,7 +130,9 @@ void tst_QContactActions::testSendEmail()
     foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->vendor(), QString("Test"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -138,7 +142,9 @@ void tst_QContactActions::testSendEmail()
     impls = QContactManager::actions(QString(), QString(), -200); // ignores implementation Version if empty vendor
     foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -149,7 +155,9 @@ void tst_QContactActions::testSendEmail()
     foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->vendor(), QString("Nonexistent"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -160,7 +168,9 @@ void tst_QContactActions::testSendEmail()
     foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -172,7 +182,9 @@ void tst_QContactActions::testSendEmail()
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
         QCOMPARE(impls.at(i)->vendor(), QString("Test"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -185,7 +197,9 @@ void tst_QContactActions::testSendEmail()
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
         QCOMPARE(impls.at(i)->vendor(), QString("Test"));
         QCOMPARE(impls.at(i)->implementationVersion(), 1);
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -197,7 +211,9 @@ void tst_QContactActions::testSendEmail()
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
         QCOMPARE(impls.at(i)->vendor(), QString("Test"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -208,7 +224,9 @@ void tst_QContactActions::testSendEmail()
     foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -220,7 +238,9 @@ void tst_QContactActions::testSendEmail()
     for (int i = 0; i < impls.size(); i++) {
         QCOMPARE(impls.at(i)->actionName(), QString("SendEmail"));
         QCOMPARE(impls.at(i)->vendor(), QString("Nonexistent"));
-        if (impls.at(i)->actionName() == QString("SendEmail")) {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
@@ -230,7 +250,9 @@ void tst_QContactActions::testSendEmail()
     impls = QContactManager::actions();
     QContactAbstractAction* sendEmail = 0;
     for (int i = 0; i < impls.size(); i++) {
-        if (impls.at(i)->actionName() == "SendEmail") {
+        if (impls.at(i)->actionName() == QString("SendEmail")
+                && impls.at(i)->vendor() == QString("Test")
+                && impls.at(i)->implementationVersion() == 1) {
             sendEmail = impls.at(i);
             break;
         }
