@@ -11,6 +11,7 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 
 ./tst_qnetworkconfiguration
 ./tst_qnetworkconfigurationmanager
+./tst_qnetworksession
 
 cd $SAVED_PWD
 
