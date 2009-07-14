@@ -1655,11 +1655,11 @@ void tst_QContactManager::displayName()
 void tst_QContactManager::filtering()
 {
     /* Try the memory database first */
-    QContactManager cm("memory");
+    QContactManager* cm = new QContactManager("memory");
 
     /* Make sure it's empty */
-    QList<QUniqueId> ids = cm.contacts();
-    cm.removeContacts(&ids);
+    QList<QUniqueId> ids = cm->contacts();
+    cm->removeContacts(&ids);
 
     /* Register an int detail */
     QContactDetailDefinition def;
@@ -1670,7 +1670,7 @@ void tst_QContactManager::filtering()
     fields.insert("value", field);
     def.setFields(fields);
 
-    QVERIFY(cm.saveDetailDefinition(def));
+    QVERIFY(cm->saveDetailDefinition(def));
 
     def.setId("DateTime");
     fields.clear();
@@ -1678,7 +1678,7 @@ void tst_QContactManager::filtering()
     fields.insert("value", field);
     def.setFields(fields);
 
-    QVERIFY(cm.saveDetailDefinition(def));
+    QVERIFY(cm->saveDetailDefinition(def));
 
     /* Add some contacts */
     QContact a, b, c;
@@ -1716,276 +1716,276 @@ void tst_QContactManager::filtering()
     c.saveDetail(&integer);
     c.saveDetail(&datetime);
 
-    QVERIFY(cm.saveContact(&a));
-    QVERIFY(cm.saveContact(&b));
-    QVERIFY(cm.saveContact(&c));
+    QVERIFY(cm->saveContact(&a));
+    QVERIFY(cm->saveContact(&b));
+    QVERIFY(cm->saveContact(&c));
 
-    QCOMPARE(cm.contacts().count(), 3);
+    QCOMPARE(cm->contacts().count(), 3);
 
     /* Reload the contacts to pick up any changes */
-    a = cm.contact(a.id());
-    b = cm.contact(b.id());
-    c = cm.contact(c.id());
+    a = cm->contact(a.id());
+    b = cm->contact(b.id());
+    c = cm->contact(c.id());
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
 
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
 
-    QContact a1 = cm.contact(ids.at(0));
+    QContact a1 = cm->contact(ids.at(0));
     if (a1.id() == a.id()) {
         dumpContactDifferences(a1, a);
-        dumpContactDifferences(cm.contact(ids.at(1)), b);
+        dumpContactDifferences(cm->contact(ids.at(1)), b);
     } else {
         dumpContactDifferences(a1, b);
-        dumpContactDifferences(cm.contact(ids.at(1)), a);
+        dumpContactDifferences(cm->contact(ids.at(1)), a);
     }
 
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, "Hamburger");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
 
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
 
     df.setValue("555-1212");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     QContactDetailRangeFilter drf;
     drf.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     drf.setRange("555-1200", "555-1220");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     /* Some name matching */
     df.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     df.setValue("Bob");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
 
     /* Starts with */
     df.setValue("B");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
 
     df.setMatchFlags(Qt::MatchStartsWith);
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     /* Ends with */
     df.setValue("ob");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
 
     df.setMatchFlags(Qt::MatchEndsWith);
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
 
     df.setValue("OB");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
 
     df.setMatchFlags(Qt::MatchEndsWith | Qt::MatchCaseSensitive);
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
 
     // Test contains
     df.setMatchFlags(Qt::MatchContains);
     df.setValue("r");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     df.setValue("R");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     df.setMatchFlags(Qt::MatchContains | Qt::MatchCaseSensitive);
     df.setValue("r");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     df.setValue("R");
-    ids = cm.contacts(df);
+    ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
 
     /* Range testing */
     drf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     drf.setMatchFlags(0);
     drf.setRange("A", "Bob");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
     drf.setRange("A", "Bob", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange("Bob", "C");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), c);
-    QCOMPARE(cm.contact(ids.at(0)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), c);
+    QCOMPARE(cm->contact(ids.at(0)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), c);
-    QCOMPARE(cm.contact(ids.at(0)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), c);
+    QCOMPARE(cm->contact(ids.at(0)), c);
 
     /* Check that starts with gives the same results */
     drf.setMatchFlags(Qt::MatchStartsWith);
     drf.setRange("A", "Bob");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange("A", "Bob", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange("Bob", "C");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), c);
-    QCOMPARE(cm.contact(ids.at(0)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), c);
+    QCOMPARE(cm->contact(ids.at(0)), c);
 
     drf.setRange("Bob", "C", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), c);
-    QCOMPARE(cm.contact(ids.at(0)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), c);
+    QCOMPARE(cm->contact(ids.at(0)), c);
 
     // Check MatchContains with range (== invalid)
     drf.setMatchFlags(Qt::MatchContains);
     drf.setRange("A", "Bob");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     // Check EndsWith with range
@@ -1993,116 +1993,119 @@ void tst_QContactManager::filtering()
     drf.setMatchFlags(Qt::MatchEndsWith);
     drf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     drf.setRange("sen", "son");
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
 
     drf.setRange("sen", "son", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange("sen", "son", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange("sen", "son", QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), b);
-    QCOMPARE(cm.contact(ids.at(0)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), b);
+    QCOMPARE(cm->contact(ids.at(0)), b);
 
     drf.setRange("sen", "son", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange("sen", "sun", QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     /* Now try some integer range testing */
     drf.setDetailDefinitionName("Integer", "value");
     drf.setMatchFlags(0);
 
     drf.setRange(9, 9);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(9, 10);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(9, 11);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange(10, 10);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(10, 10, QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(10, 10, QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(10, 10, QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(10, 10, QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange(10, 11);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
 
     drf.setRange(11, 11);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(-30, -19);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm.contact(ids.at(0)), c);
-    QCOMPARE(cm.contact(ids.at(0)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), c);
+    QCOMPARE(cm->contact(ids.at(0)), c);
 
     drf.setRange(-20, -30);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 0);
 
     drf.setRange(9, QVariant());
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), b);
-    QCOMPARE(cm.contact(ids.at(1)), b);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), b);
+    QCOMPARE(cm->contact(ids.at(1)), b);
 
     drf.setRange(QVariant(), 11);
-    ids = cm.contacts(drf);
+    ids = cm->contacts(drf);
     QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm.contact(ids.at(0)), a);
-    QCOMPARE(cm.contact(ids.at(0)), a);
-    dumpContactDifferences(cm.contact(ids.at(1)), c);
-    QCOMPARE(cm.contact(ids.at(1)), c);
+    dumpContactDifferences(cm->contact(ids.at(0)), a);
+    QCOMPARE(cm->contact(ids.at(0)), a);
+    dumpContactDifferences(cm->contact(ids.at(1)), c);
+    QCOMPARE(cm->contact(ids.at(1)), c);
+
+
+    delete cm;
 }
 
 
