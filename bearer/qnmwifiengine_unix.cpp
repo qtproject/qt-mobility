@@ -103,7 +103,7 @@ QString QNmWifiEngine::getNameForConfiguration(QNetworkManagerInterfaceDevice *d
 
 QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
 {
-    qWarning() << Q_FUNC_INFO << updated;
+//    qWarning() << Q_FUNC_INFO << updated;
     if (ok)
         *ok = false;
 
@@ -345,7 +345,7 @@ void QNmWifiEngine::knownConnections()
                     qWarning() <<"XXXXXXXXXXXXXXXXXXXXXXXXX" << mac << "type wireless";
                     QString devPath;
                     devPath = deviceConnectionPath(mac);
-                    qWarning() << Q_FUNC_INFO << devPath;
+//                    qWarning() << Q_FUNC_INFO << devPath;
 
                     QNetworkManagerInterfaceDevice *devIface;
                     devIface = new QNetworkManagerInterfaceDevice(devPath);
@@ -439,7 +439,7 @@ QString QNmWifiEngine::bearerName(const QString &id)
 
 void QNmWifiEngine::connectToId(const QString &id)
 {
-    qWarning() <<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << __FUNCTION__ << id;
+//    qWarning() <<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << __FUNCTION__ << id;
     activatingConnectionPath = id;
     QStringList connectionSettings = getConnectionPathForId(id);
     if(connectionSettings.isEmpty()) {
@@ -469,7 +469,7 @@ void QNmWifiEngine::connectToId(const QString &id)
 void QNmWifiEngine::disconnectFromId(const QString &id)
 {
     QString activeConnectionPath = getActiveConnectionPath(id);
-    qWarning() <<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << __FUNCTION__ << id << activeConnectionPath ;
+    //qWarning() <<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << __FUNCTION__ << id << activeConnectionPath ;
 
     if (!activeConnectionPath.isEmpty()) {
         QNetworkManagerConnectionActive *activeCon;
@@ -478,11 +478,11 @@ void QNmWifiEngine::disconnectFromId(const QString &id)
         settingsCon = new QNetworkManagerSettingsConnection(activeCon->serviceName(), activeCon->connection().path());
 
         if(settingsCon->isAutoConnect()) {
-            qWarning() << id << "is autoconnect";
+//            qWarning() << id << "is autoconnect";
             emit connectionError(id, OperationNotSupported);
             //unsupported
         } else {
-            qWarning() <<id << "is NOT autoconnect";
+//            qWarning() <<id << "is NOT autoconnect";
             QDBusObjectPath dbpath(activeConnectionPath);
             iface->deactivateConnection(dbpath);
             activatingConnectionPath = "";
@@ -694,7 +694,7 @@ QString QNmWifiEngine::getActiveConnectionPath(const QString &id)
      return flag;
  }
 
-void QNmWifiEngine::updateDeviceInterfaceState(const QString &path, quint32 nmState)
+void QNmWifiEngine::updateDeviceInterfaceState(const QString &/*path*/, quint32 nmState)
 {
 //    qWarning() << Q_FUNC_INFO << path << nmState;
 
@@ -786,7 +786,7 @@ void QNmWifiEngine::addDevice(QDBusObjectPath path)
     };
 }
 
-void QNmWifiEngine::removeDevice(QDBusObjectPath path)
+void QNmWifiEngine::removeDevice(QDBusObjectPath /*path*/)
 {
 //    qWarning() << Q_FUNC_INFO << path.path();
 //    disconnect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
@@ -824,7 +824,7 @@ void QNmWifiEngine::cmpPropertiesChanged(const QString &path, QMap<QString,QVari
    }
 }
 
-void QNmWifiEngine::accessPointRemoved( const QString &aPath, QDBusObjectPath oPath)
+void QNmWifiEngine::accessPointRemoved( const QString &aPath, QDBusObjectPath /*oPath*/)
 {
     //qWarning() << Q_FUNC_INFO << aPath << oPath.path();
 
@@ -1010,13 +1010,13 @@ quint64 QNmWifiEngine::sentDataForId(const QString &id) const
     return result;
 }
 
-void QNmWifiEngine::newConnection(QDBusObjectPath path)
+void QNmWifiEngine::newConnection(QDBusObjectPath /*path*/)
 {
     //qWarning() << Q_FUNC_INFO;
     requestUpdate();
 }
 
-void QNmWifiEngine::settingsConnectionRemoved(const QString &path)
+void QNmWifiEngine::settingsConnectionRemoved(const QString &/*path*/)
 {
     //qWarning() << Q_FUNC_INFO;
     requestUpdate();
@@ -1026,8 +1026,8 @@ void QNmWifiEngine::slotActivationFinished(QDBusPendingCallWatcher *openCall)
 {
     QDBusPendingReply<QDBusObjectPath> reply = *openCall;
     if (reply.isError()) {
-        //qWarning() <<"Error" <<  reply.error().name() << reply.error().message()
-         //       <<activatingConnectionPath;
+        qWarning() <<"Error" <<  reply.error().name() << reply.error().message()
+                <<activatingConnectionPath;
         emit connectionError(activatingConnectionPath, ConnectError);
     } else {
         QDBusObjectPath result = reply.value();
