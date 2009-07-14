@@ -57,7 +57,7 @@ public:
     virtual QByteArray contentFileName() const;
 
     virtual bool contentAvailable() const;
-    virtual uint indicativeSize() const;
+    virtual uint size() const;
 
     virtual QString decodedTextContent() const;
     virtual QByteArray decodedContent() const;
@@ -104,7 +104,7 @@ private:
 #ifdef QMESSAGING_OPTIONAL
     virtual void setContainerDataModified(bool modified);
 #endif
-    virtual void setIndicativeSize(uint size);
+    virtual void setSize(uint size);
 
     QMessageContentContainerPrivate *d_ptr;
 };

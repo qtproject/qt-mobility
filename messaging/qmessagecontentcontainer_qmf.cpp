@@ -114,12 +114,12 @@ bool QMessageContentContainer::contentAvailable() const
     return false;
 }
 
-void QMessageContentContainer::setIndicativeSize(uint size)
+void QMessageContentContainer::setSize(uint size)
 {
     Q_UNUSED(size)
 }
 
-uint QMessageContentContainer::indicativeSize() const
+uint QMessageContentContainer::size() const
 {
     return 0;
 }

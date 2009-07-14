@@ -231,17 +231,19 @@
 */
 
 /*!
-    \fn QMessageContentContainer::setIndicativeSize(uint size)
+    \fn QMessageContentContainer::setSize(uint size)
     
-    Set the size indication of the container including contents to \a size.
+    Set the size of the container including contents to \a size.
 
-    \sa indicativeSize()
+    \sa size()
 */
 
 /*!
-    \fn QMessageContentContainer::indicativeSize() const
+    \fn QMessageContentContainer::size() const
     
-    Returns an indication of the size of the container including contents.
+    If the size of the container is known then returns an indication
+    of the size of the container including contents; otherwise
+    returns 0.
 */
 
 /*!

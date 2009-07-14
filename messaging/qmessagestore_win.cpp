@@ -164,5 +164,4 @@ void QMessageStore::startNotifications(const QMessageFilterKey &key)
 
 void QMessageStore::stopNotifications()
 {
-    Q_UNUSED(key)    
 }
