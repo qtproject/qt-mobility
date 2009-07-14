@@ -162,12 +162,12 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     aDetails = a.details();
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
-        if (d.definitionName() != QContactDisplayLabel::DefinitionId)
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName)
             qDebug() << "A contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
-        if (d.definitionName() != QContactDisplayLabel::DefinitionId)
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName)
             qDebug() << "B contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
     }
 
@@ -1709,7 +1709,7 @@ void tst_QContactManager::filtering()
     c = cm.contact(c.id());
 
     QContactDetailFilter df;
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionId);
+    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
 
     ids = cm.contacts(df);
     QCOMPARE(ids.count(), 2);
@@ -1723,11 +1723,11 @@ void tst_QContactManager::filtering()
         dumpContactDifferences(cm.contact(ids.at(1)), a);
     }
 
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionId, "Hamburger");
+    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, "Hamburger");
     ids = cm.contacts(df);
     QCOMPARE(ids.count(), 0);
 
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionId, QContactPhoneNumber::FieldNumber);
+    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
     ids = cm.contacts(df);
     QCOMPARE(ids.count(), 2);
 
@@ -1738,7 +1738,7 @@ void tst_QContactManager::filtering()
     QCOMPARE(cm.contact(ids.at(0)), a);
 
     QContactDetailRangeFilter drf;
-    drf.setDetailDefinitionName(QContactPhoneNumber::DefinitionId, QContactPhoneNumber::FieldNumber);
+    drf.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     drf.setRange("555-1200", "555-1220");
     ids = cm.contacts(drf);
@@ -1747,7 +1747,7 @@ void tst_QContactManager::filtering()
     QCOMPARE(cm.contact(ids.at(0)), a);
 
     /* Some name matching */
-    df.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldFirst);
+    df.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     df.setValue("Bob");
     ids = cm.contacts(df);
     QCOMPARE(ids.count(), 1);
@@ -1820,7 +1820,7 @@ void tst_QContactManager::filtering()
     QCOMPARE(ids.count(), 0);
 
     /* Range testing */
-    drf.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldFirst);
+    drf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     drf.setMatchFlags(0);
     drf.setRange("A", "Bob");
     ids = cm.contacts(drf);
@@ -1972,7 +1972,7 @@ void tst_QContactManager::filtering()
     // Check EndsWith with range
     // A == son, B == sen, C == sun
     drf.setMatchFlags(Qt::MatchEndsWith);
-    drf.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldLast);
+    drf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     drf.setRange("sen", "son");
     ids = cm.contacts(drf);
     QCOMPARE(ids.count(), 1);

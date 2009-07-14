@@ -235,15 +235,15 @@ void tst_QContactFilter::actionFilter()
 
     /* Test initial conditions */
     QVERIFY(af.type() == QContactFilter::Action);
-    QVERIFY(af.actionId().isEmpty());
+    QVERIFY(af.actionName().isEmpty());
     QVERIFY(af.value().isNull());
 
 
-    af.setActionId("Action Id");
-    QVERIFY(af.actionId() == "Action Id");
+    af.setActionName("Action Name");
+    QVERIFY(af.actionName() == "Action Name");
 
-    af.setActionId(QString());
-    QVERIFY(af.actionId().isEmpty());
+    af.setActionName(QString());
+    QVERIFY(af.actionName().isEmpty());
 
     af.setValue(5);
     QVERIFY(af.value() == 5);

@@ -97,141 +97,85 @@
  * \variable QContactName::DefinitionName
  * The constant string which identifies the definition of details which are names
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactName::DefinitionId[] = "Name";
-=======
-const QString QContactName::DefinitionName("Name");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactName::DefinitionName[] = "Name";
 
 /*!
  * \variable QContactAvatar::DefinitionName
  * The constant string which identifies the definition of details which are avatars
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactAvatar::DefinitionId[] = "Avatar";
-=======
-const QString QContactAvatar::DefinitionName("Avatar");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactAvatar::DefinitionName[] = "Avatar";
 
 /*!
  * \variable QContactAddress::DefinitionName
  * The constant string which identifies the definition of details which are street addresses
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactAddress::DefinitionId[] = "StreetAddress";
-=======
-const QString QContactAddress::DefinitionName("StreetAddress");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactAddress::DefinitionName[] = "StreetAddress";
 
 /*!
  * \variable QContactPhoneNumber::DefinitionName
  * The constant string which identifies the definition of details which are phone numbers
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactPhoneNumber::DefinitionId[] = "PhoneNumber";
-=======
-const QString QContactPhoneNumber::DefinitionName("PhoneNumber");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactPhoneNumber::DefinitionName[] = "PhoneNumber";
 
 /*!
  * \variable QContactSyncTarget::DefinitionName
  * The constant string which identifies the definition of details which are synchronisation target stores
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactSyncTarget::DefinitionId[] = "SyncTarget";
-=======
-const QString QContactSyncTarget::DefinitionName("SyncTarget");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactSyncTarget::DefinitionName[] = "SyncTarget";
 
 /*!
  * \variable QContactGuid::DefinitionName
  * The constant string which identifies the definition of details which are globally unique identifiers
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactGuid::DefinitionId[] = "Guid";
-=======
-const QString QContactGuid::DefinitionName("Guid");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactGuid::DefinitionName[] = "Guid";
 
 /*!
  * \variable QContactEmailAddress::DefinitionName
  * The constant string which identifies the definition of details which are email addresses
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactEmailAddress::DefinitionId[] = "EmailAddress";
-=======
-const QString QContactEmailAddress::DefinitionName("EmailAddress");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactEmailAddress::DefinitionName[] = "EmailAddress";
 
 /*!
  * \variable QContactUrl::DefinitionName
  * The constant string which identifies the definition of details which are universal resource location paths
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactUrl::DefinitionId[] = "Url";
-=======
-const QString QContactUrl::DefinitionName("Url");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactUrl::DefinitionName[] = "Url";
 
 ///*!
 // * \variable QContactMeeting::DefinitionName
 // * The constant string which identifies the definition of details which are the date and time of a meeting
 // */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-//const char QContactMeeting::DefinitionId[] = "Meeting";
-=======
-//const QString QContactMeeting::DefinitionName("Meeting");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+//const char QContactMeeting::DefinitionName[] = "Meeting";
 
 /*!
  * \variable QContactBirthday::DefinitionName
  * The constant string which identifies the definition of details which are the dates of birthdays
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactBirthday::DefinitionId[] = "Birthday";
-=======
-const QString QContactBirthday::DefinitionName("Birthday");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactBirthday::DefinitionName[] = "Birthday";
 
 /*!
  * \variable QContactAnniversary::DefinitionName
  * The constant string which identifies the definition of details which are anniversary dates
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactAnniversary::DefinitionId[] = "Anniversary";
-=======
-const QString QContactAnniversary::DefinitionName("Anniversary");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactAnniversary::DefinitionName[] = "Anniversary";
 
 /*!
  * \variable QContactGender::DefinitionName
  * The constant string which identifies the definition of details which identify the gender of a contact in a given context
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactGender::DefinitionId[] = "Gender";
-=======
-const QString QContactGender::DefinitionName("Gender");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactGender::DefinitionName[] = "Gender";
 
 /*!
  * \variable QContactOrganisation::DefinitionName
  * The constant string which identifies the definition of details which identify the organisation to which a contact belongs in a given context
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactOrganisation::DefinitionId[] = "Organisation";
-=======
-const QString QContactOrganisation::DefinitionName("Organisation");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactOrganisation::DefinitionName[] = "Organisation";
 
 /*!
  * \variable QContactDisplayLabel::DefinitionName
  * The constant string which identifies the definition of details which contain a display label of a contact
  */
-<<<<<<< HEAD:contacts/qcontactdetails.cpp
-const char QContactDisplayLabel::DefinitionId[] = "DisplayLabel";
-=======
-const QString QContactDisplayLabel::DefinitionName("DisplayLabel");
->>>>>>> Added initial actions plugin support + test case.:contacts/qcontactdetails.cpp
+const char QContactDisplayLabel::DefinitionName[] = "DisplayLabel";
 
 
 

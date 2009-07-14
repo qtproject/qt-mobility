@@ -266,7 +266,7 @@ bool QContact::saveDetail(QContactDetail* detail)
     }
 
     /* Handle display labels specially */
-    if (detail->definitionName() == QLatin1String(QContactDisplayLabel::DefinitionId)) {
+    if (detail->definitionName() == QLatin1String(QContactDisplayLabel::DefinitionName)) {
         d->m_details[0] = *detail;
         detail->d->m_id = 1;
         QContactData::setError(d, QContact::NoError);
@@ -317,7 +317,7 @@ bool QContact::removeDetail(QContactDetail* detail)
     }
 
     // Check if this a display label
-    if (detail->d->m_definitionName == QLatin1String(QContactDisplayLabel::DefinitionId)) {
+    if (detail->d->m_definitionName == QLatin1String(QContactDisplayLabel::DefinitionName)) {
         QContactData::setError(d, QContact::NoError);
         QContactDisplayLabel l = d->m_details[0];
         l.setLabel(QString());
