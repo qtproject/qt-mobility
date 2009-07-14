@@ -104,7 +104,6 @@ private:
 #ifdef QMESSAGING_OPTIONAL
     virtual void setContainerDataModified(bool modified);
 #endif
-    virtual void setContentAvailable(bool available);
     virtual void setIndicativeSize(uint size);
 
     QMessageContentContainerPrivate *d_ptr;

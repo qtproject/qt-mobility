@@ -109,13 +109,6 @@ QByteArray QMessageContentContainer::contentFileName() const
     return QByteArray(); // stub
 }
 
-#ifdef QMESSAGING_OPTIONAL
-void QMessageContentContainer::setContentAvailable(bool available)
-{
-    Q_UNUSED(available)
-}
-#endif
-
 bool QMessageContentContainer::contentAvailable() const
 {
     return false;

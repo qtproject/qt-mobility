@@ -224,14 +224,6 @@
 */
 
 /*!
-    \fn QMessageContentContainer::setContentAvailable(bool available)
-    
-    Sets the content availability of the content contained to \a available.
-
-    \sa contentAvailable()
-*/
-
-/*!
     \fn QMessageContentContainer::contentAvailable() const
     
     Returns true if the entirety of the content contained is available on the device; 
