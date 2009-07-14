@@ -374,10 +374,6 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
         case QContactManagerInfo::Synchronous:
             return true;
 
-        case QContactManagerInfo::Locking:
-        case QContactManagerInfo::NativeFiltering:
-        case QContactManagerInfo::NativeSorting:
-        case QContactManagerInfo::Asynchronous:
         default:
             return false;
     }
