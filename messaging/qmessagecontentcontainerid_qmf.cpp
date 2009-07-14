@@ -32,42 +32,72 @@
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
 
+#include <qmailmessage.h>
+
+class QMessageContentContainerIdPrivate
+{
+public:
+    QMailMessagePart::Location _location;
+};
+
 QMessageContentContainerId::QMessageContentContainerId()
+    : d_ptr(0)
 {
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
+    : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
+    : d_ptr(0)
 {
-    Q_UNUSED(id)
+    QMailMessagePart::Location loc(id);
+    if (loc.isValid(true)) {
+        d_ptr = new QMessageContentContainerIdPrivate;
+        d_ptr->_location = loc;
+    }
 }
 
 QMessageContentContainerId::~QMessageContentContainerId()
 {
+    delete d_ptr;
 }
 
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        return (other.isValid() ? (d_ptr->_location.toString(true) == other.d_ptr->_location.toString(true)) : false);
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageContentContainerIdPrivate;
+            }
+            d_ptr->_location = other.d_ptr->_location;
+        } else {
+            delete d_ptr;
+        }
+    }
+
+    return *this;
 }
 
 QString QMessageContentContainerId::toString() const
 {
-    return QString::null; // stub
+    return (isValid() ? d_ptr->_location.toString(true) : QString());
 }
 
 bool QMessageContentContainerId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && d_ptr->_location.isValid(true));
 }
+

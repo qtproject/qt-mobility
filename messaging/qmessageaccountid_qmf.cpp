@@ -32,42 +32,72 @@
 ****************************************************************************/
 #include "qmessageaccountid.h"
 
+#include <qmailid.h>
+
+class QMessageAccountIdPrivate
+{
+public:
+    QMailAccountId _id;
+};
+
 QMessageAccountId::QMessageAccountId()
+    : d_ptr(0)
 {
 }
 
 QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
+    : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageAccountId::QMessageAccountId(const QString& id)
+    : d_ptr(0)
 {
-    Q_UNUSED(id)
+    QMailAccountId aid(id.toULongLong());
+    if (aid.isValid()) {
+        d_ptr = new QMessageAccountIdPrivate;
+        d_ptr->_id = aid;
+    }
 }
 
 QMessageAccountId::~QMessageAccountId()
 {
+    delete d_ptr;
 }
 
 bool QMessageAccountId::operator==(const QMessageAccountId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageAccountIdPrivate;
+            }
+            d_ptr->_id = other.d_ptr->_id;
+        } else {
+            delete d_ptr;
+        }
+    }
+
+    return *this;
 }
 
 QString QMessageAccountId::toString() const
 {
-    return QString::null; // stub
+    return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
 }
 
 bool QMessageAccountId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && d_ptr->_id.isValid());
 }
+

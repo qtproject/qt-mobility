@@ -33,43 +33,73 @@
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
 
+#include <qmailid.h>
+
+class QMessageFolderIdPrivate
+{
+public:
+    QMailFolderId _id;
+};
+
 QMessageFolderId::QMessageFolderId()
+    : d_ptr(0)
 {
 }
 
 QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
+    : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageFolderId::QMessageFolderId(const QString& id)
+    : d_ptr(0)
 {
-    Q_UNUSED(id)
+    QMailFolderId fid(id.toULongLong());
+    if (fid.isValid()) {
+        d_ptr = new QMessageFolderIdPrivate;
+        d_ptr->_id = fid;
+    }
 }
 
 QMessageFolderId::~QMessageFolderId()
 {
+    delete d_ptr;
 }
 
 bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageFolderIdPrivate;
+            }
+            d_ptr->_id = other.d_ptr->_id;
+        } else {
+            delete d_ptr;
+        }
+    }
+
+    return *this;
 }
 
 QString QMessageFolderId::toString() const
 {
-    return QString::null; // stub
+    return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
 }
 
 bool QMessageFolderId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && d_ptr->_id.isValid());
 }
+
 #endif
