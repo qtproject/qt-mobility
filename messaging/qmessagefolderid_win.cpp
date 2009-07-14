@@ -47,6 +47,10 @@ QMessageFolderId::QMessageFolderId(const QString& id)
     Q_UNUSED(id)
 }
 
+QMessageFolderId::~QMessageFolderId()
+{
+}
+
 bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 {
     Q_UNUSED(other)

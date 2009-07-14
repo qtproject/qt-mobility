@@ -46,6 +46,10 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     Q_UNUSED(id)
 }
 
+QMessageContentContainerId::~QMessageContentContainerId()
+{
+}
+
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
     Q_UNUSED(other)

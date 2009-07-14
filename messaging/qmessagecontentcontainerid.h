@@ -45,6 +45,8 @@ public:
     QMessageContentContainerId();
     QMessageContentContainerId(const QMessageContentContainerId &other);
     QMessageContentContainerId(const QString &id);
+    ~QMessageContentContainerId();
+
     bool operator==(const QMessageContentContainerId &other) const;
     QMessageContentContainerId& operator=(const QMessageContentContainerId &other);
 

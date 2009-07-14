@@ -77,6 +77,12 @@ SOURCES += qmessageid_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 } else {
+# QMF headers must be located at $QMF_INCLUDEDIR
+INCLUDEPATH += $$QMF_INCLUDEDIR $$QMF_INCLUDEDIR/support
+
+# QMF libraries must be located at $QMF_LIBDIR
+LIBS += -L $$QMF_LIBDIR -lqtopiamail
+
 SOURCES += qmessageid_qmf.cpp \
            qmessagecontentcontainerid_qmf.cpp \
            qmessagefolderid_qmf.cpp \

@@ -45,8 +45,10 @@ public:
     QMessageId();
     QMessageId(const QMessageId &other);
     QMessageId(const QString &id);
-    bool operator==(const QMessageId &other) const;
+    ~QMessageId();
+
     QMessageId& operator=(const QMessageId &other);
+    bool operator==(const QMessageId &other) const;
 
     QString toString() const;
     bool isValid() const;
