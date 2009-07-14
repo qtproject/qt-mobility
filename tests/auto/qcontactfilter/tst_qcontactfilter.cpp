@@ -539,6 +539,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
 
     /* Blank Policy */
@@ -547,6 +548,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
 
     sortorder.setBlankPolicy(QContactSortOrder::BlanksLast);
@@ -554,6 +556,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
 
     /* Direction */
@@ -562,6 +565,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
 
     sortorder.setDirection(Qt::AscendingOrder);
@@ -569,6 +573,24 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
+    QVERIFY(!sortorder.isValid());
+
+    /* Case sensitivity */
+    sortorder.setCaseSensitivity(Qt::CaseInsensitive);
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseInsensitive);
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setCaseSensitivity(Qt::CaseSensitive);
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
 
     /* Definitions */

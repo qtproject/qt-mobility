@@ -105,3 +105,14 @@ Qt::SortOrder QContactSortOrder::direction() const
 {
     return d->m_direction;
 }
+
+
+Qt::CaseSensitivity QContactSortOrder::caseSensitivity() const
+{
+    return d->m_sensitivity;
+}
+
+void QContactSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
+{
+    d->m_sensitivity = sensitivity;
+}

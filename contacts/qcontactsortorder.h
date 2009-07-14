@@ -58,12 +58,14 @@ public:
     void setDetailDefinitionName(const QString& definitionId, const QString& fieldId);
     void setBlankPolicy(BlankPolicy blankPolicy);
     void setDirection(Qt::SortOrder direction);
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
 
     /* Accessors */
     QString detailDefinitionName() const;
     QString detailFieldName() const;
     BlankPolicy blankPolicy() const;
     Qt::SortOrder direction() const;
+    Qt::CaseSensitivity caseSensitivity() const;
 
     bool isValid() const;
 private:

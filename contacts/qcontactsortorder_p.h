@@ -56,6 +56,7 @@ public:
             : QSharedData()
             , m_blankPolicy(QContactSortOrder::BlanksLast)
             , m_direction(Qt::AscendingOrder)
+            , m_sensitivity(Qt::CaseSensitive)
     {
     }
 
@@ -65,6 +66,7 @@ public:
 
     QContactSortOrder::BlankPolicy m_blankPolicy;
     Qt::SortOrder m_direction;
+    Qt::CaseSensitivity m_sensitivity;
     QString m_definitionId;
     QString m_fieldId;
 };
