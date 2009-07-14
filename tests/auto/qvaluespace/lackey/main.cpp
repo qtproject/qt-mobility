@@ -122,7 +122,7 @@ private slots:
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
     }
 
-    void itemSetValue(const QByteArray& path, const QVariant& variant )
+    void itemSetValue(const QByteArray& /*path*/, const QVariant& /*variant*/ )
     {
         //qDebug() << sender()->objectName() << path << variant.toInt();
     }

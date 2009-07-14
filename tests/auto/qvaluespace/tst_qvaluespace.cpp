@@ -923,4 +923,4 @@ void tst_QValueSpaceItem::ipcSetValue()
 }
 
 QTEST_MAIN(tst_QValueSpaceItem)
-#include "tst_qvaluespaceitem.moc"
+#include "tst_qvaluespace.moc"
