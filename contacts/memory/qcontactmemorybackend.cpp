@@ -122,10 +122,10 @@ QList<QUniqueId> QContactMemoryEngine::contacts(const QContactSortOrder& sortOrd
     // TODO: this needs to be done properly...
     QList<QUniqueId> sortedIds;
     QList<QContact> sortedContacts;
-    foreach (const QContact& c, d->m_contacts)
-        QContactManagerEngine::addSorted(&sortedContacts, c, sortOrder);
-    foreach (const QContact& c, sortedContacts)
-        sortedIds.append(c.id());
+    for (int i = 0; i < d->m_contacts.size(); i++)
+        QContactManagerEngine::addSorted(&sortedContacts, d->m_contacts.at(i), sortOrder);
+    for (int i = 0; i < sortedContacts.size(); i++)
+        sortedIds.append(sortedContacts.at(i).id());
     return sortedIds;
 }
 
@@ -366,76 +366,21 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
 {
     switch (feature) {
         case QContactManagerInfo::Groups:
-        {
+        case QContactManagerInfo::Batch:
+        case QContactManagerInfo::ActionPreferences:
+        case QContactManagerInfo::ReadOnlyDetails:
+        case QContactManagerInfo::CreateOnlyDetails:
+        case QContactManagerInfo::MutableDefinitions:
+        case QContactManagerInfo::Synchronous:
             return true;
-        }
-        break;
 
         case QContactManagerInfo::Locking:
-        {
-            return false;
-        }
-        break;
-
-        case QContactManagerInfo::Batch:
-        {
-            return true;
-        }
-        break;
-
-        case QContactManagerInfo::ActionPreferences:
-        {
-            return true;
-        }
-        break;
-
-        case QContactManagerInfo::ReadOnlyDetails:
-        {
-            return true;
-        }
-        break;
-
-        case QContactManagerInfo::CreateOnlyDetails:
-        {
-            return true;
-        }
-        break;
-
-        case QContactManagerInfo::MutableDefinitions:
-        {
-            return true;
-        }
-        break;
-
         case QContactManagerInfo::NativeFiltering:
-        {
-            return false;
-        }
-        break;
-
         case QContactManagerInfo::NativeSorting:
-        {
-            return false;
-        }
-        break;
-
         case QContactManagerInfo::Asynchronous:
-        {
-            return false;
-        }
-        break;
-
-        case QContactManagerInfo::Synchronous:
-        {
-            return true;
-        }
-        break;
-
         default:
-        return false;
+            return false;
     }
-
-    return false;
 }
 
 /*!
