@@ -106,7 +106,5 @@ QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
  */
 bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
 {
-    if (d->m_engine)
-        return d->m_engine->filterSupported(filter);
-    return false;
+    return d->m_engine->filterSupported(filter);
 }
