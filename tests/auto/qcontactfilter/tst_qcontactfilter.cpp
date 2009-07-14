@@ -272,10 +272,13 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
 
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
     /* Self assignment should do nothing */
     bf2 = bf2;
     QVERIFY(bf2 == f2);
 
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
     /* Test set filter */
     bf2.setFilters(filterList);
     QCOMPARE(bf2.filters().count(), 3);
@@ -324,10 +327,13 @@ void tst_QContactFilter::actionFilter()
 
     QContactActionFilter af2 = f;
     QVERIFY(af2 == af);
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 
     /* Self assignment should do nothing */
     af2 = af2;
     QVERIFY(af2 == af);
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -370,10 +376,13 @@ void tst_QContactFilter::changeLogFilter()
 
     QContactChangeLogFilter cf2 = f;
     QVERIFY(cf2 == cf);
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 
     /* Self assignment should do nothing */
     cf2 = cf2;
     QVERIFY(cf2 == cf);
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 }
 
 void tst_QContactFilter::detailFilter()
@@ -415,9 +424,12 @@ void tst_QContactFilter::detailFilter()
     QContactDetailFilter df2 = f;
     QVERIFY(df2 == df);
 
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
     /* Self assignment should do nothing */
     df2 = df2;
     QVERIFY(df2 == df);
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 }
 
 void tst_QContactFilter::detailRangeFilter()
@@ -501,10 +513,13 @@ void tst_QContactFilter::detailRangeFilter()
 
     QContactDetailRangeFilter rf2 = f;
     QVERIFY(rf2 == rf);
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 
     /* Self assignment should do nothing */
     rf2 = rf2;
     QVERIFY(rf2 == rf);
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 }
 
 void tst_QContactFilter::groupMembershipFilter()
@@ -524,6 +539,7 @@ void tst_QContactFilter::groupMembershipFilter()
 
     QContactGroupMembershipFilter gf2 = f;
     QVERIFY(gf2 == gf);
+<<<<<<< HEAD:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 
     /* Self assignment should do nothing */
     gf2 = gf2;
@@ -654,6 +670,8 @@ void tst_QContactFilter::sortObject()
     QVERIFY(another.detailDefinitionName() == "Definition");
     QVERIFY(another.detailFieldName() == "Detail");
     QVERIFY(another.isValid());
+=======
+>>>>>>> Slightly change the semantics of operator== for QContactFilter.:tests/auto/qcontactfilter/tst_qcontactfilter.cpp
 }
 
 void tst_QContactFilter::sortObject()
