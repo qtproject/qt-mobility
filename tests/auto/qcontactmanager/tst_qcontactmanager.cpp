@@ -2183,7 +2183,7 @@ void tst_QContactManager::sorting()
 
     /* Now try some different sort orders */
     QContactSortOrder so;
-    so.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldFirst);
+    so.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
 
     /* First ascending */
     ids = cm->contacts(so);
@@ -2202,7 +2202,7 @@ void tst_QContactManager::sorting()
     QVERIFY(ids[2] == a.id());
 
     /* Last descending */
-    so.setDetailDefinitionName(QContactName::DefinitionId, QContactName::FieldLast);
+    so.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     ids = cm->contacts(so);
     QVERIFY(ids.count() == 3);
     QVERIFY(ids[0] == c.id());
