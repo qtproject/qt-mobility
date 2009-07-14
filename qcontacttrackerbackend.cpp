@@ -261,6 +261,17 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             Live<nie::DataObject> fdo = ::tracker()->liveNode( avatar );
             contact->setPhoto(fdo);
         }
+        else if (definition == QContactServiceId::DefinitionId) {
+            QString account = det.value(QContactServiceId::FieldAccount);
+            QString serviceName = det.value(QContactServiceId::FieldServiceName);
+            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
+            if (0 == liveIMAccount) {
+                liveIMAccount = contact->addHasIMAccount();
+            }
+            liveIMAccount->setImID(account);
+            liveIMAccount->setImAccountType(serviceName);
+        }
     }
 
     if(!batch) {

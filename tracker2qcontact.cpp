@@ -11,17 +11,7 @@
 #include "tracker2qcontact.h"
 
 #include <qcontact.h>
-#include <qcontactname.h>
-#include <qcontactaddress.h>
-#include <qcontactanniversary.h>
-#include <qcontactavatar.h>
-#include <qcontactbirthday.h>
-#include <qcontactemailaddress.h>
-#include <qcontactphonenumber.h>
-#include <qcontacturl.h>
-#include <qcontactsynctarget.h>
-#include <qcontactgender.h>
-#include <qcontactguid.h>
+#include <qcontactdetails.h>
 
 #include <QtTracker/ontologies/nco.h>
 
@@ -188,6 +178,13 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactUrl& det
 }
 */
 
+void copyDetailData(const Live<nco::IMAccount>& imAccount, QContactServiceId& detail)
+{
+    detail.setAccount(imAccount->getImID());
+    detail.setServiceName(imAccount->getImAccountType());
+}
+
+
 bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContact, QContact& qcontact )
 {
     bool ok;
@@ -234,6 +231,13 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
             detail.setAttribute(QContactAvatar::AttributeContext, QContactAvatar::AttributeContextHome);
             qcontact.saveDetail(&detail);
         }
+    }
+
+    LiveNodes imAccounts = ncoContact->getHasIMAccounts();
+    foreach (const Live<nco::IMAccount>& imAccount, imAccounts) {
+        QContactServiceId detail;
+        copyDetailData(imAccount, detail);
+        qcontact.saveDetail(&detail);
     }
 
 
