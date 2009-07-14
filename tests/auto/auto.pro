@@ -2,5 +2,5 @@ TEMPLATE = subdirs
 SUBDIRS += qnetworkconfigmanager \
            qnetworkconfiguration
 
-!mac:unix:win32:SUBDIRS += qnetworksession
-
+win32:SUBDIRS += qnetworksession
+!mac:unix::SUBDIRS += qnetworksession
