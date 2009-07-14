@@ -411,6 +411,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="retrieve" fullname="QMessageServiceAction::retrieve" href="qmessageserviceaction.html#retrieve" location="qmessageserviceaction_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="retrieve(const QMessageId &amp; id)">
                 <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="retrieveBody" fullname="QMessageServiceAction::retrieveBody" href="qmessageserviceaction.html#retrieveBody" location="qmessageserviceaction_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="retrieveBody(const QMessageId &amp; id)">
+                <parameter left="const QMessageId &amp;" right="" name="id" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="retrieve" fullname="QMessageServiceAction::retrieve" href="qmessageserviceaction.html#retrieve-2" location="qmessageserviceaction_win.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="retrieve(const QMessageContentContainerId &amp; id)">
                 <parameter left="const QMessageContentContainerId &amp;" right="" name="id" default=""/>
             </function>

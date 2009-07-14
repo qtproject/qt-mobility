@@ -298,6 +298,7 @@
         <keyword ref="qmessageserviceaction.html#exportUpdates">exportUpdates</keyword>
         <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
+        <keyword ref="qmessageserviceaction.html#retrieveBody">retrieveBody</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>
         <keyword ref="qmessageserviceaction.html#show">show</keyword>
         <section ref="qmessageserviceaction-members.html" title="List of all members"/>
