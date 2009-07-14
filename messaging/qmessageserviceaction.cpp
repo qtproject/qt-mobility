@@ -90,7 +90,10 @@
 /*!
     \fn QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
   
-    Transmit \a message using the account identified by \a accountId.
+    Transmit \a message using the account identified by \a accountId. 
+    
+    The message should be placed in the standard outbox folder for the account before sending, 
+    and if the sending is successful moved to the sent folder for the account.
   
     \sa QMessage, QMessageAccountId
 */
