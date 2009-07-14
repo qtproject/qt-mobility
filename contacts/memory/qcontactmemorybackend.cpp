@@ -116,7 +116,7 @@ void QContactMemoryEngine::deref()
 QList<QUniqueId> QContactMemoryEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    if (sortOrder.type() == QContactSortOrder::Unsorted)
+    if (!sortOrder.isValid())
         return d->m_contactIds;
 
     // TODO: this needs to be done properly...

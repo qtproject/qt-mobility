@@ -66,6 +66,8 @@ private slots:
     void changeLogFilter();
     void actionFilter();
     void groupMembershipFilter();
+
+    void sortObject(); // should perhaps be in a different test :)
 };
 
 tst_QContactFilter::tst_QContactFilter()
@@ -406,6 +408,125 @@ void tst_QContactFilter::groupMembershipFilter()
 
     gf.setGroupId(546);
     QVERIFY(gf.groupId() == 546);
+}
+
+void tst_QContactFilter::sortObject()
+{
+    QContactSortOrder sortorder;
+
+    /* Defaults */
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(!sortorder.isValid());
+
+    /* Blank Policy */
+    sortorder.setBlankPolicy(QContactSortOrder::BlanksFirst);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksFirst);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setBlankPolicy(QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(!sortorder.isValid());
+
+    /* Direction */
+    sortorder.setDirection(Qt::DescendingOrder);
+    QVERIFY(sortorder.direction() == Qt::DescendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDirection(Qt::AscendingOrder);
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    /* Definitions */
+    sortorder.setDetailDefinitionName(QString(), QString());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDetailDefinitionName("", QString());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDetailDefinitionName(QString(), "");
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDetailDefinitionName("", "");
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDetailDefinitionName("Definition", QString());
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    sortorder.setDetailDefinitionName("Definition", "Detail");
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName() == "Definition");
+    QVERIFY(sortorder.detailFieldName() == "Detail");
+    QVERIFY(sortorder.isValid());
+
+    sortorder.setDetailDefinitionName(QString(), "Detail");
+    QVERIFY(sortorder.direction() == Qt::AscendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
+    QVERIFY(sortorder.detailDefinitionName().isEmpty());
+    QVERIFY(sortorder.detailFieldName().isEmpty());
+    QVERIFY(!sortorder.isValid());
+
+    /* Copy ctor */
+    sortorder.setDetailDefinitionName("Definition", "Detail");
+    sortorder.setBlankPolicy(QContactSortOrder::BlanksFirst);
+    sortorder.setDirection(Qt::DescendingOrder);
+    QVERIFY(sortorder.direction() == Qt::DescendingOrder);
+    QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksFirst);
+    QVERIFY(sortorder.detailDefinitionName() == "Definition");
+    QVERIFY(sortorder.detailFieldName() == "Detail");
+    QVERIFY(sortorder.isValid());
+
+    QContactSortOrder other(sortorder);
+    QVERIFY(other.direction() == Qt::DescendingOrder);
+    QVERIFY(other.blankPolicy() == QContactSortOrder::BlanksFirst);
+    QVERIFY(other.detailDefinitionName() == "Definition");
+    QVERIFY(other.detailFieldName() == "Detail");
+    QVERIFY(other.isValid());
+
+    /* Assignment operator */
+
+    QContactSortOrder another;
+    another = other;
+    QVERIFY(another.direction() == Qt::DescendingOrder);
+    QVERIFY(another.blankPolicy() == QContactSortOrder::BlanksFirst);
+    QVERIFY(another.detailDefinitionName() == "Definition");
+    QVERIFY(another.detailFieldName() == "Detail");
+    QVERIFY(another.isValid());
 }
 
 QTEST_MAIN(tst_QContactFilter)

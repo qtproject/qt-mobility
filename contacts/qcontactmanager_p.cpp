@@ -1554,25 +1554,21 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder)
 {
-    for (int i = 0; i < sorted->size(); i++) {
-        QContact curr = sorted->at(i);
-        if (sortOrder.type() == QContactSortOrder::Unsorted) {
-            sorted->insert(i, toAdd);
-            return;
-        } else if (sortOrder.type() == QContactSortOrder::Temporal) {
-            if (sortOrder.direction() == Qt::AscendingOrder) {
-                // if toAdd.addedDate < curr.addedDate, sorted->insert(i, toAdd); return;
-            }
-            // if toAdd.addedDate >= curr.addedDate, sorted->insert(i, toAdd); return;
-        } else if (sortOrder.type() == QContactSortOrder::Detail) {
-            if (toAdd.detail(sortOrder.detailDefinitionId()).value(sortOrder.detailFieldId())
-                < curr.detail(sortOrder.detailDefinitionId()).value(sortOrder.detailFieldId())) {
+
+    if (!sortOrder.isValid()) {
+        sorted->append(toAdd);
+    } else {
+        for (int i = 0; i < sorted->size(); i++) {
+            QContact curr = sorted->at(i);
+
+            // XXX this uses string compare
+            if (toAdd.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName())
+                < curr.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName())) {
                 sorted->insert(i, toAdd);
                 return;
             }
         }
     }
-
     // couldn't find anywhere for it to go.  put it at the end.
     sorted->append(toAdd);
 }
