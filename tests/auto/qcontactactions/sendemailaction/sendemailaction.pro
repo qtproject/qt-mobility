@@ -16,6 +16,8 @@ DEFINES += ACTIONPLUGINNAME=\\\"SendEmail\\\"
 
 INCLUDEPATH += ../../../../contacts
 
+LIBS += -lQtContacts
+
 HEADERS += sendemailaction_p.h
 SOURCES += sendemailaction.cpp
 
