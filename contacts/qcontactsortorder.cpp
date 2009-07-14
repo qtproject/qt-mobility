@@ -59,7 +59,8 @@ QContactSortOrder& QContactSortOrder::operator=(const QContactSortOrder& other)
 
 bool QContactSortOrder::isValid() const
 {
-    if (d->m_definitionId.isEmpty() || d->m_fieldId.isEmpty())
+    /* We clear both when one is empty, so we only need to check one */
+    if (d->m_definitionId.isEmpty())
         return false;
     return true;
 }
