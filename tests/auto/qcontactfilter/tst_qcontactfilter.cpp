@@ -199,6 +199,10 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
 
+    /* Self assignment should do nothing */
+    bf2 = bf2;
+    QVERIFY(bf2 == f2);
+
     /* Test set filter */
     bf2.setFilters(filterList);
     QCOMPARE(bf2.filters().count(), 3);
@@ -268,6 +272,10 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
 
+    /* Self assignment should do nothing */
+    bf2 = bf2;
+    QVERIFY(bf2 == f2);
+
     /* Test set filter */
     bf2.setFilters(filterList);
     QCOMPARE(bf2.filters().count(), 3);
@@ -316,6 +324,10 @@ void tst_QContactFilter::actionFilter()
 
     QContactActionFilter af2 = f;
     QVERIFY(af2 == af);
+
+    /* Self assignment should do nothing */
+    af2 = af2;
+    QVERIFY(af2 == af);
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -358,6 +370,10 @@ void tst_QContactFilter::changeLogFilter()
 
     QContactChangeLogFilter cf2 = f;
     QVERIFY(cf2 == cf);
+
+    /* Self assignment should do nothing */
+    cf2 = cf2;
+    QVERIFY(cf2 == cf);
 }
 
 void tst_QContactFilter::detailFilter()
@@ -399,6 +415,9 @@ void tst_QContactFilter::detailFilter()
     QContactDetailFilter df2 = f;
     QVERIFY(df2 == df);
 
+    /* Self assignment should do nothing */
+    df2 = df2;
+    QVERIFY(df2 == df);
 }
 
 void tst_QContactFilter::detailRangeFilter()
@@ -482,6 +501,10 @@ void tst_QContactFilter::detailRangeFilter()
 
     QContactDetailRangeFilter rf2 = f;
     QVERIFY(rf2 == rf);
+
+    /* Self assignment should do nothing */
+    rf2 = rf2;
+    QVERIFY(rf2 == rf);
 }
 
 void tst_QContactFilter::groupMembershipFilter()
@@ -500,6 +523,10 @@ void tst_QContactFilter::groupMembershipFilter()
     QVERIFY(f == gf);
 
     QContactGroupMembershipFilter gf2 = f;
+    QVERIFY(gf2 == gf);
+
+    /* Self assignment should do nothing */
+    gf2 = gf2;
     QVERIFY(gf2 == gf);
 }
 
@@ -612,9 +639,16 @@ void tst_QContactFilter::sortObject()
     QVERIFY(other.isValid());
 
     /* Assignment operator */
-
     QContactSortOrder another;
     another = other;
+    QVERIFY(another.direction() == Qt::DescendingOrder);
+    QVERIFY(another.blankPolicy() == QContactSortOrder::BlanksFirst);
+    QVERIFY(another.detailDefinitionName() == "Definition");
+    QVERIFY(another.detailFieldName() == "Detail");
+    QVERIFY(another.isValid());
+
+    /* Self assignment */
+    another = another;
     QVERIFY(another.direction() == Qt::DescendingOrder);
     QVERIFY(another.blankPolicy() == QContactSortOrder::BlanksFirst);
     QVERIFY(another.detailDefinitionName() == "Definition");
