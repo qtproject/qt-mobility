@@ -95,6 +95,8 @@ bool QNetworkManagerInterface::isValid()
 
 bool QNetworkManagerInterface::setConnections()
 {
+    if(!isValid() )
+        return false;
     bool allOk = false;
     if (!dbusConnection.connect(NM_DBUS_SERVICE,
                                   NM_DBUS_PATH,
@@ -214,6 +216,9 @@ bool QNetworkManagerInterfaceAccessPoint::isValid()
 
 bool QNetworkManagerInterfaceAccessPoint::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
@@ -319,6 +324,9 @@ bool QNetworkManagerInterfaceDevice::isValid()
 
 bool QNetworkManagerInterfaceDevice::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
@@ -408,7 +416,11 @@ bool QNetworkManagerInterfaceDeviceWired::isValid()
 
 bool QNetworkManagerInterfaceDeviceWired::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
+
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -480,6 +492,9 @@ bool QNetworkManagerInterfaceDeviceWireless::isValid()
 
 bool QNetworkManagerInterfaceDeviceWireless::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
@@ -663,6 +678,9 @@ bool QNetworkManagerSettingsConnection::isValid()
 
 bool QNetworkManagerSettingsConnection::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
     if(!dbusConnection.connect(d->service, d->path,
                            NM_DBUS_IFACE_SETTINGS_CONNECTION, "NewConnection",
@@ -881,6 +899,9 @@ bool QNetworkManagerConnectionActive::isValid()
 
 bool QNetworkManagerConnectionActive::setConnections()
 {
+    if(!isValid() )
+        return false;
+
     bool allOk = false;
     nmDBusHelper = new QNmDBusHelper;
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
