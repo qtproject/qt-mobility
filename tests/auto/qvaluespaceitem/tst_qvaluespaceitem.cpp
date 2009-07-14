@@ -36,6 +36,7 @@
 #include <QProcess>
 #include "qvaluespace.h"
 #include <unistd.h>
+#include <QVariant>
 
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -57,6 +58,8 @@ class ChangeListener : public QObject
 Q_SIGNALS:
     void baseChanged();
     void copyChanged();
+    void changeValue(const QByteArray&, const QVariant&);
+    void itemRemove(const QByteArray&);
 };
 
 
@@ -85,6 +88,8 @@ private slots:
     void contentsChanged();
     void value();
     void ipcTests();
+    void setValue();
+    void ipcSetValue();
 };
 
 void tst_QValueSpaceItem::initTestCase()
@@ -689,8 +694,8 @@ void tst_QValueSpaceItem::value()
     QCOMPARE( base->value("home/user/float", 4.0).toDouble(), (double)4.56);
 
     QValueSpaceItem* base1 = new QValueSpaceItem(QString("/home"), this);
-    QCOMPARE( base1->value("usercount",5).toInt(),1);
-    QCOMPARE( base1->value("user/QString", "default").toString(), QString("testString") );
+    QCOMPARE( base1->value(QString("usercount"),5).toInt(),1);
+    QCOMPARE( base1->value(QByteArray("user/QString"), "default").toString(), QString("testString") );
     QCOMPARE( base1->value("user/bool", false).toBool(), true);
     QCOMPARE( base1->value("user/int", 5).toInt(), 3);
     QCOMPARE( base1->value("user/QByteArray", QByteArray("invalid")).toByteArray(), QByteArray("testByteArray"));
@@ -698,8 +703,8 @@ void tst_QValueSpaceItem::value()
     //QCOMPARE( base1->value("user/float", 4.0).toString(), QString("4.56"));
 
     QValueSpaceItem* base2 = new QValueSpaceItem(QString("/home/user"), this);
-    QCOMPARE( base2->value("usercount", 5).toInt(), 5);
-    QCOMPARE( base2->value("QString", "default").toString(), QString("testString") );
+    QCOMPARE( base2->value(QByteArray("usercount"), 5).toInt(), 5);
+    QCOMPARE( base2->value(QString("QString"), "default").toString(), QString("testString") );
     QCOMPARE( base2->value("bool", false).toBool(), true);
     QCOMPARE( base2->value("int", 5).toInt(), 3);
     QCOMPARE( base2->value("QByteArray", QByteArray("invalid")).toByteArray(), QByteArray("testByteArray"));
@@ -745,5 +750,177 @@ void tst_QValueSpaceItem::ipcTests()
     spy.clear();
 #endif
 }
+
+void tst_QValueSpaceItem::setValue()
+{
+    QValueSpaceObject* object = new QValueSpaceObject("/usr/intern/changeRequests");
+    object->setAttribute("value", 500);
+    object->setObjectName("object");
+    QValueSpaceObject* rel_object = new QValueSpaceObject("/usr/intern");
+    rel_object->setObjectName("rel_object");
+
+
+    QValueSpaceItem item("/usr/intern/changeRequests/value");
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    ChangeListener* listener = new ChangeListener();
+    connect(object, SIGNAL(itemSetValue(QByteArray, QVariant)),
+            listener, SIGNAL(changeValue(QByteArray,QVariant)));
+    QSignalSpy spy(listener, SIGNAL(changeValue(QByteArray, QVariant)));
+
+    ChangeListener* rel_listener = new ChangeListener();
+    connect(rel_object, SIGNAL(itemSetValue(QByteArray, QVariant)),
+            rel_listener, SIGNAL(changeValue(QByteArray,QVariant)));
+    QSignalSpy rel_spy(rel_listener, SIGNAL(changeValue(QByteArray, QVariant)));
+ 
+    item.setValue(501);
+    item.sync();
+
+    QTRY_COMPARE(spy.count(), 1);
+    QList<QVariant> arguments = spy.takeFirst();
+
+    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    QValueSpaceItem item2("/usr/intern");
+    QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+    item2.setValue("changeRequests/value", 501);
+    item2.sync();
+    QTRY_COMPARE(spy.count(), 1);
+
+    arguments = spy.takeFirst();
+    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+    QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+
+    QValueSpaceItem item3("/");
+    QEXPECT_FAIL("", "root based item not working", Continue);
+    QCOMPARE(item3.value("usr/intern/changeRequests/value", 600).toInt(), 500);
+    item3.setValue(QString("usr/intern/changeRequests/value"), 501);
+    item3.sync();
+    QTRY_COMPARE(spy.count(), 1);
+
+    arguments = spy.takeFirst();
+    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+    QEXPECT_FAIL("", "root based item not working", Continue);
+    QCOMPARE(item3.value(QString("usr/intern/changeRequests/value"), 600).toInt(), 500);
+
+    QValueSpaceItem item4("/usr/intern/changeRequests");
+    QCOMPARE(item4.value("value", 600).toInt(), 500);
+    item4.setValue(QByteArray("value"), 501);
+    item4.sync();
+    QTRY_COMPARE(spy.count(), 1);
+
+    arguments = spy.takeFirst();
+    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+    QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
+
+
+    delete listener;
+    delete rel_listener;
+    delete object;
+    delete rel_object;
+}
+
+void tst_QValueSpaceItem::ipcSetValue()
+{
+#if defined(QT_NO_PROCESS)
+    QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
+#else
+    QList<QValueSpaceObject*> objects;
+    QList<QSignalSpy*> spies;
+    QList<ChangeListener*> listeners;
+
+    objects.append( new QValueSpaceObject("/usr/lackey"));  //actual owner
+    objects.append( new QValueSpaceObject("/usr/lackey/")); //happens to use same path
+    objects.append( new QValueSpaceObject("/usr") ); //parent path
+    objects.append( new QValueSpaceObject("/usr/lackey/unrelated")); //subpath
+    objects.at(0)->setAttribute("changeRequests/value", 500);
+
+    QValueSpaceItem item("/usr/lackey/changeRequests/value");
+
+    const int itemCount = 4;
+    for(int j =0; j<itemCount; j++) {
+        //objects.at(j)->setObjectName(QString("obj%1").arg(j));
+        ChangeListener * listener = new ChangeListener();
+        connect(objects.at(j), SIGNAL(itemSetValue(QByteArray, QVariant)),
+                listener, SIGNAL(changeValue(QByteArray, QVariant)));
+        connect(objects.at(j), SIGNAL(itemRemove(QByteArray)),
+                listener, SIGNAL(itemRemove(QByteArray)));
+        listeners.append(listener);
+        QSignalSpy* changeSpy = new QSignalSpy(listener, SIGNAL(changeValue(QByteArray,QVariant)));
+        QSignalSpy* removeSpy = new QSignalSpy(listener, SIGNAL(itemRemove(QByteArray)));
+        spies.append(changeSpy);
+        spies.append(removeSpy);
+    } 
+
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    QProcess process;
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    process.start("./vsiTestLackey",QStringList()<< "-ipcSetValue" );
+    QVERIFY(process.waitForStarted());
+
+    QTest::qWait(5000); 
+    //QTRY_COMPARE(changeSpy.count(), 3);
+    QTRY_COMPARE(spies.at(0)->count(), 3);
+    QTRY_COMPARE(spies.at(1)->count(), 5);
+
+    for(int i=0; i<spies.count(); i++) {
+        QSignalSpy * spy = spies.at(i);
+        int k = 0;
+        if (i == 6 || i == 7) { //unrelated subpath item
+            QCOMPARE(spy->count(), 0);
+        } else if ( i%2 == 0) { //change spies
+            while(!spy->isEmpty()) {
+                QList<QVariant> arguments = spy->takeFirst();
+                QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+                if (i==4)
+                    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/lackey/changeRequests/value"));
+                else
+                    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/changeRequests/value"));
+                QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+                QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501+k);
+                k+=1;
+            }
+        } else { //remove spies
+            QByteArray offset("");
+            if (i == 5)
+                offset = "/lackey";
+            while (!spy->isEmpty()) {
+                QList<QVariant> arguments = spy->takeFirst();
+                QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+                if (k == 3)
+                    QCOMPARE(arguments.at(0).toByteArray(),offset+QByteArray("/changeRequests/test"));
+                else if (k==4)
+                    QCOMPARE(arguments.at(0).toByteArray(),offset+QByteArray(""));
+                else
+                    QCOMPARE(arguments.at(0).toByteArray(),offset+QByteArray("/changeRequests/value"));
+                k++;
+            }
+        }
+    }
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    while(!spies.isEmpty())
+        delete spies.takeFirst();
+    while(!listeners.isEmpty())
+        delete listeners.takeFirst();
+    while(!objects.isEmpty())
+        delete objects.takeFirst();
+#endif
+}
+
 QTEST_MAIN(tst_QValueSpaceItem)
 #include "tst_qvaluespaceitem.moc"

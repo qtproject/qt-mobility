@@ -37,28 +37,73 @@
 #include <QFile>
 #include <QTimer>
 #include <stdio.h>
-//#include <QDebug>
+#include <QDebug>
+
+#define TIMEOUT 700
 
 class Controller : public QObject
 {
     Q_OBJECT
 public:
-    Controller() 
+    Controller(int function) 
         : QObject(0), index(0)
     {
-        object = new QValueSpaceObject("/usr/lackey/subdir", this);
-        object->setAttribute("value", 100);
-        object->sync();
-        QTimer::singleShot(1000, this, SLOT(proceed()));
+        if (function == 0) {
+            object = new QValueSpaceObject("/usr/lackey/subdir", this);
+            connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
+                    this, SLOT(itemSetValue(QByteArray,QVariant)));
+            object->setObjectName("original_lackey");
+            object->setAttribute("value", 100);
+            object->sync();
+
+            QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
+        } else {
+            item = new QValueSpaceItem("/usr/lackey", this);
+            item->setValue("changeRequests/value", 501);
+            QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
+        }
     }
 
 private slots:
-    void proceed() {
+    void setValueNextStep()
+    {
+        switch(index) {
+            case 0:
+                item->setValue(QByteArray("changeRequests/value"), 502);
+                break;
+            case 1:
+                item->remove("changeRequests/value");
+                break;
+            case 2:
+                item->setValue(QString("changeRequests/value"), 503);
+                break;
+            case 3:
+                item->remove(QString("changeRequests/value"));
+                break;
+            case 4:
+                item->remove(QByteArray("changeRequests/value"));
+                break;
+            case 5: 
+                item->remove("changeRequests/test");
+                break;
+            case 6:
+                item->remove();
+                break;
+        }
+        index++;
+        item->sync();
+        if (index == 7) {
+            QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
+        } else
+            QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
+ 
+    }
 
+    void proceed() {
         switch(index) {
             case 0:
                 //qDebug() << "Setting 101";
-                object->setAttribute("value", 101);
+                object->setAttribute(QByteArray("value"), 101);
                 break;
             case 1:
                 //qDebug() << "Removing";
@@ -66,27 +111,46 @@ private slots:
                 break;
             case 2:
                 //qDebug() << "Setting 102";
-                object->setAttribute("value", 102);
+                object->setAttribute(QString("value"), 102);
                 break;
         }
         index++;
         object->sync();
         if (index == 3)
-            QTimer::singleShot(1000, qApp, SLOT(quit()));
+            QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
         else
-            QTimer::singleShot(1000, this, SLOT(proceed()));
+            QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
+    }
+
+    void itemSetValue(const QByteArray& path, const QVariant& variant )
+    {
+        //qDebug() << sender()->objectName() << path << variant.toInt();
     }
 
 private:
     QValueSpaceObject* object;
+    QValueSpaceItem *item;
     int index;
 };
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-    Controller controler;
-    //qDebug() << "Starting lackey";
+    QStringList arguments = app.arguments();
+    arguments.takeFirst();
+    //QValueSpace::initValuespaceManager();
+
+    bool testSetValue = false;
+    while (!arguments.isEmpty()) {
+        QString arg = arguments.takeFirst();
+        if (arg == "-ipcSetValue") {
+            testSetValue = true;
+            break;
+        }
+    }
+
+    Controller controler(testSetValue);;
+    qDebug() << "Starting lackey";
     return app.exec();
 }
 
