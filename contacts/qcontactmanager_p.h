@@ -147,7 +147,9 @@ signals:
     void groupsRemoved(const QList<QUniqueId>& groupIds);
 
 protected:
+    /* Helper functions */
     static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder);
+    static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
 };
 
 /* Data and stuff that is shared amongst all backends */

@@ -1297,6 +1297,64 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqu
 }
 
 /*!
+ * Compares \a first against \a second.  If the types are
+ * strings (QVariant::String), the \a sensitivity argument controls
+ * case sensitivity when comparing.
+ *
+ * Returns:
+ * <0 if \a first is less than \a second
+ *  0 if \a first is equal to \a second
+ * >0 if \a first is greater than \a second.
+ *
+ * The results are undefined if the variants are different types, or
+ * cannot be compared.
+ */
+int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity)
+{
+    switch(first.type()) {
+        case QVariant::Int:
+            return first.toInt() - second.toInt();
+
+        case QVariant::LongLong:
+            return first.toLongLong() - second.toLongLong();
+
+        case QVariant::Bool:
+        case QVariant::Char:
+        case QVariant::UInt:
+            return first.toUInt() - second.toUInt();
+
+        case QVariant::ULongLong:
+            return first.toULongLong() - second.toULongLong();
+
+        case QVariant::Double:
+            return first.toDouble() - second.toDouble();
+
+       case QVariant::String:
+            return first.toString().compare(second.toString(), sensitivity);
+
+        case QVariant::DateTime:
+            {
+                const QDateTime a = first.toDateTime();
+                const QDateTime b = second.toDateTime();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
+
+        case QVariant::Date:
+            return first.toDate().toJulianDay() - first.toDate().toJulianDay();
+
+        case QVariant::Time:
+            {
+                const QTime a = first.toTime();
+                const QTime b = second.toTime();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
+
+        default:
+            return 0;
+    }
+}
+
+/*!
  * Returns true if the supplied \a filter matches the supplied \a contact.
  *
  * The default implementation of this function will test each condition in
@@ -1367,10 +1425,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 } else {
                     /* Nope, testing the values as a variant */
                     /* Value equality test */
-                    // XXX value test should use cs
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        if (detail.variantValue(cdf.detailFieldName()) == cdf.value())
+                        if (compareVariant(detail.variantValue(cdf.detailFieldName()), cdf.value(), cs) == 0)
                             return true;
                     }
                 }
@@ -1394,11 +1451,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     return false; /* can't match */
 
                 /* open or closed interval testing support */
-                // relies on QString::compare returning an int, and '<= 0' is equivalent to '< 1'
-                // int testing is also ok.
-                // double testing is not ok - have to use conditional comparison.
                 const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
                 const int maxComp = cdf.rangeFlags() & QContactDetailRangeFilter::IncludeUpper ? 1 : 0;
+
+                const bool testMin = cdf.minValue().isValid();
+                const bool testMax = cdf.maxValue().isValid();
 
                 /* Case sensitivity, for those parts that use it */
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
@@ -1413,9 +1470,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     /* Min/Max and contains do not make sense */
                     if (matchContains)
                         return false;
-
-                    bool testMin = cdf.minValue().isValid();
-                    bool testMax = cdf.maxValue().isValid();
 
                     QString minVal = cdf.minValue().toString();
                     QString maxVal = cdf.maxValue().toString();
@@ -1440,116 +1494,37 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     return false;
                 } else {
                     /* Nope, testing the values as a variant */
-                    bool testMin = cdf.minValue().isValid();
-                    bool testMax = cdf.maxValue().isValid();
-
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        const QVariant var = detail.variantValue(cdf.detailFieldName());
+                        const QVariant& var = detail.variantValue(cdf.detailFieldName());
 
-                        /* uggh.. we only handle some types of min/max */
-                        switch(var.type()) {
-                            case QVariant::Int:
-                            {
-                                if ((!testMin || (var.toInt() - cdf.minValue().toInt()) >= minComp)
-                                 && (!testMax || (var.toInt() - cdf.maxValue().toInt()) < maxComp))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::LongLong:
-                            {
-                                if ((!testMin || (var.toLongLong() - cdf.minValue().toLongLong()) >= minComp)
-                                 && (!testMax || (var.toLongLong() - cdf.maxValue().toLongLong()) < maxComp))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::Bool:
-                            case QVariant::Char:
-                            case QVariant::UInt:
-                            {
-                                if ((!testMin || long(var.toUInt() - cdf.minValue().toUInt()) >= minComp)
-                                 && (!testMax || long(var.toUInt() - cdf.maxValue().toUInt()) < maxComp))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::ULongLong:
-                            {
-                                if ((!testMin || ((long long)(var.toULongLong() - cdf.minValue().toULongLong())) >= minComp)
-                                 && (!testMax || ((long long)(var.toULongLong() - cdf.maxValue().toULongLong())) < maxComp))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::DateTime:
-                            {
-                                const QDateTime& dtvar = var.toDateTime();
-                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDateTime() : dtvar >= cdf.minValue().toDateTime()))
-                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDateTime() : dtvar < cdf.maxValue().toDateTime())))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::Date:
-                            {
-                                const QDate& dtvar = var.toDate();
-                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDate() : dtvar >= cdf.minValue().toDate()))
-                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDate() : dtvar < cdf.maxValue().toDate())))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::Double:
-                            {
-                                const double dtvar = var.toDouble();
-                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toDouble() : dtvar >= cdf.minValue().toDouble()))
-                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toDouble() : dtvar < cdf.maxValue().toDouble())))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::Time:
-                            {
-                                const QTime& dtvar = var.toTime();
-                                if ((!testMin || (minComp ? dtvar > cdf.minValue().toTime() : dtvar >= cdf.minValue().toTime()))
-                                    && (!testMax || (maxComp ? dtvar <= cdf.maxValue().toTime() : dtvar < cdf.maxValue().toTime())))
-                                    return true;
-                                break;
-                            }
-
-                            case QVariant::String:
-                            {
-                                if ((!testMin || QString::compare(var.toString(), cdf.minValue().toString(), cs) >= minComp)
-                                    && (!testMax || QString::compare(var.toString(), cdf.maxValue().toString(), cs) < maxComp))
-                                    return true;
-                                break;
-                            }
-
-                            default:
-                                break;
-                        }
+                        if ((!testMin || compareVariant(var, cdf.minValue(), cs) >= minComp)
+                            && (!testMax || compareVariant(var, cdf.maxValue(), cs) < maxComp))
+                            return true;
                     }
+                    return false;
                 }
             }
             break;
 
         case QContactFilter::GroupMembership:
             {
-
+                // XXX TODO
             }
             break;
 
         case QContactFilter::ChangeLog:
             {
-
+                // Well, the base implementation of this depends on having
+                // the QContactTimestamp detail, which is NYI.
+                // XXX TODO
             }
             break;
 
         case QContactFilter::Action:
             {
-
+                // XXX - find any matching actions,
+                // and create a union filter from their filter objects
             }
             break;
 
@@ -1596,9 +1571,9 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     if (!sortOrder.isValid()) {
         sorted->append(toAdd);
     } else {
-        const QString& newValue = toAdd.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName());
+        const QVariant& newValue = toAdd.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
-        if (newValue.isEmpty()) {
+        if (newValue.isNull()) {
             if (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst)
                 sorted->prepend(toAdd);
             else
@@ -1606,19 +1581,19 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
             return;
         }
 
+        // XXX use a binary search or a proper insertion sort
         for (int i = 0; i < sorted->size(); i++) {
             const QContact& curr = sorted->at(i);
 
-            // XXX this uses string compare, and is messy.
-            // also, multiple details of the same type are broken.
-            const QString& currValue = curr.detail(sortOrder.detailDefinitionName()).value(sortOrder.detailFieldName());
+            // Multiple details of the same type are intrisically broken
+            const QVariant& currValue = curr.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
             if (sortOrder.direction() == Qt::AscendingOrder) {
-                if (newValue < currValue) {
+                if (compareVariant(newValue, currValue, sortOrder.caseSensitivity()) < 0) {
                     sorted->insert(i, toAdd);
                     return;
                 }
             } else {
-                if (newValue > currValue) {
+                if (compareVariant(newValue, currValue, sortOrder.caseSensitivity()) > 0) {
                     sorted->insert(i, toAdd);
                     return;
                 }
