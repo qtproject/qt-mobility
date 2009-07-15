@@ -1,4 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += qmediaplaylist \
-           qmediaplaylistnavigator
+           qmediaplaylistnavigator \
+           qmediametadata
+
