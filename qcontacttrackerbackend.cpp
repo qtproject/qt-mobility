@@ -12,8 +12,10 @@
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
-#include "qcontactmanagercapabilities.h"
-#include "qcontactmanagercapabilities_p.h"
+#include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
+//#include "qcontactmanagercapabilities.h"
+//#include "qcontactmanagercapabilities_p.h"
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
@@ -61,7 +63,7 @@ QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString
     return new QContactTrackerEngine(parameters);
 }
 
-QString ContactTrackerFactory::managerId() const
+QString ContactTrackerFactory::managerName() const
 {
     return QString("tracker");
 }
@@ -164,7 +166,7 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
 bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
 {
     //::tracker()->setVerbosity(3);
-    Q_UNUSED(batch);
+    // TODO: batch
 
     if(contact == 0) {
         error = QContactManager::BadArgumentError;
@@ -194,16 +196,16 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
 
     // Iterate the contact details that are set for the contact. Save them.
     foreach(const QContactDetail& det, contact->details()) {
-        QString definition = det.definitionId();
+        QString definition = det.definitionName();
 
         /* Save name data */
-        if(definition == QContactName::DefinitionId) {
+        if(definition == QContactName::DefinitionName) {
             ncoContact->setNameGiven(det.value(QContactName::FieldFirst));
             ncoContact->setNameAdditional(det.value(QContactName::FieldMiddle));
             ncoContact->setNameFamily(det.value(QContactName::FieldLast));
 
         /* Save address data */
-        } else if(definition == QContactAddress::DefinitionId) {
+        } else if(definition == QContactAddress::DefinitionName) {
             // OrganizationContact or PersonalContact depending on the context
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
             Live<nco::PostalAddress> ncoPostalAddress = contact->getHasPostalAddress();
@@ -216,7 +218,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             ncoPostalAddress->setCountry(det.value(QContactAddress::FieldCountry));
 
         /* Save phone numbers. */
-        } else if(definition == QContactPhoneNumber::DefinitionId) {
+        } else if(definition == QContactPhoneNumber::DefinitionName) {
             // The new phone number field to save into Tracker.
             QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
 
@@ -243,7 +245,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             }
 
         /* Save emails */
-        } else if(definition == QContactEmailAddress::DefinitionId) {
+        } else if(definition == QContactEmailAddress::DefinitionName) {
             QString email = det.value(QContactEmailAddress::FieldEmailAddress);
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
 
@@ -255,13 +257,33 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
                 liveEmail = contact->addHasEmailAddress();
             }
             liveEmail->setEmailAddress(email);
-        } else if(definition == QContactAvatar::DefinitionId) {
+        /* Save avatar */
+        } else if(definition == QContactAvatar::DefinitionName) {
             QUrl avatar = det.value(QContactAvatar::FieldAvatar);
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
             Live<nie::DataObject> fdo = ::tracker()->liveNode( avatar );
             contact->setPhoto(fdo);
+        /* Save url */
+        } else if(definition == QContactUrl::DefinitionName) {
+            QUrl url = det.value(QContactUrl::FieldUrl);
+            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+
+            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeHomePage)){
+                Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
+                liveUrl = url;
+                contact->setWebsiteUrl(liveUrl);
+                // At the moment the url is a homepage or not. Waiting for tracker ontology additions for the rest.
+                //            } else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeFavourite)){
+                //qDebug() << "Favourite subtype not implemented!!!" << __FUNCTION__;
+                //} else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeSocialNetworking)){
+                // qDebug() << "SocialNetworking subtype not implemented!!!" << __FUNCTION__;
+            } else {
+                Live< rdfs::Resource > liveUrl = contact->addUrl();
+                liveUrl = url;
+                contact->setUrl(liveUrl);
+            }
         }
-        else if (definition == QContactServiceId::DefinitionId) {
+        else if (definition == QContactServiceId::DefinitionName) {
             QString account = det.value(QContactServiceId::FieldAccount);
             QString serviceName = det.value(QContactServiceId::FieldServiceName);
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
@@ -431,14 +453,14 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
 
         // modification: avatar is unique.
-        QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionId);
+        QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionName);
         avatarDef.setUnique(true);
-        d->m_definitions.insert(QContactAvatar::DefinitionId, avatarDef);
+        d->m_definitions.insert(QContactAvatar::DefinitionName, avatarDef);
 
         // modification: url is unique.
-        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionId);
+        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionName);
         urlDef.setUnique(true);
-        d->m_definitions.insert(QContactUrl::DefinitionId, urlDef);
+        d->m_definitions.insert(QContactUrl::DefinitionName, urlDef);
     }
 
     error = QContactManager::NoError;

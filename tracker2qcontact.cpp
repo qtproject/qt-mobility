@@ -100,7 +100,6 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactName& na
     name.setMiddle     ( ncoContact->getNameAdditional() );
     name.setLast       ( ncoContact->getNameFamily() );
     name.setSuffix     ( ncoContact->getNameHonorificSuffix() );
-    name.setDisplayName( ncoContact->getFullname() );
     setSubType( ncoContact, name );
 }
 
@@ -144,6 +143,12 @@ void copyDetailData(const Live<nfo::FileDataObject>& fdo, QContactAvatar& detail
         setSubType( fdo, detail );
     }
 }
+
+void copyDetailData(const Live< rdfs::Resource >& url, QContactUrl& detail)
+{
+    detail.setUrl(url.toString());
+}
+
 // TODO
 /*
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactAnniversary& detail)
@@ -240,6 +245,16 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
         qcontact.saveDetail(&detail);
     }
 
+    foreach( Live< rdfs::Resource > url, ncoContact->getUrls() ) { //Home homepage urls
+        QContactUrl detail;
+        copyDetailData(url, detail);
+        detail.setAttribute(QContactUrl::AttributeContext, QContactUrl::AttributeContextHome);
+        if( url.hasType<nco::websiteUrl>() ) {
+            detail.setAttribute(QContactUrl::AttributeSubType, QContactUrl::AttributeSubTypeHomePage);
+        } else { //TODO other subtypes when tracker supports them
+        }
+        qcontact.saveDetail(&detail);
+    }
 
     // Work addresses+phonenumbers+emails+avatars
 
@@ -277,6 +292,16 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
                 qcontact.saveDetail(&detail);
             }
         }
+        foreach( Live< rdfs::Resource > url, org->getUrls() ) { //Work homepage urls
+            QContactUrl detail;
+            copyDetailData(url, detail);
+            detail.setAttribute(QContactUrl::AttributeContext, QContactUrl::AttributeContextWork);
+            if( url.hasType<nco::websiteUrl>() ) {
+                detail.setAttribute(QContactUrl::AttributeSubType, QContactUrl::AttributeSubTypeHomePage);
+            } else { //TODO other subtypes when tracker supports them
+            }
+            qcontact.saveDetail(&detail);
+        }
     }
 
     /*{ //TODO
@@ -297,10 +322,6 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
         qcontact.saveDetail(&detail);
     }{
         QContactSyncTarget detail;
-        copyDetailData(ncoContact, detail);
-        qcontact.saveDetail(&detail);
-    }{
-        QContactUrl detail;
         copyDetailData(ncoContact, detail);
         qcontact.saveDetail(&detail);
     }

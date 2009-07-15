@@ -144,7 +144,7 @@ class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManag
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
-        QString managerId() const;
+        QString managerName() const;
 };
 
 #endif
