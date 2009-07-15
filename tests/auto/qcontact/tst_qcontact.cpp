@@ -279,18 +279,44 @@ void tst_QContact::details()
 
 void tst_QContact::actions()
 {
-    // set the correct path to look for plugins
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
-    QApplication::addLibraryPath(path);
-
-    QContactManager cm; // load the available action plugins.
     QContact c;
     QContactEmailAddress e;
     e.setEmailAddress("test@nokia.com");
     c.saveDetail(&e);
 
+    // Prior to plugin loading:
     QStringList availableActions = c.availableActions();
+    QVERIFY(availableActions.isEmpty());
+    QContactDetail d = c.detailWithAction("SendEmail");
+    QVERIFY(d.isEmpty());
+    QList<QContactDetail> dets = c.detailsWithAction("SendEmail");
+    QVERIFY(dets.isEmpty());
+
+    // set the correct path to look for plugins and load them
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
+    QApplication::addLibraryPath(path);
+    QContactManager cm;
+
+    // available actions - should be one there now.
+    availableActions = c.availableActions();
     QVERIFY(availableActions.contains("SendEmail"));
+
+    // detail with action
+    d = c.detailWithAction("SendEmail");
+    QVERIFY(d == e);
+    QCOMPARE(c.error(), QContact::NoError);
+    d = c.detailWithAction("NonexistentAction");
+    QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
+    d = c.detailWithAction(QString());
+    QCOMPARE(c.error(), QContact::BadArgumentError);
+
+    // details with action
+    dets = c.detailsWithAction("SendEmail");
+    QVERIFY(dets.contains(e));
+    dets = c.detailsWithAction("NonexistentAction");
+    QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
+    dets = c.detailsWithAction(QString());
+    QCOMPARE(c.error(), QContact::BadArgumentError);
 }
 
 void tst_QContact::preferences()
@@ -313,7 +339,7 @@ void tst_QContact::preferences()
     QCOMPARE(c.isPreferredDetail("nonexistentAction", det2), false);
     QCOMPARE(c.setPreferredDetail("nonexistentAction", det2), true);
     QCOMPARE(c.isPreferredDetail("nonexistentAction", det2), true);
-    QCOMPARE(c.isPreferredDetail("nonexistnetAction", det), false);
+    QCOMPARE(c.isPreferredDetail("nonexistentAction", det), false);
     QCOMPARE(c.preferredDetail("nonexistentAction"), det2);
 
     // test for detail that is not part of the contact

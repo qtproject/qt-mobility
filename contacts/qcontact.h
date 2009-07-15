@@ -95,7 +95,7 @@ public:
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
     QContactDetail detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> detailsWithAction(const QString& actionName);
+    QList<QContactDetail> detailsWithAction(const QString& actionName) const;
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const

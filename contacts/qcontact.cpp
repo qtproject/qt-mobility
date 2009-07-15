@@ -350,15 +350,29 @@ bool QContact::operator==(const QContact& other) const
 /*! Retrieve the first detail for which the given \a actionName is available */
 QContactDetail QContact::detailWithAction(const QString& actionName) const
 {
-    // dummy implementation - actions aren't implemented (requires QServiceFramework integration)
-    Q_UNUSED(actionName);
-    QContactData::setError(d, QContact::DetailDoesNotExistError);
-    return QContactDetail();
+    if (actionName.isEmpty()) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return QContactDetail();
+    }
+
+    QList<QContactDetail> dets = detailsWithAction(actionName);
+    if (dets.isEmpty()) {
+        QContactData::setError(d, QContact::DetailDoesNotExistError);
+        return QContactDetail();
+    }
+
+    QContactDetail retn = dets.first();
+    return retn;
 }
 
 /*! Retrieve any details for which the given \a actionName is available */
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionName)
+QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
 {
+    if (actionName.isEmpty()) {
+        QContactData::setError(d, QContact::BadArgumentError);
+        return QList<QContactDetail>();
+    }
+
     // ascertain which details are supported by any implementation of the given action
     QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
