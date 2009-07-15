@@ -389,6 +389,8 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);
     st.append(QVariant::Time);
+    st.append(QVariant::Bool);
+    st.append(QVariant::Char);
     st.append(QVariant::Int);
     st.append(QVariant::UInt);
     st.append(QVariant::LongLong);
