@@ -36,6 +36,8 @@ HEADERS += qcontact.h \
     qcontactguid.h \
     qcontactmanager.h \
     qcontactmanager_p.h \
+    qcontactmanagerengine.h \
+    qcontactmanagerenginefactory.h \
     qcontactmanagerinfo.h \
     qcontacts_p.h \
     qcontactsortorder.h \
@@ -55,6 +57,8 @@ SOURCES += qcontact.cpp \
     qcontactgroup.cpp \
     qcontactmanager_p.cpp \
     qcontactmanager.cpp \
+    qcontactmanagerengine.cpp \
+    qcontactmanagerenginefactory.cpp \
     qcontactmanagerinfo.cpp \
     qcontactsortorder.cpp
 

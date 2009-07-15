@@ -46,111 +46,17 @@
 // We mean it.
 //
 
-#include <QSharedData>
 #include <QMap>
 #include <QMultiMap>
 #include <QList>
-#include <QDateTime>
 #include <QString>
 
-#include <QtPlugin>
-
-#include "qcontact.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
-#include "qcontactdetaildefinition.h"
+#include "qcontactmanagerengine.h"
 #include "qcontactmanagerinfo.h"
 
-#include <QDebug>
-
 class QContactAbstractAction;
-class QContactFilter;
-class QContactSortOrder;
-
-/* Backend plugin API interface, creates engines for us */
-class QContactManagerEngine;
-class QTCONTACTS_EXPORT QContactManagerEngineFactory
-{
-    public:
-    virtual ~QContactManagerEngineFactory() {}
-    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
-    virtual QString managerName() const = 0;
-};
-
-#define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-
-Q_DECLARE_INTERFACE(QContactManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
-
-/* This API largely mirrors the public one */
-class QTCONTACTS_EXPORT QContactManagerEngine : public QObject
-{
-    Q_OBJECT
-
-public:
-    QContactManagerEngine() {}
-    virtual void deref() = 0;
-
-    /* Filtering */
-    virtual bool testFilter(const QContactFilter& filter, const QContact& contact) const;
-    virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
-
-    /* Contacts - Accessors and Mutators */
-    virtual QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
-    virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    virtual bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
-    virtual bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
-
-    /* Synthesise the display label of a contact */
-    virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-
-    /* Validation for saving */
-    virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
-    virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
-
-    /* Groups - Accessors and Mutators */
-    virtual QList<QUniqueId> groups(QContactManager::Error& error) const;
-    virtual QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    virtual bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    virtual bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
-
-    /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    virtual QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
-
-    /* Changelog Functions */
-    virtual QList<QUniqueId> contactsAddedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsModifiedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-
-    virtual QList<QUniqueId> groupsAddedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> groupsModifiedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-
-    /* Capabilities reporting */
-    virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    virtual bool filterSupported(const QContactFilter& filter) const;
-    virtual QList<QVariant::Type> supportedDataTypes() const;
-
-    /* Reports the built-in definitions from the schema */
-    static QMap<QString, QContactDetailDefinition> schemaDefinitions();
-
-signals:
-    void contactsAdded(const QList<QUniqueId>& contactIds);
-    void contactsChanged(const QList<QUniqueId>& contactIds);
-    void contactsRemoved(const QList<QUniqueId>& contactIds);
-    void groupsAdded(const QList<QUniqueId>& groupIds);
-    void groupsChanged(const QList<QUniqueId>& groupIds);
-    void groupsRemoved(const QList<QUniqueId>& groupIds);
-
-protected:
-    /* Helper functions */
-    static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder);
-    static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
-};
+class QContactManagerEngineFactory;
 
 /* Data and stuff that is shared amongst all backends */
 class QContactManagerData
@@ -196,4 +102,3 @@ private:
 };
 
 #endif
-

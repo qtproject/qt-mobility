@@ -31,23 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef QTCONTACTS_H
-#define QTCONTACTS_H
 
-// this file includes all of the public header files
-// provided by the Qt Contacts API
+#ifndef QCONTACTMANAGERENGINEFACTORY_H
+#define QCONTACTMANAGERENGINEFACTORY_H
 
-#include "qtcontactsglobal.h"                   // global exports
-#include "qcontactmanager.h"                    // manager
-#include "qcontactmanagerengine.h"              // manager backend
-#include "qcontactmanagerenginefactory.h"       // manage backend instantiator
-#include "qcontactmanagerinfo.h"                // manager information
-#include "qcontact.h"                           // contact
-#include "qcontactgroup.h"                      // group
-#include "qcontactdetaildefinition.h"           // definition
-#include "qcontactdetail.h"                     // detail
-#include "qcontactdetails.h"                    // leaf-details
-#include "qcontactfilter.h"                     // contact filtering
-#include "qcontactsortorder.h"                  // contact sorting
+#include <QtPlugin>
+#include <QMap>
+#include <QString>
+
+#include "qcontactmanager.h"
+
+/* Backend plugin API interface, creates engines for us */
+class QContactManagerEngine;
+class QTCONTACTS_EXPORT QContactManagerEngineFactory
+{
+public:
+    virtual ~QContactManagerEngineFactory() {}
+    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
+    virtual QString managerName() const = 0;
+};
+#define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
+Q_DECLARE_INTERFACE(QContactManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
 
 #endif

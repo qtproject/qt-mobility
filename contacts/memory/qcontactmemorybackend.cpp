@@ -37,6 +37,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
+#include "qcontactmanagerengine.h"
 
 #include "qcontactmemorybackend_p.h"
 

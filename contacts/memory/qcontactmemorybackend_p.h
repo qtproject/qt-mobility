@@ -50,6 +50,7 @@
 #include <QMap>
 #include <QMultiMap>
 #include <QList>
+#include <QSet>
 #include <QDateTime>
 #include <QString>
 
