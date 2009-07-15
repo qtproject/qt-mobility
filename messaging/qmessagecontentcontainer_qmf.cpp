@@ -32,242 +32,521 @@
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
 
-QMessageContentContainer::QMessageContentContainer()
+#include <qmailmessage.h>
+
+#include <QTextCodec>
+
+class QMessageContentContainerPrivate
 {
+public:
+    mutable QMailMessagePart _part;
+
+    QByteArray _type;
+    QByteArray _subType;
+    QByteArray _charset;
+    QByteArray _name;
+    QByteArray _content;
+    QString _textContent;
+    QString _filename;
+
+    QMailMessageContentType contentType() const 
+    {
+        QMailMessageContentType ct;
+        ct.setType(_type);
+        ct.setSubType(_subType);
+        ct.setName(_name);
+        ct.setCharset(_charset);
+
+        return ct;
+    }
+    
+    void applyPendingChanges() const
+    {
+        if (!_content.isEmpty()) {
+            _part.setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        } else if (!_textContent.isEmpty()) {
+            _part.setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
+        } else if (!_filename.isEmpty()) {
+            _part.setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        }
+    }
+};
+
+namespace {
+
+QMessageContentContainerId convert(const QMailMessagePart::Location &location)
+{
+    return QMessageContentContainerId(location.toString(true));
+}
+
+QMailMessagePart::Location convert(const QMessageContentContainerId &id)
+{
+    return QMailMessagePart::Location(id.toString());
+}
+
+QMessageId convert(const QMailMessageId &id)
+{
+    return QMessageId(QString::number(id.toULongLong()));
+}
+
+QMailMessageId convert(const QMessageId &id)
+{
+    return QMailMessageId(id.toString().toULongLong());
+}
+
+QList<QByteArray> charsets;
+
+void setPreferredCharsets(const QList<QByteArray> &charsetNames)
+{
+    charsets = charsetNames;
+}
+
+QList<QByteArray>& preferredCharsets()
+{
+    return charsets;
+}
+
+QByteArray charsetFor(const QString &s)
+{
+    QList<QTextCodec*> codecs;
+    foreach (const QByteArray &name, charsets) {
+        if (QTextCodec* codec = QTextCodec::codecForName(name)) {
+            codecs.append(codec);
+        }
+    }
+
+    if (!codecs.isEmpty()) {
+        // See if any of these codecs can encode the data
+        QString::const_iterator sit = s.begin(), end = s.end();
+        for ( ; sit != end; ++sit) {
+            QList<QTextCodec*>::iterator cit = codecs.begin();
+            if (!(*cit)->canEncode(*sit)) {
+                // This codec is not acceptable
+                cit = codecs.erase(cit);
+                if (codecs.isEmpty()) {
+                    break;
+                }
+            } else {
+                ++cit;
+            }
+        }
+
+        if (!codecs.isEmpty()) {
+            // Return the first remaining codec
+            return codecs.first()->name();
+        }
+    }
+
+    return QByteArray("UTF-8");
+}
+
+bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs)
+{
+    return (lhs.toString(true) == rhs.toString(true));
+}
+
+struct PartLocator
+{
+    const QMailMessagePart::Location &_location;
+    QMailMessagePart *_part;
+
+    PartLocator(const QMailMessagePart::Location &location)
+        : _location(location),
+          _part(0)
+    {
+    }
+
+    bool operator()(QMailMessagePart &part)
+    {
+        if (part.location() == _location) {
+            _part = &part;
+            return false;
+        }
+
+        return true;
+    }
+};
+
+struct SizeAccumulator
+{
+    uint _size;
+
+    SizeAccumulator() : _size(0) {}
+
+    bool operator()(QMailMessagePart &part)
+    {
+        if (part.hasBody()) {
+            _size += part.body().length();
+        }
+
+        return true;
+    }
+};
+
+}
+
+QMessageContentContainer::QMessageContentContainer()
+    : d_ptr(0)
+{
+    clearContents();
 }
 
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
+    : d_ptr(new QMessageContentContainerPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_part = other.d_ptr->_part;
+    }
+
+    return *this;
 }
 
 QMessageContentContainer::~QMessageContentContainer()
 {
+    delete d_ptr;
 }
 
 QMessageContentContainerId QMessageContentContainer::containerId() const
 {
-    return QMessageContentContainerId();
+    return convert(d_ptr->_part.location());
 }
 
 QMessageId QMessageContentContainer::messageId() const
 {
-    return QMessageId(); // stub
+    return convert(d_ptr->_part.location().containingMessageId());
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentType(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    clearContents();
+    d_ptr->_type = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentType() const
 {
-    return QByteArray(); // stub
+    if (!d_ptr->_type.isEmpty()) {
+        return d_ptr->_type;
+    }
+    return d_ptr->_part.contentType().type();
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentSubType(const QByteArray &data)
 {
-    Q_UNUSED(data);
+    d_ptr->_subType = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentSubType() const
 {
-    return QByteArray(); // stub
+    if (!d_ptr->_subType.isEmpty()) {
+        return d_ptr->_subType;
+    }
+    return d_ptr->_part.contentType().subType();
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentCharset(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_charset = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentCharset() const
 {
-    return QByteArray(); // stub
+    if (!d_ptr->_charset.isEmpty()) {
+        return d_ptr->_charset;
+    }
+    return d_ptr->_part.contentType().charset();
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentFileName(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_name = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentFileName() const
 {
-    return QByteArray(); // stub
+    if (!d_ptr->_name.isEmpty()) {
+        return d_ptr->_name;
+    }
+    return d_ptr->_part.contentType().name();
 }
 
 bool QMessageContentContainer::contentAvailable() const
 {
-    return false;
+    if (!d_ptr->_content.isEmpty()) {
+        return true;
+    }
+    return d_ptr->_part.contentAvailable();
 }
 
 void QMessageContentContainer::setSize(uint size)
 {
+    // TODO: doesn't make sense?
     Q_UNUSED(size)
 }
 
 uint QMessageContentContainer::size() const
 {
-    return 0;
+    d_ptr->applyPendingChanges();
+
+    SizeAccumulator accumulator;
+    d_ptr->_part.foreachPart<SizeAccumulator&>(accumulator);
+
+    return accumulator._size;
 }
 
 QString QMessageContentContainer::decodedTextContent() const
 {
-    return QString::null;
+    d_ptr->applyPendingChanges();
+    return d_ptr->_part.body().data();
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
 {
-    return QByteArray(); // stub
+    d_ptr->applyPendingChanges();
+    return d_ptr->_part.body().data(QMailMessageBody::Decoded);
 }
 
 QString QMessageContentContainer::decodedContentFileName() const
 {
-    return QString(); // stub
+    // TODO: not supported?
+    return QString();
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    Q_UNUSED(out)
+    d_ptr->applyPendingChanges();
+    if (d_ptr->_part.hasBody()) {
+        d_ptr->_part.body().toStream(out, QMailMessageBody::Decoded);
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::clearContents()
 {
+    delete d_ptr;
+
+    d_ptr = new QMessageContentContainerPrivate;
+    d_ptr->_type = QByteArray("text");
+    d_ptr->_subType = QByteArray("plain");
 }
 
 void QMessageContentContainer::setContent(const QString &text)
 {
-    Q_UNUSED(text)
+    d_ptr->_type = "text";
+    d_ptr->_textContent = text;
+    d_ptr->_charset = charsetFor(text);
+
+    if (!d_ptr->_content.isEmpty()) {
+        d_ptr->_content = QByteArray();
+    }
+    if (!d_ptr->_filename.isEmpty()) {
+        d_ptr->_filename = QString();
+    }
 }
 
 void QMessageContentContainer::setContent(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_content = data;
+
+    if (!d_ptr->_textContent.isEmpty()) {
+        d_ptr->_textContent = QString();
+    }
+    if (!d_ptr->_filename.isEmpty()) {
+        d_ptr->_filename = QString();
+    }
 }
 
 void QMessageContentContainer::setContentFromFile(const QString &fileName)
 {
-    Q_UNUSED(fileName)
+    d_ptr->_filename = fileName;
+
+    if (!d_ptr->_content.isEmpty()) {
+        d_ptr->_content = QByteArray();
+    }
+    if (!d_ptr->_textContent.isEmpty()) {
+        d_ptr->_textContent = QString();
+    }
 }
 
 void QMessageContentContainer::readContentFrom(QDataStream &in)
 {
-    Q_UNUSED(in)
+    QByteArray content;
+    while (!in.atEnd()) {
+        char buffer[1024];
+        int len = in.readRawData(buffer, 1024);
+        content.append(buffer, len);
+    }
+
+    setContent(content);
 }
 
 QMessageContentContainerId QMessageContentContainer::appendContent(const QMessageContentContainer & content)
 {
-    Q_UNUSED(content)
-    return QMessageContentContainerId(); // stub
+    if (contentType() != QByteArray("multipart")) {
+        clearContents();
+
+        setContentType(QByteArray("multipart"));
+        setContentSubType(QByteArray("mixed"));
+    }
+
+    content.d_ptr->applyPendingChanges();
+    d_ptr->_part.appendPart(content.d_ptr->_part);
+
+    return convert(d_ptr->_part.partAt(d_ptr->_part.partCount() - 1).location());
 }
 
 void QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(content)
+    QMailMessagePart::Location location(convert(id));
+
+    PartLocator locator(location);
+    d_ptr->_part.foreachPart<PartLocator&>(locator);
+
+    if (locator._part) {
+        *locator._part = content.d_ptr->_part;
+    }
 }
 #endif
 
 QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
-    return QMessageContentContainerIdList(); // stub
+    QMessageContentContainerIdList ids;
+
+    for (uint i = 0; i < d_ptr->_part.partCount(); ++i) {
+        ids.append(convert(d_ptr->_part.partAt(i).location()));
+    }
+
+    return ids;
 }
 
 const QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
+    QMessageContentContainer container;
+
+    QMailMessagePart::Location location(convert(id));
+
+    PartLocator locator(location);
+    d_ptr->_part.foreachPart<PartLocator&>(locator);
+
+    if (locator._part) {
+        container.d_ptr->_part = *locator._part;
+    }
+
+    return container;
 }
 
 QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id)
 {
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
+    QMessageContentContainer container;
+
+    QMailMessagePart::Location location(convert(id));
+
+    PartLocator locator(location);
+    d_ptr->_part.foreachPart<PartLocator&>(locator);
+
+    if (locator._part) {
+        container.d_ptr->_part = *locator._part;
+    }
+
+    return container;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    QByteArray charset = charsetFor(value);
+    if (QTextCodec* codec = QTextCodec::codecForName(charset)) {
+        appendHeaderField(name, codec->fromUnicode(value));
+    }
 }
 
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    QByteArray charset = charsetFor(value);
+    if (QTextCodec* codec = QTextCodec::codecForName(charset)) {
+        setHeaderField(name, codec->fromUnicode(value));
+    }
 }
 #endif
 
 QString QMessageContentContainer::headerField(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QString(); // stub
+    return d_ptr->_part.headerFieldText(name);
 }
 
 QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QList<QString>(); // stub
+    return d_ptr->_part.headerFieldsText(name);
 }
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
-    return QList<QByteArray>(); // stub
+    QList<QByteArray> fields;
+    foreach (const QMailMessageHeaderField &field, d_ptr->_part.headerFields()) {
+        fields.append(field.id());
+    }
+
+    return fields;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    d_ptr->_part.appendHeaderField(name, value);
 }
 
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    d_ptr->_part.setHeaderField(name, value);
 }
 #endif
 
 void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 {
-    Q_UNUSED(charsetNames);
+    ::setPreferredCharsets(charsetNames);
 }
 
 QList<QByteArray> QMessageContentContainer::preferredCharsets()
 {
-    return QList<QByteArray>(); // stub;
+    return ::preferredCharsets();
 }
 
 #ifdef QMESSAGING_OPTIONAL
 bool QMessageContentContainer::containerDataModified() const
 {
-    return false; // stub
+    return true;
 }
 
 void QMessageContentContainer::setContainerDataModified(bool modified)
 {
+    // TODO: does this make sense?
     Q_UNUSED(modified);
 }
 
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
 {
-    Q_UNUSED(content);
-    return QMessageContentContainerId(); // stub
+    if (contentType() != QByteArray("multipart")) {
+        clearContents();
+
+        setContentType(QByteArray("multipart"));
+        setContentSubType(QByteArray("mixed"));
+    }
+
+    content.d_ptr->applyPendingChanges();
+    d_ptr->_part.prependPart(content.d_ptr->_part);
+
+    return convert(d_ptr->_part.partAt(0).location());
 }
 #endif
