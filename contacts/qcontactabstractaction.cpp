@@ -36,3 +36,56 @@
 QContactAbstractAction::~QContactAbstractAction()
 {
 }
+
+/*!
+ * \fn QContactAbstractAction::~QContactAbstractAction()
+ * Clears any memory in use by this instance of the action implementation
+ */
+
+/*!
+ * \fn QContactAbstractAction::actionName() const
+ * Returns the name of the action provided by this implementation.
+ * The name of the action identifies the action provided; different implementations of an action
+ * with the same name must provide the same functionality, but may differ in implementation semantics.
+ * Hence, the action name includes the major version of the interface definition implemented.
+ */
+
+/*!
+ * \fn QContactAbstractAction::metadata() const
+ * Returns the metadata associated with this action, such as icons, labels or sound cues
+ */
+
+/*!
+ * \fn QContactAbstractAction::vendor() const
+ * Returns the identification string of the vendor which has provided this implementation
+ */
+
+/*!
+ * \fn QContactAbstractAction::implementationVersion() const
+ * Returns the (minor) version of the implementation of this action.  Note that the major version
+ * (which describes the semantics/outcomes of the action) is included in the action name itself.
+ */
+
+/*!
+ * \fn QContactAbstractAction::contactFilter() const
+ * Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
+ */
+
+/*!
+ * \fn QContactAbstractAction::supportsDetail(const QContactDetail& detail) const
+ * Returns true if the provided \a detail contains the fields required for this action to be
+ * performed on it; otherwise, returns false
+ */
+
+/*!
+ * \fn QContactAbstractAction::supportedDetails(const QContact& contact) const
+ * Returns a list of the details saved in the given \a contact which contain the fields required
+ * for this action to be performed on them.
+ */
+
+/*!
+ * \fn QContactAbstractAction::performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+ * Performs the implemented action on the specified \a detail of the given \a contact, or on the first
+ * eligible detail saved in the contact if the given \a detail is empty.
+ */
+
