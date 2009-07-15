@@ -233,7 +233,7 @@
 /*!
     \fn QMessageContentContainer::setSize(uint size)
     
-    Set the size of the container including contents to \a size.
+    Set the size of the container on the originating server, including contents, to \a size.
 
     \sa size()
 */
@@ -241,9 +241,8 @@
 /*!
     \fn QMessageContentContainer::size() const
     
-    If the size of the container is known then returns an indication
-    of the size of the container including contents; otherwise
-    returns 0.
+    If the size of the container is known then returns an indication of the size of the container 
+    on the originating server, including contents; otherwise returns 0.
 */
 
 /*!
