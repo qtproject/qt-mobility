@@ -363,8 +363,10 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName)
     QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
     QList<QContactAbstractAction*> implementations = QContactManagerData::actions(actionName);
-    foreach (const QContactDetail& detail, d->m_details) {
-        foreach (QContactAbstractAction* aptr, implementations) {
+    for (int i = 0; i < d->m_details.size(); i++) {
+        QContactDetail detail = d->m_details.at(i);
+        for (int j = 0; j < implementations.size(); j++) {
+            QContactAbstractAction* aptr = implementations.at(j);
             if (aptr->supportsDetail(detail)) {
                 retn.append(detail);
                 break;
@@ -385,7 +387,8 @@ QStringList QContact::availableActions() const
     QContactData::setError(d, QContact::NoError);
     QMap<QString, bool> supportMap;
     QList<QContactAbstractAction*> implementations = QContactManagerData::actions();
-    foreach (QContactAbstractAction* aptr, implementations) {
+    for (int i = 0; i < implementations.size(); i++) {
+        QContactAbstractAction* aptr = implementations.at(i);
         QContact self = *this;
         if (!(aptr->supportedDetails(self).isEmpty()))
             supportMap.insert(aptr->actionName(), true);
@@ -398,7 +401,8 @@ QStringList QContact::availableActions() const
     // for each action name, if it is supported, add it to the return list.
     QStringList retn;
     QStringList keys = supportMap.keys();
-    foreach (const QString& key, keys) {
+    for (int i = 0; i < keys.size(); i++) {
+        QString key = keys.at(i);
         if (supportMap.value(key, false)) {
             retn.append(key);
         }
@@ -418,7 +422,8 @@ bool QContact::setPreferredDetail(const QString& actionName, const QContactDetai
 
     // check to see whether the the given preferredDetail is saved in this contact
     bool detailExists = false;
-    foreach (const QContactDetail& det, d->m_details) {
+    for (int i = 0; i < d->m_details.size(); i++) {
+        QContactDetail det = d->m_details.at(i);
         if (det == preferredDetail) {
             detailExists = true;
             break;
@@ -472,7 +477,8 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
 
     QContactData::setError(d, QContact::NoError);
     quint32 detId = d->m_preferences.value(actionName);
-    foreach (const QContactDetail& det, d->m_details) {
+    for (int i = 0; i < d->m_details.size(); i++) {
+        QContactDetail det = d->m_details.at(i);
         if (det.d->m_id == detId) {
             return det;
         }
