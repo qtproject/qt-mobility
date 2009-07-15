@@ -280,6 +280,7 @@ int QAudioDeviceEndpoint::selectedDevice() const
 void QAudioDeviceEndpoint::setSelectedDevice(int device)
 {
     emit selectedDeviceChanged(d_func()->selectedDevice = device);
+    emit selectedDeviceChanged(name(device));
 }
 
 /*!
