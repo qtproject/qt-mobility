@@ -393,6 +393,7 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
     st.append(QVariant::UInt);
     st.append(QVariant::LongLong);
     st.append(QVariant::ULongLong);
+    st.append(QVariant::Double);
 
     return st;
 }
