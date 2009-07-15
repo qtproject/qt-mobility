@@ -29,8 +29,7 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#appendHeaderField-2">appendHeaderField</a></b> ( const QByteArray &amp; <i>name</i>, const QByteArray &amp; <i>value</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessagecontentcontainer.html#clearContents">clearContents</a></b> ()</li>
-<li><div class="fn"></div>virtual const QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</li>
-<li><div class="fn"></div>virtual QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container-2">container</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>virtual QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#containerId">containerId</a></b> () const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a></b> () const</li>
@@ -116,11 +115,8 @@
 <p>Clears existing content either media or parts, and resets the content type, subtype and charset to default values for text content.</p>
 <p>Does not modify header fields other than &quot;Content-Type&quot;.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>(), <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>(), and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
-<h3 class="fn"><a name="container"></a>const QMessageContentContainer QMessageContentContainer::container ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns that other container; otherwise returns an empty container constructed with the default constructor.</p>
-<p>See also <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
-<h3 class="fn"><a name="container-2"></a>QMessageContentContainer QMessageContentContainer::container ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns that other container; otherwise returns an empty container constructed with the default constructor.</p>
+<h3 class="fn"><a name="container"></a>QMessageContentContainer QMessageContentContainer::container ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns the value of that other container; otherwise returns an empty container constructed with the default constructor.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
 <h3 class="fn"><a name="containerDataModified"></a>bool QMessageContentContainer::containerDataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the container has been modified since it was constructed; otherwise returns false.</p>
@@ -219,7 +215,7 @@
 <p>Sets the ordered by preference list of names of charsets to use when encoding unicode QString text with <a href="qmessagecontentcontainer.html#setContent">setContent</a>(), <a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a>() or <a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a>() to <i>charsetNames</i>.</p>
 <p>See also <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="size"></a>uint QMessageContentContainer::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>If the size of the container is known then returns an indication of the size of the container including contents; otherwise returns 0.</p>
+<p>If the size of the container is known then returns an indication of the size of the container on the originating server, including contents; otherwise returns 0.</p>
 <h3 class="fn"><a name="writeContentTo"></a>void QMessageContentContainer::writeContentTo ( QDataStream &amp; <i>out</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>For a non multipart container writes the content as would be returned by <a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a>() into the stream <i>out</i>; otherwise for a multipart container does nothing.</p>
 <p>See also <a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a>().</p>
