@@ -148,6 +148,16 @@ void tst_QContact::details()
 
     QVERIFY(p == p3);
 
+    // now try removing a detail for which we've set a preference
+    QContactEmailAddress pref;
+    pref.setEmailAddress("test@test");
+    c.saveDetail(&pref);
+    c.setPreferredDetail("SendEmail", pref);
+    QVERIFY(c.isPreferredDetail(QString(), pref));
+    QVERIFY(c.removeDetail(&pref));
+    QCOMPARE(c.error(), QContact::NoError);
+    QVERIFY(!c.isPreferredDetail(QString(), pref));
+
     // Now try adding a detail to multiple contacts
 
     QContact c2;
@@ -360,33 +370,33 @@ void tst_QContact::preferences()
     QContactDetail det("TestId");
     det.setValue("test", QVariant("test1"));
     c.saveDetail(&det);
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", det), false);
-    QCOMPARE(c.setPreferredDetail("nonexistentAction", det), true);
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", det), true);
+    QCOMPARE(c.isPreferredDetail("testAction", det), false);
+    QCOMPARE(c.setPreferredDetail("testAction", det), true);
+    QCOMPARE(c.isPreferredDetail("testAction", det), true);
     QCOMPARE(c.isPreferredDetail(QString(), det), true);
-    QCOMPARE(c.preferredDetail("nonexistentAction"), det);
+    QCOMPARE(c.preferredDetail("testAction"), det);
 
     // test replacement
     QContactDetail det2("TestId");
     det2.setValue("test", QVariant("test2"));
     c.saveDetail(&det2);
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", det2), false);
-    QCOMPARE(c.setPreferredDetail("nonexistentAction", det2), true);
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", det2), true);
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", det), false);
-    QCOMPARE(c.preferredDetail("nonexistentAction"), det2);
+    QCOMPARE(c.isPreferredDetail("testAction", det2), false);
+    QCOMPARE(c.setPreferredDetail("testAction", det2), true);
+    QCOMPARE(c.isPreferredDetail("testAction", det2), true);
+    QCOMPARE(c.isPreferredDetail("testAction", det), false);
+    QCOMPARE(c.preferredDetail("testAction"), det2);
 
     // test for detail that is not part of the contact
     QContactDetail det3("TestId");
     det3.setValue("test", QVariant("test3"));
-    QCOMPARE(c.setPreferredDetail("nonexistentAction", det3), false);
-    QCOMPARE(c.preferredDetail("nonexistentAction"), det2); // shouldn't have changed.
+    QCOMPARE(c.setPreferredDetail("testAction", det3), false);
+    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
 
     // test invalid set
     QCOMPARE(c.setPreferredDetail(QString(), det3), false);
     QCOMPARE(c.setPreferredDetail(QString(), QContactDetail()), false);
-    QCOMPARE(c.setPreferredDetail("nonexistentAction", QContactDetail()), false);
-    QCOMPARE(c.preferredDetail("nonexistentAction"), det2); // shouldn't have changed.
+    QCOMPARE(c.setPreferredDetail("testAction", QContactDetail()), false);
+    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
 
     // test invalid query
     QContactDetail det4;
@@ -394,14 +404,18 @@ void tst_QContact::preferences()
     c.saveDetail(&det4);
     QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
     QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
-    QCOMPARE(c.isPreferredDetail("nonexistentAction", QContactDetail()), false);
+    QCOMPARE(c.isPreferredDetail("testAction", QContactDetail()), false);
 
     // test retrieving preferred details
     QContactDetail pd = c.preferredDetail(QString());
     QCOMPARE(c.error(), QContact::BadArgumentError);
-    pd = c.preferredDetail("nonexistentAction");
+    pd = c.preferredDetail("testAction");
     QCOMPARE(c.error(), QContact::NoError);
     QVERIFY(pd == det2); // shouldn't have changed.
+
+    // test for preference for action that hasn't been added
+    QVERIFY(c.preferredDetail("NonexistentAction").isEmpty());
+    QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
 }
 
 void tst_QContact::displayName()

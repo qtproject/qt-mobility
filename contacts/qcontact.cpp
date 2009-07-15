@@ -326,7 +326,9 @@ bool QContact::removeDetail(QContactDetail* detail)
     }
 
     // remove any preferences we may have stored for the detail.
-    foreach (const QString& prefKey, d->m_preferences.keys()) {
+    QStringList keys = d->m_preferences.keys();
+    for (int i = 0; i < keys.size(); i++) {
+        QString prefKey = keys.at(i);
         if (d->m_preferences.value(prefKey) == detail->d->m_id) {
             d->m_preferences.remove(prefKey);
         }
