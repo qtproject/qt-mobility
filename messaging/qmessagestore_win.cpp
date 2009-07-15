@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "qmessagestore.h"
+#include "qmessagestore_p.h"
 
 QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
