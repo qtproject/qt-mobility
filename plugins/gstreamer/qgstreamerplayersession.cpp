@@ -308,12 +308,17 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             GstFormat   format = GST_FORMAT_TIME;
                             gint64      position = 0;
 
+                            /*
+                            //gst_element_seek_simple doesn't work reliably here, have to find a better solution
                             bool seekable = false;
                             if (gst_element_query_position(m_playbin, &format, &position)) {
                                 seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
                             }
 
-                            setSeekable(seekable);
+                            setSeekable(seekable);*/
+
+                            setSeekable(true);
+
                         }
 
                         break;
