@@ -49,6 +49,8 @@ public:
 
     virtual int state() const = 0;
 
+    virtual int streamStatus() const /* = 0*/;
+
     virtual QMediaPlaylist* mediaPlaylist() const = 0;
     virtual bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
 
@@ -91,12 +93,14 @@ Q_SIGNALS:
     void playlistPositionChanged(int position);
     void currentMediaChanged(const QMediaSource&);
     void stateChanged(int newState);
+    void streamStateChanged(int state);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
+    void error(int error, const QString &errorString);
 
 
 protected:

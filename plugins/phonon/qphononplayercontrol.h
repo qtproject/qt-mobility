@@ -110,13 +110,14 @@ signals:
 
 private slots:
     void play(const QMediaSource&);
-    void updateState();
+    void updateState(Phonon::State newState, Phonon::State oldState);
     void updateVolume();
 
 private:    
     Phonon::MediaObject *m_session;
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlaylistNavigator *m_navigator;
+    int m_state;
 };
 
 #endif

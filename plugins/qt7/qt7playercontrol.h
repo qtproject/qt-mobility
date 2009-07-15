@@ -47,7 +47,7 @@ class Qt7PlayerControl : public QMediaPlayerControl
     Q_OBJECT
 
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState, ErrorState };
+    enum State { PlayingState, PausedState, StoppedState };
 
     Qt7PlayerControl(QObject *parent);
     ~Qt7PlayerControl();

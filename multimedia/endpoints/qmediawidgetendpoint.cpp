@@ -88,23 +88,14 @@ QMediaEndpointInterface::Direction QMediaWidgetEndpoint::direction() const
 
 /*!
     \property QMediaWidgetEndpoint::fullscreen
-
-    The full screen state of a media output widget.
+    \brief the full screen state of a media output widget.
 */
 
-/*!
-    Identifies if a media output widget is in full screen mode.
-
-    Returns true if the widget is full screen, and false otherwise.
-*/
 bool QMediaWidgetEndpoint::isFullscreen() const
 {
     return d_func()->fullscreen;
 }
 
-/*!
-    Sets the \a fullscreen mode of a media output widget.
-*/
 void QMediaWidgetEndpoint::setFullscreen(bool fullscreen)
 {
     d_func()->fullscreen = fullscreen;
@@ -133,15 +124,7 @@ void QMediaWidgetEndpoint::setFullscreen(bool fullscreen)
 
     The aspect ratio mode of a media output widget.
 
-    \sa QMediaWidgetEndpoint::AspectRatio QMediaWidgetEndpoint::customAspectRatio
-*/
-
-/*!
-    \property QMediaWidgetEndpoint::customAspectRatio
-
-    The aspect ratio value used when QMediaWidgetEndpoint::aspectRatio == AspectRatioCustom.
-
-    \sa QMediaWidgetEndpoint::aspectRatio
+    \sa QMediaWidgetEndpoint::AspectRatio, QMediaWidgetEndpoint::customAspectRatio
 */
 
 QMediaWidgetEndpoint::AspectRatio QMediaWidgetEndpoint::aspectRatio() const
@@ -154,6 +137,13 @@ void QMediaWidgetEndpoint::setAspectRatio(QMediaWidgetEndpoint::AspectRatio rati
     d_func()->aspectRatio = ratio;
 }
 
+/*!
+    \property QMediaWidgetEndpoint::customAspectRatio
+
+    The aspect ratio value used when QMediaWidgetEndpoint::aspectRatio == AspectRatioCustom.
+
+    \sa QMediaWidgetEndpoint::aspectRatio
+*/
 
 QSize QMediaWidgetEndpoint::customAspectRatio() const
 {

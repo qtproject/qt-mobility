@@ -113,7 +113,7 @@ void QMediaPlaylistPrivate::_q_itemsRemoved()
 
 
 /*!
-  Create a new playlist object for playlist \a source.
+  Create a new playlist object for playlist \a source with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
@@ -170,7 +170,7 @@ bool QMediaPlaylist::isEmpty() const
 
 /*!
   Returns true if the playlist can be modified; otherwise returns false.
-  \sa size().
+  \sa size()
   */
 bool QMediaPlaylist::isReadOnly() const
 {
@@ -397,21 +397,21 @@ void QMediaPlaylist::shuffle()
     \fn void QMediaPlaylist::itemsInserted(int start, int end)
 
     This signal is emitted after media sources have been inserted into the playlist.
-    The new items are those between start and end inclusive.
+    The new items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsRemoved(int start, int end)
 
     This signal is emitted after media sources have been removed from the playlist.
-    The removed items are those between start and end inclusive.
+    The removed items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsChanged(int start, int end)
 
     This signal is emitted after media sources have been changed in the playlist
-    between start and end positions inclusive.
+    between \a start and \a end positions inclusive.
  */
 
 #include "moc_qmediaplaylist.cpp"

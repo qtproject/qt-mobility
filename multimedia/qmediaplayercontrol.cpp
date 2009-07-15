@@ -34,7 +34,7 @@
 
 #include "qmediaplayercontrol.h"
 #include "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
+#include "qmediaplayer.h"
 
 
 /*!
@@ -55,5 +55,10 @@ QMediaPlayerControl::~QMediaPlayerControl()
 QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-//    addPropertyWatch("position");
 }
+
+int QMediaPlayerControl::streamStatus() const
+{
+    return QMediaPlayer::UnknownStreamStatus;
+}
+
