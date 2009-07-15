@@ -61,6 +61,7 @@ private slots:
     /* Special test with special data */
     void uriParsing();
     void nameSynthesis();
+    void testFilters();
 
     /* Tests that are run on all managers */
     void nullIdOperations();
@@ -1392,6 +1393,42 @@ void tst_QContactManager::nameSynthesis()
 
     // Finally!
     QCOMPARE(cm.synthesiseDisplayLabel(c), expected);
+}
+
+void tst_QContactManager::testFilters()
+{
+    /* Use the memory engine as a reference (filter testing is not currently engine specific) */
+    QContactManager* cm = new QContactManager("memory");
+
+    // note - currently the memory engine always returns false!
+    QContactDetailFilter emailFilter;
+    QVERIFY(!cm->information()->filterSupported(emailFilter));
+    emailFilter.setDetailDefinitionName("EmailAddress", "EmailAddress");
+    emailFilter.setValue("test@nokia.com");
+    QVERIFY(!cm->information()->filterSupported(emailFilter));
+
+    // now we use contact filtering to call cm->d->testFilter(..).
+    // first, Date values:
+    QContact c;
+    QContactBirthday b;
+    QDate currentDate = QDate::currentDate();
+    b.setDate(currentDate);
+    c.saveDetail(&b);
+
+    QContactDetailFilter dateFilter;
+    dateFilter.setDetailDefinitionName(QContactBirthday::DefinitionName, QContactBirthday::FieldBirthday);
+    QVERIFY(cm->contacts(dateFilter).isEmpty());
+    cm->saveContact(&c);
+    QVERIFY(!cm->contacts(dateFilter).isEmpty());
+    cm->removeContact(c.id());
+    dateFilter.setValue(currentDate);
+    QVERIFY(cm->contacts(dateFilter).isEmpty());
+    cm->saveContact(&c);
+    QVERIFY(!cm->contacts(dateFilter).isEmpty());
+    cm->removeContact(c.id());
+
+    // other types -- long long, uint, bool, ...
+
 }
 
 void tst_QContactManager::contactValidation()
