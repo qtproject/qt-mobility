@@ -367,7 +367,14 @@
     recursively then returns the value of that other container; otherwise returns an 
     empty container constructed with the default constructor.
 
-    \sa contentIds(), clearContents(), appendContent(), replaceContent()
+    \sa contains(), contentIds(), clearContents(), appendContent(), replaceContent()
+*/
+
+/*!
+    \fn bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const;
+    
+    If the container contains content with the identifier \a id, either directly or recursively 
+    then returns true; otherwise returns false.
 */
 
 /*!

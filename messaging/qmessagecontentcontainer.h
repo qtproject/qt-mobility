@@ -67,6 +67,7 @@ public:
     virtual QMessageContentContainerIdList contentIds() const;
 
     virtual QMessageContentContainer container(const QMessageContentContainerId &id) const;
+    virtual bool contains(const QMessageContentContainerId &id) const;
 
     virtual QString headerField(const QByteArray &name) const;
     virtual QList<QString> headerFieldValues(const QByteArray &name) const;

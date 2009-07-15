@@ -441,6 +441,12 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
     return container;
 }
 
+bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const
+{
+    Q_UNUSED(id)
+    return false; // stub
+}
+
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
 {
