@@ -35,29 +35,66 @@
 #include "radio.h"
 
 #include <qabstractmediaservice.h>
+#include <qradiotuner.h>
 
 #include <QtGui>
 
 Radio::Radio()
 {
     player = new QRadioPlayer();
+    connect(player,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
+    connect(player,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
+
+    if(player->isSupportedBand(QRadioPlayer::FM))
+        player->setBand(QRadioPlayer::FM);
+    else {
+        qWarning()<<"Currently only works for FM";
+        exit(0);
+    }
 
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
+    QHBoxLayout* buttonBar = new QHBoxLayout;
+    QHBoxLayout* topBar = new QHBoxLayout;
+
+    layout->addLayout(topBar);
 
     freq = new QLabel;
     freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
-    layout->addWidget(freq);
+    topBar->addWidget(freq);
+
+    signal = new QLabel;
+    signal->setText(tr("No Signal"));
+    topBar->addWidget(signal);
+
+    volumeSlider = new QSlider(Qt::Vertical,this);
+    volumeSlider->setRange(0,100);
+    qWarning()<<player->volume();
+    volumeSlider->setValue(player->volume());
+    connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
+    topBar->addWidget(volumeSlider);
+
+    layout->addLayout(buttonBar);
+
+    searchLeft = new QPushButton;
+    searchLeft->setText(tr("scan Down"));
+    connect(searchLeft,SIGNAL(clicked()),SLOT(searchDown()));
+    buttonBar->addWidget(searchLeft);
 
     left = new QPushButton;
     left->setText(tr("Freq Down"));
     connect(left,SIGNAL(clicked()),SLOT(freqDown()));
-    layout->addWidget(left);
+    buttonBar->addWidget(left);
 
     right = new QPushButton;
     connect(right,SIGNAL(clicked()),SLOT(freqUp()));
     right->setText(tr("Freq Up"));
-    layout->addWidget(right);
+    buttonBar->addWidget(right);
+
+    searchRight = new QPushButton;
+    searchRight->setText(tr("scan Up"));
+    connect(searchRight,SIGNAL(clicked()),SLOT(searchUp()));
+    buttonBar->addWidget(searchRight);
 
     window->setLayout(layout);
     setCentralWidget(window);
@@ -70,18 +107,43 @@ Radio::~Radio()
 
 void Radio::freqUp()
 {
-    qWarning()<<"freqUp f="<<player->frequency();
     int f = player->frequency();
     f = f + 5000;
     player->setFrequency(f);
-    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
 }
 
 void Radio::freqDown()
 {
-    qWarning()<<"freqDown f="<<player->frequency();
     int f = player->frequency();
     f = f - 5000;
     player->setFrequency(f);
+}
+
+void Radio::searchUp()
+{
+    player->searchForward();
+}
+
+void Radio::searchDown()
+{
+    player->searchBackward();
+}
+
+void Radio::freqChanged(int f)
+{
     freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
 }
+
+void Radio::signalChanged(int s)
+{
+    if(player->signalStrength() > 25)
+        signal->setText(tr("Got Signal"));
+    else
+        signal->setText(tr("No Signal"));
+}
+
+void Radio::updateVolume(int v)
+{
+    player->setVolume(v);
+}
+
