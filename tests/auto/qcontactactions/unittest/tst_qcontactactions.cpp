@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+#define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 #include <QApplication>
 
@@ -57,6 +58,49 @@ public slots:
 private slots:
     void testSendEmail();
 };
+
+/* Test a static factory as well */
+class DummyStaticActionFactory : public QContactAbstractActionFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QContactAbstractActionFactory)
+
+public:
+    DummyStaticActionFactory() {}
+    ~DummyStaticActionFactory() {}
+
+    QString name()
+    {
+        return QString("dummystaticactionfactory");
+    }
+
+    QStringList actionNames()
+    {
+        return QStringList();
+    }
+
+    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    {
+        Q_UNUSED(actionName);
+        Q_UNUSED(vendor);
+        Q_UNUSED(implementationVersion);
+        return 0;
+    }
+
+    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    {
+        Q_UNUSED(actionName);
+        Q_UNUSED(vendor);
+        Q_UNUSED(implementationVersion);
+        return QList<QContactAbstractAction*>();
+    }
+};
+
+/* Statically import it (and a duplicate copy of it, purely for testing purposes) */
+Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactory, DummyStaticActionFactory);
+Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactory);
+Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactorycopy, DummyStaticActionFactory);
+Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy);
 
 tst_QContactActions::tst_QContactActions()
 {
