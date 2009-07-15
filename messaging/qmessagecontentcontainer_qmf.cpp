@@ -431,23 +431,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
     return ids;
 }
 
-const QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
-{
-    QMessageContentContainer container;
-
-    QMailMessagePart::Location location(convert(id));
-
-    PartLocator locator(location);
-    d_ptr->_part.foreachPart<PartLocator&>(locator);
-
-    if (locator._part) {
-        container.d_ptr->_part = *locator._part;
-    }
-
-    return container;
-}
-
-QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id)
+QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
 {
     QMessageContentContainer container;
 

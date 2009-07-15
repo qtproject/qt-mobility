@@ -373,18 +373,8 @@
     \fn QMessageContentContainer::container(const QMessageContentContainerId &id) const
     
     If the container contains another container with identifier \a id either directly or 
-    recursively then returns that other container; otherwise returns an empty container 
-    constructed with the default constructor.
-
-    \sa contentIds(), clearContents(), appendContent(), replaceContent()
-*/
-
-/*!
-    \fn QMessageContentContainer::container(const QMessageContentContainerId &id)
-    
-    If the container contains another container with identifier \a id either directly or 
-    recursively then returns that other container; otherwise returns an empty container 
-    constructed with the default constructor.
+    recursively then returns the value of that other container; otherwise returns an 
+    empty container constructed with the default constructor.
 
     \sa contentIds(), clearContents(), appendContent(), replaceContent()
 */
