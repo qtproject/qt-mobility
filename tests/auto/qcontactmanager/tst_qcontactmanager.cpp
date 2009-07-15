@@ -1935,6 +1935,14 @@ void tst_QContactManager::filtering()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
+    /* Check to see whether it supports a detail filter */
+    // note - currently the memory engine always returns false!
+    QContactDetailFilter dfil;
+    QVERIFY(!cm->information()->filterSupported(dfil));
+    dfil.setDetailDefinitionName("EmailAddress", "EmailAddress");
+    dfil.setValue("test@nokia.com");
+    QVERIFY(!cm->information()->filterSupported(dfil));
+
     /* Make sure it's empty */
     QList<QUniqueId> ids = cm->contacts();
     cm->removeContacts(&ids);
