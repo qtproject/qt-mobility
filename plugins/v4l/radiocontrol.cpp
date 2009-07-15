@@ -43,6 +43,13 @@
 #include <sys/ioctl.h>
 #include "linux/videodev2.h"
 
+#include <sys/soundcard.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 RadioControl::RadioControl(QObject *parent)
     :QRadioTuner(parent)
 {
@@ -50,16 +57,21 @@ RadioControl::RadioControl(QObject *parent)
     initRadio();
     muted = false;
     stereo = false;
+    sig = 0;
     currentBand = QRadioPlayer::FM;
     step = 100000;
     scanning = false;
+    playTime.restart();
     timer = new QTimer(this);
-    timer->setInterval(100);
+    timer->setInterval(200);
     connect(timer,SIGNAL(timeout()),this,SLOT(search()));
+    timer->start();
 }
 
 RadioControl::~RadioControl()
 {
+    timer->stop();
+
     if(fd > 0)
         ::close(fd);
 }
@@ -71,7 +83,6 @@ int RadioControl::band() const
 
 bool RadioControl::isSupportedBand(int b) const
 {
-    qWarning()<<b;
     QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
     switch(bnd) {
         case QRadioPlayer::FM:
@@ -98,21 +109,25 @@ void RadioControl::setBand(int b)
         // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
         currentBand =  (QRadioPlayer::Band)b;
         step = 100000; // 100kHz steps
+        emit bandChanged(currentBand);
 
     } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioPlayer::LW) {
         // LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
         currentBand =  (QRadioPlayer::Band)b;
         step = 1000; // 1kHz steps
+        emit bandChanged(currentBand);
 
     } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioPlayer::AM) {
         // AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
         currentBand =  (QRadioPlayer::Band)b;
         step = 1000; // 1kHz steps
+        emit bandChanged(currentBand);
 
     } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioPlayer::SW) {
         // SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
         currentBand =  (QRadioPlayer::Band)b;
         step = 500; // 500Hz steps
+        emit bandChanged(currentBand);
     }
 }
 
@@ -126,8 +141,6 @@ void RadioControl::setFrequency(int frequency)
     qint64 f = frequency;
 
     v4l2_frequency freq;
-
-    //qWarning()<<"f="<<frequency<<", c="<<currentFreq<<", min="<<freqMin<<", max="<<freqMax;
 
     if(frequency < freqMin)
         f = freqMax;
@@ -148,6 +161,7 @@ void RadioControl::setFrequency(int frequency)
             }
             ioctl( fd, VIDIOC_S_FREQUENCY, &freq );
             currentFreq = f;
+            playTime.restart();
             emit frequencyChanged(currentFreq);
         }
     }
@@ -160,7 +174,20 @@ bool RadioControl::isStereo() const
 
 void RadioControl::setStereo(bool stereo)
 {
-    //??? dont think we can set this, TODO
+    v4l2_tuner tuner;
+
+    memset( &tuner, 0, sizeof( tuner ) );
+
+    if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) >= 0 ) {
+        if(stereo)
+            tuner.audmode = V4L2_TUNER_MODE_STEREO;
+        else
+            tuner.audmode = V4L2_TUNER_MODE_MONO;
+
+        if ( ioctl( fd, VIDIOC_S_TUNER, &tuner ) >= 0 ) {
+            emit stereoStatusChanged(stereo);
+        }
+    }
 }
 
 int RadioControl::signalStrength() const
@@ -184,13 +211,7 @@ int RadioControl::signalStrength() const
 
 qint64 RadioControl::duration() const
 {
-    // ??? what is this supposed to do?
-    return 0;
-}
-
-void RadioControl::setDuration(qint64 duration)
-{
-    //???
+    return playTime.elapsed();
 }
 
 int RadioControl::volume() const
@@ -203,7 +224,7 @@ int RadioControl::volume() const
         if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
             v4l2_control control;
             if(queryctrl.maximum == 0) {
-                qWarning()<<"volume must be done using alsa/OSS, TODO";
+                return vol;
             } else {
                 // percentage volume returned
                 return queryctrl.default_value*100/queryctrl.maximum;
@@ -222,15 +243,16 @@ void RadioControl::setVolume(int volume)
         queryctrl.id = V4L2_CID_AUDIO_VOLUME;
         if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
             v4l2_control control;
-            qWarning()<<"min="<<queryctrl.minimum<<", max="<<queryctrl.maximum<<", vol="<<queryctrl.default_value<<", step="<<queryctrl.step;
+
             if(queryctrl.maximum > 0) {
                 memset( &control, 0, sizeof( control ) );
                 control.id = V4L2_CID_AUDIO_VOLUME;
                 control.value = volume*queryctrl.maximum/100;
                 ioctl( fd, VIDIOC_S_CTRL, &control );
             } else {
-                qWarning()<<"volume adjustment needs to be impl with alsa/OSS code?";
+                setVol(volume);
             }
+            emit volumeChanged(volume);
         }
     }
 }
@@ -254,6 +276,7 @@ void RadioControl::setMuted(bool muted)
             control.value = (muted ? queryctrl.maximum : queryctrl.minimum );
             ioctl( fd, VIDIOC_S_CTRL, &control );
             this->muted = muted;
+            emit mutingChanged(muted);
         }
     }
 }
@@ -262,20 +285,17 @@ void RadioControl::searchForward()
 {
     // Scan up
     if(scanning) {
-        timer->stop();
         scanning = false;
         return;
     }
     scanning = true;
     forward  = true;
-    timer->start();
 }
 
 void RadioControl::searchBackward()
 {
     // Scan down
     if(scanning) {
-        timer->stop();
         scanning = false;
         return;
     }
@@ -286,6 +306,13 @@ void RadioControl::searchBackward()
 
 void RadioControl::search()
 {
+    int signal = signalStrength();
+    if(sig != signal) {
+        sig = signal;
+        emit signalStrengthChanged(sig);
+    }
+    emit durationChanged(playTime.elapsed());
+
     if(!scanning) return;
 
     if(forward) {
@@ -371,11 +398,45 @@ bool RadioControl::initRadio()
                 stereo = true;
         }
 
+        vol = getVol();
+
         return true;
     }
 
     return false;
 }
 
+void RadioControl::setVol(int v)
+{
+    int fd = ::open( "/dev/mixer", O_RDWR, 0 );
+    if ( fd < 0 )
+        return;
+    int volume = v;
+    if ( volume < 0 )
+        volume = 0;
+    else if ( volume > 100 )
+        volume = 100;
+    vol = volume;
+    volume += volume << 8;
+    ::ioctl( fd, MIXER_WRITE(SOUND_MIXER_VOLUME), &volume );
+    ::close( fd );
+}
 
+int RadioControl::getVol()
+{
+    int fd = ::open( "/dev/mixer", O_RDWR, 0 );
+    if ( fd >= 0 ) {
+        int volume = 0;
+        ::ioctl( fd, MIXER_READ(SOUND_MIXER_VOLUME), &volume );
+        int left = ( volume & 0xFF );
+        int right = ( ( volume >> 8 ) & 0xFF );
+        if ( left > right )
+            vol = left;
+        else
+            vol = right;
+        ::close( fd );
+        return vol;
+    }
+    return 0;
+}
 

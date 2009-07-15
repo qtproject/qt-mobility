@@ -67,6 +67,13 @@ Radio::Radio()
     signal->setText(tr("No Signal"));
     topBar->addWidget(signal);
 
+    volumeSlider = new QSlider(Qt::Vertical,this);
+    volumeSlider->setRange(0,100);
+    qWarning()<<player->volume();
+    volumeSlider->setValue(player->volume());
+    connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
+    topBar->addWidget(volumeSlider);
+
     layout->addLayout(buttonBar);
 
     searchLeft = new QPushButton;
@@ -133,5 +140,10 @@ void Radio::signalChanged(int s)
         signal->setText(tr("Got Signal"));
     else
         signal->setText(tr("No Signal"));
+}
+
+void Radio::updateVolume(int v)
+{
+    player->setVolume(v);
 }
 

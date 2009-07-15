@@ -99,7 +99,7 @@ Q_SIGNALS:
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
     void signalStrengthChanged(int signalStrength);
-    void durationChanged(qint64 durattion);
+    void durationChanged(qint64 duration);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
 

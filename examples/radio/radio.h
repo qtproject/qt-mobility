@@ -41,6 +41,7 @@
 
 class QLabel;
 class QPushButton;
+class QSlider;
 
 class Radio : public QMainWindow
 {
@@ -56,6 +57,7 @@ public slots:
     void searchDown();
     void freqChanged(int f);
     void signalChanged(int s);
+    void updateVolume(int v);
 
 private:
     QLabel* freq;
@@ -64,6 +66,7 @@ private:
     QPushButton* right;
     QPushButton* searchLeft;
     QPushButton* searchRight;
+    QSlider* volumeSlider;
     QRadioPlayer* player;
 };
 

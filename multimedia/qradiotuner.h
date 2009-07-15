@@ -37,6 +37,8 @@
 
 #include "qabstractmediacontrol.h"
 
+#include "qradioplayer.h"
+
 class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
 {
     Q_OBJECT
@@ -57,7 +59,6 @@ public:
     virtual int signalStrength() const = 0;
 
     virtual qint64 duration() const = 0;
-    virtual void setDuration(qint64 duration) = 0;
 
     virtual int volume() const = 0;
     virtual void setVolume(int volume) = 0;
@@ -69,6 +70,7 @@ public:
     virtual void searchBackward() = 0;
 
 Q_SIGNALS:
+    void bandChanged(QRadioPlayer::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
     void signalStrengthChanged(int signalStrength);

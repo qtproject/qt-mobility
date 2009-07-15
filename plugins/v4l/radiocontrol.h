@@ -37,6 +37,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
+#include <QTime>
 
 #include "qradiotuner.h"
 #include "qradioplayer.h"
@@ -66,7 +67,6 @@ public:
     int signalStrength() const;
 
     qint64 duration() const;
-    void setDuration(qint64 duration);
 
     int volume() const;
     void setVolume(int volume);
@@ -82,6 +82,8 @@ private slots:
 
 private:
     bool initRadio();
+    void setVol(int v);
+    int  getVol();
 
     int fd;
 
@@ -91,6 +93,8 @@ private:
     bool available;
     int  tuners;
     int  step;
+    int  vol;
+    int  sig;
     bool scanning;
     bool forward;
     QTimer* timer;
@@ -98,6 +102,7 @@ private:
     qint64 freqMin;
     qint64 freqMax;
     qint64 currentFreq;
+    QTime  playTime;
 };
 
 #endif
