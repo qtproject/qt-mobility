@@ -317,6 +317,9 @@ void tst_QContact::actions()
     QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
     dets = c.detailsWithAction(QString());
     QCOMPARE(c.error(), QContact::BadArgumentError);
+
+    // remove the library path.
+    QApplication::removeLibraryPath(path);
 }
 
 void tst_QContact::preferences()
@@ -347,6 +350,20 @@ void tst_QContact::preferences()
     det3.setValue("test", QVariant("test3"));
     QCOMPARE(c.setPreferredDetail("nonexistentAction", det3), false);
     QCOMPARE(c.preferredDetail("nonexistentAction"), det2); // shouldn't have changed.
+
+    // test invalid set
+    QCOMPARE(c.setPreferredDetail(QString(), det3), false);
+    QCOMPARE(c.setPreferredDetail(QString(), QContactDetail()), false);
+    QCOMPARE(c.setPreferredDetail("nonexistentAction", QContactDetail()), false);
+    QCOMPARE(c.preferredDetail("nonexistentAction"), det2); // shouldn't have changed.
+
+    // test invalid query
+    QContactDetail det4;
+    det4.setValue("test", QVariant("test4"));
+    c.saveDetail(&det4);
+    QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
+    QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
+    QCOMPARE(c.isPreferredDetail("nonexistentAction", QContactDetail()), false);
 }
 
 void tst_QContact::displayName()
