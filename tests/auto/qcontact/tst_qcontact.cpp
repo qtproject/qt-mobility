@@ -279,17 +279,26 @@ void tst_QContact::details()
 
 void tst_QContact::actions()
 {
-    QContact c;
+    QContact c;  // empty contact.
+    QContact c2; // contact with email saved.
     QContactEmailAddress e;
     e.setEmailAddress("test@nokia.com");
-    c.saveDetail(&e);
+    c2.saveDetail(&e);
 
     // Prior to plugin loading:
+    // first, the empty contact
     QStringList availableActions = c.availableActions();
     QVERIFY(availableActions.isEmpty());
     QContactDetail d = c.detailWithAction("SendEmail");
     QVERIFY(d.isEmpty());
     QList<QContactDetail> dets = c.detailsWithAction("SendEmail");
+    QVERIFY(dets.isEmpty());
+    // then, the email contact
+    availableActions = c2.availableActions();
+    QVERIFY(availableActions.isEmpty());
+    d = c2.detailWithAction("SendEmail");
+    QVERIFY(d.isEmpty());
+    dets = c2.detailsWithAction("SendEmail");
     QVERIFY(dets.isEmpty());
 
     // set the correct path to look for plugins and load them
@@ -298,25 +307,46 @@ void tst_QContact::actions()
     QContactManager cm;
 
     // available actions - should be one there now.
+    // empty contact
     availableActions = c.availableActions();
+    QVERIFY(availableActions.isEmpty());
+    // contact with email
+    availableActions = c2.availableActions();
     QVERIFY(availableActions.contains("SendEmail"));
 
-    // detail with action
+    // detail with action:
+    // empty contact
     d = c.detailWithAction("SendEmail");
-    QVERIFY(d == e);
-    QCOMPARE(c.error(), QContact::NoError);
+    QVERIFY(d.isEmpty());
+    QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
     d = c.detailWithAction("NonexistentAction");
     QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
     d = c.detailWithAction(QString());
     QCOMPARE(c.error(), QContact::BadArgumentError);
+    // contact with email
+    d = c2.detailWithAction("SendEmail");
+    QVERIFY(d == e);
+    QCOMPARE(c2.error(), QContact::NoError);
+    d = c2.detailWithAction("NonexistentAction");
+    QCOMPARE(c2.error(), QContact::DetailDoesNotExistError);
+    d = c2.detailWithAction(QString());
+    QCOMPARE(c2.error(), QContact::BadArgumentError);
 
-    // details with action
+    // details with action:
+    // empty contact
     dets = c.detailsWithAction("SendEmail");
-    QVERIFY(dets.contains(e));
+    QVERIFY(dets.isEmpty());
     dets = c.detailsWithAction("NonexistentAction");
     QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
     dets = c.detailsWithAction(QString());
     QCOMPARE(c.error(), QContact::BadArgumentError);
+    // contact with email
+    dets = c2.detailsWithAction("SendEmail");
+    QVERIFY(dets.contains(e));
+    dets = c2.detailsWithAction("NonexistentAction");
+    QCOMPARE(c2.error(), QContact::DetailDoesNotExistError);
+    dets = c2.detailsWithAction(QString());
+    QCOMPARE(c2.error(), QContact::BadArgumentError);
 
     // remove the library path.
     QApplication::removeLibraryPath(path);
@@ -333,6 +363,7 @@ void tst_QContact::preferences()
     QCOMPARE(c.isPreferredDetail("nonexistentAction", det), false);
     QCOMPARE(c.setPreferredDetail("nonexistentAction", det), true);
     QCOMPARE(c.isPreferredDetail("nonexistentAction", det), true);
+    QCOMPARE(c.isPreferredDetail(QString(), det), true);
     QCOMPARE(c.preferredDetail("nonexistentAction"), det);
 
     // test replacement
@@ -364,6 +395,13 @@ void tst_QContact::preferences()
     QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
     QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
     QCOMPARE(c.isPreferredDetail("nonexistentAction", QContactDetail()), false);
+
+    // test retrieving preferred details
+    QContactDetail pd = c.preferredDetail(QString());
+    QCOMPARE(c.error(), QContact::BadArgumentError);
+    pd = c.preferredDetail("nonexistentAction");
+    QCOMPARE(c.error(), QContact::NoError);
+    QVERIFY(pd == det2); // shouldn't have changed.
 }
 
 void tst_QContact::displayName()
