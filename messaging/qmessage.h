@@ -165,14 +165,6 @@ public:
 private:
     friend class QMessageStore;
 
-    void setId(const QMessageId &id);
-    void setDataModified(bool modified);
-    void setParentAccountId(const QMessageAccountId &accountId);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-    void setParentFolderId(const QMessageFolderId &folderId);
-#endif
-    void setSize(uint size);
-
     QMessagePrivate *d_ptr;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)

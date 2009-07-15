@@ -86,11 +86,6 @@ QMessageId QMessage::id() const
     return QMessageId(); // stub
 }
 
-void QMessage::setId(const QMessageId &id)
-{
-    Q_UNUSED(id)
-}
-
 QMessage::Type QMessage::type() const
 {
     return None; // stub
@@ -104,11 +99,6 @@ void QMessage::setType(Type t)
 QMessageAccountId QMessage::parentAccountId() const
 {
     return QMessageAccountId(); // stub
-}
-
-void QMessage::setParentAccountId(const QMessageAccountId &accountId)
-{
-    Q_UNUSED(accountId)
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -233,11 +223,6 @@ uint QMessage::size() const
     return 0; // stub
 }
 
-void QMessage::setSize(uint size)
-{
-    Q_UNUSED(size)
-}
-
 QMessageContentContainerId QMessage::body() const
 {
     // TODO: Example body finding algorithm.
@@ -325,11 +310,6 @@ QList<QString> QMessage::customFields() const
 bool QMessage::dataModified() const
 {
     return false; // stub
-}
-
-void QMessage::setDataModified(bool modified)
-{
-    Q_UNUSED(modified);
 }
 
 QMessage QMessage::replyTo() const

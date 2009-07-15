@@ -231,14 +231,6 @@
 */
     
 /*!
-    \fn QMessage::setId(const QMessageId &id)
-  
-    Sets the identifier of the message to \a id.
-    
-    \sa id()
-*/
-
-/*!
     \fn QMessage::type() const
     
     Returns the Type of the message.
@@ -264,22 +256,10 @@
 */
     
 /*!
-    \fn QMessage::setParentAccountId(const QMessageAccountId &accountId)
-  
-    Sets the identifier of the parent account of the message to \a accountId.
-*/
-
-/*!
     \fn QMessage::parentFolderId() const
   
     Returns the identifier of the folder that contains the message if any; otherwise returns an 
     invalid identifier.
-*/
-
-/*!
-    \fn QMessage::setParentFolderId(const QMessageFolderId &folderId)
-  
-    Sets the identifier of the folder that contains the message to \a folderId.
 */
 
 /*!
@@ -461,14 +441,6 @@
 */
 
 /*!
-    \fn QMessage::setSize(uint size)
-    
-    Sets the complete size of the message as found on the originating server to \a size.
-    
-    \sa size()
-*/
-
-/*!
     \fn QMessage::body() const
   
     Returns the identifier for the body content contained by the Message if a body exists; 
@@ -607,12 +579,6 @@
     
     Returns true if the message has been modified since it was constructed; 
     otherwise returns false.
-*/
-
-/*!
-    \fn QMessage::setDataModified(bool modified)
-    
-    Sets the modified data state of the message to \a modified.
 */
 
 /*!
