@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #include "qphononplayercontrol.h"
-#include <phonon>
 
 #include "qmediaplaylistnavigator.h"
 #include "qmediasource.h"

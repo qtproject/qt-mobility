@@ -36,7 +36,9 @@
 #define QGSTREAMERPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
-#include <phonon>
+
+#include <Phonon/MediaObject>
+#include <Phonon/VideoWidget>
 
 #include "qmediaplayerservice.h"
 

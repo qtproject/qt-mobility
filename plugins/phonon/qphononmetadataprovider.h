@@ -2,7 +2,8 @@
 #define QGSTREAMERMETADATAPROVIDER_H
 
 #include "qmetadataprovider.h"
-#include <phonon>
+
+#include <Phonon/MediaObject>
 
 class QPhononPlayerSession;
 

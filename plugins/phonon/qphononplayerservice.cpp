@@ -36,8 +36,6 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
-#include <phonon>
-
 #include "qphononplayerservice.h"
 #include "qphononplayercontrol.h"
 #include "qphononmetadataprovider.h"

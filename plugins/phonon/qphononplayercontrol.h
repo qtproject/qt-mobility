@@ -36,7 +36,9 @@
 #define QWMPPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <phonon>
+
+#include <Phonon/MediaObject>
+#include <Phonon/AudioOutput>
 
 #include "qmediasource.h"
 #include "qmediaplayercontrol.h"

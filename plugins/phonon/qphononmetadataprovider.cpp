@@ -1,4 +1,7 @@
 #include "qphononmetadataprovider.h"
+
+#include <QtCore/qstringlist.h>
+
 #include <QDebug>
 
 QPhononMetadataProvider::QPhononMetadataProvider(Phonon::MediaObject *session, QObject *parent)
