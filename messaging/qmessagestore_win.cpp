@@ -33,13 +33,16 @@
 #include "qmessagestore.h"
 
 QMessageStore::QMessageStore(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      d_ptr(0)
 {
     Q_ASSERT(instance() != 0);
 }
 
 QMessageStore::~QMessageStore()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
