@@ -36,6 +36,7 @@
 #include "qgstreamerplayersession.h"
 #include "qgstreamerbushelper.h"
 #include "qmediastreams.h"
+#include "qmediaplayer.h"
 
 #include <QDebug>
 
@@ -70,6 +71,17 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QObject *parent)
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
 {
     stop();
+
+    if (m_pipeline) {
+        delete m_busHelper;
+        gst_object_unref(GST_OBJECT(m_bus));
+        gst_object_unref(GST_OBJECT(m_pipeline));
+        gst_object_unref(GST_OBJECT(m_alsasrc));
+        gst_object_unref(GST_OBJECT(m_audioconvert));
+        gst_object_unref(GST_OBJECT(m_encoder));
+        gst_object_unref(GST_OBJECT(m_muxer));
+        gst_object_unref(GST_OBJECT(m_filesink));
+    }
 }
 
 QMediaSink QGstreamerCaptureSession::sink() const
@@ -104,7 +116,7 @@ void QGstreamerCaptureSession::start()
 {
     if (m_pipeline) {
         if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            m_state = QMediaPlayer::ErrorState;
+            m_state = QMediaPlayer::StoppedState;
             emit stateChanged(m_state);
         }
     }
@@ -164,6 +176,17 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                     }
                 }
                 break;
+            case GST_MESSAGE_ERROR:
+                {
+                    GError *err;
+                    gchar *debug;
+                    gst_message_parse_error (gm, &err, &debug);
+                    emit error(int(QMediaPlayer::ResourceError),QString::fromUtf8(err->message));
+                    g_error_free (err);
+                    g_free (debug);
+                }
+                break;
+
 
             default:
                 break;

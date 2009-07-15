@@ -161,7 +161,7 @@ void QGstreamerPlayerSession::play()
     if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to play -" << m_url.toString();
-            m_state = QMediaPlayer::ErrorState;
+            m_state = QMediaPlayer::StoppedState;
             emit stateChanged(m_state);
         }
     }
@@ -329,10 +329,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 break;
 
             case GST_MESSAGE_EOS:
-                if (m_state != QMediaPlayer::StoppedState && m_state != QMediaPlayer::EndOfStreamState) {
-                    emit stateChanged(m_state = QMediaPlayer::EndOfStreamState);
-                    emit playbackFinished();
-                }
+                if (m_state != QMediaPlayer::StoppedState)
+                    emit stateChanged(m_state = QMediaPlayer::StoppedState);
+                emit playbackFinished();
                 break;
 
             case GST_MESSAGE_TAG:

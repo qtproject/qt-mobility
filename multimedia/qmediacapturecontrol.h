@@ -22,6 +22,7 @@ public:
 signals:
     void stateChanged(int state);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 public slots:
     virtual void start() = 0;
