@@ -5,4 +5,5 @@ CONFIG += ordered
 SUBDIRS = \
     multimedia \
     plugins \
-    examples
+    examples \
+    tests
