@@ -52,11 +52,18 @@ public:
 public slots:
     void freqUp();
     void freqDown();
+    void searchUp();
+    void searchDown();
+    void freqChanged(int f);
+    void signalChanged(int s);
 
 private:
     QLabel* freq;
+    QLabel* signal;
     QPushButton* left;
     QPushButton* right;
+    QPushButton* searchLeft;
+    QPushButton* searchRight;
     QRadioPlayer* player;
 };
 

@@ -61,12 +61,14 @@ class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
     Q_ENUMS(Band)
 
 public:
-    enum Band { AM, FM, SW };
+    enum Band { AM, FM, SW, LW };
 
     QRadioPlayer(QRadioService *radioService = createRadioService(), QObject *parent = 0);
     ~QRadioPlayer();
 
     Band band() const;
+
+    bool isSupportedBand(int b) const;
 
     int frequency() const;
 

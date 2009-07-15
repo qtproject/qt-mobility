@@ -48,6 +48,14 @@ RadioControl::RadioControl(QObject *parent)
 {
     fd = -1;
     initRadio();
+    muted = false;
+    stereo = false;
+    currentBand = QRadioPlayer::FM;
+    step = 100000;
+    scanning = false;
+    timer = new QTimer(this);
+    timer->setInterval(100);
+    connect(timer,SIGNAL(timeout()),this,SLOT(search()));
 }
 
 RadioControl::~RadioControl()
@@ -56,9 +64,56 @@ RadioControl::~RadioControl()
         ::close(fd);
 }
 
+int RadioControl::band() const
+{
+    return currentBand;
+}
+
+bool RadioControl::isSupportedBand(int b) const
+{
+    qWarning()<<b;
+    QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
+    switch(bnd) {
+        case QRadioPlayer::FM:
+            if(freqMin <= 87500000 && freqMax >= 108000000)
+                return true;
+            break;
+        case QRadioPlayer::LW:
+            if(freqMin <= 148500 && freqMax >= 283500)
+                return true;
+        case QRadioPlayer::AM:
+            if(freqMin <= 520000 && freqMax >= 1610000)
+                return true;
+        default:
+            if(freqMin <= 1711000 && freqMax >= 30000000)
+                return true;
+    }
+
+    return false;
+}
+
 void RadioControl::setBand(int b)
 {
-    //???
+    if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioPlayer::FM) {
+        // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
+        currentBand =  (QRadioPlayer::Band)b;
+        step = 100000; // 100kHz steps
+
+    } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioPlayer::LW) {
+        // LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
+        currentBand =  (QRadioPlayer::Band)b;
+        step = 1000; // 1kHz steps
+
+    } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioPlayer::AM) {
+        // AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
+        currentBand =  (QRadioPlayer::Band)b;
+        step = 1000; // 1kHz steps
+
+    } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioPlayer::SW) {
+        // SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
+        currentBand =  (QRadioPlayer::Band)b;
+        step = 500; // 500Hz steps
+    }
 }
 
 int RadioControl::frequency() const
@@ -68,31 +123,69 @@ int RadioControl::frequency() const
 
 void RadioControl::setFrequency(int frequency)
 {
+    qint64 f = frequency;
+
     v4l2_frequency freq;
+
+    //qWarning()<<"f="<<frequency<<", c="<<currentFreq<<", min="<<freqMin<<", max="<<freqMax;
+
+    if(frequency < freqMin)
+        f = freqMax;
+    if(frequency > freqMax)
+        f = freqMin;
 
     if(fd > 0) {
         memset( &freq, 0, sizeof( freq ) );
+        // Use the first tuner
         freq.tuner = 0;
         if ( ioctl( fd, VIDIOC_G_FREQUENCY, &freq ) >= 0 ) {
-            if(low)
-                freq.frequency = (int)(frequency/62.5);
-            else
-                freq.frequency = (int)(frequency/62500);
+            if(low) {
+                // For low, freq in units of 62.5Hz, so convert from Hz to units.
+                freq.frequency = (int)(f/62.5);
+            } else {
+                // For high, freq in units of 62.5kHz, so convert from Hz to units.
+                freq.frequency = (int)(f/62500);
+            }
             ioctl( fd, VIDIOC_S_FREQUENCY, &freq );
-            currentFreq = frequency;
+            currentFreq = f;
+            emit frequencyChanged(currentFreq);
         }
-        //changePropertyValue("frequency", frequency);
     }
+}
+
+bool RadioControl::isStereo() const
+{
+    return stereo;
 }
 
 void RadioControl::setStereo(bool stereo)
 {
-    //??? dont think we can set this
+    //??? dont think we can set this, TODO
 }
 
-void RadioControl::setSignalStrength(int strength)
+int RadioControl::signalStrength() const
 {
-    // ??? this cannot be set, remove
+    v4l2_tuner tuner;
+
+    // Return the first tuner founds signal strength.
+    for ( int index = 0; index < tuners; ++index ) {
+        memset( &tuner, 0, sizeof( tuner ) );
+        tuner.index = index;
+        if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) < 0 )
+            continue;
+        if ( tuner.type != V4L2_TUNER_RADIO )
+            continue;
+        // percentage signal strength
+        return tuner.signal*100/65535;
+    }
+
+    return 0;
+}
+
+qint64 RadioControl::duration() const
+{
+    // ??? what is this supposed to do?
+    return 0;
 }
 
 void RadioControl::setDuration(qint64 duration)
@@ -100,9 +193,51 @@ void RadioControl::setDuration(qint64 duration)
     //???
 }
 
+int RadioControl::volume() const
+{
+    v4l2_queryctrl queryctrl;
+
+    if(fd > 0) {
+        memset( &queryctrl, 0, sizeof( queryctrl ) );
+        queryctrl.id = V4L2_CID_AUDIO_VOLUME;
+        if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
+            v4l2_control control;
+            if(queryctrl.maximum == 0) {
+                qWarning()<<"volume must be done using alsa/OSS, TODO";
+            } else {
+                // percentage volume returned
+                return queryctrl.default_value*100/queryctrl.maximum;
+            }
+        }
+    }
+    return 0;
+}
+
 void RadioControl::setVolume(int volume)
 {
-    //??? this would need to be impl in alsa or OSS!
+    v4l2_queryctrl queryctrl;
+
+    if(fd > 0) {
+        memset( &queryctrl, 0, sizeof( queryctrl ) );
+        queryctrl.id = V4L2_CID_AUDIO_VOLUME;
+        if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
+            v4l2_control control;
+            qWarning()<<"min="<<queryctrl.minimum<<", max="<<queryctrl.maximum<<", vol="<<queryctrl.default_value<<", step="<<queryctrl.step;
+            if(queryctrl.maximum > 0) {
+                memset( &control, 0, sizeof( control ) );
+                control.id = V4L2_CID_AUDIO_VOLUME;
+                control.value = volume*queryctrl.maximum/100;
+                ioctl( fd, VIDIOC_S_CTRL, &control );
+            } else {
+                qWarning()<<"volume adjustment needs to be impl with alsa/OSS code?";
+            }
+        }
+    }
+}
+
+bool RadioControl::isMuted() const
+{
+    return muted;
 }
 
 void RadioControl::setMuted(bool muted)
@@ -118,17 +253,47 @@ void RadioControl::setMuted(bool muted)
             control.id = V4L2_CID_AUDIO_MUTE;
             control.value = (muted ? queryctrl.maximum : queryctrl.minimum );
             ioctl( fd, VIDIOC_S_CTRL, &control );
+            this->muted = muted;
         }
-        changePropertyValue("muted", muted);
     }
 }
 
 void RadioControl::searchForward()
 {
+    // Scan up
+    if(scanning) {
+        timer->stop();
+        scanning = false;
+        return;
+    }
+    scanning = true;
+    forward  = true;
+    timer->start();
 }
 
 void RadioControl::searchBackward()
 {
+    // Scan down
+    if(scanning) {
+        timer->stop();
+        scanning = false;
+        return;
+    }
+    scanning = true;
+    forward  = false;
+    timer->start();
+}
+
+void RadioControl::search()
+{
+    if(!scanning) return;
+
+    if(forward) {
+        setFrequency(currentFreq+step);
+    } else {
+        setFrequency(currentFreq-step);
+    }
+    emit signalStrengthChanged(signalStrength());
 }
 
 bool RadioControl::initRadio()
@@ -205,7 +370,6 @@ bool RadioControl::initRadio()
             if((tuner.rxsubchans & V4L2_TUNER_SUB_STEREO) != 0)
                 stereo = true;
         }
-        //changePropertyValue("stereo", stereo);
 
         return true;
     }

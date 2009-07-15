@@ -66,6 +66,11 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QRadioTuner *>(service->control("com.nokia.qt.RadioPlayerControl"));
 
+    if(d->control) {
+        connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
+        connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
+    }
+
     addPropertyWatch("duration");
 }
 
@@ -90,6 +95,11 @@ int QRadioPlayer::frequency() const
 bool QRadioPlayer::isStereo() const
 {
     return d_func()->control->isStereo();
+}
+
+bool QRadioPlayer::isSupportedBand(int b) const
+{
+    return d_func()->control->isSupportedBand(b);
 }
 
 int QRadioPlayer::signalStrength() const
