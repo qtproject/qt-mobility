@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../contacts/qcontactmanager_p.cpp -->
+<!-- ../../contacts/qcontactmanagerengine.cpp -->
 <head>
   <title>QContactManagerEngine Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -34,8 +34,7 @@
 <li><div class="fn"></div>virtual QMap&lt;QString, QContactDetailDefinition&gt; <b><a href="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qcontactmanagerengine.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</li>
 <li><div class="fn"></div>virtual QContactGroup <b><a href="qcontactmanagerengine.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups">groups</a></b> ( const QContactFilter &amp; <i>filter</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
-<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups-2">groups</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
+<li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groups">groups</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsAddedSince">groupsAddedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsModifiedSince">groupsModifiedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
 <li><div class="fn"></div>virtual QList&lt;QUniqueId&gt; <b><a href="qcontactmanagerengine.html#groupsRemovedSince">groupsRemovedSince</a></b> ( const QDateTime &amp; <i>timestamp</i>, QContactManager::Error &amp; <i>error</i> ) const</li>
@@ -73,6 +72,7 @@
 <h3>Static Protected Members</h3>
 <ul>
 <li><div class="fn"></div>void <b><a href="qcontactmanagerengine.html#addSorted">addSorted</a></b> ( QList&lt;QContact&gt; * <i>sorted</i>, const QContact &amp; <i>toAdd</i>, const QContactSortOrder &amp; <i>sortOrder</i> )</li>
+<li><div class="fn"></div>int <b><a href="qcontactmanagerengine.html#compareVariant">compareVariant</a></b> ( const QVariant &amp; <i>first</i>, const QVariant &amp; <i>second</i>, Qt::CaseSensitivity <i>sensitivity</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -88,6 +88,10 @@
 <p>A default, empty constructor.</p>
 <h3 class="fn"><a name="addSorted"></a>void QContactManagerEngine::addSorted ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>sorted</i>, const <a href="qcontact.html">QContact</a> &amp; <i>toAdd</i>, const QContactSortOrder &amp; <i>sortOrder</i> )&nbsp;&nbsp;<tt> [static protected]</tt></h3>
 <p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrder</i></p>
+<h3 class="fn"><a name="compareVariant"></a>int QContactManagerEngine::compareVariant ( const QVariant &amp; <i>first</i>, const QVariant &amp; <i>second</i>, Qt::CaseSensitivity <i>sensitivity</i> )&nbsp;&nbsp;<tt> [static protected]</tt></h3>
+<p>Compares <i>first</i> against <i>second</i>. If the types are strings (QVariant::String), the <i>sensitivity</i> argument controls case sensitivity when comparing.</p>
+<p>Returns: &lt;0 if <i>first</i> is less than <i>second</i> 0 if <i>first</i> is equal to <i>second</i> &gt;0 if <i>first</i> is greater than <i>second</i>.</p>
+<p>The results are undefined if the variants are different types, or cannot be compared.</p>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManagerEngine::contact ( const QUniqueId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the contact in the database identified by <i>contactId</i></p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
@@ -129,10 +133,7 @@
 <h3 class="fn"><a name="group"></a><a href="qcontactgroup.html">QContactGroup</a> QContactManagerEngine::group ( const QUniqueId &amp; <i>groupId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the group which is identified by the given <i>groupId</i>, or a default-constructed group if no such group exists</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( const QContactFilter &amp; <i>filter</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Return the list of group ids present in this manager which fulfil the criteria specified in the given <i>filter</i>.</p>
-<p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="groups-2"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContactManagerEngine::groups ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Return the list of group ids present in this manager.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <h3 class="fn"><a name="groupsAdded"></a>void QContactManagerEngine::groupsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

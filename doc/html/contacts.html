@@ -29,8 +29,9 @@
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
-<li><a href="#manager-information-and-functionality-reporting">Manager information and functionality reporting</a></li>
 <li><a href="#detail-leaf-classes">Detail leaf classes</a></li>
+<li><a href="#implementing-backends">Implementing Backends</a></li>
+<li><a href="#manager-information-and-functionality-reporting">Manager information and functionality reporting</a></li>
 <li><a href="#examples">Examples</a></li>
 </ul>
 </ul>
@@ -69,7 +70,7 @@
         number.setAttribute(&quot;SubType&quot;, &quot;Mobile&quot;);
         number.setNumber(&quot;12345678&quot;);
         alice.saveDetail(&amp;number);
-        alice.setPreferredDetail(&quot;DialActionId&quot;, number);
+        alice.setPreferredDetail(&quot;DialAction&quot;, number);
 
         <span class="comment">/* Add a second phone number */</span>
         QContactPhoneNumber number2;
@@ -87,8 +88,7 @@
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
         QContactDetailFilter phoneFilter;
-        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;);
-        phoneFilter.setDetailFieldName(&quot;Number&quot;);
+        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;, &quot;Number&quot;);
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(Qt::MatchExactly);
 
@@ -97,7 +97,7 @@
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
             QContact match = cm-&gt;contact(matchingContacts.at(0));
-            QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionId);
+            QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
             if (cdl.isEmpty())
                 cdl.setLabel(cm-&gt;synthesiseDisplayLabel(match));
             qDebug() &lt;&lt; &quot;Incoming call from&quot;
@@ -112,7 +112,7 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
@@ -125,7 +125,7 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; cdl.label();
@@ -150,7 +150,7 @@
     {
         <span class="comment">/* Find the definition that we are modifying */</span>
         QMap&lt;QString, QContactDetailDefinition&gt; definitions = cm-&gt;detailDefinitions();
-        QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionId);
+        QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
         <span class="comment">/* Make our modifications: we add a &quot;Label&quot; field to email addresses */</span>
         QContactDetailDefinition::Field newField;
@@ -174,7 +174,7 @@
     {
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; cdl.label();
@@ -208,7 +208,7 @@
         QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
-            QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionId);
+            QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
             if (cdl.isEmpty())
                 cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
             qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; cdl.label();
@@ -259,10 +259,8 @@
 <li><a href="qcontactdetail.html">QContactDetail</a></li>
 <li><a href="qcontact.html">QContact</a></li>
 <li><a href="qcontactgroup.html">QContactGroup</a></li>
+<li><a href="qcontactabstractaction.html">QContactAbstractAction</a></li>
 </ul>
-<a name="manager-information-and-functionality-reporting"></a>
-<h3>Manager information and functionality reporting</h3>
-<p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality. The functionality is reported in an instance of a <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> object.</p>
 <a name="detail-leaf-classes"></a>
 <h3>Detail leaf classes</h3>
 <p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Contacts API. They are general in design but are intended to fulfil specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality.</p>
@@ -280,6 +278,12 @@
 <li><a href="qcontacturl.html">QContactUrl</a></li>
 </ul>
 <p>Each of these subclasses provide access to information stored in fields which are listed in the <a href="contactsschema.html">schema</a>.</p>
+<a name="implementing-backends"></a>
+<h3>Implementing Backends</h3>
+<p>A manager backend may be implemented by subclassing <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, and providing a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a> which can instantiate it when required.</p>
+<a name="manager-information-and-functionality-reporting"></a>
+<h3>Manager information and functionality reporting</h3>
+<p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality. The functionality is reported in an instance of a <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> object.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
 <ul>

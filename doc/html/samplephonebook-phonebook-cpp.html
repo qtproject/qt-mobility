@@ -262,8 +262,8 @@
             for (int i = 0; i &lt; sorted.size(); i++) {
                 <span class="comment">// first, retrieve the display labels from each contact</span>
                 QContact sortedContact = sorted.at(i);
-                QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionId);
-                QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionId);
+                QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionName);
+                QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionName);
 
                 <span class="comment">// if none set, ask the backend to synthesise them for us.</span>
                 if (cdl.isEmpty())
@@ -338,7 +338,7 @@
 
         QContactAddress address;
         address.setDisplayLabel(addressText-&gt;toPlainText());
-        address.setAttribute(QContactDetail::AttributeSubType, QString(QContactAddress::AttributeSubTypeDomestic + &quot;,&quot; + QContactAddress::AttributeSubTypeParcel + &quot;,&quot; + QContactAddress::AttributeSubTypePostal));
+        address.setAttribute(QContactDetail::AttributeSubType, QString(QLatin1String(QContactAddress::AttributeSubTypeDomestic) + &quot;,&quot; + QLatin1String(QContactAddress::AttributeSubTypeParcel) + &quot;,&quot; + QLatin1String(QContactAddress::AttributeSubTypePostal)));
         c.saveDetail(&amp;address);
 
         return c;
@@ -353,10 +353,10 @@
         nameLine-&gt;setText(c.displayLabel().label());
 
         <span class="comment">// display the email address</span>
-        emailLine-&gt;setText(c.detail(QContactEmailAddress::DefinitionId).value(QContactEmailAddress::FieldEmailAddress));
+        emailLine-&gt;setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
 
         <span class="comment">// display the phone numbers</span>
-        QList&lt;QContactDetail&gt; phns = c.details(QContactPhoneNumber::DefinitionId);
+        QList&lt;QContactDetail&gt; phns = c.details(QContactPhoneNumber::DefinitionName);
         bool foundHomePhone = false;
         bool foundWorkPhone = false;
         bool foundMobilePhone = false;
@@ -382,10 +382,10 @@
             mobilePhoneLine-&gt;setText(&quot;&quot;);
 
         <span class="comment">// display the address</span>
-        addressText-&gt;setText((QContactAddress(c.detail(QContactAddress::DefinitionId))).displayLabel());
+        addressText-&gt;setText((QContactAddress(c.detail(QContactAddress::DefinitionName))).displayLabel());
 
         <span class="comment">// and build the avatar filename and display it if it exists.</span>
-        QString avatarFile = c.detail(QContactAvatar::DefinitionId).value(QContactAvatar::FieldAvatar);
+        QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);
         if (avatarFile.isNull() || avatarFile.isEmpty()) {
             avatarButton-&gt;setIcon(QIcon());
             avatarButton-&gt;setText(&quot;No image selected&quot;);
@@ -418,7 +418,7 @@
         QString selected = QFileDialog::getOpenFileName(this, &quot;Select avatar image file&quot;, &quot;.&quot;);
         if (!selected.isNull()) {
             QContact curr = contacts.at(currentIndex);
-            QContactAvatar av = curr.detail(QContactAvatar::DefinitionId);
+            QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
             av.setAvatar(selected);
             curr.saveDetail(&amp;av);
             contacts.replace(currentIndex, curr);
@@ -440,7 +440,7 @@
     {
         QContact c = buildContact();
         c.setId(contacts.at(currentIndex).id());
-        QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionId);
+        QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionName);
         c.saveDetail(&amp;av);
         if (!cm-&gt;saveContact(&amp;c)) {
             QString errorCode = &quot;Unable to save the contact in the database; error code:&quot; + QString::number(cm-&gt;error());
@@ -452,7 +452,7 @@
     void PhoneBook::removeContact()
     {
         QContact current = contacts.at(currentIndex);
-        QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(current));
         QString contactName = cdl.label();
@@ -498,7 +498,7 @@
             <span class="comment">// XXX TODO: use QContactManager::contactsWithDetail</span>
             for (int i = 0; i &lt; contacts.size(); i++) {
                 QContact current = contacts.at(i);
-                QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+                QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
                 if (cdl.isEmpty())
                     cdl.setLabel(cm-&gt;synthesiseDisplayLabel(current));
                 if (cdl.label() == contactName) {
@@ -575,7 +575,7 @@
 
         QFile file(newName);
         QContact current = contacts.at(currentIndex);
-        QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionId);
+        QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(current));
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

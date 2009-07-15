@@ -19,6 +19,8 @@
 <li><div class="fn"></div>enum <a href="qcontactmanager.html#Error-enum">Error</a></li>
 <li><div class="fn"></div><a href="qcontactmanager.html#QContactManager">QContactManager</a> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp;, QObject * )</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a> ()</li>
+<li><div class="fn"></div><a href="qcontactmanager.html#actions">actions</a> ( const QString &amp;, const QString &amp;, int ) : QList&lt;QContactAbstractAction *&gt;</li>
+<li><div class="fn"></div><a href="qcontactmanager.html#availableActions">availableActions</a> ( const QString &amp;, int ) : QStringList</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#availableManagers">availableManagers</a> () : QStringList</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#buildUri">buildUri</a> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp; ) : QString</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#contact">contact</a> ( const QUniqueId &amp; ) const : QContact</li>
@@ -35,9 +37,8 @@
 <li><div class="fn"></div><a href="qcontactmanager.html#error">error</a> () const : QContactManager::Error</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#fromUri">fromUri</a> ( const QString &amp;, QObject * ) : QContactManager *</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#group">group</a> ( const QUniqueId &amp; ) const : QContactGroup</li>
-<li><div class="fn"></div><a href="qcontactmanager.html#groups">groups</a> () const : QList&lt;QUniqueId&gt;</li>
-<li><div class="fn"></div><a href="qcontactmanager.html#groups-2">groups</a> ( const QContactFilter &amp; ) const : QList&lt;QUniqueId&gt;</li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"></div><a href="qcontactmanager.html#groups">groups</a> () const : QList&lt;QUniqueId&gt;</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#groupsAdded">groupsAdded</a> ( const QList&lt;QUniqueId&gt; &amp; )</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#groupsAddedSince">groupsAddedSince</a> ( const QDateTime &amp; ) const : QList&lt;QUniqueId&gt;</li>
 <li><div class="fn"></div><a href="qcontactmanager.html#groupsChanged">groupsChanged</a> ( const QList&lt;QUniqueId&gt; &amp; )</li>

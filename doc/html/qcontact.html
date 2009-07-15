@@ -38,10 +38,13 @@
 <li><div class="fn"></div>QContactDisplayLabel <b><a href="qcontact.html#displayLabel">displayLabel</a></b> () const</li>
 <li><div class="fn"></div>Error <b><a href="qcontact.html#error">error</a></b> () const</li>
 <li><div class="fn"></div>QUniqueId <b><a href="qcontact.html#id">id</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qcontact.html#isEmpty">isEmpty</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#isPreferredDetail">isPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>detail</i> ) const</li>
 <li><div class="fn"></div>QContactDetail <b><a href="qcontact.html#preferredDetail">preferredDetail</a></b> ( const QString &amp; <i>actionName</i> ) const</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#removeDetail">removeDetail</a></b> ( QContactDetail * <i>detail</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#saveDetail">saveDetail</a></b> ( QContactDetail * <i>detail</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontact.html#setDisplayLabel">setDisplayLabel</a></b> ( const QContactDisplayLabel &amp; <i>label</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qcontact.html#setDisplayLabel-2">setDisplayLabel</a></b> ( const QString &amp; <i>label</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#setId">setId</a></b> ( const QUniqueId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#setPreferredDetail">setPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>preferredDetail</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qcontact.html#operator-not-eq">operator!=</a></b> ( const QContact &amp; <i>other</i> ) const</li>
@@ -65,10 +68,9 @@
 <tr><td valign="top"><tt>QContact::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed due to running out of memory</td></tr>
 <tr><td valign="top"><tt>QContact::DetailDoesNotExistError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The most recent operation failed because the requested detail does not exist</td></tr>
 <tr><td valign="top"><tt>QContact::DetailAlreadyExistsError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The most recent operation failed because the specified detail already exists</td></tr>
-<tr><td valign="top"><tt>QContact::DetailLimitReachedError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because no more details may be stored in this contact</td></tr>
-<tr><td valign="top"><tt>QContact::DetailOfThisTypeLimitReachedError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The most recent operation failed because no more details of this definition type may be stored in this contact</td></tr>
-<tr><td valign="top"><tt>QContact::PermissionsError</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The most recent operation failed because the caller does not have permission to perform the operation</td></tr>
-<tr><td valign="top"><tt>QContact::UnspecifiedError</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The most recent operation failed for an undocumented reason</td></tr>
+<tr><td valign="top"><tt>QContact::BadArgumentError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because a bad argument was supplied</td></tr>
+<tr><td valign="top"><tt>QContact::PermissionsError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The most recent operation failed because the caller does not have permission to perform the operation</td></tr>
+<tr><td valign="top"><tt>QContact::UnspecifiedError</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The most recent operation failed for an undocumented reason</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -93,21 +95,39 @@
 <h3 class="fn"><a name="detailsWithAction"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const QString &amp; <i>actionName</i> )</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
 <h3 class="fn"><a name="displayLabel"></a>QContactDisplayLabel QContact::displayLabel () const</h3>
-<p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the QContactDisplayLabel in the contact) or synthesised by the manager from which the contact is retrieved.</p>
+<p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the QContactDisplayLabel in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesised by the manager from which the contact is retrieved.</p>
+<p>See also <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>().</p>
 <h3 class="fn"><a name="error"></a><a href="qcontact.html#Error-enum">Error</a> QContact::error () const</h3>
 <p>Returns the code of the error of the most recent operation</p>
 <h3 class="fn"><a name="id"></a>QUniqueId QContact::id () const</h3>
 <p>Returns the QUniqueId that identifies this contact</p>
 <p>See also <a href="qcontact.html#setId">setId</a>().</p>
+<h3 class="fn"><a name="isEmpty"></a>bool QContact::isEmpty () const</h3>
+<p>Returns true if this <a href="qcontact.html">QContact</a> is empty, false if not.</p>
+<p>An empty <a href="qcontact.html">QContact</a> has an empty label and no extra details.</p>
 <h3 class="fn"><a name="isPreferredDetail"></a>bool QContact::isPreferredDetail ( const QString &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> ) const</h3>
 <p>Returns true if the given <i>detail</i> is a preferred detail for the given <i>actionName</i>, or for any action if the <i>actionName</i> is empty</p>
 <h3 class="fn"><a name="preferredDetail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::preferredDetail ( const QString &amp; <i>actionName</i> ) const</h3>
 <p>Returns the preferred detail for a given <i>actionName</i></p>
 <p>See also <a href="qcontact.html#setPreferredDetail">setPreferredDetail</a>().</p>
 <h3 class="fn"><a name="removeDetail"></a>bool QContact::removeDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
-<p>Removes the <i>detail</i> from the contact. Any preference for the given field is removed, also. The Id of the <i>detail</i> is removed, to signify that it is no longer part of the contact. Returns true if the detail was removed successfully, false if an error occurred</p>
+<p>Removes the <i>detail</i> from the contact.</p>
+<p>Any preference for the given field is also removed. The Id of the <i>detail</i> is removed, to signify that it is no longer part of the contact.</p>
+<p>If the detail is the display label for this contact, the display label will be reset to an empty state, and the function will return success.</p>
+<p>Returns true if the detail was removed successfully, false if an error occurred</p>
 <h3 class="fn"><a name="saveDetail"></a>bool QContact::saveDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
-<p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list. Returns true if the detail was saved successfully, otherwise returns false</p>
+<p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.</p>
+<p>If <i>detail</i> is a contact display label, the existing display label will be overwritten with <i>detail</i>. There is never more than one display label in a contact.</p>
+<p>Returns true if the detail was saved successfully, otherwise returns false</p>
+<h3 class="fn"><a name="setDisplayLabel"></a>bool QContact::setDisplayLabel ( const QContactDisplayLabel &amp; <i>label</i> )</h3>
+<p>Set the display label of the contact to <i>label</i>.</p>
+<p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
+<p>Returns true on success, false otherwise.</p>
+<p>See also <a href="qcontact.html#displayLabel">displayLabel</a>().</p>
+<h3 class="fn"><a name="setDisplayLabel-2"></a>bool QContact::setDisplayLabel ( const QString &amp; <i>label</i> )</h3>
+<p>Set the display label of the contact to <i>label</i>.</p>
+<p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
+<p>Returns true on success, false otherwise.</p>
 <h3 class="fn"><a name="setId"></a>bool QContact::setId ( const QUniqueId &amp; <i>id</i> )</h3>
 <p>Sets the id of this contact to <i>id</i>. Note that this only affects this structure, not any corresponding structures stored by a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If you change the id of a contact and save the contact in a manager, the previously existing contact will still exist. You can do this to create copies (possibly modified) of an existing contact.</p>

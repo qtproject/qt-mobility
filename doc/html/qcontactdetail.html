@@ -206,25 +206,25 @@
 <pre>    class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
     {
     public:
-        Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;);
+        Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
 
-        static const QString DefinitionId; <span class="comment">// == staticType() == &quot;PhoneNumber&quot;</span>
+        static const char DefinitionName[]; <span class="comment">// == staticType() == &quot;PhoneNumber&quot;</span>
 
-        static const QString FieldNumber;
+        static const char FieldNumber[];
 
-        static const QString AttributeSubTypeLandline;
-        static const QString AttributeSubTypeMobile;
-        static const QString AttributeSubTypeFacsimile;
-        static const QString AttributeSubTypePager;
-        static const QString AttributeSubTypeVoice;
-        static const QString AttributeSubTypeModem;
-        static const QString AttributeSubTypeVideo;
-        static const QString AttributeSubTypeCar;
-        static const QString AttributeSubTypeBulletinBoardSystem;
-        static const QString AttributeSubTypeMessagingCapable;
+        static const char AttributeSubTypeLandline[];
+        static const char AttributeSubTypeMobile[];
+        static const char AttributeSubTypeFacsimile[];
+        static const char AttributeSubTypePager[];
+        static const char AttributeSubTypeVoice[];
+        static const char AttributeSubTypeModem[];
+        static const char AttributeSubTypeVideo[];
+        static const char AttributeSubTypeCar[];
+        static const char AttributeSubTypeBulletinBoardSystem[];
+        static const char AttributeSubTypeMessagingCapable[];
 
-        void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
-        QString number() const {return value(FieldNumber);}
+        void setNumber(const QString&amp; number) {setValue(QLatin1String(FieldNumber), number);}
+        QString number() const {return value(QLatin1String(FieldNumber));}
     };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
