@@ -72,15 +72,20 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void itemsAboutToBeInserted(int start, int end);
-    void itemsInserted();
+    void itemsInserted(int start, int end);
     void itemsAboutToBeRemoved(int start, int end);
-    void itemsRemoved();
+    void itemsRemoved(int start, int end);
     void itemsChanged(int start, int end);
 
 protected:
     QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);
 
 private:
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeInserted(int start, int end));
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted());
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeRemoved(int start, int end));
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved());
+
     Q_DECLARE_PRIVATE(QMediaPlaylist)
 };
 

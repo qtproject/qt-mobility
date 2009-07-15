@@ -36,8 +36,11 @@
 #define RADIOCONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qtimer.h>
+#include <QTime>
 
 #include "qradiotuner.h"
+#include "qradioplayer.h"
 #include "qmediasource.h"
 
 #include "linux/videodev2.h"
@@ -51,28 +54,55 @@ public:
     RadioControl(QObject *parent = 0);
     ~RadioControl();
 
+    int band() const;
     void setBand(int b);
+    bool isSupportedBand(int b) const;
+
     int frequency() const;
     void setFrequency(int frequency);
+
+    bool isStereo() const;
     void setStereo(bool stereo);
-    void setSignalStrength(int strength);
-    void setDuration(qint64 duration);
+
+    int signalStrength() const;
+
+    qint64 duration() const;
+
+    int volume() const;
     void setVolume(int volume);
+
+    bool isMuted() const;
     void setMuted(bool muted);
+
     void searchForward();
     void searchBackward();
 
+private slots:
+    void search();
+
 private:
     bool initRadio();
+    void setVol(int v);
+    int  getVol();
 
     int fd;
 
+    bool muted;
+    bool stereo;
     bool low;
     bool available;
     int  tuners;
+    int  step;
+    int  vol;
+    int  sig;
+    bool scanning;
+    bool forward;
+    QTimer* timer;
+    QRadioPlayer::Band   currentBand;
     qint64 freqMin;
     qint64 freqMax;
     qint64 currentFreq;
+    QTime  playTime;
 };
 
 #endif

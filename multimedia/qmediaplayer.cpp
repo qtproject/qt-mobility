@@ -61,19 +61,21 @@ public:
     QMediaPlayerService* service;
     QMediaPlayerControl* control;
 
-    void _q_stateChanged(QMediaPlayer::State state);
+    void _q_stateChanged(int state);
 };
 
-void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State state)
+void QMediaPlayerPrivate::_q_stateChanged(int state)
 {
     Q_Q(QMediaPlayer);
 
-    if (state == QMediaPlayer::PlayingState)
+    const QMediaPlayer::State ps = QMediaPlayer::State(state);
+
+    if (ps == QMediaPlayer::PlayingState)
         q->beginWatch();
     else
         q->endWatch(); //
 
-    emit q->stateChanged(state);
+    emit q->stateChanged(ps);
 }
 
 /*!
@@ -90,7 +92,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
 
-    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
+    connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
 
     connect(d->control, SIGNAL(bufferingChanged(bool)), SIGNAL(bufferingChanged(bool)));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));

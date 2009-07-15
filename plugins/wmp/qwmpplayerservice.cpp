@@ -109,8 +109,10 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             container->Release();
         }
 
-        m_control = new QWmpPlayerControl(m_player, this);
-        m_metaData = new QWmpMetaData(this);
+        m_playlist = new QWmpPlaylist(m_player);
+        m_metaData = new QWmpMetaData;
+        m_control = new QWmpPlayerControl(m_player, m_playlist);
+
     }
 }
 
@@ -125,6 +127,8 @@ QWmpPlayerService::~QWmpPlayerService()
     }
 
     delete m_control;
+    delete m_metaData;
+    delete m_playlist;
 
     if (m_inPlaceObject)
         m_inPlaceObject->Release();
