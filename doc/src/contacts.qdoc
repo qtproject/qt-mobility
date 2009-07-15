@@ -131,14 +131,8 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QContactDetail}
     \o \l{QContact}
     \o \l{QContactGroup}
+    \o \l{QContactAbstractAction}
 \endlist
-
-\section2 Manager information and functionality reporting
-
-Different backends have different capabilities and offer different functionality.
-In order to allow clients to query the provided functionality at runtime, every
-backend must be capable of reporting their functionality.  The functionality is
-reported in an instance of a \l{QContactManagerInfo} object.
 
 \section2 Detail leaf classes
 
@@ -164,6 +158,18 @@ they may offer their own which provide similar functionality.
 
 Each of these subclasses provide access to information stored in fields which
 are listed in the \l{Qt Contacts Schema}{schema}.
+
+\section2 Implementing Backends
+
+A manager backend may be implemented by subclassing \l{QContactManagerEngine}, and providing a
+\l{QContactManagerEngineFactory} which can instantiate it when required.
+
+\section2 Manager information and functionality reporting
+
+Different backends have different capabilities and offer different functionality.
+In order to allow clients to query the provided functionality at runtime, every
+backend must be capable of reporting their functionality.  The functionality is
+reported in an instance of a \l{QContactManagerInfo} object.
 
 \section2 Examples
 

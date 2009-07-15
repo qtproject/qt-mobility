@@ -38,6 +38,17 @@ QContactAbstractAction::~QContactAbstractAction()
 }
 
 /*!
+ * \class QContactAbstractAction
+ * \brief This class provides an interface for performing an action on a QContact or QContactDetail
+ *
+ * An action is anything that can be performed on a contact, or a detail of a contact.  An example
+ * of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be
+ * implemented by multiple vendors, and indeed one vendor may provide multiple implementations of
+ * the same action.  The name of an action identifies its semantics, while its implementation version
+ * distinguishes it from other implementations of the action by the same vendor.
+ */
+
+/*!
  * \fn QContactAbstractAction::~QContactAbstractAction()
  * Clears any memory in use by this instance of the action implementation
  */
