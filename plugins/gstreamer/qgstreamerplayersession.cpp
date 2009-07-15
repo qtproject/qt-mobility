@@ -44,7 +44,7 @@ QGstreamerVideoRendererInterface::~QGstreamerVideoRendererInterface()
 }
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
-    :QObject(parent),     
+    :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
      m_busHelper(0),
      m_playbin(0),

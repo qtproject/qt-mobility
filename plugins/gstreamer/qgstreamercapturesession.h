@@ -32,47 +32,60 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
-#include "qgstreamerserviceplugin.h"
-#include "qgstreamerplayerservice.h"
-#include "qgstreamercaptureservice.h"
+#ifndef QGSTREAMERCAPTURESESSION_H
+#define QGSTREAMERCAPTURESESSION_H
 
-#include <qmediaserviceprovider.h>
+#include "qmediacapturecontrol.h"
+#include "qmediasink.h"
+#include "qmediaplayer.h"
 
+#include <gst/gst.h>
 
-class QGstreamerProvider : public QMediaServiceProvider
+class QGstreamerMessage;
+class QGstreamerBusHelper;
+
+class QGstreamerCaptureSession : public QMediaCaptureControl
 {
-    Q_OBJECT
 public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
-            return new QGstreamerPlayerService;
+    QGstreamerCaptureSession(QObject *parent);
+    ~QGstreamerCaptureSession();
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaCapture/1.0"))
-            return new QGstreamerCaptureService;
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink& sink);
 
-        return 0;
-    }
+    int state();
+
+    qint64 position() const;
+    void setPositionUpdatePeriod(int ms);
+
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
+
+public slots:
+    void start();
+    void pause();
+    void stop();
+
+    void setCaptureDevice(const QString &deviceName);
+
+private slots:
+    void busMessage(const QGstreamerMessage &message);
+
+private:
+    QMediaSink m_sink;
+    QMediaPlayer::State m_state;
+    QGstreamerBusHelper *m_busHelper;
+    GstBus* m_bus;
+
+    GstElement *m_pipeline;
+
+    GstElement *m_alsasrc;
+    GstElement *m_audioconvert;
+    GstElement *m_encoder;
+    GstElement *m_muxer;
+    GstElement *m_filesink;
 };
 
-QStringList QGstreamerServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer");
-}
-
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("mediacapture"))
-        return new QGstreamerProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-
-#include "qgstreamerserviceplugin.moc"
-
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
-
+#endif // QGSTREAMERCAPTURESESSION_H

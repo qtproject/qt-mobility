@@ -32,47 +32,44 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef QALSAAUDIODEVICEENDPOINT_H
+#define QALSAAUDIODEVICEENDPOINT_H
 
-#include "qgstreamerserviceplugin.h"
-#include "qgstreamerplayerservice.h"
-#include "qgstreamercaptureservice.h"
+#include "qaudiodeviceendpoint.h"
+#include <QStringList>
 
-#include <qmediaserviceprovider.h>
-
-
-class QGstreamerProvider : public QMediaServiceProvider
+class QAlsaAudioDeviceEndpoint : public QAudioDeviceEndpoint
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
-            return new QGstreamerPlayerService;
+    QAlsaAudioDeviceEndpoint(QObject *parent);
+    virtual ~QAlsaAudioDeviceEndpoint();
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaCapture/1.0"))
-            return new QGstreamerCaptureService;
+    void setDirectionFilter(DeviceDirection direction);
+    void setRoleFilter(Roles roles);
+    void setFormFactorFilter(FormFactors forms);
 
-        return 0;
-    }
+    int deviceCount() const;
+
+    int direction(int index) const;
+    Roles roles(int index) const;
+    FormFactor formFactor(int index) const;
+
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+
+    int defaultInputDevice(Role role) const;
+    int defaultOutputDevice(Role role) const;
+
+private:
+    void update();
+
+    QStringList m_names;
+    QStringList m_descriptions;
+    QList<int> m_directions;
+    QList<Roles> m_roles;
+    QList<FormFactor> m_formFactors;
 };
 
-QStringList QGstreamerServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer");
-}
-
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("mediacapture"))
-        return new QGstreamerProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-
-#include "qgstreamerserviceplugin.moc"
-
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
-
+#endif // QALSAAUDIODEVICEENDPOINT_H
