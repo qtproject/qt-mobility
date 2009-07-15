@@ -290,12 +290,6 @@ bool QMessageContentContainer::contentAvailable() const
     return d_ptr->_part.contentAvailable();
 }
 
-void QMessageContentContainer::setSize(uint size)
-{
-    // TODO: doesn't make sense?
-    Q_UNUSED(size)
-}
-
 uint QMessageContentContainer::size() const
 {
     d_ptr->applyPendingChanges();
@@ -511,12 +505,6 @@ QList<QByteArray> QMessageContentContainer::preferredCharsets()
 bool QMessageContentContainer::containerDataModified() const
 {
     return true;
-}
-
-void QMessageContentContainer::setContainerDataModified(bool modified)
-{
-    // TODO: does this make sense?
-    Q_UNUSED(modified);
 }
 
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)

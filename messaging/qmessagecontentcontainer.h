@@ -100,11 +100,6 @@ protected:
 private:
     friend class QMessageStore;
 
-#ifdef QMESSAGING_OPTIONAL
-    virtual void setContainerDataModified(bool modified);
-#endif
-    virtual void setSize(uint size);
-
     QMessageContentContainerPrivate *d_ptr;
 };
 #endif

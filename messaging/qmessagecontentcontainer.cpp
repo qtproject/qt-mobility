@@ -231,14 +231,6 @@
 */
 
 /*!
-    \fn QMessageContentContainer::setSize(uint size)
-    
-    Set the size of the container on the originating server, including contents, to \a size.
-
-    \sa size()
-*/
-
-/*!
     \fn QMessageContentContainer::size() const
     
     If the size of the container is known then returns an indication of the size of the container 
@@ -479,12 +471,6 @@
     
     Returns true if the container has been modified since it was constructed; 
     otherwise returns false.
-*/
-
-/*!
-    \fn QMessageContentContainer::setContainerDataModified(bool modified)
-    
-    Sets the modified data state of the container to \a modified.
 */
 
 /*!
