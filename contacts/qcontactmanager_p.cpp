@@ -258,3 +258,4 @@ QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actio
 
     return retn;
 }
+

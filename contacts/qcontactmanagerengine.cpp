@@ -1053,11 +1053,15 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
         case QVariant::ULongLong:
             return first.toULongLong() - second.toULongLong();
 
-        case QVariant::Double:
-            return first.toDouble() - second.toDouble();
-
        case QVariant::String:
             return first.toString().compare(second.toString(), sensitivity);
+
+        case QVariant::Double:
+            {
+                const double a = first.toDouble();
+                const double b = second.toDouble();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::DateTime:
             {
@@ -1080,7 +1084,6 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             return 0;
     }
 }
-
 /*!
  * Returns true if the supplied \a filter matches the supplied \a contact.
  *
@@ -1154,7 +1157,8 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     /* Value equality test */
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        if (compareVariant(detail.variantValue(cdf.detailFieldName()), cdf.value(), cs) == 0)
+                        const QVariant& var = detail.variantValue(cdf.detailFieldName());
+                        if (!var.isNull() && compareVariant(var, cdf.value(), cs) == 0)
                             return true;
                     }
                 }
