@@ -53,10 +53,6 @@
 class QAbstractMediaControlPrivate : public QObjectPrivate
 {
 public:
-    int         notifyInterval;
-    QTimer*     notifyTimer;
-    QList<QString>  notifyProperties;
-    QObject*    notifyObject;
 };
 
 #endif  // QABSTRACTMEDIACONTROLP_H
