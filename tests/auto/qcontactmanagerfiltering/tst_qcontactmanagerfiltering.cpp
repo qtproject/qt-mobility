@@ -306,6 +306,9 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     if (setValue)
         df.setValue(value);
 
+    /* At this point, since we're using memory, assume the filter isn't really supported */
+    QVERIFY(cm->information()->filterSupported(df) == false);
+
     ids = cm->contacts(df);
 
     QCOMPARE(ids.count(), expected.count());
