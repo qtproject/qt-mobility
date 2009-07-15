@@ -254,7 +254,8 @@ QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actio
     }
 
     // filter by vendor and (if supplied) impl. version.
-    foreach (QContactAbstractAction* impl, all) {
+    for (int i = 0; i < all.size(); i++) {
+        QContactAbstractAction* impl = all.at(i);
         if (impl->vendor() == vendor && (implementationVersion == -1
                 || implementationVersion == impl->implementationVersion())) {
             retn.append(impl);
