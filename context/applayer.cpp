@@ -53,6 +53,7 @@
 #include "qpacketprotocol.h"
 #include <QMutex>
 #include <QWaitCondition>
+#include <QSharedMemory>
 
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
@@ -1810,6 +1811,8 @@ private:
     unsigned long *m_statSystemBytes;
     unsigned long *m_statInuseBytes;
     unsigned long *m_statKeepCost;
+
+    QSharedMemory* shm;
 };
 
 QVALUESPACE_AUTO_INSTALL_LAYER(ApplicationLayer);
@@ -1842,13 +1845,14 @@ ApplicationLayer::ApplicationLayer()
   forceChangeCount(0), clientIndexShmId(0), clientIndex(0),
   changedNodesCount(0),
   m_statPoolSize(0), m_statMaxSystemBytes(0), m_statSystemBytes(0),
-  m_statInuseBytes(0), m_statKeepCost(0)
+  m_statInuseBytes(0), m_statKeepCost(0), shm(0)
 {
     sserver = new ALServerImpl( this );
 }
 
 ApplicationLayer::~ApplicationLayer()
 {
+    shm->detach();
     if(clientIndex)
         ::shmdt(clientIndex);
 }
@@ -1861,10 +1865,8 @@ QString ApplicationLayer::name()
 static void AppLayerNodeChanged(unsigned short, void *);
 bool ApplicationLayer::startup(Type type)
 {
-    int shmId = 0;
     int subShmId = 0;
 
-    void * shmptr = 0;
     void * subShmptr = 0;
 
     valid = false;
@@ -1902,12 +1904,14 @@ bool ApplicationLayer::startup(Type type)
     key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
 
     if(Server == type) {
-        shmId = ::shmget(key, APPLAYER_SIZE, IPC_CREAT | 00644);
-        shmptr = ::shmat(shmId, 0, 0);
+        shm = new QSharedMemory(socket(), this);
+        bool created = shm->create(APPLAYER_SIZE);
+        if (!created) 
+            shm->attach();
         lock = new QSystemReadWriteLock(key, true);
     } else {
-        shmId = ::shmget(key, APPLAYER_SIZE, 0);
-        shmptr = ::shmat(shmId, 0, SHM_RDONLY);
+        shm = new QSharedMemory(socket(), this);
+        shm->attach(QSharedMemory::ReadOnly);
         subShmId = ::shmget(IPC_PRIVATE, (VERSION_TABLE_ENTRIES + 7) / 8, IPC_CREAT | 00644);
         subShmptr = ::shmat(subShmId, 0, 0);
         struct shmid_ds sds;
@@ -1916,10 +1920,10 @@ bool ApplicationLayer::startup(Type type)
         lock = new QSystemReadWriteLock(key, false);
     }
 
-    if(!shmptr || -1 == shmId ||
+    if(shm->error() != QSharedMemory::NoError ||
        ((subShmId == -1 || !subShmptr) && Server != type)) {
         qFatal("ApplicationLayer: Unable to create or access shared "
-               "resources.");
+               "resources. (%s)",shm->errorString().toLatin1().constData());
         return false;
     }
 
@@ -1933,7 +1937,7 @@ bool ApplicationLayer::startup(Type type)
         (*connections.begin())->send(mem);
     }
 
-    layer = new FixedMemoryTree((char *)shmptr,
+    layer = new FixedMemoryTree((char*)shm->data(),
                                 APPLAYER_SIZE,
                                 (Server == type));
     if(Server == type)
@@ -1957,6 +1961,9 @@ bool ApplicationLayer::restart()
     delete lock;
     lock = 0;
     valid = false;
+    if (shm->isAttached())
+        shm->detach();
+    delete shm;
 
     // restart application layer
     if(Server == type) {
@@ -1990,25 +1997,25 @@ bool ApplicationLayer::restart()
 
     key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
 
-    int shmId = 0;
-    void * shmptr = 0;
     if(Server == type) {
-        shmId = ::shmget(key, APPLAYER_SIZE, IPC_CREAT | 00644);
-        shmptr = ::shmat(shmId, 0, 0);
+        shm = new QSharedMemory(socket(), this);
+        bool created = shm->create(APPLAYER_SIZE);
+        if (!created) 
+            shm->attach();
         lock = new QSystemReadWriteLock(key, true);
     } else {
-        shmId = ::shmget(key, APPLAYER_SIZE, 0);
-        shmptr = ::shmat(shmId, 0, SHM_RDONLY);
+        shm = new QSharedMemory(socket(), this);
+        shm->attach(QSharedMemory::ReadOnly);
         lock = new QSystemReadWriteLock(key, false);
     }
 
-    if(!shmptr || -1 == shmId) {
+    if (shm->error() != QSharedMemory::NoError) {
         qFatal("ApplicationLayer: Unable to create or access shared "
-               "resources.");
+               "resources. (%s)",shm->errorString().toLatin1().constData());
         return false;
     }
 
-    layer = new FixedMemoryTree((char *)shmptr,
+    layer = new FixedMemoryTree((char *)shm->data(),
                                 APPLAYER_SIZE,
                                 (Server == type));
 
