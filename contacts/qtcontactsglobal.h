@@ -35,6 +35,7 @@
 #define QTCONTACTSGLOBAL_H
 
 #include <qglobal.h>
+#include <QString>
 
 #ifdef BUILD_QTCONTACTS
 #define QTCONTACTS_EXPORT Q_DECL_EXPORT
@@ -49,7 +50,16 @@
 #define QTCONTACTS_PRIVATE_EXPORT
 #endif
 
-
 typedef quint32 QUniqueId; // XXX Put this else where
+
+template <int N> struct ConstantLatinString
+{
+    const char str[N];
+    operator QLatin1String() const {return QLatin1String(str);}
+    operator QString() const {return QString(QLatin1String(str));}
+};
+
+#define Q_DECLARE_CONSTANT_LATIN_STRING(varname, str) static const ConstantLatinString<sizeof(str)> varname
+#define Q_DEFINE_CONSTANT_LATIN_STRING(varname, str) const ConstantLatinString<sizeof(str)> varname = {str}
 
 #endif
