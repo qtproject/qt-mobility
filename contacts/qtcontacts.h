@@ -49,5 +49,7 @@
 #include "qcontactdetails.h"                    // leaf-details
 #include "qcontactfilter.h"                     // contact filtering
 #include "qcontactsortorder.h"                  // contact sorting
+#include "qcontactabstractaction.h"             // actions
+#include "qcontactabstractactionfactory.h"      // action plugin interface
 
 #endif
