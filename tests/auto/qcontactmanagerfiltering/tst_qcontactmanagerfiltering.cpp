@@ -224,7 +224,12 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QTest::newRow("no name") << es << es << false << ev << es;
     QTest::newRow("no def name") << es << "value" << false << ev << es;
 
-    /* Doubles */
+    /*
+     * Doubles
+     * B has double(4.0)
+     * C has double(4.0)
+     * D has double(-128.0)
+     */
     QTest::newRow("double presence") << "Double" << es << false << ev << "bcd";
     QTest::newRow("double presence (inc field)") << "Double" << "value" << false << ev << "bcd";
     QTest::newRow("double presence (wrong field)") << "Double" << "Trouble" << false << ev << es;
@@ -322,6 +327,101 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QTest::newRow("time value (wrong field)") << "Time" << "Trouble" << true << QVariant(at) << es;
     QTest::newRow("time value 2") << "Time" << "value" << true << QVariant(bt)<< "b";
     QTest::newRow("time value 2 (wrong field)") << "Time" << "Trouble" << true << QVariant(bt) << es;
+
+
+    /*
+     * Bool
+     * A has bool(true)
+     * B has bool(false)
+     * C has bool(false)
+     */
+    QTest::newRow("bool presence") << "Bool" << es << false << ev << "abc";
+    QTest::newRow("bool presence (inc field)") << "Bool" << "value" << false << ev << "abc";
+    QTest::newRow("bool presence (wrong field)") << "Bool" << "Trouble" << false << ev << es;
+
+    //QTest::newRow("bool value (no match)") << "Bool" << "value" << true << QVariant(false) << es;// we have both possible
+    QTest::newRow("bool value (wrong type)") << "Bool" << "value" << true << QVariant(4.0) << es;
+//    QTest::newRow("bool value (string type)") << "Bool" << "value" << true << QVariant("4.0") << es;
+    //QTest::newRow("bool value (wrong field, no match)") << "Bool" << "Trouble" << true << QVariant(false) << es;// ditto
+    QTest::newRow("bool value") << "Bool" << "value" << true << QVariant(true) << "a";
+    QTest::newRow("bool value (wrong field)") << "Bool" << "Trouble" << true << QVariant(true) << es;
+    QTest::newRow("bool value 2") << "Bool" << "value" << true << QVariant(false) << "bc";
+    QTest::newRow("bool value 2 (wrong field)") << "Bool" << "Trouble" << true << QVariant(false) << es;
+
+    /*
+     * LongLong
+     * C has LongLong(8000000000LL)
+     * D has LongLong(-14000000000LL)
+     */
+    QTest::newRow("longlong presence") << "LongLong" << es << false << ev << "cd";
+    QTest::newRow("longlong presence (inc field)") << "LongLong" << "value" << false << ev << "cd";
+    QTest::newRow("longlong presence (wrong field)") << "LongLong" << "Trouble" << false << ev << es;
+
+    QTest::newRow("longlong value (no match)") << "LongLong" << "value" << true << QVariant(50000000000LL) << es;
+    QTest::newRow("longlong value (wrong type)") << "LongLong" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("longlong value (string type)") << "LongLong" << "value" << true << QVariant("20") << es;
+    QTest::newRow("longlong value (wrong field, no match)") << "LongLong" << "Trouble" << true << QVariant(50000000000LL) << es;
+    QTest::newRow("longlong value") << "LongLong" << "value" << true << QVariant(8000000000LL) << "c";
+    QTest::newRow("longlong value (wrong field)") << "LongLong" << "Trouble" << true << QVariant(8000000000LL) << es;
+    QTest::newRow("longlong value 2") << "LongLong" << "value" << true << QVariant(-14000000000LL) << "d";
+    QTest::newRow("longlong value 2 (wrong field)") << "LongLong" << "Trouble" << true << QVariant(-14000000000LL) << es;
+
+    /*
+     * ULongLong
+     * A has ULongLong(120000000000ULL)
+     * B has ULongLong(80000000000ULL)
+     * C has ULongLong(80000000000ULL)
+     */
+        QTest::newRow("ulonglong presence") << "ULongLong" << es << false << ev << "abc";
+    QTest::newRow("ulonglong presence (inc field)") << "ULongLong" << "value" << false << ev << "abc";
+    QTest::newRow("ulonglong presence (wrong field)") << "ULongLong" << "Trouble" << false << ev << es;
+
+    QTest::newRow("ulonglong value (no match)") << "ULongLong" << "value" << true << QVariant(50000000000ULL) << es;
+    QTest::newRow("ulonglong value (wrong type)") << "ULongLong" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("ulonglong value (string type)") << "ULongLong" << "value" << true << QVariant("20") << es;
+    QTest::newRow("ulonglong value (wrong field, no match)") << "ULongLong" << "Trouble" << true << QVariant(50000000000ULL) << es;
+    QTest::newRow("ulonglong value") << "ULongLong" << "value" << true << QVariant(120000000000ULL) << "a";
+    QTest::newRow("ulonglong value (wrong field)") << "ULongLong" << "Trouble" << true << QVariant(120000000000ULL) << es;
+    QTest::newRow("ulonglong value 2") << "ULongLong" << "value" << true << QVariant(80000000000ULL) << "bc";
+    QTest::newRow("ulonglong value 2 (wrong field)") << "ULongLong" << "Trouble" << true << QVariant(80000000000ULL) << es;
+
+    /*
+     * UInt
+     * B has UInt(4000000000u)
+     * D has UInt(3000000000u)
+     */
+    QTest::newRow("unsigned integer presence") << "UInt" << es << false << ev << "bd";
+    QTest::newRow("unsigned integer presence (inc field)") << "UInt" << "value" << false << ev << "bd";
+    QTest::newRow("unsigned integer presence (wrong field)") << "UInt" << "Trouble" << false << ev << es;
+
+    QTest::newRow("unsigned integer value (no match)") << "UInt" << "value" << true << QVariant(3500000000u) << es;
+    QTest::newRow("unsigned integer value (wrong type)") << "UInt" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("unsigned integer value (string type)") << "UInt" << "value" << true << QVariant("20") << es;
+    QTest::newRow("unsigned integer value (wrong field, no match)") << "UInt" << "Trouble" << true << QVariant(3500000000u) << es;
+    QTest::newRow("unsigned integer value") << "UInt" << "value" << true << QVariant(4000000000u) << "b";
+    QTest::newRow("unsigned integer value (wrong field)") << "UInt" << "Trouble" << true << QVariant(4000000000u) << es;
+    QTest::newRow("unsigned integer value 2") << "UInt" << "value" << true << QVariant(3000000000u) << "d";
+    QTest::newRow("unsigned integer value 2 (wrong field)") << "UInt" << "Trouble" << true << QVariant(3000000000u) << es;
+
+    /*
+     * Char
+     * B has QChar('b')
+     * C has QChar('c')
+     */
+    const QChar bchar('b');
+    const QChar cchar('c');
+    QTest::newRow("char presence") << "Char" << es << false << ev << "bc";
+    QTest::newRow("char presence (inc field)") << "Char" << "value" << false << ev << "bc";
+    QTest::newRow("char presence (wrong field)") << "Char" << "Trouble" << false << ev << es;
+
+    QTest::newRow("char value (no match)") << "Char" << "value" << true << QVariant(QChar('a')) << es;
+    QTest::newRow("char value (wrong type)") << "Char" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("char value (string type)") << "Char" << "value" << true << QVariant(at.toString(Qt::ISOTime)) << es;
+    QTest::newRow("char value (wrong field, no match)") << "Char" << "Trouble" << true << QVariant(QChar('a')) << es;
+    QTest::newRow("char value") << "Char" << "value" << true << QVariant(bchar) << "b";
+    QTest::newRow("char value (wrong field)") << "Char" << "Trouble" << true << QVariant(bchar) << es;
+    QTest::newRow("char value 2") << "Char" << "value" << true << QVariant(cchar)<< "c";
+    QTest::newRow("char value 2 (wrong field)") << "Char" << "Trouble" << true << QVariant(cchar) << es;
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering()
@@ -860,8 +960,10 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     dubble.setValue("value", 4.0);
     boool.setValue("value", false);
     ullong.setValue("value", (qulonglong) 80000000000LL); // 80B
+    uintt.setValue("value", 4000000000u); // 4B
     date.setValue("value", QDate(1492, 5, 5));
     time.setValue("value", QTime(15,52,23,0));
+    charr.setValue("value", QVariant(QChar('b')));
 
     b.saveDetail(&name);
     b.saveDetail(&number);
@@ -869,14 +971,17 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     b.saveDetail(&dubble);
     b.saveDetail(&boool);
     b.saveDetail(&ullong);
+    b.saveDetail(&uintt);
     b.saveDetail(&date);
     b.saveDetail(&time);
+    b.saveDetail(&charr);
 
     name.setFirst("Boris");
     name.setLast("Aaronsun");
     integer.setValue("value", -20);
     datetime.setValue("value", QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0)));
     llong.setValue("value", (qlonglong)8000000000LL); // 8B
+    charr.setValue("value", QVariant(QChar('c')));
 
     c.saveDetail(&name);
     c.saveDetail(&integer);
@@ -885,16 +990,19 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     c.saveDetail(&boool);
     c.saveDetail(&llong);
     c.saveDetail(&ullong);
+    c.saveDetail(&charr);
 
     name.setFirst("Dennis");
     name.setLast("FitzMacintyre");
     dubble.setValue("value", -128.0);
     llong.setValue("value", (qlonglong)-14000000000LL);
+    uintt.setValue("value", 3000000000u); // 3B
     date.setValue("value", QDate(1770, 10, 1));
 
     d.saveDetail(&name);
     d.saveDetail(&dubble);
     d.saveDetail(&llong);
+    d.saveDetail(&uintt);
     d.saveDetail(&date);
 
     Q_ASSERT(cm->saveContact(&a));
