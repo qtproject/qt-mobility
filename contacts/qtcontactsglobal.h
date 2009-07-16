@@ -52,13 +52,14 @@
 
 typedef quint32 QUniqueId; // XXX Put this else where
 
-template <int N> struct ConstantLatinString
+template <int N> struct QLatin1Literal
 {
     const char str[N];
-    operator QString() const {return QString(QLatin1String(str));}
+
+    operator QString() const {return QString::fromLatin1(str, N-1);}
 };
 
-#define Q_DECLARE_CONSTANT_LATIN_STRING(varname, str) static const ConstantLatinString<sizeof(str)> varname
-#define Q_DEFINE_CONSTANT_LATIN_STRING(varname, str) const ConstantLatinString<sizeof(str)> varname = {str}
+#define Q_DECLARE_LATIN1_LITERAL(varname, str) static const QLatin1Literal<sizeof(str)> varname
+#define Q_DEFINE_LATIN1_LITERAL(varname, str) const QLatin1Literal<sizeof(str)> varname = {str}
 
 #endif

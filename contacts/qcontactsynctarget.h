@@ -47,7 +47,7 @@ class QTCONTACTS_EXPORT QContactSyncTarget : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldSyncTarget, "SyncTarget");
+    Q_DECLARE_LATIN1_LITERAL(FieldSyncTarget, "SyncTarget");
 
     void setSyncTarget(const QString& syncTarget) {setValue(FieldSyncTarget, syncTarget);}
     QString syncTarget() const {return value(FieldSyncTarget);}

@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactBirthday : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldBirthday, "Birthday");
+    Q_DECLARE_LATIN1_LITERAL(FieldBirthday, "Birthday");
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}
     QDate date() const {return value<QDate>(FieldBirthday);}

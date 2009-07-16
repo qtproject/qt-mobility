@@ -36,11 +36,11 @@
 #include "qcontactmanager.h"
 
 /* Definitions of predefined string constants */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDetail::AttributeContext, "Context");
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDetail::AttributeSubType, "SubType");
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDetail::AttributeContextOther, "Other");
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDetail::AttributeContextHome, "Home");
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDetail::AttributeContextWork, "Work");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContext, "Context");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeSubType, "SubType");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextOther, "Other");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextHome, "Home");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextWork, "Work");
 
 /*!
  * \class QContactDetail

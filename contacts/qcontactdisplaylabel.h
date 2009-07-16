@@ -47,8 +47,8 @@ class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLabel, "Label");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldSynthesised, "Synthesised");
+    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_LITERAL(FieldSynthesised, "Synthesised");
 
     void setLabel(const QString& label)
     {

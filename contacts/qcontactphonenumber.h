@@ -48,18 +48,18 @@ class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldNumber, "PhoneNumber");
+    Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeLandline, "Landline");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMobile, "Mobile");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeFacsimile, "Facsimile");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypePager, "Pager");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeVoice, "Voice");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeModem, "Modem");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeVideo, "Video");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeCar, "Car");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMessagingCapable, "MessagingCapable");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline, "Landline");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile, "Mobile");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile, "Facsimile");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePager, "Pager");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVoice, "Voice");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeModem, "Modem");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVideo, "Video");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar, "Car");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable, "MessagingCapable");
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}
     QString number() const {return value(FieldNumber);}

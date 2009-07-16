@@ -60,11 +60,11 @@ public:
     };
 
     // Predefined attribute names and values
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContext, "Context");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubType, "SubType");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextHome, "Home");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextWork, "Work");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextOther, "Other");
+    Q_DECLARE_LATIN1_LITERAL(AttributeContext, "Context");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(AttributeContextHome, "Home");
+    Q_DECLARE_LATIN1_LITERAL(AttributeContextWork, "Work");
+    Q_DECLARE_LATIN1_LITERAL(AttributeContextOther, "Other");
 
     QContactDetail::Error error() const;
 
@@ -129,7 +129,10 @@ private:
     className(const QContactDetail& field) : QContactDetail(field, DefinitionName) {} \
     className& operator=(const QContactDetail& other) {assign(other, DefinitionName); return *this;} \
     \
-    Q_DECLARE_CONSTANT_LATIN_STRING(DefinitionName, definitionNameString);
+    Q_DECLARE_LATIN1_LITERAL(DefinitionName, definitionNameString);
+
+#define Q_IMPLEMENT_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
+    Q_DEFINE_LATIN1_LITERAL(className::DefinitionName, definitionNameString)
 
 #endif
 

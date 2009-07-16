@@ -46,7 +46,7 @@ class QTCONTACTS_EXPORT QContactGender : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldGender, "Gender");
+    Q_DECLARE_LATIN1_LITERAL(FieldGender, "Gender");
 
     void setGender(const QString& gender) {setValue(FieldGender, gender);}
     QString gender() const {return value(FieldGender);}

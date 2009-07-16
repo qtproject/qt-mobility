@@ -46,11 +46,11 @@ class QTCONTACTS_EXPORT QContactName : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldPrefix, "Prefix");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldFirst, "First");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldMiddle, "Middle");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLast, "Last");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldSuffix, "Suffix");
+    Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
+    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "First");
+    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "Middle");
+    Q_DECLARE_LATIN1_LITERAL(FieldLast, "Last");
+    Q_DECLARE_LATIN1_LITERAL(FieldSuffix, "Suffix");
 
     QString prefix() const {return value(FieldPrefix);}
     QString first() const {return value(FieldFirst);}

@@ -97,85 +97,85 @@
  * \variable QContactName::DefinitionName
  * The constant string which identifies the definition of details which are names
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::DefinitionName, "Name");
+Q_DEFINE_LATIN1_LITERAL(QContactName::DefinitionName, "Name");
 
 /*!
  * \variable QContactAvatar::DefinitionName
  * The constant string which identifies the definition of details which are avatars
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAvatar::DefinitionName, "Avatar");
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::DefinitionName, "Avatar");
 
 /*!
  * \variable QContactAddress::DefinitionName
  * The constant string which identifies the definition of details which are street addresses
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::DefinitionName, "StreetAddress");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "StreetAddress");
 
 /*!
  * \variable QContactPhoneNumber::DefinitionName
  * The constant string which identifies the definition of details which are phone numbers
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::DefinitionName, "PhoneNumber");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
  * \variable QContactSyncTarget::DefinitionName
  * The constant string which identifies the definition of details which are synchronisation target stores
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactSyncTarget::DefinitionName, "SyncTarget");
+Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
  * \variable QContactGuid::DefinitionName
  * The constant string which identifies the definition of details which are globally unique identifiers
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGuid::DefinitionName, "Guid");
+Q_DEFINE_LATIN1_LITERAL(QContactGuid::DefinitionName, "Guid");
 
 /*!
  * \variable QContactEmailAddress::DefinitionName
  * The constant string which identifies the definition of details which are email addresses
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactEmailAddress::DefinitionName, "EmailAddress");
+Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::DefinitionName, "EmailAddress");
 
 /*!
  * \variable QContactUrl::DefinitionName
  * The constant string which identifies the definition of details which are universal resource location paths
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactUrl::DefinitionName, "Url");
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::DefinitionName, "Url");
 
 ///*!
 // * \variable QContactMeeting::DefinitionName
 // * The constant string which identifies the definition of details which are the date and time of a meeting
 // */
-//Q_DEFINE_CONSTANT_LATIN_STRING(QContactMeeting::DefinitionName, "Meeting");
+//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::DefinitionName, "Meeting");
 
 /*!
  * \variable QContactBirthday::DefinitionName
  * The constant string which identifies the definition of details which are the dates of birthdays
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactBirthday::DefinitionName, "Birthday");
+Q_DEFINE_LATIN1_LITERAL(QContactBirthday::DefinitionName, "Birthday");
 
 /*!
  * \variable QContactAnniversary::DefinitionName
  * The constant string which identifies the definition of details which are anniversary dates
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::DefinitionName, "Anniversary");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::DefinitionName, "Anniversary");
 
 /*!
  * \variable QContactGender::DefinitionName
  * The constant string which identifies the definition of details which identify the gender of a contact in a given context
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGender::DefinitionName, "Gender");
+Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
 
 /*!
  * \variable QContactOrganisation::DefinitionName
  * The constant string which identifies the definition of details which identify the organisation to which a contact belongs in a given context
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactOrganisation::DefinitionName, "Organisation");
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::DefinitionName, "Organisation");
 
 /*!
  * \variable QContactDisplayLabel::DefinitionName
  * The constant string which identifies the definition of details which contain a display label of a contact
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDisplayLabel::DefinitionName, "DisplayLabel");
+Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
 
 
 
@@ -183,350 +183,350 @@ Q_DEFINE_CONSTANT_LATIN_STRING(QContactDisplayLabel::DefinitionName, "DisplayLab
  * \variable QContactPhoneNumber::FieldNumber
  * The constant key for which the phone number value is stored in details of the QContactPhoneNumber type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::FieldNumber, "PhoneNumber");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
 
 /*!
  * \variable QContactEmailAddress::FieldEmailAddress
  * The constant key for which the email address value is stored in details of the QContactEmailAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactEmailAddress::FieldEmailAddress, "EmailAddress");
+Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::FieldEmailAddress, "EmailAddress");
 
 /*!
  * \variable QContactGuid::FieldGuid
  * The constant key for which the globally unique identifier value is stored in details of the QContactGuid type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGuid::FieldGuid, "Guid");
+Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
 
 /*!
  * \variable QContactSyncTarget::FieldSyncTarget
  * The constant key for which the value of the target store for synchronisation is stored in details of the QContactSyncTarget type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
+Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
 /*!
  * \variable QContactAvatar::FieldAvatar
  * The constant key for which the path the avatar value is stored in details of the QContactAvatar type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAvatar::FieldAvatar, "Avatar");
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
 
 /*!
  * \variable QContactName::FieldPrefix
  * The constant key for which the name prefix value is stored in details of the QContactName type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::FieldPrefix, "Prefix");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldPrefix, "Prefix");
 
 /*!
  * \variable QContactName::FieldFirst
  * The constant key for which the first name value is stored in details of the QContactName type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::FieldFirst, "First");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
 
 /*!
  * \variable QContactName::FieldMiddle
  * The constant key for which the middle name value is stored in details of the QContactName type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::FieldMiddle, "Middle");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
 
 /*!
  * \variable QContactName::FieldLast
  * The constant key for which the last name value is stored in details of the QContactName type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::FieldLast, "Last");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
 
 /*!
  * \variable QContactName::FieldSuffix
  * The constant key for which the name suffix value is stored in details of the QContactName type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactName::FieldSuffix, "Suffix");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
 
 /*!
  * \variable QContactAddress::FieldDisplayLabel
  * The constant key for which the display label value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldDisplayLabel, "DisplayLabel");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldDisplayLabel, "DisplayLabel");
 
 /*!
  * \variable QContactAddress::FieldStreet
  * The constant key for which the street value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldStreet, "Street");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldStreet, "Street");
 
 /*!
  * \variable QContactAddress::FieldLocality
  * The constant key for which the locality value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldLocality, "Locality");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldLocality, "Locality");
 
 /*!
  * \variable QContactAddress::FieldRegion
  * The constant key for which the region value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldRegion, "Region");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldRegion, "Region");
 
 /*!
  * \variable QContactAddress::FieldPostcode
  * The constant key for which the postcode value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldPostcode, "Postcode");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
 
 /*!
  * \variable QContactAddress::FieldCountry
  * The constant key for which the country value is stored in details of the QContactAddress type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::FieldCountry, "Country");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
 
 /*!
  * \variable QContactUrl::FieldUrl
  * The constant key for which the url value is stored in details of the QContactUrl type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactUrl::FieldUrl, "Url");
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldUrl, "Url");
 
 ///*!
 // * \variable QContactMeeting::FieldMeeting
 // * The constant key for which the meeting date and time value is stored in details of the QContactMeeting type
 // */
-//Q_DEFINE_CONSTANT_LATIN_STRING(QContactMeeting::FieldMeeting, "Meeting");
+//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::FieldMeeting, "Meeting");
 
 /*!
  * \variable QContactBirthday::FieldBirthday
  * The constant key for which the birthday date value is stored in details of the QContactBirthday type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactBirthday::FieldBirthday, "Birthday");
+Q_DEFINE_LATIN1_LITERAL(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
  * \variable QContactAnniversary::FieldOriginalDate
  * The constant key for which the anniversary original event date value is stored in details of the QContactAnniversary type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::FieldOriginalDate, "OriginalDate");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldOriginalDate, "OriginalDate");
 
 /*!
  * \variable QContactAnniversary::FieldEvent
  * The constant key for which the name of the event is stored in details of the QContactAnniversary type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::FieldEvent, "Event");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldEvent, "Event");
 
 /*!
  * \variable QContactAnniversary::FieldCalendarId
  * The constant key for which the value of the identifier of the associated calendar entry is stored in details of the QContactAnniversary type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::FieldCalendarId, "CalendarId");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
 
 /*!
  * \variable QContactGender::FieldGender
  * The constant key for which the gender value is stored in details of the QContactGender type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGender::FieldGender, "Gender");
+Q_DEFINE_LATIN1_LITERAL(QContactGender::FieldGender, "Gender");
 
 /*!
  * \variable QContactOrganisation::FieldDisplayLabel
  * The constant key for which the display label value is stored in details of the QContactOrganisation type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactOrganisation::FieldDisplayLabel, "DisplayLabel");
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldDisplayLabel, "DisplayLabel");
 
 /*!
  * \variable QContactOrganisation::FieldLogo
  * The constant key for which the logo path value is stored in details of the QContactOrganisation type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactOrganisation::FieldLogo, "Logo");
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldLogo, "Logo");
 
 /*!
  * \variable QContactDisplayLabel::FieldLabel
  * The constant key for which the display label value is stored in details of the QContactDisplayLabel type
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDisplayLabel::FieldLabel, "Label");
+Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
 
 /*!
  * \variable QContactDisplayLabel::FieldSynthesised
  * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesised by a QContactManager or set manually.
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactDisplayLabel::FieldSynthesised, "Synthesised");
+Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
 
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeLandline
  * The constant attribute value which describes the phone number as identifying a landline phone
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeLandline, "Landline");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeLandline, "Landline");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeMobile
  * The constant attribute value which describes the phone number as identifying a mobile phone
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeMobile, "Mobile");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeMobile, "Mobile");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeFacsimile
  * The constant attribute value which describes the phone number as identifying a facsimile machine
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeFacsimile, "Facsimile");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeFacsimile, "Facsimile");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypePager
  * The constant attribute value which describes the phone number as identifying a pager device
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypePager, "Pager");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypePager, "Pager");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeCar
  * The constant attribute value which describes the phone number as identifying a car phone
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeCar, "Car");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeCar, "Car");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem
  * The constant attribute value which describes the phone number as identifying a bulletin board system
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeVoice
  * The constant attribute value which describes the phone number as supporting voice transmission
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeVoice, "Voice");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeVoice, "Voice");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeModem
  * The constant attribute value which describes the phone number as supporting digital data transfer
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeModem, "Modem");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeModem, "Modem");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeVideo
  * The constant attribute value which describes the phone number as supporting video transmission
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeVideo, "Video");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeVideo, "Video");
 
 /*!
  * \variable QContactPhoneNumber::AttributeSubTypeMessagingCapable
  * The constant attribute value which describes the phone number as supporting messaging services
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactPhoneNumber::AttributeSubTypeMessagingCapable, "MessagingCapable");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::AttributeSubTypeMessagingCapable, "MessagingCapable");
 
 /*!
  * \variable QContactAddress::AttributeSubTypeParcel
  * The constant attribute value which describes the address as being an address for parcel delivery
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::AttributeSubTypeParcel, "Parcel");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::AttributeSubTypeParcel, "Parcel");
 
 /*!
  * \variable QContactAddress::AttributeSubTypePostal
  * The constant attribute value which describes the address as being an address for postal delivery
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::AttributeSubTypePostal, "Postal");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::AttributeSubTypePostal, "Postal");
 
 /*!
  * \variable QContactAddress::AttributeSubTypeDomestic
  * The constant attribute value which describes the address as being a domestic address
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::AttributeSubTypeDomestic, "Domestic");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::AttributeSubTypeDomestic, "Domestic");
 
 /*!
  * \variable QContactAddress::AttributeSubTypeInternational
  * The constant attribute value which describes the address as being an international address
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAddress::AttributeSubTypeInternational, "International");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::AttributeSubTypeInternational, "International");
 
 /*!
  * \variable QContactEmailAddress::AttributeSubTypeInternet
  * The constant attribute value which describes the email address as being an internet email address
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactEmailAddress::AttributeSubTypeInternet, "Internet");
+Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::AttributeSubTypeInternet, "Internet");
 
 /*!
  * \variable QContactAvatar::AttributeSubTypeImage
  * The constant attribute value which describes the avatar as being an image
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAvatar::AttributeSubTypeImage, "Image");
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::AttributeSubTypeImage, "Image");
 
 /*!
  * \variable QContactAvatar::AttributeSubTypeVideo
  * The constant attribute value which describes the avatar as being a video
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAvatar::AttributeSubTypeVideo, "Video");
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::AttributeSubTypeVideo, "Video");
 
 /*!
  * \variable QContactAvatar::AttributeSubTypeTexturedMesh
  * The constant attribute value which describes the avatar as being a textured, 3D mesh
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAvatar::AttributeSubTypeTexturedMesh, "TexturedMesh");
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::AttributeSubTypeTexturedMesh, "TexturedMesh");
 
 /*!
  * \variable QContactGuid::AttributeSubTypeSync
  * The constant attribute value which describes the guid as being used for synchronisation
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGuid::AttributeSubTypeSync, "Sync");
+Q_DEFINE_LATIN1_LITERAL(QContactGuid::AttributeSubTypeSync, "Sync");
 
 /*!
  * \variable QContactGuid::AttributeSubTypeOther
  * The constant attribute value which describes the guid as being used for a purpose other than synchronisation
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactGuid::AttributeSubTypeOther, "Other");
+Q_DEFINE_LATIN1_LITERAL(QContactGuid::AttributeSubTypeOther, "Other");
 
 /*!
  * \variable QContactUrl::AttributeSubTypeHomePage
  * The constant attribute value which describes the url as being the homepage of the contact
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactUrl::AttributeSubTypeHomePage, "HomePage");
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::AttributeSubTypeHomePage, "HomePage");
 
 /*!
  * \variable QContactUrl::AttributeSubTypeFavourite
  * The constant attribute value which describes the url as being a favourite page of the contact
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactUrl::AttributeSubTypeFavourite, "Favourite");
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::AttributeSubTypeFavourite, "Favourite");
 
 /*!
  * \variable QContactUrl::AttributeSubTypeSocialNetworking
  * The constant attribute value which describes the url as being one of the social networking pages of the contact
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactUrl::AttributeSubTypeSocialNetworking, "SocialNetworking");
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::AttributeSubTypeSocialNetworking, "SocialNetworking");
 
 ///*!
 // * \variable QContactMeeting::AttributeSubTypeBusiness
 // * The constant attribute value which describes the meeting as being a business meeting
 // */
-//Q_DEFINE_CONSTANT_LATIN_STRING(QContactMeeting::AttributeSubTypeBusiness, "Business");
+//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypeBusiness, "Business");
 
 ///*!
 // * \variable QContactMeeting::AttributeSubTypePersonal
 // * The constant attribute value which describes the url as being a personal meeting
 // */
-//Q_DEFINE_CONSTANT_LATIN_STRING(QContactMeeting::AttributeSubTypePersonal, "Personal");
+//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypePersonal, "Personal");
 
 ///*!
 // * \variable QContactMeeting::AttributeSubTypeAppointment
 // * The constant attribute value which describes the url as being a professional appointment
 // */
-//Q_DEFINE_CONSTANT_LATIN_STRING(QContactMeeting::AttributeSubTypeAppointment, "Appointment");
+//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypeAppointment, "Appointment");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeWedding
  * The constant attribute value which describes the anniversary as being a wedding anniversary
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeWedding, "Wedding");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::AttributeSubTypeWedding, "Wedding");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeEngagement
  * The constant attribute value which describes the anniversary as being an engagement anniversary
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeEngagement, "Engagement");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::AttributeSubTypeEngagement, "Engagement");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeHouse
  * The constant attribute value which describes the anniversary as being an anniversary of ownership of a particular residence
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeHouse, "House");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::AttributeSubTypeHouse, "House");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeEmployment
  * The constant attribute value which describes the anniversary as being an anniversary of employment at a particular company
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeEmployment, "Employment");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::AttributeSubTypeEmployment, "Employment");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeMemorial
  * The constant attribute value which describes the anniversary as being an anniversary of an event of sentimental significance
  */
-Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeMemorial, "Memorial");
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::AttributeSubTypeMemorial, "Memorial");
 
 
 

@@ -46,15 +46,15 @@ class QTCONTACTS_EXPORT QContactAnniversary : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldCalendarId, "CalendarId");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldOriginalDate, "OriginalDate");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldEvent, "Event");
+    Q_DECLARE_LATIN1_LITERAL(FieldCalendarId, "CalendarId");
+    Q_DECLARE_LATIN1_LITERAL(FieldOriginalDate, "OriginalDate");
+    Q_DECLARE_LATIN1_LITERAL(FieldEvent, "Event");
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeWedding, "Wedding");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeEngagement, "Engagement");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeHouse, "House");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeEmployment, "Employment");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMemorial, "Memorial");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeWedding, "Wedding");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEngagement, "Engagement");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeHouse, "House");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEmployment, "Employment");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMemorial, "Memorial");
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
     QDate originalDate() const {return value<QDate>(FieldOriginalDate);}

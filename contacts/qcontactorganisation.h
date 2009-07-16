@@ -46,8 +46,8 @@ class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldDisplayLabel, "DisplayLabel");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLogo, "Logo");
+    Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
+    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const {return value(FieldDisplayLabel);}

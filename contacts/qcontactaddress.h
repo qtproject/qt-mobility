@@ -47,17 +47,17 @@ class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldDisplayLabel, "DisplayLabel");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldStreet, "Street");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLocality, "Locality");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldRegion, "Region");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldPostcode, "Postcode");
-    Q_DECLARE_CONSTANT_LATIN_STRING(FieldCountry, "Country");
+    Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
+    Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
+    Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
+    Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
+    Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
+    Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
 
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeParcel, "Parcel");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypePostal, "Postal");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeDomestic, "Domestic");
-    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeInternational, "International");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeParcel, "Parcel");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePostal, "Postal");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeDomestic, "Domestic");
+    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternational, "International");
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const;
