@@ -858,8 +858,7 @@ void tst_QContactManagerFiltering::actionFiltering()
     QContactActionFilter af;
     af.setActionName(actionName);
     af.setValue(value);
-    af.setVendorName(vendorName);
-    af.setVersion(version);
+    af.setVendor(vendorName, version);
 
     ids = cm->contacts(af);
 

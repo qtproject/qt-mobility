@@ -375,22 +375,14 @@ void QContactActionFilter::setValue(const QVariant& value)
     d->m_value = value;
 }
 
-void QContactActionFilter::setVendorName(const QString& vendor)
+// Empty vendor means ignore version
+void QContactActionFilter::setVendor(const QString& vendor, int version)
 {
     Q_D(QContactActionFilter);
+    if (vendor.isEmpty())
+        version = -1;
     d->m_vendor = vendor;
-}
-
-void QContactActionFilter::setVersion(int version)
-{
-    Q_D(QContactActionFilter);
     d->m_version = version;
-}
-
-void QContactActionFilter::clearVersion()
-{
-    Q_D(QContactActionFilter);
-    d->m_version = -1;
 }
 
 QString QContactActionFilter::actionName() const
@@ -411,7 +403,7 @@ QString QContactActionFilter::vendorName() const
     return d->m_vendor;
 }
 
-int QContactActionFilter::version() const
+int QContactActionFilter::vendorVersion() const
 {
     Q_D(const QContactActionFilter);
     return d->m_version;
