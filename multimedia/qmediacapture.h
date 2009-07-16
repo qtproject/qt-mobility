@@ -32,61 +32,77 @@
 **
 ****************************************************************************/
 
+#ifndef QMEDIACAPTURE_H
+#define QMEDIACAPTURE_H
 
-#ifndef QGSTREAMERCAPTURESESSION_H
-#define QGSTREAMERCAPTURESESSION_H
+#include "qabstractmediaobject.h"
 
-#include "qmediacapturecontrol.h"
+#include "qmediaserviceprovider.h"
 #include "qmediasink.h"
-#include "qmediacapture.h"
 
-#include <gst/gst.h>
 
-class QGstreamerMessage;
-class QGstreamerBusHelper;
+class QMediaCaptureService;
+extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiocapture"));
 
-class QGstreamerCaptureSession : public QMediaCaptureControl
+class QMediaCapturePrivate;
+
+class QMediaCapture : public QAbstractMediaObject
 {
     Q_OBJECT
+
 public:
-    QGstreamerCaptureSession(QObject *parent);
-    ~QGstreamerCaptureSession();
+    enum State
+    {
+        StoppedState,
+        RecordingState,
+        PausedState
+    };
+
+    enum Error
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        NetworkError
+    };
+
+    QMediaCapture(QAbstractMediaService *service = createMediaCaptureService(), QObject *parent = 0);
+    QMediaCapture(QAbstractMediaObject *mediaObject, QObject *parent = 0);
+    virtual ~QMediaCapture();
+
+    bool isValid() const;
+
+    QAbstractMediaService* service() const;
 
     QMediaSink sink() const;
-    bool setSink(const QMediaSink& sink);
+    bool setSink(const QMediaSink &sink);
 
-    int state() const;
+    State state() const;
+
+    Error error() const;
+    QString errorString() const;
+    void unsetError();
 
     qint64 position() const;
     void setPositionUpdatePeriod(int ms);
-
-signals:
-    void stateChanged(int state);
-    void positionChanged(qint64 position);
 
 public slots:
     void record();
     void pause();
     void stop();
 
-    void setCaptureDevice(const QString &deviceName);
+signals:
+    void stateChanged(State state);
+    void positionChanged(qint64 position);
+    void error(QMediaCapture::Error error);
+    void errorStringChanged(const QString &error);
 
-private slots:
-    void busMessage(const QGstreamerMessage &message);
 
 private:
-    QMediaSink m_sink;
-    QMediaCapture::State m_state;
-    QGstreamerBusHelper *m_busHelper;
-    GstBus* m_bus;
-
-    GstElement *m_pipeline;
-
-    GstElement *m_alsasrc;
-    GstElement *m_audioconvert;
-    GstElement *m_encoder;
-    GstElement *m_muxer;
-    GstElement *m_filesink;
+    Q_DISABLE_COPY(QMediaCapture)
+    Q_DECLARE_PRIVATE(QMediaCapture)
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
 
-#endif // QGSTREAMERCAPTURESESSION_H
+#endif // QMEDIACAPTURE_H

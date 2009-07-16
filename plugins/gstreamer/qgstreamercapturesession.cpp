@@ -36,13 +36,13 @@
 #include "qgstreamerplayersession.h"
 #include "qgstreamerbushelper.h"
 #include "qmediastreams.h"
-#include "qmediaplayer.h"
+#include "qmediacapture.h"
 
 #include <QDebug>
 
 QGstreamerCaptureSession::QGstreamerCaptureSession(QObject *parent)
     :QMediaCaptureControl(parent),
-     m_state(QMediaPlayer::StoppedState)
+     m_state(QMediaCapture::StoppedState)
 {
     static bool initialized = false;
     if (!initialized) {
@@ -97,7 +97,7 @@ bool QGstreamerCaptureSession::setSink(const QMediaSink& sink)
     return true;
 }
 
-int QGstreamerCaptureSession::state()
+int QGstreamerCaptureSession::state() const
 {
     return int(m_state);
 }
@@ -112,11 +112,11 @@ void QGstreamerCaptureSession::setPositionUpdatePeriod(int ms)
     Q_UNUSED(ms);
 }
 
-void QGstreamerCaptureSession::start()
+void QGstreamerCaptureSession::record()
 {
     if (m_pipeline) {
         if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            m_state = QMediaPlayer::StoppedState;
+            m_state = QMediaCapture::StoppedState;
             emit stateChanged(m_state);
         }
     }
@@ -161,17 +161,17 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
                     case GST_STATE_READY:
-                        if (m_state != QMediaPlayer::StoppedState) {
-                            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+                        if (m_state != QMediaCapture::StoppedState) {
+                            emit stateChanged(m_state = QMediaCapture::StoppedState);
                         }
                         break;
                     case GST_STATE_PAUSED:
-                        if (m_state != QMediaPlayer::PausedState)
-                            emit stateChanged(m_state = QMediaPlayer::PausedState);                        
+                        if (m_state != QMediaCapture::PausedState)
+                            emit stateChanged(m_state = QMediaCapture::PausedState);
                         break;
                     case GST_STATE_PLAYING:                        
-                        if (m_state != QMediaPlayer::PlayingState)
-                            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+                        if (m_state != QMediaCapture::RecordingState)
+                            emit stateChanged(m_state = QMediaCapture::RecordingState);
                         break;
                     }
                 }
@@ -181,7 +181,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                     GError *err;
                     gchar *debug;
                     gst_message_parse_error (gm, &err, &debug);
-                    emit error(int(QMediaPlayer::ResourceError),QString::fromUtf8(err->message));
+                    emit error(int(QMediaCapture::ResourceError),QString::fromUtf8(err->message));
                     g_error_free (err);
                     g_free (debug);
                 }
