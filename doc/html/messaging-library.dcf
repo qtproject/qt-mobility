@@ -142,6 +142,7 @@
         <keyword ref="qmessagecontentcontainer.html#container">container</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerDataModified">containerDataModified</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
+        <keyword ref="qmessagecontentcontainer.html#contains">contains</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentAvailable">contentAvailable</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentFileName">contentFileName</keyword>

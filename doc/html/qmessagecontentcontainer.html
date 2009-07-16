@@ -32,6 +32,7 @@
 <li><div class="fn"></div>virtual QMessageContentContainer <b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a></b> () const</li>
 <li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessagecontentcontainer.html#containerId">containerId</a></b> () const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#contains">contains</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</li>
 <li><div class="fn"></div>virtual bool <b><a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a></b> () const</li>
 <li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const</li>
 <li><div class="fn"></div>virtual QByteArray <b><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a></b> () const</li>
@@ -117,11 +118,13 @@
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>(), <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>(), and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
 <h3 class="fn"><a name="container"></a>QMessageContentContainer QMessageContentContainer::container ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>If the container contains another container with identifier <i>id</i> either directly or recursively then returns the value of that other container; otherwise returns an empty container constructed with the default constructor.</p>
-<p>See also <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
+<p>See also <a href="qmessagecontentcontainer.html#contains">contains</a>(), <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>(), <a href="qmessagecontentcontainer.html#clearContents">clearContents</a>(), <a href="qmessagecontentcontainer.html#appendContent">appendContent</a>(), and <a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a>().</p>
 <h3 class="fn"><a name="containerDataModified"></a>bool QMessageContentContainer::containerDataModified () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the container has been modified since it was constructed; otherwise returns false.</p>
 <h3 class="fn"><a name="containerId"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessageContentContainer::containerId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the container object.</p>
+<h3 class="fn"><a name="contains"></a>bool QMessageContentContainer::contains ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>If the container contains content with the identifier <i>id</i>, either directly or recursively then returns true; otherwise returns false.</p>
 <h3 class="fn"><a name="contentAvailable"></a>bool QMessageContentContainer::contentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the entirety of the content contained is available on the device; otherwise returns false.</p>
 <h3 class="fn"><a name="contentCharset"></a>QByteArray QMessageContentContainer::contentCharset () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
