@@ -73,6 +73,7 @@ private slots:
     void detailVariantFiltering_data();
 
     void sorting(); // XXX should take all managers
+    void sorting_data();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
@@ -587,8 +588,38 @@ void tst_QContactManagerFiltering::rangeFiltering()
     }
 }
 
+void tst_QContactManagerFiltering::sorting_data()
+{
+    QTest::addColumn<QString>("defname");
+    QTest::addColumn<QString>("fieldname");
+    QTest::addColumn<int>("directioni");
+    QTest::addColumn<bool>("setbp");
+    QTest::addColumn<int>("blankpolicyi");
+    QTest::addColumn<QString>("expected");
+
+    QTest::newRow("first ascending") << QContactName::DefinitionName << QContactName::FieldFirst << (int)(Qt::AscendingOrder) << false << 0 << "abcd";
+    QTest::newRow("first descending") << QContactName::DefinitionName << QContactName::FieldFirst << (int)(Qt::DescendingOrder) << false << 0 << "dcba";
+    QTest::newRow("last ascending") << QContactName::DefinitionName << QContactName::FieldLast << (int)(Qt::AscendingOrder) << false << 0 << "bacd";
+    QTest::newRow("last descending") << QContactName::DefinitionName << QContactName::FieldLast << (int)(Qt::DescendingOrder) << false << 0 << "dcab";
+    QTest::newRow("integer ascending, blanks last") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabd";
+    QTest::newRow("integer descending, blanks last") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacd";
+    QTest::newRow("integer ascending, blanks first") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dcab";
+    QTest::newRow("integer descending, blanks first") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dbac";
+}
+
 void tst_QContactManagerFiltering::sorting()
 {
+    QFETCH(QString, defname);
+    QFETCH(QString, fieldname);
+    QFETCH(int, directioni);
+    QFETCH(bool, setbp);
+    QFETCH(int, blankpolicyi);
+    QFETCH(QString, expected);
+
+    Qt::SortOrder direction = (Qt::SortOrder)directioni;
+    QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
+
+    /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
     QList<QContact> contacts = prepareModel(cm);
@@ -600,85 +631,20 @@ void tst_QContactManagerFiltering::sorting()
     QContact c = contacts.at(2);
     QContact d = contacts.at(3);
 
-    /* Now try some different sort orders */
-    QContactSortOrder so;
-    so.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    /* Build the sort order */
+    QContactSortOrder s;
+    s.setDetailDefinitionName(defname, fieldname);
+    s.setDirection(direction);
+    if (setbp)
+        s.setBlankPolicy(blankpolicy);
 
-    /* First ascending */
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == a.id());
-    QVERIFY(ids[1] == b.id());
-    QVERIFY(ids[2] == c.id());
-    QVERIFY(ids[3] == d.id());
+    ids = cm->contacts(s);
+    QVERIFY(ids.count() == contacts.count());
 
-    so.setDirection(Qt::DescendingOrder);
-
-    /* First descending */
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == d.id());
-    QVERIFY(ids[1] == c.id());
-    QVERIFY(ids[2] == b.id());
-    QVERIFY(ids[3] == a.id());
-
-    /* Last descending */
-    so.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == d.id());
-    QVERIFY(ids[1] == c.id());
-    QVERIFY(ids[2] == a.id());
-    QVERIFY(ids[3] == b.id());
-
-    /* Last ascending */
-    so.setDirection(Qt::AscendingOrder);
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == b.id());
-    QVERIFY(ids[1] == a.id());
-    QVERIFY(ids[2] == c.id());
-    QVERIFY(ids[3] == d.id());
-
-    /* Integer ascending, blanks last */
-    so.setDetailDefinitionName("Integer", "value");
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == c.id());
-    QVERIFY(ids[1] == a.id());
-    QVERIFY(ids[2] == b.id());
-    QVERIFY(ids[3] == d.id());
-
-    /* Descending, blanks last */
-    so.setDirection(Qt::DescendingOrder);
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == b.id());
-    QVERIFY(ids[1] == a.id());
-    QVERIFY(ids[2] == c.id());
-    QVERIFY(ids[3] == d.id());
-
-    /* Descending, blanks first */
-    so.setBlankPolicy(QContactSortOrder::BlanksFirst);
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == d.id());
-    QVERIFY(ids[1] == b.id());
-    QVERIFY(ids[2] == a.id());
-    QVERIFY(ids[3] == c.id());
-
-    /* Ascending, blanks first */
-    so.setDirection(Qt::AscendingOrder);
-    ids = cm->contacts(so);
-    QVERIFY(ids.count() == 4);
-    QVERIFY(ids[0] == d.id());
-    QVERIFY(ids[1] == c.id());
-    QVERIFY(ids[2] == a.id());
-    QVERIFY(ids[3] == b.id());
-
-    /* XXX Doubles.. there's a problem with no sub sort for stable results */
-
-    delete cm;
+    /* Expected is of the form "abcd".. */
+    for (int i = 0; i < expected.size(); i++) {
+        QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
+    }
 }
 
 QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
