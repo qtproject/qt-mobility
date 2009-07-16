@@ -798,6 +798,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="container" fullname="QMessageContentContainer::container" href="qmessagecontentcontainer.html#container" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMessageContentContainer" signature="container(const QMessageContentContainerId &amp; id) const">
                 <parameter left="const QMessageContentContainerId &amp;" right="" name="id" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contains" fullname="QMessageContentContainer::contains" href="qmessagecontentcontainer.html#contains" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="contains(const QMessageContentContainerId &amp; id) const">
+                <parameter left="const QMessageContentContainerId &amp;" right="" name="id" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="headerField" fullname="QMessageContentContainer::headerField" href="qmessagecontentcontainer.html#headerField" location="qmessagecontentcontainer_qmf.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="headerField(const QByteArray &amp; name) const">
                 <parameter left="const QByteArray &amp;" right="" name="name" default=""/>
             </function>

@@ -458,7 +458,8 @@
     "plain", the charset will be determined by preferredCharsets(),
     
     If the internet media (MIME) content type of the message is not multipart then the content of 
-    the message will be set to \a body; otherwise the body will be the first part of the message.
+    the message will be set to \a body; otherwise a body part will be created if one does not 
+    exist, and the body will be the first part of the message.
     
     \sa body(), setBodyFromFile(), preferredCharsets()
 */
@@ -493,7 +494,7 @@
   
     Append the contents of the files specified by \a fileNames to the end of the list of 
     attachments for the message. The internet media (MIME) type of the attachments will be 
-    determined by examining the contents the files.
+    determined by examining the files or file names.
 
     \sa attachments(), clearAttachments()
 */

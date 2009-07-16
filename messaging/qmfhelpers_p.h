@@ -30,58 +30,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-#include "qmessagefoldersortkey.h"
-#include "qmessagefoldersortkey_p.h"
 
+#ifndef _QMFHELPERS_H_
+#define _QMFHELPERS_H_
 
-QMessageFolderSortKey::QMessageFolderSortKey()
-{
-}
+#include "qmessage.h"
+#include "qmessageaccountid.h"
+#include "qmessagefolderid.h"
+#include "qmessagestore.h"
 
-QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
-{
-    Q_UNUSED(other)
-}
+#include <qmailmessage.h>
 
-bool QMessageFolderSortKey::isEmpty() const
-{
-    return false; // stub
-}
+namespace QmfHelpers {
 
-QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
-{
-    Q_UNUSED(other)
-    return QMessageFolderSortKey(); // stub
-}
+QMessageId convert(const QMailMessageId &id);
+QMailMessageId convert(const QMessageId &id);
 
-QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
+QMessageAccountId convert(const QMailAccountId &id);
+QMailAccountId convert(const QMessageAccountId &id);
 
-bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
+QMessageFolderId convert(const QMailFolderId &id);
+QMailFolderId convert(const QMessageFolderId &id);
 
-const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
+QMessageContentContainerId convert(const QMailMessagePart::Location &location);
+QMailMessagePart::Location convert(const QMessageContentContainerId &id);
 
-QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
-}
+QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations);
+QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids);
 
-QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
-}
+QMailMessage::MessageType convert(QMessage::Type t);
+QMessage::Type convert(QMailMessage::MessageType t);
+
+QMessage::StatusFlags convert(quint64 v);
+quint64 convert(QMessage::StatusFlags v);
+
+QMessageAddress convert(const QMailAddress &address);
+QMailAddress convert(const QMessageAddress &address);
+
+QMessageAddressList convert(const QList<QMailAddress> &list);
+QList<QMailAddress> convert(const QMessageAddressList& list);
+
+};
+
 #endif

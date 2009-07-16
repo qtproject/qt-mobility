@@ -83,7 +83,9 @@ INCLUDEPATH += $$QMF_INCLUDEDIR $$QMF_INCLUDEDIR/support
 # QMF libraries must be located at $QMF_LIBDIR
 LIBS += -L $$QMF_LIBDIR -lqtopiamail
 
-DEFINES += QMESSAGING_OPTIONAL
+DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
+
+HEADERS += qmfhelpers_p.h
 
 SOURCES += qmessageid_qmf.cpp \
            qmessagecontentcontainerid_qmf.cpp \
@@ -100,5 +102,6 @@ SOURCES += qmessageid_qmf.cpp \
            qmessagefilterkey_qmf.cpp \
            qmessagesortkey_qmf.cpp \
            qmessagestore_qmf.cpp \
-           qmessageserviceaction_qmf.cpp 
+           qmessageserviceaction_qmf.cpp \
+           qmfhelpers.cpp
 }
