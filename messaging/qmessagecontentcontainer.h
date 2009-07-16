@@ -34,6 +34,7 @@
 #define QMESSAGECONTENTCONTAINER_H
 #include <QString>
 #include <QList>
+#include <QDataStream>
 #include "qmessagecontentcontainerid.h"
 #include "qmessageid.h"
 

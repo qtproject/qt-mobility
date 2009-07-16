@@ -32,8 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGE_H
 #define QMESSAGE_H
-#include <QString>
-#include <QList>
+#include <QStringList>
 #include <QDateTime>
 #include "qmessageaccountid.h"
 #include "qmessagefolderid.h"
