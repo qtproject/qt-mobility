@@ -33,6 +33,8 @@
 #include "qmessage.h"
 #include "qmfhelpers_p.h"
 
+#include <qmailnamespace.h>
+
 using namespace QmfHelpers;
 
 class QMessagePrivate
@@ -362,8 +364,18 @@ QMessageContentContainerIdList QMessage::attachments() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    // TODO
-    Q_UNUSED(fileNames)
+    foreach (const QString &filename, fileNames) {
+        QString mimeType(QMail::mimeTypeFromFileName(filename));
+        if (!mimeType.isEmpty()) {
+            QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
+            cd.setFilename(filename.toAscii());
+
+            QMailMessageContentType ct(mimeType.toAscii());
+
+            QMailMessagePart part(QMailMessagePart::fromFile(filename, cd, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+            d_ptr->_message.appendPart(part);
+        }
+    }
 }
 
 void QMessage::clearAttachments()
