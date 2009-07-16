@@ -50,8 +50,6 @@ public:
     Qt7Movie(QObject *parent = 0);
     ~Qt7Movie();
 
-    void setSource(QMediaSource const &source);
-
     qint64 duration() const;
 
     qint64 position() const;
@@ -63,6 +61,9 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
+    float rate() const;
+    void setRate(float r);
+
     bool isVideoAvailable() const;
     bool isSeekable() const;
 
@@ -70,7 +71,12 @@ public:
     void pause();
     void stop();
 
+    int state() const;
+
     void setVideoOutput(Qt7Widget *outpout);
+
+public slots:
+    void setSource(QMediaSource const &source);
 
 private:
     Qt7MoviePrivate *d;

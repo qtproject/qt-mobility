@@ -38,10 +38,13 @@
 #include <qmediaplayercontrol.h>
 
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
 class Qt7Widget;
 class Qt7Movie;
+class QTimer;
 
 
+class Qt7PlayerControlPrivate;
 class Qt7PlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
@@ -91,11 +94,18 @@ public:
 
     void setVideoOutput(Qt7Widget *output);
 
+private slots:
+    void setSource(QMediaSource const &source);
+    void update();
+
 private:
+    Qt7PlayerControlPrivate* d;
+
     Qt7Movie*   movie;
     QMediaPlaylist  *playlist;
-    int _state;
+    QMediaPlaylistNavigator *navigator;
     int playlistPos;
+    QTimer* updateTimer;
 };
 
 #endif  // QT7PLAYERCONTROL_H
