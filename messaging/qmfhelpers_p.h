@@ -72,4 +72,6 @@ QList<QMailAddress> convert(const QMessageAddressList& list);
 
 };
 
+bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs);
+
 #endif

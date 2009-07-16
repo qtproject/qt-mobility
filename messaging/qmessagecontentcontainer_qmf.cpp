@@ -121,11 +121,6 @@ QByteArray charsetFor(const QString &s)
     return QByteArray("UTF-8");
 }
 
-bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs)
-{
-    return (lhs.toString(true) == rhs.toString(true));
-}
-
 struct PartLocator
 {
     const QMailMessagePart::Location &_location;
