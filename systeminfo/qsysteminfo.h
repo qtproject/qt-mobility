@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMSINFO_H
-#define QSYSTEMSINFO_H
+#ifndef QSYSTEMINFO_H
+#define QSYSTEMINFO_H
 
 #include <QObject>
 #include <QSize>
