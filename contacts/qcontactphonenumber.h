@@ -48,20 +48,18 @@ class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
 
-    static const char DefinitionName[]; // == staticType() == "PhoneNumber"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldNumber, "PhoneNumber");
 
-    static const char FieldNumber[];
-
-    static const char AttributeSubTypeLandline[];
-    static const char AttributeSubTypeMobile[];
-    static const char AttributeSubTypeFacsimile[];
-    static const char AttributeSubTypePager[];
-    static const char AttributeSubTypeVoice[];
-    static const char AttributeSubTypeModem[];
-    static const char AttributeSubTypeVideo[];
-    static const char AttributeSubTypeCar[];
-    static const char AttributeSubTypeBulletinBoardSystem[];
-    static const char AttributeSubTypeMessagingCapable[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeLandline, "Landline");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMobile, "Mobile");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeFacsimile, "Facsimile");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypePager, "Pager");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeVoice, "Voice");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeModem, "Modem");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeVideo, "Video");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeCar, "Car");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMessagingCapable, "MessagingCapable");
 
     void setNumber(const QString& number) {setValue(QLatin1String(FieldNumber), number);}
     QString number() const {return value(QLatin1String(FieldNumber));}

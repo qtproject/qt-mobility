@@ -69,14 +69,14 @@ void tst_QContact::details()
     // Test there are no details (apart from the name :/) by default
     QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details().count() == 1);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     // Test retrieving the first detail (the display label)
     QContactDetail detail = c.detail(QString());
-    QVERIFY(detail.definitionName() == QContactDisplayLabel::staticType());
+    QVERIFY(detail.definitionName() == QContactDisplayLabel::DefinitionName);
 
     detail = c.detail("nonexistent");
     QVERIFY(detail.isEmpty());
@@ -92,9 +92,9 @@ void tst_QContact::details()
     QVERIFY(c.isEmpty() == false);
 
     QVERIFY(c.details().count() == 2);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), p);
 
@@ -103,9 +103,9 @@ void tst_QContact::details()
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 1);
     QVERIFY(c.isEmpty() == true);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     // Try removing it again
@@ -117,16 +117,16 @@ void tst_QContact::details()
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.isEmpty() == false);
     QVERIFY(c.details().count() == 2);
-    QContactPhoneNumber p2 = c.detail(QContactPhoneNumber::staticType());
+    QContactPhoneNumber p2 = c.detail(QContactPhoneNumber::DefinitionName);
     QCOMPARE(p, p2);
 
     QVERIFY(c.removeDetail(&p2));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 1);
     QVERIFY(c.isEmpty() == true);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     QCOMPARE(p, p2);
@@ -135,15 +135,15 @@ void tst_QContact::details()
     QVERIFY(c.saveDetail(&p));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 2);
-    QContactDetail p3 = c.detail(QContactPhoneNumber::staticType());
+    QContactDetail p3 = c.detail(QContactPhoneNumber::DefinitionName);
     QVERIFY(p == p3);
 
     QVERIFY(c.removeDetail(&p3));
     QVERIFY(c.error() == QContact::NoError);
     QVERIFY(c.details().count() == 1);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     QVERIFY(p == p3);
@@ -169,16 +169,16 @@ void tst_QContact::details()
     QVERIFY(c2.isEmpty() == false);
 
     QVERIFY(c.details().count() == 2);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), p);
 
     QVERIFY(c2.details().count() == 2);
-    QVERIFY(c2.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c2.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c2.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c2.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c2.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c2.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c2.detail<QContactPhoneNumber>(), p);
 
@@ -189,17 +189,17 @@ void tst_QContact::details()
     // Make sure it's gone from the first contact
     QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details().count() == 1);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     // but not the second
     QVERIFY(c2.isEmpty() == false);
     QVERIFY(c2.details().count() == 2);
-    QVERIFY(c2.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c2.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c2.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c2.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c2.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c2.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c2.detail<QContactPhoneNumber>(), p);
 
@@ -209,15 +209,15 @@ void tst_QContact::details()
 
     // Make sure it's gone from both
     QVERIFY(c.details().count() == 1);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     QVERIFY(c2.details().count() == 1);
-    QVERIFY(c2.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c2.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c2.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c2.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c2.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c2.detail<QContactPhoneNumber>().isEmpty());
 
     // add a, add b, remove a, add a, remove b, remove a
@@ -244,18 +244,18 @@ void tst_QContact::details()
     // add it once
     QVERIFY(c.saveDetail(&one));
     QVERIFY(c.details().count() == 2);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), one);
 
     // add it twice
     QVERIFY(c.saveDetail(&two));
     QVERIFY(c.details().count() == 3);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 2);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 2);
-    QVERIFY(!c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), one);
     QCOMPARE(c.details<QContactPhoneNumber>()[0], one);
@@ -264,18 +264,18 @@ void tst_QContact::details()
     // Remove it once
     QVERIFY(c.removeDetail(&one));
     QVERIFY(c.details().count() == 2);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
-    QVERIFY(!c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), two);
 
     // Remove it twice
     QVERIFY(c.removeDetail(&two));
     QVERIFY(c.details().count() == 1);
-    QVERIFY(c.details(QContactPhoneNumber::staticType()).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
-    QVERIFY(c.detail(QContactPhoneNumber::staticType()).isEmpty());
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     // Null pointer tests

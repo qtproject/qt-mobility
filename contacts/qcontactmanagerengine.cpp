@@ -365,7 +365,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     d.setId(QLatin1String(QContactPhoneNumber::DefinitionName));
-    fields.insert(QLatin1String(QContactPhoneNumber::FieldNumber), f);
+    fields.insert(QContactPhoneNumber::FieldNumber, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);

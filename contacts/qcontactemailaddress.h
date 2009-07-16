@@ -47,11 +47,9 @@ class QTCONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
 
-    static const char DefinitionName[]; // == staticType() == "EmailAddress"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldEmailAddress, "EmailAddress");
 
-    static const char FieldEmailAddress[];
-
-    static const char AttributeSubTypeInternet[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeInternet, "Internet");
 
     void setEmailAddress(const QString& emailAddress) {setValue(QLatin1String(FieldEmailAddress), emailAddress);}
     QString emailAddress() const {return value(QLatin1String(FieldEmailAddress));}

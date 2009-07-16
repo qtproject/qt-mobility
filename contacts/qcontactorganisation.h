@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QCONTACTORGANISATION_H
 #define QCONTACTORGANISATION_H
 
@@ -47,10 +46,8 @@ class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
 
-    static const char DefinitionName[]; // == staticType() == "Organisation"
-
-    static const char FieldDisplayLabel[];
-    static const char FieldLogo[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldDisplayLabel, "DisplayLabel");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLogo, "Logo");
 
     void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
     QString displayLabel() const {return value(QLatin1String(FieldDisplayLabel));}

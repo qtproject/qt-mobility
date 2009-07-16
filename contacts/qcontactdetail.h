@@ -60,11 +60,11 @@ public:
     };
 
     // Predefined attribute names and values
-    static const char AttributeContext[];
-    static const char AttributeSubType[];
-    static const char AttributeContextHome[];
-    static const char AttributeContextWork[];
-    static const char AttributeContextOther[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContext, "Context");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubType, "SubType");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextHome, "Home");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextWork, "Work");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeContextOther, "Other");
 
     QContactDetail::Error error() const;
 
@@ -125,11 +125,11 @@ private:
 };
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
-    className() : QContactDetail(staticType()) {} \
-    className(const QContactDetail& field) : QContactDetail(field, staticType()) {} \
-    className& operator=(const QContactDetail& other) {assign(other, staticType()); return *this;} \
+    className() : QContactDetail(DefinitionName) {} \
+    className(const QContactDetail& field) : QContactDetail(field, DefinitionName) {} \
+    className& operator=(const QContactDetail& other) {assign(other, DefinitionName); return *this;} \
     \
-    static QString staticType() {return QString(QLatin1String(definitionNameString));}
+    Q_DECLARE_CONSTANT_LATIN_STRING(DefinitionName, definitionNameString);
 
 #endif
 

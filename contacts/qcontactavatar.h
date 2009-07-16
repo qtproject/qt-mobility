@@ -46,13 +46,11 @@ class QTCONTACTS_EXPORT QContactAvatar : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
 
-    static const char DefinitionName[]; // == staticType() == "Avatar"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldAvatar, "Avatar");
 
-    static const char FieldAvatar[];
-
-    static const char AttributeSubTypeImage[];
-    static const char AttributeSubTypeVideo[];
-    static const char AttributeSubTypeTexturedMesh[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeImage, "Image");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeVideo, "Video");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeTexturedMesh, "TexturedMesh");
 
     void setAvatar(const QString& avatarPath) {setValue(QLatin1String(FieldAvatar), avatarPath);}
     QString avatar() const {return value(QLatin1String(FieldAvatar));}

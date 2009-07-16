@@ -46,17 +46,15 @@ class QTCONTACTS_EXPORT QContactAnniversary : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
 
-    static const char DefinitionName[]; // == staticType() == "Anniversary"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldCalendarId, "CalendarId");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldOriginalDate, "OriginalDate");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldEvent, "Event");
 
-    static const char FieldCalendarId[];
-    static const char FieldOriginalDate[];
-    static const char FieldEvent[];
-
-    static const char AttributeSubTypeWedding[];
-    static const char AttributeSubTypeEngagement[];
-    static const char AttributeSubTypeHouse[];
-    static const char AttributeSubTypeEmployment[];
-    static const char AttributeSubTypeMemorial[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeWedding, "Wedding");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeEngagement, "Engagement");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeHouse, "House");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeEmployment, "Employment");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMemorial, "Memorial");
 
     void setOriginalDate(const QDate& date) {setValue(QLatin1String(FieldOriginalDate), date);}
     QDate originalDate() const {return value<QDate>(QLatin1String(FieldOriginalDate));}

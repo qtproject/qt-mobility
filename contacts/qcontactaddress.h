@@ -47,19 +47,17 @@ class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
 
-    static const char DefinitionName[]; // == staticType() == "StreetAddress"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldDisplayLabel, "DisplayLabel");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldStreet, "Street");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldLocality, "Locality");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldRegion, "Region");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldPostcode, "Postcode");
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldCountry, "Country");
 
-    static const char FieldDisplayLabel[];
-    static const char FieldStreet[];
-    static const char FieldLocality[];
-    static const char FieldRegion[];
-    static const char FieldPostcode[];
-    static const char FieldCountry[];
-
-    static const char AttributeSubTypeParcel[];
-    static const char AttributeSubTypePostal[];
-    static const char AttributeSubTypeDomestic[];
-    static const char AttributeSubTypeInternational[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeParcel, "Parcel");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypePostal, "Postal");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeDomestic, "Domestic");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeInternational, "International");
 
     void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
     QString displayLabel() const;

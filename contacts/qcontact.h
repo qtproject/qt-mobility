@@ -100,7 +100,7 @@ public:
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const
     {
-        QList<QContactDetail> props = details(T::staticType());
+        QList<QContactDetail> props = details(T::DefinitionName);
         QList<T> ret;
         foreach(QContactDetail prop, props)
             ret.append(T(prop));
@@ -109,7 +109,7 @@ public:
 
     template<typename T> T detail() const
     {
-        return T(detail(T::staticType()));
+        return T(detail(T::DefinitionName));
     }
 
     /* generic detail addition/removal functions */

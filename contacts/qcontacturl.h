@@ -46,13 +46,11 @@ class QTCONTACTS_EXPORT QContactUrl : public QContactDetail
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
 
-    static const char DefinitionName[]; // == staticType() == "Url"
+    Q_DECLARE_CONSTANT_LATIN_STRING(FieldUrl, "Url");
 
-    static const char FieldUrl[];
-
-    static const char AttributeSubTypeHomePage[];
-    static const char AttributeSubTypeFavourite[];
-    static const char AttributeSubTypeSocialNetworking[];
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeHomePage, "HomePage");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeFavourite, "Favourite");
+    Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeSocialNetworking, "SocialNetworking");
 
     void setUrl(const QString& url) {setValue(QLatin1String(FieldUrl), url);}
     QString url() const {return value(QLatin1String(FieldUrl));}
