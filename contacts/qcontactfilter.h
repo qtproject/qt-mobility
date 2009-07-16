@@ -52,6 +52,7 @@ class QContactFilterPrivate;
 class QTCONTACTS_EXPORT QContactFilter
 {
 public:
+    QContactFilter();
     virtual ~QContactFilter();
     QContactFilter(const QContactFilter& other);
     QContactFilter& operator=(const QContactFilter& other);
@@ -74,7 +75,6 @@ public:
 
 protected:
     QContactFilter(QContactFilterPrivate* d);
-    QContactFilter();
 
 protected:
     friend class QContactFilterPrivate;
