@@ -44,6 +44,7 @@
 
 #include <QSharedData>
 #include <QPair>
+#include <QSet>
 
 /*!
  * \class QContactManager
@@ -104,21 +105,19 @@ QStringList QContactManager::availableManagers()
 QStringList QContactManager::availableActions(const QString& vendor, int implementationVersion)
 {
     // SLOW naive implementation...
-    QStringList ret;
+    QSet<QString> ret;
+    QContactManagerData::loadFactories();
     QList<QContactAbstractAction*> actionImpls = QContactManagerData::actions(QString(), vendor, implementationVersion);
     for (int i = 0; i < actionImpls.size(); i++) {
         QContactAbstractAction* actionImpl = actionImpls.at(i);
-        QString currAction = actionImpl->actionName();
-        if (!ret.contains(currAction)) {
-            ret.append(currAction);
-        }
+        ret.insert(actionImpl->actionName());
 
         // we took ownership; clean up.
         // TODO: fix this.  currently, we don't take ownership, so don't delete.
         //delete actionImpl;
     }
 
-    return ret;
+    return ret.toList();
 }
 
 /*!
@@ -136,6 +135,7 @@ QStringList QContactManager::availableActions(const QString& vendor, int impleme
 QList<QContactAbstractAction*> QContactManager::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
     // the caller takes ownership
+    QContactManagerData::loadFactories();
     return QContactManagerData::actions(actionName, vendor, implementationVersion);
 }
 
