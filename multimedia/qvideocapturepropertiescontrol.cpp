@@ -32,44 +32,13 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASINK_H
-#define QMEDIASINK_H
+#include "qvideocapturepropertiescontrol.h"
 
-#include <QString>
-#include <QVariant>
-
-#include "qmultimediaglobal.h"
-
-#include <QList>
-#include <QSharedDataPointer>
-
-class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink
+QVideoCapturePropertiesControl::~QVideoCapturePropertiesControl()
 {
-public:
-    QMediaSink();
-    QMediaSink(const QVariant &url);
-    ~QMediaSink();
-    QMediaSink(const QMediaSink &other);
-    QMediaSink &operator =(const QMediaSink &other);
+}
 
-    bool isNull() const;
-
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
-
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
-
-    bool operator ==(const QMediaSink& other) const;
-    bool operator !=(const QMediaSink& other) const;
-
-private:
-    QSharedDataPointer<QMediaSinkPrivate> d;
-
-};
-
-#endif  // QMEDIASINK_H
-
-
-
+QVideoCapturePropertiesControl::QVideoCapturePropertiesControl(QObject *parent)
+    :QAbstractMediaControl(parent)
+{
+}

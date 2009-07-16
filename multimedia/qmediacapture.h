@@ -32,81 +32,77 @@
 **
 ****************************************************************************/
 
-#ifndef QT7PLAYERCONTROL_H
-#define QT7PLAYERCONTROL_H
+#ifndef QMEDIACAPTURE_H
+#define QMEDIACAPTURE_H
 
-#include <qmediaplayercontrol.h>
+#include "qabstractmediaobject.h"
 
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-class Qt7Widget;
-class Qt7Movie;
-class QTimer;
+#include "qmediaserviceprovider.h"
+#include "qmediasink.h"
 
 
-class Qt7PlayerControlPrivate;
-class Qt7PlayerControl : public QMediaPlayerControl
+class QMediaCaptureService;
+extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiocapture"));
+
+class QMediaCapturePrivate;
+
+class QMediaCapture : public QAbstractMediaObject
 {
     Q_OBJECT
 
 public:
-    enum State { PlayingState, PausedState, StoppedState };
+    enum State
+    {
+        StoppedState,
+        RecordingState,
+        PausedState
+    };
 
-    Qt7PlayerControl(QObject *parent);
-    ~Qt7PlayerControl();
+    enum Error
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        NetworkError
+    };
 
-    int state() const;
+    QMediaCapture(QAbstractMediaService *service = createMediaCaptureService(), QObject *parent = 0);
+    QMediaCapture(QAbstractMediaObject *mediaObject, QObject *parent = 0);
+    virtual ~QMediaCapture();
 
-    QMediaPlaylist* mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    bool isValid() const;
 
-    qint64 duration() const;
+    QAbstractMediaService* service() const;
+
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink &sink);
+
+    State state() const;
+
+    Error error() const;
+    QString errorString() const;
+    void unsetError();
 
     qint64 position() const;
-    void setPosition(qint64);
+    void setPositionUpdatePeriod(int ms);
 
-    int playlistPosition() const;
-    void setPlaylistPosition(int position);
-
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
-
-    bool isBuffering() const;
-
-    int bufferStatus() const;
-
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
-
-    void play();
+public slots:
+    void record();
     void pause();
     void stop();
 
-    void advance();
-    void back();
+signals:
+    void stateChanged(State state);
+    void positionChanged(qint64 position);
+    void error(QMediaCapture::Error error);
+    void errorStringChanged(const QString &error);
 
-    void setVideoOutput(Qt7Widget *output);
-
-private slots:
-    void setSource(QMediaSource const &source);
-    void update();
 
 private:
-    Qt7PlayerControlPrivate* d;
-
-    Qt7Movie*   movie;
-    QMediaPlaylist  *playlist;
-    QMediaPlaylistNavigator *navigator;
-    int playlistPos;
-    QTimer* updateTimer;
+    Q_DISABLE_COPY(QMediaCapture)
+    Q_DECLARE_PRIVATE(QMediaCapture)
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
 
-#endif  // QT7PLAYERCONTROL_H
-
+#endif // QMEDIACAPTURE_H

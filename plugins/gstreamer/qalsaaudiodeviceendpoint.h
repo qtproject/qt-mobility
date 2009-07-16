@@ -32,44 +32,44 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASINK_H
-#define QMEDIASINK_H
+#ifndef QALSAAUDIODEVICEENDPOINT_H
+#define QALSAAUDIODEVICEENDPOINT_H
 
-#include <QString>
-#include <QVariant>
+#include "qaudiodeviceendpoint.h"
+#include <QStringList>
 
-#include "qmultimediaglobal.h"
-
-#include <QList>
-#include <QSharedDataPointer>
-
-class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink
+class QAlsaAudioDeviceEndpoint : public QAudioDeviceEndpoint
 {
+Q_OBJECT
 public:
-    QMediaSink();
-    QMediaSink(const QVariant &url);
-    ~QMediaSink();
-    QMediaSink(const QMediaSink &other);
-    QMediaSink &operator =(const QMediaSink &other);
+    QAlsaAudioDeviceEndpoint(QObject *parent);
+    virtual ~QAlsaAudioDeviceEndpoint();
 
-    bool isNull() const;
+    void setDirectionFilter(DeviceDirection direction);
+    void setRoleFilter(Roles roles);
+    void setFormFactorFilter(FormFactors forms);
 
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
+    int deviceCount() const;
 
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
+    int direction(int index) const;
+    Roles roles(int index) const;
+    FormFactor formFactor(int index) const;
 
-    bool operator ==(const QMediaSink& other) const;
-    bool operator !=(const QMediaSink& other) const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+
+    int defaultInputDevice(Role role) const;
+    int defaultOutputDevice(Role role) const;
 
 private:
-    QSharedDataPointer<QMediaSinkPrivate> d;
+    void update();
 
+    QStringList m_names;
+    QStringList m_descriptions;
+    QList<int> m_directions;
+    QList<Roles> m_roles;
+    QList<FormFactor> m_formFactors;
 };
 
-#endif  // QMEDIASINK_H
-
-
-
+#endif // QALSAAUDIODEVICEENDPOINT_H

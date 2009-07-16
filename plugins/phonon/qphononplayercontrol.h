@@ -36,7 +36,9 @@
 #define QWMPPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <phonon>
+
+#include <Phonon/MediaObject>
+#include <Phonon/AudioOutput>
 
 #include "qmediasource.h"
 #include "qmediaplayercontrol.h"
@@ -110,13 +112,14 @@ signals:
 
 private slots:
     void play(const QMediaSource&);
-    void updateState();
+    void updateState(Phonon::State newState, Phonon::State oldState);
     void updateVolume();
 
 private:    
     Phonon::MediaObject *m_session;
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlaylistNavigator *m_navigator;
+    int m_state;
 };
 
 #endif

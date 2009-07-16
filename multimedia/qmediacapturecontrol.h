@@ -32,44 +32,39 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASINK_H
-#define QMEDIASINK_H
+#ifndef QMEDIACAPTURECONTROL_H
+#define QMEDIACAPTURECONTROL_H
 
-#include <QString>
-#include <QVariant>
+#include "qabstractmediacontrol.h"
 
-#include "qmultimediaglobal.h"
+class QMediaSink;
 
-#include <QList>
-#include <QSharedDataPointer>
-
-class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink
+class QMediaCaptureControl : public QAbstractMediaControl
 {
+Q_OBJECT
 public:
-    QMediaSink();
-    QMediaSink(const QVariant &url);
-    ~QMediaSink();
-    QMediaSink(const QMediaSink &other);
-    QMediaSink &operator =(const QMediaSink &other);
+    virtual ~QMediaCaptureControl();
 
-    bool isNull() const;
+    virtual QMediaSink sink() const = 0;
+    virtual bool setSink(const QMediaSink &sink) = 0;
 
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
+    virtual int state() const = 0;
 
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
+    virtual qint64 position() const = 0;
+    virtual void setPositionUpdatePeriod(int ms) = 0;
 
-    bool operator ==(const QMediaSink& other) const;
-    bool operator !=(const QMediaSink& other) const;
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
-private:
-    QSharedDataPointer<QMediaSinkPrivate> d;
+public slots:
+    virtual void record() = 0;
+    virtual void pause() = 0;
+    virtual void stop() = 0;
 
+protected:    
+    QMediaCaptureControl(QObject* parent);
 };
 
-#endif  // QMEDIASINK_H
-
-
-
+#endif // QMEDIACAPTURECONTROL_H

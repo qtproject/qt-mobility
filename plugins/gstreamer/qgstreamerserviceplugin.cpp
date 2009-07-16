@@ -37,6 +37,7 @@
 
 #include "qgstreamerserviceplugin.h"
 #include "qgstreamerplayerservice.h"
+#include "qgstreamercaptureservice.h"
 
 #include <qmediaserviceprovider.h>
 
@@ -50,18 +51,21 @@ public:
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
             return new QGstreamerPlayerService;
 
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaCapture/1.0"))
+            return new QGstreamerCaptureService;
+
         return 0;
     }
 };
 
 QStringList QGstreamerServicePlugin::keys() const
 {
-    return QStringList() << "mediaplayer";
+    return QStringList() << QLatin1String("mediaplayer");
 }
 
 QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
 {
-    if (key == "mediaplayer")
+    if (key == QLatin1String("mediaplayer") || key == QLatin1String("mediacapture"))
         return new QGstreamerProvider;
 
     qDebug() << "unsupported key:" << key;

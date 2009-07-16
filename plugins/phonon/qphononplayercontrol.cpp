@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #include "qphononplayercontrol.h"
-#include <phonon>
 
 #include "qmediaplaylistnavigator.h"
 #include "qmediasource.h"
@@ -41,15 +40,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-
-QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
-    :QAbstractMediaControl(parent)
-{
-}
-
-
 QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent)
-   :QMediaPlayerControl(parent), m_session(session)
+   :QMediaPlayerControl(parent), m_session(session), m_state(QMediaPlayer::StoppedState)
 {
     QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
     m_navigator = new QMediaPlaylistNavigator(playlist,this);    
@@ -112,21 +104,12 @@ qint64 QPhononPlayerControl::duration() const
 
 int QPhononPlayerControl::state() const
 {
-    switch (m_session->state()) {
-        case Phonon::LoadingState: return int(QMediaPlayer::LoadingState);
-        case Phonon::StoppedState: return int(QMediaPlayer::StoppedState);
-        case Phonon::PlayingState: return int(QMediaPlayer::PlayingState);
-        case Phonon::BufferingState: return int(QMediaPlayer::PausedState);
-        case Phonon::PausedState: return int(QMediaPlayer::PausedState);
-        case Phonon::ErrorState: return int(QMediaPlayer::ErrorState);
-    }
-
-    return int(QMediaPlayer::ErrorState);
+    return m_state;
 }
 
 bool QPhononPlayerControl::isBuffering() const
 {
-    return false;
+    return m_session->state() == Phonon::BufferingState;
 }
 
 
@@ -181,17 +164,33 @@ void QPhononPlayerControl::setPosition(qint64 pos)
 
 void QPhononPlayerControl::play()
 {
+    m_state = QMediaPlayer::PlayingState;
+
     m_session->play();
+
+    if (m_state == QMediaPlayer::PlayingState)
+        emit stateChanged(m_state);
+
 }
 
 void QPhononPlayerControl::pause()
 {
+    m_state = QMediaPlayer::PausedState;
+
     m_session->pause();
+
+    if (m_state == QMediaPlayer::PausedState)
+        emit stateChanged(m_state);
 }
 
 void QPhononPlayerControl::stop()
 {
+    m_state = QMediaPlayer::StoppedState;
+
     m_session->stop();
+
+    if (m_state == QMediaPlayer::StoppedState)
+        emit stateChanged(m_state);
 }
 
 void QPhononPlayerControl::setVolume(int volume)
@@ -241,9 +240,35 @@ bool QPhononPlayerControl::isVideoAvailable() const
     return m_session->hasVideo();
 }
 
-void QPhononPlayerControl::updateState()
+void QPhononPlayerControl::updateState(Phonon::State newState, Phonon::State oldState)
 {
-    emit stateChanged(state());
+    switch (newState) {
+    case Phonon::LoadingState:
+        break;
+    case Phonon::StoppedState:
+        if (m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        break;
+    case Phonon::PlayingState:
+        if (m_state != QMediaPlayer::PlayingState)
+            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+        break;
+    case Phonon::PausedState:
+        if (m_state != QMediaPlayer::PausedState)
+            emit stateChanged(m_state = QMediaPlayer::PausedState);
+        break;
+    case Phonon::BufferingState:
+        emit bufferingChanged(true);
+        break;
+    case Phonon::ErrorState:
+        if (m_session->errorType() == Phonon::FatalError && m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        break;
+
+    }
+
+    if (oldState == Phonon::BufferingState)
+        emit bufferingChanged(false);
 }
 
 void QPhononPlayerControl::updateVolume()

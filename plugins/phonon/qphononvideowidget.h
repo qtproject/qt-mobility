@@ -2,7 +2,8 @@
 #define QGSTREAMERVIDEOWIDGET_H
 
 #include "qmediawidgetendpoint.h"
-#include <phonon>
+
+#include <Phonon/VideoWidget>
 
 class QPhononVideoWidget : public QMediaWidgetEndpoint
 {

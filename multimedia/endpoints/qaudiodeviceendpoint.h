@@ -122,6 +122,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void selectedDeviceChanged(int index);
+    void selectedDeviceChanged(const QString &deviceName);
     void devicesInserted(int index, int count);
     void devicesRemoved(int index, int count);
     void devicesChanged(int index, int count);

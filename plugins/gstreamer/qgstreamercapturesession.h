@@ -32,44 +32,61 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASINK_H
-#define QMEDIASINK_H
 
-#include <QString>
-#include <QVariant>
+#ifndef QGSTREAMERCAPTURESESSION_H
+#define QGSTREAMERCAPTURESESSION_H
 
-#include "qmultimediaglobal.h"
+#include "qmediacapturecontrol.h"
+#include "qmediasink.h"
+#include "qmediacapture.h"
 
-#include <QList>
-#include <QSharedDataPointer>
+#include <gst/gst.h>
 
-class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink
+class QGstreamerMessage;
+class QGstreamerBusHelper;
+
+class QGstreamerCaptureSession : public QMediaCaptureControl
 {
+    Q_OBJECT
 public:
-    QMediaSink();
-    QMediaSink(const QVariant &url);
-    ~QMediaSink();
-    QMediaSink(const QMediaSink &other);
-    QMediaSink &operator =(const QMediaSink &other);
+    QGstreamerCaptureSession(QObject *parent);
+    ~QGstreamerCaptureSession();
 
-    bool isNull() const;
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink& sink);
 
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
+    int state() const;
 
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
+    qint64 position() const;
+    void setPositionUpdatePeriod(int ms);
 
-    bool operator ==(const QMediaSink& other) const;
-    bool operator !=(const QMediaSink& other) const;
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
+    void setCaptureDevice(const QString &deviceName);
+
+private slots:
+    void busMessage(const QGstreamerMessage &message);
 
 private:
-    QSharedDataPointer<QMediaSinkPrivate> d;
+    QMediaSink m_sink;
+    QMediaCapture::State m_state;
+    QGstreamerBusHelper *m_busHelper;
+    GstBus* m_bus;
 
+    GstElement *m_pipeline;
+
+    GstElement *m_alsasrc;
+    GstElement *m_audioconvert;
+    GstElement *m_encoder;
+    GstElement *m_muxer;
+    GstElement *m_filesink;
 };
 
-#endif  // QMEDIASINK_H
-
-
-
+#endif // QGSTREAMERCAPTURESESSION_H

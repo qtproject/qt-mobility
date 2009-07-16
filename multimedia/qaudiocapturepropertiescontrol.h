@@ -32,44 +32,25 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASINK_H
-#define QMEDIASINK_H
+#ifndef QAUDIOCAPTUREPROPERTIESCONTROL_H
+#define QAUDIOCAPTUREPROPERTIESCONTROL_H
 
-#include <QString>
-#include <QVariant>
+#include "qabstractmediacontrol.h"
 
-#include "qmultimediaglobal.h"
+class QAudioFormat;
 
-#include <QList>
-#include <QSharedDataPointer>
-
-class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink
+class QAudioCapturePropertiesControl : public QAbstractMediaControl
 {
 public:
-    QMediaSink();
-    QMediaSink(const QVariant &url);
-    ~QMediaSink();
-    QMediaSink(const QMediaSink &other);
-    QMediaSink &operator =(const QMediaSink &other);
+    virtual ~QAudioCapturePropertiesControl();
 
-    bool isNull() const;
+    virtual QAudioFormat format() const = 0;    
+    virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
+    virtual bool setFormat(const QAudioFormat &format) = 0;
 
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
 
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
-
-    bool operator ==(const QMediaSink& other) const;
-    bool operator !=(const QMediaSink& other) const;
-
-private:
-    QSharedDataPointer<QMediaSinkPrivate> d;
-
+protected:
+    QAudioCapturePropertiesControl(QObject *parent);
 };
 
-#endif  // QMEDIASINK_H
-
-
-
+#endif // QAUDIOCAPTUREPROPERTIESCONTROL_H
