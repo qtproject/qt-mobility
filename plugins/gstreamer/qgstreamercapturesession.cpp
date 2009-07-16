@@ -61,6 +61,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QObject *parent)
     if ( m_alsasrc && m_audioconvert && m_encoder && m_muxer && m_filesink && m_pipeline ) {
         gst_bin_add_many(GST_BIN(m_pipeline), m_alsasrc, m_audioconvert, m_encoder, m_muxer, m_filesink, NULL);
 
+        gst_element_link_many(m_alsasrc, m_audioconvert, m_encoder, m_muxer, m_filesink, NULL);
+
         m_bus = gst_element_get_bus(m_pipeline);
         m_busHelper = new QGstreamerBusHelper(m_bus, this);
         connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
