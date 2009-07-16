@@ -92,7 +92,20 @@ QContactAbstractAction::~QContactAbstractAction()
  * \fn QContactAbstractAction::supportedDetails(const QContact& contact) const
  * Returns a list of the details saved in the given \a contact which contain the fields required
  * for this action to be performed on them.
+ *
+ * The default implementation of this function simply tests all the details in the contact
+ * using \l supportsDetail()
  */
+QList<QContactDetail> QContactAbstractAction::supportedDetails(const QContact& contact) const
+{
+    QList<QContactDetail> ret;
+    QList<QContactDetail> details = contact.details();
+    for (int j=0; j < details.count(); j++) {
+        if (supportsDetail(details.at(j)))
+            ret.append(details.at(j));
+    }
+    return ret;
+}
 
 /*!
  * \fn QContactAbstractAction::performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
