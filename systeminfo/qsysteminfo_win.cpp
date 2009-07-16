@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsystemsinfo.h"
-#include "qsystemsinfo_p.h"
+#include "qsysteminfo.h"
+#include "qsysteminfo_p.h"
 #include <qt_windows.h>
 
 #include <QStringList>
@@ -63,19 +63,19 @@
 #define _TIME64_T_DEFINED
 
 
-QSystemsInfoPrivate::QSystemsInfoPrivate(QObject *parent)
+QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 {
     Q_UNUSED(parent);
     availableLanguages();
 }
 
 // 2 letter ISO 639-1
-QString QSystemsInfoPrivate::currentLanguage() const
+QString QSystemInfoPrivate::currentLanguage() const
 {
    return QString(setlocale(LC_ALL,NULL)).left(2);
 }
 
-QStringList QSystemsInfoPrivate::availableLanguages() const
+QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList lgList;
     QString rSubKey = "SOFTWARE\\Classes\\MIME\\Database\\Rfc1766";
@@ -91,23 +91,23 @@ QStringList QSystemsInfoPrivate::availableLanguages() const
     return lgList;
 }
 
-QString QSystemsInfoPrivate::qtVersion() const
+QString QSystemInfoPrivate::qtVersion() const
 {
     return qVersion();
 }
 
-QString QSystemsInfoPrivate::browserVersion() const
+QString QSystemInfoPrivate::browserVersion() const
 {
     return QString();
 }
 
-QString QSystemsInfoPrivate::firmwareVersion() const
+QString QSystemInfoPrivate::firmwareVersion() const
 {
     return QString();
 }
 
 
-QString QSystemsInfoPrivate::platformVersion() const
+QString QSystemInfoPrivate::platformVersion() const
 {
     //    QString wVer;
     DWORD qt_cever = 0;
@@ -126,54 +126,54 @@ QString QSystemsInfoPrivate::platformVersion() const
 }
 
 //2 letter ISO 3166-1
-QString QSystemsInfoPrivate::countryCode() const
+QString QSystemInfoPrivate::countryCode() const
 {
    return QString(setlocale(LC_ALL,"")).mid(3,2);
 }
 
-qint32 QSystemsInfoPrivate::networkSignalStrength()
+qint32 QSystemInfoPrivate::networkSignalStrength()
 {
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::cellId()
+qint32 QSystemInfoPrivate::cellId()
 {
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::lac()
+qint32 QSystemInfoPrivate::lac()
 {
     return -1;
 }
 
 // Mobile Country Code
-qint32 QSystemsInfoPrivate::currentMCC()
+qint32 QSystemInfoPrivate::currentMCC()
 {
     return -1;
 }
 
 // Mobile Network Code
-qint32 QSystemsInfoPrivate::currentMNC()
+qint32 QSystemInfoPrivate::currentMNC()
 {
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::homeMCC()
+qint32 QSystemInfoPrivate::homeMCC()
 {
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::homeMNC()
+qint32 QSystemInfoPrivate::homeMNC()
 {
     return -1;
 }
 
-bool QSystemsInfoPrivate::isLocationEnabled() const
+bool QSystemInfoPrivate::isLocationEnabled() const
 {
     return false;
 }
 
-bool QSystemsInfoPrivate::isWLANAccessible() const
+bool QSystemInfoPrivate::isWLANAccessible() const
 {
     HANDLE phClientHandle = NULL;
     DWORD result;
@@ -197,13 +197,13 @@ bool QSystemsInfoPrivate::isWLANAccessible() const
 }
 
  //returns OR'd feature
-qint32 QSystemsInfoPrivate::supportedFeatures()
+qint32 QSystemInfoPrivate::supportedFeatures()
 {
     return -1;
 }
 
 // display
-qint32 QSystemsInfoPrivate::displayBrightness()
+qint32 QSystemInfoPrivate::displayBrightness()
 {
     qint32 brightness;
     HANDLE display = CreateFile(L"\\\\.\\LCD", FILE_ANY_ACCESS, 0, NULL, OPEN_EXISTING, 0, NULL);
@@ -223,17 +223,17 @@ qint32 QSystemsInfoPrivate::displayBrightness()
     return brightness;
 }
 
-qint32 QSystemsInfoPrivate::screenSaverTimeout()
+qint32 QSystemInfoPrivate::screenSaverTimeout()
 {
     return -1;
 }
 
-qint32 QSystemsInfoPrivate::screenBlankingTimeout()
+qint32 QSystemInfoPrivate::screenBlankingTimeout()
 {
     return -1;
 }
 
-QSize QSystemsInfoPrivate::screenSize()
+QSize QSystemInfoPrivate::screenSize()
 {
     QSize sz = QApplication::desktop()->availableGeometry().size();
     if (sz.isValid())
@@ -243,71 +243,71 @@ QSize QSystemsInfoPrivate::screenSize()
 }
 
 
-qint32 QSystemsInfoPrivate::colorDepth()
+qint32 QSystemInfoPrivate::colorDepth()
 {
     return QPixmap::defaultDepth();
 }
 
-qint64 QSystemsInfoPrivate::memory() const
+qint64 QSystemInfoPrivate::memory() const
 {
     return -1;
 }
 
-qint64 QSystemsInfoPrivate::diskSpace(const QString &drive)
+qint64 QSystemInfoPrivate::diskSpace(const QString &drive)
 {
 Q_UNUSED(drive);
     return -1;
 }
 
-QStringList QSystemsInfoPrivate::listOfVolumes()
+QStringList QSystemInfoPrivate::listOfVolumes()
 {
     return QStringList();
 }
 
 // device
-QString QSystemsInfoPrivate::imei() const
+QString QSystemInfoPrivate::imei() const
 {
     return QString();
 }
 
-QString QSystemsInfoPrivate::imsi() const
+QString QSystemInfoPrivate::imsi() const
 {
     return QString();
 }
 
-QString QSystemsInfoPrivate::manufacturer() const
+QString QSystemInfoPrivate::manufacturer() const
 {
     return QString();
 }
 
-QString QSystemsInfoPrivate::model() const
+QString QSystemInfoPrivate::model() const
 {
     return QString();
 }
 
-qint32 QSystemsInfoPrivate::batteryLevel() const
+qint32 QSystemInfoPrivate::batteryLevel() const
 {
     return -1;
 }
 
-bool QSystemsInfoPrivate::isSimAvailable()
+bool QSystemInfoPrivate::isSimAvailable()
 {
     return false;
 }
 
-bool QSystemsInfoPrivate::isDiskSpaceCritical(const QString &drive)
+bool QSystemInfoPrivate::isDiskSpaceCritical(const QString &drive)
 {
     Q_UNUSED(drive);
     return false;
 }
 
 
-bool QSystemsInfoPrivate::isBatteryCharging()
+bool QSystemInfoPrivate::isBatteryCharging()
 {
     return false;
 }
 
-bool QSystemsInfoPrivate::isCriticalMemory() const
+bool QSystemInfoPrivate::isCriticalMemory() const
 {
 return false;
 }
