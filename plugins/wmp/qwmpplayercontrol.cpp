@@ -175,7 +175,7 @@ qint64 QWmpPlayerControl::position() const
 void QWmpPlayerControl::setPosition(qint64 position)
 {
     if (m_controls)
-        m_controls->put_currentPosition(position);
+        m_controls->put_currentPosition(double(position) / 1000.);
 }
 
 int QWmpPlayerControl::playlistPosition() const
