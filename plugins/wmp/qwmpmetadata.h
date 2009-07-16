@@ -39,11 +39,13 @@
 
 #include <wmp.h>
 
+class QWmpEvents;
+
 class QWmpMetaData : public QMetadataProvider
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QObject *parent = 0);
+    QWmpMetaData(QWmpEvents *events, QObject *parent = 0);
     ~QWmpMetaData();
 
     bool metadataAvailable() const;
@@ -54,15 +56,16 @@ public:
     QVariant metadata(QString const &name) const;
     void setMetadata(QString const &name, QVariant const &value);
 
-    IWMPMedia *media() const;
-    void setMedia(IWMPMedia *media);
-
     static QStringList keys(IWMPMedia *media);
 
     static int valueCount(IWMPMedia *media, const QString &key);
     
     static QVariant value(IWMPMedia *media, const QString &key, int value);
     static QVariantList values(IWMPMedia *media, const QString &key);
+
+private Q_SLOTS:
+    void currentItemChangeEvent(IDispatch *dispatch);
+    void mediaChangeEvent(IDispatch *dispatch);
 
 private:
     IWMPMedia *m_media;

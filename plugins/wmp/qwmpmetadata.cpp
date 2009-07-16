@@ -34,14 +34,19 @@
 
 #include "qwmpmetadata.h"
 
+#include "qwmpevents.h"
 #include "qwmpglobal.h"
 
+#include <QtCore/qdebug.h>
 #include <QtCore/qstringlist.h>
 
-QWmpMetaData::QWmpMetaData(QObject *parent)
+QWmpMetaData::QWmpMetaData(QWmpEvents *events, QObject *parent)
     : QMetadataProvider(parent)
     , m_media(0)
 {
+    connect(events, SIGNAL(CurrentItemChange(IDispatch*)),
+            this, SLOT(currentItemChangeEvent(IDispatch*)));
+    connect(events, SIGNAL(MediaChange(IDispatch*)), this, SLOT(mediaChangeEvent(IDispatch*)));
 }
 
 QWmpMetaData::~QWmpMetaData()
@@ -52,7 +57,7 @@ QWmpMetaData::~QWmpMetaData()
 
 bool QWmpMetaData::metadataAvailable() const
 {
-    return true;
+    return m_media != 0;
 }
 
 bool QWmpMetaData::isReadOnly() const
@@ -79,22 +84,6 @@ void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
 {
     Q_UNUSED(name);
     Q_UNUSED(value);
-}
-
-IWMPMedia *QWmpMetaData::media() const
-{
-    return m_media;
-}
-
-void QWmpMetaData::setMedia(IWMPMedia *media)
-{
-    if (m_media)
-        m_media->Release();
-
-    m_media = media;
-
-    if (m_media)
-        m_media->AddRef();
 }
 
 QStringList QWmpMetaData::keys(IWMPMedia *media)
@@ -147,14 +136,31 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key, int index)
 
         if (media3->getItemInfoByType(QAutoBStr(key), 0, index, &var) == S_OK) {
             switch (var.vt) {
+            case VT_I2:
+                value = var.iVal;
+                break;
             case VT_I4:
                 value = var.lVal;
                 break;
+            case VT_I8:
+                value = var.llVal;
+                break;
+            case VT_UI2:
+                value = var.uiVal;
+                break;
+            case VT_UI4:
+                value = quint32(var.ulVal);
+                break;
+            case VT_UI8:
+                value = var.ullVal;
             case VT_INT:
                 value = var.intVal;
                 break;
+            case VT_UINT:
+                value = var.uintVal;
+                break;
             case VT_BSTR:
-                value = QString::fromWCharArray(var.bstrVal, SysStringLen(var.bstrVal));
+                value = QString::fromWCharArray(var.bstrVal, ::SysStringLen(var.bstrVal));
                 break;
             case VT_DISPATCH:
                 {
@@ -166,9 +172,9 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key, int index)
                             reinterpret_cast<void **>(&picture)) == S_OK) {
                         BSTR string;
                         if (picture->get_URL(&string) == S_OK) {
-                            value = QString::fromWCharArray(string, SysStringLen(string));
+                            value = QString::fromWCharArray(string, ::SysStringLen(string));
 
-                            SysFreeString(string);
+                            ::SysFreeString(string);
                         }
                         picture->Release();
                     } else if (var.pdispVal->QueryInterface(
@@ -178,7 +184,7 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key, int index)
                         if (text->get_description(&string) == S_OK) {
                             value = QString::fromWCharArray(string, SysStringLen(string));
 
-                            SysFreeString(string);
+                            ::SysFreeString(string);
                         }
                         text->Release();
                     }
@@ -208,4 +214,37 @@ QVariantList QWmpMetaData::values(IWMPMedia *media, const QString &key)
     }
 
     return values;
+}
+
+void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
+{
+    IWMPMedia *media = m_media;
+
+    m_media = 0;
+    if (dispatch)
+        dispatch->QueryInterface(__uuidof(IWMPMedia), reinterpret_cast<void **>(&m_media));
+
+    if (media) {
+        if (m_media)
+            emit metadataChanged();
+        else
+            emit metadataAvailabilityChanged(false);
+
+        media->Release();
+    } else {
+        if (m_media)
+            emit metadataAvailabilityChanged(false);
+    }
+}
+
+void QWmpMetaData::mediaChangeEvent(IDispatch *dispatch)
+{
+    IWMPMedia *media = 0;
+    if (dispatch &&  dispatch->QueryInterface(
+            __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
+        VARIANT_BOOL isEqual = VARIANT_FALSE;
+        if (media->get_isIdentical(m_media, &isEqual) == S_OK && isEqual)
+            emit metadataChanged();
+        media->Release();
+    }
 }

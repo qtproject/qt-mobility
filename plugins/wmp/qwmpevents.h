@@ -35,13 +35,26 @@
 #ifndef QWMPEVENTS_H
 #define QWMPEVENTS_H
 
+#include <QtCore/qobject.h>
+
 #include <wmp.h>
 
-class QWmpEvents : public IWMPEvents3
+class QWmpEvents : public QObject, public IWMPEvents3
 {
+    Q_OBJECT
 public:
-    // IWMPEvents
+    QWmpEvents(IUnknown *source, QObject *parent = 0);
+    ~QWmpEvents();
 
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+Q_SIGNALS:
+
+#ifndef Q_MOC_RUN
+    // IWMPEvents
     void STDMETHODCALLTYPE OpenStateChange(long NewState);
     void STDMETHODCALLTYPE PlayStateChange(long NewState);
     void STDMETHODCALLTYPE AudioLanguageChange(long LangID);
@@ -115,6 +128,88 @@ public:
             long lCollectionIndex);
     void STDMETHODCALLTYPE MediaCollectionMediaAdded(IDispatch *pdispMedia);    
     void STDMETHODCALLTYPE MediaCollectionMediaRemoved(IDispatch *pdispMedia);
+#else
+    // Declare again without STDMETHODCALLTYPE for moc's benefit.
+
+    // IWMPEvents
+    void OpenStateChange(long NewState);
+    void PlayStateChange(long NewState);
+    void AudioLanguageChange(long LangID);
+    void StatusChange();
+    void ScriptCommand(BSTR scType, BSTR Param);
+    void NewStream();
+    void Disconnect(long Result);
+    void Buffering(VARIANT_BOOL Start);
+    void Error();
+    void Warning(long WarningType, long Param, BSTR Description);
+    void EndOfStream(long Result);
+    void PositionChange(double oldPosition, double newPosition);
+    void MarkerHit(long MarkerNum);
+    void DurationUnitChange(long NewDurationUnit);
+    void CdromMediaChange(long CdromNum);
+    void PlaylistChange(IDispatch *Playlist, WMPPlaylistChangeEventType change);
+    void CurrentPlaylistChange(WMPPlaylistChangeEventType change);
+    void CurrentPlaylistItemAvailable(BSTR bstrItemName);
+    void MediaChange(IDispatch *Item);
+    void CurrentMediaItemAvailable(BSTR bstrItemName);
+    void CurrentItemChange(IDispatch *pdispMedia);
+    void MediaCollectionChange();
+    void MediaCollectionAttributeStringAdded(
+            BSTR bstrAttribName, BSTR bstrAttribVal);
+    void MediaCollectionAttributeStringRemoved(
+            BSTR bstrAttribName, BSTR bstrAttribVal);
+    void MediaCollectionAttributeStringChanged(
+            BSTR bstrAttribName, BSTR bstrOldAttribVal, BSTR bstrNewAttribVal);
+    void PlaylistCollectionChange();
+    void PlaylistCollectionPlaylistAdded(BSTR bstrPlaylistName);
+    void PlaylistCollectionPlaylistRemoved(BSTR bstrPlaylistName);
+    void PlaylistCollectionPlaylistSetAsDeleted(
+            BSTR bstrPlaylistName, VARIANT_BOOL varfIsDeleted);
+    void ModeChange(BSTR ModeName, VARIANT_BOOL NewValue);
+    void MediaError(IDispatch *pMediaObject);
+    void OpenPlaylistSwitch(IDispatch *pItem);
+    void DomainChange(BSTR strDomain);
+    void SwitchedToPlayerApplication();
+    void SwitchedToControl();
+    void PlayerDockedStateChange();
+    void PlayerReconnect();
+    void Click(short nButton, short nShiftState, long fX, long fY);
+    void DoubleClick(short nButton, short nShiftState, long fX, long fY);
+    void KeyDown(short nKeyCode, short nShiftState);
+    void KeyPress(short nKeyAscii);
+    void KeyUp(short nKeyCode, short nShiftState);
+    void MouseDown(short nButton, short nShiftState, long fX, long fY);
+    void MouseMove(short nButton, short nShiftState, long fX, long fY);
+    void MouseUp(short nButton, short nShiftState, long fX, long fY);
+
+    // IWMPEvents2
+    void DeviceConnect(IWMPSyncDevice *pDevice);
+    void DeviceDisconnect(IWMPSyncDevice *pDevice);
+    void DeviceStatusChange(IWMPSyncDevice *pDevice, WMPDeviceStatus NewStatus);
+    void DeviceSyncStateChange(IWMPSyncDevice *pDevice, WMPSyncState NewState);
+    void DeviceSyncError(IWMPSyncDevice *pDevice, IDispatch *pMedia);
+    void CreatePartnershipComplete(IWMPSyncDevice *pDevice, HRESULT hrResult);
+
+    // IWMPEvents3
+    void CdromRipStateChange(IWMPCdromRip *pCdromRip, WMPRipState wmprs);
+    void CdromRipMediaError(IWMPCdromRip *pCdromRip, IDispatch *pMedia);
+    void CdromBurnStateChange(IWMPCdromBurn *pCdromBurn, WMPBurnState wmpbs);
+    void CdromBurnMediaError(IWMPCdromBurn *pCdromBurn, IDispatch *pMedia);
+    void CdromBurnError(IWMPCdromBurn *pCdromBurn, HRESULT hrError);
+    void LibraryConnect(IWMPLibrary *pLibrary);
+    void LibraryDisconnect(IWMPLibrary *pLibrary);
+    void FolderScanStateChange(WMPFolderScanState wmpfss);
+    void StringCollectionChange(
+            IDispatch *pdispStringCollection,
+            WMPStringCollectionChangeEventType change,
+            long lCollectionIndex);
+    void MediaCollectionMediaAdded(IDispatch *pdispMedia);
+    void MediaCollectionMediaRemoved(IDispatch *pdispMedia);
+#endif
+private:
+    volatile LONG m_ref;
+    IConnectionPoint *m_connectionPoint;
+    DWORD m_adviseCookie;
 };
 
 #endif

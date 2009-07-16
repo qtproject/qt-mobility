@@ -41,11 +41,13 @@
 
 #include <wmp.h>
 
+class QWmpEvents;
+
 class QWmpPlaylist : public QMediaPlaylistSource
 {
     Q_OBJECT
 public:
-    QWmpPlaylist(IWMPCore3 *player, QObject *parent = 0);
+    QWmpPlaylist(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpPlaylist();
 
     bool load(const QString &location, const char *format = 0);
@@ -72,15 +74,18 @@ public:
     QVariant value(int index, const QString &key, int value = 0) const;
     QVariantList values(int index, const QString &key) const;
 
-    IWMPPlaylist *playlist() const;
-    void setPlaylist(IWMPPlaylist *playlist);
-
 public Q_SLOTS:
     virtual void shuffle();
+
+private Q_SLOTS:
+    void currentPlaylistChangeEvent(WMPPlaylistChangeEventType change);
+    void openPlaylistChangeEvent(IDispatch *dispatch);
+    void mediaChangeEvent(IDispatch *dispatch);
 
 private:
     IWMPCore3 *m_player;
     IWMPPlaylist *m_playlist;
+    long m_count;
 };
 
 #endif

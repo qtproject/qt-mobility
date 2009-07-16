@@ -52,7 +52,6 @@ class QWmpPlaylist;
 
 class QWmpPlayerService
     : public QMediaPlayerService
-    , public QWmpEvents
     , public IOleClientSite
     , public IOleInPlaceSite
     , public IOleInPlaceFrame
@@ -85,12 +84,6 @@ public:
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
     ULONG STDMETHODCALLTYPE AddRef();
     ULONG STDMETHODCALLTYPE Release();
-
-    // IWMPEvents
-    void STDMETHODCALLTYPE PlayStateChange(long NewState);
-    void STDMETHODCALLTYPE Buffering(VARIANT_BOOL Start);
-    void STDMETHODCALLTYPE PositionChange(double oldPosition, double newPosition);
-    void STDMETHODCALLTYPE MediaChange(IDispatch *Item);
 
     // IOleClientSite
     HRESULT STDMETHODCALLTYPE SaveObject();
@@ -151,12 +144,10 @@ private:
     IWMPPlayer4 *m_player;
     IOleObject *m_oleObject;
     IOleInPlaceObject *m_inPlaceObject;
+    QWmpEvents *m_events;
     QWmpPlaceholderWidget *m_placeholderWidget;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
-    QWmpPlaylist *m_playlist;
-    IConnectionPoint *m_connectionPoint;
-    DWORD m_adviseCookie;
 
 #ifdef QWMP_EVR
     HINSTANCE m_evrHwnd;

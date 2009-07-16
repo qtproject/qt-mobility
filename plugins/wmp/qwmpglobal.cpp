@@ -34,6 +34,8 @@
 
 #include "qwmpglobal.h"
 
+#include <QtCore/qdebug.h>
+
 const char *qwmp_error_string(HRESULT hr)
 {
     switch (hr) {

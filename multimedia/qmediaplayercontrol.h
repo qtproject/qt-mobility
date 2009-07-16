@@ -93,7 +93,7 @@ Q_SIGNALS:
     void playlistPositionChanged(int position);
     void currentMediaChanged(const QMediaSource&);
     void stateChanged(int newState);
-    void streamStateChanged(int state);
+    void streamStatusChanged(int state);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
