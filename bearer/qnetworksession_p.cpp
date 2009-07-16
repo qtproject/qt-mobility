@@ -52,22 +52,25 @@
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include "qnmwifiengine_unix_p.h"
 #endif
+#if defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#include "qnativewifiengine_unix_p.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 
-//#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-//static bool NetworkManagerAvailable()
-//{
-//    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-//    if (dbusConnection.isConnected()) {
-//        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-//        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
-//        if (reply.isValid())
-//            return reply.value();
-//    }
-//    return false;
-//}
-//#endif
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+static bool NetworkManagerAvailable()
+{
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
+        if (reply.isValid())
+            return reply.value();
+    }
+    return false;
+}
+#endif
 
 static QNetworkSessionEngine *getEngineFromId(const QString &id)
 {
@@ -84,9 +87,16 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
 #endif
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    QNmWifiEngine *nmwiifi = QNmWifiEngine::instance();
-    if (nmwiifi && nmwiifi->hasIdentifier(id))
-        return nmwiifi;
+    if(NetworkManagerAvailable()) {
+        QNmWifiEngine *nmwiifi = QNmWifiEngine::instance();
+        if (nmwiifi && nmwiifi->hasIdentifier(id))
+            return nmwiifi;
+    }
+#endif
+#if defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+    QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
+    if (nativeWifi && nativeWifi->hasIdentifier(id))
+        return nativeWifi;
 #endif
 
     QGenericEngine *generic = QGenericEngine::instance();
@@ -487,6 +497,10 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 void QNetworkSessionPrivate::setActiveTimeStamp()
 {
+    if(NetworkManagerAvailable()) {
+        startTime = QDateTime();
+        return;
+    }
     QString connectionIdent = q->configuration().identifier();
     QString interface = currentInterface().hardwareAddress().toLower();
     QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
@@ -495,6 +509,7 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
     QString serviceName;
     QNetworkManagerInterface * ifaceD;
     ifaceD = new QNetworkManagerInterface();
+
     QList<QDBusObjectPath> connections = ifaceD->activeConnections();
     foreach(QDBusObjectPath conpath, connections) {
         QNetworkManagerConnectionActive *conDetails;

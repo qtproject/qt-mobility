@@ -55,6 +55,9 @@ QNmWifiEngine::QNmWifiEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
 {
     iface = new QNetworkManagerInterface();
+    if(!iface->isValid()) {
+        return;
+    }
     iface->setConnections();
     connect(iface,SIGNAL(deviceAdded(QDBusObjectPath)),
             this,SLOT(addDevice(QDBusObjectPath)));
@@ -981,11 +984,12 @@ QNetworkInterface QNmWifiEngine::getBestInterface( quint32 type, const QString &
 
 quint64 QNmWifiEngine::receivedDataForId(const QString &id) const
 {
+    if(configurationInterface.count() > 1)
+        return 0;
     quint64 result = 0;
 
     QString devFile;
     devFile =  configurationInterface.value(id);
-
     QFile rx("/sys/class/net/"+devFile+"/statistics/rx_bytes");
     if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&rx);
@@ -997,6 +1001,8 @@ quint64 QNmWifiEngine::receivedDataForId(const QString &id) const
 
 quint64 QNmWifiEngine::sentDataForId(const QString &id) const
 {
+    if(configurationInterface.count() > 1)
+        return 0;
     quint64 result = 0;
     QString devFile;
     devFile =  configurationInterface.value(id);
