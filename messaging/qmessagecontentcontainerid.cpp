@@ -54,9 +54,10 @@
     be reused.
     
     If the QMessageContentContainerId refers to an object that has a parent container, and the 
-    contents of that parent container are modified by removing contents (i.e. attachments are 
-    removed) or the parent container itself is removed then the identifier may become invalid, 
-    or be reused to reference a different object entirely.
+    contents of that parent container are modified by removing or prepending contents (i.e. 
+    message attachments are removed or a message body is created) or the parent container 
+    itself is removed then the identifier may become invalid, or be reused to reference a 
+    different object entirely.
     
     \sa QMessageContentContainer
 */
