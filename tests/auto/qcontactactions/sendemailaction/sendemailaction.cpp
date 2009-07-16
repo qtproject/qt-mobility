@@ -136,10 +136,10 @@ int QContactSendEmailAction::implementationVersion() const
     return 1;
 }
 
-QContactActionFilter QContactSendEmailAction::contactFilter() const
+QContactFilter QContactSendEmailAction::contactFilter() const
 {
-    QContactActionFilter retn;
-    retn.setActionName("SendEmail");
+    QContactDetailFilter retn;
+    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
     return retn;
 }
 
@@ -147,12 +147,6 @@ bool QContactSendEmailAction::supportsDetail(const QContactDetail& detail) const
 {
     return (detail.definitionName() == QContactEmailAddress::DefinitionName);
 }
-
-QList<QContactDetail> QContactSendEmailAction::supportedDetails(const QContact& contact) const
-{
-    return contact.details(QContactEmailAddress::DefinitionName);
-}
-
 void QContactSendEmailAction::performAction(const QContact& contact, const QContactDetail& detail)
 {
     Q_UNUSED(contact);

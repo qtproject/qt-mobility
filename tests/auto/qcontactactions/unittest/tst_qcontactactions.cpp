@@ -124,7 +124,6 @@ void tst_QContactActions::testSendEmail()
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
     QApplication::addLibraryPath(path);
 
-    QContactManager cm;
     QContact c;
     QContactEmailAddress e;
     e.setEmailAddress("test@nokia.com");
