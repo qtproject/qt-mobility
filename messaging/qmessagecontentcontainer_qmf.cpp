@@ -443,8 +443,12 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 
 bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return false; // stub
+    QMailMessagePart::Location location(convert(id));
+
+    PartLocator locator(location);
+    d_ptr->_part.foreachPart<PartLocator&>(locator);
+
+    return (locator._part != 0);
 }
 
 #ifdef QMESSAGING_OPTIONAL
