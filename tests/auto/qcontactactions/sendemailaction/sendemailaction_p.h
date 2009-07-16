@@ -80,7 +80,7 @@ public:
     virtual QString vendor() const;
     virtual int implementationVersion() const;
 
-    QContactFilter contactFilter() const;
+    QContactFilter contactFilter(const QVariant& value) const;
     bool supportsDetail(const QContactDetail& detail) const;
     void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
 };

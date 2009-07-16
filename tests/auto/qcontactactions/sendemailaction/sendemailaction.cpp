@@ -136,10 +136,11 @@ int QContactSendEmailAction::implementationVersion() const
     return 1;
 }
 
-QContactFilter QContactSendEmailAction::contactFilter() const
+QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) const
 {
     QContactDetailFilter retn;
     retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    retn.setValue(value);
     return retn;
 }
 
