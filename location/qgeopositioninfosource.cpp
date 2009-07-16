@@ -115,6 +115,9 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
     rounded to the nearest second if the implementation does not support
     intervals specified to millisecond precision.
 
+    If an implementation cannot provide an update at a particular interval,
+    it will provide the next update as soon as it becomes available.
+
     \bold {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure updateInterval() returns the correct
     value.
