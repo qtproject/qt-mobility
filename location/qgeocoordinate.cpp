@@ -218,8 +218,8 @@ bool QGeoCoordinate::isValid() const
 */
 QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
 {
-    if ( (d->lat >= -90 && d->lat <= 90)
-          && (d->lng >= -180 && d->lng <= 180) ) {
+    if (QLocationUtils::isValidLat(d->lat)
+            && QLocationUtils::isValidLong(d->lng)) {
         if (qIsNaN(d->alt))
             return Coordinate2D;
         return Coordinate3D;
