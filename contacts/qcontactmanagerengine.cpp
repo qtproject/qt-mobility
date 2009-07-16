@@ -1071,7 +1071,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             }
 
         case QVariant::Date:
-            return first.toDate().toJulianDay() - first.toDate().toJulianDay();
+            return first.toDate().toJulianDay() - second.toDate().toJulianDay();
 
         case QVariant::Time:
             {

@@ -251,7 +251,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QTest::newRow("integer value (no match)") << "Integer" << "value" << true << QVariant(50) << es;
     QTest::newRow("integer value (wrong type)") << "Integer" << "value" << true << QVariant(3.5) << es;
 //    QTest::newRow("integer value (string type)") << "Integer" << "value" << true << QVariant("20") << es;
-    QTest::newRow("integer value (wrong field, no match)") << "Integer" << "Trouble" << true << QVariant(20) << es;
+    QTest::newRow("integer value (wrong field, no match)") << "Integer" << "Trouble" << true << QVariant(50) << es;
     QTest::newRow("integer value") << "Integer" << "value" << true << QVariant(10) << "a";
     QTest::newRow("integer value (wrong field)") << "Integer" << "Trouble" << true << QVariant(10) << es;
     QTest::newRow("integer value 2") << "Integer" << "value" << true << QVariant(-20) << "c";
@@ -272,13 +272,56 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QTest::newRow("datetime value (no match)") << "DateTime" << "value" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
     QTest::newRow("datetime value (wrong type)") << "DateTime" << "value" << true << QVariant(3.5) << es;
 //    QTest::newRow("datetime value (string type)") << "DateTime" << "value" << true << QVariant(adt.toString(Qt::ISODate)) << es;
-    QTest::newRow("datetime value (wrong field, no match)") << "DateTime" << "Trouble" << true << QVariant(adt) << es;
+    QTest::newRow("datetime value (wrong field, no match)") << "DateTime" << "Trouble" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
     QTest::newRow("datetime value") << "DateTime" << "value" << true << QVariant(adt) << "a";
     QTest::newRow("datetime value (wrong field)") << "DateTime" << "Trouble" << true << QVariant(adt) << es;
     QTest::newRow("datetime value 2") << "DateTime" << "value" << true << QVariant(cdt)<< "c";
     QTest::newRow("datetime value 2 (wrong field)") << "DateTime" << "Trouble" << true << QVariant(cdt) << es;
 
+    /*
+     * Dates
+     * A has QDate(1988, 1, 26)
+     * B has QDate(1492, 5, 5)
+     * D has QDate(1770, 10, 1)
+     */
+    const QDate ad(1988, 1, 26);
+    const QDate bd(1492, 5, 5);
+    const QDate dd(1770, 10, 1);
+    QTest::newRow("date presence") << "Date" << es << false << ev << "abd";
+    QTest::newRow("date presence (inc field)") << "Date" << "value" << false << ev << "abd";
+    QTest::newRow("date presence (wrong field)") << "Date" << "Trouble" << false << ev << es;
 
+    QTest::newRow("date value (no match)") << "Date" << "value" << true << QVariant(QDate(2100,5,13)) << es;
+    QTest::newRow("date value (wrong type)") << "Date" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("date value (string type)") << "Date" << "value" << true << QVariant(ad.toString(Qt::ISODate)) << es;
+    QTest::newRow("date value (wrong field, no match)") << "Date" << "Trouble" << true << QVariant(QDate(2100,5,13)) << es;
+    QTest::newRow("date value") << "Date" << "value" << true << QVariant(ad) << "a";
+    QTest::newRow("date value (wrong field)") << "Date" << "Trouble" << true << QVariant(ad) << es;
+    QTest::newRow("date value 2") << "Date" << "value" << true << QVariant(bd)<< "b";
+    QTest::newRow("date value 2 (wrong field)") << "Date" << "Trouble" << true << QVariant(bd) << es;
+    QTest::newRow("date value 3") << "Date" << "value" << true << QVariant(dd)<< "d";
+    QTest::newRow("date value 3 (wrong field)") << "Date" << "Trouble" << true << QVariant(dd) << es;
+
+
+    /*
+     * Times
+     * A has QTime(16,52,23,0)
+     * B has QTime(15,52,23,0)
+     */
+    const QTime at = QTime(16,52,23,0);
+    const QTime bt = QTime(15,52,23,0);
+    QTest::newRow("time presence") << "Time" << es << false << ev << "ab";
+    QTest::newRow("time presence (inc field)") << "Time" << "value" << false << ev << "ab";
+    QTest::newRow("time presence (wrong field)") << "Time" << "Trouble" << false << ev << es;
+
+    QTest::newRow("time value (no match)") << "Time" << "value" << true << QVariant(QTime(5,5,5)) << es;
+    QTest::newRow("time value (wrong type)") << "Time" << "value" << true << QVariant(3.5) << es;
+//    QTest::newRow("time value (string type)") << "Time" << "value" << true << QVariant(at.toString(Qt::ISOTime)) << es;
+    QTest::newRow("time value (wrong field, no match)") << "Time" << "Trouble" << true << QVariant(QTime(5,5,5)) << es;
+    QTest::newRow("time value") << "Time" << "value" << true << QVariant(at) << "a";
+    QTest::newRow("time value (wrong field)") << "Time" << "Trouble" << true << QVariant(at) << es;
+    QTest::newRow("time value 2") << "Time" << "value" << true << QVariant(bt)<< "b";
+    QTest::newRow("time value 2 (wrong field)") << "Time" << "Trouble" << true << QVariant(bt) << es;
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering()
@@ -799,6 +842,7 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     boool.setValue("value", true);
     ullong.setValue("value", (qulonglong)120000000000LL); // 120B
     date.setValue("value", QDate(1988, 1, 26));
+    time.setValue("value", QTime(16,52,23,0));
 
     a.saveDetail(&name);
     a.saveDetail(&number);
@@ -806,7 +850,8 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     a.saveDetail(&datetime);
     a.saveDetail(&boool);
     a.saveDetail(&ullong);
-    //a.saveDetail(&date);
+    a.saveDetail(&date);
+    a.saveDetail(&time);
 
     name.setFirst("Bob");
     name.setLast("Aaronsen");
@@ -816,6 +861,7 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     boool.setValue("value", false);
     ullong.setValue("value", (qulonglong) 80000000000LL); // 80B
     date.setValue("value", QDate(1492, 5, 5));
+    time.setValue("value", QTime(15,52,23,0));
 
     b.saveDetail(&name);
     b.saveDetail(&number);
@@ -824,6 +870,7 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     b.saveDetail(&boool);
     b.saveDetail(&ullong);
     b.saveDetail(&date);
+    b.saveDetail(&time);
 
     name.setFirst("Boris");
     name.setLast("Aaronsun");
