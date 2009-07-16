@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+#include <QSet>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
@@ -401,30 +402,15 @@ QStringList QContact::availableActions() const
 {
     // check every action implementation to see if it supports me.
     QContactData::setError(d, QContact::NoError);
-    QMap<QString, bool> supportMap;
+    QSet<QString> validActions;
     QList<QContactAbstractAction*> implementations = QContactManagerData::actions();
     for (int i = 0; i < implementations.size(); i++) {
         QContactAbstractAction* aptr = implementations.at(i);
-        QContact self = *this;
-        if (!(aptr->supportedDetails(self).isEmpty()))
-            supportMap.insert(aptr->actionName(), true);
-
-        // alternative - requires access to an engine
-        //if (QContactManagerEngine::testFilter(aptr->contactFilter(), self))
-        //    supportMap.insert(aptr->actionName(), true);
+        if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
+            validActions.insert(aptr->actionName());
     }
 
-    // for each action name, if it is supported, add it to the return list.
-    QStringList retn;
-    QStringList keys = supportMap.keys();
-    for (int i = 0; i < keys.size(); i++) {
-        QString key = keys.at(i);
-        if (supportMap.value(key, false)) {
-            retn.append(key);
-        }
-    }
-
-    return retn;
+    return validActions.toList();
 }
 
 /*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
