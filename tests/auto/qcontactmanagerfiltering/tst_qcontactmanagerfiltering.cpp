@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+#define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
@@ -58,7 +59,9 @@ private:
     void dumpContacts();
     bool isSuperset(const QContact& ca, const QContact& cb);
 
-    QList<QContact> prepareModel(QContactManager* cm); // add the standard contacts
+    QList<QUniqueId> prepareModel(QContactManager* cm); // add the standard contacts
+
+    QString convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids); // convert back to "abcd"
 public slots:
     void init();
     void cleanup();
@@ -68,6 +71,10 @@ private slots:
     void rangeFiltering_data();
 
     void detailStringFiltering(); // XXX should take all managers
+
+    void actionPlugins();
+    void actionFiltering();
+    void actionFiltering_data();
 
     void detailVariantFiltering();
     void detailVariantFiltering_data();
@@ -100,14 +107,14 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
-    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = prepareModel(cm);
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = contacts.at(0);
-    QContact b = contacts.at(1);
-    QContact c = contacts.at(2);
-    QContact d = contacts.at(3);
+    QContact a = cm->contact(contacts.at(0));
+    QContact b = cm->contact(contacts.at(1));
+    QContact c = cm->contact(contacts.at(2));
+    QContact d = cm->contact(contacts.at(3));
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
@@ -443,14 +450,10 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
-    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = prepareModel(cm);
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = contacts.at(0);
-    QContact b = contacts.at(1);
-    QContact c = contacts.at(2);
-    QContact d = contacts.at(3);
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
@@ -462,15 +465,21 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     ids = cm->contacts(df);
 
-    QCOMPARE(ids.count(), expected.count());
-    QVERIFY(expected.count() <= contacts.count());
-
-    /* Expected is of the form "abcd".. */
-    for (int i = 0; i < expected.size(); i++) {
-        QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
-    }
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 
     delete cm;
+}
+
+QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids)
+{
+    QString ret;
+    /* Expected is of the form "abcd".. */
+    for (int i = 0; i < ids.size(); i++) {
+        ret += ('a' + allIds.indexOf(ids.at(i)));
+    }
+
+    return ret;
 }
 
 void tst_QContactManagerFiltering::rangeFiltering_data()
@@ -569,14 +578,14 @@ void tst_QContactManagerFiltering::rangeFiltering()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
-    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = prepareModel(cm);
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = contacts.at(0);
-    QContact b = contacts.at(1);
-    QContact c = contacts.at(2);
-    QContact d = contacts.at(3);
+    QContact a = cm->contact(contacts.at(0));
+    QContact b = cm->contact(contacts.at(1));
+    QContact c = cm->contact(contacts.at(2));
+    QContact d = cm->contact(contacts.at(3));
 
     /* Build the range filter */
     QContactDetailRangeFilter drf;
@@ -706,14 +715,14 @@ void tst_QContactManagerFiltering::sorting()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
-    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = prepareModel(cm);
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = contacts.at(0);
-    QContact b = contacts.at(1);
-    QContact c = contacts.at(2);
-    QContact d = contacts.at(3);
+    QContact a = cm->contact(contacts.at(0));
+    QContact b = cm->contact(contacts.at(1));
+    QContact c = cm->contact(contacts.at(2));
+    QContact d = cm->contact(contacts.at(3));
 
     /* Build the sort order */
     QContactSortOrder s;
@@ -733,7 +742,134 @@ void tst_QContactManagerFiltering::sorting()
     delete cm;
 }
 
-QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
+void tst_QContactManagerFiltering::actionPlugins()
+{
+    QStringList actions = QContactManager::availableActions();
+    QVERIFY(actions.contains("Boolean"));
+    QVERIFY(actions.contains("Number"));
+
+    /* Ignore the version if the vendor is not set */
+    actions = QContactManager::availableActions(QString(), 555);
+    QVERIFY(actions.contains("Boolean"));
+    QVERIFY(actions.contains("Number"));
+
+    actions = QContactManager::availableActions("NumberCo");
+    QVERIFY(actions.contains("Number"));
+    QVERIFY(!actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("IntegerCo");
+    QVERIFY(actions.contains("Number"));
+    QVERIFY(!actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("BooleanCo");
+    QVERIFY(!actions.contains("Number"));
+    QVERIFY(actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("IntegerCo", 5);
+    QVERIFY(actions.contains("Number"));
+    QVERIFY(!actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("IntegerCo", 3);
+    QVERIFY(!actions.contains("Number"));
+    QVERIFY(!actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("BooleanCo", 3);
+    QVERIFY(!actions.contains("Number"));
+    QVERIFY(actions.contains("Boolean"));
+
+    actions = QContactManager::availableActions("BooleanCo", 555);
+    QVERIFY(!actions.contains("Number"));
+    QVERIFY(!actions.contains("Boolean"));
+}
+
+void tst_QContactManagerFiltering::actionFiltering_data()
+{
+    QTest::addColumn<QString>("actionName");
+    QTest::addColumn<QString>("vendorName");
+    QTest::addColumn<int>("version");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QString>("expected");
+
+    QString es;
+    QVariant ev;
+
+    QTest::newRow("empty (any action matches)") << es << es << -1 << ev << "abcd";
+    QTest::newRow("bad actionname") << "No such action" << es << -1 << ev << es;
+    QTest::newRow("bad vendor") << es << "Vendor missing" << -1 << ev << es;
+    /* versions are ignored if vendors are not specified */
+    QTest::newRow("ignored version") << es << es << 793434 << ev << "abcd";
+
+    QTest::newRow("Number") << "Number" << es << -1 << ev << "abcd";
+    QTest::newRow("Number (IntegerCo)") << "Number" << "IntegerCo" << -1 << ev << "abc";
+    QTest::newRow("Number (NumberCo)") << "Number" << "NumberCo" << -1 << ev << "abcd";
+    QTest::newRow("Number (BooleanCo)") << "Number" << "BooleanCo" << -1 << ev << es;
+
+    QTest::newRow("Number (IntegerCo, good version)") << "Number" << "IntegerCo" << 5 << ev << "abc";
+    QTest::newRow("Number (NumberCo, good version)") << "Number" << "NumberCo" << 42 << ev << "abcd";
+
+    QTest::newRow("Number (IntegerCo, bad version)") << "Number" << "IntegerCo" << 345345 << ev << es;
+    QTest::newRow("Number (NumberCo, bad version)") << "Number" << "NumberCo" << 7547544 << ev << es;
+
+    /* versions are ignored if vendors are not specified */
+    QTest::newRow("Number (ignored version)") << "Number" << es << 345345 << ev << "abcd";
+
+    /* Vendor specific */
+    QTest::newRow("NumberCo") << es << "NumberCo" << -1 << ev << "abcd";
+    QTest::newRow("NumberCo (good version)") << es << "NumberCo" << 42 << ev << "abcd";
+    QTest::newRow("NumberCo (bad version)") << es << "NumberCo" << 41 << ev << es;
+
+    QTest::newRow("IntegerCo") << es << "IntegerCo" << -1 << ev << "abc";
+    QTest::newRow("IntegerCo (good version)") << es << "IntegerCo" << 5 << ev << "abc";
+    QTest::newRow("IntegerCo (bad version)") << es << "IntegerCo" << 41 << ev << es;
+
+
+    /* Boolean testing */
+    QTest::newRow("Boolean action") << "Boolean" << es << -1 << ev << "a";
+    QTest::newRow("BooleanCo") << es << "BooleanCo" << -1 << ev << "a";
+    QTest::newRow("BooleanCo (good version)") << es << "BooleanCo" << 3 << ev << "a";
+    QTest::newRow("BooleanCo (bad version)") << es << "BooleanCo" << 3234243 << ev << es;
+
+    /* Value filtering */
+    QTest::newRow("Any action matching 20") << es << es << -1 << QVariant(20) << "b";
+    QTest::newRow("Any action matching 4.0") << es << es << -1 << QVariant(4.0) << "bc";
+    QTest::newRow("NumberCo with 20") << es << "NumberCo" << -1 << QVariant(20) << "b";
+    QTest::newRow("NumberCo with 4.0") << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
+    QTest::newRow("IntegerCo with 20") << es << "IntegerCo" << -1 << QVariant(20) << "b";
+    QTest::newRow("IntegerCo with 4.0") << es << "IntegerCo" << -1 << QVariant(4.0) << es;
+    QTest::newRow("Boolean action matching true") << es << "BooleanCo" << -1 << QVariant(true) << "a";
+    QTest::newRow("Boolean action matching false") << es << "BooleanCo" << -1 << QVariant(false) << es;
+}
+
+void tst_QContactManagerFiltering::actionFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QFETCH(QString, actionName);
+    QFETCH(QString, vendorName);
+    QFETCH(int, version);
+    QFETCH(QVariant, value);
+    QFETCH(QString, expected);
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    QContactActionFilter af;
+    af.setActionName(actionName);
+    af.setValue(value);
+    af.setVendorName(vendorName);
+    af.setVersion(version);
+
+    ids = cm->contacts(af);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete cm;
+}
+
+QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
 {
     /* Make sure it's empty */
     QList<QUniqueId> ids = cm->contacts();
@@ -903,15 +1039,15 @@ QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     c = cm->contact(c.id());
     d = cm->contact(d.id());
 
-    QList<QContact> list;
+    QList<QUniqueId> list;
     if (!a.isEmpty())
-        list << a;
+        list << a.id();
     if (!b.isEmpty())
-        list << b;
+        list << b.id();
     if (!c.isEmpty())
-        list << c;
+        list << c.id();
     if (!d.isEmpty())
-        list << d;
+        list << d.id();
     return list;
 }
 
@@ -1024,9 +1160,180 @@ void tst_QContactManagerFiltering::dumpContacts()
     }
 }
 
+/* Static actions for testing matching */
+class QIntegerAction : public QContactAbstractAction
+{
+    Q_OBJECT
 
+public:
+    QIntegerAction() {}
+    ~QIntegerAction() {}
 
+    QString actionName() const {return "Number";}
+    QVariantMap metadata() const {return QVariantMap();}
+    virtual QString vendor() const {return "IntegerCo";}
+    virtual int implementationVersion() const {return 5;}
 
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        df.setDetailDefinitionName("Integer", "value");
+        df.setValue(value);
+        return df;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == "Integer" && !detail.variantValue("value").isNull();
+    }
+
+    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+    }
+};
+
+class QNumberAction : public QContactAbstractAction
+{
+    Q_OBJECT
+
+public:
+    QNumberAction() {}
+    ~QNumberAction() {}
+
+    QString actionName() const {return "Number";}
+    QVariantMap metadata() const {return QVariantMap();}
+    virtual QString vendor() const {return "NumberCo";}
+    virtual int implementationVersion() const {return 42;}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        df.setDetailDefinitionName("Double", "value");
+        df.setValue(value);
+
+        QContactDetailFilter df2;
+        df2.setDetailDefinitionName("Integer", "value");
+        df2.setValue(value);
+
+        /* We like either doubles or integers */
+        return df || df2;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        if (detail.definitionName() == "Double" && !detail.variantValue("value").isNull())
+            return true;
+        if (detail.definitionName() == "Integer" && !detail.variantValue("value").isNull())
+            return true;
+        return false;
+    }
+
+    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+    }
+};
+
+class QBooleanAction : public QContactAbstractAction
+{
+    Q_OBJECT
+
+public:
+    QBooleanAction() {}
+    ~QBooleanAction() {}
+
+    QString actionName() const {return "Boolean";}
+    QVariantMap metadata() const {return QVariantMap();}
+    virtual QString vendor() const {return "BooleanCo";}
+    virtual int implementationVersion() const {return 3;}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        if (value.isNull() || (value.type() == QVariant::Bool && value.toBool() == true)) {
+            /* This only likes bools that are true */
+            QContactDetailFilter df;
+            df.setDetailDefinitionName("Bool", "value");
+            df.setValue(true);
+            return df;
+        } else {
+            return QContactFilter();
+        }
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == "Bool" && (detail.value<bool>("value") == true);
+    }
+
+    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+    }
+};
+
+class FilterActionFactory : public QContactAbstractActionFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QContactAbstractActionFactory)
+
+public:
+    FilterActionFactory() {}
+    ~FilterActionFactory() {}
+
+    QString name() {return QString("FilterActionFactory");}
+    QStringList actionNames() {return QStringList() << "Number" << "Boolean";}
+
+    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    {
+        Q_UNUSED(actionName);
+        Q_UNUSED(vendor);
+        Q_UNUSED(implementationVersion);
+        return 0;
+    }
+
+    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    {
+        QList<QContactAbstractAction*> ret;
+        // If we're after Number, we add all IntegerAction and NumberAction
+        // If we're after Boolean, we add BooleanAction
+        if (actionName == "Number") {
+            if (vendor.isEmpty()) {
+                if (implementationVersion == -1 || implementationVersion == 5)
+                    ret.append(new QIntegerAction());
+                if (implementationVersion == -1 || implementationVersion == 42) {
+                    ret.append(new QNumberAction());
+                }
+            } else if (vendor == "IntegerCo") {
+                if (implementationVersion == -1 || implementationVersion == 5)
+                    ret.append(new QIntegerAction);
+            } else if (vendor == "NumberCo") {
+                if (implementationVersion == -1 || implementationVersion == 42)
+                    ret.append(new QNumberAction);
+            }
+        } else if (actionName == "Boolean") {
+            if (implementationVersion == -1 || implementationVersion == 3)
+                ret.append(new QBooleanAction);
+        } else {
+            if (implementationVersion == -1 || implementationVersion == 42)
+                ret.append(new QNumberAction);
+            if (implementationVersion == -1 || implementationVersion == 5)
+                ret.append(new QIntegerAction);
+            if (implementationVersion == -1 || implementationVersion == 3)
+                ret.append(new QBooleanAction);
+        }
+
+        qDebug() << actionName << vendor << implementationVersion << ret;
+        return ret;
+    }
+};
+
+/* Statically import it (and a duplicate copy of it, purely for testing purposes) */
+Q_EXPORT_PLUGIN2(contacts_testFilterActionFactory, FilterActionFactory);
+Q_IMPORT_PLUGIN(contacts_testFilterActionFactory);
 
 QTEST_MAIN(tst_QContactManagerFiltering)
 #include "tst_qcontactmanagerfiltering.moc"

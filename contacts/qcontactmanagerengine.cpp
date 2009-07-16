@@ -42,6 +42,8 @@
 #include "qcontactfilter.h"
 #include "qcontactsortorder.h"
 
+#include "qcontactabstractaction.h"
+
 /*!
  * \class QContactManagerEngine
  * \preliminary
@@ -1261,8 +1263,23 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::Action:
             {
-                // XXX - find any matching actions,
-                // and create a union filter from their filter objects
+                // Find any matching actions, and do a union filter on their filter objects
+                QContactActionFilter af(filter);
+                QList<QContactAbstractAction*> actions = QContactManager::actions(af.actionName(), af.vendorName(), af.version());
+
+                // There's a small wrinkle if there's a value specified in the action filter
+                // we have to adjust any contained QContactDetailFilters to have that value
+                // or test if a QContactDetailRangeFilter contains this value already
+                for (int j = 0; j < actions.count(); j++) {
+                    QContactAbstractAction* action = actions.at(j);
+                    if (action->contactFilter(af.value()) == af)
+                        return false; // No recursion!
+
+                    // Check for values etc...
+                    if (testFilter(action->contactFilter(af.value()), contact))
+                        return true;
+                }
+                return false;
             }
             break;
 
