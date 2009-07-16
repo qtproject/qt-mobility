@@ -174,10 +174,15 @@ public:
 
     void setActionName(const QString& action);
     void setValue(const QVariant& value);
+    void setVendorName(const QString& vendor);
+    void setVersion(int version);
+    void clearVersion();
 
     /* Accessors */
     QString actionName() const;
     QVariant value() const;
+    QString vendorName() const;
+    int version() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter);

@@ -44,8 +44,6 @@ template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clo
 
 /* ====================================================================== */
 
-//Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(QContactFilter)
-
 QContactFilter::QContactFilter()
     : d_ptr(0)
 {
@@ -377,6 +375,24 @@ void QContactActionFilter::setValue(const QVariant& value)
     d->m_value = value;
 }
 
+void QContactActionFilter::setVendorName(const QString& vendor)
+{
+    Q_D(QContactActionFilter);
+    d->m_vendor = vendor;
+}
+
+void QContactActionFilter::setVersion(int version)
+{
+    Q_D(QContactActionFilter);
+    d->m_version = version;
+}
+
+void QContactActionFilter::clearVersion()
+{
+    Q_D(QContactActionFilter);
+    d->m_version = -1;
+}
+
 QString QContactActionFilter::actionName() const
 {
     Q_D(const QContactActionFilter);
@@ -387,6 +403,18 @@ QVariant QContactActionFilter::value() const
 {
     Q_D(const QContactActionFilter);
     return d->m_value;
+}
+
+QString QContactActionFilter::vendorName() const
+{
+    Q_D(const QContactActionFilter);
+    return d->m_vendor;
+}
+
+int QContactActionFilter::version() const
+{
+    Q_D(const QContactActionFilter);
+    return d->m_version;
 }
 
 /* ====================================================================== */
