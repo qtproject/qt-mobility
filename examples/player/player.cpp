@@ -178,6 +178,13 @@ void Player::metadataChanged()
     if (metaData->metadataAvailable())
         setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
                                           arg(metaData->metadata(QLatin1String("Title")).toString()));
+
+    const int currentRow = player->playlistPosition();
+
+    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Track), metaData->metadata("Track"));
+    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Title), metaData->metadata("Title"));
+    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Album), metaData->metadata("Album"));
+    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::AlbumArtist), metaData->metadata("Artist"));
 }
 
 void Player::jump(const QModelIndex &index)
