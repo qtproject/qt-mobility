@@ -31,8 +31,9 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
+#include "qmfhelpers_p.h"
 
-#include <qmailmessage.h>
+using namespace QmfHelpers;
 
 #include <QTextCodec>
 
@@ -73,26 +74,6 @@ public:
 };
 
 namespace {
-
-QMessageContentContainerId convert(const QMailMessagePart::Location &location)
-{
-    return QMessageContentContainerId(location.toString(true));
-}
-
-QMailMessagePart::Location convert(const QMessageContentContainerId &id)
-{
-    return QMailMessagePart::Location(id.toString());
-}
-
-QMessageId convert(const QMailMessageId &id)
-{
-    return QMessageId(QString::number(id.toULongLong()));
-}
-
-QMailMessageId convert(const QMessageId &id)
-{
-    return QMailMessageId(id.toString().toULongLong());
-}
 
 QList<QByteArray> charsets;
 
