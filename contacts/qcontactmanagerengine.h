@@ -60,7 +60,6 @@ public:
     virtual void deref() = 0;
 
     /* Filtering */
-    virtual bool testFilter(const QContactFilter& filter, const QContact& contact) const;
     virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
@@ -115,10 +114,11 @@ signals:
     void groupsChanged(const QList<QUniqueId>& groupIds);
     void groupsRemoved(const QList<QUniqueId>& groupIds);
 
-protected:
+public:
     /* Helper functions */
     static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
+    static bool testFilter(const QContactFilter& filter, const QContact& contact);
 };
 
 #endif

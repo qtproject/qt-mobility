@@ -1087,10 +1087,9 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
 /*!
  * Returns true if the supplied \a filter matches the supplied \a contact.
  *
- * The default implementation of this function will test each condition in
- * the filter, possibly recursing.
+ * This function will test each condition in the filter, possibly recursing.
  */
-bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QContact &contact) const
+bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QContact &contact)
 {
     switch(filter.type()) {
         case QContactFilter::Invalid:
