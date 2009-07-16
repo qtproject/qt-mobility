@@ -31,191 +31,282 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
+#include "qmfhelpers_p.h"
+
+using namespace QmfHelpers;
+
+class QMessagePrivate
+{
+public:
+    QMailMessage _message;
+};
+
+namespace {
+
+struct TextPartLocator
+{
+    QMailMessagePart::Location _location;
+
+    bool operator()(const QMailMessagePart &part)
+    {
+        if (part.contentType().type().toLower() == "text") {
+            _location = part.location();
+            return false;
+        }
+
+        return true;
+    }
+};
+
+struct PartLocator
+{
+    QMailMessagePart::Location _location;
+    const QMailMessagePart *_part;
+
+    PartLocator(const QMailMessagePart::Location &location) : _location(location), _part(0) {}
+
+    bool operator()(const QMailMessagePart &part)
+    {
+        if (part.location() == _location) {
+            _part = &part;
+            return false;
+        }
+
+        return true;
+    }
+};
+
+struct AttachmentLocator
+{
+    QList<QMailMessagePart::Location> _locations;
+    bool _foundText;
+
+    AttachmentLocator() : _foundText(false) {}
+
+    bool operator()(const QMailMessagePart &part)
+    {
+        if (!_foundText && part.contentType().type().toLower() == "text") {
+            _foundText = true;
+        } else if (part.multipartType() != QMailMessagePart::MultipartNone) {
+            _locations.append(part.location());
+        }
+
+        return true;
+    }
+};
+
+}
 
 QMessage::QMessage()
+    : d_ptr(new QMessagePrivate)
 {
 }
 
 QMessage::QMessage(const QMessageId& id)
+    : d_ptr(new QMessagePrivate)
 {
-    Q_UNUSED(id)
+    *this = QMessageStore::instance()->message(id);
 }
 
 QMessage::QMessage(const QMessage &other)
-    :QMessageContentContainer(other)
+    : QMessageContentContainer(other),
+      d_ptr(new QMessagePrivate)
 {
-    Q_UNUSED(other)
+    *this = other;
 }
 
 const QMessage& QMessage::operator=(const QMessage& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_message = other.d_ptr->_message;
+    }
+
+    return *this;
 }
 
 QMessage::~QMessage()
 {
+    delete d_ptr;
 }
 
 QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
 {
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
+    QMessage result;
+
+    QMailMessage msg = QMailMessage::fromRfc2822(ba);
+    msg.setMessageType(convert(t));
+
+    result.d_ptr->_message = msg;
+    return result;
 }
 
 QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 {
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
+    QMessage result;
+
+    QMailMessage msg = QMailMessage::fromRfc2822File(fileName);
+    msg.setMessageType(convert(t));
+
+    result.d_ptr->_message = msg;
+    return result;
 }
 
 QByteArray QMessage::toTransmissionFormat() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat);
 }
 
 void QMessage::toTransmissionFormat(QDataStream& out) const
 {
-    Q_UNUSED(out)
+    d_ptr->_message.toRfc2822(out, QMailMessage::TransmissionFormat);
 }
 
 QMessageId QMessage::id() const
 {
-    return QMessageId(); // stub
+    return convert(d_ptr->_message.id());
 }
 
 QMessage::Type QMessage::type() const
 {
-    return None; // stub
+    return convert(d_ptr->_message.messageType());
 }
 
 void QMessage::setType(Type t)
 {
-    Q_UNUSED(t)
+    d_ptr->_message.setMessageType(convert(t));
 }
 
 QMessageAccountId QMessage::parentAccountId() const
 {
-    return QMessageAccountId(); // stub
+    return convert(d_ptr->_message.parentAccountId());
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
-    return QMessageFolderId(); // stub
-}
-    
-void QMessage::setParentFolderId(const QMessageFolderId &folderId)
-{
-    Q_UNUSED(folderId)
+    return convert(d_ptr->_message.parentFolderId());
 }
 #endif
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
-    return QMessage::InboxFolder; // stub
+    // TODO
+    return QMessage::InboxFolder;
 }
 
 void QMessage::setStandardFolder(StandardFolder sf)
 {
+    // TODO
     Q_UNUSED(sf)
 }
 
 QMessageAddress QMessage::from() const
 {
-    return QMessageAddress(); // stub
+    return convert(d_ptr->_message.from());
 }
 
 void QMessage::setFrom(const QMessageAddress &address)
 {
-    Q_UNUSED(address)
+    d_ptr->_message.setFrom(convert(address));
 }
 
 QString QMessage::subject() const
 {
-    return QString::null; //stub
+    return d_ptr->_message.subject();
 }
 
 void QMessage::setSubject(const QString &s)
 {
-    Q_UNUSED(s)
+    d_ptr->_message.setSubject(s);
 }
 
 QDateTime QMessage::date() const
 {
-    return date(); // stub
+    return d_ptr->_message.date().toLocalTime();
 }
 
 void QMessage::setDate(const QDateTime &d)
 {
-    Q_UNUSED(d)
+    d_ptr->_message.setDate(QMailTimeStamp(d));
 }
 
 QDateTime QMessage::receivedDate() const
 {
-    return QDateTime(); // stub
+    return d_ptr->_message.receivedDate().toLocalTime();
 }
 
 void QMessage::setReceivedDate(const QDateTime &d)
 {
-    Q_UNUSED(d)
+    d_ptr->_message.setReceivedDate(QMailTimeStamp(d));
 }
 
 QMessageAddressList QMessage::to() const
 {
-    return QMessageAddressList(); // stub
+    return convert(d_ptr->_message.to());
 }
 
 void QMessage::setTo(const QMessageAddressList& toList)
 {
-    Q_UNUSED(toList)
+    d_ptr->_message.setTo(convert(toList));
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
-    Q_UNUSED(address)
+    d_ptr->_message.setTo(convert(address));
 }
 
 QMessageAddressList QMessage::cc() const
 {
-    return QMessageAddressList(); // stub
+    return convert(d_ptr->_message.cc());
 }
 
 void QMessage::setCc(const QMessageAddressList& ccList)
 {
-    Q_UNUSED(ccList)
+    d_ptr->_message.setCc(convert(ccList));
 }
 
 QMessageAddressList QMessage::bcc() const
 {
-    return QMessageAddressList(); // stub
+    return convert(d_ptr->_message.bcc());
 }
 
 void QMessage::setBcc(const QMessageAddressList& bccList)
 {
-    Q_UNUSED(bccList)
+    d_ptr->_message.setBcc(convert(bccList));
 }
 
 QMessage::StatusFlags QMessage::status() const
 {
-    return StatusFlags(None); // stub
+    return convert(d_ptr->_message.status());
 }
 
 void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
-    Q_UNUSED(newStatus)
+    d_ptr->_message.setStatus(convert(newStatus));
 }
 
 QMessage::Priority QMessage::priority() const
 {
-    return QMessage::Normal; // stub
+    QString priority = d_ptr->_message.customField("QMessage::priority");
+
+    if (priority == "high") {
+        return QMessage::High;
+    } else if (priority == "low") {
+        return QMessage::Low;
+    }
+
+    return QMessage::Low;
 }
 
 void QMessage::setPriority(Priority newPriority)
 {
-    Q_UNUSED(newPriority)
+    if (newPriority == QMessage::High) {
+        d_ptr->_message.setCustomField("QMessage::priority", "high");
+    } else if (newPriority == QMessage::Low) {
+        d_ptr->_message.setCustomField("QMessage::priority", "low");
+    } else {
+        d_ptr->_message.removeCustomField("QMessage::priority");
+    }
 }
 
 uint QMessage::size() const
@@ -225,104 +316,137 @@ uint QMessage::size() const
 
 QMessageContentContainerId QMessage::body() const
 {
-    // TODO: Example body finding algorithm.
-    // If the content type of the message is text, then that is the body
-    // otherwise if the first part of the body is text then that is the body.
-    
-    return QMessageContentContainerId(); // stub
+    if (d_ptr->_message.hasBody()) {
+        // Return a location with no indices
+        QMailMessagePart::Location location;
+        location.setContainingMessageId(d_ptr->_message.id());
+        return convert(location);
+    }
+
+    // Return the first text part
+    TextPartLocator locator;
+    d_ptr->_message.foreachPart<TextPartLocator&>(locator);
+
+    return convert(locator._location);
 }
 
 
 void QMessage::setBody(const QString &body)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id, maybe should add protected setBodyId() and bodyId() methods to the API.
-    Q_UNUSED(body)
+    if (d_ptr->_message.multipartType() != QMailMessage::MultipartNone) {
+        d_ptr->_message.clearParts();
+    }
+
+    QMailMessageContentType ct("text/plain; charset=UTF-8");
+    d_ptr->_message.setBody(QMailMessageBody::fromData(body, ct, QMailMessageBody::Base64));
 }
 
 void QMessage::setBodyFromFile(const QString &fileName)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id. Will need to use prepend for multipart messages.
-    Q_UNUSED(fileName)
+    if (d_ptr->_message.multipartType() != QMailMessage::MultipartNone) {
+        d_ptr->_message.clearParts();
+    }
+
+    QMailMessageContentType ct("text/plain; charset=UTF-8");
+    d_ptr->_message.setBody(QMailMessageBody::fromFile(fileName, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
 }
 
 QMessageContentContainerIdList QMessage::attachments() const
 {
-    //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
-    //    have to recurse into them, somewhat ambiguous.
-    //    Don't recurse, just ignore any body part, see body() for body finding algorithm.
-    
-    // Implementation note, this should be platform independent.
-    return QMessageContentContainerIdList(); // stub
+    // Return any non-multipart parts excluding the first text part
+    AttachmentLocator locator;
+    d_ptr->_message.foreachPart<AttachmentLocator&>(locator);
+
+    return convert(locator._locations);
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    // Implementation note, this should be platform independent.
+    // TODO
     Q_UNUSED(fileNames)
 }
 
 void QMessage::clearAttachments()
 {
-    // Implementation note, this should be platform independent.
+    QMessageContentContainerId textId(body());
+
+    for (uint i = d_ptr->_message.partCount(); i > 0; --i) {
+        QMailMessagePart &part = d_ptr->_message.partAt(i - 1);
+        if (!(convert(part.location()) == textId)) {
+            // See if this part contains the text part
+            PartLocator locator(convert(textId));
+            part.foreachPart<PartLocator&>(locator);
+            if (locator._part == 0) {
+                d_ptr->_message.removePartAt(i - 1);
+            }
+        }
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessage::setOriginatorPort(uint port)
 {
-    Q_UNUSED(port)
+    d_ptr->_message.setCustomField("QMessage::originatorPort", QString::number(port));
 }
 
 uint QMessage::originatorPort()
 {
-    return 0; // stub
+    return d_ptr->_message.customField("QMessage::originatorPort").toUInt();
 }
 
 void QMessage::setDestinationPort(uint port)
 {
-    Q_UNUSED(port)
+    d_ptr->_message.setCustomField("QMessage::destinationPort", QString::number(port));
 }
 
 uint QMessage::destinationPort()
 {
-    return 0; // stub
+    return d_ptr->_message.customField("QMessage::destinationPort").toUInt();
 }
 
 QString QMessage::customField(const QString &name) const
 {
-    Q_UNUSED(name);
-    return QString(); // stub
+    return d_ptr->_message.customField(name);
 }
 
 void QMessage::setCustomField(const QString &name, const QString &value)
 {
-    Q_UNUSED(name);
-    Q_UNUSED(value);
+    d_ptr->_message.setCustomField(name, value);
 }
 
 QList<QString> QMessage::customFields() const
 {
-    return QList<QString>(); // stub
+    QList<QString> result;
+
+    foreach (const QString &key, d_ptr->_message.customFields().keys()) {
+        if (key.startsWith("QMessage::")) {
+            result.append(key);
+        }
+    }
+
+    return result;
 }
 #endif
 
 bool QMessage::dataModified() const
 {
-    return false; // stub
+    return d_ptr->_message.dataModified();
 }
 
 QMessage QMessage::replyTo() const
 {
-    return QMessage(); // stub
+    // TODO
+    return QMessage();
 }
 
 QMessage QMessage::replyToAll() const
 {
-    return QMessage(); // stub
+    // TODO
+    return QMessage();
 }
 
 QMessage QMessage::forward() const
 {
-    return QMessage(); // stub
+    // TODO
+    return QMessage();
 }
