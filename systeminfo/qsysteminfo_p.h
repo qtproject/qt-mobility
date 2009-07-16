@@ -56,7 +56,7 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
-    QString getVersion(QSystemInfo::Version,  const QString &parameter) const;
+    QString getVersion(QSystemInfo::Version,  const QString &parameter = QString()) const;
 
     QString countryCode() const; //2 letter ISO 3166-1
 //features
@@ -133,7 +133,7 @@ Q_SIGNALS:
 #if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
     virtual bool isCriticalMemory() const;
     virtual bool isBatteryCharging();
-    virtual bool isDiskSpaceCritical(const QString &driveVolume);
+//    virtual bool isDiskSpaceCritical(const QString &driveVolume);
 #endif
 };
 

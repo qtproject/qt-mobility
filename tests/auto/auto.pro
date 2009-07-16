@@ -1,2 +1,8 @@
 TEMPLATE = subdirs
-SUBDIRS =
+SUBDIRS = qsysteminfo \
+#          qsystemdeviceinfo \
+ #         qsystemdisplayinfo \
+  #        qsystemmemoryinfo \
+   #       qsystemnetworkinfo
+
+

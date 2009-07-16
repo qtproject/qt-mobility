@@ -62,7 +62,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    return QStringList();
+    return QStringList() << currentLanguage();
 }
 
 // "major.minor.build" format.
@@ -154,7 +154,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QString QSystemInfoPrivate::getDetailOfFeature(QSystemInfo::Feature feature)
 {
     Q_UNUSED(feature);
-    return QString();
+    return "No other features";
 }
 
 //////// QSystemNetworkInfo
@@ -215,6 +215,10 @@ bool QSystemNetworkInfoPrivate::isWLANAccessible() const
     return false;
 }
 
+QString QSystemNetworkInfoPrivate::operatorName()
+{
+    return QString();
+}
 
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
@@ -239,6 +243,11 @@ qint32 QSystemDisplayInfoPrivate::colorDepth(qint32 screen)
 {
     Q_UNUSED(screen);
     return QPixmap::defaultDepth();
+}
+
+bool QSystemDisplayInfoPrivate::isScreenLockOn()
+{
+    return false;
 }
 
 //////// QSystemMemoryInfo
@@ -349,7 +358,13 @@ else
     return false;
 }
 
-bool QSystemMemoryInfoPrivate::isBatteryCharging()
+//bool  QSystemMemoryInfoPrivate::isDiskSpaceCritical(const QString &driveVolume)
+// {
+//    Q_UNUSED(driveVolume);
+//    return false;
+// }
+
+ bool QSystemMemoryInfoPrivate::isBatteryCharging()
 {
     return false;
 }
@@ -358,6 +373,11 @@ bool QSystemMemoryInfoPrivate::isBatteryCharging()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     Q_UNUSED(parent);
+}
+
+QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
+{
+ return QSystemDeviceInfo::KeysAndTouch;
 }
 
 QString QSystemDeviceInfoPrivate::imei() const
