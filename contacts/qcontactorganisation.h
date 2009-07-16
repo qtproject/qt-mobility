@@ -49,10 +49,10 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldLogo, "Logo");
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
-    QString displayLabel() const {return value(QLatin1String(FieldDisplayLabel));}
-    void setLogo(const QString& logo) {setValue(QLatin1String(FieldLogo), logo);}
-    QString logo() const {return value(QLatin1String(FieldLogo));}
+    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
+    QString displayLabel() const {return value(FieldDisplayLabel);}
+    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
+    QString logo() const {return value(FieldLogo);}
 };
 
 #endif

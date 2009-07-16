@@ -534,7 +534,7 @@ Q_DEFINE_CONSTANT_LATIN_STRING(QContactAnniversary::AttributeSubTypeMemorial, "M
 
 QString QContactAddress::displayLabel() const
 {
-    QString dl = value(QLatin1String(QContactAddress::FieldDisplayLabel));
+    QString dl = value(QContactAddress::FieldDisplayLabel);
     if (!dl.isNull())
         return dl;
 

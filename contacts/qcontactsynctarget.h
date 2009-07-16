@@ -49,8 +49,8 @@ public:
 
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldSyncTarget, "SyncTarget");
 
-    void setSyncTarget(const QString& syncTarget) {setValue(QLatin1String(FieldSyncTarget), syncTarget);}
-    QString syncTarget() const {return value(QLatin1String(FieldSyncTarget));}
+    void setSyncTarget(const QString& syncTarget) {setValue(FieldSyncTarget, syncTarget);}
+    QString syncTarget() const {return value(FieldSyncTarget);}
 };
 
 #endif

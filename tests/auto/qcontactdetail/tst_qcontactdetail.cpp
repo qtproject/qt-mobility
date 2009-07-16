@@ -92,12 +92,12 @@ void tst_QContactDetail::classHierarchy()
     QContactPhoneNumber p1;
     p1.setNumber("123456");
     QVERIFY(!p1.isEmpty());
-    QCOMPARE(p1.definitionName(), QContactPhoneNumber::staticType());
+    QVERIFY(p1.definitionName() == QContactPhoneNumber::DefinitionName);
 
     QContactName m1;
     m1.setFirst("Bob");
     QVERIFY(!m1.isEmpty());
-    QCOMPARE(m1.definitionName(), QContactName::staticType());
+    QVERIFY(m1.definitionName() == QContactName::DefinitionName);
 
     QVERIFY(p1 != m1);
     QVERIFY(f1 == f2);
@@ -153,7 +153,7 @@ void tst_QContactDetail::classHierarchy()
     p2 = m1; // assign a name to a phone number
     QVERIFY(p2 != m1);
     QCOMPARE(p2.error(), QContactDetail::IncompatibleAssignmentError);
-    QCOMPARE(p2.definitionName(), QContactPhoneNumber::staticType()); // should still be a phone number though
+    QVERIFY(p2.definitionName() == QContactPhoneNumber::DefinitionName); // should still be a phone number though
     QVERIFY(p2.isEmpty());
 
     /* copy ctor */
@@ -164,7 +164,7 @@ void tst_QContactDetail::classHierarchy()
     m2 = p2; // phone number to a name
     QVERIFY(m2 != m1);
     QCOMPARE(m2.error(), QContactDetail::IncompatibleAssignmentError);
-    QCOMPARE(m2.definitionName(), QContactName::staticType());
+    QVERIFY(m2.definitionName() == QContactName::DefinitionName);
     QVERIFY(m2.isEmpty());
 
     /* Check attributes are considered for equality */
@@ -178,13 +178,13 @@ void tst_QContactDetail::classHierarchy()
     QContactDetail f3(p2);
     QVERIFY(f3 == p2);
     QCOMPARE(f3.error(), QContactDetail::NoError);
-    QCOMPARE(f3.definitionName(), QContactPhoneNumber::staticType());
+    QVERIFY(f3.definitionName() == QContactPhoneNumber::DefinitionName);
 
     /* Copy ctor from invalid type */
     QContactPhoneNumber p3(m1);
     QVERIFY(p3 != m1);
     QCOMPARE(p3.error(), QContactDetail::IncompatibleAssignmentError);
-    QCOMPARE(p3.definitionName(), QContactPhoneNumber::staticType());
+    QVERIFY(p3.definitionName() == QContactPhoneNumber::DefinitionName);
     QVERIFY(p3.isEmpty());
 
     /* Copy ctore from invalid type, through base type */
@@ -192,7 +192,7 @@ void tst_QContactDetail::classHierarchy()
     QContactPhoneNumber p4(f3);
     QVERIFY(p4 != f3);
     QCOMPARE(p4.error(), QContactDetail::IncompatibleAssignmentError);
-    QCOMPARE(p4.definitionName(), QContactPhoneNumber::staticType());
+    QVERIFY(p4.definitionName() == QContactPhoneNumber::DefinitionName);
     QVERIFY(p4.isEmpty());
 
     // Make sure errors don't move from object to object

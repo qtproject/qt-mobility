@@ -48,8 +48,8 @@ public:
 
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldGender, "Gender");
 
-    void setGender(const QString& gender) {setValue(QLatin1String(FieldGender), gender);}
-    QString gender() const {return value(QLatin1String(FieldGender));}
+    void setGender(const QString& gender) {setValue(FieldGender, gender);}
+    QString gender() const {return value(FieldGender);}
 };
 
 #endif

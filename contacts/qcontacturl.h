@@ -52,8 +52,8 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeFavourite, "Favourite");
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeSocialNetworking, "SocialNetworking");
 
-    void setUrl(const QString& url) {setValue(QLatin1String(FieldUrl), url);}
-    QString url() const {return value(QLatin1String(FieldUrl));}
+    void setUrl(const QString& url) {setValue(FieldUrl, url);}
+    QString url() const {return value(FieldUrl);}
 };
 
 #endif

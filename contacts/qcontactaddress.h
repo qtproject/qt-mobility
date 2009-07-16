@@ -59,18 +59,18 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeDomestic, "Domestic");
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeInternational, "International");
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(QLatin1String(FieldDisplayLabel), displayLabel);}
+    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const;
-    void setStreet(const QString& street) {setValue(QLatin1String(FieldStreet), street);}
-    QString street() const {return value(QLatin1String(FieldStreet));}
-    void setLocality(const QString& locality) {setValue(QLatin1String(FieldLocality), locality);}
-    QString locality() const {return value(QLatin1String(FieldLocality));}
-    void setRegion(const QString& region) {setValue(QLatin1String(FieldRegion), region);}
-    QString region() const {return value(QLatin1String(FieldRegion));}
-    void setPostcode(const QString& postcode) {setValue(QLatin1String(FieldPostcode), postcode);}
-    QString postcode() const {return value(QLatin1String(FieldPostcode));}
-    void setCountry(const QString& country) {setValue(QLatin1String(FieldCountry), country);}
-    QString country() const {return value(QLatin1String(FieldCountry));}
+    void setStreet(const QString& street) {setValue(FieldStreet, street);}
+    QString street() const {return value(FieldStreet);}
+    void setLocality(const QString& locality) {setValue(FieldLocality, locality);}
+    QString locality() const {return value(FieldLocality);}
+    void setRegion(const QString& region) {setValue(FieldRegion, region);}
+    QString region() const {return value(FieldRegion);}
+    void setPostcode(const QString& postcode) {setValue(FieldPostcode, postcode);}
+    QString postcode() const {return value(FieldPostcode);}
+    void setCountry(const QString& country) {setValue(FieldCountry, country);}
+    QString country() const {return value(FieldCountry);}
 };
 
 #endif

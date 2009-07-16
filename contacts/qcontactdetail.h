@@ -96,22 +96,22 @@ public:
 
     void setSubTypeAttribute(const QString& subType)
     {
-        setAttribute(QLatin1String(AttributeSubType), subType);
+        setAttribute(AttributeSubType, subType);
     }
 
     QString subTypeAttribute() const
     {
-        return attribute(QLatin1String(AttributeSubType));
+        return attribute(AttributeSubType);
     }
 
     void setContextAttribute(const QString& context)
     {
-        setAttribute(QLatin1String(AttributeContext), context);
+        setAttribute(AttributeContext, context);
     }
 
     QString contextAttribute() const
     {
-        return attribute(QLatin1String(AttributeContext));
+        return attribute(AttributeContext);
     }
 
 

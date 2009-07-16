@@ -52,12 +52,12 @@ public:
 
     void setLabel(const QString& label)
     {
-        setValue(QLatin1String(FieldLabel), label);
-        setValue(QLatin1String(FieldSynthesised), label.isEmpty() ? true : false);
+        setValue(FieldLabel, label);
+        setValue(FieldSynthesised, label.isEmpty() ? true : false);
     }
-    QString label() const {return value(QLatin1String(FieldLabel));}
-    void setSynthesised(bool synthesised) {setValue(QLatin1String(FieldSynthesised), synthesised);}
-    bool isSynthesised() const {return variantValue(QLatin1String(FieldSynthesised)).toBool();}
+    QString label() const {return value(FieldLabel);}
+    void setSynthesised(bool synthesised) {setValue(FieldSynthesised, synthesised);}
+    bool isSynthesised() const {return value<bool>(FieldSynthesised);}
 };
 
 #endif

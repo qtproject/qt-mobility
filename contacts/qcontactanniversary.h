@@ -56,12 +56,12 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeEmployment, "Employment");
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMemorial, "Memorial");
 
-    void setOriginalDate(const QDate& date) {setValue(QLatin1String(FieldOriginalDate), date);}
-    QDate originalDate() const {return value<QDate>(QLatin1String(FieldOriginalDate));}
-    void setCalendarId(const QString& calendarId) {setValue(QLatin1String(FieldCalendarId), calendarId);}
-    QString calendarId() const {return value(QLatin1String(FieldCalendarId));}
-    void setEvent(const QString& event) {setValue(QLatin1String(FieldEvent), event);}
-    QString event() const {return value(QLatin1String(FieldEvent));}
+    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
+    QDate originalDate() const {return value<QDate>(FieldOriginalDate);}
+    void setCalendarId(const QString& calendarId) {setValue(FieldCalendarId, calendarId);}
+    QString calendarId() const {return value(FieldCalendarId);}
+    void setEvent(const QString& event) {setValue(FieldEvent, event);}
+    QString event() const {return value(FieldEvent);}
 };
 
 #endif

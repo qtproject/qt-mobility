@@ -52,8 +52,8 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeSync, "Sync");
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeOther, "Other");
 
-    void setGuid(const QString& guid) {setValue(QLatin1String(FieldGuid), guid);}
-    QString guid() const {return value(QLatin1String(FieldGuid));}
+    void setGuid(const QString& guid) {setValue(FieldGuid, guid);}
+    QString guid() const {return value(FieldGuid);}
 };
 
 #endif

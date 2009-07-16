@@ -61,8 +61,8 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeMessagingCapable, "MessagingCapable");
 
-    void setNumber(const QString& number) {setValue(QLatin1String(FieldNumber), number);}
-    QString number() const {return value(QLatin1String(FieldNumber));}
+    void setNumber(const QString& number) {setValue(FieldNumber, number);}
+    QString number() const {return value(FieldNumber);}
 };
 //! [0]
 

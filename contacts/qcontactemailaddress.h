@@ -51,8 +51,8 @@ public:
 
     Q_DECLARE_CONSTANT_LATIN_STRING(AttributeSubTypeInternet, "Internet");
 
-    void setEmailAddress(const QString& emailAddress) {setValue(QLatin1String(FieldEmailAddress), emailAddress);}
-    QString emailAddress() const {return value(QLatin1String(FieldEmailAddress));}
+    void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
+    QString emailAddress() const {return value(FieldEmailAddress);}
 };
 
 #endif

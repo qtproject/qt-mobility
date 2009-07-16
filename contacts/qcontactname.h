@@ -52,17 +52,17 @@ public:
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldLast, "Last");
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldSuffix, "Suffix");
 
-    QString prefix() const {return value(QLatin1String(FieldPrefix));}
-    QString first() const {return value(QLatin1String(FieldFirst));}
-    QString middle() const {return value(QLatin1String(FieldMiddle));}
-    QString last() const {return value(QLatin1String(FieldLast));}
-    QString suffix() const {return value(QLatin1String(FieldSuffix));}
+    QString prefix() const {return value(FieldPrefix);}
+    QString first() const {return value(FieldFirst);}
+    QString middle() const {return value(FieldMiddle);}
+    QString last() const {return value(FieldLast);}
+    QString suffix() const {return value(FieldSuffix);}
 
-    void setPrefix(const QString& prefix) {setValue(QLatin1String(FieldPrefix), prefix);}
-    void setFirst(const QString& first) {setValue(QLatin1String(FieldFirst), first);}
-    void setMiddle(const QString& middle) {setValue(QLatin1String(FieldMiddle), middle);}
-    void setLast(const QString& last) {setValue(QLatin1String(FieldLast), last);}
-    void setSuffix(const QString& suffix) {setValue(QLatin1String(FieldSuffix), suffix);}
+    void setPrefix(const QString& prefix) {setValue(FieldPrefix, prefix);}
+    void setFirst(const QString& first) {setValue(FieldFirst, first);}
+    void setMiddle(const QString& middle) {setValue(FieldMiddle, middle);}
+    void setLast(const QString& last) {setValue(FieldLast, last);}
+    void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
 };
 
 #endif

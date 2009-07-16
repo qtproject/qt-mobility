@@ -55,7 +55,6 @@ typedef quint32 QUniqueId; // XXX Put this else where
 template <int N> struct ConstantLatinString
 {
     const char str[N];
-    operator QLatin1String() const {return QLatin1String(str);}
     operator QString() const {return QString(QLatin1String(str));}
 };
 

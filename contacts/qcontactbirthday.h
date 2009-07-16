@@ -48,8 +48,8 @@ public:
 
     Q_DECLARE_CONSTANT_LATIN_STRING(FieldBirthday, "Birthday");
 
-    void setDate(const QDate& date) {setValue(QLatin1String(FieldBirthday), date);}
-    QDate date() const {return value<QDate>(QLatin1String(FieldBirthday));}
+    void setDate(const QDate& date) {setValue(FieldBirthday, date);}
+    QDate date() const {return value<QDate>(FieldBirthday);}
 };
 
 #endif

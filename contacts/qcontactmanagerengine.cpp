@@ -207,7 +207,7 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
 {
     // synthesise the display name from the name of the contact, or, failing that, the organisation of the contact.
     error = QContactManager::NoError;
-    QList<QContactDetail> allNames = contact.details(QLatin1String(QContactName::DefinitionName));
+    QList<QContactDetail> allNames = contact.details(QContactName::DefinitionName);
 
     const QLatin1String space(" ");
 
@@ -216,32 +216,32 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
         const QContactName& name = allNames.at(i);
 
         QString result;
-        if (!name.value(QLatin1String(QContactName::FieldPrefix)).trimmed().isEmpty()) {
-           result += name.value(QLatin1String(QContactName::FieldPrefix));
+        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
+           result += name.value(QContactName::FieldPrefix);
         }
 
-        if (!name.value(QLatin1String(QContactName::FieldFirst)).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QLatin1String(QContactName::FieldFirst));
+            result += name.value(QContactName::FieldFirst);
         }
 
-        if (!name.value(QLatin1String(QContactName::FieldMiddle)).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QLatin1String(QContactName::FieldMiddle));
+            result += name.value(QContactName::FieldMiddle);
         }
 
-        if (!name.value(QLatin1String(QContactName::FieldLast)).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QLatin1String(QContactName::FieldLast));
+            result += name.value(QContactName::FieldLast);
         }
 
-        if (!name.value(QLatin1String(QContactName::FieldSuffix)).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QLatin1String(QContactName::FieldSuffix));
+            result += name.value(QContactName::FieldSuffix);
         }
 
         if (!result.isEmpty()) {
@@ -250,7 +250,7 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
     }
 
     /* Well, we had no non empty names. if we have orgs, fall back to those */
-    QList<QContactDetail> allOrgs = contact.details(QLatin1String(QContactOrganisation::DefinitionName));
+    QList<QContactDetail> allOrgs = contact.details(QContactOrganisation::DefinitionName);
     for (int i=0; i < allOrgs.size(); i++) {
         const QContactOrganisation& org = allOrgs.at(i);
         if (!org.displayLabel().isEmpty()) {
@@ -305,8 +305,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactSyncTarget::DefinitionName));
-    fields.insert(QLatin1String(QContactSyncTarget::FieldSyncTarget), f);
+    d.setId(QContactSyncTarget::DefinitionName);
+    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
@@ -316,8 +316,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactGuid::DefinitionName));
-    fields.insert(QLatin1String(QContactGuid::FieldGuid), f);
+    d.setId(QContactGuid::DefinitionName);
+    fields.insert(QContactGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
@@ -327,11 +327,11 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactDisplayLabel::DefinitionName));
-    fields.insert(QLatin1String(QContactDisplayLabel::FieldLabel), f);
+    d.setId(QContactDisplayLabel::DefinitionName);
+    fields.insert(QContactDisplayLabel::FieldLabel, f);
     f.dataType = QVariant::Bool;
     f.allowableValues = QVariantList();
-    fields.insert(QLatin1String(QContactDisplayLabel::FieldSynthesised), f);
+    fields.insert(QContactDisplayLabel::FieldSynthesised, f);
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -341,8 +341,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactEmailAddress::DefinitionName));
-    fields.insert(QLatin1String(QContactEmailAddress::FieldEmailAddress), f);
+    d.setId(QContactEmailAddress::DefinitionName);
+    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -352,9 +352,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactOrganisation::DefinitionName));
-    fields.insert(QLatin1String(QContactOrganisation::FieldLogo), f);
-    fields.insert(QLatin1String(QContactOrganisation::FieldDisplayLabel), f);
+    d.setId(QContactOrganisation::DefinitionName);
+    fields.insert(QContactOrganisation::FieldLogo, f);
+    fields.insert(QContactOrganisation::FieldDisplayLabel, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -364,7 +364,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactPhoneNumber::DefinitionName));
+    d.setId(QContactPhoneNumber::DefinitionName);
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     d.setFields(fields);
     d.setUnique(false);
@@ -375,14 +375,14 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAnniversary::DefinitionName));
-    fields.insert(QLatin1String(QContactAnniversary::FieldOriginalDate), f);
+    d.setId(QContactAnniversary::DefinitionName);
+    fields.insert(QContactAnniversary::FieldOriginalDate, f);
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    fields.insert(QLatin1String(QContactAnniversary::FieldCalendarId), f);
+    fields.insert(QContactAnniversary::FieldCalendarId, f);
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    fields.insert(QLatin1String(QContactAnniversary::FieldEvent), f);
+    fields.insert(QContactAnniversary::FieldEvent, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -392,8 +392,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactBirthday::DefinitionName));
-    fields.insert(QLatin1String(QContactBirthday::FieldBirthday), f);
+    d.setId(QContactBirthday::DefinitionName);
+    fields.insert(QContactBirthday::FieldBirthday, f);
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -429,8 +429,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactUrl::DefinitionName));
-    fields.insert(QLatin1String(QContactUrl::FieldUrl), f);
+    d.setId(QContactUrl::DefinitionName);
+    fields.insert(QContactUrl::FieldUrl, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -440,8 +440,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList() << QString(QLatin1String("Male")) << QString(QLatin1String("Female")) << QString(QLatin1String("Unspecified"));
-    d.setId(QLatin1String(QContactGender::DefinitionName));
-    fields.insert(QLatin1String(QContactGender::FieldGender), f);
+    d.setId(QContactGender::DefinitionName);
+    fields.insert(QContactGender::FieldGender, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -451,8 +451,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAvatar::DefinitionName));
-    fields.insert(QLatin1String(QContactAvatar::FieldAvatar), f);
+    d.setId(QContactAvatar::DefinitionName);
+    fields.insert(QContactAvatar::FieldAvatar, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -483,13 +483,13 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactAddress::DefinitionName));
-    fields.insert(QLatin1String(QContactAddress::FieldStreet), f);
-    fields.insert(QLatin1String(QContactAddress::FieldLocality), f);
-    fields.insert(QLatin1String(QContactAddress::FieldRegion), f);
-    fields.insert(QLatin1String(QContactAddress::FieldPostcode), f);
-    fields.insert(QLatin1String(QContactAddress::FieldCountry), f);
-    fields.insert(QLatin1String(QContactAddress::FieldDisplayLabel), f);
+    d.setId(QContactAddress::DefinitionName);
+    fields.insert(QContactAddress::FieldStreet, f);
+    fields.insert(QContactAddress::FieldLocality, f);
+    fields.insert(QContactAddress::FieldRegion, f);
+    fields.insert(QContactAddress::FieldPostcode, f);
+    fields.insert(QContactAddress::FieldCountry, f);
+    fields.insert(QContactAddress::FieldDisplayLabel, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
@@ -499,12 +499,12 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setId(QLatin1String(QContactName::DefinitionName));
-    fields.insert(QLatin1String(QContactName::FieldPrefix), f);
-    fields.insert(QLatin1String(QContactName::FieldFirst), f);
-    fields.insert(QLatin1String(QContactName::FieldMiddle), f);
-    fields.insert(QLatin1String(QContactName::FieldLast), f);
-    fields.insert(QLatin1String(QContactName::FieldSuffix), f);
+    d.setId(QContactName::DefinitionName);
+    fields.insert(QContactName::FieldPrefix, f);
+    fields.insert(QContactName::FieldFirst, f);
+    fields.insert(QContactName::FieldMiddle, f);
+    fields.insert(QContactName::FieldLast, f);
+    fields.insert(QContactName::FieldSuffix, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
