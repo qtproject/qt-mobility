@@ -52,9 +52,6 @@
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 #include "qnmwifiengine_unix_p.h"
 #endif
-#if defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-#include "qnativewifiengine_unix_p.h"
-#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -92,11 +89,6 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
         if (nmwiifi && nmwiifi->hasIdentifier(id))
             return nmwiifi;
     }
-#endif
-#if defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    QNativeWifiEngine *nativeWifi = QNativeWifiEngine::instance();
-    if (nativeWifi && nativeWifi->hasIdentifier(id))
-        return nativeWifi;
 #endif
 
     QGenericEngine *generic = QGenericEngine::instance();
