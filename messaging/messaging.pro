@@ -6,10 +6,11 @@ include(../common.pri)
 
 #Input
 
-#DEFINES += QMESSAGING_OPTIONAL_FOLDER
-#DEFINES += QMESSAGING_OPTIONAL
+!static:DEFINES += QT_MAKEDLL
+DEFINES += QT_BUILD_MESSAGING_LIB
 
-HEADERS += qmessageid.h \
+HEADERS += qmessageglobal.h \
+           qmessageid.h \
            qmessageid_p.h \
            qmessagecontentcontainerid.h \
            qmessagecontentcontainerid_p.h \

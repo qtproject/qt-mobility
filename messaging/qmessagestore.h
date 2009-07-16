@@ -33,6 +33,7 @@
 #ifndef QMESSAGESTORE_H
 #define QMESSAGESTORE_H
 #include <QObject>
+#include <qmessageglobal.h>
 #include <qmessagefilterkey.h>
 #include <qmessagesortkey.h>
 #include <qmessagefoldersortkey.h>
@@ -43,7 +44,7 @@
 
 class QMessageStorePrivate;
 
-class QMessageStore : public QObject
+class Q_MESSAGING_EXPORT QMessageStore : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QMessageStore)

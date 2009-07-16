@@ -32,17 +32,18 @@
 ****************************************************************************/
 #ifndef QMESSAGEFILTERKEY_H
 #define QMESSAGEFILTERKEY_H
-#include "qmessagedatacomparator.h"
-#include "qmessageid.h"
-#include "qmessageaccountid.h"
-#include "qmessagefolderid.h"
-#include "qmessageaccountfilterkey.h"
-#include "qmessagefolderfilterkey.h"
-#include "qmessage.h"
+#include <qmessageglobal.h>
+#include <qmessagedatacomparator.h>
+#include <qmessageid.h>
+#include <qmessageaccountid.h>
+#include <qmessagefolderid.h>
+#include <qmessageaccountfilterkey.h>
+#include <qmessagefolderfilterkey.h>
+#include <qmessage.h>
 
 class QMessageFilterKeyPrivate;
 
-class QMessageFilterKey
+class Q_MESSAGING_EXPORT QMessageFilterKey
 {
     Q_DECLARE_PRIVATE(QMessageFilterKey)
 

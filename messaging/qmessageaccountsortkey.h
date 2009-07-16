@@ -33,10 +33,11 @@
 #ifndef QMESSAGEACCOUNTSORTKEY_H
 #define QMESSAGEACCOUNTSORTKEY_H
 #include <Qt>
+#include <qmessageglobal.h>
 
 class QMessageAccountSortKeyPrivate;
 
-class QMessageAccountSortKey {
+class Q_MESSAGING_EXPORT QMessageAccountSortKey {
     Q_DECLARE_PRIVATE(QMessageAccountSortKey)
 
 public:

@@ -35,10 +35,11 @@
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <QString>
 #include <QList>
+#include <qmessageglobal.h>
 
 class QMessageFolderIdPrivate;
 
-class QMessageFolderId 
+class Q_MESSAGING_EXPORT QMessageFolderId 
 {
     Q_DECLARE_PRIVATE(QMessageFolderId)
 

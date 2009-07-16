@@ -34,14 +34,15 @@
 #define QMESSAGE_H
 #include <QStringList>
 #include <QDateTime>
-#include "qmessageaccountid.h"
-#include "qmessagefolderid.h"
-#include "qmessagecontentcontainer.h"
-#include "qmessageaddress.h"
+#include <qmessageglobal.h>
+#include <qmessageaccountid.h>
+#include <qmessagefolderid.h>
+#include <qmessagecontentcontainer.h>
+#include <qmessageaddress.h>
 
 class QMessagePrivate;
 
-class QMessage : public QMessageContentContainer {
+class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer {
     Q_DECLARE_PRIVATE(QMessage)
 
 public:

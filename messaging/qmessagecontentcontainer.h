@@ -35,12 +35,13 @@
 #include <QString>
 #include <QList>
 #include <QDataStream>
-#include "qmessagecontentcontainerid.h"
-#include "qmessageid.h"
+#include <qmessageglobal.h>
+#include <qmessagecontentcontainerid.h>
+#include <qmessageid.h>
 
 class QMessageContentContainerPrivate;
 
-class QMessageContentContainer {
+class Q_MESSAGING_EXPORT QMessageContentContainer {
     Q_DECLARE_PRIVATE(QMessageContentContainer)
 
 public:

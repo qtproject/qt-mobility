@@ -34,11 +34,12 @@
 #define QMESSAGEACCONT_H
 #include <QString>
 #include <QList>
-#include "qmessage.h"
+#include <qmessageglobal.h>
+#include <qmessage.h>
 
 class QMessageAccountPrivate;
 
-class QMessageAccount {
+class Q_MESSAGING_EXPORT QMessageAccount {
     Q_DECLARE_PRIVATE(QMessageAccount)
 
 public:
