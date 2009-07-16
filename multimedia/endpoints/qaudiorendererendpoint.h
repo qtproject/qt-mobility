@@ -35,18 +35,26 @@
 #ifndef QAUDIORENDERERENDPOINT_H
 #define QAUDIORENDERERENDPOINT_H
 
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
+#endif
+
 #include "qmediaendpointinterface.h"
 
 class QIODevice;
+class QByteArray;
 
 class QAudioRendererEndpointPrivate;
 
 class Q_MEDIA_EXPORT QAudioRendererEndpoint: public QObject, public QMediaEndpointInterface
 {
     Q_OBJECT
-    Q_PROPERTY(int frequency READ frequency WRITE setFrequency)
-    Q_PROPERTY(int channels READ channels WRITE setChannels)
-    Q_PROPERTY(int sampleSize READ sampleSize WRITE setSampleSize)
+
+#ifdef AUDIOSERVICES
+    Q_PROPERTY(QAudioFormat format READ format WRITE setFormat)
+#endif
+
     Q_INTERFACES(QMediaEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioRendererEndpoint)
 public:
@@ -55,17 +63,15 @@ public:
 
     Direction direction() const;
 
-    int frequency() const;
-    virtual void setFrequency(int frequency);
-    virtual QList<int> supportedFrequencies() const = 0;
+#ifdef AUDIOSERVICES
+    virtual QAudioFormat format() const;
+    virtual void setFormat(const QAudioFormat &format);
 
-    int channels() const;
-    virtual void setChannels(int channels);
-    virtual QList<int> supportedChannels() const = 0;
-
-    int sampleSize() const;
-    virtual void setSampleSize(int size);
-    virtual QList<int> supportedSampleSizes() const = 0;
+    virtual QList<QByteArray> deviceList() const = 0;
+    virtual QAudioDeviceInfo* deviceInfo() const;
+    virtual void setDeviceInfo(const QByteArray &deviceName);
+    virtual void create(const QByteArray &deviceName);
+#endif
 
     QIODevice *device() const;
     virtual void setDevice(QIODevice *device);
