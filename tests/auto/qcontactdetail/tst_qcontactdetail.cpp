@@ -476,6 +476,18 @@ void tst_QContactDetail::values()
     p.setValue("stringdatetime", dt.toString(Qt::ISODate));
     p.setValue("stringint", "123");
 
+    /* Presence test */
+    QVERIFY(p.hasValue("string"));
+    QVERIFY(p.hasValue("date"));
+    QVERIFY(p.hasValue("datetime"));
+    QVERIFY(p.hasValue("int"));
+    QVERIFY(p.hasValue("stringdate"));
+    QVERIFY(p.hasValue("stringdatetime"));
+    QVERIFY(p.hasValue("stringint"));
+    QCOMPARE(p.error(), QContactDetail::NoError);
+    QVERIFY(!p.hasValue("non existent field"));
+    QCOMPARE(p.error(), QContactDetail::MissingValueError);
+
     /* String accessors */
     QCOMPARE(p.value("string"), QString("This is a string"));
     QCOMPARE(p.value("date"), d.toString(Qt::ISODate));
@@ -538,6 +550,15 @@ void tst_QContactDetail::values()
 
     QCOMPARE(p.values(), values);
     QVERIFY(p.values().count() == 0);
+    QVERIFY(!p.hasValue("string"));
+    QVERIFY(!p.hasValue("date"));
+    QVERIFY(!p.hasValue("datetime"));
+    QVERIFY(!p.hasValue("int"));
+    QVERIFY(!p.hasValue("stringdate"));
+    QVERIFY(!p.hasValue("stringdatetime"));
+    QVERIFY(!p.hasValue("stringint"));
+    QVERIFY(!p.hasValue("non existent field"));
+
     QVERIFY(p.value("string") == QString());
     QVERIFY(p.variantValue("string") == QVariant());
 
@@ -555,6 +576,14 @@ void tst_QContactDetail::values()
     QCOMPARE(p.values(), values);
 
     /* Now repeat the tests with our bulk set map */
+    QVERIFY(p.hasValue("string"));
+    QVERIFY(p.hasValue("date"));
+    QVERIFY(p.hasValue("datetime"));
+    QVERIFY(p.hasValue("int"));
+    QVERIFY(p.hasValue("stringdate"));
+    QVERIFY(p.hasValue("stringdatetime"));
+    QVERIFY(p.hasValue("stringint"));
+    QVERIFY(!p.hasValue("non existent field"));
 
     /* String accessors */
     QCOMPARE(p.value("string"), QString("This is a string"));
@@ -606,6 +635,7 @@ void tst_QContactDetail::values()
 
     /* Check that we can add a null variant */
     QVERIFY(p.setValue("nullvariant", QVariant()));
+    QVERIFY(p.hasValue("nullvariant"));
     QCOMPARE(p.value("nullvariant"), QString());
     QCOMPARE(p.variantValue("nullvariant"), QVariant());
     QVERIFY(p.removeValue("nullvariant"));
@@ -617,6 +647,7 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value("string"), QString("string value"));
     QVERIFY(p.setValue("string", QVariant()));
     QCOMPARE(p.values().count(), 1);
+    QVERIFY(p.hasValue("string"));
     QVERIFY(p.removeValue("string"));
     QCOMPARE(p.values().count(), 0);
 
@@ -626,6 +657,7 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value("string"), QString("string value"));
     QVERIFY(p.setValue("string", QString()));
     QCOMPARE(p.values().count(), 1);
+    QVERIFY(p.hasValue("string"));
     QVERIFY(p.removeValue("string"));
     QCOMPARE(p.values().count(), 0);
 

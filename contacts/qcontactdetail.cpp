@@ -320,6 +320,20 @@ QVariant QContactDetail::variantValue(const QString& key) const
     }
 }
 
+/*!
+ * Returns true if this detail has a field with the given \a key, or false otherwise.
+ */
+bool QContactDetail::hasValue(const QString& key) const
+{
+    if (d.constData()->m_values.contains(key)) {
+        QContactDetailPrivate::setError(d, QContactDetail::NoError);
+        return true;
+    } else {
+        QContactDetailPrivate::setError(d, QContactDetail::MissingValueError);
+        return false;
+    }
+}
+
 /*! Inserts \a value into the detail for the given \a key.  Returns true if the operation succeeded */
 bool QContactDetail::setValue(const QString& key, const QVariant& value)
 {
