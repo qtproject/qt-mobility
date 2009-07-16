@@ -34,10 +34,11 @@
 #define QMESSAGEADDRESS_H
 #include <QString>
 #include <QList>
+#include <qmessageglobal.h>
 
 class QMessageAddressPrivate;
 
-class QMessageAddress {
+class Q_MESSAGING_EXPORT QMessageAddress {
     Q_DECLARE_PRIVATE(QMessageAddress)
 
 public:

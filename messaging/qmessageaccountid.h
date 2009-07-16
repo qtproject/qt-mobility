@@ -34,10 +34,11 @@
 #define QMESSAGEACCOUNTID_H
 #include <QString>
 #include <QList>
+#include <qmessageglobal.h>
 
 class QMessageAccountIdPrivate;
 
-class QMessageAccountId 
+class Q_MESSAGING_EXPORT QMessageAccountId 
 {
     Q_DECLARE_PRIVATE(QMessageAccountId)
 

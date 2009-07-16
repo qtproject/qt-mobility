@@ -33,10 +33,11 @@
 #ifndef QMESSAGESORTKEY_H
 #define QMESSAGESORTKEY_H
 #include <Qt>
+#include <qmessageglobal.h>
 
 class QMessageSortKeyPrivate;
 
-class QMessageSortKey {
+class Q_MESSAGING_EXPORT QMessageSortKey {
     Q_DECLARE_PRIVATE(QMessageSortKey)
 
 public:

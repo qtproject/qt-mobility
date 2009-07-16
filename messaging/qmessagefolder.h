@@ -34,12 +34,13 @@
 #define QMESSAGEFOLDER_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <QString>
-#include "qmessagefolderid.h"
-#include "qmessageaccountid.h"
+#include <qmessageglobal.h>
+#include <qmessagefolderid.h>
+#include <qmessageaccountid.h>
 
 class QMessageFolderPrivate;
 
-class QMessageFolder {
+class Q_MESSAGING_EXPORT QMessageFolder {
     Q_DECLARE_PRIVATE(QMessageFolder)
 
 public:

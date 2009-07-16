@@ -33,11 +33,12 @@
 #ifndef QMESSAGESERVICEACTION_H
 #define QMESSAGESERVICEACTION_H
 #include <QObject>
-#include "qmessage.h"
+#include <qmessageglobal.h>
+#include <qmessage.h>
 
 class QMessageServiceActionPrivate;
 
-class QMessageServiceAction : public QObject
+class Q_MESSAGING_EXPORT QMessageServiceAction : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QMessageAddress)

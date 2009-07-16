@@ -85,7 +85,7 @@
 <li><div class="fn"></div>const QMessage &amp; <b><a href="qmessage.html#operator-eq">operator=</a></b> ( const QMessage &amp; <i>other</i> )</li>
 </ul>
 <ul>
-<li><div class="fn"></div>34 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
+<li><div class="fn"></div>35 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -177,7 +177,7 @@
 <h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message.</p>
 <h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const QStringList &amp; <i>fileNames</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Append the contents of the files specified by <i>fileNames</i> to the end of the list of attachments for the message. The internet media (MIME) type of the attachments will be determined by examining the contents the files.</p>
+<p>Append the contents of the files specified by <i>fileNames</i> to the end of the list of attachments for the message. The internet media (MIME) type of the attachments will be determined by examining the files or file names.</p>
 <p>See also <a href="qmessage.html#attachments">attachments</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
 <h3 class="fn"><a name="attachments"></a>QMessageContentContainerIdList QMessage::attachments () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of attachments for the message.</p>
@@ -256,7 +256,7 @@
 <h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const QString &amp; <i>body</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the body text of the message to be the string <i>body</i>.</p>
 <p>The internet media (MIME) content type of the body will be &quot;text&quot;, the subtype will be &quot;plain&quot;, the charset will be determined by <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>(),</p>
-<p>If the internet media (MIME) content type of the message is not multipart then the content of the message will be set to <i>body</i>; otherwise the body will be the first part of the message.</p>
+<p>If the internet media (MIME) content type of the message is not multipart then the content of the message will be set to <i>body</i>; otherwise a body part will be created if one does not exist, and the body will be the first part of the message.</p>
 <p>See also <a href="qmessage.html#body">body</a>(), <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>(), and <a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a>().</p>
 <h3 class="fn"><a name="setBodyFromFile"></a>void QMessage::setBodyFromFile ( const QString &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the body text of the message to be the contents of the file <i>fileName</i>.</p>

@@ -34,10 +34,11 @@
 #define QMESSAGEFOLDERSORTKEY_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <Qt>
+#include <qmessageglobal.h>
 
 class QMessageFolderSortKeyPrivate;
 
-class QMessageFolderSortKey {
+class Q_MESSAGING_EXPORT QMessageFolderSortKey {
     Q_DECLARE_PRIVATE(QMessageFolderSortKey)
 
 public:
