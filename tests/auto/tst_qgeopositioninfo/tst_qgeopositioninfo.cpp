@@ -100,6 +100,8 @@ private:
     {
         QTest::addColumn<QGeoPositionInfo>("info");
 
+        QTest::newRow("invalid") << QGeoPositionInfo();
+
         QTest::newRow("coord") << QGeoPositionInfo(QGeoCoordinate(-27.3422,150.2342), QDateTime());
         QTest::newRow("datetime") << QGeoPositionInfo(QGeoCoordinate(), QDateTime::currentDateTime());
 
@@ -112,7 +114,7 @@ private:
     }
 
 private slots:
-    void isValid()
+    void constructor()
     {
         QGeoPositionInfo info;
         QVERIFY(!info.isValid());
@@ -124,21 +126,28 @@ private slots:
     {
         QFETCH(QGeoCoordinate, coord);
         QFETCH(QDateTime, dateTime);
+        QFETCH(bool, valid);
 
         QGeoPositionInfo info(coord, dateTime);
         QCOMPARE(info.coordinate(), coord);
         QCOMPARE(info.dateTime(), dateTime);
+        QCOMPARE(info.isValid(), valid);
     }
 
     void constructor_coord_dateTime_data()
     {
         QTest::addColumn<QGeoCoordinate>("coord");
         QTest::addColumn<QDateTime>("dateTime");
+        QTest::addColumn<bool>("valid");
 
-        QTest::newRow("both null") << QGeoCoordinate() << QDateTime();
-        QTest::newRow("both valid") << QGeoCoordinate(1,1) << QDateTime::currentDateTime();
-        QTest::newRow("valid coord") << QGeoCoordinate(1,1) << QDateTime();
-        QTest::newRow("valid datetime") << QGeoCoordinate() << QDateTime::currentDateTime();
+        QTest::newRow("both null") << QGeoCoordinate() << QDateTime() << false;
+        QTest::newRow("both valid") << QGeoCoordinate(1,1) << QDateTime::currentDateTime() << true;
+        QTest::newRow("valid coord") << QGeoCoordinate(1,1) << QDateTime() << false;
+        QTest::newRow("valid datetime") << QGeoCoordinate() << QDateTime::currentDateTime() << false;
+        QTest::newRow("valid time but not date == invalid")
+                << QGeoCoordinate() << QDateTime(QDate(), QTime::currentTime()) << false;
+        QTest::newRow("valid date but not time == valid due to QDateTime constructor")
+                << QGeoCoordinate() << QDateTime(QDate::currentDate(), QTime()) << false;
     }
 
     void constructor_copy()
@@ -153,19 +162,43 @@ private slots:
         addTestData_info();
     }
 
-    void operator_comparison()
+    void operator_assign()
     {
         QFETCH(QGeoPositionInfo, info);
 
-        QVERIFY(info == info); 
-        QCOMPARE(info != info, false); 
-        QCOMPARE(info == QGeoPositionInfo(), false);
-        QCOMPARE(info != QGeoPositionInfo(), true);
-
-        QVERIFY(QGeoPositionInfo() == QGeoPositionInfo());
+        QGeoPositionInfo info2 = info;
+        QCOMPARE(info2, info);
     }
 
-    void operator_comparison_data()
+    void operator_assign_data()
+    {
+        addTestData_info();
+    }
+
+    void operator_equals()
+    {
+        QFETCH(QGeoPositionInfo, info);
+
+        QVERIFY(info == info);
+        if (info.isValid())
+            QCOMPARE(info == QGeoPositionInfo(), false);
+    }
+
+    void operator_equals_data()
+    {
+        addTestData_info();
+    }
+
+    void operator_notEquals()
+    {
+        QFETCH(QGeoPositionInfo, info);
+
+        QCOMPARE(info != info, false);
+        if (info.isValid())
+            QCOMPARE(info != QGeoPositionInfo(), true);
+    }
+
+    void operator_notEquals_data()
     {
         addTestData_info();
     }
