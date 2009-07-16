@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../systeminfo/qsystemsinfo.cpp -->
+<head>
+  <title>QSystemsNetworkInfo Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemsNetworkInfo Class Reference</h1>
+<p>The QSystemsNetworkInfo class provides access to network information from the system. <a href="#details">More...</a></p>
+<pre>    #include &lt;QSystemsNetworkInfo&gt;</pre><ul>
+<li><a href="qsystemsnetworkinfo-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"/>enum <b><a href="qsystemsnetworkinfo.html#CellNetworkStatus-enum">CellNetworkStatus</a></b> { UndefinedStatus, NoNetworkAvailable, EmergencyOnly, Searching, ..., Roaming }</li>
+<li><div class="fn"/>enum <b><a href="qsystemsnetworkinfo.html#NetworkMode-enum">NetworkMode</a></b> { UnknownMode, GsmMode, CdmaMode, WcdmaMode, WlanMode, EthMode }</li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"/><b><a href="qsystemsnetworkinfo.html#QSystemsNetworkInfo">QSystemsNetworkInfo</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#cellId">cellId</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#currentMCC">currentMCC</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#currentMNC">currentMNC</a></b> ()</li>
+<li><div class="fn"/>QSystemsNetworkInfo::CellNetworkStatus <b><a href="qsystemsnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#homeMCC">homeMCC</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#homeMNC">homeMNC</a></b> ()</li>
+<li><div class="fn"/>bool <b><a href="qsystemsnetworkinfo.html#isLocationEnabled">isLocationEnabled</a></b> () const</li>
+<li><div class="fn"/>bool <b><a href="qsystemsnetworkinfo.html#isWLANAccessible">isWLANAccessible</a></b> () const</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#locationAreaCode">locationAreaCode</a></b> ()</li>
+<li><div class="fn"/>qint32 <b><a href="qsystemsnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ()</li>
+<li><div class="fn"/>QString <b><a href="qsystemsnetworkinfo.html#operatorName">operatorName</a></b> ()</li>
+</ul>
+<a name="signals"></a>
+<h3>Signals</h3>
+<ul>
+<li><div class="fn"/>void <b><a href="qsystemsnetworkinfo.html#networkStatusChanged">networkStatusChanged</a></b> ( QSystemsNetworkInfo::NetworkMode <i>netMode</i>, QSystemsNetworkInfo::CellNetworkStatus <i>netStatus</i> )</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QSystemsNetworkInfo class provides access to network information from the system.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="CellNetworkStatus-enum"></a>enum QSystemsNetworkInfo::CellNetworkStatus</h3>
+<p>This enum describes the status of the network connection:</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::UndefinedStatus</tt></td><td align="center" valign="top"><tt>-1</tt></td><td valign="top">There is no network device, or error.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::NoNetworkAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">There is no network available.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::EmergencyOnly</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Emergency calls only.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::Searching</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Searching for network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::Busy</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Network is busy.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::HomeNetwork</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">On Home Network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::Denied</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Network access denied.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::Roaming</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">On Roaming network.</td></tr>
+</table></p>
+<h3 class="fn"><a name="NetworkMode-enum"></a>enum QSystemsNetworkInfo::NetworkMode</h3>
+<p>This enum describes the type of network:</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::UnknownMode</tt></td><td align="center" valign="top"><tt>0x00000000</tt></td><td valign="top">No network, or error.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::GsmMode</tt></td><td align="center" valign="top"><tt>0x00000001</tt></td><td valign="top">Global System for Mobile (GSM) network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::CdmaMode</tt></td><td align="center" valign="top"><tt>0x00000002</tt></td><td valign="top">Code division multiple access (CDMA) network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::WcdmaMode</tt></td><td align="center" valign="top"><tt>0x00000004</tt></td><td valign="top">Wideband Code Division Multiple Access (W-CDMA) network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::WlanMode</tt></td><td align="center" valign="top"><tt>0x00000008</tt></td><td valign="top">Wireless Local Area Network (WLAN) network.</td></tr>
+<tr><td valign="top"><tt>QSystemsNetworkInfo::EthMode</tt></td><td align="center" valign="top"><tt>0x00000010</tt></td><td valign="top">Wired Local Area network.</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QSystemsNetworkInfo"></a>QSystemsNetworkInfo::QSystemsNetworkInfo ( QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qsystemsnetworkinfo.html">QSystemsNetworkInfo</a> with the given <i>parent</i>.</p>
+<h3 class="fn"><a name="cellId"></a>qint32 QSystemsNetworkInfo::cellId ()</h3>
+<p>Returns the Cell ID of the connected tower or based station.</p>
+<h3 class="fn"><a name="currentMCC"></a>qint32 QSystemsNetworkInfo::currentMCC ()</h3>
+<p>Returns the current Mobile Country Code /</p>
+<h3 class="fn"><a name="currentMNC"></a>qint32 QSystemsNetworkInfo::currentMNC ()</h3>
+<p>Returns the current Mobile Network Code</p>
+<h3 class="fn"><a name="getCellNetworkStatus"></a><a href="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::CellNetworkStatus</a> QSystemsNetworkInfo::getCellNetworkStatus ()</h3>
+<p>Returns the status of the cell network.</p>
+<h3 class="fn"><a name="homeMCC"></a>qint32 QSystemsNetworkInfo::homeMCC ()</h3>
+<p>Returns the home Mobile Network Code</p>
+<h3 class="fn"><a name="homeMNC"></a>qint32 QSystemsNetworkInfo::homeMNC ()</h3>
+<p>Returns the home Mobile Country Code</p>
+<h3 class="fn"><a name="isLocationEnabled"></a>bool QSystemsNetworkInfo::isLocationEnabled () const</h3>
+<p>Returns true if the system has location services, otherwise false.</p>
+<h3 class="fn"><a name="isWLANAccessible"></a>bool QSystemsNetworkInfo::isWLANAccessible () const</h3>
+<p>Returns true if the system has an accessab;e WLan, otherwise false.</p>
+<h3 class="fn"><a name="locationAreaCode"></a>qint32 QSystemsNetworkInfo::locationAreaCode ()</h3>
+<p>Returns the Location Area Code, in the range of 0 to 65,535.</p>
+<h3 class="fn"><a name="networkSignalStrength"></a>qint32 QSystemsNetworkInfo::networkSignalStrength ()</h3>
+<p>Returns the strength of the network signal, per network mode , 0 - 100 linear scaling</p>
+<h3 class="fn"><a name="networkStatusChanged"></a>void QSystemsNetworkInfo::networkStatusChanged ( <a href="qsystemsnetworkinfo.html#NetworkMode-enum">QSystemsNetworkInfo::NetworkMode</a> <i>netMode</i>, <a href="qsystemsnetworkinfo.html#CellNetworkStatus-enum">QSystemsNetworkInfo::CellNetworkStatus</a> <i>netStatus</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when network status has changed. <i>netMode</i> is the network mode of the changed network. <i>netStatus</i> is the new status of the changed network.</p>
+<h3 class="fn"><a name="operatorName"></a>QString QSystemsNetworkInfo::operatorName ()</h3>
+<p>Returns the name of the operator.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">System Information API</div></td>
+</tr></table></div></address></body>
+</html>
