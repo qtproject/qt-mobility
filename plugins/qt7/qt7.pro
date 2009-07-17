@@ -4,7 +4,7 @@ CONFIG += plugin
 TARGET = qt7
 
 INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
-LIBS += -L../../lib -lQtMedia -framework QTKit
+LIBS += -L../../lib -lQtMedia -framework QTKit -framework QuickTime
 DESTDIR = ../../lib/mediaservice
 
 HEADERS = \

@@ -32,6 +32,7 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qurl.h>
 #include <qmediasource.h>
 
 #include "qt7widget.h"
@@ -59,30 +60,22 @@ Qt7Movie::~Qt7Movie()
     [d->movie release];
 }
 
-void Qt7Movie::setSource(QMediaSource const &source)
-{
-    if (d->movie != nil)
-        [d->movie release];
-
-    NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:source.dataLocation().toString().toUtf8()]];
-    d->movie = [[QTMovie movieWithURL:url error:nil] retain];
-}
-
 qint64 Qt7Movie::duration() const
 {
     QTTime  t = [d->movie duration];
 
-    return 0;
+    return t.timeValue * 1000 / t.timeScale;
 }
 
 qint64 Qt7Movie::position() const
 {
     QTTime t = [d->movie currentTime];
-    return 0;
+    return t.timeValue * 1000 / t.timeScale;
 }
 
 void Qt7Movie::setPosition(qint64 position)
 {
+    [d->movie setCurrentTime:QTMakeTime(position, 1000)];
 }
 
 int Qt7Movie::volume() const
@@ -92,6 +85,7 @@ int Qt7Movie::volume() const
 
 void Qt7Movie::setVolume(int v)
 {
+    [d->movie setVolume:float(v) / 100];
 }
 
 bool Qt7Movie::isMuted() const
@@ -101,6 +95,17 @@ bool Qt7Movie::isMuted() const
 
 void Qt7Movie::setMuted(bool muted)
 {
+    [d->movie setMuted:BOOL(muted)];
+}
+
+float Qt7Movie::rate() const
+{
+    return [d->movie rate];
+}
+
+void Qt7Movie::setRate(float r)
+{
+    [d->movie setRate:r];
 }
 
 bool Qt7Movie::isVideoAvailable() const
@@ -120,6 +125,7 @@ void Qt7Movie::play()
 
 void Qt7Movie::pause()
 {
+    [d->movie setRate:0];
 }
 
 void Qt7Movie::stop()
@@ -127,7 +133,30 @@ void Qt7Movie::stop()
     [d->movie stop];
 }
 
+int Qt7Movie::state() const
+{
+    if (d->movie == nil)
+        return 3;
+
+    if (IsMovieDone([d->movie quickTimeMovie]))
+        return 3;
+    else if (rate() == 0)
+        return 2;
+
+    return 1;
+}
+
 void Qt7Movie::setVideoOutput(Qt7Widget *outpout)
 {
+}
+
+void Qt7Movie::setSource(QMediaSource const &source)
+{
+    if (d->movie != nil)
+        [d->movie release];
+
+    QUrl qurl = QUrl(source.dataLocation().toString());
+    d->movie = [[QTMovie movieWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:qurl.toEncoded().constData()]]
+                                error:nil] retain];
 }
 

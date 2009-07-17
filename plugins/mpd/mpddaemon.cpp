@@ -49,6 +49,7 @@ public:
     QTimer*     statusTimer;
     QTcpSocket *socket;
 
+    bool connected;
     int state;
     qint64 duration;
     qint64 position;
@@ -128,9 +129,15 @@ QStringList MpdDaemon::send(QString const &command, bool *ok)
 {
     QStringList r;
 
-    rawSend("noidle", true);
-    r = rawSend(command.toAscii().constData(), true, ok);
-    rawSend("idle", false);
+    if (d->socket->state() != QAbstractSocket::ConnectedState) {
+        if (ok != 0)
+            *ok = false;
+    }
+    else {
+        rawSend("noidle", true);
+        r = rawSend(command.toAscii().constData(), true, ok);
+        rawSend("idle", false);
+    }
 
     return r;
 }

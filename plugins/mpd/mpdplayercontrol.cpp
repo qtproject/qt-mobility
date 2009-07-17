@@ -81,12 +81,12 @@ bool MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 
 qint64 MpdPlayerControl::duration() const
 {
-    return 0;
+    return daemon->duration();
 }
 
 qint64 MpdPlayerControl::position() const
 {
-    return 0;
+    return daemon->position();
 }
 
 void MpdPlayerControl::setPosition(qint64 position)
@@ -101,6 +101,7 @@ int MpdPlayerControl::playlistPosition() const
 
 void MpdPlayerControl::setPlaylistPosition(int position)
 {
+    daemon->send(QString("play %1").arg(position));
 }
 
 int MpdPlayerControl::volume() const
@@ -161,6 +162,7 @@ float MpdPlayerControl::playbackRate() const
 
 void MpdPlayerControl::setPlaybackRate(float rate)
 {
+    Q_UNUSED(rate);
 }
 
 void MpdPlayerControl::play()

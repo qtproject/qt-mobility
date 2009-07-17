@@ -156,7 +156,13 @@ void MpdPlaylistSource::loadPlaylist()
     bool ok = false;
     QStringList r = d->daemon->send("playlist", &ok);
 
-    d->entries = ok ? r.size() : 0;
+    if (ok) {
+        d->entries = r.size();
+        emit itemsAboutToBeInserted(0, d->entries);
+        emit itemsInserted();
+    }
+    else
+        d->entries = 0;
 }
 
 //Q_SIGNALS:
