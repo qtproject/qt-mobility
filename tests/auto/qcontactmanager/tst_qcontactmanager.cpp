@@ -1472,7 +1472,7 @@ void tst_QContactManager::contactValidation()
     d3.setValue("value", "test2");
     c.saveDetail(&d3);
     QVERIFY(!cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::InvalidDetailError);
+    QCOMPARE(cm->error(), QContactManager::AlreadyExistsError);
     c.removeDetail(&d3);
     c.removeDetail(&d2);
 

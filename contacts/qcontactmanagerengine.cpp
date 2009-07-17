@@ -579,13 +579,16 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
 
         // check that the definition is supported
         if (error != QContactManager::NoError) {
+            error = QContactManager::InvalidDetailError;
             return false; // this definition is not supported.
         }
 
         // check uniqueness
         if (def.isUnique()) {
-            if (uniqueDefinitionIds.contains(def.id()))
+            if (uniqueDefinitionIds.contains(def.id())) {
+                error = QContactManager::AlreadyExistsError;
                 return false; // can't have two of a unique detail.
+            }
             uniqueDefinitionIds.append(def.id());
         }
 
@@ -594,20 +597,40 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
             const QString& key = keys.at(i);
             // check that no values exist for nonexistent fields.
             if (!def.fields().contains(key)) {
+                error = QContactManager::InvalidDetailError;
                 return false; // value for nonexistent field.
             }
 
             QContactDetailDefinition::Field field = def.fields().value(key);
             // check that the type of each value corresponds to the allowable field type
             if (field.dataType != values.value(key).type()) {
+                error = QContactManager::InvalidDetailError;
                 return false; // type doesn't match.
             }
             // check that the value is allowable
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues.isEmpty()
                 && !field.allowableValues.contains(values.value(key))) {
+                error = QContactManager::InvalidDetailError;
                 return false; // value not allowed.
             }
+        }
+    }
+
+    // Check that any groups in the contact actually exist
+    if (contact.groups().count() > 0) {
+        QList<QUniqueId> allGroups = groups(error);
+        if (error == QContactManager::NoError) {
+            for (int i=0; i < contact.groups().count(); i++) {
+                QUniqueId groupId = contact.groups().at(i);
+                if (!allGroups.contains(groupId)) {
+                    error = QContactManager::DoesNotExistError;
+                    return false;
+                }
+            }
+        } else {
+            // pass the original error back
+            return false;
         }
     }
 
@@ -1243,12 +1266,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // check the specified group for membership.
                 const QContactGroupMembershipFilter cgf(filter);
-                QContactManager::Error groupsError = QContactManager::NoError;
-                QContactGroup filterGroup = group(cgf.groupId(), groupsError);
-                if (groupsError != QContactManager::NoError)
-                    return false;                
-                if (filterGroup.hasMember(contact.id()))
+
+                if (contact.groups().contains(cgf.groupId()))
                     return true;
+
                 return false;
             }
             break;
