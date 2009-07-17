@@ -55,7 +55,8 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerinfo.h"
 
-class QContactAbstractAction;
+#include "qcontactabstractactionfactory.h"
+
 class QContactManagerEngineFactory;
 
 /* Data and stuff that is shared amongst all backends */
@@ -77,6 +78,7 @@ public:
     }
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+    static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
     QContactManagerEngine* m_engine;
     QString m_managerName;
@@ -89,13 +91,17 @@ public:
     QContactManagerInfo *m_info;
 
     /* Manager plugins */
-    static QMap<QString, QContactManagerEngineFactory*> m_engines;
+    static QHash<QString, QContactManagerEngineFactory*> m_engines;
     static bool m_discovered;
     static void loadFactories();
 
     /* Action Implementations */
-    static QMultiMap<QString, QContactAbstractAction*> m_actionImplementations; // map of actionName to implementation.
-    static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    typedef QHash<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*> DescriptorHash;
+    static QList<QContactAbstractActionFactory*> m_actionfactories; // list of all factories
+    static QList<QContactAbstractActionFactory::ActionDescriptor> m_descriptors; // all descriptors
+    static DescriptorHash m_descriptormap;
+    static QHash<QString, int> m_actionmap;
+    static QHash<QString, int> m_vendormap;
 
 private:
     Q_DISABLE_COPY(QContactManagerData);

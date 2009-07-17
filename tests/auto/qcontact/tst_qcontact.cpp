@@ -314,7 +314,6 @@ void tst_QContact::actions()
     // set the correct path to look for plugins and load them
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
     QApplication::addLibraryPath(path);
-    QContactManager cm;
 
     // available actions - should be one there now.
     // empty contact

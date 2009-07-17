@@ -56,18 +56,33 @@
 
 
 /* Shared QContactManager stuff here, default engine stuff below */
-QMultiMap<QString, QContactAbstractAction*> QContactManagerData::m_actionImplementations;
-QMap<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QList<QContactAbstractActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
+QList<QContactAbstractActionFactory::ActionDescriptor> QContactManagerData::m_descriptors;
+QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QContactManagerData::DescriptorHash QContactManagerData::m_descriptormap;
+QHash<QString, int> QContactManagerData::m_vendormap;
+QHash<QString, int> QContactManagerData::m_actionmap;
+
 bool QContactManagerData::m_discovered;
 
 static void qContactsCleanEngines()
 {
     QContactManagerData::m_discovered = false;
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
+    QList<QContactAbstractActionFactory*> actionfactories = QContactManagerData::m_actionfactories;
+
     for (int i=0; i < factories.count(); i++) {
         delete factories.at(i);
     }
+    for(int i=0; i < actionfactories.count(); i++) {
+        delete actionfactories.at(i);
+    }
     QContactManagerData::m_engines.clear();
+    QContactManagerData::m_actionfactories.clear();
+    QContactManagerData::m_descriptors.clear();
+    QContactManagerData::m_descriptormap.clear();
+    QContactManagerData::m_actionmap.clear();
+    QContactManagerData::m_vendormap.clear();
 }
 
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
@@ -126,26 +141,23 @@ void QContactManagerData::loadFactories()
                 } else {
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
                 }
-            } else if (g) {
+            }
+
+            if (g) {
                 QString name = g->name();
                 qDebug() << "Static: found an action factory" << g << "with name" << name;
 
-                // option one: we own the action implementations; clients DO NOT delete them...
-                QList<QContactAbstractAction*> impls = g->instances();
-                for (int j = 0; j < impls.size(); j++) {
-                    QContactAbstractAction* impl = impls.at(j);
-                    m_actionImplementations.insert(impl->actionName(), impl);
+                m_actionfactories.append(g);
+
+                QList<QContactAbstractActionFactory::ActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*>::iterator it;
+                for (int j = 0; j < actions.size(); j++) {
+                    const QContactAbstractActionFactory::ActionDescriptor& desc = actions.at(j);
+                    m_descriptormap.insert(desc, g);
+                    m_descriptors.append(desc);
+                    m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
+                    m_vendormap.insertMulti(desc.vendorName, m_descriptors.count() - 1);
                 }
-
-                // option two: we own the factory instances; clients own the action implementation instances!
-                // m_actionFactories.append(g);
-                // ... then in our "::actions(..)" functions:
-                // foreach (const QContactAbstactActionFactory* f, m_actionFactories) {
-                //     retn += f.instances();
-                // }
-
-            } else {
-                qDebug() << "Static: plugin found is of unknown type!";
             }
         }
 
@@ -202,58 +214,78 @@ void QContactManagerData::loadFactories()
                 } else {
                     qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
                 }
-            } else if (g) {
+            }
+
+            if (g) {
                 QString name = g->name();
                 qDebug() << "Dynamic: found an action factory" << g << "with name" << name;
 
-                // option one: we own the action implementations; clients DO NOT delete them...
-                QList<QContactAbstractAction*> impls = g->instances();
-                for (int j = 0; j < impls.size(); j++) {
-                    QContactAbstractAction* impl = impls.at(j);
-                    m_actionImplementations.insert(impl->actionName(), impl);
-                }
+                m_actionfactories.append(g);
 
-                // option two: we own the factory instances; clients own the action implementation instances!
-                // m_actionFactories.append(g);
-                // ... then in our "::actions(..)" functions:
-                // foreach (const QContactAbstactActionFactory* f, m_actionFactories) {
-                //     retn += f.instances();
-                // }
-            } else {
-                qDebug() << "Dynamic: plugin found is of unknown type!";
-                qDebug() << "    qpl.instance() =" << qpl.instance();
+                QList<QContactAbstractActionFactory::ActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*>::iterator it;
+                for (int j = 0; j < actions.size(); j++) {
+                    const QContactAbstractActionFactory::ActionDescriptor& desc = actions.at(j);
+                    m_descriptormap.insert(desc, g);
+                    m_descriptors.append(desc);
+                    m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
+                    m_vendormap.insertMulti(desc.vendorName, m_descriptors.count() - 1);
+                }
             }
         }
 
         qDebug() << "Found engines:" << m_engines.keys();
-        qDebug() << "Found actions:" << m_actionImplementations.keys();
+        qDebug() << "Found actions:" << m_actionmap.keys();
     }
 }
 
 QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
-    QList<QContactAbstractAction*> all;
     QList<QContactAbstractAction*> retn;
-    if (actionName.isEmpty()) {
-        // return the entire list of implementations (which are from the given vendor and of the given impl. version)
-        all = m_actionImplementations.values();
-    } else {
-        // just get the list of actions of the specified name, then sort by vendor and impl. version.
-        all = m_actionImplementations.values(actionName);
+
+    loadFactories();
+
+    bool restrict = false;
+    QSet<int> subset;
+    QList<QContactAbstractActionFactory::ActionDescriptor> descriptors;
+
+    // Go through our list of descriptors, looking for a match
+    if (!actionName.isEmpty()) {
+        subset = m_actionmap.values(actionName).toSet();
+        restrict = true;
     }
 
-    // no vendor given, :. implVersion is meaningless; return all.
-    if (vendor.isEmpty()) {
-        return all;
-    }
+    if (!vendor.isEmpty()) {
+        if (restrict)
+            subset &= m_vendormap.values(vendor).toSet();
+        else
+            subset = m_vendormap.values(vendor).toSet();
+        restrict = true;
 
-    // filter by vendor and (if supplied) impl. version.
-    for (int i = 0; i < all.size(); i++) {
-        QContactAbstractAction* impl = all.at(i);
-        if (impl->vendor() == vendor && (implementationVersion == -1
-                || implementationVersion == impl->implementationVersion())) {
-            retn.append(impl);
+        /* We still have to check versions, since we don't hash that */
+        if (implementationVersion != -1) {
+            QMutableSetIterator<int> it(subset);
+            while(it.hasNext()) {
+                if (m_descriptors.at(it.next()).vendorVersion != implementationVersion)
+                    it.remove();
+            }
         }
+    }
+
+    if (restrict) {
+        QSetIterator<int> it(subset);
+        while(it.hasNext()) {
+            descriptors << m_descriptors.at(it.next());
+        }
+    } else {
+        /* No restrictions, just iterate over all descriptors and return all actions (!) */
+        descriptors = m_descriptors;
+    }
+
+    /* Now loop over the valid descriptors */
+    for (int j=0; j < descriptors.size(); j++) {
+        const QContactAbstractActionFactory::ActionDescriptor& descriptor = descriptors.at(j);
+        retn += m_descriptormap.value(descriptor)->instance(descriptor);
     }
 
     return retn;

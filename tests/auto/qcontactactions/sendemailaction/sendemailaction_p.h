@@ -61,10 +61,9 @@ public:
     QContactSendEmailActionFactory();
     ~QContactSendEmailActionFactory();
 
-    QString name();
-    QStringList actionNames();
-    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
-    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    QString name() const;
+    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const;
+    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor& descriptor) const;
 };
 
 class QContactSendEmailAction : public QContactAbstractAction

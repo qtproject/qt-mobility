@@ -37,6 +37,11 @@ QContactAbstractActionFactory::~QContactAbstractActionFactory()
 {
 }
 
+uint qHash(const QContactAbstractActionFactory::ActionDescriptor& ad)
+{
+    return qHash(ad.actionName) + qHash(ad.vendorName) + ad.vendorVersion;
+}
+
 /*!
  * \fn QContactAbstractActionFactory::~QContactAbstractActionFactory()
  * Clears any memory in use by this factory

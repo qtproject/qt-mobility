@@ -42,6 +42,7 @@
 #include <QString>
 #include <QList>
 #include <QStringList>
+#include <QHash>
 
 class QContactAbstractAction;
 
@@ -52,11 +53,51 @@ class QTCONTACTS_EXPORT QContactAbstractActionFactory : public QObject
 public:
     virtual ~QContactAbstractActionFactory() = 0;
 
-    virtual QString name() = 0;
-    virtual QStringList actionNames() = 0;
-    virtual QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1) = 0;
-    virtual QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1) = 0;
+    struct ActionDescriptor {
+        QString actionName;
+        QString vendorName;
+        int vendorVersion;
+
+        ActionDescriptor(const QString& action, const QString& vendor, int version)
+                : actionName(action),
+                vendorName(vendor),
+                vendorVersion(version)
+        {
+        }
+
+        /*
+        bool operator <(const ActionDescriptor& other) const
+        {
+            if (actionName < other.actionName)
+                return true;
+            if (actionName == other.actionName) {
+                if (vendorName < other.vendorName)
+                    return true;
+                else if (vendorName == other.vendorName) {
+                    if (vendorVersion < other.vendorVersion)
+                        return true;
+                    else if (vendorVersion == other.vendorVersion)
+                        return this < &other; // equality, try to be stable
+                }
+            }
+            return false;
+        }
+        */
+
+        bool operator ==(const ActionDescriptor& other) const
+        {
+            return actionName == other.actionName
+                    && vendorName == other.vendorName
+                    && vendorVersion == other.vendorVersion;
+        }
+    };
+
+    virtual QString name() const = 0;
+    virtual QList<ActionDescriptor> actionDescriptors() const = 0;
+    virtual QContactAbstractAction* instance(const ActionDescriptor& descriptor) const = 0;
 };
+
+uint qHash(const QContactAbstractActionFactory::ActionDescriptor& ad);
 
 #define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.abstractactionfactory/1.0"
 Q_DECLARE_INTERFACE(QContactAbstractActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);

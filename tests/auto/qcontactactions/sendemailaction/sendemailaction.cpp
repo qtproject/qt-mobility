@@ -53,59 +53,20 @@ QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
 {
 }
 
-QString QContactSendEmailActionFactory::name()
+QString QContactSendEmailActionFactory::name() const
 {
     return QString(ACTIONFACTORYPLUGINNAME);
 }
 Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
 
-QStringList QContactSendEmailActionFactory::actionNames()
+QList<QContactAbstractActionFactory::ActionDescriptor> QContactSendEmailActionFactory::actionDescriptors() const
 {
-    return (QStringList() << "SendEmail");
+    return QList<QContactAbstractActionFactory::ActionDescriptor>() << QContactAbstractActionFactory::ActionDescriptor("SendEmail", "Test", 1);
 }
 
-QContactAbstractAction* QContactSendEmailActionFactory::instance(const QString& actionName, const QString& vendor, int implementationVersion)
+QContactAbstractAction* QContactSendEmailActionFactory::instance(const QContactAbstractActionFactory::ActionDescriptor&) const
 {
-    QContactSendEmailAction *sea = new QContactSendEmailAction;
-    if (!actionName.isEmpty() && actionName != "SendEmail") {
-        delete sea;
-        return 0;
-    }
-
-    if (!vendor.isEmpty() && vendor != sea->vendor()) {
-        delete sea;
-        return 0;
-    }
-
-    if (implementationVersion != -1 && implementationVersion != sea->implementationVersion()) {
-        delete sea;
-        return 0;
-    }
-
-    return sea;
-}
-
-QList<QContactAbstractAction*> QContactSendEmailActionFactory::instances(const QString& actionName, const QString& vendor, int implementationVersion)
-{
-    QContactSendEmailAction *sea = new QContactSendEmailAction;
-    if (!actionName.isEmpty() && actionName != "SendEmail") {
-        delete sea;
-        return QList<QContactAbstractAction*>();
-    }
-
-    if (!vendor.isEmpty() && vendor != sea->vendor()) {
-        delete sea;
-        return QList<QContactAbstractAction*>();
-    }
-
-    if (implementationVersion != -1 && implementationVersion != sea->implementationVersion()) {
-        delete sea;
-        return QList<QContactAbstractAction*>();
-    }
-
-    QList<QContactAbstractAction*> retn;
-    retn.append(sea);
-    return retn;
+    return new QContactSendEmailAction;
 }
 
 QContactSendEmailAction::QContactSendEmailAction() : QContactAbstractAction()

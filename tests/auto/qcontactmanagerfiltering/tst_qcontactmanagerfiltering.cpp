@@ -1283,50 +1283,31 @@ public:
     FilterActionFactory() {}
     ~FilterActionFactory() {}
 
-    QString name() {return QString("FilterActionFactory");}
-    QStringList actionNames() {return QStringList() << "Number" << "Boolean";}
-
-    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    QString name() const
     {
-        Q_UNUSED(actionName);
-        Q_UNUSED(vendor);
-        Q_UNUSED(implementationVersion);
-        return 0;
+        return QString("FilterActionFactory");
     }
 
-    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const
     {
-        QList<QContactAbstractAction*> ret;
-        // If we're after Number, we add all IntegerAction and NumberAction
-        // If we're after Boolean, we add BooleanAction
-        if (actionName == "Number") {
-            if (vendor.isEmpty()) {
-                if (implementationVersion == -1 || implementationVersion == 5)
-                    ret.append(new QIntegerAction());
-                if (implementationVersion == -1 || implementationVersion == 42) {
-                    ret.append(new QNumberAction());
-                }
-            } else if (vendor == "IntegerCo") {
-                if (implementationVersion == -1 || implementationVersion == 5)
-                    ret.append(new QIntegerAction);
-            } else if (vendor == "NumberCo") {
-                if (implementationVersion == -1 || implementationVersion == 42)
-                    ret.append(new QNumberAction);
-            }
-        } else if (actionName == "Boolean") {
-            if (implementationVersion == -1 || implementationVersion == 3)
-                ret.append(new QBooleanAction);
-        } else {
-            if (implementationVersion == -1 || implementationVersion == 42)
-                ret.append(new QNumberAction);
-            if (implementationVersion == -1 || implementationVersion == 5)
-                ret.append(new QIntegerAction);
-            if (implementationVersion == -1 || implementationVersion == 3)
-                ret.append(new QBooleanAction);
-        }
+        QList<QContactAbstractActionFactory::ActionDescriptor> ret;
 
-        qDebug() << actionName << vendor << implementationVersion << ret;
+        ret << ActionDescriptor("Number", "NumberCo", 42)
+                << ActionDescriptor("Number", "IntegerCo", 5)
+                << ActionDescriptor("Boolean", "BooleanCo", 3);
+
         return ret;
+    }
+
+    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor& descriptor) const
+    {
+        if (descriptor.actionName == "Number") {
+            if (descriptor.vendorName == "IntegerCo")
+                return new QIntegerAction;
+            else
+                return new QNumberAction;
+        } else
+            return new QBooleanAction;
     }
 };
 

@@ -69,30 +69,19 @@ public:
     DummyStaticActionFactory() {}
     ~DummyStaticActionFactory() {}
 
-    QString name()
+    QString name() const
     {
         return QString("dummystaticactionfactory");
     }
 
-    QStringList actionNames()
+    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const
     {
-        return QStringList();
+        return QList<QContactAbstractActionFactory::ActionDescriptor>();
     }
 
-    QContactAbstractAction* instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
+    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor&) const
     {
-        Q_UNUSED(actionName);
-        Q_UNUSED(vendor);
-        Q_UNUSED(implementationVersion);
         return 0;
-    }
-
-    QList<QContactAbstractAction*> instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
-    {
-        Q_UNUSED(actionName);
-        Q_UNUSED(vendor);
-        Q_UNUSED(implementationVersion);
-        return QList<QContactAbstractAction*>();
     }
 };
 
