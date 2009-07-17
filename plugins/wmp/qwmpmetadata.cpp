@@ -40,10 +40,12 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qstringlist.h>
 
-QWmpMetaData::QWmpMetaData(QWmpEvents *events, QObject *parent)
+QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
     : QMetadataProvider(parent)
     , m_media(0)
 {
+    player->get_currentMedia(&m_media);
+
     connect(events, SIGNAL(CurrentItemChange(IDispatch*)),
             this, SLOT(currentItemChangeEvent(IDispatch*)));
     connect(events, SIGNAL(MediaChange(IDispatch*)), this, SLOT(mediaChangeEvent(IDispatch*)));

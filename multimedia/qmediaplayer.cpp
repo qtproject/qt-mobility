@@ -125,6 +125,9 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
 
     addPropertyWatch("position");
+
+    if (d->control->state() == PlayingState)
+        beginWatch();
 }
 
 /*!

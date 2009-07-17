@@ -45,7 +45,7 @@ class QWmpMetaData : public QMetadataProvider
 {
     Q_OBJECT
 public:
-    QWmpMetaData(QWmpEvents *events, QObject *parent = 0);
+    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpMetaData();
 
     bool metadataAvailable() const;

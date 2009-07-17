@@ -70,11 +70,12 @@ Player::Player(QWidget *parent)
 
     playlistView = new QTableView;
     playlistView->setModel(playlistModel);
+    playlistView->setCurrentIndex(playlistModel->index(player->playlistPosition(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setRange(0, 0);
+    slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
@@ -83,6 +84,9 @@ Player::Player(QWidget *parent)
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
     PlayerControls *controls = new PlayerControls;
+    controls->setState(player->state());
+    controls->setVolume(player->volume());
+    controls->setMuted(controls->isMuted());
 
     connect(controls, SIGNAL(play()), player, SLOT(play()));
     connect(controls, SIGNAL(pause()), player, SLOT(pause()));
@@ -111,7 +115,7 @@ Player::Player(QWidget *parent)
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
 
-        /*        
+        /*
         connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
         videoWidget->setMinimumSize(64,64);
         videoWidget->setVisible(false);*/
@@ -124,6 +128,8 @@ Player::Player(QWidget *parent)
     layout->addLayout(controlLayout);
 
     setLayout(layout);
+
+    metadataChanged();
 }
 
 Player::~Player()
@@ -135,13 +141,13 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
-	if (!fileNames.isEmpty()) {
-		QList<QMediaSource>	sources;
+    if (!fileNames.isEmpty()) {
+        QList<QMediaSource> sources;
 
-		foreach (QString const &fileName, fileNames)
-			sources << QMediaSource("", QLatin1String("file://") + fileName);
+        foreach (QString const &fileName, fileNames)
+            sources << QMediaSource("", QLatin1String("file://") + fileName);
 
-		player->mediaPlaylist()->append(sources);
+        player->mediaPlaylist()->append(sources);
     }
 }
 
@@ -172,10 +178,10 @@ void Player::jump(const QModelIndex &index)
 
 void Player::playlistPositionChanged(int currentItem)
 {
-    playlistView->setCurrentIndex(playlistModel->index(currentItem,0));
+    playlistView->setCurrentIndex(playlistModel->index(currentItem, 0));
 }
 
 void Player::seek(int seconds)
 {
-    player->setPosition(seconds*1000);
+    player->setPosition(seconds * 1000);
 }
