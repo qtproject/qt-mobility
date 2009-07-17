@@ -66,11 +66,9 @@ public:
 #ifdef AUDIOSERVICES
     virtual QAudioFormat format() const;
     virtual void setFormat(const QAudioFormat &format);
-
-    virtual QList<QByteArray> deviceList() const = 0;
-    virtual QAudioDeviceInfo* deviceInfo() const;
-    virtual void setDeviceInfo(const QByteArray &deviceName);
-    virtual void create(const QByteArray &deviceName);
+    virtual bool isFormatSupported(const QAudioFormat &format) const;
+    virtual QAudioFormat preferredFormat() const;
+    virtual QAudioFormat nearestFormat(const QAudioFormat &format) const;
 #endif
 
     QIODevice *device() const;
