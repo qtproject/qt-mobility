@@ -32,43 +32,54 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef PLAYERCONTROLS_H
+#define PLAYERCONTROLS_H
 
-#include "qmetadataprovider.h"
+#include "qmediaplayer.h"
 
-#include <wmp.h>
+#include <QtGui/qwidget.h>
 
-class QWmpEvents;
+class QAbstractButton;
+class QAbstractSlider;
 
-class QWmpMetaData : public QMetadataProvider
+class PlayerControls : public QWidget
 {
     Q_OBJECT
 public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    PlayerControls(QWidget *parent = 0);
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
+    QMediaPlayer::State state() const;
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
+    int volume() const;
+    bool isMuted() const;
 
-    static QStringList keys(IWMPMedia *media);
+public slots:
+    void setState(QMediaPlayer::State state);
+    void setVolume(int volume);
+    void setMuted(bool muted);
 
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
+signals:
+    void play();
+    void pause();
+    void stop();
+    void next();
+    void previous();
+    void changeVolume(int volume);
+    void changeMuting(bool muting);
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+private slots:
+    void playClicked();
+    void muteClicked();
 
 private:
-    IWMPMedia *m_media;
+    QMediaPlayer::State playerState;
+    bool playerMuted;
+    QAbstractButton *playButton;
+    QAbstractButton *stopButton;
+    QAbstractButton *nextButton;
+    QAbstractButton *previousButton;
+    QAbstractButton *muteButton;
+    QAbstractSlider *volumeSlider;
 };
 
 #endif

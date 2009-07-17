@@ -10,10 +10,12 @@ DESTDIR = ../../bin
 
 HEADERS = \
     player.h \
+    playercontrols.h \
     playlistmodel.h
   
 SOURCES = \
     main.cpp \
     player.cpp \
+    playercontrols.cpp \
     playlistmodel.cpp
     

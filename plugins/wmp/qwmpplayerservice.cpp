@@ -90,7 +90,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
         }
 
         m_events = new QWmpEvents(m_player);
-        m_metaData = new QWmpMetaData(m_events);
+        m_metaData = new QWmpMetaData(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
 
     }

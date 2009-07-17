@@ -67,6 +67,10 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     m_playlistSource = new QWmpPlaylist(player, events);
     m_playlist = new QMediaPlaylist(m_playlistSource);
 
+    WMPPlayState state = wmppsUndefined;
+    if (m_player->get_playState(&state) == S_OK)
+        playStateChangeEvent(state);
+
     connect(events, SIGNAL(Buffering(VARIANT_BOOL)), this, SLOT(bufferingEvent(VARIANT_BOOL)));
     connect(events, SIGNAL(PositionChange(double,double)),
             this, SLOT(positionChangeEvent(double,double)));
@@ -153,11 +157,13 @@ qint64 QWmpPlayerControl::duration() const
     double duration = 0.;
 
     IWMPMedia *media = 0;
-    if (m_player->get_currentMedia(&media) == S_OK) {
+    if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
         media->get_duration(&duration);
 
         media->Release();
     }
+
+
 
     return m_duration * 1000;
 }
@@ -183,7 +189,7 @@ int QWmpPlayerControl::playlistPosition() const
     int position = 0;
 
     IWMPMedia *media = 0;
-    if (m_player->get_currentMedia(&media) == S_OK) {
+    if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
         position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
 
         media->Release();
@@ -219,8 +225,8 @@ int QWmpPlayerControl::volume() const
 
 void QWmpPlayerControl::setVolume(int volume)
 {
-    if (m_settings)
-        m_settings->put_volume(volume);
+    if (m_settings && m_settings->put_volume(volume) == S_OK)
+        emit volumeChanged(volume);
 }
 
 bool QWmpPlayerControl::isMuted() const
@@ -235,8 +241,9 @@ bool QWmpPlayerControl::isMuted() const
 
 void QWmpPlayerControl::setMuted(bool muted)
 {
-    if (m_settings)
-        m_settings->put_mute(muted ? TRUE : FALSE);
+    if (m_settings && m_settings->put_mute(muted ? TRUE : FALSE) == S_OK)
+        emit mutingChanged(muted);
+
 }
 
 bool QWmpPlayerControl::isBuffering() const
@@ -372,7 +379,7 @@ void QWmpPlayerControl::mediaChangeEvent(IDispatch *dispatch)
     if (dispatch &&  dispatch->QueryInterface(
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
         IWMPMedia *currentMedia = 0;
-        if (m_player->get_currentMedia(&currentMedia) == S_OK) {
+        if (m_controls && m_controls->get_currentItem(&currentMedia) == S_OK) {
             VARIANT_BOOL isEqual = VARIANT_FALSE;
             if (media->get_isIdentical(currentMedia, &isEqual) == S_OK && isEqual) {
                 double duration = 0;

@@ -34,6 +34,7 @@
 
 #include "player.h"
 
+#include "playercontrols.h"
 #include "playlistmodel.h"
 
 #include <qmediaplayer.h>
@@ -69,57 +70,43 @@ Player::Player(QWidget *parent)
 
     playlistView = new QTableView;
     playlistView->setModel(playlistModel);
+    playlistView->setCurrentIndex(playlistModel->index(player->playlistPosition(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setRange(0, 0);
+    slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
     QPushButton *openButton = new QPushButton(tr("Open"));
+
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
-    QPushButton *playButton = new QPushButton(tr("Play"));
-    connect(playButton, SIGNAL(clicked()), player, SLOT(play()));
+    PlayerControls *controls = new PlayerControls;
+    controls->setState(player->state());
+    controls->setVolume(player->volume());
+    controls->setMuted(controls->isMuted());
 
-    QPushButton *pauseButton = new QPushButton(tr("Pause"));
-    connect(pauseButton, SIGNAL(clicked()), player, SLOT(pause()));
+    connect(controls, SIGNAL(play()), player, SLOT(play()));
+    connect(controls, SIGNAL(pause()), player, SLOT(pause()));
+    connect(controls, SIGNAL(stop()), player, SLOT(stop()));
+    connect(controls, SIGNAL(next()), player, SLOT(advance()));
+    connect(controls, SIGNAL(previous()), player, SLOT(back()));
+    connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
+    connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
 
-    QPushButton *stopButton = new QPushButton(tr("Stop"));
-    connect(stopButton, SIGNAL(clicked()), player, SLOT(stop()));
-
-    QPushButton *advanceButton = new QPushButton(tr("Advance"));
-    connect(advanceButton, SIGNAL(clicked()), player, SLOT(advance()));
-
-    QPushButton *backButton = new QPushButton(tr("Back"));
-    connect(backButton, SIGNAL(clicked()), player, SLOT(back()));
-
-    QLabel *volumeLabel = new QLabel(tr("Volume"));
-
-    QSlider *volumeSlider = new QSlider(Qt::Horizontal);
-    volumeSlider->setRange(0, 100);
-    volumeSlider->setValue(player->volume());
-    connect(volumeSlider, SIGNAL(valueChanged(int)), player, SLOT(setVolume(int)));
-    connect(player, SIGNAL(volumeChanged(int)), volumeSlider, SLOT(setValue(int)));
-
-    QPushButton *muteButton = new QPushButton(tr("Mute"));
-    muteButton->setCheckable(true);
-    muteButton->setChecked(player->isMuted());
-    connect(muteButton, SIGNAL(clicked(bool)), player, SLOT(setMuted(bool)));
-    connect(player, SIGNAL(mutingChanged(bool)), muteButton, SLOT(setChecked(bool)));
+    connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
+            controls, SLOT(setState(QMediaPlayer::State)));
+    connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
+    connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
-    controlLayout->addWidget(playButton);
-    controlLayout->addWidget(pauseButton);
-    controlLayout->addWidget(stopButton);
-    controlLayout->addWidget(volumeLabel);
-    controlLayout->addWidget(volumeSlider);
-    controlLayout->addWidget(muteButton);
-    controlLayout->addWidget(backButton);
-    controlLayout->addWidget(advanceButton);
+    controlLayout->addStretch(1);
+    controlLayout->addWidget(controls);
+    controlLayout->addStretch(1);
 
     QBoxLayout *layout = new QVBoxLayout;
     if (videoWidget) {
@@ -128,7 +115,7 @@ Player::Player(QWidget *parent)
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
 
-        /*        
+        /*
         connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
         videoWidget->setMinimumSize(64,64);
         videoWidget->setVisible(false);*/
@@ -141,6 +128,8 @@ Player::Player(QWidget *parent)
     layout->addLayout(controlLayout);
 
     setLayout(layout);
+
+    metadataChanged();
 }
 
 Player::~Player()
@@ -152,13 +141,13 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
-	if (!fileNames.isEmpty()) {
-		QList<QMediaSource>	sources;
+    if (!fileNames.isEmpty()) {
+        QList<QMediaSource> sources;
 
-		foreach (QString const &fileName, fileNames)
-			sources << QMediaSource("", QLatin1String("file://") + fileName);
+        foreach (QString const &fileName, fileNames)
+            sources << QMediaSource("", QLatin1String("file://") + fileName);
 
-		player->mediaPlaylist()->append(sources);
+        player->mediaPlaylist()->append(sources);
     }
 }
 
@@ -178,13 +167,6 @@ void Player::metadataChanged()
     if (metaData->metadataAvailable())
         setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
                                           arg(metaData->metadata(QLatin1String("Title")).toString()));
-
-    const int currentRow = player->playlistPosition();
-
-    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Track), metaData->metadata("Track"));
-    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Title), metaData->metadata("Title"));
-    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::Album), metaData->metadata("Album"));
-    playlistModel->setData(playlistModel->index(currentRow, PlaylistModel::AlbumArtist), metaData->metadata("Artist"));
 }
 
 void Player::jump(const QModelIndex &index)
@@ -196,10 +178,10 @@ void Player::jump(const QModelIndex &index)
 
 void Player::playlistPositionChanged(int currentItem)
 {
-    playlistView->setCurrentIndex(playlistModel->index(currentItem,0));
+    playlistView->setCurrentIndex(playlistModel->index(currentItem, 0));
 }
 
 void Player::seek(int seconds)
 {
-    player->setPosition(seconds*1000);
+    player->setPosition(seconds * 1000);
 }
