@@ -153,14 +153,12 @@ QContact QContactMemoryEngine::contact(const QUniqueId& contactId, QContactManag
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
+bool QContactMemoryEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
         return false;
     }
-
-    // XXX refactor a little bit
 
     // check to see if this contact already exists
     int index = d->m_contactIds.indexOf(contact->id());
@@ -189,63 +187,36 @@ bool QContactMemoryEngine::saveContact(QContact* contact, bool batch, QContactMa
             }
         }
 
+        // See what groups are no longer present...
+        QSet<QUniqueId> oldGroups = d->m_contacts.at(index).groups().toSet();
+        oldGroups.subtract(contact->groups().toSet());
+        groupsChanged.unite(oldGroups);
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *contact);
-        error = QContactManager::NoError;
 
-        QList<QUniqueId> groupsChangedList;
+        contactsChanged << contact->id();
+    } else {
+        /* New contact */
 
-        // now fix up groups that this contact has
-        for (int i=0; i < contact->groups().size(); i++) {
-            QUniqueId groupId = contact->groups().at(i);
-            if (d->m_groups[groupId].addMember(contact->id())) {
-                groupsChangedList << groupId;
-            }
-        }
+        // update the contact item - set its ID
+        contact->setId(++d->m_nextContactId);
 
-        if (!batch) {
-            QList<QUniqueId> emitList;
-            emitList.append(contact->id());
-            emit contactsChanged(emitList);
+        // finally, add the contact to our internal lists and return
+        d->m_contacts.append(*contact);             // add contact to list
+        d->m_contactIds.append(contact->id());      // track the contact id.
 
-            if (groupsChangedList.count() > 0)
-                emit groupsChanged(groupsChangedList);
-        }
-        return true;
+        contactsAdded << contact->id();
     }
 
-    /* We ignore read only details here - we may have provided some */
-
-    // update the contact item - set its ID
-    contact->setId(++d->m_nextContactId);
-
-    // finally, add the contact to our internal lists and return
-    d->m_contacts.append(*contact);             // add contact to list
-    d->m_contactIds.append(contact->id());      // track the contact id.
-
     error = QContactManager::NoError;     // successful.
-
-    // Fix up groups
-    QList<QUniqueId> groupsChangedList;
 
     // now fix up groups that this contact has
     for (int i=0; i < contact->groups().size(); i++) {
         QUniqueId groupId = contact->groups().at(i);
         if (d->m_groups[groupId].addMember(contact->id())) {
-            groupsChangedList << groupId;
+            groupsChanged << groupId;
         }
-    }
-
-
-    // if we need to emit signals (ie, this isn't part of a batch operation)
-    // then emit the correct one.
-    if (!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contact->id());
-        emit contactsAdded(emitList);
-
-        if (groupsChangedList.count() > 0)
-            emit groupsChanged(groupsChangedList);
     }
 
     return true;

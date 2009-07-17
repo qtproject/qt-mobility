@@ -323,7 +323,21 @@ QContact QContactManager::contact(const QUniqueId& contactId) const
  */
 bool QContactManager::saveContact(QContact* contact)
 {
-    return d->m_engine->saveContact(contact, false, d->m_error);
+    QSet<QUniqueId> added;
+    QSet<QUniqueId> changed;
+    QSet<QUniqueId> groups;
+
+    bool ret = d->m_engine->saveContact(contact, added, changed, groups, d->m_error);
+
+    /* Emit the signals from the engine, since it might be connected to multiple places */
+    if (!added.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
+    if (!changed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
+    if (!groups.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
+
+    return ret;
 }
 
 /*!
@@ -352,7 +366,21 @@ bool QContactManager::removeContact(const QUniqueId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    return d->m_engine->saveContacts(contactList, d->m_error);
+    QSet<QUniqueId> added;
+    QSet<QUniqueId> changed;
+    QSet<QUniqueId> groups;
+
+    QList<QContactManager::Error> ret = d->m_engine->saveContacts(contactList, added, changed, groups, d->m_error);
+
+    /* Emit the signals from the engine, since it might be connected to multiple places */
+    if (!added.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
+    if (!changed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
+    if (!groups.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
+
+    return ret;
 }
 
 /*!

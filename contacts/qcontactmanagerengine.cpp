@@ -519,34 +519,35 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
 /*!
  * Add the given \a contact to the database if it is a new contact,
  * or updates the existing contact. Returns false on failure, or true on
- * success.  If successful and the contact was a new contact, its UID will
+ * success.  If successful and the contact was a new contact, its UID should
  * be set to a new, valid id.
  *
  * If the \a contact contains one or more details whose definitions have
  * not yet been saved with the manager, the operation will fail and the
  * manager will return \c QContactManager::UnsupportedError.
  *
- * The default implementation of QContactManagerEngine::saveContacts will
- * call this function with \a batch set to \c true.  All other calls to
- * this function will pass \c false for \a batch.
+ * This function is called by the contacts framework in both the
+ * single contact save and batch contact save, if the saveContacts
+ * function is not overridden.
  *
- * If \a batch is \c false, the backend must (at some point) emit either
- * the \c QContactManagerEngine::contactsAdded signal or the
- * \c QContactManagerEngine::contactsChanged signal if the operation was
- * successful.  If the operation fails or \a batch is \c true, neither
- * signal may be emitted as a direct result of the operation.
+ * The engine should add the id of any contacts that it has added
+ * to \a contactsAdded, and the id of any contacts that is has changed
+ * to \a contactsChanged.  If a contact has been added or removed to
+ * any groups (via \l QContact::setGroups()), the id of any QContactGroup
+ * affected should be added to \a groupsChanged.
  *
- * The base implementation of QContactManagerEngine::saveContacts
- * will emit a single add or single change signal once all the saving is
- * complete.
+ * The framework will emit the \l contactsAdded(), \l contactsChanged()
+ * and \l groupsChanged() signals at some point after calling this function.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
+bool QContactManagerEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     Q_UNUSED(contact);
-    Q_UNUSED(batch);
+    Q_UNUSED(contactsAdded);
+    Q_UNUSED(contactsChanged);
+    Q_UNUSED(groupsChanged);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -946,55 +947,40 @@ QList<QUniqueId> QContactManagerEngine::groupsRemovedSince(const QDateTime& time
  * when saving a new contact, the id will be cleared.  If a failure occurs
  * when updating a contact that already exists, then TODO.
  *
- * At some stage after completion of the operation, the backend must emit
- * either the \c QContactManagerEngine::contactsAdded or
- * \c QContactManagerEngine::contactsChanged signal, or both, if any
- * contacts were successfully saved.  If the operation fails, neither
- * signal may be emitted as a direct result of the operation.
+ * The engine should add the id of any contacts that it has added
+ * to \a contactsAdded, and the id of any contacts that is has changed
+ * to \a contactsChanged.  If a contact has been added or removed to
+ * any groups (via \l QContact::setGroups()), the id of any QContactGroup
+ * affected should be added to \a groupsChanged.
+ *
+ * The framework will emit the \l contactsAdded(), \l contactsChanged()
+ * and \l groupsChanged() signals at some point after calling this function.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
  * \sa QContactManager::saveContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contacts) {
         error = QContactManager::BadArgumentError;
         return ret;
     } else {
-        QList<QUniqueId> changedList;
-        QList<QUniqueId> addedList;
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contacts->count(); i++) {
             QContact current = contacts->at(i);
-            QUniqueId oldId = current.id();
-            if (!saveContact(&current, true, error)) {
-                (*contacts)[i].setId(0);
+            if (!saveContact(&current, contactsAdded, contactsChanged, groupsChanged, error)) {
                 functionError = error;
                 ret.append(functionError);
             } else {
                 (*contacts)[i] = current;
                 ret.append(QContactManager::NoError);
-
-                // add the contact's id to the appropriate signal list
-                if (oldId != current.id()) {
-                    // new contact
-                    addedList.append(current.id());
-                } else {
-                    // old contact updated
-                    changedList.append(current.id());
-                }
             }
         }
 
         error = functionError;
-        // emit the required signals.
-        if (!addedList.isEmpty())
-            emit contactsAdded(addedList);
-        if (!changedList.isEmpty())
-            emit contactsChanged(changedList);
         return ret;
     }
 }

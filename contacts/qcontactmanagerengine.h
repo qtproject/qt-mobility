@@ -65,9 +65,11 @@ public:
     /* Contacts - Accessors and Mutators */
     virtual QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    virtual bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
+
+    virtual bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+
     virtual bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     virtual QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
     /* Synthesise the display label of a contact */

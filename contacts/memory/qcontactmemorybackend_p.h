@@ -101,7 +101,7 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
