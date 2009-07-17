@@ -192,6 +192,13 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QSet<QUniqueId>& conta
         oldGroups.subtract(contact->groups().toSet());
         groupsChanged.unite(oldGroups);
 
+        // Remove this contact from those groups
+        QSetIterator<QUniqueId> git(oldGroups);
+
+        while(git.hasNext()) {
+            d->m_groups[git.next()].removeMember(contact->id());
+        };
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *contact);
 
