@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += plugin multimedia
+CONFIG += plugin
 TARGET = gstengine
 DESTDIR = $$OUT_PWD/../../lib/mediaservice
 DEPENDPATH += .
@@ -55,4 +55,8 @@ multimedia {
     HEADERS += \
         qvideosurfacegstsink.h \
         qgstvideobuffer.h
+
+    LIBS += -lQtMultimedia
+} else {
+    DEFINES += QT_NO_VIDEOSURFACE
 }
