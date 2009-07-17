@@ -211,6 +211,8 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     df.setValue("R");
     ids = cm->contacts(df);
     QCOMPARE(ids.count(), 0);
+
+    delete cm;
 }
 
 Q_DECLARE_METATYPE(QVariant);
@@ -467,6 +469,8 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     for (int i = 0; i < expected.size(); i++) {
         QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
     }
+
+    delete cm;
 }
 
 void tst_QContactManagerFiltering::rangeFiltering_data()
@@ -594,6 +598,8 @@ void tst_QContactManagerFiltering::rangeFiltering()
     for (int i = 0; i < expected.size(); i++) {
         QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
     }
+
+    delete cm;
 }
 
 void tst_QContactManagerFiltering::groupMembershipFiltering_data()
@@ -660,6 +666,8 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
         QVERIFY(contacts.at(expectedone.at(i).toLower().toAscii() -'a').id() == idsone.at(i));
     for (int i = 0; i < expectedtwo.size(); i++)
         QVERIFY(contacts.at(expectedtwo.at(i).toLower().toAscii() -'a').id() == idstwo.at(i));
+
+    delete cm;
 }
 
 void tst_QContactManagerFiltering::sorting_data()
@@ -719,6 +727,8 @@ void tst_QContactManagerFiltering::sorting()
     for (int i = 0; i < expected.size(); i++) {
         QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
     }
+
+    delete cm;
 }
 
 QList<QContact> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
