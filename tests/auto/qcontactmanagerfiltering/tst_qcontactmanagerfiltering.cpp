@@ -497,50 +497,57 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QVariant ev; // empty variant
     QString es; // empty string
 
+    QString namedef = QContactName::DefinitionName;
+    QString firstname = QContactName::FieldFirst;
+    QString lastname = QContactName::FieldLast;
+
+    QString phonedef = QContactPhoneNumber::DefinitionName;
+    QString phonenum = QContactPhoneNumber::FieldNumber;
+
     /* First, cover the "empty defname / fieldname / ranges" cases */
-    QTest::newRow("invalid defname") << es << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("invalid fieldname") << QContactName::DefinitionName << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant() << QVariant() << false << 0 << true << 0 << es;
-    QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
-    QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
+    QTest::newRow("invalid defname") << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+    QTest::newRow("invalid fieldname") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+    QTest::newRow("invalid ranges") << namedef << firstname << QVariant() << QVariant() << false << 0 << true << 0 << es;
+    QTest::newRow("invalid ranges") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
+    QTest::newRow("invalid ranges") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
 
     /* 'a' has phone number ("555-1212") */
-    QTest::newRow("range1") << QContactPhoneNumber::DefinitionName << QContactPhoneNumber::FieldNumber << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
+    QTest::newRow("range1") << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
 
     /* A(Aaron Aaronson), B(Bob Aaronsen), C(Boris Aaronsun), D(Dennis FitzMacyntire) */
     // string range matching - no matchflags set.
-    QTest::newRow("string range - no matchflags - 1") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 2") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 3") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 4") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
-    QTest::newRow("string range - no matchflags - 5") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
-    QTest::newRow("string range - no matchflags - 6") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "c";
-    QTest::newRow("string range - no matchflags - 7") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
-    QTest::newRow("string range - no matchflags - 8") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "bc";
-    QTest::newRow("string range - no matchflags - 9") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "c";
-    QTest::newRow("string range - no matchflags - 10") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
+    QTest::newRow("string range - no matchflags - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "a";
+    QTest::newRow("string range - no matchflags - 2") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
+    QTest::newRow("string range - no matchflags - 3") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
+    QTest::newRow("string range - no matchflags - 4") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
+    QTest::newRow("string range - no matchflags - 5") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
+    QTest::newRow("string range - no matchflags - 6") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "c";
+    QTest::newRow("string range - no matchflags - 7") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
+    QTest::newRow("string range - no matchflags - 8") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "bc";
+    QTest::newRow("string range - no matchflags - 9") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "c";
+    QTest::newRow("string range - no matchflags - 10") << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
 
     // string range matching - Qt::MatchStartsWith should produce the same results as without matchflags set.
-    QTest::newRow("string range - startswith - 1") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("string range - startswith - 2") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("string range - startswith - 3") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
-    QTest::newRow("string range - startswith - 4") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
-    QTest::newRow("string range - startswith - 5") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
-    QTest::newRow("string range - startswith - 6") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
-    QTest::newRow("string range - startswith - 7") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
-    QTest::newRow("string range - startswith - 8") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
-    QTest::newRow("string range - startswith - 9") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+    QTest::newRow("string range - startswith - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("string range - startswith - 2") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("string range - startswith - 3") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
+    QTest::newRow("string range - startswith - 4") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
+    QTest::newRow("string range - startswith - 5") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
+    QTest::newRow("string range - startswith - 6") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+    QTest::newRow("string range - startswith - 7") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+    QTest::newRow("string range - startswith - 8") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
+    QTest::newRow("string range - startswith - 9") << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
 
     // Qt::MatchContains with range is invalid
-    QTest::newRow("string range - contains - 1") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchContains) << es;
+    QTest::newRow("string range - contains - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchContains) << es;
 
     // Check EndsWith with range: A == son, B == sen, C == sun
-    QTest::newRow("string range - endswith - 1") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << es;
-    QTest::newRow("string range - endswith - 2") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
-    QTest::newRow("string range - endswith - 3") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
-    QTest::newRow("string range - endswith - 4") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ab";
-    QTest::newRow("string range - endswith - 5") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ac";
-    QTest::newRow("string range - endswith - 6") << QContactName::DefinitionName << QContactName::FieldLast << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
+    QTest::newRow("string range - endswith - 1") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << es;
+    QTest::newRow("string range - endswith - 2") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
+    QTest::newRow("string range - endswith - 3") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
+    QTest::newRow("string range - endswith - 4") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ab";
+    QTest::newRow("string range - endswith - 5") << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ac";
+    QTest::newRow("string range - endswith - 6") << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
 
     /* A(10), B(20), C(-20) */
     // Now integer range testing
@@ -582,10 +589,6 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = cm->contact(contacts.at(0));
-    QContact b = cm->contact(contacts.at(1));
-    QContact c = cm->contact(contacts.at(2));
-    QContact d = cm->contact(contacts.at(3));
 
     /* Build the range filter */
     QContactDetailRangeFilter drf;
@@ -602,13 +605,8 @@ void tst_QContactManagerFiltering::rangeFiltering()
 
     ids = cm->contacts(drf);
 
-    QCOMPARE(ids.count(), expected.count());
-    QVERIFY(expected.count() <= contacts.count());
-
-    /* Expected is of the form "abcd".. */
-    for (int i = 0; i < expected.size(); i++) {
-        QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
-    }
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 
     delete cm;
 }
@@ -634,14 +632,10 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
-    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = prepareModel(cm);
     QList<QUniqueId> idsone, idstwo;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = contacts.at(0);
-    QContact b = contacts.at(1);
-    QContact c = contacts.at(2);
-    QContact d = contacts.at(3);
 
     QContactGroup g1, g2;
     g1.setName("GroupOne");
@@ -649,9 +643,9 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
 
     // add the specified members to the specified groups
     for (int i = 0; i < expectedone.size(); i++)
-        g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a').id());
+        g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a'));
     for (int i = 0; i < expectedtwo.size(); i++)
-        g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a').id());
+        g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a'));
 
     // save them to the manager.
     cm->saveGroup(&g1);
@@ -667,16 +661,12 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
 
     idsone = cm->contacts(cg1f);
     idstwo = cm->contacts(cg2f);
-    QCOMPARE(idsone.count(), expectedone.count());
-    QCOMPARE(idstwo.count(), expectedtwo.count());
-    QVERIFY(expectedone.count() <= contacts.count());
-    QVERIFY(expectedtwo.count() <= contacts.count());
 
-    /* Expected is of the form "abcd".. */
-    for (int i = 0; i < expectedone.size(); i++)
-        QVERIFY(contacts.at(expectedone.at(i).toLower().toAscii() -'a').id() == idsone.at(i));
-    for (int i = 0; i < expectedtwo.size(); i++)
-        QVERIFY(contacts.at(expectedtwo.at(i).toLower().toAscii() -'a').id() == idstwo.at(i));
+    QString output = convertIds(contacts, idsone);
+    QCOMPARE(output, expectedone);
+
+    output = convertIds(contacts, idstwo);
+    QCOMPARE(output, expectedtwo);
 
     delete cm;
 }
@@ -690,10 +680,14 @@ void tst_QContactManagerFiltering::sorting_data()
     QTest::addColumn<int>("blankpolicyi");
     QTest::addColumn<QString>("expected");
 
-    QTest::newRow("first ascending") << QContactName::DefinitionName << QContactName::FieldFirst << (int)(Qt::AscendingOrder) << false << 0 << "abcd";
-    QTest::newRow("first descending") << QContactName::DefinitionName << QContactName::FieldFirst << (int)(Qt::DescendingOrder) << false << 0 << "dcba";
-    QTest::newRow("last ascending") << QContactName::DefinitionName << QContactName::FieldLast << (int)(Qt::AscendingOrder) << false << 0 << "bacd";
-    QTest::newRow("last descending") << QContactName::DefinitionName << QContactName::FieldLast << (int)(Qt::DescendingOrder) << false << 0 << "dcab";
+    QString firstname = QContactName::FieldFirst;
+    QString lastname = QContactName::FieldLast;
+    QString namedef = QContactName::DefinitionName;
+
+    QTest::newRow("first ascending") << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcd";
+    QTest::newRow("first descending") << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "dcba";
+    QTest::newRow("last ascending") << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacd";
+    QTest::newRow("last descending") << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "dcab";
     QTest::newRow("integer ascending, blanks last") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabd";
     QTest::newRow("integer descending, blanks last") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacd";
     QTest::newRow("integer ascending, blanks first") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dcab";
@@ -719,10 +713,6 @@ void tst_QContactManagerFiltering::sorting()
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = cm->contact(contacts.at(0));
-    QContact b = cm->contact(contacts.at(1));
-    QContact c = cm->contact(contacts.at(2));
-    QContact d = cm->contact(contacts.at(3));
 
     /* Build the sort order */
     QContactSortOrder s;
@@ -732,12 +722,8 @@ void tst_QContactManagerFiltering::sorting()
         s.setBlankPolicy(blankpolicy);
 
     ids = cm->contacts(s);
-    QVERIFY(ids.count() == contacts.count());
-
-    /* Expected is of the form "abcd".. */
-    for (int i = 0; i < expected.size(); i++) {
-        QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
-    }
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 
     delete cm;
 }
