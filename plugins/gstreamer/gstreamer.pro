@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin multimedia
 TARGET = gstengine
 DESTDIR = $$OUT_PWD/../../lib/mediaservice
 DEPENDPATH += .
@@ -24,21 +24,35 @@ HEADERS += qgstreamerplayercontrol.h \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideowidget.h \
+    qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
     qgstreamermetadataprovider.h \
     qgstreamerstreamscontrol.h \
     qgstreamercaptureservice.h \
     qalsaaudiodeviceendpoint.h \
     qgstreamercapturesession.h
+
 SOURCES += qgstreamerplayercontrol.cpp \
     qgstreamerplayerservice.cpp \
     qgstreamerplayersession.cpp \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideowidget.cpp \
+    qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreamermetadataprovider.cpp \
     qgstreamerstreamscontrol.cpp \
     qgstreamercaptureservice.cpp \
     qalsaaudiodeviceendpoint.cpp \
     qgstreamercapturesession.cpp
+
+
+multimedia {
+    SOURCES += \
+        qvideosurfacegstsink.cpp \
+        qgstvideobuffer.cpp
+
+    HEADERS += \
+        qvideosurfacegstsink.h \
+        qgstvideobuffer.h
+}

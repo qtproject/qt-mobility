@@ -41,8 +41,9 @@
 #include "qgstreamerplayersession.h"
 #include "qgstreamermetadataprovider.h"
 
-//#include "qmediawidgetendpoint.h"
+
 #include "qgstreamervideowidget.h"
+#include "qgstreamervideorenderer.h"
 
 #include "qmediaplaylistnavigator.h"
 #include "qmediaplaylist.h"
@@ -73,7 +74,7 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 void QGstreamerPlayerService::setVideoOutput(QObject *output)
 {
     m_control->setVideoOutput(output);
-    QAbstractMediaService::setVideoOutput(output);    
+    QAbstractMediaService::setVideoOutput(output);
 }
 
 QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
@@ -81,8 +82,12 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
 {
     QList<QByteArray> res;
     
-    if (direction == QMediaEndpointInterface::Output)
+    if (direction == QMediaEndpointInterface::Output) {
         res << QMediaWidgetEndpoint_iid;
+#ifndef QT_NO_VIDEOSURFACE
+        res << QVideoRendererEndpoint_iid;
+#endif
+    }
 
     return res;
 }
@@ -93,6 +98,12 @@ QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
     if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
         return new QGstreamerVideoWidget;
     }
+
+#ifndef QT_NO_VIDEOSURFACE
+    if (qstrcmp(interface,QVideoRendererEndpoint_iid) == 0) {
+        return new QGstreamerVideoRenderer;
+    }
+#endif
 
     return 0;
 }
