@@ -492,6 +492,8 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QTest::newRow("invalid defname") << es << QContactName::FieldFirst << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
     QTest::newRow("invalid fieldname") << QContactName::DefinitionName << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
     QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant() << QVariant() << false << 0 << true << 0 << es;
+    QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
+    QTest::newRow("invalid ranges") << QContactName::DefinitionName << QContactName::FieldFirst << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
 
     /* 'a' has phone number ("555-1212") */
     QTest::newRow("range1") << QContactPhoneNumber::DefinitionName << QContactPhoneNumber::FieldNumber << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
