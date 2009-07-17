@@ -512,6 +512,10 @@ void tst_QContactManager::groups()
         QVERIFY(cm->saveGroup(&g) == true);
         QCOMPARE(cm->error(), QContactManager::NoError);
 
+        /* Check that retrieving a again shows the updated group */
+        QContact a2 = cm->contact(a.id());
+        QVERIFY(a2.groups().contains(g.id()));
+
         g2 = cm->group(g2.id());
         QCOMPARE(cm->error(), QContactManager::NoError);
 
@@ -528,6 +532,10 @@ void tst_QContactManager::groups()
         QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
         QVERIFY(g2.id() == 0);
         QVERIFY(g2.members().count() == 0);
+
+        /* Check that retrieving a again shows the updated group */
+        a2 = cm->contact(a.id());
+        QVERIFY(!a2.groups().contains(g.id()));
 
         /* Save a new group with multiple people */
         QContactGroup g3;
@@ -548,7 +556,10 @@ void tst_QContactManager::groups()
         /* Now remove the contacts, make sure they disappear from the groups */
         QVERIFY(cm->removeContact(a.id()));
         QVERIFY(cm->removeContact(b.id()));
-        QVERIFY(cm->removeContact(c.id()));
+
+        /* Just adjust c to not have any groups */
+        c.setGroups(QList<QUniqueId>());
+        QVERIFY(cm->saveContact(&c));
 
         g2 = cm->group(g3.id());
         QVERIFY(g2.id() == g3.id());
@@ -561,6 +572,9 @@ void tst_QContactManager::groups()
         /* Test double remove */
         QVERIFY(cm->removeGroup(g3.id()) == false);
         QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+        /* And remove c as well */
+        QVERIFY(cm->removeContact(c.id()));
 
         /*
          * Now we should hopefully be back to our normal number of groups
@@ -1560,12 +1574,12 @@ void tst_QContactManager::signalEmission()
 
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
-    QSignalSpy spy(m1, SIGNAL(contactsAdded(QList<QUniqueId>)));
-    QSignalSpy spy2(m1, SIGNAL(contactsChanged(QList<QUniqueId>)));
-    QSignalSpy spy3(m1, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-    QSignalSpy spy4(m1, SIGNAL(groupsAdded(QList<QUniqueId>)));
-    QSignalSpy spy5(m1, SIGNAL(groupsChanged(QList<QUniqueId>)));
-    QSignalSpy spy6(m1, SIGNAL(groupsRemoved(QList<QUniqueId>)));
+    QSignalSpy spyCA(m1, SIGNAL(contactsAdded(QList<QUniqueId>)));
+    QSignalSpy spyCM(m1, SIGNAL(contactsChanged(QList<QUniqueId>)));
+    QSignalSpy spyCR(m1, SIGNAL(contactsRemoved(QList<QUniqueId>)));
+    QSignalSpy spyGA(m1, SIGNAL(groupsAdded(QList<QUniqueId>)));
+    QSignalSpy spyGC(m1, SIGNAL(groupsChanged(QList<QUniqueId>)));
+    QSignalSpy spyGR(m1, SIGNAL(groupsRemoved(QList<QUniqueId>)));
 
     QList<QVariant> args;
     QContact c;
@@ -1580,8 +1594,8 @@ void tst_QContactManager::signalEmission()
     c.saveDetail(&nc);
     m1->saveContact(&c);
     addSigCount += 1;
-    QCOMPARE(spy.count(), addSigCount);
-    args = spy.takeFirst();
+    QCOMPARE(spyCA.count(), addSigCount);
+    args = spyCA.takeFirst();
     addSigCount -= 1;
     QVERIFY(args.count() == 1);
     temp = QUniqueId(args.at(0).value<quint32>());
@@ -1591,8 +1605,8 @@ void tst_QContactManager::signalEmission()
     c.saveDetail(&nc);
     m1->saveContact(&c);
     modSigCount += 1;
-    QCOMPARE(spy2.count(), modSigCount);
-    args = spy2.takeFirst();
+    QCOMPARE(spyCM.count(), modSigCount);
+    args = spyCM.takeFirst();
     modSigCount -= 1;
     QVERIFY(args.count() == 1);
     QCOMPARE(temp, QUniqueId(args.at(0).value<quint32>()));
@@ -1600,8 +1614,8 @@ void tst_QContactManager::signalEmission()
     // verify remove emits signal removed
     m1->removeContact(c.id());
     remSigCount += 1;
-    QCOMPARE(spy3.count(), remSigCount);
-    args = spy3.takeFirst();
+    QCOMPARE(spyCR.count(), remSigCount);
+    args = spyCR.takeFirst();
     remSigCount -= 1;
     QVERIFY(args.count() == 1);
     QCOMPARE(temp, QUniqueId(args.at(0).value<quint32>()));
@@ -1619,7 +1633,7 @@ void tst_QContactManager::signalEmission()
     addSigCount += 1;
     m1->saveContact(&c3);
     addSigCount += 1;
-    QCOMPARE(spy.count(), addSigCount);
+    QCOMPARE(spyCA.count(), addSigCount);
 
     // verify multiple modifies works as advertised
     nc2.setLast("M.");
@@ -1634,15 +1648,14 @@ void tst_QContactManager::signalEmission()
     modSigCount += 1;
     m1->saveContact(&c3);
     modSigCount += 1;
-    QCOMPARE(spy2.count(), modSigCount);
+    QCOMPARE(spyCM.count(), modSigCount);
 
     // verify multiple removes works as advertised
     m1->removeContact(c3.id());
     remSigCount += 1;
     m1->removeContact(c2.id());
     remSigCount += 1;
-    QCOMPARE(spy3.count(), remSigCount);
-
+    QCOMPARE(spyCR.count(), remSigCount);
 
     /* There's a hitch with the memory engine - anonymous engines don't share signals */
     QString engine;
@@ -1660,17 +1673,63 @@ void tst_QContactManager::signalEmission()
         c.saveDetail(&ncs);
         m2->saveContact(&c);
         modSigCount += 1;
-        QCOMPARE(spy2.count(), modSigCount); // check that we received the update signals.
+        QCOMPARE(spyCM.count(), modSigCount); // check that we received the update signals.
         m2->removeContact(c.id());
         remSigCount += 1;
-        QCOMPARE(spy3.count(), remSigCount); // check that we received the remove signal.
+        QCOMPARE(spyCR.count(), remSigCount); // check that we received the remove signal.
+    }
+
+    /* Check groups, if supported */
+    if (m1->information()->hasFeature(QContactManagerInfo::Groups)) {
+        QContactGroup g1;
+        g1.setName("XXXXXX Group");
+        QVariantList vl;
+
+        // Reset the counts so we don't get confused.
+        spyCA.clear();
+        spyCM.clear();
+        spyCR.clear();
+        spyGA.clear();
+        spyGC.clear();
+        spyGR.clear();
+
+        // Save an empty group
+        QVERIFY(m1->saveGroup(&g1));
+
+        QVERIFY(spyCA.count() == 0);
+        QVERIFY(spyCM.count() == 0);
+        QVERIFY(spyCR.count() == 0);
+        QEXPECT_FAIL("", "Group signals don't work yet", Abort);
+        QVERIFY(spyGA.count() == 1);
+        QVERIFY(spyGC.count() == 0);
+        QVERIFY(spyGR.count() == 0);
+
+        vl = spyGA.takeFirst();
+        QVERIFY(vl.size() == 1);
+        QVERIFY(vl.at(0).value<QUniqueId>() == g1.id());
+
+        g1.addMember(c.id());
+        QVERIFY(m1->saveGroup(&g1));
+
+        QVERIFY(spyCA.count() == 0);
+        QVERIFY(spyCM.count() == 1);
+        QVERIFY(spyCR.count() == 0);
+        QVERIFY(spyGA.count() == 0);
+        QVERIFY(spyGC.count() == 1);
+        QVERIFY(spyGR.count() == 0);
+
+        vl = spyCM.takeFirst();
+        QVERIFY(vl.size() == 1);
+        QVERIFY(vl.at(0).value<QUniqueId>() == c.id());
+
+        vl = spyGC.takeFirst();
+        QVERIFY(vl.size() == 1);
+        QVERIFY(vl.at(0).value<QUniqueId>() == g1.id());
     }
 
     delete m1;
     delete m2;
 }
-
-
 
 void tst_QContactManager::errorStayingPut()
 {
