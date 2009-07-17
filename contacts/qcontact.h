@@ -83,6 +83,10 @@ public:
     QUniqueId id() const;
     bool setId(const QUniqueId& id);
 
+    /* Group IDs */
+    QList<QUniqueId> groups() const;
+    bool setGroups(const QList<QUniqueId> & groupIds);
+
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
     bool setDisplayLabel(const QContactDisplayLabel& label);
@@ -127,7 +131,6 @@ public:
 private:
     friend class QContactManager;
     friend class QContactManagerData;
-    friend class QContactManagerEngine;
 
     QSharedDataPointer<QContactData> d;
 };

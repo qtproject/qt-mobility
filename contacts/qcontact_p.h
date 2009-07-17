@@ -70,7 +70,8 @@ public:
         m_id(other.m_id),
         m_details(other.m_details),
         m_preferences(other.m_preferences),
-        m_nextDetailId(other.m_nextDetailId)
+        m_nextDetailId(other.m_nextDetailId),
+        m_groups(other.m_groups)
     {
     }
 
@@ -91,6 +92,7 @@ public:
     QList<QContactDetail> m_details;
     QMap<QString, quint32> m_preferences;
     quint32 m_nextDetailId;
+    QList<QUniqueId> m_groups;
 };
 
 #endif

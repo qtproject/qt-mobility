@@ -136,6 +136,37 @@ QUniqueId QContact::id() const
 }
 
 /*!
+ * Returns a list of QUniqueIds that identify any QContactGroups that
+ * this contact is a member of.
+ *
+ * You should check that your \l QContactManager supports
+ * groups.
+ *
+ * \sa QContactGroup
+ */
+QList<QUniqueId> QContact::groups() const
+{
+    QContactData::setError(d, QContact::NoError);
+    return d->m_groups;
+}
+
+/*!
+ * Sets the list of QContactGroups that this contact is
+ * a member of.
+ *
+ * You should check that your \l QContactManager supports
+ * groups.
+ *
+ * \sa QContactGroup
+ */
+bool QContact::setGroups(const QList<QUniqueId>& groups)
+{
+    QContactData::setError(d, QContact::NoError);
+    d->m_groups = groups;
+    return true;
+}
+
+/*!
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
  * in the contact, or by calling \l setDisplayLabel()) or synthesised by the manager from
