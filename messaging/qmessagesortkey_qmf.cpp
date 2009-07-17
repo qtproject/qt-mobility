@@ -31,96 +31,121 @@
 **
 ****************************************************************************/
 #include "qmessagesortkey.h"
-#include "qmessagesortkey_p.h"
+
+#include <qmailmessagesortkey.h>
+
+class QMessageSortKeyPrivate
+{
+public:
+    QMailMessageSortKey _key;
+};
 
 QMessageSortKey::QMessageSortKey()
+    : d_ptr(new QMessageSortKeyPrivate)
 {
 }
 
 QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
+    : d_ptr(new QMessageSortKeyPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 bool QMessageSortKey::isEmpty() const
 {
-    return false; // stub
+    return d_ptr->_key.isEmpty();
 }
 
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
-    Q_UNUSED(other)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    return key;
 }
 
 QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    d_ptr->_key &= other.d_ptr->_key;
+    return *this;
 }
 
 bool QMessageSortKey::operator==(const QMessageSortKey& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return (d_ptr->_key == other.d_ptr->_key);
 }
 
 const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
 }
 
 QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::messageType(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::sender(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::recipients(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::subject(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::timeStamp(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::receptionTimeStamp(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::status(order);
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 {
+    QMessageSortKey key;
+    // TODO: We need to implement sort on custom field value in QMF
+    //key.d_ptr->_key = QMailMessageSortKey::custom("QMessage::Priority", order);
+    return key;
+
     Q_UNUSED(order)
-    return QMessageSortKey(); // stub
 }
 
 QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageSortKey(); // stub
+    QMessageSortKey key;
+    key.d_ptr->_key = QMailMessageSortKey::size(order);
+    return key;
 }
+

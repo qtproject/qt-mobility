@@ -32,56 +32,69 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefoldersortkey.h"
-#include "qmessagefoldersortkey_p.h"
 
+#include <qmailfoldersortkey.h>
+
+class QMessageFolderSortKeyPrivate
+{
+public:
+    QMailFolderSortKey _key;
+};
 
 QMessageFolderSortKey::QMessageFolderSortKey()
+    : d_ptr(new QMessageFolderSortKeyPrivate)
 {
 }
 
 QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
+    : d_ptr(new QMessageFolderSortKeyPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 bool QMessageFolderSortKey::isEmpty() const
 {
-    return false; // stub
+    return d_ptr->_key.isEmpty();
 }
 
 QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
 {
-    Q_UNUSED(other)
-    return QMessageFolderSortKey(); // stub
+    QMessageFolderSortKey key;
+    key.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    return key;
 }
 
 QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    d_ptr->_key &= other.d_ptr->_key;
+    return *this;
 }
 
 bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return (d_ptr->_key == other.d_ptr->_key);
 }
 
 const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
 }
 
 QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
+    QMessageFolderSortKey key;
+    key.d_ptr->_key = QMailFolderSortKey::displayName(order);
+    return key;
 }
 
 QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageFolderSortKey(); // stub
+    QMessageFolderSortKey key;
+    key.d_ptr->_key = QMailFolderSortKey::path(order);
+    return key;
 }
 #endif

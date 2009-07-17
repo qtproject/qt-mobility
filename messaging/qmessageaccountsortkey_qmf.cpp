@@ -31,37 +31,49 @@
 **
 ****************************************************************************/
 #include "qmessageaccountsortkey.h"
-#include "qmessageaccountsortkey_p.h"
 
+#include <qmailaccountsortkey.h>
+
+class QMessageAccountSortKeyPrivate
+{
+public:
+    QMailAccountSortKey _key;
+};
 
 QMessageAccountSortKey::QMessageAccountSortKey()
+    : d_ptr(new QMessageAccountSortKeyPrivate)
 {
 }
 
 QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &other)
+    : d_ptr(new QMessageAccountSortKeyPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 bool QMessageAccountSortKey::isEmpty() const
 {
-    return false; // stub
+    return d_ptr->_key.isEmpty();
 }
 
 bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return d_ptr->_key == other.d_ptr->_key;
 }
 
 const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAccountSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
 }
 
 QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageAccountSortKey(); // stub
+    QMessageAccountSortKey key;
+    key.d_ptr->_key = QMailAccountSortKey::name(order);
+    return key;
 }
+
