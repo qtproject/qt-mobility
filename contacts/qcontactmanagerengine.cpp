@@ -1099,7 +1099,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
     switch(filter.type()) {
         case QContactFilter::Invalid:
             return false;
-            break;
 
         case QContactFilter::ContactDetail:
             {
