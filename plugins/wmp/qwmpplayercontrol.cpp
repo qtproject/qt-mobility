@@ -219,8 +219,8 @@ int QWmpPlayerControl::volume() const
 
 void QWmpPlayerControl::setVolume(int volume)
 {
-    if (m_settings)
-        m_settings->put_volume(volume);
+    if (m_settings && m_settings->put_volume(volume) == S_OK)
+        emit volumeChanged(volume);
 }
 
 bool QWmpPlayerControl::isMuted() const
@@ -235,8 +235,9 @@ bool QWmpPlayerControl::isMuted() const
 
 void QWmpPlayerControl::setMuted(bool muted)
 {
-    if (m_settings)
-        m_settings->put_mute(muted ? TRUE : FALSE);
+    if (m_settings && m_settings->put_mute(muted ? TRUE : FALSE) == S_OK)
+        emit mutingChanged(muted);
+
 }
 
 bool QWmpPlayerControl::isBuffering() const
