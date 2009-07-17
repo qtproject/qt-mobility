@@ -191,6 +191,14 @@ void QMediaSource::setAlternativeRepresentations(const QList<QMediaSource> &sour
 }
 
 /*!
+  Add the alternative representations of this media source.
+*/
+void QMediaSource::addAlternativeRepresentation(const QMediaSource &source )
+{
+    d->alternativeRepresentations.append(source);
+}
+
+/*!
   Returns true if this media source and the given source are equal; otherwise returns false.
 */
 bool QMediaSource::operator ==(const QMediaSource& other) const

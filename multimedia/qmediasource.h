@@ -65,6 +65,7 @@ public:
 
     QList<QMediaSource> alternativeRepresentations() const;
     void setAlternativeRepresentations(const QList<QMediaSource> &sources);
+    void addAlternativeRepresentation(const QMediaSource&);
 
     bool operator ==(const QMediaSource& other) const;
     bool operator !=(const QMediaSource& other) const;
