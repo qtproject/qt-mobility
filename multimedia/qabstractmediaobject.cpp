@@ -84,20 +84,17 @@ QAbstractMediaObject::~QAbstractMediaObject()
 
 int QAbstractMediaObject::notifyInterval() const
 {
-    return d_func()->notifyInterval;
+    return d_func()->notifyTimer->interval();
 }
 
 void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
 {
     Q_D(QAbstractMediaObject);
 
-    if (d->notifyInterval != milliSeconds) {
-        d->notifyInterval = milliSeconds;
+    if (d->notifyTimer->interval() != milliSeconds) {
+        d->notifyTimer->setInterval(milliSeconds);
 
-        if (d->watching && d->notifyTimer->isActive())
-            d->notifyTimer->start(d->notifyInterval);
-
-        emit notifyIntervalChanged(d->notifyInterval);
+        emit notifyIntervalChanged(milliSeconds);
     }
 }
 
@@ -111,6 +108,7 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
 {
     Q_D(QAbstractMediaObject);
     d->notifyTimer = new QTimer(this);
+    d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
 }
 
@@ -123,31 +121,8 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
 {
     Q_D(QAbstractMediaObject);
     d->notifyTimer = new QTimer(this);
+    d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
-}
-
-void QAbstractMediaObject::beginWatch()
-{
-    Q_D(QAbstractMediaObject);
-
-    if (d->watching)
-        return;
-
-    d->watching = true;
-
-    if (!d->notifyProperties.isEmpty())
-        d->notifyTimer->start(d->notifyInterval);
-}
-
-void QAbstractMediaObject::endWatch()
-{
-    Q_D(QAbstractMediaObject);
-
-    if (!d->watching)
-        return;
-
-    d->watching = false;
-    d->notifyTimer->stop();
 }
 
 void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
@@ -156,8 +131,8 @@ void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
 
     d->notifyProperties << name;
 
-    if (d->watching && !d->notifyTimer->isActive())
-        d->notifyTimer->start(d->notifyInterval);
+    if (!d->notifyTimer->isActive())
+        d->notifyTimer->start();
 }
 
 void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)

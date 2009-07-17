@@ -66,6 +66,7 @@ public:
     void _q_stateChanged(int state);
     void _q_streamStatusChanged(int status);
     void _q_error(int error, const QString &errorString);
+    void _q_bufferingChanged(bool buffering);
 };
 
 void QMediaPlayerPrivate::_q_stateChanged(int state)
@@ -75,9 +76,9 @@ void QMediaPlayerPrivate::_q_stateChanged(int state)
     const QMediaPlayer::State ps = QMediaPlayer::State(state);
 
     if (ps == QMediaPlayer::PlayingState)
-        q->beginWatch();
+        q->addPropertyWatch("position");
     else
-        q->endWatch(); //
+        q->removePropertyWatch("position");
 
     emit q->stateChanged(ps);
 }
@@ -98,6 +99,16 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
     emit q->errorStringChanged(this->errorString);
 }
 
+void QMediaPlayerPrivate::_q_bufferingChanged(bool buffering)
+{
+    Q_Q(QMediaPlayer);
+
+    if (buffering)
+        q->addPropertyWatch("bufferStatus");
+    else
+        q->removePropertyWatch("bufferStatus");
+}
+
 /*!
     Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
 */
@@ -115,6 +126,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
     connect(d->control, SIGNAL(streamStatusChanged(int)), SLOT(_q_streamStatusChanged(int)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
+    connect(d->control, SIGNAL(bufferingChanged(bool)), this, SLOT(_q_bufferingChanged(bool)));
 
     connect(d->control, SIGNAL(bufferingChanged(bool)), SIGNAL(bufferingChanged(bool)));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));
@@ -124,10 +136,12 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
     connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
 
-    addPropertyWatch("position");
 
     if (d->control->state() == PlayingState)
-        beginWatch();
+        addPropertyWatch("position");
+
+    if (d->control->isBuffering())
+        addPropertyWatch("bufferStatus");
 }
 
 /*!

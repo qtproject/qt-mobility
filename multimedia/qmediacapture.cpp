@@ -96,9 +96,9 @@ void QMediaCapturePrivate::_q_stateChanged(int state)
     const QMediaCapture::State ps = QMediaCapture::State(state);
 
     if (ps == QMediaCapture::RecordingState)
-        q->beginWatch();
+        q->addPropertyWatch("position");
     else
-        q->endWatch();
+        q->removePropertyWatch("position");
 
     emit q->stateChanged(ps);
 }
@@ -124,8 +124,6 @@ QMediaCapture::QMediaCapture(QAbstractMediaService *service, QObject *parent)
     if (d->control) {        
         connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-
-        addPropertyWatch("position");
     }
 }
 
@@ -137,8 +135,6 @@ QMediaCapture::QMediaCapture(QAbstractMediaObject *mediaObject, QObject *parent)
     if (d->control) {
         connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-
-        addPropertyWatch("position");
     }
 }
 

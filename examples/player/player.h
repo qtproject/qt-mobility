@@ -37,6 +37,8 @@
 
 #include <QtGui/QWidget>
 
+#include "qmediaplayer.h"
+
 class QMediaPlayer;
 class QMediaMetadata;
 class QModelIndex;
@@ -61,12 +63,21 @@ private slots:
     void jump(const QModelIndex &index);
     void playlistPositionChanged(int);
 
+    void statusChanged(QMediaPlayer::StreamStatus status);
+    void bufferingChanged(bool buffering);
+    void bufferingProgress(int progress);
+
 private:
+    void setTrackInfo(const QString &info);
+    void setStatusInfo(const QString &info);
+
     QMediaPlayer *player;
     QMediaMetadata *metaData;
     QSlider *slider;
     PlaylistModel *playlistModel;
     QTableView *playlistView;
+    QString trackInfo;
+    QString statusInfo;
 };
 
 #endif

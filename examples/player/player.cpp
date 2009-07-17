@@ -37,7 +37,6 @@
 #include "playercontrols.h"
 #include "playlistmodel.h"
 
-#include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
 #include <qabstractmediaservice.h>
@@ -57,6 +56,10 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
     connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
+    connect(player, SIGNAL(streamStatusChanged(QMediaPlayer::StreamStatus)),
+            this, SLOT(statusChanged(QMediaPlayer::StreamStatus)));
+    connect(player, SIGNAL(bufferingChanged(bool)), this, SLOT(bufferingChanged(bool)));
+    connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
@@ -164,9 +167,11 @@ void Player::positionChanged(qint64 progress)
 void Player::metadataChanged()
 {
     qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
-    if (metaData->metadataAvailable())
-        setWindowTitle(QString("%1 - %2").arg(metaData->metadata(QLatin1String("Artist")).toString()).
-                                          arg(metaData->metadata(QLatin1String("Title")).toString()));
+    if (metaData->metadataAvailable()) {
+        setTrackInfo(QString("%1 - %2")
+                .arg(metaData->metadata(QLatin1String("Artist")).toString())
+                .arg(metaData->metadata(QLatin1String("Title")).toString()));
+    }
 }
 
 void Player::jump(const QModelIndex &index)
@@ -184,4 +189,65 @@ void Player::playlistPositionChanged(int currentItem)
 void Player::seek(int seconds)
 {
     player->setPosition(seconds * 1000);
+}
+
+void Player::statusChanged(QMediaPlayer::StreamStatus status)
+{
+    switch (status) {
+    case QMediaPlayer::UnknownStreamStatus:
+    case QMediaPlayer::NoStream:
+    case QMediaPlayer::LoadedStream:
+    case QMediaPlayer::PrimedStream:
+        unsetCursor();
+        setStatusInfo(QString());
+        break;
+    case QMediaPlayer::LoadingStream:
+        setCursor(QCursor(Qt::BusyCursor));
+        setStatusInfo(tr("Loading..."));
+        break;
+    case QMediaPlayer::StalledStream:
+        setCursor(QCursor(Qt::BusyCursor));
+        break;
+    case QMediaPlayer::EndOfStream:
+        unsetCursor();
+        setStatusInfo(QString());
+        QApplication::alert(this);
+        break;
+    case QMediaPlayer::InvalidStream:
+        unsetCursor();
+        setStatusInfo(player->errorString());
+        break;
+    }
+}
+
+void Player::bufferingChanged(bool buffering)
+{
+    if (buffering)
+        statusChanged(player->streamStatus());
+}
+
+void Player::bufferingProgress(int progress)
+{
+    setStatusInfo(tr("Buffering %4%%").arg(progress));
+}
+
+void Player::setTrackInfo(const QString &info)
+{
+    trackInfo = info;
+
+    if (!statusInfo.isEmpty())
+        setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
+    else
+        setWindowTitle(trackInfo);
+
+}
+
+void Player::setStatusInfo(const QString &info)
+{
+    statusInfo = info;
+
+    if (!statusInfo.isEmpty())
+        setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
+    else
+        setWindowTitle(trackInfo);
 }

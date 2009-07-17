@@ -171,6 +171,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_streamStatusChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_bufferingChanged(bool));
 };
 
 #endif  // QMEDIAPLAYER_H

@@ -65,9 +65,6 @@ protected:
     QAbstractMediaObject(QObject *parent = 0);
     QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
 
-    void beginWatch();
-    void endWatch();
-
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
 
