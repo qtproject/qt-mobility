@@ -116,7 +116,7 @@ QMessage::QMessage(const QMessage &other)
     : QMessageContentContainer(other),
       d_ptr(new QMessagePrivate)
 {
-    *this = other;
+    this->operator=(other);
 }
 
 const QMessage& QMessage::operator=(const QMessage& other)
