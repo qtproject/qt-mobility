@@ -1225,7 +1225,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         }
                     }
 
-                    return false;
+                    // Fall through to end
                 } else {
                     /* Nope, testing the values as a variant */
                     for(int j=0; j < details.count(); j++) {
@@ -1236,7 +1236,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                             && (!testMax || compareVariant(var, cdf.maxValue(), cs) < maxComp))
                             return true;
                     }
-                    return false;
+                    // Fall through to end
                 }
             }
             break;
@@ -1249,7 +1249,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (contact.groups().contains(cgf.groupId()))
                     return true;
 
-                return false;
+                // Fall through to end
             }
             break;
 
@@ -1279,7 +1279,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     if (testFilter(action->contactFilter(af.value()), contact))
                         return true;
                 }
-                return false;
+                // Fall through to end
             }
             break;
 
@@ -1296,6 +1296,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     }
                     return true;
                 }
+                // Fall through to end
             }
             break;
 
@@ -1312,6 +1313,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     }
                     return false;
                 }
+                // Fall through to end
             }
             break;
     }
