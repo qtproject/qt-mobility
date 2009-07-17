@@ -31,58 +31,91 @@
 **
 ****************************************************************************/
 #include "qmessageaccount.h"
+#include "qmfhelpers_p.h"
+
+#include <qmailaccount.h>
+#include <qmailstore.h>
+
+using namespace QmfHelpers;
+
+class QMessageAccountPrivate
+{
+public:
+    QMailAccount _account;
+};
 
 QMessageAccount::QMessageAccount()
+    : d_ptr(new QMessageAccountPrivate)
 {
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+    : d_ptr(new QMessageAccountPrivate)
 {
-    Q_UNUSED(id)
+    *this = QMessageStore::instance()->account(id);
 }
 
-QMessageAccount::QMessageAccount(const QMessageAccount &other)
+QMessageAccount::QMessageAccount(const QMessageAccount &other) 
+    : d_ptr(new QMessageAccountPrivate) 
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 const QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_account = other.d_ptr->_account;
+    }
+
+    return *this;
 }
 
 QMessageAccount::~QMessageAccount()
 {
+    delete d_ptr;
 }
 
 QMessageAccountId QMessageAccount::id() const
 {
-    return QMessageAccountId();  // stub
+    return convert(d_ptr->_account.id());
 }
 
 QString QMessageAccount::name() const
 {
-    return QString(); // stub
+    return d_ptr->_account.name();
 }
 
 QMessageAddress QMessageAccount::fromAddress() const
 {
-    return QMessageAddress(); // stub
+    return convert(d_ptr->_account.fromAddress());
 }
 
 QMessage::TypeFlags QMessageAccount::types() const
 {
-    return QMessage::None; // stub
+    return convert(d_ptr->_account.messageType());
 }
 
 QString QMessageAccount::signature() const
 {
-    return QString(); // stub
+    return d_ptr->_account.signature();
 }
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    Q_UNUSED(type)
-    return QMessageAccountId(); // stub
+    if (QMailStore *store = QMailStore::instance()) {
+        QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type)));
+        QMailAccountKey preferredKey(QMailAccountKey::status(QMailAccount::PreferredSender));
+
+        // See if there is a preferred sender
+        foreach (const QMailAccountId &id, store->queryAccounts(typeKey & preferredKey)) {
+            return convert(id);
+        }
+
+        // See if there are any accounts for this type
+        foreach (const QMailAccountId &id, store->queryAccounts(typeKey)) {
+            return convert(id);
+        }
+    }
+
+    return QMessageAccountId();
 }
