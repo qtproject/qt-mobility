@@ -56,8 +56,50 @@ template <int N> struct QLatin1Literal
 {
     const char str[N];
 
+    operator QLatin1String() const {return QLatin1String(str);}
     operator QString() const {return QString::fromLatin1(str, N-1);}
 };
+
+template<int N> bool operator==(const QLatin1Literal<N>& a, const QLatin1String& b)
+{
+    return QLatin1String(a.str) == b;
+}
+
+template<int N> bool operator==(const QLatin1Literal<N>& a, const QString& b)
+{
+    return b == QLatin1String(a.str);
+}
+
+template<int N> bool operator==(const QLatin1String& b, const QLatin1Literal<N>& a)
+{
+    return QLatin1String(a.str) == b;
+}
+
+template<int N> bool operator==(const QString& b, const QLatin1Literal<N>& a)
+{
+    return b == QLatin1String(a.str);
+}
+
+template<int N> bool operator!=(const QLatin1Literal<N>& a, const QLatin1String& b)
+{
+    return QLatin1String(a.str) != b;
+}
+
+template<int N> bool operator!=(const QLatin1Literal<N>& a, const QString& b)
+{
+    return b != QLatin1String(a.str);
+}
+
+template<int N> bool operator!=(const QLatin1String& b, const QLatin1Literal<N>& a)
+{
+    return QLatin1String(a.str) != b;
+}
+
+template<int N> bool operator!=(const QString& b, const QLatin1Literal<N>& a)
+{
+    return b != QLatin1String(a.str);
+}
+
 
 #define Q_DECLARE_LATIN1_LITERAL(varname, str) static const QLatin1Literal<sizeof(str)> varname
 #define Q_DEFINE_LATIN1_LITERAL(varname, str) const QLatin1Literal<sizeof(str)> varname = {str}
