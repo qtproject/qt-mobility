@@ -34,69 +34,74 @@
 
 #include "qwmpevents.h"
 
-void QWmpEvents::OpenStateChange(long) {}
-void QWmpEvents::PlayStateChange(long) {}
-void QWmpEvents::AudioLanguageChange(long) {}
-void QWmpEvents::StatusChange() {}
-void QWmpEvents::ScriptCommand(BSTR, BSTR) {}
-void QWmpEvents::NewStream() {}    
-void QWmpEvents::Disconnect(long) {}
-void QWmpEvents::Buffering(VARIANT_BOOL) {}
-void QWmpEvents::Error() {}
-void QWmpEvents::Warning(long, long, BSTR) {}
-void QWmpEvents::EndOfStream(long) {}
-void QWmpEvents::PositionChange(double, double) {}
-void QWmpEvents::MarkerHit(long) {}
-void QWmpEvents::DurationUnitChange(long) {}
-void QWmpEvents::CdromMediaChange(long) {}
-void QWmpEvents::PlaylistChange(IDispatch *, WMPPlaylistChangeEventType) {}
-void QWmpEvents::CurrentPlaylistChange(WMPPlaylistChangeEventType) {}
-void QWmpEvents::CurrentPlaylistItemAvailable(BSTR) {}
-void QWmpEvents::MediaChange(IDispatch *) {}
-void QWmpEvents::CurrentMediaItemAvailable(BSTR) {}
-void QWmpEvents::CurrentItemChange(IDispatch *) {}
-void QWmpEvents::MediaCollectionChange() {}
-void QWmpEvents::MediaCollectionAttributeStringAdded(BSTR, BSTR) {}
-void QWmpEvents::MediaCollectionAttributeStringRemoved(BSTR, BSTR) {}
-void QWmpEvents::MediaCollectionAttributeStringChanged(BSTR, BSTR, BSTR) {}
-void QWmpEvents::PlaylistCollectionChange() {}
-void QWmpEvents::PlaylistCollectionPlaylistAdded(BSTR) {}
-void QWmpEvents::PlaylistCollectionPlaylistRemoved(BSTR) {}
-void QWmpEvents::PlaylistCollectionPlaylistSetAsDeleted(BSTR, VARIANT_BOOL) {}
-void QWmpEvents::ModeChange(BSTR, VARIANT_BOOL) {}
-void QWmpEvents::MediaError(IDispatch *) {}
-void QWmpEvents::OpenPlaylistSwitch(IDispatch *) {}
-void QWmpEvents::DomainChange(BSTR) {}
-void QWmpEvents::SwitchedToPlayerApplication() {}
-void QWmpEvents::SwitchedToControl() {}
-void QWmpEvents::PlayerDockedStateChange() {}
-void QWmpEvents::PlayerReconnect() {}
-void QWmpEvents::Click(short, short, long, long) {}
-void QWmpEvents::DoubleClick(short, short, long, long) {}
-void QWmpEvents::KeyDown(short, short) {}
-void QWmpEvents::KeyPress(short) {}
-void QWmpEvents::KeyUp(short, short) {}
-void QWmpEvents::MouseDown(short, short, long, long) {}
-void QWmpEvents::MouseMove(short, short, long, long) {}
-void QWmpEvents::MouseUp(short, short, long, long) {}
+#include "qwmpglobal.h"
 
-// IWMPEvents2
-void QWmpEvents::DeviceConnect(IWMPSyncDevice *) {}
-void QWmpEvents::DeviceDisconnect(IWMPSyncDevice *) {}
-void QWmpEvents::DeviceStatusChange(IWMPSyncDevice *, WMPDeviceStatus) {}
-void QWmpEvents::DeviceSyncStateChange(IWMPSyncDevice *, WMPSyncState) {}
-void QWmpEvents::DeviceSyncError(IWMPSyncDevice *, IDispatch *) {}
-void QWmpEvents::CreatePartnershipComplete(IWMPSyncDevice *, HRESULT) {}
+QWmpEvents::QWmpEvents(IUnknown *source, QObject *parent)
+    : QObject(parent)
+    , m_ref(1)
+    , m_connectionPoint(0)
+    , m_adviseCookie(0)
+{
+    HRESULT hr;
+    IConnectionPointContainer *container = 0;
 
-// IWMPEvents3
-void QWmpEvents::CdromRipStateChange(IWMPCdromRip *, WMPRipState) {}
-void QWmpEvents::CdromRipMediaError(IWMPCdromRip *, IDispatch *) {}
-void QWmpEvents::CdromBurnStateChange(IWMPCdromBurn *, WMPBurnState) {}
-void QWmpEvents::CdromBurnMediaError(IWMPCdromBurn *, IDispatch *) {}
-void QWmpEvents::CdromBurnError(IWMPCdromBurn *, HRESULT) {}
-void QWmpEvents::LibraryConnect(IWMPLibrary *) {}
-void QWmpEvents::LibraryDisconnect(IWMPLibrary *) {}
-void QWmpEvents::FolderScanStateChange(WMPFolderScanState) {}
-void QWmpEvents::StringCollectionChange(IDispatch *, WMPStringCollectionChangeEventType, long) {}
-void QWmpEvents::MediaCollectionMediaAdded(IDispatch *) {}    
-void QWmpEvents::MediaCollectionMediaRemoved(IDispatch *) {}
+    if ((hr = source->QueryInterface(
+            IID_IConnectionPointContainer, reinterpret_cast<void **>(&container))) != S_OK) {
+        qWarning("No connection point container, %x: %d", hr, qwmp_error_string(hr));
+    } else {
+        if ((hr = container->FindConnectionPoint(
+                __uuidof(IWMPEvents), &m_connectionPoint)) != S_OK) {
+            qWarning("No connection point for IWMPEvents %d", hr);
+        } else if ((hr = m_connectionPoint->Advise(
+                static_cast<IWMPEvents3 *>(this), &m_adviseCookie)) != S_OK) {
+            qWarning("Failed to link to connection point, %x, %s", hr, qwmp_error_string(hr));
+
+            m_connectionPoint->Release();
+            m_connectionPoint = 0;
+        }
+        container->Release();
+    }
+}
+
+QWmpEvents::~QWmpEvents()
+{
+    if (m_connectionPoint) {
+        m_connectionPoint->Unadvise(m_adviseCookie);
+        m_connectionPoint->Release();
+    }
+
+    Q_ASSERT(m_ref == 1);
+}
+
+// IUnknown
+HRESULT QWmpEvents::QueryInterface(REFIID riid, void **object)
+{
+    if (!object) {
+        return E_POINTER;
+    } else if (riid == __uuidof(IUnknown)
+            || riid == __uuidof(IWMPEvents)
+            || riid == __uuidof(IWMPEvents2)
+            || riid == __uuidof(IWMPEvents3)) {
+        *object = static_cast<IWMPEvents3 *>(this);
+
+        AddRef();
+
+        return S_OK;
+    } else {
+        return E_NOINTERFACE;
+    }
+}
+
+ULONG QWmpEvents::AddRef()
+{
+    return InterlockedIncrement(&m_ref);
+}
+
+ULONG QWmpEvents::Release()
+{
+    ULONG ref = InterlockedDecrement(&m_ref);
+
+    Q_ASSERT(ref != 0);
+
+    return ref;
+}

@@ -167,7 +167,8 @@ private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
-    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
+    Q_PRIVATE_SLOT(d_func(), void _q_streamStatusChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
 #endif  // QMEDIAPLAYER_H

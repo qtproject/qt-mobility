@@ -39,13 +39,15 @@
 
 #include <wmp.h>
 
+class QWmpEvents;
 class QWmpPlaylist;
 
 class QWmpPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
 public:
-    QWmpPlayerControl(IWMPCore3 *player, QWmpPlaylist *playlist, QObject *parent = 0);
+    QWmpPlayerControl(
+            IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpPlayerControl();
 
     int state() const;
@@ -54,10 +56,7 @@ public:
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *playlist);
 
-    void wmpPlaylistChanged(IWMPPlaylist *playlist);
-
     qint64 duration() const;
-    void setDuration(qint64 duration);
 
     qint64 position() const;
     void setPosition(qint64 position);
@@ -101,6 +100,13 @@ private Q_SLOTS:
     void proxiedItemsRemoved(int start, int end);
     void proxiedItemsChanged(int start, int end);
 
+    void bufferingEvent(VARIANT_BOOL buffering);
+    void currentItemChangeEvent(IDispatch *dispatch);
+    void mediaChangeEvent(IDispatch *dispatch);
+    void positionChangeEvent(double from, double to);
+    void playStateChangeEvent(long state);
+    void openPlaylistChangeEvent(IDispatch *dispatch);
+
 private:
     IWMPCore3 *m_player;
     IWMPControls *m_controls;
@@ -111,6 +117,7 @@ private:
     QMediaPlaylist *m_proxiedPlaylist;
     IWMPPlaylist *m_proxyPlaylist;
     int m_state;
+    int m_status;
     qint64 m_duration;
     bool m_buffering;
     bool m_videoAvailable;

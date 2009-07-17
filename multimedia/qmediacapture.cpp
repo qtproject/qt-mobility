@@ -41,6 +41,17 @@
 
 Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
 {
+    QObject *object = provider ? provider->createObject("com.nokia.qt.AudioCapture/1.0") : 0;
+
+    if (object != 0) {
+        QAbstractMediaService *service = qobject_cast<QAbstractMediaService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete service;
+    }
+
     return 0;
 }
 

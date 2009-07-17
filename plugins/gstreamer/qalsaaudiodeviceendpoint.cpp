@@ -51,20 +51,26 @@ QAlsaAudioDeviceEndpoint::~QAlsaAudioDeviceEndpoint()
 
 void QAlsaAudioDeviceEndpoint::setDirectionFilter(QAudioDeviceEndpoint::DeviceDirection direction)
 {
-    QAudioDeviceEndpoint::setDirectionFilter(direction);
-    update();
+    if (direction != directionFilter()) {
+        QAudioDeviceEndpoint::setDirectionFilter(direction);
+        update();
+    }
 }
 
 void QAlsaAudioDeviceEndpoint::setRoleFilter(QAudioDeviceEndpoint::Roles roles)
 {
-    QAudioDeviceEndpoint::setRoleFilter(roles);
-    update();
+    if (roles != roleFilter()) {
+        QAudioDeviceEndpoint::setRoleFilter(roles);
+        update();
+    }
 }
 
 void QAlsaAudioDeviceEndpoint::setFormFactorFilter(QAudioDeviceEndpoint::FormFactors forms)
 {
-    QAudioDeviceEndpoint::setFormFactorFilter(forms);
-    update();
+    if (forms != formFactorFilter()) {
+        QAudioDeviceEndpoint::setFormFactorFilter(forms);
+        update();
+    }
 }
 
 int QAlsaAudioDeviceEndpoint::deviceCount() const

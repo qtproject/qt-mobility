@@ -57,11 +57,10 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     , m_player(0)
     , m_oleObject(0)
     , m_inPlaceObject(0)
+    , m_events(0)
     , m_placeholderWidget(0)
     , m_control(0)
     , m_metaData(0)
-    , m_connectionPoint(0)
-    , m_adviseCookie(0)
 #ifdef QWMP_EVR
     , m_evrHwnd(0)
 #endif
@@ -90,28 +89,9 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             qWarning("No IOleInnPlaceObject interface, %x: %s", hr, qwmp_error_string(hr));
         }
 
-        IConnectionPointContainer *container = 0;
-
-        if ((hr = m_player->QueryInterface(
-                IID_IConnectionPointContainer, reinterpret_cast<void **>(&container))) != S_OK) {
-            qWarning("No connection point container, %x: %d", hr, qwmp_error_string(hr));
-        } else {
-            if ((hr = container->FindConnectionPoint(
-                    __uuidof(IWMPEvents), &m_connectionPoint)) != S_OK) {
-                qWarning("No connection point for IWMPEvents %d", hr);
-            } else if ((hr = m_connectionPoint->Advise(
-                    static_cast<IWMPEvents3 *>(this), &m_adviseCookie)) != S_OK) {
-                qWarning("Failed to link to connection point, %x, %s", hr, qwmp_error_string(hr));
-
-                m_connectionPoint->Release();
-                m_connectionPoint = 0;
-            }
-            container->Release();
-        }
-
-        m_playlist = new QWmpPlaylist(m_player);
-        m_metaData = new QWmpMetaData;
-        m_control = new QWmpPlayerControl(m_player, m_playlist);
+        m_events = new QWmpEvents(m_player);
+        m_metaData = new QWmpMetaData(m_events);
+        m_control = new QWmpPlayerControl(m_player, m_events);
 
     }
 }
@@ -121,14 +101,9 @@ QWmpPlayerService::~QWmpPlayerService()
     if (m_placeholderWidget)
         m_placeholderWidget->removeEventFilter(this);
 
-    if (m_connectionPoint) {
-        m_connectionPoint->Unadvise(m_adviseCookie);
-        m_connectionPoint->Release();
-    }
-
     delete m_control;
     delete m_metaData;
-    delete m_playlist;
+    delete m_events;
 
     if (m_inPlaceObject)
         m_inPlaceObject->Release();
@@ -284,11 +259,7 @@ HRESULT QWmpPlayerService::QueryInterface(REFIID riid, void **object)
     if (!object) {
         return E_POINTER;
     } else if (riid == __uuidof(IUnknown)
-            || riid == __uuidof(IWMPEvents)
-            || riid == __uuidof(IWMPEvents2)
-            || riid == __uuidof(IWMPEvents3)) {
-        *object = static_cast<IWMPEvents3 *>(this);
-    } else if (riid == __uuidof(IOleClientSite)) {
+            || riid == __uuidof(IOleClientSite)) {
         *object = static_cast<IOleClientSite *>(this);
     } else if (riid == __uuidof(IOleWindow)
             || riid == __uuidof(IOleInPlaceSite)) {
@@ -321,54 +292,6 @@ ULONG QWmpPlayerService::Release()
     Q_ASSERT(ref != 0);
 
     return ref;
-}
-
-// IWMPEvents
-void QWmpPlayerService::PlayStateChange(long NewState)
-{
-    switch (NewState) {
-    case wmppsStopped:
-        m_control->setState(QMediaPlayer::StoppedState);
-        break;
-    case wmppsPaused:
-        m_control->setState(QMediaPlayer::PausedState);
-        break;
-    case wmppsPlaying:
-        m_control->setState(QMediaPlayer::PlayingState);
-        break;
-    default:
-        break;
-    }
-}
-
-void QWmpPlayerService::Buffering(VARIANT_BOOL Start)
-{
-    m_control->setBuffering(Start);
-}
-
-void QWmpPlayerService::PositionChange(double oldPosition, double newPosition)
-{
-    Q_UNUSED(oldPosition);
-
-    m_control->positionChanged(newPosition);
-}
-
-void QWmpPlayerService::MediaChange(IDispatch *Item)
-{
-    Q_UNUSED(Item);
-
-    IWMPMedia *media = 0;
-    if (m_player->get_currentMedia(&media) == S_OK) {
-        double duration = 0;
-
-        media->get_duration(&duration);
-
-        m_control->setDuration(duration);
-
-        m_metaData->setMedia(media);
-
-        media->Release();
-    }
 }
 
 // IOleClientSite
