@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #ifndef QMESSAGEACCOUNT_H
-#define QMESSAGEACCONT_H
+#define QMESSAGEACCOUNT_H
 #include <QString>
 #include <QList>
 #include <qmessageglobal.h>
