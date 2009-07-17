@@ -72,6 +72,9 @@ private slots:
     void detailVariantFiltering();
     void detailVariantFiltering_data();
 
+    void groupMembershipFiltering();
+    void groupMembershipFiltering_data();
+
     void sorting(); // XXX should take all managers
     void sorting_data();
 };
@@ -586,6 +589,72 @@ void tst_QContactManagerFiltering::rangeFiltering()
     for (int i = 0; i < expected.size(); i++) {
         QVERIFY(contacts.at(expected.at(i).toLower().toAscii() -'a').id() == ids.at(i));
     }
+}
+
+void tst_QContactManagerFiltering::groupMembershipFiltering_data()
+{
+    QTest::addColumn<QString>("expectedone");
+    QTest::addColumn<QString>("expectedtwo");
+
+    QString es; // empty string.
+
+    QTest::newRow("1") << "abcd" << es;
+    QTest::newRow("2") << "abcd" << "abcd";
+    QTest::newRow("3") << "ad" << "ab";
+    QTest::newRow("4") << es << "c";
+}
+
+void tst_QContactManagerFiltering::groupMembershipFiltering()
+{
+    QFETCH(QString, expectedone);
+    QFETCH(QString, expectedtwo);
+
+    /* Try the memory database first */
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QContact> contacts = prepareModel(cm);
+    QList<QUniqueId> idsone, idstwo;
+
+    QVERIFY(contacts.count() == 4);
+    QContact a = contacts.at(0);
+    QContact b = contacts.at(1);
+    QContact c = contacts.at(2);
+    QContact d = contacts.at(3);
+
+    QContactGroup g1, g2;
+    g1.setName("GroupOne");
+    g2.setName("GroupTwo");
+
+    // add the specified members to the specified groups
+    for (int i = 0; i < expectedone.size(); i++)
+        g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a').id());
+    for (int i = 0; i < expectedtwo.size(); i++)
+        g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a').id());
+
+    // save them to the manager.
+    cm->saveGroup(&g1);
+    cm->saveGroup(&g2);
+
+    // build the group membership filters
+    QContactGroupMembershipFilter cg1f, cg2f;
+    cg1f.setGroupId(g1.id());
+    cg2f.setGroupId(g2.id());
+
+    /* At this point, since we're using memory, assume the filter isn't really supported */
+    QVERIFY(cm->information()->filterSupported(cg1f) == false);
+
+    idsone = cm->contacts(cg1f);
+    idstwo = cm->contacts(cg2f);
+    QCOMPARE(idsone.count(), expectedone.count());
+    QCOMPARE(idstwo.count(), expectedtwo.count());
+    QVERIFY(expectedone.count() <= contacts.count());
+    QVERIFY(expectedtwo.count() <= contacts.count());
+
+    /* Expected is of the form "abcd".. */
+    for (int i = 0; i < expectedone.size(); i++)
+        QVERIFY(contacts.at(expectedone.at(i).toLower().toAscii() -'a').id() == idsone.at(i));
+    for (int i = 0; i < expectedtwo.size(); i++)
+        QVERIFY(contacts.at(expectedtwo.at(i).toLower().toAscii() -'a').id() == idstwo.at(i));
 }
 
 void tst_QContactManagerFiltering::sorting_data()

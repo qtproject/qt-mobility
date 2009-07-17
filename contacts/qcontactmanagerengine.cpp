@@ -1240,7 +1240,15 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::GroupMembership:
             {
-                // XXX TODO
+                // check the specified group for membership.
+                const QContactGroupMembershipFilter cgf(filter);
+                QContactManager::Error groupsError = QContactManager::NoError;
+                QContactGroup filterGroup = group(cgf.groupId(), groupsError);
+                if (groupsError != QContactManager::NoError)
+                    return false;                
+                if (filterGroup.hasMember(contact.id()))
+                    return true;
+                return false;
             }
             break;
 
