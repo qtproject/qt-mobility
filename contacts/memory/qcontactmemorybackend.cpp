@@ -223,7 +223,7 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QSet<QUniqueId>& conta
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error)
 {
     int index = d->m_contactIds.indexOf(contactId);
 
@@ -241,16 +241,11 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, bool batch,
     QMutableMapIterator<QUniqueId, QContactGroup> it(d->m_groups);
     while (it.hasNext()) {
         it.next();
-        it.value().removeMember(contactId);
+        if(it.value().removeMember(contactId))
+            changedGroups << it.value().id();
     }
 
-    // if we need to emit signals (ie, this isn't part of a batch operation)
-    // then emit the correct one.
-    if (!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contactId);
-        emit contactsRemoved(emitList);
-    }
+    removedContacts.insert(contactId);
 
     return true;
 }

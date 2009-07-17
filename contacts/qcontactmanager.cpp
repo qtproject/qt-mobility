@@ -347,7 +347,17 @@ bool QContactManager::saveContact(QContact* contact)
  */
 bool QContactManager::removeContact(const QUniqueId& contactId)
 {
-    return d->m_engine->removeContact(contactId, false, d->m_error);
+    QSet<QUniqueId> removed;
+    QSet<QUniqueId> groups;
+
+    bool ret = d->m_engine->removeContact(contactId, removed, groups, d->m_error);
+
+    if (!removed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
+    if (!groups.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
+
+    return ret;
 }
 
 /*!
@@ -398,7 +408,17 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* idList)
 {
-    return d->m_engine->removeContacts(idList, d->m_error);
+    QSet<QUniqueId> removed;
+    QSet<QUniqueId> groups;
+
+    QList<QContactManager::Error> ret = d->m_engine->removeContacts(idList, removed, groups, d->m_error);
+
+    if (!removed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
+    if (!groups.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
+
+    return ret;
 }
 
 /*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */

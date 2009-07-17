@@ -719,10 +719,11 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removed, QSet<QUniqueId>& changed, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
-    Q_UNUSED(batch);
+    Q_UNUSED(removed);
+    Q_UNUSED(changed);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -996,17 +997,12 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
  *
- * At some stage after completion of the operation, the backend must emit
- * the \c QContactManagerEngine::contactsRemoved signal if any
- * contacts were successfully removed.  If the operation fails, no such
- * signal may be emitted as a direct result of the operation.
- *
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
@@ -1017,19 +1013,16 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqu
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
             QUniqueId current = contactIds->at(i);
-            if (!removeContact(current, true, error)) {
+            if (!removeContact(current, removedContacts, changedGroups, error)) {
                 functionError = error;
                 ret.append(functionError);
             } else {
                 (*contactIds)[i] = 0;
                 ret.append(QContactManager::NoError);
-                removedList.append(current);
             }
         }
 
         error = functionError;
-        if (!removedList.isEmpty())
-            emit contactsRemoved(removedList);
         return ret;
     }
 }
