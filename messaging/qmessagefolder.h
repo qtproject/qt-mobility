@@ -59,7 +59,7 @@ public:
     QString path() const;
 
 private:
-    QMessageFolder *d_ptr;
+    QMessageFolderPrivate *d_ptr;
 };
 #endif
 #endif
