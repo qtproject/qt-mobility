@@ -32,53 +32,71 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolder.h"
+#include "qmfhelpers_p.h"
+
+#include <qmailfolder.h>
+
+using namespace QmfHelpers;
+
+class QMessageFolderPrivate
+{
+public:
+    QMailFolder _folder;
+};
 
 QMessageFolder::QMessageFolder()
+    : d_ptr(new QMessageFolderPrivate)
 {
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
+    : d_ptr(new QMessageFolderPrivate)
 {
-    Q_UNUSED(id)
+    *this = QMessageStore::instance()->folder(id);
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolder &other)
+    : d_ptr(new QMessageFolderPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 const QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_folder = other.d_ptr->_folder;
+    }
+
+    return *this;
 }
 
 QMessageFolder::~QMessageFolder()
 {
+    delete d_ptr;
 }
 
 QMessageFolderId QMessageFolder::id() const
 {
-    return QMessageFolderId(); // stub
+    return convert(d_ptr->_folder.id());
 }
 
 QMessageAccountId QMessageFolder::parentAccountId() const
 {
-    return QMessageAccountId(); // stub
+    return convert(d_ptr->_folder.parentAccountId());
 }
 
 QMessageFolderId QMessageFolder::parentFolderId() const
 {
-    return QMessageFolderId(); // stub
+    return convert(d_ptr->_folder.parentFolderId());
 }
 
 QString QMessageFolder::displayName() const
 {
-    return QString::null; // stub
+    return d_ptr->_folder.displayName();
 }
 
 QString QMessageFolder::path() const
 {
-    return QString::null; // stub
+    return d_ptr->_folder.path();
 }
 #endif
