@@ -138,6 +138,11 @@ QMediaPlayer::~QMediaPlayer()
     delete d->service;
 }
 
+bool QMediaPlayer::isValid() const
+{
+    return d_func()->control != 0;
+}
+
 /*!
     \property QMediaPlayer::state
     \brief the media player's playback state.

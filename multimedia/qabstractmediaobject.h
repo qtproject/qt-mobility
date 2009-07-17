@@ -53,6 +53,8 @@ public:
 
     virtual QAbstractMediaService* service() const = 0;
 
+    virtual bool isValid() const = 0;
+
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 

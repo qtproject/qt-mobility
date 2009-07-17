@@ -100,6 +100,8 @@ public:
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
 
+    bool isValid() const;
+
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 

@@ -131,6 +131,11 @@ public:
     {
     }
 
+    bool isValid() const
+    {
+        return true;
+    }
+
     QAbstractMediaService* service() const
     {
         return mockService;
