@@ -2552,7 +2552,10 @@ bool ApplicationLayer::value(HANDLE handle, const QByteArray &subPath,
 
     bool rv = false;
     if(0xFFFFFFFF == rhandle->currentPath) {
-        ReadHandle vhandle(rhandle->path + subPath);
+        QByteArray abs_path = rhandle->path + subPath;
+        if (rhandle->path.length() == 1) 
+            abs_path = subPath;
+        ReadHandle vhandle(abs_path);
         clearHandle(&vhandle);
         refreshHandle(&vhandle);
         if(0xFFFFFFFF == vhandle.currentPath) {
