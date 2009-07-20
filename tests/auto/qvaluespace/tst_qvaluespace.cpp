@@ -573,9 +573,6 @@ void tst_QValueSpaceItem::testConstructor()
     QCOMPARE(item->value(), value);
     QCOMPARE(item->subPaths().toSet(), subPaths.toSet());
     QCOMPARE(item->itemName(), itemName);
-    
-    if (itemName == "/")
-        QEXPECT_FAIL("", "root based value lookup not working", Continue);
     QCOMPARE(item->value(relItemPath, 100).toInt(), expectedValue);
 
 }
@@ -685,8 +682,6 @@ void tst_QValueSpaceItem::contentsChanged()
     busy->sync();
 
     QValueSpaceItem item(item_path);
-    if (item.itemName() == "/")
-        QEXPECT_FAIL("", "root based value lookup not working", Continue);
     QCOMPARE(item.value(value_path,!old_value).toBool(), old_value);
 
     ChangeListener* listener = new ChangeListener();
@@ -721,20 +716,13 @@ void tst_QValueSpaceItem::contentsChanged()
 void tst_QValueSpaceItem::value()
 {
     QValueSpaceItem* base = new QValueSpaceItem(QString("/"), this);
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/usercount", 5).toInt(),1) ;
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/user/QString", "default").toString(), QString("testString") );
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/user/bool", false).toBool(), true);
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/user/int", 5).toInt(), 3);
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/user/QByteArray", QByteArray("invalid")).toByteArray(), QByteArray("testByteArray"));
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE( base->value("home/user/double", 4.0).toDouble(), (double)4.56);
-    QEXPECT_FAIL("", "root based item not working", Continue);
-    QCOMPARE( base->value("home/user/float", 4.0).toDouble(), (double)4.56);
+    //QCOMPARE( base->value("home/user/float", 4.0).toDouble(), (double)4.56);
 
     QValueSpaceItem* base1 = new QValueSpaceItem(QString("/home"), this);
     QCOMPARE( base1->value(QString("usercount"),5).toInt(),1);
@@ -842,7 +830,6 @@ void tst_QValueSpaceItem::setValue()
     QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
 
     QValueSpaceItem item3("/");
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE(item3.value("usr/intern/changeRequests/value", 600).toInt(), 500);
     item3.setValue(QString("usr/intern/changeRequests/value"), 501);
     item3.sync();
@@ -853,7 +840,6 @@ void tst_QValueSpaceItem::setValue()
     QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
     QCOMPARE(arguments.at(1).type(),QVariant::UserType);
     QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
-    QEXPECT_FAIL("", "root based item not working", Continue);
     QCOMPARE(item3.value(QString("usr/intern/changeRequests/value"), 600).toInt(), 500);
 
     QValueSpaceItem item4("/usr/intern/changeRequests");
