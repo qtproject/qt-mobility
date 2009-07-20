@@ -18,34 +18,21 @@ LIBS += $$QT_LIBS_GSTREAMER \
     -lasound
 
 # Input
-HEADERS += qgstreamerplayercontrol.h \
-    qgstreamerplayerservice.h \
-    qgstreamerplayersession.h \
+HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideowidget.h \
     qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
-    qgstreamermetadataprovider.h \
-    qgstreamerstreamscontrol.h \
-    qgstreamercaptureservice.h \
-    qalsaaudiodeviceendpoint.h \
-    qgstreamercapturesession.h
+    qalsaaudiodeviceendpoint.h
 
-SOURCES += qgstreamerplayercontrol.cpp \
-    qgstreamerplayerservice.cpp \
-    qgstreamerplayersession.cpp \
+SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideowidget.cpp \
     qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \
-    qgstreamermetadataprovider.cpp \
-    qgstreamerstreamscontrol.cpp \
-    qgstreamercaptureservice.cpp \
-    qalsaaudiodeviceendpoint.cpp \
-    qgstreamercapturesession.cpp
-
+    qalsaaudiodeviceendpoint.cpp
 
 multimedia {
     SOURCES += \
@@ -60,3 +47,6 @@ multimedia {
 } else {
     DEFINES += QT_NO_VIDEOSURFACE
 }
+
+include(mediaplayer/mediaplayer.pri)
+include(mediacapture/mediacapture.pri)

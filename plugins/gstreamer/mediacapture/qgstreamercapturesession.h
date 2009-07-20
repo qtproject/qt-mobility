@@ -44,6 +44,7 @@
 
 class QGstreamerMessage;
 class QGstreamerBusHelper;
+class QGstreamerCaptureProperties;
 
 class QGstreamerCaptureSession : public QMediaCaptureControl
 {
@@ -59,6 +60,8 @@ public:
 
     qint64 position() const;
     void setPositionUpdatePeriod(int ms);
+
+    QGstreamerCaptureProperties *captureProperties() const { return m_captureProperties; }
 
 signals:
     void stateChanged(int state);
@@ -78,15 +81,20 @@ private:
     QMediaSink m_sink;
     QMediaCapture::State m_state;
     QGstreamerBusHelper *m_busHelper;
+    QGstreamerCaptureProperties *m_captureProperties;
     GstBus* m_bus;
 
     GstElement *m_pipeline;
 
-    GstElement *m_alsasrc;
-    GstElement *m_audioconvert;
+    GstElement *m_audiosrc;
+    GstElement *m_tee;
+    GstElement *m_audioconvert1;
+    GstElement *m_volume;
     GstElement *m_encoder;
     GstElement *m_muxer;
     GstElement *m_filesink;
+    GstElement *m_audioconvert2;
+    GstElement *m_fakesink;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H

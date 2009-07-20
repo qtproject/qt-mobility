@@ -35,39 +35,31 @@
 #include "recorder.h"
 
 #include <qabstractmediaservice.h>
-#include "qiodeviceendpoint.h"
+#include "qaudiodeviceendpoint.h"
+#include "qaudiocapturepropertiescontrol.h"
 
 #include <QtGui>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/QAudioDeviceInfo>
-#endif
-
 Recorder::Recorder()
 {
-    file = new QFile("/tmp/test.raw");
-    audioCapture = new QAudioCapture;
-
-#ifdef AUDIOSERVICES
-    format.setFrequency(8000);
-    format.setChannels(1);
-    format.setSampleSize(8);
-    format.setSampleType(QAudioFormat::UnSignedInt);
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setCodec("audio/pcm");
-#endif
-
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
 
     deviceBox = new QComboBox(this);
-#ifdef AUDIOSERVICES
-    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
-    for(int i = 0; i < devices.size(); ++i) {
-        deviceBox->addItem(QAudioDeviceInfo(devices.at(i)).deviceName(), qVariantFromValue(devices.at(i)));
-    }
-    audioInput = 0;
-#endif
+
+    audioCapture = new QMediaCapture;
+    audioCapture->setSink(QMediaSink(QUrl("/tmp/test.ogg")));
+    audioDevice = audioCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
+
+    if (audioDevice) {
+        audioCapture->service()->setAudioInput(audioDevice);
+        audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
+        for (int i=0; i<audioDevice->deviceCount(); i++) {
+            deviceBox->addItem(audioDevice->description(i));
+        }
+    } else
+        deviceBox->setEnabled(false);
+
     connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
     layout->addWidget(deviceBox);
 
@@ -84,6 +76,14 @@ Recorder::Recorder()
     setCentralWidget(window);
     window->show();
 
+    QAudioCapturePropertiesControl *control =
+            qobject_cast<QAudioCapturePropertiesControl*>(audioCapture->service()->control("com.nokia.qt.AudioCapturePropertiesControl"));
+
+    if (control) {
+        qDebug() << "supported audio codecs:" << control->supportedAudioCodecs();
+        control->setAudioCodec("lame");
+    }
+
     active = false;
 }
 
@@ -99,62 +99,26 @@ void Recorder::status()
     qWarning()<<"time: "<<currentTime;
 }
 
-#ifdef AUDIOSERVICES
-void Recorder::state(QAudio::State state)
-{
-    if(state == QAudio::StopState)
-        qWarning()<<" state = Stop";
-    else if(state == QAudio::ActiveState)
-        qWarning()<<" state = Active";
-    else
-        qWarning()<<" state = "<<state;
-}
-#endif
-
 void Recorder::deviceChanged(int idx)
 {
-#ifdef AUDIOSERVICES
-    if(audioInput)
-        delete audioInput;
-
-    device = deviceBox->itemData(idx).value<QAudioDeviceId>();
-    audioInput = new QAudioInput(device,format,this);
-    connect(audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(state(QAudio::State)));
-    connect(audioInput,SIGNAL(notify()),this,SLOT(status()));
-
-    if(!audioCapture) return;
-
-    // Setup and connections
-    audioCapture->setOutputDevice(file);
-    audioCapture->setInputFormat(format);
-    audioCapture->setOutputFormat(format);
-
-#endif
+    if (audioDevice)
+        audioDevice->setSelectedDevice(idx);
 }
 
 void Recorder::toggleRecord()
 {
-    if(!audioCapture) return;
-#ifdef AUDIOSERVICES
-    if(!audioInput) return;
-#endif
-    if(!active) {
+    if (!audioCapture) return;
+
+    if (!active) {
         recTime->setText("0 sec");
         currentTime = 0;
-        file->open(QIODevice::WriteOnly);
-#ifdef AUDIOSERVICES
-        QIODevice* tmp = audioInput->start();
-        audioCapture->setInputDevice(tmp);
-#endif
+        audioCapture->record();
 
         button->setText(tr("Click to stop recording"));
         active = true;
     } else {
-#ifdef AUDIOSERVICES
-        audioInput->stop();
-#endif
         button->setText(tr("Click to start recording"));
-        file->close();
+        audioCapture->stop();
         active = false;
     }
 }

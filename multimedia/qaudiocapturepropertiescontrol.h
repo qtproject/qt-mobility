@@ -40,6 +40,12 @@
 class QAudioFormat;
 class QStringList;
 
+#ifndef AUDIOSERVICES
+class QAudioFormat
+{
+};
+#endif
+
 class QAudioCapturePropertiesControl : public QAbstractMediaControl
 {
     Q_OBJECT
@@ -49,6 +55,10 @@ public:
     virtual QAudioFormat format() const = 0;    
     virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
+
+    virtual QStringList supportedAudioCodecs() const = 0;
+    virtual QString codecDescription(const QString &codecName) = 0;
+    virtual bool setAudioCodec(const QString &codecName) = 0;
 
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
