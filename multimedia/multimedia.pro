@@ -46,7 +46,11 @@ HEADERS = qabstractmediacontrol.h \
     qmediacapturecontrol.h \
     qaudiocapturepropertiescontrol.h \
     qvideocapturepropertiescontrol.h \
-    qmediacapture.h
+    qmediacapture.h \
+    qcamera.h \
+    qcameracontrol.h \
+    qcameraservice.h
+
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
@@ -81,5 +85,9 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediacapturecontrol.cpp \
     qaudiocapturepropertiescontrol.cpp \
     qvideocapturepropertiescontrol.cpp \
-    qmediacapture.cpp
+    qmediacapture.cpp \
+    qcamera.cpp \
+    qcameracontrol.cpp \
+    qcameraservice.cpp
+
 include (endpoints/endpoints.pri)
