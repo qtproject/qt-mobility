@@ -1,6 +1,4 @@
-load(qttest_p4)
 SOURCES  += tst_qsystemdeviceinfo.cpp
-HEADERS  += 
 TARGET = tst_qsystemdeviceinfo
 CONFIG+=testcase
 QT -= gui
