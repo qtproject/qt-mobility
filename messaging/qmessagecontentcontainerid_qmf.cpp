@@ -99,6 +99,6 @@ QString QMessageContentContainerId::toString() const
 bool QMessageContentContainerId::isValid() const
 {
     // Either we have a valid part indicator, or invalid with a valid message ID (indicating the message body)
-    return (d_ptr && (d_ptr->_location.isValid(true)) || d_ptr->_location.containingMessageId().isValid());
+    return (d_ptr && (d_ptr->_location.isValid(true) || d_ptr->_location.containingMessageId().isValid()));
 }
 
