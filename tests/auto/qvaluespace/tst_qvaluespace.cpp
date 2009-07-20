@@ -86,8 +86,8 @@ private slots:
     void testAssignmentOperator();
     void contentsChanged_data();
     void contentsChanged();
-    void dataVersitility_data();
-    void dataVersitility();
+    void dataVersatility_data();
+    void dataVersatility();
     void value();
     void ipcTests();
     void setValue();
@@ -126,7 +126,7 @@ void tst_QValueSpaceItem::cleanupTestCase()
     delete root;
 }
 
-void tst_QValueSpaceItem::dataVersitility_data()
+void tst_QValueSpaceItem::dataVersatility_data()
 {
     QTest::addColumn< QVariant >("data");
     QTest::addColumn< QString >("typeString");
@@ -150,7 +150,7 @@ void tst_QValueSpaceItem::dataVersitility_data()
     QTest::newRow("QDateTime") << QVariant(QDateTime::currentDateTime()) << "QDateTime" << (int)QVariant::DateTime;
 }
 
-void tst_QValueSpaceItem::dataVersitility()
+void tst_QValueSpaceItem::dataVersatility()
 {
     QFETCH(QVariant, data);
     QFETCH(QString, typeString);
@@ -867,7 +867,7 @@ void tst_QValueSpaceItem::ipcSetValue()
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
-    QList<QValueSpaceObject*> objects;
+    /*QList<QValueSpaceObject*> objects;
     QList<QSignalSpy*> spies;
     QList<ChangeListener*> listeners;
 
@@ -947,7 +947,7 @@ void tst_QValueSpaceItem::ipcSetValue()
     while(!listeners.isEmpty())
         delete listeners.takeFirst();
     while(!objects.isEmpty())
-        delete objects.takeFirst();
+        delete objects.takeFirst();*/
 #endif
 }
 
