@@ -42,10 +42,11 @@
 #include <QtMultimedia/qaudioinput.h>
 #endif
 
-#include <qaudiocapture.h>
+#include <qmediacapture.h>
 
 class QComboBox;
 class QLabel;
+class QAudioDeviceEndpoint;
 
 class Recorder : public QMainWindow
 {
@@ -57,18 +58,11 @@ public:
 private slots:
     void status();
     void toggleRecord();
-#ifdef AUDIOSERVICES
-    void state(QAudio::State s);
-#endif
     void deviceChanged(int idx);
 
 private:
-#ifdef AUDIOSERVICES
-    QAudioDeviceId device;
-    QAudioFormat   format;
-    QAudioInput*   audioInput;
-#endif
-    QAudioCapture* audioCapture;
+    QMediaCapture* audioCapture;
+    QAudioDeviceEndpoint *audioDevice;
     QComboBox*     deviceBox;
     QPushButton*   button;
     QLabel*        recTime;
