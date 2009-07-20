@@ -44,8 +44,10 @@
 
 #include "qmediaserviceprovider.h"
 
+#ifdef VIDEOSERVICES
 #include <QtMultimedia/qvideostream.h>
 #include <QtMultimedia/qvideoframe.h>
+#endif
 
 class QCameraService;
 class QCameraControl;
@@ -61,6 +63,7 @@ public:
     QCamera(QCameraService *service = createCameraService(), QObject *parent = 0);
     ~QCamera();
 
+#ifdef VIDEOSERVICES
     QList<QVideoFrame::Type> supportedColorFormats();
     QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
 
@@ -107,15 +110,16 @@ public:
     void setAutofocus(bool);
 
     void setDevice(QByteArray device);
-
+#endif
     bool isValid() const;
 
     QAbstractMediaService* service() const;
 
+#ifdef VIDEOSERVICES
 Q_SIGNALS:
     void frameReady(QVideoFrame frame);
     void stateChanged(QVideoStream::State state);
-
+#endif
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
