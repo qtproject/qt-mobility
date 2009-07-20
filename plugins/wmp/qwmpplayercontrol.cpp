@@ -190,7 +190,7 @@ int QWmpPlayerControl::playlistPosition() const
 
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
-        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
 
         media->Release();
     }
@@ -362,7 +362,7 @@ void QWmpPlayerControl::currentItemChangeEvent(IDispatch *dispatch)
     IWMPMedia *media = 0;
     if (dispatch && dispatch->QueryInterface(
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
-        int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+        int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
 
         emit playlistPositionChanged(index);
 

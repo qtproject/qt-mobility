@@ -50,18 +50,15 @@ public:
 
     bool metadataAvailable() const;
     bool isReadOnly() const;
-    void setReadOnly(bool readonly);
 
     QList<QString> availableMetadata() const;
     QVariant metadata(QString const &name) const;
     void setMetadata(QString const &name, QVariant const &value);
 
     static QStringList keys(IWMPMedia *media);
-
-    static int valueCount(IWMPMedia *media, const QString &key);
-    
-    static QVariant value(IWMPMedia *media, const QString &key, int value);
-    static QVariantList values(IWMPMedia *media, const QString &key);
+    static QVariant value(IWMPMedia *media, const QString &key);
+    static void setValue(IWMPMedia *media, const QString &key, const QVariant &value);
+    static QVariant convertVariant(const VARIANT &variant);
 
 private Q_SLOTS:
     void currentItemChangeEvent(IDispatch *dispatch);
