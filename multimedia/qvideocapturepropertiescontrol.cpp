@@ -33,12 +33,43 @@
 ****************************************************************************/
 
 #include "qvideocapturepropertiescontrol.h"
+#include <QtCore/qstringlist.h>
+#include <QtCore/qvariant.h>
+
+
+QVideoCapturePropertiesControl::QVideoCapturePropertiesControl(QObject *parent)
+    :QAbstractMediaControl(parent)
+{
+}
 
 QVideoCapturePropertiesControl::~QVideoCapturePropertiesControl()
 {
 }
 
-QVideoCapturePropertiesControl::QVideoCapturePropertiesControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+
+QStringList QVideoCapturePropertiesControl::supportedEncodingOptions() const
 {
+    return QStringList();
+}
+
+QVariant QVideoCapturePropertiesControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
+
+void QVideoCapturePropertiesControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
+
+QList<QSize> QVideoCapturePropertiesControl::supportedResolutions() const
+{
+    return QList<QSize>();
+}
+
+QList< QPair<int,int> > QVideoCapturePropertiesControl::supportedFrameRates() const
+{
+    return QList< QPair<int,int> >();
 }
