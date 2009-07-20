@@ -33,17 +33,51 @@
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
 
+class QMessageStorePrivatePlatform
+{
+public:
+    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
+        :d_ptr(d), q_ptr(q) {}
+    QMessageStorePrivate *d_ptr;
+    QMessageStore *q_ptr;
+    //...
+};
+
+QMessageStorePrivate::QMessageStorePrivate()
+    :p_ptr(0),
+     q_ptr(0)
+{
+}
+
+void QMessageStorePrivate::initialize(QMessageStore *store)
+{
+    q_ptr = store;
+    p_ptr = new QMessageStorePrivatePlatform(this, store);
+}
+
+Q_GLOBAL_STATIC(QMessageStorePrivate,data);
+
 QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
-      d_ptr(0)
+      d_ptr(data())
 {
-    Q_ASSERT(instance() != 0);
+    Q_ASSERT(d_ptr != 0);
+    Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
+    d_ptr->initialize(this);
 }
 
 QMessageStore::~QMessageStore()
 {
-    delete d_ptr;
-    d_ptr = 0;
+    d_ptr = 0; // should be cleaned up by automatically
+}
+
+QMessageStore* QMessageStore::instance()
+{
+    QMessageStorePrivate *d = data();
+    Q_ASSERT(d != 0);
+    if (!d->q_ptr)
+        d->initialize(new QMessageStore());
+    return d->q_ptr;
 }
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
@@ -156,11 +190,6 @@ uint QMessageStore::maximumWorkingMemory()
     return 0; // stub
 }
 
-QMessageStore* QMessageStore::instance()
-{
-    return 0;
-}
-    
 void QMessageStore::startNotifications(const QMessageFilterKey &key)
 {
     Q_UNUSED(key)    

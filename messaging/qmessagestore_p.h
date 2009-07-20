@@ -32,15 +32,16 @@
 ****************************************************************************/
 #include "qmessagestore.h"
 
+class QMessageStorePrivatePlatform;
+
 class QMessageStorePrivate
 {
     Q_DECLARE_PUBLIC(QMessageStore)
 
 public:
-    QMessageStorePrivate(QMessageStore *store)
-        :q_ptr(store)
-    {
-    }
+    QMessageStorePrivate();
+    void initialize(QMessageStore *store);
 
     QMessageStore *q_ptr;
+    QMessageStorePrivatePlatform *p_ptr;
 };
