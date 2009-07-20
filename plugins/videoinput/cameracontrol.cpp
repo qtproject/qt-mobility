@@ -291,8 +291,8 @@ void CameraControl::setDevice(const QByteArray &device)
 {
     if(m_camera) delete m_camera;
     m_camera = new QVideoCamera(device,this);
-    connect(m_camera,SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
-    connect(m_camera,SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL((stateChanged(QVideoStream::State))));
+    connect(m_camera->preview(),SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
+    connect(m_camera->preview(),SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL((stateChanged(QVideoStream::State))));
 }
 
 
