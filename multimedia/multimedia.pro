@@ -2,6 +2,8 @@ TEMPLATE = lib
 
 # QT += multimedia
 # DEFINES += AUDIOSERVICES
+# DEFINES += VIDEOSERVICES
+
 # distinct from QtMultimedia
 TARGET = QtMedia
 DESTDIR = $$OUT_PWD/../lib

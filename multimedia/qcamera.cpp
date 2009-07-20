@@ -82,6 +82,7 @@ QCamera::QCamera(QCameraService *service, QObject *parent)
 QCamera::~QCamera()
 {
 }
+#ifdef VIDEOSERVICES
 
 QList<QVideoFrame::Type> QCamera::supportedColorFormats()
 {
@@ -476,7 +477,7 @@ void QCamera::setDevice(QByteArray device)
     if(d->control)
         d->control->setDevice(device);
 }
-
+#endif
 bool QCamera::isValid() const
 {
     if(d_func()->control)

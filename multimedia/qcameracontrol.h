@@ -38,8 +38,10 @@
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
+#ifdef VIDEOSERVICES
 #include <QtMultimedia/qvideoformat.h>
 #include <QtMultimedia/qvideostream.h>
+#endif
 
 class QCameraControl : public QAbstractMediaControl
 {
@@ -48,6 +50,7 @@ class QCameraControl : public QAbstractMediaControl
 public:
     ~QCameraControl();
 
+#ifdef VIDEOSERVICES
     virtual QList<QVideoFrame::Type> supportedColorFormats() = 0;
     virtual QList<QSize> supportedResolutions(QVideoFrame::Type fmt) = 0;
 
@@ -94,12 +97,13 @@ public:
     virtual void setAutofocus(bool f) = 0;
 
     virtual void setDevice(QByteArray device) = 0;
+#endif
     virtual bool isValid() const = 0;
-
+#ifdef VIDEOSERVICES
 Q_SIGNALS:
     void frameReady(QVideoFrame frame);
     void stateChanged(QVideoStream::State state);
-
+#endif
 protected:
     QCameraControl(QObject* parent);
 };
