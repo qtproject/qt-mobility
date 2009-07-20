@@ -239,6 +239,10 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QTest::newRow("no name") << es << es << false << ev << es;
     QTest::newRow("no def name") << es << "value" << false << ev << es;
 
+    /* Strings (name) */
+    QTest::newRow("first name presence") << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcd";
+    QTest::newRow("first name == Aaron") << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
+
     /*
      * Doubles
      * B has double(4.0)
@@ -506,9 +510,10 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
 
     /* First, cover the "empty defname / fieldname / ranges" cases */
     QTest::newRow("invalid defname") << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("invalid fieldname") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-
-    QTest::newRow("presence test") << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
+    QTest::newRow("defn presence test") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcd";
+    QTest::newRow("field presence test") << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
+    QTest::newRow("good def, bad field") << namedef << "Bongo" << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+    QTest::newRow("bad def") << "Bongo" << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
 
     QTest::newRow("no max, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
     QTest::newRow("no max, some results") << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << 0 << "bcd";

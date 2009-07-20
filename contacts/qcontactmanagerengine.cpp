@@ -1171,7 +1171,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
         case QContactFilter::ContactDetailRange:
             {
                 const QContactDetailRangeFilter cdf(filter);
-                if (cdf.detailDefinitionName().isEmpty() || cdf.detailFieldName().isEmpty())
+                if (cdf.detailDefinitionName().isEmpty())
                     return false; /* we do not know which field to check */
 
                 /* See if this contact has one of these details in it */
@@ -1180,9 +1180,19 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (details.count() == 0)
                     return false; /* can't match */
 
-                /* Now figure out what tests we are doing */
-                if (!cdf.minValue().isValid() && !cdf.maxValue().isValid())
-                    return true; // just a presence test
+                /* Check for a detail presence test */
+                if (cdf.detailFieldName().isEmpty())
+                    return true;
+
+                /* See if this is a field presence test */
+                if (!cdf.minValue().isValid() && !cdf.maxValue().isValid()) {
+                    for(int j=0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        if (detail.values().contains(cdf.detailFieldName()))
+                            return true;
+                    }
+                    return false;
+                }
 
                 /* open or closed interval testing support */
                 const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
