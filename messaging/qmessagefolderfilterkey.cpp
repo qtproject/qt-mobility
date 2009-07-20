@@ -153,7 +153,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose identifier matches \a id, according to \a cmp.
 
@@ -161,7 +161,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose identifier is a member of \a ids, according to \a cmp.
 

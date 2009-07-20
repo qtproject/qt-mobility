@@ -63,8 +63,8 @@ public:
     bool operator==(const QMessageFolderFilterKey &other) const;
     const QMessageFolderFilterKey& operator=(const QMessageFolderFilterKey &other);
 
-    static QMessageFolderFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFolderFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFolderFilterKey id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFolderFilterKey id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFolderFilterKey displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp);

@@ -152,7 +152,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageAccountFilterKey::id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching accounts whose identifier matches \a id, according to \a cmp.
 
@@ -160,7 +160,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageAccountFilterKey::id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose identifier is a member of \a ids, according to \a cmp.
 

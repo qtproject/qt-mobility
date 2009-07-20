@@ -99,14 +99,14 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessa
     return *this; // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(ids)
     Q_UNUSED(cmp)

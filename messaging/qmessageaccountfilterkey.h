@@ -34,7 +34,7 @@
 #define QMESSAGEACCOUNTFILTERKEY_H
 #include <qmessageglobal.h>
 #include <qmessagedatacomparator.h>
-#include <qmessageid.h>
+#include <qmessageaccountid.h>
 
 class QMessageAccountFilterKeyPrivate;
 
@@ -59,8 +59,8 @@ public:
     bool operator==(const QMessageAccountFilterKey &other) const;
     const QMessageAccountFilterKey& operator=(const QMessageAccountFilterKey &other);
 
-    static QMessageAccountFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageAccountFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageAccountFilterKey id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageAccountFilterKey id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageAccountFilterKey id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageAccountFilterKey fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp);

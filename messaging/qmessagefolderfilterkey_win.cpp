@@ -99,14 +99,14 @@ const QMessageFolderFilterKey& QMessageFolderFilterKey::operator=(const QMessage
     return *this; // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(ids)
     Q_UNUSED(cmp)
