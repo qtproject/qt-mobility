@@ -38,9 +38,18 @@
 #include "qmessageaccountid.h"
 #include "qmessagefolderid.h"
 #include "qmessagestore.h"
+#include "qmessagedatacomparator.h"
 
 #include <qmailmessage.h>
 #include <qmaildatacomparator.h>
+
+class QMessageAccountFilterKey;
+class QMessageFolderFilterKey;
+class QMessageFilterKey;
+
+class QMailAccountKey;
+class QMailFolderKey;
+class QMailMessageKey;
 
 namespace QmfHelpers {
 
@@ -85,6 +94,18 @@ QMailDataComparator::EqualityComparator convert(QMessageDataComparator::Equality
 
 QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp);
 QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp);
+
+QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp);
+QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp);
+
+QMessageAccountFilterKey convert(const QMailAccountKey &key);
+QMailAccountKey convert(const QMessageAccountFilterKey &key);
+
+QMessageFolderFilterKey convert(const QMailFolderKey &key);
+QMailFolderKey convert(const QMessageFolderFilterKey &key);
+
+QMessageFilterKey convert(const QMailMessageKey &key);
+QMailMessageKey convert(const QMessageFilterKey &key);
 
 };
 

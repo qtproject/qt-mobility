@@ -309,7 +309,65 @@ QMailDataComparator::InclusionComparator convert(QMessageDataComparator::Inclusi
     return QMailDataComparator::Includes;
 }
 
-};
+QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMailDataComparator::LessThan: return QMessageDataComparator::LessThan;
+    case QMailDataComparator::LessThanEqual: return QMessageDataComparator::LessThanEqual;
+    case QMailDataComparator::GreaterThan: return QMessageDataComparator::GreaterThan;
+    case QMailDataComparator::GreaterThanEqual: return QMessageDataComparator::GreaterThanEqual;
+    default: break;
+    }
+    
+    return QMessageDataComparator::LessThan;
+}
+
+QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMessageDataComparator::LessThan: return QMailDataComparator::LessThan;
+    case QMessageDataComparator::LessThanEqual: return QMailDataComparator::LessThanEqual;
+    case QMessageDataComparator::GreaterThan: return QMailDataComparator::GreaterThan;
+    case QMessageDataComparator::GreaterThanEqual: return QMailDataComparator::GreaterThanEqual;
+    default: break;
+    }
+
+    return QMailDataComparator::LessThan;
+}
+
+/* in qmessageaccountfilterkey_qmf.cpp
+QMessageAccountFilterKey convert(const QMailAccountKey &key)
+{
+}
+
+QMailAccountKey convert(const QMessageAccountFilterKey &key)
+{
+}
+*/
+
+/* in qmessagefolderfilterkey_qmf.cpp
+QMessageFolderFilterKey convert(const QMailFolderKey &key)
+{
+}
+
+QMailFolderKey convert(const QMessageFolderFilterKey &key)
+{
+}
+*/
+
+/* in qmessagefilterkey_qmf.cpp
+QMessageFilterKey convert(const QMailMessageKey &key)
+{
+}
+
+QMailMessageKey convert(const QMessageFilterKey &key)
+{
+}
+*/
+
+}
 
 bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs)
 {

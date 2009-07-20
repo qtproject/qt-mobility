@@ -31,283 +31,337 @@
 **
 ****************************************************************************/
 #include "qmessagefilterkey.h"
-#include "qmessagefilterkey_p.h"
+#include "qmfhelpers_p.h"
+
+#include <qmailaccountkey.h>
+#include <qmailfolderkey.h>
+#include <qmailmessagekey.h>
+
+using namespace QmfHelpers;
+
+class QMessageFilterKeyPrivate
+{
+public:
+    QMessageFilterKeyPrivate() : _key(), _options(0) {}
+
+    QMailMessageKey _key;
+    QMessageDataComparator::Options _options;
+
+    static QMessageFilterKey convert(const QMailMessageKey &key);
+    static QMailMessageKey convert(const QMessageFilterKey &key);
+};
+
+QMessageFilterKey QMessageFilterKeyPrivate::convert(const QMailMessageKey &key)
+{
+    QMessageFilterKey result;
+    result.d_ptr->_key = key;
+    return result;
+}
+
+QMailMessageKey QMessageFilterKeyPrivate::convert(const QMessageFilterKey &key)
+{
+    return key.d_ptr->_key;
+}
+
+namespace QmfHelpers {
+
+QMessageFilterKey convert(const QMailMessageKey &key)
+{
+    return QMessageFilterKeyPrivate::convert(key);
+}
+
+QMailMessageKey convert(const QMessageFilterKey &key)
+{
+    return QMessageFilterKeyPrivate::convert(key);
+}
+
+}
 
 void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
 {
-    Q_UNUSED(options)
+    d_ptr->_options |= options;
 }
 
 QMessageDataComparator::Options QMessageFilterKey::options()
 {
-    return 0;
+    return d_ptr->_options;
 }
 
 QMessageFilterKey::QMessageFilterKey()
+    : d_ptr(new QMessageFilterKeyPrivate)
 {
 }
 
 QMessageFilterKey::QMessageFilterKey(const QMessageFilterKey &other)
+    : d_ptr(new QMessageFilterKeyPrivate)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 bool QMessageFilterKey::isEmpty() const
 {
-    return false; // stub
+    return d_ptr->_key.isEmpty();
 }
 
 QMessageFilterKey QMessageFilterKey::operator~() const
 {
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = ~d_ptr->_key;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) const
 {
-    Q_UNUSED(other)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) const
 {
-    Q_UNUSED(other)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
+    return result;
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& other)
 {
-    Q_UNUSED(other)
+    d_ptr->_key &= other.d_ptr->_key;
     return *this;
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& other)
 {
-    Q_UNUSED(other)
+    d_ptr->_key |= other.d_ptr->_key;
     return *this;
 }
 
 bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return (d_ptr->_key == other.d_ptr->_key);
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
 }
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::id(convert(id), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(ids)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::id(convert(ids), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(key)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::id(convert(key), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(type)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::messageType(convert(type), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(type)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::messageType(convert(type), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::sender(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::sender(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::recipients(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::recipients(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::subject(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::subject(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    // TODO:
+    //result.d_ptr->_key = QMailMessageKey::body(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    // TODO:
+    //result.d_ptr->_key = QMailMessageKey::body(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::timeStamp(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::timeStamp(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::status(convert(value), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(mask)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::status(convert(mask), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    // TODO:
+    //result.d_ptr->_key = QMailMessageKey::priority(convert(value), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::size(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::size(value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::customField(name, value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::customField(name, value, convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::parentAccountId(convert(id), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(key)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::parentAccountId(convert(key), convert(cmp));
+    return result;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::parentFolderId(convert(id), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(key)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::parentFolderId(convert(key), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::ancestorFolderIds(convert(id), convert(cmp));
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(key)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result;
+    result.d_ptr->_key = QMailMessageKey::ancestorFolderIds(convert(key), convert(cmp));
+    return result;
 }
 #endif
+
