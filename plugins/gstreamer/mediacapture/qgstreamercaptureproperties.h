@@ -7,11 +7,13 @@ class QGstreamerCaptureSession;
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
+#include <gst/gst.h>
+
 class QGstreamerCaptureProperties : public QAudioCapturePropertiesControl
 {
     Q_OBJECT
 public:
-    QGstreamerCaptureProperties(QGstreamerCaptureSession *session, QObject *parent);
+    QGstreamerCaptureProperties(QObject *parent);
     virtual ~QGstreamerCaptureProperties();
 
     QAudioFormat format() const;
@@ -32,13 +34,22 @@ public:
     QVariant encodingOption(const QString &name);
     void setEncodingOption(const QString &name, const QVariant &value);
 
+    void applyOptions();
+    GstElement *encoder();
+
 private:
-    QGstreamerCaptureSession *m_session;
+    GstBin *m_encoderBin;
+    GstElement *m_encoderElement;
+    GstElement *m_muxerElement;
+    GstElement *m_identity1;
+    GstElement *m_identity2;
+
     QMap<QString, QVariant> m_options;
     QString m_codec;
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
+    QMap<QString,QString> m_muxers;
 };
 
 #endif

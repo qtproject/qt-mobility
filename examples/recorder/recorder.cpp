@@ -36,6 +36,7 @@
 
 #include <qabstractmediaservice.h>
 #include "qaudiodeviceendpoint.h"
+#include "qaudiocapturepropertiescontrol.h"
 
 #include <QtGui>
 
@@ -74,6 +75,14 @@ Recorder::Recorder()
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
+
+    QAudioCapturePropertiesControl *control =
+            qobject_cast<QAudioCapturePropertiesControl*>(audioCapture->service()->control("com.nokia.qt.AudioCapturePropertiesControl"));
+
+    if (control) {
+        qDebug() << "supported audio codecs:" << control->supportedAudioCodecs();
+        control->setAudioCodec("lame");
+    }
 
     active = false;
 }
