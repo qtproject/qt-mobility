@@ -32,45 +32,16 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
+#include "camera.h"
 
-#include <QtMultimedia/qvideocamera.h>
+#include <QtGui>
 
-#include "endpoints/qvideorendererendpoint.h"
-
-#include "cameraservice.h"
-#include "cameracontrol.h"
-
-CameraService::CameraService(QObject *parent)
-    : QCameraService(parent)
+int main(int argc, char *argv[])
 {
-    m_control = new CameraControl(this, this);
-}
+    QApplication app(argc, argv);
 
-CameraService::~CameraService()
-{
-    delete m_control;
-}
+    Camera camera;
+    camera.show();
 
-QAbstractMediaControl *CameraService::control(const char *name) const
-{
-    return m_control;
-}
-
-QList<QByteArray> CameraService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
-    return list;
-}
-
-QObject *CameraService::createEndpoint(const char *interface)
-{
-    return new QVideoRendererEndpoint;
-}
-
-
-
+    return app.exec();
+};

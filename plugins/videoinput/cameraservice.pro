@@ -1,6 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
 
+QT+=multimedia
+
 TARGET = videoinput
 DESTDIR = $$OUT_PWD/../../lib/mediaservice
 DEPENDPATH += .

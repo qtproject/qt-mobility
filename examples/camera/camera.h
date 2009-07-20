@@ -32,45 +32,37 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
+#ifndef CAMERA_H
+#define CAMERA_H
 
-#include <QtMultimedia/qvideocamera.h>
+#include <QtGui>
 
-#include "endpoints/qvideorendererendpoint.h"
+#include <qcamera.h>
 
-#include "cameraservice.h"
-#include "cameracontrol.h"
+class QComboBox;
+class QLabel;
 
-CameraService::CameraService(QObject *parent)
-    : QCameraService(parent)
+class Camera : public QMainWindow
 {
-    m_control = new CameraControl(this, this);
-}
+    Q_OBJECT
+public:
+    Camera();
+    ~Camera();
 
-CameraService::~CameraService()
-{
-    delete m_control;
-}
+private slots:
+    void deviceChanged(int idx);
+    void togglePlay();
+    void statusChanged(QVideoStream::State state);
+    void frameReady(QVideoFrame frame);
 
-QAbstractMediaControl *CameraService::control(const char *name) const
-{
-    return m_control;
-}
+private:
+    QCamera*       cam;
+    QVideoFormat   format;
+    QComboBox*     deviceBox;
+    QLabel*        recTime;
+    QPushButton*   button;
+    bool           active;
+    int            currentTime;
+};
 
-QList<QByteArray> CameraService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-    list = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
-    return list;
-}
-
-QObject *CameraService::createEndpoint(const char *interface)
-{
-    return new QVideoRendererEndpoint;
-}
-
-
-
+#endif

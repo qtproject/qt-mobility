@@ -470,7 +470,7 @@ void QCamera::setAutofocus(bool f)
     Set the camera device to \a device.
 */
 
-void QCamera::setDevice(QByteArray device)
+void QCamera::setDevice(const QByteArray &device)
 {
     Q_D(QCamera);
 

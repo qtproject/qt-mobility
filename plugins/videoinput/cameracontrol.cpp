@@ -38,6 +38,7 @@
 #include "qvideorendererendpoint.h"
 
 #include <QtMultimedia/qvideocamera.h>
+#include <QtMultimedia/qvideostream.h>
 
 #include <QtCore/qdebug.h>
 
@@ -286,7 +287,7 @@ bool CameraControl::isValid() const
         return false;
 }
 
-void CameraControl::setDevice(QByteArray device)
+void CameraControl::setDevice(const QByteArray &device)
 {
     if(m_camera) delete m_camera;
     m_camera = new QVideoCamera(device,this);

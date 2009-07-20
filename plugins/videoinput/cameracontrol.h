@@ -40,6 +40,10 @@
 #include "qcameracontrol.h"
 #include "qmediasource.h"
 
+#include <QtMultimedia/qvideoframe.h>
+#include <QtMultimedia/qvideoformat.h>
+
+
 class CameraService;
 class QVideoCamera;
 
@@ -96,7 +100,7 @@ public:
     bool autofocus() const;
     void setAutofocus(bool f);
 
-    void setDevice(QByteArray device);
+    void setDevice(const QByteArray &device);
     bool isValid() const;
 
 private:

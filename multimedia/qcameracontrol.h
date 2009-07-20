@@ -96,7 +96,7 @@ public:
     virtual bool autofocus() const = 0;
     virtual void setAutofocus(bool f) = 0;
 
-    virtual void setDevice(QByteArray device) = 0;
+    virtual void setDevice(const QByteArray &device) = 0;
 #endif
     virtual bool isValid() const = 0;
 #ifdef VIDEOSERVICES

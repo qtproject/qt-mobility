@@ -109,7 +109,7 @@ public:
     bool autofocus() const;
     void setAutofocus(bool);
 
-    void setDevice(QByteArray device);
+    void setDevice(const QByteArray &device);
 #endif
     bool isValid() const;
 
