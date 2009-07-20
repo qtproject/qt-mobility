@@ -1174,15 +1174,15 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (cdf.detailDefinitionName().isEmpty() || cdf.detailFieldName().isEmpty())
                     return false; /* we do not know which field to check */
 
-                /* Now figure out what tests we are doing */
-                if (!cdf.minValue().isValid() && !cdf.maxValue().isValid())
-                    return false; // invalid range limits.
-
                 /* See if this contact has one of these details in it */
                 const QList<QContactDetail>& details = contact.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
                     return false; /* can't match */
+
+                /* Now figure out what tests we are doing */
+                if (!cdf.minValue().isValid() && !cdf.maxValue().isValid())
+                    return true; // just a presence test
 
                 /* open or closed interval testing support */
                 const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
@@ -1190,6 +1190,8 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
                 const bool testMin = cdf.minValue().isValid();
                 const bool testMax = cdf.maxValue().isValid();
+
+                /* At this point we know that at least of testMin & testMax is true */
 
                 /* Case sensitivity, for those parts that use it */
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
@@ -1214,14 +1216,18 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         const QString& var = detail.value(cdf.detailFieldName());
                         if (!matchEnds) {
                             // MatchStarts, or MatchFixedString
-                            if ((!testMin || QString::compare(var, minVal, cs) >= minComp)
-                                && (!testMax || QString::compare(var, maxVal, cs) < maxComp))
-                                return true;
+                            if (testMin && QString::compare(var, minVal, cs) < minComp)
+                                continue;
+                            if (testMax && QString::compare(var, maxVal, cs) >= maxComp)
+                                continue;
+                            return true;
                         } else {
                             /* Have to test the length of min & max */
-                            if ((!testMin || QString::compare(var.right(minVal.length()), minVal, cs) >= minComp)
-                                && (!testMax || QString::compare(var.right(maxVal.length()), maxVal, cs) < maxComp))
-                                return true;
+                            if (testMin && QString::compare(var.right(minVal.length()), minVal, cs) < minComp)
+                                continue;
+                            if (testMax && QString::compare(var.right(maxVal.length()), maxVal, cs) >= maxComp)
+                                continue;
+                            return true;
                         }
                     }
 
@@ -1232,9 +1238,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         const QContactDetail& detail = details.at(j);
                         const QVariant& var = detail.variantValue(cdf.detailFieldName());
 
-                        if ((!testMin || compareVariant(var, cdf.minValue(), cs) >= minComp)
-                            && (!testMax || compareVariant(var, cdf.maxValue(), cs) < maxComp))
-                            return true;
+                        if (testMin && compareVariant(var, cdf.minValue(), cs) < minComp)
+                            continue;
+                        if (testMax && compareVariant(var, cdf.maxValue(), cs) >= maxComp)
+                            continue;
+                        return true;
                     }
                     // Fall through to end
                 }

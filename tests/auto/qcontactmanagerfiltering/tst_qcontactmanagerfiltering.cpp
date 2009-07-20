@@ -507,9 +507,15 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     /* First, cover the "empty defname / fieldname / ranges" cases */
     QTest::newRow("invalid defname") << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
     QTest::newRow("invalid fieldname") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("invalid ranges") << namedef << firstname << QVariant() << QVariant() << false << 0 << true << 0 << es;
-    QTest::newRow("invalid ranges") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
-    QTest::newRow("invalid ranges") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
+
+    QTest::newRow("presence test") << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
+
+    QTest::newRow("no max, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
+    QTest::newRow("no max, some results") << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << 0 << "bcd";
+    QTest::newRow("no max, no results") << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << 0 << es;
+    QTest::newRow("no min, all results") << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << 0 << "abcd";
+    QTest::newRow("no min, some results") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
+    QTest::newRow("no min, no results") << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << 0 << es;
 
     /* 'a' has phone number ("555-1212") */
     QTest::newRow("range1") << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
