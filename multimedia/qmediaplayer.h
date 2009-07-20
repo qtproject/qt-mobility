@@ -65,10 +65,10 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(StreamStatus streamStatus READ streamStatus NOTIFY streamStatusChanged)
+    Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QString error READ errorString NOTIFY errorStringChanged)
     Q_ENUMS(State)
-    Q_ENUMS(StreamStatus)
+    Q_ENUMS(MediaStatus)
 public:
     enum State
     {
@@ -77,16 +77,16 @@ public:
         PausedState
     };
 
-    enum StreamStatus
+    enum MediaStatus
     {
-        UnknownStreamStatus,
-        NoStream,
-        LoadingStream,
-        LoadedStream,
-        StalledStream,
-        PrimedStream,
-        EndOfStream,
-        InvalidStream
+        UnknownMediaStatus,
+        NoMedia,
+        LoadingMedia,
+        LoadedMedia,
+        StalledMedia,
+        PrimedMedia,
+        EndOfMedia,
+        InvalidMedia
     };
 
     enum Error
@@ -124,7 +124,7 @@ public:
     float playbackRate() const;
 
     State state() const;
-    StreamStatus streamStatus() const;
+    MediaStatus mediaStatus() const;
 
     Error error() const;
     QString errorString() const;
@@ -160,7 +160,7 @@ Q_SIGNALS:
     void seekableChanged(bool seekable);
     void playbackRateChanged(float rate);
 
-    void streamStatusChanged(QMediaPlayer::StreamStatus status);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
 
     void error(QMediaPlayer::Error error);
     void errorStringChanged(const QString &error);
@@ -169,7 +169,7 @@ private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
-    Q_PRIVATE_SLOT(d_func(), void _q_streamStatusChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_bufferingChanged(bool));
 };

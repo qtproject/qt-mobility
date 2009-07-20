@@ -57,8 +57,8 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 {
 }
 
-int QMediaPlayerControl::streamStatus() const
+int QMediaPlayerControl::mediaStatus() const
 {
-    return QMediaPlayer::UnknownStreamStatus;
+    return QMediaPlayer::UnknownMediaStatus;
 }
 
