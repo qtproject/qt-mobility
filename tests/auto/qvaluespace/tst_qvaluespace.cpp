@@ -132,6 +132,7 @@ void tst_QValueSpaceItem::dataVersitility_data()
     QTest::addColumn< QString >("typeString");
     QTest::addColumn< int >("typeIdent");
 
+    //these types have custom loading/saving operator
     QTest::newRow("Int") << QVariant((int)567) << "Int" << (int)QVariant::Int;
     QTest::newRow("Bool") << QVariant((bool)true) << "Bool" << (int)QVariant::Bool;
     QTest::newRow("UInt") << QVariant((unsigned int)4) << "UInt" << (int)QVariant::UInt;
@@ -555,7 +556,7 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("//home")
         << QString("user/int")
         << 100;
-}
+} 
 
 void tst_QValueSpaceItem::testConstructor()
 {
