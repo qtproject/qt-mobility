@@ -69,7 +69,7 @@ void tst_QSystemInfo::tst_currentLanguage()
 {
     QSystemInfo si;
     QVERIFY(!si.currentLanguage().isEmpty());
-    QVERIFY(si.currentLanguage().length() == 2);
+    QCOMPARE(si.currentLanguage().length(), 2);
     QVERIFY(si.currentLanguage() == si.currentLanguage().toLower());
 
 }
@@ -80,7 +80,7 @@ void tst_QSystemInfo::tst_availableLanguages()
     QVERIFY(!si.availableLanguages().isEmpty());
     QStringList available = si.availableLanguages();
     foreach(QString lang, available) {
-        QVERIFY(lang.length() == 2);
+        QCOMPARE(lang.length(), 2);
         QVERIFY(lang == lang.toLower());
     }
 }
@@ -118,7 +118,7 @@ void tst_QSystemInfo::tst_countryCode()
 {
     QSystemInfo si;
     QVERIFY(!si.countryCode().isEmpty());
-    QVERIFY(si.countryCode().length() == 2);
+    QCOMPARE(si.countryCode().length(),2);
     QVERIFY(si.countryCode() == si.countryCode().toUpper());
 }
 

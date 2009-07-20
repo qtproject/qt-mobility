@@ -35,6 +35,7 @@
 
 #include <QObject>
 #include <QSize>
+#include <QHash>
 
 #include "qsysteminfo.h"
 
@@ -134,6 +135,8 @@ Q_SIGNALS:
     virtual bool isCriticalMemory() const;
     virtual bool isBatteryCharging();
 //    virtual bool isDiskSpaceCritical(const QString &driveVolume);
+    QHash<QString, QString> mountEntries;
+    void getMountEntries();
 #endif
 };
 
@@ -154,7 +157,7 @@ public:
     
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
-    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+//    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
 
     QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
@@ -164,6 +167,9 @@ Q_SIGNALS:
     void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
     void batteryLevelCritical(qint32);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+
+private:
+
 };
 //    QSystemInfo::Error error() const;
 

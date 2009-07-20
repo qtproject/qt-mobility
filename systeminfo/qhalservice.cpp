@@ -1,0 +1,223 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include <QObject>
+#include <QList>
+#include <QtDBus>
+#include <QDBusConnection>
+#include <QDBusError>
+#include <QDBusInterface>
+#include <QDBusMessage>
+#include <QDBusReply>
+#include <QDBusPendingCallWatcher>
+#include <QDBusObjectPath>
+
+#include "qhalservice.h"
+
+class QHalInterfacePrivate
+{
+public:
+    QDBusInterface *connectionInterface;
+    bool valid;
+};
+
+QHalInterface::QHalInterface(QObject *parent)
+        : QObject(parent)
+{
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    d = new QHalInterfacePrivate();
+    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+                                                HAL_DBUS_MANAGER_PATH,
+                                                HAL_DBUS_MANAGER_INTERFACE,
+                                                dbusConnection);
+    if (!d->connectionInterface->isValid()) {
+        qWarning() << "Could not find Hal";
+        d->valid = false;
+        return;
+    } else {
+        d->valid = true;
+    }
+}
+
+QHalInterface::~QHalInterface()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QHalInterface::isValid()
+{
+    return d->valid;
+}
+
+QDBusInterface *QHalInterface::connectionInterface()  const
+{
+    return d->connectionInterface;
+}
+
+QStringList QHalInterface::findDeviceByCapability(const QString &cap)
+{
+    QDBusReply<  QStringList > reply = d->connectionInterface->call("FindDeviceByCapability", cap);
+    if (!reply.isValid()) {
+        qWarning() << reply.error().message();
+    } else {
+
+        return reply.value();
+    }
+    return QStringList();
+}
+
+QStringList QHalInterface::getAllDevices()
+{
+    QDBusReply<  QStringList > reply = d->connectionInterface->call("GetAllDevices");
+    if (!reply.isValid()) {
+        qWarning() << reply.error().message();
+    } else {
+
+        return reply.value();
+    }
+    return QStringList();
+}
+
+/////////
+
+
+
+
+class QHalDeviceInterfacePrivate
+{
+public:
+    QDBusInterface *connectionInterface;
+    QString path;
+    bool valid;
+};
+
+QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject *parent )
+        : QObject(parent)
+{
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    d = new QHalDeviceInterfacePrivate();
+    d->path = devicePathName;
+    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+                                                d->path,
+                                                HAL_DEVICE_INTERFACE,
+                                                dbusConnection);
+    if (!d->connectionInterface->isValid()) {
+        d->valid = false;
+        qWarning() << "Could not find HalDeviceInterface";
+        return;
+    } else {
+        d->valid = true;
+    }
+}
+
+QHalDeviceInterface::~QHalDeviceInterface()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QHalDeviceInterface::isValid()
+{
+    return d->valid;
+}
+
+bool QHalDeviceInterface::getPropertyBool(const QString &prop)
+{
+    QDBusReply< bool > reply = d->connectionInterface->call("GetPropertyBoolean", prop);
+    if ( reply.isValid() ) {
+//        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    } else {
+        qWarning() << reply.error().message();
+    }
+    return false;
+}
+
+QString QHalDeviceInterface::getPropertyString(const QString &prop)
+{
+    QDBusReply< QString > reply = d->connectionInterface->call("GetPropertyString", prop);
+    if ( reply.isValid() ) {
+//        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    } else {
+        qWarning() << reply.error().message();
+    }
+    return QString();
+}
+
+QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
+{
+    QDBusReply< QStringList > reply = d->connectionInterface->call("GetPropertyStringList", prop);
+    if ( reply.isValid() ) {
+//        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    } else {
+        qWarning() << reply.error().message();
+    }
+    return QStringList();
+}
+
+quint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
+{
+    QDBusReply< quint32 > reply = d->connectionInterface->call("GetPropertyInt", prop);
+    if ( reply.isValid() ) {
+//        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    } else {
+        qWarning() << reply.error().message();
+    }
+    return 0;
+}
+
+
+bool QHalDeviceInterface::queryCapability(const QString &cap)
+{
+    QDBusReply< bool > reply = d->connectionInterface->call("QueryCapability", cap);
+    if ( reply.isValid() ) {
+//        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    } else {
+        qWarning() << reply.error().message();
+    }
+    return false;
+}
+

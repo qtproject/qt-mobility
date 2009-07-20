@@ -30,8 +30,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
-#include "qsysteminfo_p.h"
+#include <qsysteminfo.h>
+#include <qsysteminfo_p.h>
+#include <qhalservice.h>
 
 #include <QStringList>
 #include <QSize>
@@ -39,11 +40,26 @@
 #include <QTextStream>
 #include <QLocale>
 #include <QLibraryInfo>
-#include <QApplication>
+#include <QtGui>
 #include <QDesktopWidget>
 #include <QDebug>
 
+#include <QtDBus>
+#include <QDBusConnection>
+#include <QDBusError>
+#include <QDBusInterface>
+#include <QDBusMessage>
+#include <QDBusReply>
+#include <QDBusPendingCallWatcher>
+#include <QDBusObjectPath>
+#include <QDBusPendingCall>
+
 #include <locale.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/vfs.h>
+#include <mntent.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -114,7 +130,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         featureSupported = true;
         break;
     case QSystemInfo::FmradioFeature :
-        featureSupported = true;
+        featureSupported = false;
         break;
     case QSystemInfo::IrFeature :
         featureSupported = true;
@@ -129,19 +145,19 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         featureSupported = true;
         break;
     case QSystemInfo::VibFeature :
-        featureSupported = true;
+        featureSupported = false;
         break;
     case QSystemInfo::WlanFeature :
         featureSupported = true;
         break;
     case QSystemInfo::SimFeature :
-        featureSupported = true;
+        featureSupported = false;
         break;
     case QSystemInfo::LocationFeature :
-        featureSupported = true;
+        featureSupported = false;
         break;
     case QSystemInfo::VideoOutFeature :
-        featureSupported = true;
+        featureSupported = false;
         break;
     case QSystemInfo::UnknownFeature :
     default:
@@ -228,6 +244,24 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
 
 qint32 QSystemDisplayInfoPrivate::displayBrightness()
 {
+    // laptop_panel
+    // org.freedesktop.Hal.Device.LaptopPanel
+    // SetBrightness
+    // GetBrightness
+    QHalInterface *iface;
+    iface = new QHalInterface();
+
+    if (iface->isValid()) {
+            QStringList list = iface->findDeviceByCapability("laptop_panel");
+            if(!list.isEmpty()) {
+//                QHalDeviceInterface *ifaceDevice;
+//                ifaceDevice = new QHalDeviceInterface(vol);
+//                if (ifaceDevice->isValid() && ifaceDevice->getPropertyBool("volume.is_mounted")) {
+//                    qWarning() << ifaceDevice->getPropertyString("volume.mount_point");
+//                }
+
+            }
+    }
     return -1;
 }
 
@@ -256,7 +290,7 @@ QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
     Q_UNUSED(parent);
 }
 
-bool  QSystemMemoryInfoPrivate::hasRamMemoryLevel()
+bool QSystemMemoryInfoPrivate::hasRamMemoryLevel()
 {
     return true;
 }
@@ -275,31 +309,89 @@ qint64 QSystemMemoryInfoPrivate::freeMemoryLevel() const
         QString ls = line.section(' ',-2, -2);
         return ls.toInt();
     }
-    return -1;
+    return 0;
 }
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    Q_UNUSED(driveVolume);
-    return -1;
+    getMountEntries();
+    struct statfs fs;
+    if(statfs(mountEntries[driveVolume].toLatin1(), &fs ) ==0 ) {
+        long blockSize = fs.f_bsize;
+        long availBlocks = fs.f_bavail;
+        return (double)availBlocks * blockSize;
+    }
+    return 0;
 }
 
 qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    Q_UNUSED(driveVolume);
-    return -1;
+    getMountEntries();
+    mountEntries[driveVolume];
+    quint64 to = 0;
+    struct statfs fs;
+    if(statfs(mountEntries[driveVolume].toLatin1(), &fs ) == 0 ) {
+        long blockSize = fs.f_bsize;
+        long totalBlocks = fs.f_blocks;
+        return (double)totalBlocks * blockSize;
+    }
+    return 0;
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
 {
-    Q_UNUSED(driveVolume);
-    return QSystemMemoryInfo::NoVolume;
+    QStringList mountedVol;
+
+    QHalInterface *iface;
+    iface = new QHalInterface();
+
+    QStringList list = iface->findDeviceByCapability("volume");
+
+    if(!list.isEmpty()) {
+        foreach(QString vol, list) {
+            QHalDeviceInterface *ifaceDevice;
+            ifaceDevice = new QHalDeviceInterface(vol);
+            if(driveVolume == ifaceDevice->getPropertyString("block.device")) {
+                QHalDeviceInterface *ifaceDeviceParent;
+                ifaceDeviceParent = new QHalDeviceInterface(ifaceDevice->getPropertyString("info.parent"));
+                if(ifaceDeviceParent->getPropertyBool("storage.removable")) {
+                    return QSystemMemoryInfo::Removable;
+                } else {
+                    return QSystemMemoryInfo::Internal;
+                }
+            }
+        }
+    }
+
+    return QSystemMemoryInfo::Internal;
 }
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
-    return QStringList();
+    getMountEntries();
+    return mountEntries.keys();
 }
+
+void QSystemMemoryInfoPrivate::getMountEntries()
+{
+    mountEntries.clear();
+    FILE *mntfp = setmntent( "/proc/mounts", "r" );
+    mntent *me = getmntent(mntfp);
+    while(me != NULL) {
+        struct statfs fs;
+        if(statfs(me->mnt_dir, &fs ) ==0 ) {
+            long blockSize = fs.f_bsize;
+            long totalBlocks = fs.f_blocks;
+            double total = (double)totalBlocks * blockSize;
+            if(total > 0 && !mountEntries.keys().contains(me->mnt_dir)) {
+                mountEntries[me->mnt_fsname] = me->mnt_dir;
+            }
+        }
+        me = getmntent(mntfp);
+    }
+    endmntent(mntfp);
+}
+
 
 bool QSystemMemoryInfoPrivate::isCriticalMemory() const
 {
@@ -364,8 +456,14 @@ else
 //    return false;
 // }
 
- bool QSystemMemoryInfoPrivate::isBatteryCharging()
+bool QSystemMemoryInfoPrivate::isBatteryCharging()
 {
+    QHalDeviceInterface *iface;
+    iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
+
+    if (iface->isValid()) {
+        return iface->getPropertyBool("battery.rechargeable.is_charging");
+    }
     return false;
 }
 
@@ -373,11 +471,72 @@ else
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     Q_UNUSED(parent);
+
+    QHalInterface *iface;
+    iface = new QHalInterface();
+    QStringList list = iface->findDeviceByCapability("volume");
+    if(!list.isEmpty()) {
+        foreach(QString vol, list) {
+//            qWarning() << vol;
+            QHalDeviceInterface *ifaceDevice;
+            ifaceDevice = new QHalDeviceInterface(vol);
+            if (ifaceDevice->isValid() && ifaceDevice->getPropertyBool("volume.is_mounted")) {
+                qWarning() << ifaceDevice->getPropertyString("volume.mount_point");
+            }
+        }
+    }
 }
 
 QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 {
- return QSystemDeviceInfo::KeysAndTouch;
+    qWarning() << __FUNCTION__;
+
+    QSystemDeviceInfo::InputMethods methods;
+
+    QHalInterface *iface2;
+    iface2 = new QHalInterface();
+
+    if (iface2->isValid()) {
+
+        QStringList capList;
+        capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
+
+        for(int i = 0; i < capList.count(); i++) {
+            qWarning() << capList.at(i).toLatin1();
+
+            QStringList list = iface2->findDeviceByCapability(capList.at(i));
+            if(!list.isEmpty()) {
+                switch(i) {
+                case 0:
+                    qWarning() << "Keyboard";
+                    methods = (methods | QSystemDeviceInfo::Keyboard);
+                    break;
+                case 1:
+                    qWarning() << "Keys";
+                    methods = (methods | QSystemDeviceInfo::Keys);
+                    break;
+                case 2:
+                    qWarning() << "Keypad";
+                    methods = (methods | QSystemDeviceInfo::Keypad);
+                    break;
+                case 3:
+                    qWarning() << "Mouse";
+                    methods = (methods | QSystemDeviceInfo::Mouse);
+                    break;
+                case 4:
+                    qWarning() << "Tablet";
+                    methods = (methods | QSystemDeviceInfo::SingleTouch);
+                    break;
+                };
+                //                }
+            }
+        }
+    } /*else {
+                    qWarning() << iface2->error().message();
+        qWarning() << "iface 2 not valid";
+    }*/
+
+    return  methods;
 }
 
 QString QSystemDeviceInfoPrivate::imei() const
@@ -392,18 +551,36 @@ QString QSystemDeviceInfoPrivate::imsi() const
 
 QString QSystemDeviceInfoPrivate::manufacturer() const
 {
+    //system.firmware.vendor
+    //system.hardware.vendor
+
+    QHalDeviceInterface *iface;
+    iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
+
+    if (iface->isValid()) {
+        return iface->getPropertyString("system.firmware.vendor");
+    }
     return QString();
 }
 
 QString QSystemDeviceInfoPrivate::model() const
 {
-    return QString();
+    QHalDeviceInterface *iface;
+    iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
+    QString model;
+
+    if (iface->isValid()) {
+        model = iface->getPropertyString("system.product");
+        if(model.isEmpty())
+            model = iface->getPropertyString("info.product");
+    }
+    return model;
 }
 
-QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
-{
-    return QSystemDeviceInfo::NoBatteryLevel;
-}
+//QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
+//{
+//    return QSystemDeviceInfo::NoBatteryLevel;
+//}
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
 {

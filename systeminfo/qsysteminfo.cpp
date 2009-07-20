@@ -572,13 +572,13 @@ QString QSystemDeviceInfo::model() const
     return d->model();
 }
 
-/*!
-    Returns the battery charge level as percentage 1 - 100 scale
-*/
-QSystemDeviceInfo::BatteryLevel QSystemDeviceInfo::batteryLevel() const
-{
-    return d->batteryLevel();
-}
+///*!
+//    Returns the battery charge level as percentage 1 - 100 scale
+//*/
+//QSystemDeviceInfo::BatteryLevel QSystemDeviceInfo::batteryLevel() const
+//{
+//    return d->batteryLevel();
+//}
 
 /*!
   Returns status of SIM card.

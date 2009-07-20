@@ -103,6 +103,7 @@ private:
     QSystemInfoPrivate *d;
 };
 
+////////
 class QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
@@ -132,6 +133,7 @@ public:
         WlanMode = 0x00000008,
         EthMode = 0x00000010
     };
+    Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
     qint32 networkSignalStrength();
     qint32 cellId();
@@ -156,6 +158,7 @@ private:
     QSystemNetworkInfoPrivate *d;
 };
 
+////////
 class QSystemDisplayInfo : public QObject
 {
     Q_OBJECT
@@ -174,6 +177,7 @@ private:
 };
 
 
+////////
 class QSystemMemoryInfo : public QObject
 {
     Q_OBJECT
@@ -203,6 +207,7 @@ private:
     QSystemMemoryInfoPrivate *d;
 };
 
+////////
 class QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
@@ -219,18 +224,25 @@ public:
         BatteryNormal
     };
 
+//    Q_DECLARE_FLAGS(BatteryLevels, BatteryLevel)
+
     enum PowerState {
         UnknownPower = -1,
         BatteryPower = 1,
         WallPower
     };
+//    Q_DECLARE_FLAGS(PowerStates, PowerState)
 
 
-    enum InputMethods {
-        KeysOnly,
-        TouchOnly,
-        KeysAndTouch
+    enum InputMethod {
+        Keys = 0x0000001,
+        Keypad = 0x0000002,
+        Keyboard = 0x0000004,
+        SingleTouch = 0x0000008,
+        MultiTouch = 0x0000010,
+        Mouse = 0x0000020
     };
+    Q_DECLARE_FLAGS(InputMethods, InputMethod)
 
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
@@ -239,7 +251,8 @@ public:
     QString manufacturer() const;
     QString model() const;
 
-    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+// ????
+//    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
 
     enum Profile {
         UnknownProfile = -1,

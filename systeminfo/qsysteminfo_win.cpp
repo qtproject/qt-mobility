@@ -277,10 +277,11 @@ QString QSystemInfoPrivate::model() const
     return QString();
 }
 
-qint32 QSystemInfoPrivate::batteryLevel() const
-{
-    return -1;
-}
+//
+//qint32 QSystemInfoPrivate::batteryLevel() const
+//{
+//    return -1;
+//}
 
 bool QSystemInfoPrivate::isSimAvailable()
 {

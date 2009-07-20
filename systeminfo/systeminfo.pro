@@ -6,8 +6,8 @@ INCLUDEPATH += .
 # Input
 HEADERS += qsysteminfo.h qsysteminfo_p.h
 SOURCES += qsysteminfo.cpp  
+#QT += dbus
 
-include(../common.pri)
 
 win32 {
     SOURCES += qsysteminfo_win.cpp
@@ -17,9 +17,17 @@ INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" "C:\Progr
 
 
 unix: {
-    linux-*: { SOURCES += qsysteminfo_linux.cpp }
+    linux-*: {
+    SOURCES += qsysteminfo_linux.cpp
+        contains(QT_CONFIG,dbus): {
+           QT += dbus
+            SOURCES += qhalservice.cpp
+            HEADERS += qhalservice.h
+       }
+    }
     macx: {   }
     symbian: {  }
    
  }
 
+include(../common.pri)
