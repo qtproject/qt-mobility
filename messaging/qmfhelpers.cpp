@@ -75,6 +75,72 @@ QMailMessagePart::Location convert(const QMessageContentContainerId &id)
     return QMailMessagePart::Location(id.toString());
 }
 
+QMessageIdList convert(const QList<QMailMessageId> &ids)
+{
+    QMessageIdList result;
+
+    foreach (const QMailMessageId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
+QList<QMailMessageId> convert(const QMessageIdList &ids)
+{
+    QList<QMailMessageId> result;
+
+    foreach (const QMessageId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
+QMessageAccountIdList convert(const QList<QMailAccountId> &ids)
+{
+    QMessageAccountIdList result;
+
+    foreach (const QMailAccountId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
+QList<QMailAccountId> convert(const QMessageAccountIdList &ids)
+{
+    QList<QMailAccountId> result;
+
+    foreach (const QMessageAccountId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
+QMessageFolderIdList convert(const QList<QMailFolderId> &ids)
+{
+    QMessageFolderIdList result;
+
+    foreach (const QMailFolderId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
+QList<QMailFolderId> convert(const QMessageFolderIdList &ids)
+{
+    QList<QMailFolderId> result;
+
+    foreach (const QMessageFolderId &id, ids) {
+        result.append(convert(id));
+    }
+
+    return result;
+}
+
 QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations)
 {
     QMessageContentContainerIdList result;
@@ -193,6 +259,54 @@ QList<QMailAddress> convert(const QMessageAddressList& list)
     }
 
     return result;
+}
+
+QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMailDataComparator::Equal: return QMessageDataComparator::Equal;
+    case QMailDataComparator::NotEqual: return QMessageDataComparator::NotEqual;
+    default: break;
+    }
+
+    return QMessageDataComparator::Equal;
+}
+
+QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMessageDataComparator::Equal: return QMailDataComparator::Equal;
+    case QMessageDataComparator::NotEqual: return QMailDataComparator::NotEqual;
+    default: break;
+    }
+
+    return QMailDataComparator::Equal;
+}
+
+QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMailDataComparator::Includes: return QMessageDataComparator::Includes;
+    case QMailDataComparator::Excludes: return QMessageDataComparator::Excludes;
+    default: break;
+    }
+    
+    return QMessageDataComparator::Includes;
+}
+
+QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp)
+{
+    switch (cmp)
+    {
+    case QMessageDataComparator::Includes: return QMailDataComparator::Includes;
+    case QMessageDataComparator::Excludes: return QMailDataComparator::Excludes;
+    default: break;
+    }
+
+    return QMailDataComparator::Includes;
 }
 
 };

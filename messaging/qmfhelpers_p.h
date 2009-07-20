@@ -40,6 +40,7 @@
 #include "qmessagestore.h"
 
 #include <qmailmessage.h>
+#include <qmaildatacomparator.h>
 
 namespace QmfHelpers {
 
@@ -55,6 +56,15 @@ QMailFolderId convert(const QMessageFolderId &id);
 QMessageContentContainerId convert(const QMailMessagePart::Location &location);
 QMailMessagePart::Location convert(const QMessageContentContainerId &id);
 
+QMessageIdList convert(const QList<QMailMessageId> &ids);
+QList<QMailMessageId> convert(const QMessageIdList &ids);
+
+QMessageAccountIdList convert(const QList<QMailAccountId> &ids);
+QList<QMailAccountId> convert(const QMessageAccountIdList &ids);
+
+QMessageFolderIdList convert(const QList<QMailFolderId> &ids);
+QList<QMailFolderId> convert(const QMessageFolderIdList &ids);
+
 QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations);
 QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids);
 
@@ -69,6 +79,12 @@ QMailAddress convert(const QMessageAddress &address);
 
 QMessageAddressList convert(const QList<QMailAddress> &list);
 QList<QMailAddress> convert(const QMessageAddressList& list);
+
+QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp);
+QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp);
+
+QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp);
+QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp);
 
 };
 
