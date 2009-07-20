@@ -86,6 +86,8 @@ private slots:
     void testAssignmentOperator();
     void contentsChanged_data();
     void contentsChanged();
+    void dataVersitility_data();
+    void dataVersitility();
     void value();
     void ipcTests();
     void setValue();
@@ -122,6 +124,47 @@ void tst_QValueSpaceItem::init()
 void tst_QValueSpaceItem::cleanupTestCase()
 {
     delete root;
+}
+
+void tst_QValueSpaceItem::dataVersitility_data()
+{
+    QTest::addColumn< QVariant >("data");
+    QTest::addColumn< QString >("typeString");
+    QTest::addColumn< int >("typeIdent");
+
+    //these types have custom loading/saving operator
+    QTest::newRow("Int") << QVariant((int)567) << "Int" << (int)QVariant::Int;
+    QTest::newRow("Bool") << QVariant((bool)true) << "Bool" << (int)QVariant::Bool;
+    QTest::newRow("UInt") << QVariant((unsigned int)4) << "UInt" << (int)QVariant::UInt;
+    QTest::newRow("LongLong") << QVariant((long long)5) << "LongLong" << (int)QVariant::LongLong;
+    QTest::newRow("ULongLong") << QVariant((unsigned long long)6) << "ULongLong" << (int)QVariant::ULongLong;
+    QTest::newRow("Double") << QVariant((double)4.5) << "Double" << (int)QVariant::Double;
+    QTest::newRow("QChar") << QVariant(QChar('@')) << "Char" << (int)QVariant::Char;
+    QTest::newRow("QString") << QVariant(QString("asd")) << "QString" << (int)QVariant::String;
+    QTest::newRow("QByteArray") << QVariant(QByteArray("bytearray")) << "QByteArray" << (int)QVariant::ByteArray;
+
+    //other types not specifically covered by valuespace -> uses QVariant based serialization
+    QTest::newRow("QRect") << QVariant(QRect(4,5,6,7)) << "QRect" << (int)QVariant::Rect;
+    QMap<QString,QVariant> map;
+    map.insert("key", QVariant(QRect(4,5,8,9)));
+    QTest::newRow("QDateTime") << QVariant(QDateTime::currentDateTime()) << "QDateTime" << (int)QVariant::DateTime;
+}
+
+void tst_QValueSpaceItem::dataVersitility()
+{
+    QFETCH(QVariant, data);
+    QFETCH(QString, typeString);
+    QFETCH(int, typeIdent);
+
+    QCOMPARE(data.type(), (QVariant::Type)typeIdent);
+
+    QValueSpaceObject object("/usr/data");
+    object.setAttribute(typeString, data);
+    QValueSpaceItem item("/usr/data");
+    QVariant v = item.value(typeString);
+
+    QCOMPARE(v.type(), (QVariant::Type)typeIdent);
+    QCOMPARE(v, data);
 }
 
 void tst_QValueSpaceItem::testConstructor_data()
@@ -513,7 +556,7 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("//home")
         << QString("user/int")
         << 100;
-}
+} 
 
 void tst_QValueSpaceItem::testConstructor()
 {
