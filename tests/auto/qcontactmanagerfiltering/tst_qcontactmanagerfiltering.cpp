@@ -71,6 +71,7 @@ private slots:
     void rangeFiltering_data();
 
     void detailStringFiltering(); // XXX should take all managers
+    void detailStringFiltering_data();
 
     void actionPlugins();
     void actionFiltering();
@@ -102,8 +103,69 @@ void tst_QContactManagerFiltering::cleanup()
 {
 }
 
+void tst_QContactManagerFiltering::detailStringFiltering_data()
+{
+    QTest::addColumn<QString>("defname");
+    QTest::addColumn<QString>("fieldname");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<int>("matchflags");
+    QTest::addColumn<QString>("expected");
+
+    QVariant ev; // empty variant
+    QString es; // empty string
+
+    QString name = QContactName::DefinitionName;
+    QString firstname = QContactName::FieldFirst;
+
+    QTest::newRow("Name == Aaron") << name << firstname << QVariant("Aaron") << 0 << "a";
+    QTest::newRow("Name == aaron") << name << firstname << QVariant("aaron") << 0 << "a";
+    QTest::newRow("Name == Aaron, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == aaron, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
+
+    QTest::newRow("Name == Aaron, begins") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("Name == aaron, begins") << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("Name == Aaron, begins, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == aaron, begins, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+
+    QTest::newRow("Name == Aar, begins") << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("Name == aar, begins") << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
+    QTest::newRow("Name == Aar, begins, case sensitive") << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == aar, begins, case sensitive") << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+
+    QTest::newRow("Name == aro, contains") << name << firstname << QVariant("aro") << (int)(Qt::MatchContains) << "a";
+    QTest::newRow("Name == ARO, contains") << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains) << "a";
+    QTest::newRow("Name == aro, contains, case sensitive") << name << firstname << QVariant("aro") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == ARO, contains, case sensitive") << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << es;
+
+    QTest::newRow("Name == ron, ends") << name << firstname << QVariant("ron") << (int)(Qt::MatchEndsWith) << "a";
+    QTest::newRow("Name == ARON, ends") << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
+    QTest::newRow("Name == aron, ends, case sensitive") << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == ARON, ends, case sensitive") << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
+
+    QTest::newRow("Name == Aaron, fixed") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
+    QTest::newRow("Name == aaron, fixed") << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
+    QTest::newRow("Name == Aaron, fixed, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
+    QTest::newRow("Name == aaron, fixed, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
+
+    /* Converting other types to strings */
+    QTest::newRow("integer == 20") << "Integer" << "value" << QVariant("20") << 0 << es;
+    QTest::newRow("integer == 20, as string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString) << "b";
+    QTest::newRow("integer == 20, begins with, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
+    QTest::newRow("integer == 2, begins with, string") << "Integer" << "value" << QVariant("2") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
+    QTest::newRow("integer == 20, ends with, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "bc";
+    QTest::newRow("integer == 0, ends with, string") << "Integer" << "value" << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "abc";
+    QTest::newRow("integer == 20, contains, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "bc";
+    QTest::newRow("integer == 0, contains, string") << "Integer" << "value" << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "abc";
+}
+
 void tst_QContactManagerFiltering::detailStringFiltering()
 {
+    QFETCH(QString, defname);
+    QFETCH(QString, fieldname);
+    QFETCH(QVariant, value);
+    QFETCH(QString, expected);
+    QFETCH(int, matchflags);
+
     /* Try the memory database first */
     QContactManager* cm = new QContactManager("memory");
 
@@ -111,113 +173,20 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QList<QUniqueId> ids;
 
     QVERIFY(contacts.count() == 4);
-    QContact a = cm->contact(contacts.at(0));
-    QContact b = cm->contact(contacts.at(1));
-    QContact c = cm->contact(contacts.at(2));
-    QContact d = cm->contact(contacts.at(3));
 
     QContactDetailFilter df;
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+    df.setDetailDefinitionName(defname, fieldname);
+    df.setValue(value);
+    df.setMatchFlags(Qt::MatchFlags(matchflags));
+
+    /* At this point, since we're using memory, assume the filter isn't really supported */
+    QVERIFY(cm->information()->filterSupported(df) == false);
 
     ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
 
-    QContact a1 = cm->contact(ids.at(0));
-    if (a1.id() == a.id()) {
-        dumpContactDifferences(a1, a);
-        dumpContactDifferences(cm->contact(ids.at(1)), b);
-    } else {
-        dumpContactDifferences(a1, b);
-        dumpContactDifferences(cm->contact(ids.at(1)), a);
-    }
-
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, "Hamburger");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 0);
-
-    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
-
-    df.setValue("555-1212");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm->contact(ids.at(0)), a);
-    QCOMPARE(cm->contact(ids.at(0)), a);
-
-
-    /* Some name matching */
-    df.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
-    df.setValue("Bob");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm->contact(ids.at(0)), b);
-    QCOMPARE(cm->contact(ids.at(0)), b);
-
-    /* Starts with */
-    df.setValue("B");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 0);
-
-    df.setMatchFlags(Qt::MatchStartsWith);
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm->contact(ids.at(0)), b);
-    QCOMPARE(cm->contact(ids.at(0)), b);
-    dumpContactDifferences(cm->contact(ids.at(1)), c);
-    QCOMPARE(cm->contact(ids.at(1)), c);
-
-    /* Ends with */
-    df.setValue("ob");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 0);
-
-    df.setMatchFlags(Qt::MatchEndsWith);
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm->contact(ids.at(0)), b);
-    QCOMPARE(cm->contact(ids.at(0)), b);
-
-    df.setValue("OB");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 1);
-    dumpContactDifferences(cm->contact(ids.at(0)), b);
-    QCOMPARE(cm->contact(ids.at(0)), b);
-
-    df.setMatchFlags(Qt::MatchEndsWith | Qt::MatchCaseSensitive);
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 0);
-
-    // Test contains
-    df.setMatchFlags(Qt::MatchContains);
-    df.setValue("r");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm->contact(ids.at(0)), a);
-    QCOMPARE(cm->contact(ids.at(0)), a);
-    dumpContactDifferences(cm->contact(ids.at(1)), c);
-    QCOMPARE(cm->contact(ids.at(1)), c);
-
-    df.setValue("R");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm->contact(ids.at(0)), a);
-    QCOMPARE(cm->contact(ids.at(0)), a);
-    dumpContactDifferences(cm->contact(ids.at(1)), c);
-    QCOMPARE(cm->contact(ids.at(1)), c);
-
-    df.setMatchFlags(Qt::MatchContains | Qt::MatchCaseSensitive);
-    df.setValue("r");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 2);
-    dumpContactDifferences(cm->contact(ids.at(0)), a);
-    QCOMPARE(cm->contact(ids.at(0)), a);
-    dumpContactDifferences(cm->contact(ids.at(1)), c);
-    QCOMPARE(cm->contact(ids.at(1)), c);
-
-    df.setValue("R");
-    ids = cm->contacts(df);
-    QCOMPARE(ids.count(), 0);
+    QString output = convertIds(contacts, ids);
+    QEXPECT_FAIL("integer == 20", "Not sure if this should pass or fail", Continue);
+    QCOMPARE(output, expected);
 
     delete cm;
 }
