@@ -38,9 +38,11 @@
 #include "qabstractmediacontrol.h"
 
 class QAudioFormat;
+class QStringList;
 
 class QAudioCapturePropertiesControl : public QAbstractMediaControl
 {
+    Q_OBJECT
 public:
     virtual ~QAudioCapturePropertiesControl();
 
@@ -48,6 +50,15 @@ public:
     virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
 
+    virtual int bitrate() const = 0;
+    virtual void setBitrate(int) = 0;
+
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
+
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
 
 protected:
     QAudioCapturePropertiesControl(QObject *parent);

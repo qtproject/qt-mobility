@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include "qaudiocapturepropertiescontrol.h"
+#include <QtCore/qstringlist.h>
 
 QAudioCapturePropertiesControl::QAudioCapturePropertiesControl(QObject *parent)
     :QAbstractMediaControl(parent)
@@ -42,3 +43,21 @@ QAudioCapturePropertiesControl::QAudioCapturePropertiesControl(QObject *parent)
 QAudioCapturePropertiesControl::~QAudioCapturePropertiesControl()
 {
 }
+
+QStringList QAudioCapturePropertiesControl::supportedEncodingOptions() const
+{
+    return QStringList();
+}
+
+QVariant QAudioCapturePropertiesControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
+
+void QAudioCapturePropertiesControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
+

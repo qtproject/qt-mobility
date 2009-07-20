@@ -63,7 +63,7 @@ private slots:
     void jump(const QModelIndex &index);
     void playlistPositionChanged(int);
 
-    void statusChanged(QMediaPlayer::StreamStatus status);
+    void statusChanged(QMediaPlayer::MediaStatus status);
     void bufferingChanged(bool buffering);
     void bufferingProgress(int progress);
 

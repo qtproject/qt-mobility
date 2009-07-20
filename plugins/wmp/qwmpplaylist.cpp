@@ -219,45 +219,18 @@ QStringList QWmpPlaylist::keys(int index) const
     return keys;
 }
 
-int QWmpPlaylist::valueCount(int index, const QString &key) const
-{
-    int count = 0;
-
-    IWMPMedia *media = 0;
-    if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        count = QWmpMetaData::valueCount(media, key);
-
-        media->Release();
-    }
-
-    return count;
-}
-
-QVariant QWmpPlaylist::value(int index, const QString &key, int value) const
+QVariant QWmpPlaylist::value(int index, const QString &key) const
 {
     QVariant v;
     
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        v = QWmpMetaData::value(media, key, value);
+        v = QWmpMetaData::value(media, key);
 
         media->Release();
     }
 
     return v;
-}
-
-QVariantList QWmpPlaylist::values(int index, const QString &key) const
-{
-    QVariantList values;
-
-    IWMPMedia *media = 0;
-    if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        values = QWmpMetaData::values(media, key);
-
-        media->Release();
-    }
-    return values;
 }
 
 void QWmpPlaylist::shuffle()
@@ -323,7 +296,7 @@ void QWmpPlaylist::mediaChangeEvent(IDispatch *dispatch)
         VARIANT_BOOL isMember = VARIANT_FALSE;
 
         if (media->isMemberOf(m_playlist, &isMember) == S_OK && isMember) {
-            int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+            int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
 
             if (index >= 0)
                 emit itemsChanged(index, index);

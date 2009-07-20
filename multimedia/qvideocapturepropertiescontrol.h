@@ -37,20 +37,42 @@
 
 #include "qabstractmediacontrol.h"
 
+#include <QtCore/qpair.h>
+#include <QtCore/qsize.h>
+
 class QByteArray;
+class QStringList;
 
 class QVideoCapturePropertiesControl : public QAbstractMediaControl
 {
-public:
+    Q_OBJECT
+public:    
     virtual ~QVideoCapturePropertiesControl();
 
-    virtual QList<QByteArray> supportedVideoCodecs() const = 0;
-    virtual bool setVideoCodec(const QByteArray &codecName) = 0;
+    virtual QSize resolution() const = 0;
+    virtual QSize minimumResolution() const = 0;
+    virtual QSize maximumResolution() const = 0;
+    virtual QList<QSize> supportedResolutions() const;
+    virtual void setResolution(const QSize &) = 0;
+
+    virtual QPair<int,int> frameRate() const = 0;
+    virtual QPair<int,int> minumumFrameRate() const = 0;
+    virtual QPair<int,int> maximumFrameRate() const = 0;
+    virtual QList< QPair<int,int> > supportedFrameRates() const;
+    virtual void setFrameRate(QPair<int,int>) = 0;
+
+    virtual QStringList supportedVideoCodecs() const = 0;
+    virtual bool setVideoCodec(const QString &codecName) = 0;
 
     virtual int bitrate() const = 0;
-    virtual bool setBitrate(int) = 0;
-    virtual int minimumBitrate() const = 0;
-    virtual int maximumBitrate() const = 0;
+    virtual void setBitrate(int) = 0;
+
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
+
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
 
 protected:
     QVideoCapturePropertiesControl(QObject *parent);

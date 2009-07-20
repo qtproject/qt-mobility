@@ -64,7 +64,7 @@ public:
     QString errorString;
 
     void _q_stateChanged(int state);
-    void _q_streamStatusChanged(int status);
+    void _q_mediaStatusChanged(int status);
     void _q_error(int error, const QString &errorString);
     void _q_bufferingChanged(bool buffering);
 };
@@ -83,9 +83,9 @@ void QMediaPlayerPrivate::_q_stateChanged(int state)
     emit q->stateChanged(ps);
 }
 
-void QMediaPlayerPrivate::_q_streamStatusChanged(int status)
+void QMediaPlayerPrivate::_q_mediaStatusChanged(int status)
 {
-    emit q_func()->streamStatusChanged(QMediaPlayer::StreamStatus(status));
+    emit q_func()->mediaStatusChanged(QMediaPlayer::MediaStatus(status));
 }
 
 void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
@@ -124,7 +124,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
 
     connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
-    connect(d->control, SIGNAL(streamStatusChanged(int)), SLOT(_q_streamStatusChanged(int)));
+    connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
     connect(d->control, SIGNAL(bufferingChanged(bool)), this, SLOT(_q_bufferingChanged(bool)));
 
@@ -155,9 +155,12 @@ QMediaPlayer::~QMediaPlayer()
     delete d->service;
 }
 
+/*!
+    \reimp
+*/
 bool QMediaPlayer::isValid() const
 {
-    return d_func()->control != 0;
+    return d_func()->service;
 }
 
 /*!
@@ -166,7 +169,7 @@ bool QMediaPlayer::isValid() const
 
     By default this property is QMediaPlayer::Stopped
 
-    \sa streamStatus(), play(), pause(), stop()
+    \sa mediaStatus(), play(), pause(), stop()
 */
 
 /*!
@@ -181,27 +184,27 @@ QMediaPlayer::State QMediaPlayer::state() const
 }
 
 /*!
-    \property QMediaPlayer::streamStatus
+    \property QMediaPlayer::mediaStatus
     \brief the status of the current media stream.
 
     The stream status describes how the playback of the current stream is progressing.
 
-    By default this property is QMediaPlayer::NoStream
+    By default this property is QMediaPlayer::NoMedia
 
     \sa state
 */
 
 /*!
-    \fn QMediaPlayer::streamStatusChanged(QMediaPlayer::StreamStatus status)
+    \fn QMediaPlayer::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 
-    Signals that the \a status of the current media stream has changed.
+    Signals that the \a status of the current media has changed.
 
-    \sa streamStatus()
+    \sa mediaStatus()
 */
 
-QMediaPlayer::StreamStatus QMediaPlayer::streamStatus() const
+QMediaPlayer::MediaStatus QMediaPlayer::mediaStatus() const
 {
-    return QMediaPlayer::StreamStatus(d_func()->control->streamStatus());
+    return QMediaPlayer::MediaStatus(d_func()->control->mediaStatus());
 }
 
 
@@ -485,21 +488,21 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 */
 
 /*!
-    \enum QMediaPlayer::StreamStatus
+    \enum QMediaPlayer::MediaStatus
 
-    Defines the status of a media player's current stream.
+    Defines the status of a media player's current media.
 
-    \value UnknownStreamStatus The status of the stream cannot be determined.
-    \value NoStream The is no current stream.  The player is in the StoppedState.
-    \value LoadingStream The current stream is being loaded. The player may be in any state.
-    \value LoadedStream The current stream has been loaded. The player is in the StoppedState.
-    \value StalledStream Playback of the current stream has stalled due to insufficient buffering or
+    \value UnknownMediaStatus The status of the media cannot be determined.
+    \value NoMedia The is no current media.  The player is in the StoppedState.
+    \value LoadingMedia The current media is being loaded. The player may be in any state.
+    \value LoadedMedia The current media has been loaded. The player is in the StoppedState.
+    \value StalledMedia Playback of the current media has stalled due to insufficient buffering or
     some other temporary interruption.  The player is in the PlayingState or PausedState.
-    \value PrimedStream The stream has enough data buffered for playback to continue for the
+    \value PrimedMedia The media has enough data buffered for playback to continue for the
     immediate future.  The player is in the PlayingState or PausedState.
-    \value EndOfStream Playback has reached the end of the current stream.  The player is in the
+    \value EndOfMedia Playback has reached the end of the current media.  The player is in the
     StoppedState.
-    \value InvalidStream The current stream cannot be played.  The player is in the StoppedState.
+    \value InvalidMedia The current media cannot be played.  The player is in the StoppedState.
 */
 
 /*!
