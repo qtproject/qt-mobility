@@ -93,6 +93,9 @@ public:
     virtual bool autofocus() const = 0;
     virtual void setAutofocus(bool f) = 0;
 
+    virtual void setDevice(QByteArray device) = 0;
+    virtual bool isValid() const = 0;
+
 Q_SIGNALS:
     void frameReady(QVideoFrame frame);
     void stateChanged(QVideoStream::State state);

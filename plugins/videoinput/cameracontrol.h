@@ -32,34 +32,24 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERA_H
-#define QCAMERA_H
+#ifndef CAMERACONTROL_H
+#define CAMERACONTROL_H
 
-#include <QList>
-#include <QStringList>
+#include <QtCore/qobject.h>
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
+#include "qcameracontrol.h"
+#include "qmediasource.h"
 
-#include "qmediaserviceprovider.h"
+class CameraService;
+class QVideoCamera;
 
-#include <QtMultimedia/qvideostream.h>
-#include <QtMultimedia/qvideoframe.h>
-
-class QCameraService;
-class QCameraControl;
-
-extern QCameraService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
-
-class QCameraPrivate;
-
-class QCamera : public QAbstractMediaObject
+class CameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    QCamera(QCameraService *service = createCameraService(), QObject *parent = 0);
-    ~QCamera();
+    CameraControl(QObject *parent = 0);
+    CameraControl(CameraService *service, QObject *parent = 0);
+    ~CameraControl();
 
     QList<QVideoFrame::Type> supportedColorFormats();
     QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
@@ -89,36 +79,29 @@ public:
     void setSharpness(int s);
 
     int zoom() const;
-    void setZoom(int);
+    void setZoom(int z);
 
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
 
     int whitelevel() const;
-    void setWhitelevel(int);
+    void setWhitelevel(int w);
 
     int rotation() const;
-    void setRotation(int);
+    void setRotation(int r);
 
     bool flash() const;
-    void setFlash(bool);
+    void setFlash(bool f);
 
     bool autofocus() const;
-    void setAutofocus(bool);
+    void setAutofocus(bool f);
 
     void setDevice(QByteArray device);
-
     bool isValid() const;
 
-    QAbstractMediaService* service() const;
-
-Q_SIGNALS:
-    void frameReady(QVideoFrame frame);
-    void stateChanged(QVideoStream::State state);
-
 private:
-    Q_DISABLE_COPY(QCamera)
-    Q_DECLARE_PRIVATE(QCamera)
+    CameraService *m_service;
+    QVideoCamera* m_camera;
 };
 
-#endif  // QCAMERA_H
+#endif

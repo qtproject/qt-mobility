@@ -466,6 +466,26 @@ void QCamera::setAutofocus(bool f)
 }
 
 /*!
+    Set the camera device to \a device.
+*/
+
+void QCamera::setDevice(QByteArray device)
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->setDevice(device);
+}
+
+bool QCamera::isValid() const
+{
+    if(d_func()->control)
+        return d_func()->control->isValid();
+
+    return false;
+}
+
+/*!
     Returns the session object being controlled by this recorder.
 */
 
