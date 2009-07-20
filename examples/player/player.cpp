@@ -56,8 +56,8 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
     connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
-    connect(player, SIGNAL(streamStatusChanged(QMediaPlayer::StreamStatus)),
-            this, SLOT(statusChanged(QMediaPlayer::StreamStatus)));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferingChanged(bool)), this, SLOT(bufferingChanged(bool)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
@@ -191,29 +191,29 @@ void Player::seek(int seconds)
     player->setPosition(seconds * 1000);
 }
 
-void Player::statusChanged(QMediaPlayer::StreamStatus status)
+void Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
-    case QMediaPlayer::UnknownStreamStatus:
-    case QMediaPlayer::NoStream:
-    case QMediaPlayer::LoadedStream:
-    case QMediaPlayer::PrimedStream:
+    case QMediaPlayer::UnknownMediaStatus:
+    case QMediaPlayer::NoMedia:
+    case QMediaPlayer::LoadedMedia:
+    case QMediaPlayer::PrimedMedia:
         unsetCursor();
         setStatusInfo(QString());
         break;
-    case QMediaPlayer::LoadingStream:
+    case QMediaPlayer::LoadingMedia:
         setCursor(QCursor(Qt::BusyCursor));
         setStatusInfo(tr("Loading..."));
         break;
-    case QMediaPlayer::StalledStream:
+    case QMediaPlayer::StalledMedia:
         setCursor(QCursor(Qt::BusyCursor));
         break;
-    case QMediaPlayer::EndOfStream:
+    case QMediaPlayer::EndOfMedia:
         unsetCursor();
         setStatusInfo(QString());
         QApplication::alert(this);
         break;
-    case QMediaPlayer::InvalidStream:
+    case QMediaPlayer::InvalidMedia:
         unsetCursor();
         setStatusInfo(player->errorString());
         break;
@@ -223,7 +223,7 @@ void Player::statusChanged(QMediaPlayer::StreamStatus status)
 void Player::bufferingChanged(bool buffering)
 {
     if (buffering)
-        statusChanged(player->streamStatus());
+        statusChanged(player->mediaStatus());
 }
 
 void Player::bufferingProgress(int progress)

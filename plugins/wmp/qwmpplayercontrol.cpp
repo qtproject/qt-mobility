@@ -190,7 +190,7 @@ int QWmpPlayerControl::playlistPosition() const
 
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
-        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
 
         media->Release();
     }
@@ -362,7 +362,7 @@ void QWmpPlayerControl::currentItemChangeEvent(IDispatch *dispatch)
     IWMPMedia *media = 0;
     if (dispatch && dispatch->QueryInterface(
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
-        int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex"), 0).toInt();
+        int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
 
         emit playlistPositionChanged(index);
 
@@ -405,82 +405,82 @@ void QWmpPlayerControl::playStateChangeEvent(long state)
     switch (state) {
     case wmppsUndefined:
         m_state = QMediaPlayer::StoppedState;
-        m_status = QMediaPlayer::UnknownStreamStatus;
+        m_status = QMediaPlayer::UnknownMediaStatus;
 
         emit stateChanged(m_state);
-        emit streamStatusChanged(m_status);
+        emit mediaStatusChanged(m_status);
         break;
     case wmppsStopped:
         if (m_state != QMediaPlayer::StoppedState) {
             m_state = QMediaPlayer::StoppedState;
-            m_status = QMediaPlayer::LoadedStream;
+            m_status = QMediaPlayer::LoadedMedia;
 
             emit stateChanged(m_state);
-            emit streamStatusChanged(m_status);
+            emit mediaStatusChanged(m_status);
         }
         break;
     case wmppsPaused:
-        if (m_state != QMediaPlayer::PausedState && m_status != QMediaPlayer::PrimedStream) {
+        if (m_state != QMediaPlayer::PausedState && m_status != QMediaPlayer::PrimedMedia) {
             m_state = QMediaPlayer::PausedState;
-            m_status = QMediaPlayer::PrimedStream;
+            m_status = QMediaPlayer::PrimedMedia;
 
             emit stateChanged(m_state);
-            emit streamStatusChanged(m_status);
+            emit mediaStatusChanged(m_status);
         } else if (m_state != QMediaPlayer::PausedState) {
             emit stateChanged(m_state = QMediaPlayer::PausedState);
-        } else if (m_status != QMediaPlayer::PrimedStream) {
-            emit streamStatusChanged(m_status = QMediaPlayer::PrimedStream);
+        } else if (m_status != QMediaPlayer::PrimedMedia) {
+            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
         }
         break;
     case wmppsPlaying:
     case wmppsScanForward:
     case wmppsScanReverse:
-        if (m_state != QMediaPlayer::PlayingState && m_status != QMediaPlayer::PrimedStream) {
+        if (m_state != QMediaPlayer::PlayingState && m_status != QMediaPlayer::PrimedMedia) {
             m_state = QMediaPlayer::PlayingState;
-            m_status = QMediaPlayer::PrimedStream;
+            m_status = QMediaPlayer::PrimedMedia;
 
             emit stateChanged(m_state);
-            emit streamStatusChanged(m_status);
+            emit mediaStatusChanged(m_status);
         } else if (m_state != QMediaPlayer::PlayingState) {
             emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        } else if (m_status != QMediaPlayer::PrimedStream) {
-            emit streamStatusChanged(m_status = QMediaPlayer::PrimedStream);
+        } else if (m_status != QMediaPlayer::PrimedMedia) {
+            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
         }
 
         if (m_state != QMediaPlayer::PlayingState)
             emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        if (m_status != QMediaPlayer::PrimedStream)
-            emit streamStatusChanged(m_status = QMediaPlayer::PrimedStream);
+        if (m_status != QMediaPlayer::PrimedMedia)
+            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
         break;
     case wmppsBuffering:
     case wmppsWaiting:
-        if (m_status != QMediaPlayer::StalledStream && m_state != QMediaPlayer::StoppedState)
-            emit streamStatusChanged(m_status = QMediaPlayer::StalledStream);
+        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState)
+            emit mediaStatusChanged(m_status = QMediaPlayer::StalledMedia);
         break;
     case wmppsMediaEnded:
-        if (m_status != QMediaPlayer::EndOfStream && m_state != QMediaPlayer::StoppedState) {
+        if (m_status != QMediaPlayer::EndOfMedia && m_state != QMediaPlayer::StoppedState) {
             m_state = QMediaPlayer::StoppedState;
-            m_status = QMediaPlayer::StalledStream;
+            m_status = QMediaPlayer::StalledMedia;
 
             emit stateChanged(m_state);
-            emit streamStatusChanged(m_status);
+            emit mediaStatusChanged(m_status);
         }
         break;
     case wmppsTransitioning:
-        if (m_status != QMediaPlayer::LoadingStream)
-            emit streamStatusChanged(m_status = QMediaPlayer::LoadingStream);
+        if (m_status != QMediaPlayer::LoadingMedia)
+            emit mediaStatusChanged(m_status = QMediaPlayer::LoadingMedia);
         break;
     case wmppsReady:
-        if (m_status != QMediaPlayer::LoadedStream)
-            m_status = m_status = QMediaPlayer::LoadedStream;
+        if (m_status != QMediaPlayer::LoadedMedia)
+            m_status = m_status = QMediaPlayer::LoadedMedia;
 
             if (m_state != QMediaPlayer::StoppedState)
                 emit stateChanged(QMediaPlayer::StoppedState);
-            emit streamStatusChanged(m_status);
+            emit mediaStatusChanged(m_status);
         break;
     case wmppsReconnecting:
-        if (m_status != QMediaPlayer::StalledStream && m_state != QMediaPlayer::StoppedState)
-            emit streamStatusChanged(m_status = QMediaPlayer::StalledStream);
+        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState)
+            emit mediaStatusChanged(m_status = QMediaPlayer::StalledMedia);
         break;
     default:
         break;

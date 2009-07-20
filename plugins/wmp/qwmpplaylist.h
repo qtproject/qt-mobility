@@ -68,11 +68,7 @@ public:
     bool clear();
 
     QStringList keys(int index) const;
-
-    int valueCount(int index, const QString &key) const;
-
-    QVariant value(int index, const QString &key, int value = 0) const;
-    QVariantList values(int index, const QString &key) const;
+    QVariant value(int index, const QString &key) const;
 
 public Q_SLOTS:
     virtual void shuffle();
