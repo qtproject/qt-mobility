@@ -82,11 +82,15 @@ private:
 
     GstElement *m_pipeline;
 
-    GstElement *m_alsasrc;
-    GstElement *m_audioconvert;
+    GstElement *m_audiosrc;
+    GstElement *m_tee;
+    GstElement *m_audioconvert1;
+    GstElement *m_volume;
     GstElement *m_encoder;
     GstElement *m_muxer;
     GstElement *m_filesink;
+    GstElement *m_audioconvert2;
+    GstElement *m_fakesink;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H
