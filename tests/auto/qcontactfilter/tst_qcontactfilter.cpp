@@ -173,19 +173,17 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(f2.type() == QContactFilter::Intersection);
     QContactIntersectionFilter bf2 = f2;
     QVERIFY(bf2 == f2);
-    QCOMPARE(bf2.filters().count(), 3);
-    QVERIFY(bf2.filters().at(0) == df);
-    QVERIFY(bf2.filters().at(1) == df2);
-    QVERIFY(bf2.filters().at(2) == df3);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == bf);
+    QVERIFY(bf2.filters().at(1) == df3);
 
     f2 = df3 && bf;
     QVERIFY(f2.type() == QContactFilter::Intersection);
     bf2 = f2;
     QVERIFY(bf2 == f2);
-    QCOMPARE(bf2.filters().count(), 3);
+    QCOMPARE(bf2.filters().count(), 2);
     QVERIFY(bf2.filters().at(0) == df3);
-    QVERIFY(bf2.filters().at(1) == df);
-    QVERIFY(bf2.filters().at(2) == df2);
+    QVERIFY(bf2.filters().at(1) == bf);
 
     /* Save this list */
     QList<QContactFilter> filterList = bf2.filters();
@@ -194,10 +192,9 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(f2.type() == QContactFilter::Intersection);
     bf2 = f2;
     QVERIFY(bf2 == f2);
-    QCOMPARE(bf2.filters().count(), 3);
-    QVERIFY(bf2.filters().at(0) == df);
-    QVERIFY(bf2.filters().at(1) == df2);
-    QVERIFY(bf2.filters().at(2) == df3);
+    QCOMPARE(bf2.filters().count(), 2);
+    QVERIFY(bf2.filters().at(0) == (df && df2));
+    QVERIFY(bf2.filters().at(1) == df3);
 
     /* Self assignment should do nothing */
     bf2 = bf2;
@@ -205,22 +202,19 @@ void tst_QContactFilter::intersectionFilter()
 
     /* Test set filter */
     bf2.setFilters(filterList);
-    QCOMPARE(bf2.filters().count(), 3);
+    QCOMPARE(bf2.filters().count(), 2);
     QVERIFY(bf2.filters().at(0) == df3);
-    QVERIFY(bf2.filters().at(1) == df);
-    QVERIFY(bf2.filters().at(2) == df2);
+    QVERIFY(bf2.filters().at(1) == bf);
 
     /* Test remove */
-    bf2.remove(df);
-    QCOMPARE(bf2.filters().count(), 2);
+    bf2.remove(bf);
+    QCOMPARE(bf2.filters().count(), 1);
     QVERIFY(bf2.filters().at(0) == df3);
-    QVERIFY(bf2.filters().at(1) == df2);
 
     /* Double remove, should do nothing */
-    bf2.remove(df);
-    QCOMPARE(bf2.filters().count(), 2);
+    bf2.remove(bf);
+    QCOMPARE(bf2.filters().count(), 1);
     QVERIFY(bf2.filters().at(0) == df3);
-    QVERIFY(bf2.filters().at(1) == df2);
 }
 
 void tst_QContactFilter::unionFilter()
