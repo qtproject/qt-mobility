@@ -1852,7 +1852,6 @@ ApplicationLayer::ApplicationLayer()
 
 ApplicationLayer::~ApplicationLayer()
 {
-    shm->detach();
     if(clientIndex)
         ::shmdt(clientIndex);
 }
@@ -1906,8 +1905,10 @@ bool ApplicationLayer::startup(Type type)
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);
         bool created = shm->create(APPLAYER_SIZE);
-        if (!created) 
+        if (!created)  {
+            //qDebug() << "Reattaching to existing memory";
             shm->attach();
+        }
         lock = new QSystemReadWriteLock(key, true);
     } else {
         shm = new QSharedMemory(socket(), this);
@@ -1919,7 +1920,7 @@ bool ApplicationLayer::startup(Type type)
 
         lock = new QSystemReadWriteLock(key, false);
     }
-
+    
     if(shm->error() != QSharedMemory::NoError ||
        ((subShmId == -1 || !subShmptr) && Server != type)) {
         qFatal("ApplicationLayer: Unable to create or access shared "
@@ -2084,6 +2085,7 @@ void ApplicationLayer::doServerTransmit()
                     found = true;
             }
             if(found) {
+                //qDebug() << "GGGGGGGGGGGGGGGG";
                 (*iter)->send(others);
             }
         }
@@ -2204,7 +2206,6 @@ void ApplicationLayer::readyRead()
         bool done = false;
 
         changedNodesCount = 0;
-
         while(!done && !pack.isEmpty()) {
             quint8 op;
             pack >> op;
