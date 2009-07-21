@@ -477,6 +477,8 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString phonenum = QContactPhoneNumber::FieldNumber;
 
+    int csflag = (int)Qt::MatchCaseSensitive;
+
     /* First, cover the "empty defname / fieldname / ranges" cases */
     QTest::newRow("invalid defname") << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
     QTest::newRow("defn presence test") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcd";
@@ -489,12 +491,28 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QTest::newRow("field presence test negative") << "Burgers" << "Beef" << ev << ev << false << 0 << false << 0 << es;
     QTest::newRow("defn yes, field no presence test negative") << namedef << "Burger" << ev << ev << false << 0 << false << 0 << es;
 
-    QTest::newRow("no max, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << 0 << "abcd";
-    QTest::newRow("no max, some results") << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << 0 << "bcd";
-    QTest::newRow("no max, no results") << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << 0 << es;
-    QTest::newRow("no min, all results") << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << 0 << "abcd";
-    QTest::newRow("no min, some results") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << 0 << "a";
-    QTest::newRow("no min, no results") << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << 0 << es;
+    QTest::newRow("no max, all results") << namedef << firstname << QVariant("a") << QVariant() << false << 0 << true << 0 << "abcd";
+    QTest::newRow("no max, some results") << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << 0 << "bcd";
+    QTest::newRow("no max, no results") << namedef << firstname << QVariant("ZamBeZI") << QVariant() << false << 0 << true << 0 << es;
+    QTest::newRow("no min, all results") << namedef << firstname << QVariant() << QVariant("zambezi") << false << 0 << true << 0 << "abcd";
+    QTest::newRow("no min, some results") << namedef << firstname << QVariant() << QVariant("bOb") << false << 0 << true << 0 << "a";
+    QTest::newRow("no min, no results") << namedef << firstname << QVariant() << QVariant("aardvark") << false << 0 << true << 0 << es;
+
+    /* now case sensitive */
+    QTest::newRow("no max, cs, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcd";
+    QTest::newRow("no max, cs, some results") << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << csflag << "bcd";
+    QTest::newRow("no max, cs, no results") << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << csflag << es;
+    QTest::newRow("no min, cs, all results") << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << csflag << "abcd";
+    QTest::newRow("no min, cs, some results") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
+    QTest::newRow("no min, cs, no results") << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
+
+    /* due to ascii sorting, most lower case parameters give all results, which is boring */
+    QTest::newRow("no max, cs, badcase, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcd";
+    QTest::newRow("no max, cs, badcase, some results") << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcd";
+    QTest::newRow("no max, cs, badcase, no results") << namedef << firstname << QVariant("ZAMBEZI") << QVariant() << false << 0 << true << csflag << es;
+    QTest::newRow("no min, cs, badcase, all results") << namedef << firstname << QVariant() << QVariant("ZAMBEZI") << false << 0 << true << csflag << "abcd";
+    QTest::newRow("no min, cs, badcase, some results") << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
+    QTest::newRow("no min, cs, badcase, no results") << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
     /* 'a' has phone number ("555-1212") */
     QTest::newRow("range1") << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
