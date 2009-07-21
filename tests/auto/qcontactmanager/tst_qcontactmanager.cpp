@@ -1636,6 +1636,9 @@ void tst_QContactManager::signalEmission()
     QList<QVariant> args;
     QContact c;
     QUniqueId temp;
+    QList<QContact> batchAdd;
+    QList<QUniqueId> batchRemove;
+    QList<QUniqueId> sigids;
     int addSigCount = 0; // the expected signal counts.
     int modSigCount = 0;
     int remSigCount = 0;
@@ -1709,35 +1712,93 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     QCOMPARE(spyCR.count(), remSigCount);
 
+    m1->removeContact(c.id());
+
+    /* Now test the batch equivalents */
+    spyCA.clear();
+    spyCM.clear();
+    spyCR.clear();
+
+    /* Batch adds */
+    batchAdd << c << c2 << c3;
+    m1->saveContacts(&batchAdd);
+
+    QVERIFY(batchAdd.count() == 3);
+    c = batchAdd.at(0);
+    c2 = batchAdd.at(1);
+    c3 = batchAdd.at(2);
+
+    QCOMPARE(spyCA.count(), 1); // coalesced updates
+    QCOMPARE(spyCM.count(), 0);
+    QCOMPARE(spyCR.count(), 0);
+    args = spyCA.takeFirst();
+    QVERIFY(args.size() == 1);
+    sigids = args.at(0).value<QList<QUniqueId> >();
+    QVERIFY(sigids.count() == 3);
+    // The order is indeterminate
+    QVERIFY(sigids.contains(c.id()));
+    QVERIFY(sigids.contains(c2.id()));
+    QVERIFY(sigids.contains(c3.id()));
+
+    /* Batch modifies */
+    c.setDisplayLabel("This is modified number 1");
+    c2.setDisplayLabel("This is a modified number 2");
+    c3.setDisplayLabel("This is a modified number 3");
+
+    batchAdd.clear();
+    batchAdd << c << c2 << c3;
+    m1->saveContacts(&batchAdd);
+    QCOMPARE(spyCA.count(), 0);
+    QCOMPARE(spyCM.count(), 1); // 1 signal only
+    QCOMPARE(spyCR.count(), 0);
+    args = spyCM.takeFirst();
+    QVERIFY(args.size() == 1);
+    sigids = args.at(0).value<QList<QUniqueId> >();
+    QVERIFY(sigids.count() == 3);
+    QVERIFY(sigids.contains(c.id()));
+    QVERIFY(sigids.contains(c2.id()));
+    QVERIFY(sigids.contains(c3.id()));
+
+    /* Batch removes */
+    batchRemove << c.id() << c2.id() << c3.id();
+    m1->removeContacts(&batchRemove);
+    QCOMPARE(spyCA.count(), 0);
+    QCOMPARE(spyCM.count(), 0);
+    QCOMPARE(spyCR.count(), 1); // 1 signal only
+    args = spyCR.takeFirst();
+    QVERIFY(args.size() == 1);
+    sigids = args.at(0).value<QList<QUniqueId> >();
+    QVERIFY(sigids.count() == 3);
+    QVERIFY(sigids.contains(c.id()));
+    QVERIFY(sigids.contains(c2.id()));
+    QVERIFY(sigids.contains(c3.id()));
+
+    /* Now some cross manager testing */
     if (!skipCross) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
         c.saveDetail(&ncs);
         m2->saveContact(&c);
-        modSigCount += 1;
         ncs.setPrefix("Test2");
         c.saveDetail(&ncs);
         m2->saveContact(&c);
-        modSigCount += 1;
-        QCOMPARE(spyCM.count(), modSigCount); // check that we received the update signals.
+        QCOMPARE(spyCA.count(), 1); // check that we received the update signals.
+        QCOMPARE(spyCM.count(), 1); // check that we received the update signals.
         m2->removeContact(c.id());
-        remSigCount += 1;
-        QCOMPARE(spyCR.count(), remSigCount); // check that we received the remove signal.
+        QCOMPARE(spyCR.count(), 1); // check that we received the remove signal.
     }
 
     /* Check groups, if supported */
     if (m1->information()->hasFeature(QContactManagerInfo::Groups)) {
         QContactGroup g1;
         g1.setName("XXXXXX Group");
-        QVariantList vl;
 
         /* For cross notification testing, add everything to m2 and watch on m1 */
         QContactManager *adder = skipCross ? m1 : m2;
 
-        // Make sure we have two contacts to test with
-        QVERIFY(adder->saveContact(&c));
-        QVERIFY(adder->saveContact(&c2));
+        adder->removeContact(c.id());
+        adder->removeContact(c2.id());
 
         // Reset the counts so we don't get confused.
         spyCA.clear();
@@ -1746,6 +1807,30 @@ void tst_QContactManager::signalEmission()
         spyGA.clear();
         spyGC.clear();
         spyGR.clear();
+
+        // Make sure we have two contacts to test with
+        batchAdd.clear();
+        batchAdd << c << c2;
+        QVERIFY(adder->saveContacts(&batchAdd).count() == 2);
+        QVERIFY(adder->error() == QContactManager::NoError);
+
+        c = batchAdd.at(0);
+        c2 = batchAdd.at(1);
+
+        QVERIFY(spyCA.count() == 1); // only one signal, even though there's 2 contacts.
+        QVERIFY(spyCM.count() == 0);
+        QVERIFY(spyCR.count() == 0);
+        QVERIFY(spyGA.count() == 0);
+        QVERIFY(spyGC.count() == 0);
+        QVERIFY(spyGR.count() == 0);
+
+        args = spyCA.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 2);
+        // The order is indeterminate
+        QVERIFY(sigids.contains(c.id()));
+        QVERIFY(sigids.contains(c2.id()));
 
         // Save an empty group
         QVERIFY(adder->saveGroup(&g1));
@@ -1757,9 +1842,9 @@ void tst_QContactManager::signalEmission()
         QVERIFY(spyGC.count() == 0);
         QVERIFY(spyGR.count() == 0);
 
-        vl = spyGA.takeFirst();
-        QVERIFY(vl.size() == 1);
-        QList<QUniqueId> sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyGA.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == g1.id());
 
@@ -1774,15 +1859,15 @@ void tst_QContactManager::signalEmission()
         QVERIFY(spyGC.count() == 1);
         QVERIFY(spyGR.count() == 0);
 
-        vl = spyCM.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyCM.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == c.id());
 
-        vl = spyGC.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyGC.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == g1.id());
 
@@ -1797,20 +1882,22 @@ void tst_QContactManager::signalEmission()
         QVERIFY(spyGC.count() == 1);
         QVERIFY(spyGR.count() == 0);
 
-        vl = spyCM.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyCM.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == c2.id());
 
-        vl = spyGC.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyGC.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == g1.id());
 
         // delete from group (via removing contact)
-        QVERIFY(adder->removeContact(c.id()));
+        batchRemove.clear();
+        batchRemove << c.id();
+        QVERIFY(adder->removeContacts(&batchRemove).value(0, QContactManager::AlreadyExistsError) == QContactManager::NoError);
         QVERIFY(spyCA.count() == 0);
         QVERIFY(spyCM.count() == 0);
         QVERIFY(spyCR.count() == 1);
@@ -1818,15 +1905,15 @@ void tst_QContactManager::signalEmission()
         QVERIFY(spyGC.count() == 1);
         QVERIFY(spyGR.count() == 0);
 
-        vl = spyCR.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyCR.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == c.id());
 
-        vl = spyGC.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyGC.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == g1.id());
 
@@ -1839,15 +1926,15 @@ void tst_QContactManager::signalEmission()
         QVERIFY(spyGC.count() == 0);
         QVERIFY(spyGR.count() == 1);
 
-        vl = spyCM.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyCM.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == c2.id());
 
-        vl = spyGR.takeFirst();
-        QVERIFY(vl.size() == 1);
-        sigids = vl.at(0).value<QList<QUniqueId> >();
+        args = spyGR.takeFirst();
+        QVERIFY(args.size() == 1);
+        sigids = args.at(0).value<QList<QUniqueId> >();
         QVERIFY(sigids.count() == 1);
         QVERIFY(sigids.value(0) == g1.id());
 
