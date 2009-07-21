@@ -189,6 +189,54 @@ QMessage::Type convert(QMailMessage::MessageType t)
     return QMessage::None;
 }
 
+QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
+{
+    switch (v) {
+    case QMessageStore::InvalidId: return QMailStore::InvalidId;
+    case QMessageStore::ConstraintFailure: return QMailStore::ConstraintFailure;
+    case QMessageStore::ContentInaccessible: return QMailStore::ContentInaccessible;
+    case QMessageStore::NotYetImplemented: return QMailStore::NotYetImplemented;
+    case QMessageStore::FrameworkFault: return QMailStore::FrameworkFault;
+    default: break;
+    }
+
+    return QMailStore::NoError;
+}
+
+QMessageStore::ErrorCode convert(QMailStore::ErrorCode v)
+{
+    switch (v) {
+    case QMailStore::InvalidId: return QMessageStore::InvalidId;
+    case QMailStore::ConstraintFailure: return QMessageStore::ConstraintFailure;
+    case QMailStore::ContentInaccessible: return QMessageStore::ContentInaccessible;
+    case QMailStore::NotYetImplemented: return QMessageStore::NotYetImplemented;
+    case QMailStore::FrameworkFault: return QMessageStore::FrameworkFault;
+    default: break;
+    }
+
+    return QMessageStore::NoError;
+}
+
+QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
+{
+    switch (v) {
+    case QMessageStore::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
+    default: break;
+    }
+
+    return QMailStore::NoRemovalRecord;
+}
+
+QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
+{
+    switch (v) {
+    case QMailStore::CreateRemovalRecord: return QMessageStore::RemoveOnOriginatingServer;
+    default: break;
+    }
+
+    return QMessageStore::RemoveLocalCopyOnly;
+}
+
 QMessage::StatusFlags convert(quint64 v)
 {
     QMessage::StatusFlags result;

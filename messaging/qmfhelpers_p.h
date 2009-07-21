@@ -40,8 +40,9 @@
 #include "qmessagestore.h"
 #include "qmessagedatacomparator.h"
 
-#include <qmailmessage.h>
 #include <qmaildatacomparator.h>
+#include <qmailmessage.h>
+#include <qmailstore.h>
 
 class QMessageAccountFilterKey;
 class QMessageFolderFilterKey;
@@ -82,6 +83,12 @@ QMessage::Type convert(QMailMessage::MessageType t);
 
 QMessage::StatusFlags convert(quint64 v);
 quint64 convert(QMessage::StatusFlags v);
+
+QMailStore::ErrorCode convert(QMessageStore::ErrorCode v);
+QMessageStore::ErrorCode convert(QMailStore::ErrorCode v);
+
+QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v);
+QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
 
 QMessageAddress convert(const QMailAddress &address);
 QMailAddress convert(const QMessageAddress &address);
