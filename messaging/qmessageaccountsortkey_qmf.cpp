@@ -38,7 +38,36 @@ class QMessageAccountSortKeyPrivate
 {
 public:
     QMailAccountSortKey _key;
+
+    static QMessageAccountSortKey convert(const QMailAccountSortKey &key);
+    static QMailAccountSortKey convert(const QMessageAccountSortKey &key);
 };
+
+QMessageAccountSortKey QMessageAccountSortKeyPrivate::convert(const QMailAccountSortKey &key)
+{
+    QMessageAccountSortKey result;
+    result.d_ptr->_key = key;
+    return result;
+}
+
+QMailAccountSortKey QMessageAccountSortKeyPrivate::convert(const QMessageAccountSortKey &key)
+{
+    return key.d_ptr->_key;
+}
+
+namespace QmfHelpers {
+
+QMessageAccountSortKey convert(const QMailAccountSortKey &key)
+{
+    return QMessageAccountSortKeyPrivate::convert(key);
+}
+
+QMailAccountSortKey convert(const QMessageAccountSortKey &key)
+{
+    return QMessageAccountSortKeyPrivate::convert(key);
+}
+
+}
 
 QMessageAccountSortKey::QMessageAccountSortKey()
     : d_ptr(new QMessageAccountSortKeyPrivate)
