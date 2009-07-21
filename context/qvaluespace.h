@@ -125,7 +125,7 @@ namespace QValueSpace {
     } \
     static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
-class QValueSpaceItemPrivate;
+struct QValueSpaceItemPrivate;
 class QValueSpaceSubItemIterator;
 class Q_CFW_EXPORT QValueSpaceItem : public QObject
 {

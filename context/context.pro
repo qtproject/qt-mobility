@@ -6,5 +6,20 @@ include(../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
-HEADERS += qcontextglobal.h qpacketprotocol.h qmallocpool.h qsystemlock.h qvaluespace.h
-SOURCES += applayer.cpp qpacketprotocol.cpp qmallocpool.cpp qsystemlock.cpp qvaluespace.cpp
+HEADERS += qcontextglobal.h qpacketprotocol.h qvaluespace.h
+SOURCES += qpacketprotocol.cpp qvaluespace.cpp
+
+unix {
+    HEADERS += qmallocpool.h \
+               qsystemlock.h
+
+    SOURCES += qmallocpool.cpp \
+               qsystemlock.cpp \
+               applayer.cpp
+}
+
+win32 {
+    SOURCES += registrylayer_win.cpp
+
+    LIBS += -ladvapi32
+}

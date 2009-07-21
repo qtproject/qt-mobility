@@ -32,7 +32,6 @@
 ****************************************************************************/
 #include "qvaluespace.h"
 #include "qmallocpool.h"
-#include <strings.h>
 #include <QByteArray>
 #include <QObject>
 #include <QMap>
