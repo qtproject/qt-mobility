@@ -94,19 +94,20 @@ QContactFilter::QContactFilter(QContactFilterPrivate *d)
 
 const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
 {
-    if (left.type() == QContactFilter::Intersection) {
-        QContactIntersectionFilter bf(left);
-        /* we can just add the right to this one */
-        bf.append(right);
-        return bf;
-    }
+    // XXX TODO: empty intersection/union operations are not well defined yet.
+    //if (left.type() == QContactFilter::Intersection) {
+    //    QContactIntersectionFilter bf(left);
+    //    /* we can just add the right to this one */
+    //    bf.append(right);
+    //    return bf;
+    //}
 
-    if (right.type() == QContactFilter::Intersection) {
-        QContactIntersectionFilter bf(right);
-        /* we can prepend the left to this one */
-        bf.prepend(left);
-        return bf;
-    }
+    //if (right.type() == QContactFilter::Intersection) {
+    //    QContactIntersectionFilter bf(right);
+    //    /* we can prepend the left to this one */
+    //    bf.prepend(left);
+    //    return bf;
+    //}
 
     /* usual fallback case */
     QContactIntersectionFilter nif;

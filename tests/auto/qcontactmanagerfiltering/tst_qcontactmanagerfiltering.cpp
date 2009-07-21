@@ -83,6 +83,12 @@ private slots:
     void groupMembershipFiltering();
     void groupMembershipFiltering_data();
 
+    void intersectionFiltering();
+    void intersectionFiltering_data();
+
+    void unionFiltering();
+    void unionFiltering_data();
+
     void sorting(); // XXX should take all managers
     void sorting_data();
 };
@@ -691,6 +697,784 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
     output = convertIds(contacts, idstwo);
     QCOMPARE(output, expectedtwo);
 
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::intersectionFiltering_data()
+{
+    QTest::addColumn<bool>("firstfilter");
+    QTest::addColumn<int>("fftype"); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
+    QTest::addColumn<QString>("ffdefname");
+    QTest::addColumn<QString>("fffieldname");
+    QTest::addColumn<bool>("ffsetvalue");
+    QTest::addColumn<QVariant>("ffvalue");
+    QTest::addColumn<QVariant>("ffminrange");
+    QTest::addColumn<QVariant>("ffmaxrange");
+    QTest::addColumn<bool>("secondfilter");
+    QTest::addColumn<int>("sftype");
+    QTest::addColumn<QString>("sfdefname");
+    QTest::addColumn<QString>("sffieldname");
+    QTest::addColumn<bool>("sfsetvalue");
+    QTest::addColumn<QVariant>("sfvalue");
+    QTest::addColumn<QVariant>("sfminrange");
+    QTest::addColumn<QVariant>("sfmaxrange");
+    QTest::addColumn<QString>("order");
+    QTest::addColumn<QString>("expected");
+
+    QString es; // empty string.
+
+    // for the following tests, terminology:
+    // X will be an (empty) intersection filter created in the test
+    // Y will be the first filter defined here
+    // Z will be the second filter defined here
+
+    // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
+    // For these tests, Y matches "bc" and Z matches "a"
+    // X && Y - X empty so es
+    QTest::newRow("A1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
+                        << "XY" << es;
+    // Y && X - X empty so es
+    QTest::newRow("A2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
+                        << "YX" << es;
+    // Y && Z  - matches "a" and "bc" - so intersected = es
+    QTest::newRow("A3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "YZ" << es;
+    // Z && Y - matches "bc" and "a" - so intersected = es
+    QTest::newRow("A4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "ZY" << es;
+    // X && Z - X empty so es
+    QTest::newRow("A5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XZ" << es;
+    // Z && X - X empty so es
+    QTest::newRow("A6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "ZX" << es;
+    // X && Y && Z - X empty so es
+    QTest::newRow("A7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XYZ" << es;
+    // X && Z && Y - X empty so es
+    QTest::newRow("A8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XZY" << es;
+    // Y && X && Z - X empty so es
+    QTest::newRow("A9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "YXZ" << es;
+    // Z && X && Y - X empty so es
+    QTest::newRow("A10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "ZXY" << es;
+    // Y && Z && X - X empty so es
+    QTest::newRow("A11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "YZX" << es;
+    // Z && Y && X - X empty so es
+    QTest::newRow("A12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "ZYX" << es;
+
+    // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
+    // For these tests, Y matches "bc", Z matches "b"
+    // X && Y - X empty so es
+    QTest::newRow("B1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
+                        << "XY" << es;
+    // Y && X - X empty so es
+    QTest::newRow("B2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
+                        << "YX" << es;
+    // Y && Z  - matches "b" and "bc" - so intersected = "b"
+    QTest::newRow("B3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "YZ" << "b";
+    // Z && Y - matches "bc" and "b" - so intersected = "b"
+    QTest::newRow("B4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "ZY" << "b";
+    // X && Z - X empty so es
+    QTest::newRow("B5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XZ" << es;
+    // Z && X - X empty so es
+    QTest::newRow("B6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "ZX" << es;
+    // X && Y && Z - X empty so es
+    QTest::newRow("B7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XYZ" << es;
+    // X && Z && Y - X empty so es
+    QTest::newRow("B8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XZY" << es;
+    // Y && X && Z - X empty so es
+    QTest::newRow("B9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "YXZ" << es;
+    // Z && X && Y - X empty so es
+    QTest::newRow("B10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "ZXY" << es;
+    // Y && Z && X - X empty so es
+    QTest::newRow("B11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "YZX" << es;
+    // Z && Y && X - X empty so es
+    QTest::newRow("B12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "ZYX" << es;
+
+    //---------------------------
+
+    // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
+    // For these tests, Y matches "a", Z matches "b"
+    // X && Y - X empty so es
+    QTest::newRow("C1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XY" << es;
+    // Y && X - X empty so es
+    QTest::newRow("C2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YX" << es;
+    // Y && Z - no overlap so es
+    QTest::newRow("C3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YZ" << es;
+    // Z && Y - no overlap so es
+    QTest::newRow("C4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZY" << es;
+    // X && Z - X empty so es
+    QTest::newRow("C5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZ" << es;
+    // Z && X - X empty so es
+    QTest::newRow("C6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZX" << es;
+    // X && Y && Z - X empty so es
+    QTest::newRow("C7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XYZ" << es;
+    // X && Z && Y - X empty so es
+    QTest::newRow("C8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZY" << es;
+    // Y && X && Z - X empty so es
+    QTest::newRow("C9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YXZ" << es;
+    // Z && X && Y - X empty so es
+    QTest::newRow("C10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZXY" << es;
+    // Y && Z && X - X empty so es
+    QTest::newRow("C11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "YZX" << es;
+    // Z && Y && X - X empty so es
+    QTest::newRow("C12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZYX" << es;
+
+    // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
+    // For these tests, Y matches "ab", Z matches "b"
+    // X && Y - X empty so es
+    QTest::newRow("D1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XY" << es;
+    // Y && X - X empty so es
+    QTest::newRow("D2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YX" << es;
+    // Y && Z - Y matches "ab", Z matches "b", intersection = "b"
+    QTest::newRow("D3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YZ" << "b";
+    // Z && Y - Y matches "ab", Z matches "b", intersection = "b"
+    QTest::newRow("D4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZY" << "b";
+    // X && Z - X empty so es
+    QTest::newRow("D5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZ" << es;
+    // Z && X - X empty so es
+    QTest::newRow("D6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZX" << es;
+    // X && Y && Z - X empty so es
+    QTest::newRow("D7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XYZ" << es;
+    // X && Z && Y - X empty so es
+    QTest::newRow("D8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZY" << es;
+    // Y && X && Z - X empty so es
+    QTest::newRow("D9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YXZ" << es;
+    // Z && X && Y - X empty so es
+    QTest::newRow("D10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZXY" << es;
+    // Y && Z && X - X empty so es
+    QTest::newRow("D11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "YZX" << es;
+    // Z && Y && X - X empty so es
+    QTest::newRow("D12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZYX" << es;
+}
+
+void tst_QContactManagerFiltering::intersectionFiltering()
+{
+    QFETCH(bool, firstfilter);
+    QFETCH(int, fftype); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
+    QFETCH(QString, ffdefname);
+    QFETCH(QString, fffieldname);
+    QFETCH(bool, ffsetvalue);
+    QFETCH(QVariant, ffvalue);
+    QFETCH(QVariant, ffminrange);
+    QFETCH(QVariant, ffmaxrange);
+    QFETCH(bool, secondfilter);
+    QFETCH(int, sftype);
+    QFETCH(QString, sfdefname);
+    QFETCH(QString, sffieldname);
+    QFETCH(bool, sfsetvalue);
+    QFETCH(QVariant, sfvalue);
+    QFETCH(QVariant, sfminrange);
+    QFETCH(QVariant, sfmaxrange);
+    QFETCH(QString, order);
+    QFETCH(QString, expected);
+
+    QContactFilter *x = new QContactIntersectionFilter();
+    QContactFilter *y = 0, *z = 0;
+
+    if (firstfilter) {
+        switch (fftype) {
+            case 1: // detail filter
+                y = new QContactDetailFilter();
+                static_cast<QContactDetailFilter*>(y)->setDetailDefinitionName(ffdefname, fffieldname);
+                if (ffsetvalue)
+                    static_cast<QContactDetailFilter*>(y)->setValue(ffvalue);
+                break;
+            case 2: // range filter
+                y = new QContactDetailRangeFilter();
+                static_cast<QContactDetailRangeFilter*>(y)->setDetailDefinitionName(ffdefname, fffieldname);
+                static_cast<QContactDetailRangeFilter*>(y)->setRange(ffminrange, ffmaxrange);
+                break;
+            case 3: // group membership filter
+            case 4: // union filter
+            case 5: // intersection filter
+                break;
+
+            default:
+                QVERIFY(false); // force fail.
+            break;
+        }
+    }
+
+    if (secondfilter) {
+        switch (sftype) {
+            case 1: // detail filter
+                z = new QContactDetailFilter();
+                static_cast<QContactDetailFilter*>(z)->setDetailDefinitionName(sfdefname, sffieldname);
+                if (sfsetvalue)
+                    static_cast<QContactDetailFilter*>(z)->setValue(sfvalue);
+                break;
+            case 2: // range filter
+                z = new QContactDetailRangeFilter();
+                static_cast<QContactDetailRangeFilter*>(z)->setDetailDefinitionName(sfdefname, sffieldname);
+                static_cast<QContactDetailRangeFilter*>(z)->setRange(sfminrange, sfmaxrange);
+                break;
+            case 3: // group membership filter
+            case 4: // union filter
+            case 5: // intersection filter
+                break;
+
+            default:
+                QVERIFY(false); // force fail.
+            break;
+        }
+    }
+
+    // control variables - order: starts, ends, mids
+    bool sX = false;
+    bool sY = false;
+    bool sZ = false;
+    bool eX = false;
+    bool eY = false;
+    bool eZ = false;
+    bool mX = false;
+    bool mY = false;
+    bool mZ = false;
+
+    if (order.startsWith("X"))
+        sX = true;
+    if (order.startsWith("Y"))
+        sY = true;
+    if (order.startsWith("Z"))
+        sZ = true;
+    if (order.endsWith("X"))
+        eX = true;
+    if (order.endsWith("Y"))
+        eY = true;
+    if (order.endsWith("Z"))
+        eZ = true;
+    if (order.size() > 2) {
+        if (order.at(1) == 'X')
+            mX = true;
+        if (order.at(1) == 'Y')
+            mY = true;
+        if (order.at(1) == 'Z')
+            mZ = true;
+    }
+
+    // now perform the filtering.
+    QContactIntersectionFilter resultFilter;
+    if (sX) {
+        if (mY && eZ)
+            resultFilter = *x && *y && *z;
+        else if (mZ && eY)
+            resultFilter = *x && *z && *y;
+        else if (eY)
+            resultFilter = *x && *y;
+        else if (eZ)
+            resultFilter = *x && *z;
+    } else if (sY) {
+        if (mX && eZ)
+            resultFilter = *y && *x && *z;
+        else if (mZ && eX)
+            resultFilter = *y && *z && *x;
+        else if (eX)
+            resultFilter = *y && *x;
+        else if (eZ)
+            resultFilter = *y && *z;
+    } else if (sZ) {
+        if (mX && eY)
+            resultFilter = *z && *x && *y;
+        else if (mY && eX)
+            resultFilter = *z && *y && *x;
+        else if (eX)
+            resultFilter = *z && *x;
+        else if (eY)
+            resultFilter = *z && *y;
+    }
+
+    /* Try the memory database first */
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    ids = cm->contacts(resultFilter);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete x;
+    if (y) delete y;
+    if (z) delete z;
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::unionFiltering_data()
+{
+    QTest::addColumn<bool>("firstfilter");
+    QTest::addColumn<int>("fftype"); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
+    QTest::addColumn<QString>("ffdefname");
+    QTest::addColumn<QString>("fffieldname");
+    QTest::addColumn<bool>("ffsetvalue");
+    QTest::addColumn<QVariant>("ffvalue");
+    QTest::addColumn<QVariant>("ffminrange");
+    QTest::addColumn<QVariant>("ffmaxrange");
+    QTest::addColumn<bool>("secondfilter");
+    QTest::addColumn<int>("sftype");
+    QTest::addColumn<QString>("sfdefname");
+    QTest::addColumn<QString>("sffieldname");
+    QTest::addColumn<bool>("sfsetvalue");
+    QTest::addColumn<QVariant>("sfvalue");
+    QTest::addColumn<QVariant>("sfminrange");
+    QTest::addColumn<QVariant>("sfmaxrange");
+    QTest::addColumn<QString>("order");
+    QTest::addColumn<QString>("expected");
+
+    QString es; // empty string.
+
+    // for the following tests, terminology:
+    // X will be an (empty) union filter created in the test
+    // Y will be the first filter defined here
+    // Z will be the second filter defined here
+
+    // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
+    // For these tests, Y matches "bc" and Z matches "a"
+    // X || Y - X empty, Y matches "bc" so union = "bc"
+    QTest::newRow("A1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
+                        << "XY" << "bc";
+    // Y || X - Y matches "bc", X empty so union = "bc"
+    QTest::newRow("A2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
+                        << "YX" << "bc";
+    // Y || Z  - Y matches "bc" and Z matches "a" - so union = "abc"
+    QTest::newRow("A3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "YZ" << "abc";
+    // Z || Y - Y matches "bc" and Z matches "a" - so union = "abc"
+    QTest::newRow("A4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "ZY" << "abc";
+    // X || Z - X empty, Z matches "a" so "a"
+    QTest::newRow("A5") << false << 1 << "Bool" << "value" << false << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XZ" << "a";
+    // Z || X - X empty, Z matches "a" so "a"
+    QTest::newRow("A6") << false << 1 << "Bool" << "value" << false << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "ZX" << "a";
+    // X || Y || Z - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XYZ" << "abc";
+    // X || Z || Y - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "XZY" << "abc";
+    // Y || X || Z - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                        << "YXZ" << "abc";
+    // Z || X || Y - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "ZXY" << "abc";
+    // Y || Z || X - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "YZX" << "abc";
+    // Z || Y || X - X empty, Y matches "bc", Z matches "a" so "abc"
+    QTest::newRow("A12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
+                         << "ZYX" << "abc";
+
+    // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
+    // For these tests, Y matches "bc", Z matches "b"
+    // X || Y - X empty, Y matches "b", so "bc"
+    QTest::newRow("B1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
+                        << "XY" << "bc";
+    // Y || X - X empty, Y matches "bc", so "bc"
+    QTest::newRow("B2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
+                        << "YX" << "bc";
+    // Y || Z  - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "YZ" << "bc";
+    // Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "ZY" << "bc";
+    // X || Z - X empty, Z matches "b" so "b"
+    QTest::newRow("B5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XZ" << "b";
+    // Z || X - X empty, Z matches "b" so "b"
+    QTest::newRow("B6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "ZX" << "b";
+    // X || Y || Z - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XYZ" << "bc";
+    // X || Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "XZY" << "bc";
+    // Y || X || Z - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                        << "YXZ" << "bc";
+    // Z || X || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "ZXY" << "bc";
+    // Y || Z || X - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "YZX" << "bc";
+    // Z || Y || X - X empty, Y matches "bc", Z matches "b" so "bc"
+    QTest::newRow("B12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
+                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
+                         << "ZYX" << "bc";
+
+    //---------------------------
+
+    // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
+    // For these tests, Y matches "a", Z matches "b"
+    // X || Y - X empty, Y matches "a" so "a"
+    QTest::newRow("C1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XY" << "a";
+    // Y || X - X empty, Y matches "a" so "a"
+    QTest::newRow("C2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YX" << "a";
+    // Y || Z - Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YZ" << "ab";
+    // Z || Y - Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZY" << "ab";
+    // X || Z - X empty, Z matches "b" so "b"
+    QTest::newRow("C5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZ" << "b";
+    // Z || X - X empty, Z matches "b" so "b"
+    QTest::newRow("C6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZX" << "b";
+    // X || Y || Z - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XYZ" << "ab";
+    // X || Z || Y - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZY" << "ab";
+    // Y || X || Z - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YXZ" << "ab";
+    // Z || X || Y - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZXY" << "ab";
+    // Y || Z || X - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "YZX" << "ab";
+    // Z || Y || X - X empty, Y matches "a", Z matches "b" so "ab"
+    QTest::newRow("C12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZYX" << "ab";
+
+    // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
+    // For these tests, Y matches "ab", Z matches "b"
+    // X || Y - X empty, Y matches "ab" so "ab"
+    QTest::newRow("D1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XY" << "ab";
+    // Y || X - X empty, Y matches "ab" so "ab"
+    QTest::newRow("D2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YX" << "ab";
+    // Y || Z - Y matches "ab", Z matches "b", union = "ab"
+    QTest::newRow("D3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YZ" << "ab";
+    // Z || Y - Y matches "ab", Z matches "b", union = "ab"
+    QTest::newRow("D4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZY" << "ab";
+    // X || Z - X empty, Z matches "b" so "b"
+    QTest::newRow("D5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZ" << "b";
+    // Z || X - X empty, Z matches "b" so "b"
+    QTest::newRow("D6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "ZX" << "b";
+    // X || Y || Z - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XYZ" << "ab";
+    // X || Z || Y - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "XZY" << "ab";
+    // Y || X || Z - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                        << "YXZ" << "ab";
+    // Z || X || Y - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZXY" << "ab";
+    // Y || Z || X - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "YZX" << "ab";
+    // Z || Y || X - X empty, Y matches "ab", Z matches "b" so "ab"
+    QTest::newRow("D12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
+                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
+                         << "ZYX" << "ab";
+}
+
+void tst_QContactManagerFiltering::unionFiltering()
+{
+    QFETCH(bool, firstfilter);
+    QFETCH(int, fftype); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
+    QFETCH(QString, ffdefname);
+    QFETCH(QString, fffieldname);
+    QFETCH(bool, ffsetvalue);
+    QFETCH(QVariant, ffvalue);
+    QFETCH(QVariant, ffminrange);
+    QFETCH(QVariant, ffmaxrange);
+    QFETCH(bool, secondfilter);
+    QFETCH(int, sftype);
+    QFETCH(QString, sfdefname);
+    QFETCH(QString, sffieldname);
+    QFETCH(bool, sfsetvalue);
+    QFETCH(QVariant, sfvalue);
+    QFETCH(QVariant, sfminrange);
+    QFETCH(QVariant, sfmaxrange);
+    QFETCH(QString, order);
+    QFETCH(QString, expected);
+
+    QContactFilter *x = new QContactUnionFilter();
+    QContactFilter *y = 0, *z = 0;
+
+    if (firstfilter) {
+        switch (fftype) {
+            case 1: // detail filter
+                y = new QContactDetailFilter();
+                static_cast<QContactDetailFilter*>(y)->setDetailDefinitionName(ffdefname, fffieldname);
+                if (ffsetvalue)
+                    static_cast<QContactDetailFilter*>(y)->setValue(ffvalue);
+                break;
+            case 2: // range filter
+                y = new QContactDetailRangeFilter();
+                static_cast<QContactDetailRangeFilter*>(y)->setDetailDefinitionName(ffdefname, fffieldname);
+                static_cast<QContactDetailRangeFilter*>(y)->setRange(ffminrange, ffmaxrange);
+                break;
+            case 3: // group membership filter
+            case 4: // union filter
+            case 5: // intersection filter
+                break;
+
+            default:
+                QVERIFY(false); // force fail.
+            break;
+        }
+    }
+
+    if (secondfilter) {
+        switch (sftype) {
+            case 1: // detail filter
+                z = new QContactDetailFilter();
+                static_cast<QContactDetailFilter*>(z)->setDetailDefinitionName(sfdefname, sffieldname);
+                if (sfsetvalue)
+                    static_cast<QContactDetailFilter*>(z)->setValue(sfvalue);
+                break;
+            case 2: // range filter
+                z = new QContactDetailRangeFilter();
+                static_cast<QContactDetailRangeFilter*>(z)->setDetailDefinitionName(sfdefname, sffieldname);
+                static_cast<QContactDetailRangeFilter*>(z)->setRange(sfminrange, sfmaxrange);
+                break;
+            case 3: // group membership filter
+            case 4: // union filter
+            case 5: // intersection filter
+                break;
+
+            default:
+                QVERIFY(false); // force fail.
+            break;
+        }
+    }
+
+    // control variables - order: starts, ends, mids
+    bool sX = false;
+    bool sY = false;
+    bool sZ = false;
+    bool eX = false;
+    bool eY = false;
+    bool eZ = false;
+    bool mX = false;
+    bool mY = false;
+    bool mZ = false;
+
+    if (order.startsWith("X"))
+        sX = true;
+    if (order.startsWith("Y"))
+        sY = true;
+    if (order.startsWith("Z"))
+        sZ = true;
+    if (order.endsWith("X"))
+        eX = true;
+    if (order.endsWith("Y"))
+        eY = true;
+    if (order.endsWith("Z"))
+        eZ = true;
+    if (order.size() > 2) {
+        if (order.at(1) == 'X')
+            mX = true;
+        if (order.at(1) == 'Y')
+            mY = true;
+        if (order.at(1) == 'Z')
+            mZ = true;
+    }
+
+    // now perform the filtering.
+    QContactUnionFilter resultFilter;
+    if (sX) {
+        if (mY && eZ)
+            resultFilter = *x || *y || *z;
+        else if (mZ && eY)
+            resultFilter = *x || *z || *y;
+        else if (eY)
+            resultFilter = *x || *y;
+        else if (eZ)
+            resultFilter = *x || *z;
+    } else if (sY) {
+        if (mX && eZ)
+            resultFilter = *y || *x || *z;
+        else if (mZ && eX)
+            resultFilter = *y || *z || *x;
+        else if (eX)
+            resultFilter = *y || *x;
+        else if (eZ)
+            resultFilter = *y || *z;
+    } else if (sZ) {
+        if (mX && eY)
+            resultFilter = *z || *x || *y;
+        else if (mY && eX)
+            resultFilter = *z || *y || *x;
+        else if (eX)
+            resultFilter = *z || *x;
+        else if (eY)
+            resultFilter = *z || *y;
+    }
+
+    /* Try the memory database first */
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    ids = cm->contacts(resultFilter);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete x;
+    if (y) delete y;
+    if (z) delete z;
     delete cm;
 }
 
