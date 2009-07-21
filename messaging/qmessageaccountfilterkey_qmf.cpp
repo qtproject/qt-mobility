@@ -80,7 +80,7 @@ void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options option
     d_ptr->_options |= options;
 }
 
-QMessageDataComparator::Options QMessageAccountFilterKey::options()
+QMessageDataComparator::Options QMessageAccountFilterKey::options() const
 {
     return d_ptr->_options;
 }

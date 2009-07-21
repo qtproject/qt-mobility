@@ -44,7 +44,7 @@ class Q_MESSAGING_EXPORT QMessageAccountFilterKey
 
 public:
     void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options();
+    QMessageDataComparator::Options options() const;
 
     QMessageAccountFilterKey();
     QMessageAccountFilterKey(const QMessageAccountFilterKey &other);

@@ -39,7 +39,7 @@ void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options option
     Q_UNUSED(options)
 }
 
-QMessageDataComparator::Options QMessageAccountFilterKey::options()
+QMessageDataComparator::Options QMessageAccountFilterKey::options() const
 {
     return 0;
 }
