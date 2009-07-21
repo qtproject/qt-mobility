@@ -764,7 +764,9 @@ void tst_QValueSpaceItem::ipcTests()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("./vsiTestLackey");
+    process.start("vsiTestLackey");
+    bool result = process.waitForStarted();
+    qDebug() << result << process.error() << process.errorString();
     QVERIFY(process.waitForStarted());
 
     //lackey sets 100 as part of its startup
@@ -905,7 +907,7 @@ void tst_QValueSpaceItem::ipcSetValue()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("./vsiTestLackey",QStringList()<< "-ipcSetValue" );
+    process.start("vsiTestLackey", QStringList() << "-ipcSetValue");
     QVERIFY(process.waitForStarted());
 
     QTest::qWait(5000); 

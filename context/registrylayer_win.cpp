@@ -35,6 +35,8 @@
 
 #include <QSet>
 #include <QStringList>
+#include <QEventLoop>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -76,6 +78,7 @@ private:
 
     QHash<QByteArray, HANDLE> handles;
     QList<HANDLE> valueHandles;
+    QMap<HANDLE, int> refCount;
 
     QMap<HANDLE, HKEY> hKeys;
     QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
@@ -109,6 +112,11 @@ RegistryLayer::RegistryLayer()
 
 RegistryLayer::~RegistryLayer()
 {
+    while (!valueHandles.isEmpty())
+        remHandle(valueHandles.takeFirst());
+
+    while (!handles.isEmpty())
+        remHandle(*handles.begin());
 }
 
 QString RegistryLayer::name()
@@ -298,8 +306,11 @@ QAbstractValueSpaceLayer::HANDLE RegistryLayer::item(HANDLE parent, const QByteA
             fullPath = parentPath + path;
     }
 
-    if (handles.contains(fullPath))
-        return handles.value(fullPath);
+    if (handles.contains(fullPath)) {
+        HANDLE handle = handles.value(fullPath);
+        ++refCount[handle];
+        return handle;
+    }
 
     // Create random handle for path
     HANDLE handle = qrand();
@@ -312,6 +323,7 @@ QAbstractValueSpaceLayer::HANDLE RegistryLayer::item(HANDLE parent, const QByteA
         return InvalidHandle;
 
     handles.insert(fullPath, handle);
+    refCount.insert(handle, 1);
 
     return handle;
 }
@@ -372,18 +384,62 @@ void RegistryLayer::setProperty(HANDLE handle, Properties properties)
     }
 }
 
-void RegistryLayer::remHandle(HANDLE)
+void RegistryLayer::remHandle(HANDLE handle)
 {
+    if (!handles.values().contains(handle))
+        return;
+
+    if (--refCount[handle])
+        return;
+
+    refCount.remove(handle);
+    handles.remove(handles.key(handle));
+    valueHandles.removeOne(handle);
+
+    HKEY key = hKeys.take(handle);
+
+    QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+
+    UnregisterWait(wait.second);
+    CloseHandle(wait.first);
+
+    RegCloseKey(key);
 }
 
-bool RegistryLayer::remove(HANDLE)
+bool RegistryLayer::remove(HANDLE handle)
 {
-    return false;
+    return remove(InvalidHandle, handles.key(handle));
+}
+
+static LSTATUS qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
+{
+    HKEY key;
+    long result = RegOpenKeyEx(hKey, lpSubKey, 0, KEY_ALL_ACCESS, &key);
+    if (result != ERROR_SUCCESS)
+        return result;
+
+    do {
+        TCHAR subKey[MAX_KEY_LENGTH];
+        DWORD subKeySize = MAX_KEY_LENGTH;
+
+        long result = RegEnumKeyEx(key, 0, subKey, &subKeySize, 0, 0, 0, 0);
+        if (result == ERROR_NO_MORE_ITEMS)
+            break;
+
+        result = qRegDeleteTree(key, subKey);
+    } while (result == ERROR_SUCCESS);
+
+    RegCloseKey(key);
+
+    if (result != ERROR_NO_MORE_ITEMS && result != ERROR_SUCCESS)
+        return result;
+
+    return RegDeleteKey(hKey, lpSubKey);
 }
 
 bool RegistryLayer::remove(HANDLE handle, const QByteArray &subPath)
 {
-    if (!handles.values().contains(handle))
+    if (handle != InvalidHandle && !handles.values().contains(handle))
         return false;
 
     QByteArray path(subPath);
@@ -410,8 +466,13 @@ bool RegistryLayer::remove(HANDLE handle, const QByteArray &subPath)
     HKEY key = hKeys.value(handle);
 
     long result = RegDeleteValue(key, value.utf16());
-    if (result != ERROR_SUCCESS)
+    if (result == ERROR_FILE_NOT_FOUND) {
+        result = qRegDeleteTree(key, value.utf16());
+        if (result != ERROR_SUCCESS)
+            qDebug() << "RegDeleteTree failed with error" << result;
+    } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegDeleteValue failed with error" << result;
+    }
 
     return result == ERROR_SUCCESS;
 }
@@ -524,9 +585,25 @@ bool RegistryLayer::syncChanges()
 {
     bool failed = false;
 
+    // Wait for change notification callbacks before returning
+    QEventLoop loop;
+    connect(this, SIGNAL(handleChanged(uint)), &loop, SLOT(quit()));
+    bool wait = false;
+
     QList<HKEY> keys = hKeys.values();
-    while (!keys.isEmpty())
-        failed |= (RegFlushKey(keys.takeFirst()) != ERROR_SUCCESS);
+    while (!keys.isEmpty()) {
+        HKEY key = keys.takeFirst();
+
+        if (!wait && waitHandles.contains(key))
+            wait = true;
+
+        failed |= (RegFlushKey(key) != ERROR_SUCCESS);
+    }
+
+    if (wait) {
+        QTimer::singleShot(1000, &loop, SLOT(quit()));
+        loop.exec();
+    }
 
     return failed;
 }
@@ -578,11 +655,12 @@ void RegistryLayer::openRegistryKey(HANDLE handle)
         return;
 
     // Check if handle is valid.
-    QByteArray path = handles.key(handle);
-    if (path.isEmpty())
+    if (!handles.values().contains(handle))
         return;
 
-    QString fullPath = qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + path);
+    QByteArray path = handles.key(handle);
+
+    const QString fullPath = qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + path);
 
     // Attempt to open registry key path
     HKEY key;
@@ -615,14 +693,17 @@ void RegistryLayer::openRegistryKey(HANDLE handle)
 
 void RegistryLayer::createRegistryKey(HANDLE handle)
 {
+    // Check if HKEY for this handle already exists.
     if (hKeys.contains(handle))
         return;
 
-    QByteArray path = handles.key(handle);
-    if (path.isEmpty())
+    // Check if handle is valid.
+    if (!handles.values().contains(handle))
         return;
 
-    QString fullPath = qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + path);
+    const QByteArray path = handles.key(handle);
+
+    const QString fullPath = qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + path);
 
     // Attempt to open registry key path
     HKEY key;
