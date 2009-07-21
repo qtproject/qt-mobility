@@ -61,6 +61,7 @@ private slots:
     void toggleRecord();
     void deviceChanged(int idx);
     void codecChanged(int idx);
+    void setQuality(int value);
 
 private:
     QMediaCapture* audioCapture;

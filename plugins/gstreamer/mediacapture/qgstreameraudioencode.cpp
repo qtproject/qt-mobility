@@ -1,6 +1,8 @@
 #include "qgstreameraudioencode.h"
 #include "qgstreamercapturesession.h"
 
+#include <QtCore/qdebug.h>
+
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncodeControl(parent)
 {
@@ -98,7 +100,6 @@ bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
 {
     if (m_codec != codecName) {
         m_codec = codecName;
-        m_options.clear();
 
         if (m_encoderElement) {
             gst_element_unlink(m_identity1, m_encoderElement);
@@ -137,7 +138,7 @@ void QGstreamerAudioEncode::setBitrate(int value)
 
 qreal QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(int(-1))).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
 }
 
 void QGstreamerAudioEncode::setQuality(qreal value)
@@ -163,6 +164,45 @@ void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVarian
 void QGstreamerAudioEncode::applyOptions()
 {
     if (m_encoderElement) {
+        QMapIterator<QString,QVariant> it(m_options);
+        while (it.hasNext()) {
+            it.next();
+            QString option = it.key();
+            QVariant value = it.value();
+
+            if (option == QLatin1String("quality")) {
+                double qualityValue = value.toDouble();
+
+                if (m_codec == QLatin1String("vorbisenc")) {
+                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue/10.0, NULL);
+                } else if (m_codec == QLatin1String("lame")) {                    
+                    int presets[] = {1006, 1001, 1002, 1003}; //Medium, Standard, Extreme, Insane
+                    int preset = presets[ qBound(0, qRound(qualityValue*0.3), 3) ];
+                    g_object_set(G_OBJECT(m_encoderElement), "preset", preset, NULL);
+                } else if (m_codec == QLatin1String("speexenc")) {
+                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue, NULL);
+                }
+
+            } else {
+                switch (value.type()) {
+                case QVariant::Int:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toInt(), NULL);
+                    break;
+                case QVariant::Bool:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toBool(), NULL);
+                    break;
+                case QVariant::Double:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toDouble(), NULL);
+                    break;
+                case QVariant::String:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
+                    break;
+                default:
+                    qWarning() << "unsupported option type:" << option << value;
+                    break;
+                }
+            }
+        }
     }
 }
 

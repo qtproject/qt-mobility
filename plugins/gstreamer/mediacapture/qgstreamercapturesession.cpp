@@ -57,8 +57,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QObject *parent)
     m_tee = gst_element_factory_make("tee", "tee");
     m_audioconvert1 = gst_element_factory_make("audioconvert", "audioconvert1");
     m_volume = gst_element_factory_make("volume", "volume");
-    m_encoder = m_audioEncodeControl->encoder();// gst_element_factory_make("vorbisenc", "encoder");
-    //m_muxer = gst_element_factory_make("oggmux", "muxer");
+    m_encoder = m_audioEncodeControl->encoder();
     m_filesink = gst_element_factory_make("filesink", "filesink");
 
     //m_audioconvert2 = gst_element_factory_make("audioconvert", "audioconvert2");
@@ -92,10 +91,7 @@ QGstreamerCaptureSession::~QGstreamerCaptureSession()
         gst_object_unref(GST_OBJECT(m_pipeline));
         gst_object_unref(GST_OBJECT(m_audiosrc));
         gst_object_unref(GST_OBJECT(m_audioconvert1));
-        gst_object_unref(GST_OBJECT(m_tee));
-        gst_object_unref(GST_OBJECT(m_audioconvert2));
-        //gst_object_unref(GST_OBJECT(m_encoder));
-        //gst_object_unref(GST_OBJECT(m_muxer));
+        gst_object_unref(GST_OBJECT(m_tee));        
         gst_object_unref(GST_OBJECT(m_filesink));
     }
 }
@@ -131,6 +127,7 @@ void QGstreamerCaptureSession::setPositionUpdatePeriod(int ms)
 void QGstreamerCaptureSession::record()
 {
     if (m_pipeline) {
+        m_audioEncodeControl->applyOptions();
         if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
             m_state = QMediaCapture::StoppedState;
             emit stateChanged(m_state);

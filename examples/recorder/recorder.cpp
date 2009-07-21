@@ -83,6 +83,16 @@ Recorder::Recorder()
 
         layout->addWidget(new QLabel(tr("Audio codec:"),this));
         layout->addWidget(codecsBox);
+
+
+        QSlider *qualitySlider = new QSlider(Qt::Horizontal, this);
+        qualitySlider->setMinimum(0);
+        qualitySlider->setMaximum(10);
+        qualitySlider->setValue(qRound(encodeControl->quality()));
+
+        connect(qualitySlider, SIGNAL(valueChanged(int)), this, SLOT(setQuality(int)));
+        layout->addWidget(new QLabel(tr("Quality:"),this));
+        layout->addWidget(qualitySlider);
     }
 
     button = new QPushButton(this);
@@ -121,8 +131,16 @@ void Recorder::deviceChanged(int idx)
 
 void Recorder::codecChanged(int idx)
 {
-    if (encodeControl)
-        encodeControl->setAudioCodec( encodeControl->supportedAudioCodecs()[idx]);
+    if (encodeControl) {
+        encodeControl->setAudioCodec( encodeControl->supportedAudioCodecs()[idx]);        
+    }
+}
+
+void Recorder::setQuality(int value)
+{
+    if (encodeControl) {
+        encodeControl->setQuality(value);
+    }
 }
 
 void Recorder::toggleRecord()
