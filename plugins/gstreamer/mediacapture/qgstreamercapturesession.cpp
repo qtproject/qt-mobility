@@ -116,7 +116,13 @@ int QGstreamerCaptureSession::state() const
 
 qint64 QGstreamerCaptureSession::position() const
 {
-    return 0;
+    GstFormat   format = GST_FORMAT_TIME;
+    gint64      position = 0;    
+
+    if ( m_pipeline && gst_element_query_position(m_pipeline, &format, &position))
+        return position / 1000000;
+    else
+        return 0;
 }
 
 void QGstreamerCaptureSession::setPositionUpdatePeriod(int ms)
@@ -164,6 +170,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
 
             case GST_MESSAGE_STATE_CHANGED:
                 {
+
                     GstState    oldState;
                     GstState    newState;
                     GstState    pending;

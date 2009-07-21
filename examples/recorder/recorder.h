@@ -57,7 +57,7 @@ public:
     ~Recorder();
 
 private slots:
-    void status();
+    void updateStatus();
     void toggleRecord();
     void deviceChanged(int idx);
     void codecChanged(int idx);
@@ -72,8 +72,7 @@ private:
     QPushButton*   button;
     QLabel*        recTime;
     QFile*         file;
-    bool           active;
-    int            currentTime;
+    bool           active;    
 };
 
 #endif

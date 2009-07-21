@@ -51,6 +51,8 @@ Recorder::Recorder()
     audioCapture->setSink(QMediaSink(QUrl("test.ogg")));
     audioDevice = audioCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
+    connect(audioCapture, SIGNAL(positionChanged(qint64)), this, SLOT(updateStatus()));
+
     if (audioDevice) {
         audioCapture->service()->setAudioInput(audioDevice);
         audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
@@ -115,12 +117,10 @@ Recorder::~Recorder()
 {
 }
 
-void Recorder::status()
+void Recorder::updateStatus()
 {
-    currentTime++;
-    QString str = QString("%1 sec").arg(currentTime);
-    recTime->setText(str);
-    qWarning()<<"time: "<<currentTime;
+    QString str = QString("Recorded %1 sec").arg(audioCapture->position()/1000);
+    recTime->setText(str);    
 }
 
 void Recorder::deviceChanged(int idx)
@@ -148,8 +148,6 @@ void Recorder::toggleRecord()
     if (!audioCapture) return;
 
     if (!active) {
-        recTime->setText("0 sec");
-        currentTime = 0;
         audioCapture->record();
 
         button->setText(tr("Click to stop recording"));

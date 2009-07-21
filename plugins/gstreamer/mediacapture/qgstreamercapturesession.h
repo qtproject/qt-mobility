@@ -49,6 +49,7 @@ class QGstreamerAudioEncode;
 class QGstreamerCaptureSession : public QMediaCaptureControl
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
     QGstreamerCaptureSession(QObject *parent);
     ~QGstreamerCaptureSession();
