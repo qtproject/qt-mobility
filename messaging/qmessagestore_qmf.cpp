@@ -31,15 +31,35 @@
 **
 ****************************************************************************/
 #include "qmessagestore.h"
+#include "qmfhelpers_p.h"
+
+#include <qmailstore.h>
+
+
+using namespace QmfHelpers;
+
+class QMessageStorePrivate
+{
+public:
+    QMessageStorePrivate() : _store(QMailStore::instance()) {}
+
+    QMailStore *_store;
+
+    Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
+};
+
+Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
 
 QMessageStore::QMessageStore(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      d_ptr(new QMessageStorePrivate)
 {
     Q_ASSERT(instance() != 0);
 }
 
 QMessageStore::~QMessageStore()
 {
+    delete d_ptr;
 }
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
@@ -154,7 +174,7 @@ uint QMessageStore::maximumWorkingMemory()
 
 QMessageStore* QMessageStore::instance()
 {
-    return 0;
+    return QMessageStorePrivate::storeInstance();
 }
     
 void QMessageStore::startNotifications(const QMessageFilterKey &key)
