@@ -104,7 +104,7 @@ public:
     bool getPropertyBool(const QString &prop);
     QString getPropertyString(const QString &prop);
     QStringList getPropertyStringList(const QString &prop);
-    quint32 getPropertyInt(const QString &prop);
+    qint32 getPropertyInt(const QString &prop);
 
     bool queryCapability(const QString &cap);
 

@@ -572,13 +572,28 @@ QString QSystemDeviceInfo::model() const
     return d->model();
 }
 
-///*!
-//    Returns the battery charge level as percentage 1 - 100 scale
-//*/
-//QSystemDeviceInfo::BatteryLevel QSystemDeviceInfo::batteryLevel() const
-//{
-//    return d->batteryLevel();
-//}
+/*!
+    Returns the product name of the device.
+*/
+QString QSystemDeviceInfo::productName() const
+{
+    return d->productName();
+}
+/*!
+    Returns the battery charge level as percentage 1 - 100 scale
+*/
+QSystemDeviceInfo::BatteryLevel QSystemDeviceInfo::batteryLevel() const
+{
+    return d->batteryLevel();
+}
+
+/*!
+    Returns true if the battery is charging, otherwise false;
+*/
+bool QSystemDeviceInfo::isBatteryCharging()
+{
+    return d->isBatteryCharging();
+}
 
 /*!
   Returns status of SIM card.
@@ -594,6 +609,15 @@ bool QSystemDeviceInfo::isDeviceLocked()
 {
     return d->isDeviceLocked();
 }
+
+/*!
+  Gets the current device profile QSystemDeviceInfo::Profile
+*/
+QSystemDeviceInfo::Profile QSystemDeviceInfo::getCurrentProfile()
+{
+    return d->getCurrentProfile();
+}
+
 
 
 QT_END_NAMESPACE

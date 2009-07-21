@@ -246,13 +246,15 @@ public:
 
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
-    QString imei() const;
-    QString imsi() const;
+    QString imei() const; //International Mobile Equipment Identity
+    QString imsi() const; //International Mobile Subscriber Identity
     QString manufacturer() const;
-    QString model() const;
+    QString model() const; //external
+    QString productName() const; //internal name
 
 // ????
-//    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+    bool isBatteryCharging();
 
     enum Profile {
         UnknownProfile = -1,
@@ -273,10 +275,11 @@ public:
 
     QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
+    QSystemDeviceInfo::Profile getCurrentProfile();
 
 Q_SIGNALS:
 
-    void profileChanged(QSystemDeviceInfo::Profile);
+//    void profileChanged(QSystemDeviceInfo::Profile);
     void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
     void batteryLevelCritical(qint32);
     void powerStateChanged(QSystemDeviceInfo::PowerState);

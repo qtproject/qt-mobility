@@ -196,9 +196,10 @@ QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
     return QStringList();
 }
 
-quint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
+qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
 {
-    QDBusReply< quint32 > reply = d->connectionInterface->call("GetPropertyInt", prop);
+    qWarning() << __FUNCTION__;
+    QDBusReply< qint32 > reply = d->connectionInterface->call("GetPropertyInteger", prop);
     if ( reply.isValid() ) {
 //        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();

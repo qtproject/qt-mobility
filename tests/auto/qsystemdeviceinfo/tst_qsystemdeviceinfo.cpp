@@ -33,6 +33,18 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
+#define QTRY_VERIFY(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
 
 Q_DECLARE_METATYPE(QSystemDeviceInfo::BatteryLevel);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::PowerState);
@@ -54,18 +66,18 @@ private slots:
     void tst_imsi();
     void tst_manufacturer();
     void tst_model();
+    void tst_productName();
 
-//    void tst_batteryLevel_data();
+    void tst_isBatteryCharging();
     void tst_batteryLevel();
 
-//    void tst_profileChanged_data();
-//    void tst_profileChanged();
+    void tst_getCurrentProfile();
 
     void tst_getSimStatus();
 
     void tst_isDeviceLocked();
 
-//    void tst_powerState_data();
+    //    void tst_powerState_data();
 //    void tst_powerState();
 
 };
@@ -84,7 +96,8 @@ void tst_QSystemDeviceInfo::initTestCase()
 void tst_QSystemDeviceInfo::tst_getInputMethodType()
 {
     QSystemDeviceInfo di;
-    qWarning() << di.getInputMethodType();
+    QVERIFY( di.getInputMethodType() != 0);
+
 }
 
 void tst_QSystemDeviceInfo::tst_imei()
@@ -115,22 +128,54 @@ void tst_QSystemDeviceInfo::tst_model()
 
 }
 
+void tst_QSystemDeviceInfo::tst_productName()
+{
+    QSystemDeviceInfo di;
+    QVERIFY(!di.productName().isEmpty());
+
+}
+
+void tst_QSystemDeviceInfo::tst_isBatteryCharging()
+{
+    QSystemDeviceInfo di;
+    QVERIFY(di.isBatteryCharging() == true
+            || di.isBatteryCharging() == false);
+
+}
+
 void tst_QSystemDeviceInfo::tst_batteryLevel()
 {
     QSystemDeviceInfo di;
-// /   QVERIFY(di.batteryLevel() > 0);
+    QVERIFY(di.batteryLevel() > -1);
+}
+
+void tst_QSystemDeviceInfo::tst_getCurrentProfile()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::Profile profile = di.getCurrentProfile();
+    QVERIFY( profile == QSystemDeviceInfo::UnknownProfile
+             || profile == QSystemDeviceInfo::SilentProfile
+             || profile == QSystemDeviceInfo::NormalProfile
+             || profile == QSystemDeviceInfo::LoudProfile
+             || profile == QSystemDeviceInfo::VibProfile
+             || profile == QSystemDeviceInfo::OfflineProfile
+             || profile == QSystemDeviceInfo::PowersaveProfile
+             || profile == QSystemDeviceInfo::CustomProfile);
 }
 
 void tst_QSystemDeviceInfo::tst_getSimStatus()
 {
     QSystemDeviceInfo di;
+    bool simStat = di.getSimStatus();
+    QVERIFY(simStat == true || simStat == false);
 
 }
 
 void tst_QSystemDeviceInfo::tst_isDeviceLocked()
 {
     QSystemDeviceInfo di;
-
+    bool devLock = di.isDeviceLocked();
+    QVERIFY(devLock == true || devLock == false);
 }
 
 

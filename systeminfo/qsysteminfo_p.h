@@ -133,7 +133,6 @@ Q_SIGNALS:
  private:
 #if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
     virtual bool isCriticalMemory() const;
-    virtual bool isBatteryCharging();
 //    virtual bool isDiskSpaceCritical(const QString &driveVolume);
     QHash<QString, QString> mountEntries;
     void getMountEntries();
@@ -150,17 +149,22 @@ public:
 
 // device
 
-    QString imei() const;
-    QString imsi() const;
+    QString imei();
+    QString imsi();
     QString manufacturer() const;
     QString model() const;
-    
+    QString productName() const;
+
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
-//    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
 
     QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
+    QSystemDeviceInfo::Profile getCurrentProfile();
+    virtual bool isBatteryCharging();
+
+
 Q_SIGNALS:
 
     void profileChanged(QSystemDeviceInfo::Profile);

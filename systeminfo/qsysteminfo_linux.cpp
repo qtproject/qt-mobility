@@ -53,6 +53,8 @@
 #include <QDBusPendingCallWatcher>
 #include <QDBusObjectPath>
 #include <QDBusPendingCall>
+#include <QLocale>
+#include <QTimer>
 
 #include <locale.h>
 #include <sys/types.h>
@@ -72,12 +74,14 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    return QString(setlocale(LC_ALL,"")).left(2);
+    return QLocale::system().name().left(2);
 }
 
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
+    // /usr/lib/locale
+    // locale -a
     return QStringList() << currentLanguage();
 }
 
@@ -328,7 +332,6 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     getMountEntries();
     mountEntries[driveVolume];
-    quint64 to = 0;
     struct statfs fs;
     if(statfs(mountEntries[driveVolume].toLatin1(), &fs ) == 0 ) {
         long blockSize = fs.f_bsize;
@@ -456,41 +459,20 @@ else
 //    return false;
 // }
 
-bool QSystemMemoryInfoPrivate::isBatteryCharging()
-{
-    QHalDeviceInterface *iface;
-    iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
-
-    if (iface->isValid()) {
-        return iface->getPropertyBool("battery.rechargeable.is_charging");
-    }
-    return false;
-}
-
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     Q_UNUSED(parent);
 
-    QHalInterface *iface;
-    iface = new QHalInterface();
-    QStringList list = iface->findDeviceByCapability("volume");
-    if(!list.isEmpty()) {
-        foreach(QString vol, list) {
-//            qWarning() << vol;
-            QHalDeviceInterface *ifaceDevice;
-            ifaceDevice = new QHalDeviceInterface(vol);
-            if (ifaceDevice->isValid() && ifaceDevice->getPropertyBool("volume.is_mounted")) {
-                qWarning() << ifaceDevice->getPropertyString("volume.mount_point");
-            }
-        }
-    }
+}
+
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
+{
+    return QSystemDeviceInfo::UnknownProfile;
 }
 
 QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 {
-    qWarning() << __FUNCTION__;
-
     QSystemDeviceInfo::InputMethods methods;
 
     QHalInterface *iface2;
@@ -502,65 +484,56 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
         capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
 
         for(int i = 0; i < capList.count(); i++) {
-            qWarning() << capList.at(i).toLatin1();
 
             QStringList list = iface2->findDeviceByCapability(capList.at(i));
             if(!list.isEmpty()) {
                 switch(i) {
                 case 0:
-                    qWarning() << "Keyboard";
                     methods = (methods | QSystemDeviceInfo::Keyboard);
                     break;
                 case 1:
-                    qWarning() << "Keys";
                     methods = (methods | QSystemDeviceInfo::Keys);
                     break;
                 case 2:
-                    qWarning() << "Keypad";
                     methods = (methods | QSystemDeviceInfo::Keypad);
                     break;
                 case 3:
-                    qWarning() << "Mouse";
                     methods = (methods | QSystemDeviceInfo::Mouse);
                     break;
                 case 4:
-                    qWarning() << "Tablet";
                     methods = (methods | QSystemDeviceInfo::SingleTouch);
                     break;
                 };
-                //                }
             }
         }
-    } /*else {
-                    qWarning() << iface2->error().message();
-        qWarning() << "iface 2 not valid";
-    }*/
-
+    }
     return  methods;
 }
 
-QString QSystemDeviceInfoPrivate::imei() const
+QString QSystemDeviceInfoPrivate::imei()
 {
-    return QString();
+//    if(this->getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
+        return "Sim Not Available";
 }
 
-QString QSystemDeviceInfoPrivate::imsi() const
+QString QSystemDeviceInfoPrivate::imsi()
 {
-    return QString();
+//    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
+        return "Sim Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer() const
 {
-    //system.firmware.vendor
-    //system.hardware.vendor
-
     QHalDeviceInterface *iface;
     iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
-
+    QString manu;
     if (iface->isValid()) {
-        return iface->getPropertyString("system.firmware.vendor");
+        manu = iface->getPropertyString("system.firmware.vendor");
+        if(manu.isEmpty()) {
+            manu = iface->getPropertyString("system.hardware.vendor");
+        }
     }
-    return QString();
+    return manu;
 }
 
 QString QSystemDeviceInfoPrivate::model() const
@@ -570,17 +543,82 @@ QString QSystemDeviceInfoPrivate::model() const
     QString model;
 
     if (iface->isValid()) {
-        model = iface->getPropertyString("system.product");
-        if(model.isEmpty())
-            model = iface->getPropertyString("info.product");
+        model = iface->getPropertyString("system.kernel.machine");
+        if(!model.isEmpty())
+            model += " ";
+            model += iface->getPropertyString("system.chassis.type");
     }
     return model;
 }
 
-//QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
-//{
-//    return QSystemDeviceInfo::NoBatteryLevel;
-//}
+QString QSystemDeviceInfoPrivate::productName() const
+{
+    QString productName;
+    QHalDeviceInterface *iface;
+    iface = new QHalDeviceInterface("/org/freedesktop/Hal/devices/computer");
+    QString model;
+    if (iface->isValid()) {
+        productName = iface->getPropertyString("info.product");
+        if(productName.isEmpty())
+            productName = iface->getPropertyString("system.product");
+    }
+    return productName;
+}
+
+bool QSystemDeviceInfoPrivate::isBatteryCharging()
+{
+    bool isCharging = false;
+    QHalInterface *iface;
+    iface = new QHalInterface();
+    QStringList list = iface->findDeviceByCapability("battery");
+    if(!list.isEmpty()) {
+        foreach(QString dev, list) {
+            QHalDeviceInterface *ifaceDevice;
+            ifaceDevice = new QHalDeviceInterface(dev);
+            if (iface->isValid()) {
+                isCharging = ifaceDevice->getPropertyBool("battery.rechargeable.is_charging");
+            }
+        }
+    }
+    return isCharging;
+}
+
+QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
+{
+//    qWarning() << __FUNCTION__;
+    QHalInterface *iface;
+    iface = new QHalInterface();
+    QStringList list = iface->findDeviceByCapability("battery");
+    if(!list.isEmpty()) {
+        foreach(QString dev, list) {
+//            qWarning() << dev;
+            QHalDeviceInterface *ifaceDevice;
+            ifaceDevice = new QHalDeviceInterface(dev);
+            if (ifaceDevice->isValid()) {
+                if(!ifaceDevice->getPropertyBool("battery.present") ){
+                    return QSystemDeviceInfo::NoBatteryLevel;
+                } else {
+                    float levelWhenFull = ifaceDevice->getPropertyInt("battery.charge_level.last_full");
+                    float level = ifaceDevice->getPropertyInt("battery.charge_level.current");
+                    level =  level / levelWhenFull * 100;
+//                    qWarning()
+//                            << level;
+                    if(level > 4) {
+                        return QSystemDeviceInfo::BatteryCritical;
+                    } else if (level > 11) {
+                        return QSystemDeviceInfo::BatteryVeryLow;
+                    } else if (level > 41) {
+                        return QSystemDeviceInfo::BatteryLow;
+                    } else  {
+                        return QSystemDeviceInfo::BatteryNormal;
+                    }
+                };
+            }
+        }
+    }
+
+    return QSystemDeviceInfo::NoBatteryLevel;
+}
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
 {
