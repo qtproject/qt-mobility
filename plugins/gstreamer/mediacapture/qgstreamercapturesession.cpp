@@ -34,7 +34,7 @@
 
 #include "qgstreamercapturesession.h"
 #include "qgstreamerplayersession.h"
-#include "qgstreamercaptureproperties.h"
+#include "qgstreameraudioencode.h"
 #include "qgstreamerbushelper.h"
 #include "qmediastreams.h"
 #include "qmediacapture.h"
@@ -51,13 +51,13 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QObject *parent)
         gst_init(NULL, NULL);
     }
 
-    m_captureProperties = new QGstreamerCaptureProperties(this);
+    m_audioEncodeControl = new QGstreamerAudioEncode(this);
 
     m_audiosrc = gst_element_factory_make("osssrc", "audiosrc");
     m_tee = gst_element_factory_make("tee", "tee");
     m_audioconvert1 = gst_element_factory_make("audioconvert", "audioconvert1");
     m_volume = gst_element_factory_make("volume", "volume");
-    m_encoder = m_captureProperties->encoder();// gst_element_factory_make("vorbisenc", "encoder");
+    m_encoder = m_audioEncodeControl->encoder();// gst_element_factory_make("vorbisenc", "encoder");
     //m_muxer = gst_element_factory_make("oggmux", "muxer");
     m_filesink = gst_element_factory_make("filesink", "filesink");
 

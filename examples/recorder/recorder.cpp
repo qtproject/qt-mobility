@@ -36,7 +36,7 @@
 
 #include <qabstractmediaservice.h>
 #include "qaudiodeviceendpoint.h"
-#include "qaudiocapturepropertiescontrol.h"
+#include "qaudioencodecontrol.h"
 
 #include <QtGui>
 
@@ -64,18 +64,18 @@ Recorder::Recorder()
     layout->addWidget(new QLabel(tr("Input device:"),this));
     layout->addWidget(deviceBox);
 
-    captureProperties = qobject_cast<QAudioCapturePropertiesControl*>(
-            audioCapture->service()->control("com.nokia.qt.AudioCapturePropertiesControl"));
+    encodeControl = qobject_cast<QAudioEncodeControl*>(
+            audioCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
 
-    if (captureProperties) {
-        qDebug() << "supported audio codecs:" << captureProperties->supportedAudioCodecs();
-        captureProperties->setAudioCodec("lame");
+    if (encodeControl) {
+        qDebug() << "supported audio codecs:" << encodeControl->supportedAudioCodecs();
+        encodeControl->setAudioCodec("lame");
 
         QComboBox *codecsBox = new QComboBox(this);
-        foreach(const QString &codecName, captureProperties->supportedAudioCodecs()) {
-            QString description = captureProperties->codecDescription(codecName);
+        foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
+            QString description = encodeControl->codecDescription(codecName);
             codecsBox->addItem(codecName+": "+description);
-            if (codecName == captureProperties->audioCodec())
+            if (codecName == encodeControl->audioCodec())
                 codecsBox->setCurrentIndex(codecsBox->count()-1);
         }
         connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
@@ -121,8 +121,8 @@ void Recorder::deviceChanged(int idx)
 
 void Recorder::codecChanged(int idx)
 {
-    if (captureProperties)
-        captureProperties->setAudioCodec( captureProperties->supportedAudioCodecs()[idx]);
+    if (encodeControl)
+        encodeControl->setAudioCodec( encodeControl->supportedAudioCodecs()[idx]);
 }
 
 void Recorder::toggleRecord()

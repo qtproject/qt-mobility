@@ -47,7 +47,7 @@
 class QComboBox;
 class QLabel;
 class QAudioDeviceEndpoint;
-class QAudioCapturePropertiesControl;
+class QAudioEncodeControl;
 
 class Recorder : public QMainWindow
 {
@@ -65,7 +65,7 @@ private slots:
 private:
     QMediaCapture* audioCapture;
     QAudioDeviceEndpoint *audioDevice;
-    QAudioCapturePropertiesControl *captureProperties;
+    QAudioEncodeControl *encodeControl;
 
     QComboBox*     deviceBox;
     QPushButton*   button;

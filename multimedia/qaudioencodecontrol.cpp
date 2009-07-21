@@ -32,48 +32,32 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOCAPTUREPROPERTIESCONTROL_H
-#define QAUDIOCAPTUREPROPERTIESCONTROL_H
+#include "qaudioencodecontrol.h"
+#include <QtCore/qstringlist.h>
 
-#include "qabstractmediacontrol.h"
-
-class QAudioFormat;
-class QStringList;
-
-#ifndef AUDIOSERVICES
-class QAudioFormat
+QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
+    :QAbstractMediaControl(parent)
 {
-};
-#endif
+}
 
-class QAudioCapturePropertiesControl : public QAbstractMediaControl
+QAudioEncodeControl::~QAudioEncodeControl()
 {
-    Q_OBJECT
-public:
-    virtual ~QAudioCapturePropertiesControl();
+}
 
-    virtual QAudioFormat format() const = 0;    
-    virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
-    virtual bool setFormat(const QAudioFormat &format) = 0;
+QStringList QAudioEncodeControl::supportedEncodingOptions() const
+{
+    return QStringList();
+}
 
-    virtual QStringList supportedAudioCodecs() const = 0;
-    virtual QString audioCodec() const = 0;
-    virtual bool setAudioCodec(const QString &codecName) = 0;
+QVariant QAudioEncodeControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
 
-    virtual QString codecDescription(const QString &codecName) = 0;
+void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
 
-    virtual int bitrate() const = 0;
-    virtual void setBitrate(int) = 0;
-
-    virtual qreal quality() const = 0;
-    virtual void setQuality(qreal) = 0;
-
-    virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name);
-    virtual void setEncodingOption(const QString &name, const QVariant &value);
-
-protected:
-    QAudioCapturePropertiesControl(QObject *parent);
-};
-
-#endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

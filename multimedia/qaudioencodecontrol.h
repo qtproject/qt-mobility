@@ -32,44 +32,48 @@
 **
 ****************************************************************************/
 
-#include "qvideocapturepropertiescontrol.h"
-#include <QtCore/qstringlist.h>
-#include <QtCore/qvariant.h>
+#ifndef QAUDIOENCODECONTROL_H
+#define QAUDIOENCODECONTROL_H
 
+#include "qabstractmediacontrol.h"
 
-QVideoCapturePropertiesControl::QVideoCapturePropertiesControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+class QAudioFormat;
+class QStringList;
+
+#ifndef AUDIOSERVICES
+class QAudioFormat
 {
-}
+};
+#endif
 
-QVideoCapturePropertiesControl::~QVideoCapturePropertiesControl()
+class QAudioEncodeControl : public QAbstractMediaControl
 {
-}
+    Q_OBJECT
+public:
+    virtual ~QAudioEncodeControl();
 
+    virtual QAudioFormat format() const = 0;    
+    virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
+    virtual bool setFormat(const QAudioFormat &format) = 0;
 
-QStringList QVideoCapturePropertiesControl::supportedEncodingOptions() const
-{
-    return QStringList();
-}
+    virtual QStringList supportedAudioCodecs() const = 0;
+    virtual QString audioCodec() const = 0;
+    virtual bool setAudioCodec(const QString &codecName) = 0;
 
-QVariant QVideoCapturePropertiesControl::encodingOption(const QString &name)
-{
-    Q_UNUSED(name);
-    return QVariant();
-}
+    virtual QString codecDescription(const QString &codecName) = 0;
 
-void QVideoCapturePropertiesControl::setEncodingOption(const QString &name, const QVariant &value)
-{
-    Q_UNUSED(name);
-    Q_UNUSED(value);
-}
+    virtual int bitrate() const = 0;
+    virtual void setBitrate(int) = 0;
 
-QList<QSize> QVideoCapturePropertiesControl::supportedResolutions() const
-{
-    return QList<QSize>();
-}
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
 
-QList< QPair<int,int> > QVideoCapturePropertiesControl::supportedFrameRates() const
-{
-    return QList< QPair<int,int> >();
-}
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
+
+protected:
+    QAudioEncodeControl(QObject *parent);
+};
+
+#endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

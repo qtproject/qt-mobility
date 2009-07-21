@@ -46,8 +46,8 @@ HEADERS = qabstractmediacontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qmediacapturecontrol.h \
-    qaudiocapturepropertiescontrol.h \
-    qvideocapturepropertiescontrol.h \
+    qaudioencodecontrol.h \
+    qvideoencodecontrol.h \
     qmediacapture.h \
     qcamera.h \
     qcameracontrol.h \
@@ -85,8 +85,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qmediacapturecontrol.cpp \
-    qaudiocapturepropertiescontrol.cpp \
-    qvideocapturepropertiescontrol.cpp \
+    qaudioencodecontrol.cpp \
+    qvideoencodecontrol.cpp \
     qmediacapture.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
