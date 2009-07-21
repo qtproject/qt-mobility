@@ -33,11 +33,24 @@
 #ifndef QLOCATIONTESTUTILS_P_H
 #define QLOCATIONTESTUTILS_P_H
 
+#include <QString>
+#include <QTest>
+
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
+
+
 class QLocationTestUtils
 {
 public:
     static void uheap_mark();
     static void uheap_mark_end();
+
+    static QString addNmeaChecksumAndBreaks(const QString &sentence);
 };
 
 #endif
