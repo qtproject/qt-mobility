@@ -1563,6 +1563,44 @@ void tst_QContactManager::contactValidation()
     QVERIFY(!cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::DetailAccessError);
 
+    /* Have to test group validation, as well */
+    QContact d;
+    d.setDisplayLabel("Dummy contact");
+
+    QVERIFY(cm->saveContact(&d));
+    QList<QUniqueId> ids;
+    d.setGroups(ids);
+    QVERIFY(cm->saveContact(&d));
+
+    // Add a few groups
+    QContactGroup g1, g2, g3;
+    g1.setName("Group XXXXXX-1");
+    g2.setName("Group XXXXXX-2");
+    g3.setName("To be removed");
+
+    QVERIFY(cm->saveGroup(&g1));
+    QVERIFY(cm->saveGroup(&g2));
+    QVERIFY(cm->saveGroup(&g3));
+
+    QVERIFY(cm->removeGroup(g3.id()));
+    QVERIFY(cm->group(g3.id()).id() == 0);
+
+    // now g3.id is an invalid group
+
+    ids << g1.id() << g2.id();
+    d.setGroups(ids);
+    QVERIFY(cm->saveContact(&d));
+    QVERIFY(cm->error() == QContactManager::NoError);
+
+    ids << g3.id();
+    d.setGroups(ids);
+    QVERIFY(!cm->saveContact(&d));
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+
+    QVERIFY(cm->removeGroup(g2.id()));
+    QVERIFY(cm->removeGroup(g1.id()));
+    QVERIFY(cm->removeContact(d.id()));
+
     delete cm;
 }
 
