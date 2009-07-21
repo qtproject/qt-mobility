@@ -5,4 +5,5 @@ SUBDIRS = tst_qgeocoordinate \
           tst_qsatelliteinfosource \
           tst_qgeopositioninfosource \
           tst_qgeoareamonitor \
-          tst_qlocationutils
+          tst_qlocationutils \
+          tst_qnmeapositioninfosource
