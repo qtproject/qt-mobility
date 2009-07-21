@@ -381,40 +381,73 @@ void tst_QContact::preferences()
     det.setValue("test", QVariant("test1"));
     c.saveDetail(&det);
     QCOMPARE(c.isPreferredDetail("testAction", det), false);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.setPreferredDetail("testAction", det), true);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.isPreferredDetail("testAction", det), true);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.isPreferredDetail(QString(), det), true);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.preferredDetail("testAction"), det);
+    QVERIFY(c.error() == QContact::NoError);
 
     // test replacement
     QContactDetail det2("TestId");
     det2.setValue("test", QVariant("test2"));
     c.saveDetail(&det2);
     QCOMPARE(c.isPreferredDetail("testAction", det2), false);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.setPreferredDetail("testAction", det2), true);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.isPreferredDetail("testAction", det2), true);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.isPreferredDetail("testAction", det), false);
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.preferredDetail("testAction"), det2);
+    QVERIFY(c.error() == QContact::NoError);
 
     // test for detail that is not part of the contact
     QContactDetail det3("TestId");
     det3.setValue("test", QVariant("test3"));
     QCOMPARE(c.setPreferredDetail("testAction", det3), false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+
     QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
+    QVERIFY(c.error() == QContact::NoError);
 
     // test invalid set
     QCOMPARE(c.setPreferredDetail(QString(), det3), false);
+    QVERIFY(c.error() == QContact::BadArgumentError);
+
     QCOMPARE(c.setPreferredDetail(QString(), QContactDetail()), false);
+    QVERIFY(c.error() == QContact::BadArgumentError);
+
     QCOMPARE(c.setPreferredDetail("testAction", QContactDetail()), false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+
     QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
+    QVERIFY(c.error() == QContact::NoError);
 
     // test invalid query
     QContactDetail det4;
     det4.setValue("test", QVariant("test4"));
     c.saveDetail(&det4);
     QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+
     QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
+    QVERIFY(c.error() == QContact::NoError);
+
     QCOMPARE(c.isPreferredDetail("testAction", QContactDetail()), false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
 
     // test retrieving preferred details
     QContactDetail pd = c.preferredDetail(QString());
@@ -426,6 +459,39 @@ void tst_QContact::preferences()
     // test for preference for action that hasn't been added
     QVERIFY(c.preferredDetail("NonexistentAction").isEmpty());
     QCOMPARE(c.error(), QContact::DetailDoesNotExistError);
+
+    // Remove a non preferred detail
+    QContactDetail det2copy("TestId");
+    det2copy.setValue("test", QVariant("test2"));
+    QVERIFY(c.saveDetail(&det2copy));
+    QVERIFY(c.error() == QContact::NoError);
+
+    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.removeDetail(&det2copy));
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
+    QVERIFY(c.error() == QContact::NoError);
+
+    // Add it again
+    QVERIFY(c.saveDetail(&det2copy));
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
+    QVERIFY(c.error() == QContact::NoError);
+
+    // Remove the preferred detail (the copy should not become preferred)
+    QVERIFY(c.removeDetail(&det2));
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2) == false);
+    QVERIFY(c.error() == QContact::NoError);
+    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
+    QVERIFY(c.error() == QContact::NoError);
 }
 
 void tst_QContact::displayName()

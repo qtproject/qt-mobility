@@ -456,17 +456,7 @@ bool QContact::setPreferredDetail(const QString& actionName, const QContactDetai
     }
 
     // check to see whether the the given preferredDetail is saved in this contact
-    bool detailExists = false;
-    for (int i = 0; i < d->m_details.size(); i++) {
-        QContactDetail det = d->m_details.at(i);
-        if (det == preferredDetail) {
-            detailExists = true;
-            break;
-        }
-    }
-
-    // if not, return error.
-    if (!detailExists) {
+    if (!d->m_details.contains(preferredDetail)) {
         QContactData::setError(d, QContact::DetailDoesNotExistError);
         return false;
     }
@@ -480,18 +470,19 @@ bool QContact::setPreferredDetail(const QString& actionName, const QContactDetai
 /*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
 bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
-    QContactData::setError(d, QContact::NoError);
-    if (actionName.isEmpty()) {
-        if (d->m_preferences.values().contains(detail.d->m_id)) {
-            return true;
-        }
-
+    if (!d->m_details.contains(detail)) {
+        QContactData::setError(d, QContact::DetailDoesNotExistError);
         return false;
     }
 
-    if (d->m_preferences.value(actionName) == detail.d->m_id)
-        return true;
+    QContactData::setError(d, QContact::NoError);
+    if (actionName.isEmpty()) {
+         return d->m_preferences.values().contains(detail.d->m_id);
+    }
 
+    QMap<QString, quint32>::const_iterator it = d->m_preferences.find(actionName);
+    if (it != d->m_preferences.end() && it.value() == detail.d->m_id)
+        return true;
 
     return false;
 }
