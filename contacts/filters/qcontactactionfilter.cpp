@@ -54,18 +54,6 @@ void QContactActionFilter::setValue(const QVariant& value)
     d->m_value = value;
 }
 
-void QContactActionFilter::setVendorName(const QString& vendorName)
-{
-    Q_D(QContactActionFilter);
-    d->m_vendorName = vendorName;
-}
-
-void QContactActionFilter::setVendorVersion(int version)
-{
-    Q_D(QContactActionFilter);
-    d->m_vendorVersion = version;
-}
-
 void QContactActionFilter::setVendor(const QString& vendorName, int version)
 {
     Q_D(QContactActionFilter);

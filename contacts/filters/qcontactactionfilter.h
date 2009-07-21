@@ -45,8 +45,6 @@ public:
 
     void setActionName(const QString& action);
     void setValue(const QVariant& value);
-    void setVendorName(const QString& vendorName);
-    void setVendorVersion(int version);
     void setVendor(const QString& vendorName, int version = -1);
 
     /* Accessors */
