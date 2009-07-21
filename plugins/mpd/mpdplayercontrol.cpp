@@ -38,6 +38,7 @@
 #include "mpdplaylistsource.h"
 #include "mpddaemon.h"
 
+#include "qmediaplaylist.h"
 
 MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd, QObject *parent):
     QMediaPlayerControl(parent),

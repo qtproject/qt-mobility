@@ -107,7 +107,7 @@ void QMediaPlaylistPrivate::_q_itemsRemoved()
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
 
-    \sa QMediaSource
+    \sa QMediaResource
 */
 
 
@@ -178,14 +178,19 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
+    Returns the primary resource for the media item at \a index.
+*/
+QMediaResource QMediaPlaylist::resource(int index) const
+{
+    return d_func()->source->resources(index).value(0);
+}
+
+/*!
   Returns the media source at index \a position in the playlist.  
   */
-QMediaSource QMediaPlaylist::itemAt(int position) const
+QMediaResourceList QMediaPlaylist::resources(int position) const
 {
-    if (position<0 || position>=size())
-        return QMediaSource();
-    else
-        return d_func()->source->itemAt(position);
+    return d_func()->source->resources(position);
 }
 
 /*!
@@ -193,10 +198,11 @@ QMediaSource QMediaPlaylist::itemAt(int position) const
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::append(const QMediaSource &source)
+bool QMediaPlaylist::appendItem(const QMediaResource &resource)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->append(source);
+    return !resource.isNull()
+            ? d_func()->source->appendItem(QMediaResourceList() << resource)
+            : false;
 }
 
 /*!
@@ -204,10 +210,9 @@ bool QMediaPlaylist::append(const QMediaSource &source)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::append(const QList<QMediaSource> &sources)
+bool QMediaPlaylist::appendItem(const QMediaResourceList &resources)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->append(sources);
+    return d_func()->source->appendItem(resources);
 }
 
 /*!
@@ -215,10 +220,16 @@ bool QMediaPlaylist::append(const QList<QMediaSource> &sources)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::insert(int pos, const QMediaSource &source)
+bool QMediaPlaylist::insertItem(int pos, const QMediaResource &resource)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->insert(pos,source);
+    return !resource.isNull()
+            ? d_func()->source->insertItem(pos, QMediaResourceList() << resource)
+            : false;
+}
+
+bool QMediaPlaylist::insertItem(int index, const QMediaResourceList &resources)
+{
+    return d_func()->source->insertItem(index, resources);
 }
 
 /*!
@@ -226,10 +237,10 @@ bool QMediaPlaylist::insert(int pos, const QMediaSource &source)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::remove(int pos)
+bool QMediaPlaylist::removeItem(int pos)
 {
     Q_D(QMediaPlaylist);
-    return d->source->remove(pos);
+    return d->source->removeItem(pos);
 }
 
 /*!
@@ -237,10 +248,10 @@ bool QMediaPlaylist::remove(int pos)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::remove(int start, int end)
+bool QMediaPlaylist::removeItems(int start, int end)
 {
     Q_D(QMediaPlaylist);
-    return d->source->remove(start, end);
+    return d->source->removeItems(start, end);
 }
 
 /*!
@@ -256,10 +267,8 @@ bool QMediaPlaylist::clear()
 
 bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 {
-    while (!reader->atEnd()) {
-        QMediaSource src = reader->readItem();
-        source->append(src);
-    }
+    while (!reader->atEnd())
+        source->appendItem(reader->readItem());
 
     return true;
 }
@@ -267,7 +276,7 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 {
     for (int i=0; i<source->size(); i++) {
-        if (!writter->writeItem(source->itemAt(i)))
+        if (!writter->writeItem(source->resources(i)))
             return false;
     }
     writter->close();

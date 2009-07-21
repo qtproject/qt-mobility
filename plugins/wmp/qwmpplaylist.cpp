@@ -37,7 +37,6 @@
 #include "qwmpevents.h"
 #include "qwmpmetadata.h"
 #include "qwmpglobal.h"
-#include "qmediasource.h"
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
@@ -105,22 +104,22 @@ int QWmpPlaylist::size() const
     return m_count;
 }
 
-QMediaSource QWmpPlaylist::itemAt(int pos) const
+QMediaResourceList QWmpPlaylist::resources(int pos) const
 {
-    QMediaSource source;
+    QMediaResourceList resources;
 
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(pos, &media) == S_OK) {
         BSTR uri = 0;
         if (media->get_sourceURL(&uri) == S_OK) {
-            source.setDataLocation(QUrl(
-                    QString::fromWCharArray(static_cast<const wchar_t *>(uri))));
+            resources.append(QMediaResource(QUrl(
+                    QString::fromWCharArray(static_cast<const wchar_t *>(uri)))));
             ::SysFreeString(uri);
         }
         media->Release();
     }
 
-    return source;
+    return resources;
 }
 
 bool QWmpPlaylist::isReadOnly() const
@@ -128,13 +127,13 @@ bool QWmpPlaylist::isReadOnly() const
     return false;
 }
 
-bool QWmpPlaylist::append(const QMediaSource &source)
+bool QWmpPlaylist::appendItem(const QMediaResourceList &resources)
 {
     bool appended = false;
 
     IWMPMedia *media = 0;
-    if (m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+    if (!resources.isEmpty() && m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(resources.first().uri()), &media) == S_OK) {
         appended = m_playlist->appendItem(media) == S_OK;
 
         media->Release();
@@ -143,22 +142,13 @@ bool QWmpPlaylist::append(const QMediaSource &source)
     return appended;
 }
 
-bool QWmpPlaylist::append(const QList<QMediaSource> &sources)
-{
-    foreach (const QMediaSource &source, sources) {
-        if (!append(source))
-            return false;
-    }
-    return true;
-}
-
-bool QWmpPlaylist::insert(int pos, const QMediaSource &source)
+bool QWmpPlaylist::insertItem(int pos, const QMediaResourceList &resources)
 {
     bool inserted = false;
 
     IWMPMedia *media = 0;
-    if (m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(source.dataLocation().toString()), &media) == S_OK) {
+    if (!resources.isEmpty() && m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(resources.first().uri()), &media) == S_OK) {
         inserted = m_playlist->insertItem(pos, media) == S_OK;
 
         media->Release();
@@ -167,7 +157,7 @@ bool QWmpPlaylist::insert(int pos, const QMediaSource &source)
     return inserted;
 }
 
-bool QWmpPlaylist::remove(int pos)
+bool QWmpPlaylist::removeItem(int pos)
 {
     IWMPMedia *media = 0;
     if (m_playlist->get_item(pos, &media) == S_OK) {
@@ -181,7 +171,7 @@ bool QWmpPlaylist::remove(int pos)
     }
 }
 
-bool QWmpPlaylist::remove(int start, int end)
+bool QWmpPlaylist::removeItems(int start, int end)
 {
     if (!m_playlist)
         return false;

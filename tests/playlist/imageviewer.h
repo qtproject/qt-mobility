@@ -60,7 +60,7 @@ public slots:
     void back();
     void shuffle();
 
-    void display(const QMediaSource &);
+    void display(const QMediaResourceList &);
 
     void jump(const QModelIndex &index);
 

@@ -139,25 +139,10 @@ bool QMediaPlaylistSource::isReadOnly() const
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::append(const QMediaSource &source)
+bool QMediaPlaylistSource::appendItem(const QMediaResourceList &resources)
 {
-    Q_UNUSED(source);
+    Q_UNUSED(resources);
     return false;
-}
-
-/*!
-  Append a list of \a sources to the playlist.
-
-  Returns true if the operation is successfull, other wise return false.
-*/
-bool QMediaPlaylistSource::append(const QList<QMediaSource> &sources)
-{
-    foreach(const QMediaSource& source, sources ) {
-        if (!append(source))
-            return false;
-    }
-
-    return true;
 }
 
 /*!
@@ -165,10 +150,10 @@ bool QMediaPlaylistSource::append(const QList<QMediaSource> &sources)
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::insert(int pos, const QMediaSource &source)
+bool QMediaPlaylistSource::insertItem(int pos, const QMediaResourceList &resources)
 {
     Q_UNUSED(pos);
-    Q_UNUSED(source);
+    Q_UNUSED(resources);
     return false;
 }
 
@@ -177,7 +162,7 @@ bool QMediaPlaylistSource::insert(int pos, const QMediaSource &source)
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::remove(int pos)
+bool QMediaPlaylistSource::removeItem(int pos)
 {
     Q_UNUSED(pos);
     return false;
@@ -188,10 +173,10 @@ bool QMediaPlaylistSource::remove(int pos)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylistSource::remove(int start, int end)
+bool QMediaPlaylistSource::removeItems(int start, int end)
 {
     for (int pos=start; pos<=end; pos++) {
-        if (!remove(pos))
+        if (!removeItem(pos))
             return false;
     }
 
@@ -205,7 +190,7 @@ bool QMediaPlaylistSource::remove(int start, int end)
   */
 bool QMediaPlaylistSource::clear()
 {
-    return remove(0, size()-1);
+    return removeItems(0, size()-1);
 }
 
 /*!

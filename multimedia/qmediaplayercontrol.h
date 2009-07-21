@@ -38,7 +38,6 @@
 #include "qabstractmediacontrol.h"
 
 class QMediaPlaylist;
-class QMediaSource;
 
 class Q_MEDIA_EXPORT QMediaPlayerControl : public QAbstractMediaControl
 {
@@ -91,7 +90,6 @@ Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void playlistPositionChanged(int position);
-    void currentMediaChanged(const QMediaSource&);
     void stateChanged(int newState);
     void mediaStatusChanged(int state);
     void volumeChanged(int volume);

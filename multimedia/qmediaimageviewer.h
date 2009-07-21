@@ -37,7 +37,7 @@
 
 #include <QtGui/qwidget.h>
 
-#include "qmediasource.h"
+#include "qmediaresource.h"
 
 
 class QMediaImageViewerPrivate;
@@ -46,7 +46,7 @@ class Q_MEDIA_EXPORT QMediaImageViewer : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QMediaSource mediaSource READ mediaSource WRITE setMediaSource NOTIFY mediaSourceChanged)
+    Q_PROPERTY(QMediaResourceList mediaResources READ mediaResources WRITE setMediaResources)
     Q_PROPERTY(int interval READ interval NOTIFY intervalChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
@@ -62,10 +62,10 @@ public:
     int interval() const;
     State state() const;
 
-    QMediaSource mediaSource() const;
+    QMediaResourceList mediaResources() const;
 
 public Q_SLOTS:
-    void setMediaSource(QMediaSource mediaSource);
+    void setMediaResources(const QMediaResourceList &resources);
 
     void play();
     void pause();

@@ -36,8 +36,8 @@
 #define QMEDIAPLAYLISTSOURCE_H
 
 #include <QObject>
-#include "qmediasource.h"
-#include "qmediaplaylist.h"
+
+#include "qmediaresource.h"
 
 class QString;
 
@@ -55,15 +55,14 @@ public:
     virtual bool save(QIODevice * device, const char *format);
 
     virtual int size() const = 0;
-    virtual QMediaSource itemAt(int pos) const = 0;
+    virtual QMediaResourceList resources(int index) const = 0;
 
     virtual bool isReadOnly() const;
 
-    virtual bool append(const QMediaSource &source);
-    virtual bool append(const QList<QMediaSource> &sources);
-    virtual bool insert(int pos, const QMediaSource &source);
-    virtual bool remove(int pos);
-    virtual bool remove(int start, int end);
+    virtual bool appendItem(const QMediaResourceList &resource);
+    virtual bool insertItem(int index, const QMediaResourceList &resources);
+    virtual bool removeItem(int pos);
+    virtual bool removeItems(int start, int end);
     virtual bool clear();
 
 public Q_SLOTS:

@@ -35,7 +35,6 @@
 #include "qphononplayercontrol.h"
 
 #include "qmediaplaylistnavigator.h"
-#include "qmediasource.h"
 
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
@@ -52,8 +51,8 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
 
     m_session->setTickInterval(1000);
 
-    connect(m_navigator, SIGNAL(activated(QMediaSource)),
-            this, SLOT(play(QMediaSource)));
+    connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
+            this, SLOT(play(QMediaResourceList)));
     connect(m_navigator, SIGNAL(currentPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
 
@@ -85,11 +84,6 @@ QPhononPlayerControl::~QPhononPlayerControl()
 int QPhononPlayerControl::playlistPosition() const
 {
     return m_navigator->currentPosition();
-}
-
-QMediaSource QPhononPlayerControl::currentMediaSource() const
-{
-    return m_navigator->currentItem();
 }
 
 qint64 QPhononPlayerControl::position() const
@@ -203,21 +197,16 @@ void QPhononPlayerControl::setMuted(bool muted)
     m_audioOutput->setMuted(muted);
 }
 
-void QPhononPlayerControl::play(const QMediaSource &src)
+void QPhononPlayerControl::play(const QMediaResourceList &resources)
 {
-    QVariant location = src.dataLocation();
     QUrl url;
 
-    if (location.convert(QVariant::Url)) {
-        url = location.toUrl();
-    } else if (location.convert(QVariant::String)) {
-        url = QUrl(location.toString());
-    }
+    if (!resources.isEmpty())
+        url = resources.first().uri();
 
     if (url.isValid()) {
         m_session->stop();
         m_session->setCurrentSource(url);
-        emit currentMediaChanged(src);
         m_session->play();        
     } else {
         m_navigator->advance();

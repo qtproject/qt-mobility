@@ -35,9 +35,9 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-#include "qmediasource.h"
-#include <QtCore/qobject.h>
+#include "qmediaresource.h"
 
+#include <QtCore/qobject.h>
 
 class QMediaPlaylistSource;
 
@@ -49,17 +49,19 @@ public:
     QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
-    QMediaSource itemAt(int position) const;
+    QMediaResource resource(int index) const;
+    QMediaResourceList resources(int position) const;
 
     int size() const;
     bool isEmpty() const;
     bool isReadOnly() const;
 
-    bool append(const QMediaSource &source);
-    bool append(const QList<QMediaSource> &sources);
-    bool insert(int pos, const QMediaSource &source);
-    bool remove(int pos);
-    bool remove(int start, int end);
+    bool appendItem(const QMediaResource &resource);
+    bool appendItem(const QMediaResourceList &resources);
+    bool insertItem(int index, const QMediaResource &resource);
+    bool insertItem(int index, const QMediaResourceList &resources);
+    bool removeItem(int pos);
+    bool removeItems(int start, int end);
     bool clear();
 
     bool load(const QString &location, const char *format = 0);

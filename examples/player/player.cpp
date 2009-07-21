@@ -144,13 +144,14 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
-    if (!fileNames.isEmpty()) {
-        QList<QMediaSource> sources;
-
-        foreach (QString const &fileName, fileNames)
-            sources << QMediaSource("", QLatin1String("file://") + fileName);
-
-        player->mediaPlaylist()->append(sources);
+    foreach (QString const &fileName, fileNames) {
+#ifndef Q_OS_WIN
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file://") + fileName)));
+#else
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
+#endif
     }
 }
 

@@ -34,7 +34,6 @@
 
 #include "radiocontrol.h"
 #include "radioservice.h"
-#include "qmediasource.h"
 
 #include <QtCore/qdebug.h>
 
