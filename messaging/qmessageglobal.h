@@ -64,4 +64,32 @@
 #  endif
 #endif
 
+// A variant of Q_GLOBAL_STATIC for use in class scope
+#define Q_SCOPED_STATIC_DECLARE(TYPE, NAME)                      \
+    static TYPE *NAME();
+
+#if defined(QT_NO_THREAD)
+#  define Q_SCOPED_STATIC_DEFINE(TYPE, SCOPE, NAME)              \
+    TYPE *SCOPE::NAME()                                          \
+    {                                                            \
+        static TYPE this_##NAME;                                 \
+        static QGlobalStatic<TYPE > global_##NAME(&this_##NAME); \
+        return global_##NAME.pointer;                            \
+    }
+#  else
+#  define Q_SCOPED_STATIC_DEFINE(TYPE, SCOPE, NAME)                     \
+    Q_GLOBAL_STATIC_INIT(TYPE, NAME);                                   \
+    TYPE *SCOPE::NAME()                                                 \
+    {                                                                   \
+        if (!this_##NAME.pointer && !this_##NAME.destroyed) {           \
+            TYPE *x = new TYPE;                                         \
+            if (!this_##NAME.pointer.testAndSetOrdered(0, x))           \
+                delete x;                                               \
+            else                                                        \
+                static QGlobalStaticDeleter<TYPE > cleanup(this_##NAME); \
+        }                                                               \
+        return this_##NAME.pointer;                                     \
+    }
+#endif
+
 #endif // QMESSAGINGGLOBAL_H
