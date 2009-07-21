@@ -558,6 +558,10 @@ void tst_QContactManager::groups()
         QVERIFY(cm->removeContact(a.id()));
         QVERIFY(cm->removeContact(b.id()));
 
+        /* Make sure we can't save the group with a or b in it */
+        QVERIFY(!cm->saveGroup(&g2));
+        QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+
         /* Just adjust c to not have any groups */
         c.setGroups(QList<QUniqueId>());
         QVERIFY(cm->saveContact(&c));
