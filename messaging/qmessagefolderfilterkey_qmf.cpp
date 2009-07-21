@@ -83,7 +83,7 @@ void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options
     d_ptr->_options |= options;
 }
 
-QMessageDataComparator::Options QMessageFolderFilterKey::options()
+QMessageDataComparator::Options QMessageFolderFilterKey::options() const
 {
     return d_ptr->_options;
 }

@@ -39,7 +39,7 @@ void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options
     Q_UNUSED(options)
 }
 
-QMessageDataComparator::Options QMessageFolderFilterKey::options()
+QMessageDataComparator::Options QMessageFolderFilterKey::options() const
 {
     return 0;
 }

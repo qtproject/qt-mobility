@@ -70,7 +70,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::options()
+    \fn QMessageFilterKey::options() const
   
     Return the options for the search key.
     

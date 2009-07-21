@@ -48,7 +48,7 @@ class Q_MESSAGING_EXPORT QMessageFolderFilterKey
 
 public:
     void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options();
+    QMessageDataComparator::Options options() const;
 
     QMessageFolderFilterKey();
     QMessageFolderFilterKey(const QMessageFolderFilterKey &other);

@@ -49,7 +49,7 @@ class Q_MESSAGING_EXPORT QMessageFilterKey
 
 public:
     void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options();
+    QMessageDataComparator::Options options() const;
 
     QMessageFilterKey();
     QMessageFilterKey(const QMessageFilterKey &other);

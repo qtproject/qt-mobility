@@ -62,7 +62,7 @@
 */
 
 /*!
-    \fn QMessageDataComparator::Options QMessageFolderFilterKey::options()
+    \fn QMessageDataComparator::Options QMessageFolderFilterKey::options() const
   
     Return the options for the search key.
     
