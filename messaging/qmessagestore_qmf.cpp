@@ -41,9 +41,10 @@ using namespace QmfHelpers;
 class QMessageStorePrivate
 {
 public:
-    QMessageStorePrivate() : _store(QMailStore::instance()) {}
+    QMessageStorePrivate() : _store(QMailStore::instance()), _error(QMessageStore::NoError) {}
 
     QMailStore *_store;
+    QMessageStore::ErrorCode _error;
 
     Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
 };
@@ -64,111 +65,152 @@ QMessageStore::~QMessageStore()
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
 {
-    return NotYetImplemented;
+    if (d_ptr->_error != QMessageStore::NoError) {
+        return d_ptr->_error;
+    }
+
+    return convert(d_ptr->_store->lastError());
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return QMessageIdList();
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey)));
+
+    // TODO: Extend QMF to support limit/offset
     Q_UNUSED(limit)
     Q_UNUSED(offset)
-    return QMessageIdList(); // stub
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return QMessageFolderIdList();
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->queryFolders(convert(key), convert(sortKey)));
+
+    // TODO: Extend QMF to support limit/offset
     Q_UNUSED(limit)
     Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
 }
 #endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return QMessageAccountIdList();
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->queryAccounts(convert(key), convert(sortKey)));
+
+    // TODO: Extend QMF to support limit/offset
     Q_UNUSED(limit)
     Q_UNUSED(offset)
-    return QMessageAccountIdList(); // stub
 }
 
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return 0;
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->countMessages(convert(key));
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return 0;
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->countFolders(convert(key));
 }
 #endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return 0;
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->countAccounts(convert(key));
 }
 
-bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
+bool QMessageStore::removeMessage(const QMessageId& id, QMessageStore::RemovalOption option)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(option)
-    return false; // stub
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->removeMessage(convert(id), convert(option));
 }
 
 bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
 {
-    Q_UNUSED(key)
-    Q_UNUSED(option)
-    return true; // stub
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->removeMessages(convert(key), convert(option));
 }
 
 bool QMessageStore::addMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    QMailMessage msg(convert(*m));
+
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->addMessage(&msg);
 }
 
 bool QMessageStore::updateMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    QMailMessage msg(convert(*m));
+
+    d_ptr->_error = QMessageStore::NoError;
+    return d_ptr->_store->updateMessage(&msg);
 }
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->message(convert(id)));
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->folder(convert(id)));
 }
 #endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageAccount(); // stub
+    d_ptr->_error = QMessageStore::NoError;
+    return convert(d_ptr->_store->account(convert(id)));
 }
 
 void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
 {
+    // TODO: implement memory constraints
     Q_UNUSED(maximumBytes)
 }
 
 uint QMessageStore::maximumWorkingMemory()
 {
+    // TODO: implement memory constraints
     return 0; // stub
 }
 
@@ -179,9 +221,17 @@ QMessageStore* QMessageStore::instance()
     
 void QMessageStore::startNotifications(const QMessageFilterKey &key)
 {
+    if (key.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return;
+    }
+    
+    // TODO: implement notifications
     Q_UNUSED(key)    
 }
 
 void QMessageStore::stopNotifications()
 {
+    // TODO: implement notifications
 }
+
