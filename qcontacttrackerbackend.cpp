@@ -109,8 +109,10 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactTrackerEngine::contacts(QContactManager::Error& error) const
+QList<QUniqueId> QContactTrackerEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
 {
+    Q_UNUSED(sortOrder)
+
     QList<QUniqueId> ids;
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     RDFSelect query;
@@ -118,7 +120,6 @@ QList<QUniqueId> QContactTrackerEngine::contacts(QContactManager::Error& error) 
     query.addColumn("contact_uri", RDFContact);
     query.addColumn("contactId", RDFContact.property<nco::contactUID>());
     LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-
     for(int i=0; i<ncoContacts->rowCount(); i++) {
         ids.append(ncoContacts->index(i, 1).data().toInt());
     }
@@ -155,18 +156,13 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
         return QContact();
     }
 
-    // Contact exists! Then continue with the contact loading.
-    Live<nco::PersonContact> ncoContact = ncoContacts->liveNode(0); // We only have one node in the list
-                                                                    // and we have checked already that it exists.
-
     QContact contact;
-    return Tracker2QContact::copyContactData( ncoContact, contact ) ? contact : QContact();
+    return Tracker2QContact::copyContactData( ncoContacts->liveNode(0), contact ) ? contact : QContact();
 }
 
 bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
 {
     //::tracker()->setVerbosity(3);
-    // TODO: batch
 
     if(contact == 0) {
         error = QContactManager::BadArgumentError;
