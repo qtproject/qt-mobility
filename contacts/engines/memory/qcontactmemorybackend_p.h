@@ -107,8 +107,8 @@ public:
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups(QContactManager::Error& error) const;
     QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    bool saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
+    bool removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;

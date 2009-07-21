@@ -275,21 +275,23 @@ QContactGroup QContactMemoryEngine::group(const QUniqueId& groupId, QContactMana
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
+bool QContactMemoryEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
 {
     if (!group) {
         error = QContactManager::BadArgumentError;
         return false;
     }
 
-    if (group->name().isEmpty()) {
-        error = QContactManager::BadArgumentError;
+    if (!validateGroup(*group, error)) {
         return false;
     }
 
     // if the group does not exist, generate a new group id for it.
     if (!d->m_groups.contains(group->id())) {
         group->setId(++d->m_nextGroupId);
+        groupsAdded << group->id();
+    } else {
+        groupsChanged << group->id();
     }
 
     // save it in the database
@@ -299,9 +301,11 @@ bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactManager::Erro
     for (int i=0; i < group->members().count(); i++) {
         int idx = d->m_contactIds.indexOf(group->members().value(i));
         QList<QUniqueId> groups = d->m_contacts[idx].groups();
-        if (!groups.contains(group->id()))
+        if (!groups.contains(group->id())) {
             groups.append(group->id());
-        d->m_contacts[idx].setGroups(groups);
+            d->m_contacts[idx].setGroups(groups);
+            contactsChanged << d->m_contacts[idx].id();
+        }
     }
 
     error = QContactManager::NoError;
@@ -309,7 +313,7 @@ bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactManager::Erro
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
+bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
 {
     if (!d->m_groups.contains(groupId)) {
         error = QContactManager::DoesNotExistError;
@@ -321,11 +325,14 @@ bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactManager
     for (int i=0; i < g.members().count(); i++) {
         int idx = d->m_contactIds.indexOf(g.members().value(i));
         QList<QUniqueId> groups = d->m_contacts[idx].groups();
-        groups.removeAll(groupId);
-        d->m_contacts[idx].setGroups(groups);
+        if (groups.removeAll(groupId)) {
+            d->m_contacts[idx].setGroups(groups);
+            contactsChanged << d->m_contacts[idx].id();
+        }
     }
 
     d->m_groups.remove(groupId);
+    groupsRemoved << groupId;
     error = QContactManager::NoError;
     return true;
 }

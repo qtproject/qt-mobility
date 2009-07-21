@@ -699,6 +699,32 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 }
 
 /*!
+ * Checks that the given \a group passes seems valid.
+ *
+ * This means:
+ * - it has a name
+ * - any contacts that are in the group exist
+ *
+ * Returns true if the group seems valid, false otherwise.
+ */
+bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactManager::Error& error) const
+{
+    if (group.name().isEmpty()) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    // Fetch a whole contact to test for existence?
+    for (int i=0; i < group.members().count(); i++) {
+        if (contact(group.members().at(i), error).isEmpty()) {
+            error = QContactManager::DoesNotExistError;
+            return false;
+        }
+    }
+    return true;
+}
+
+/*!
  * Remove the contact identified by \a contactId from the database.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
@@ -753,12 +779,21 @@ QContactGroup QContactManagerEngine::group(const QUniqueId& groupId, QContactMan
  *
  * Returns true on success, or false on failure.
  *
+ * Any groups that are added by this operation should be added to \a groupsAdded,
+ * any groups that are changed by this operation should be added to \a groupsChanged, and
+ * any contacts that are changed by this operation should be added to \a contactsChanged.
+ *
+ * The base implementation will emit the appropriate signals based on the returned ids.
+ *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
+bool QContactManagerEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
 {
     Q_UNUSED(group);
+    Q_UNUSED(groupsAdded);
+    Q_UNUSED(groupsChanged);
+    Q_UNUSED(contactsChanged);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -769,12 +804,19 @@ bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Err
  * Returns false if no group with that id exists, or the operation otherwise failed.
  * Returns true if the group was successfully deleted.
  *
+ * Any groups that are removed by this operation should be added to \a groupsRemoved, and
+ * any contacts that are changed by this operation should be added to \a contactsChanged.
+ *
+ * The base implementation will emit the appropriate signals based on the returned ids.
+ *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
+bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
 {
     Q_UNUSED(groupId);
+    Q_UNUSED(groupsRemoved);
+    Q_UNUSED(contactsChanged);
     error = QContactManager::NotSupportedError;
     return false;
 }

@@ -449,13 +449,37 @@ QContactGroup QContactManager::group(const QUniqueId& groupId) const
  */
 bool QContactManager::saveGroup(QContactGroup* group)
 {
-    return d->m_engine->saveGroup(group, d->m_error);
+    QSet<QUniqueId> added;
+    QSet<QUniqueId> changed;
+    QSet<QUniqueId> contacts;
+
+    bool ret = d->m_engine->saveGroup(group, added, changed, contacts, d->m_error);
+
+    /* Emit the signals from the engine, since it might be connected to multiple places */
+    if (!added.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
+    if (!changed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
+    if (!contacts.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
+
+    return ret;
 }
 
 /*! Remove the group with the given id \a groupId from the database.  Returns false if no group with that id exists, or the operation otherwise failed.  Returns true if the group was successfully deleted. */
 bool QContactManager::removeGroup(const QUniqueId& groupId)
 {
-    return d->m_engine->removeGroup(groupId, d->m_error);
+    QSet<QUniqueId> removed;
+    QSet<QUniqueId> contacts;
+
+    bool ret = d->m_engine->removeGroup(groupId, removed, contacts, d->m_error);
+
+    if (!removed.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "groupsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
+    if (!contacts.isEmpty())
+        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
+
+    return ret;
 }
 
 /*!

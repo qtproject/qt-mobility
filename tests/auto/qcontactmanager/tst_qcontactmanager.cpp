@@ -122,6 +122,7 @@ void tst_QContactManager::cleanup()
 // to get QFETCH to work with the template expression...
 typedef QMap<QString,QString> tst_QContactManager_QStringMap;
 Q_DECLARE_METATYPE(tst_QContactManager_QStringMap);
+Q_DECLARE_METATYPE(QList<QUniqueId>);
 
 void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QContact& cb)
 {
@@ -1610,6 +1611,15 @@ void tst_QContactManager::signalEmission()
     QContactManager* m1 = QContactManager::fromUri(uri);
     QContactManager* m2 = QContactManager::fromUri(uri);
 
+    /* There's a hitch with the memory engine - anonymous engines don't share signals */
+    QString engine;
+    QMap<QString, QString> params;
+    QContactManager::splitUri(uri, &engine, &params);
+
+    // If this is the memory engine, we skip some
+    // cross manager notification tests (anonymous ids)
+    bool skipCross = engine == "memory" && params["id"].isEmpty();
+
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
     QSignalSpy spyCA(m1, SIGNAL(contactsAdded(QList<QUniqueId>)));
@@ -1695,12 +1705,7 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     QCOMPARE(spyCR.count(), remSigCount);
 
-    /* There's a hitch with the memory engine - anonymous engines don't share signals */
-    QString engine;
-    QMap<QString, QString> params;
-    QContactManager::splitUri(uri, &engine, &params);
-
-    if (engine != "memory" || !params["id"].isEmpty()) {
+    if (!skipCross) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
@@ -1723,6 +1728,13 @@ void tst_QContactManager::signalEmission()
         g1.setName("XXXXXX Group");
         QVariantList vl;
 
+        /* For cross notification testing, add everything to m2 and watch on m1 */
+        QContactManager *adder = skipCross ? m1 : m2;
+
+        // Make sure we have two contacts to test with
+        QVERIFY(adder->saveContact(&c));
+        QVERIFY(adder->saveContact(&c2));
+
         // Reset the counts so we don't get confused.
         spyCA.clear();
         spyCM.clear();
@@ -1732,22 +1744,24 @@ void tst_QContactManager::signalEmission()
         spyGR.clear();
 
         // Save an empty group
-        QVERIFY(m1->saveGroup(&g1));
+        QVERIFY(adder->saveGroup(&g1));
 
         QVERIFY(spyCA.count() == 0);
         QVERIFY(spyCM.count() == 0);
         QVERIFY(spyCR.count() == 0);
-        QEXPECT_FAIL("", "Group signals don't work yet", Abort);
         QVERIFY(spyGA.count() == 1);
         QVERIFY(spyGC.count() == 0);
         QVERIFY(spyGR.count() == 0);
 
         vl = spyGA.takeFirst();
         QVERIFY(vl.size() == 1);
-        QVERIFY(vl.at(0).value<QUniqueId>() == g1.id());
+        QList<QUniqueId> sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == g1.id());
 
+        // Add one member (via the group)
         g1.addMember(c.id());
-        QVERIFY(m1->saveGroup(&g1));
+        QVERIFY(adder->saveGroup(&g1));
 
         QVERIFY(spyCA.count() == 0);
         QVERIFY(spyCM.count() == 1);
@@ -1758,11 +1772,81 @@ void tst_QContactManager::signalEmission()
 
         vl = spyCM.takeFirst();
         QVERIFY(vl.size() == 1);
-        QVERIFY(vl.at(0).value<QUniqueId>() == c.id());
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == c.id());
 
         vl = spyGC.takeFirst();
         QVERIFY(vl.size() == 1);
-        QVERIFY(vl.at(0).value<QUniqueId>() == g1.id());
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == g1.id());
+
+        // Add one member (via the contact)
+        c2.setGroups(QList<QUniqueId>() << g1.id());
+        QVERIFY(adder->saveContact(&c2));
+
+        QVERIFY(spyCA.count() == 0);
+        QVERIFY(spyCM.count() == 1);
+        QVERIFY(spyCR.count() == 0);
+        QVERIFY(spyGA.count() == 0);
+        QVERIFY(spyGC.count() == 1);
+        QVERIFY(spyGR.count() == 0);
+
+        vl = spyCM.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == c2.id());
+
+        vl = spyGC.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == g1.id());
+
+        // delete from group (via removing contact)
+        QVERIFY(adder->removeContact(c.id()));
+        QVERIFY(spyCA.count() == 0);
+        QVERIFY(spyCM.count() == 0);
+        QVERIFY(spyCR.count() == 1);
+        QVERIFY(spyGA.count() == 0);
+        QVERIFY(spyGC.count() == 1);
+        QVERIFY(spyGR.count() == 0);
+
+        vl = spyCR.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == c.id());
+
+        vl = spyGC.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == g1.id());
+
+        // Delete the group
+        QVERIFY(adder->removeGroup(g1.id()));
+        QVERIFY(spyCA.count() == 0);
+        QVERIFY(spyCM.count() == 1);
+        QVERIFY(spyCR.count() == 0);
+        QVERIFY(spyGA.count() == 0);
+        QVERIFY(spyGC.count() == 0);
+        QVERIFY(spyGR.count() == 1);
+
+        vl = spyCM.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == c2.id());
+
+        vl = spyGR.takeFirst();
+        QVERIFY(vl.size() == 1);
+        sigids = vl.at(0).value<QList<QUniqueId> >();
+        QVERIFY(sigids.count() == 1);
+        QVERIFY(sigids.value(0) == g1.id());
+
     }
 
     delete m1;

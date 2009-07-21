@@ -79,13 +79,14 @@ public:
 
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
+    virtual bool validateGroup(const QContactGroup& group, QContactManager::Error& error) const;
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
 
     /* Groups - Accessors and Mutators */
     virtual QList<QUniqueId> groups(QContactManager::Error& error) const;
     virtual QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    virtual bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    virtual bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    virtual bool saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
+    virtual bool removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
