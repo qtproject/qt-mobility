@@ -42,7 +42,36 @@ class QMessageFolderPrivate
 {
 public:
     QMailFolder _folder;
+
+    static QMessageFolder convert(const QMailFolder &folder);
+    static QMailFolder convert(const QMessageFolder &folder);
 };
+
+QMessageFolder QMessageFolderPrivate::convert(const QMailFolder &folder)
+{
+    QMessageFolder result;
+    result.d_ptr->_folder = folder;
+    return result;
+}
+
+QMailFolder QMessageFolderPrivate::convert(const QMessageFolder &folder)
+{
+    return folder.d_ptr->_folder;
+}
+
+namespace QmfHelpers {
+
+QMessageFolder convert(const QMailFolder &folder)
+{
+    return QMessageFolderPrivate::convert(folder);
+}
+
+QMailFolder convert(const QMessageFolder &folder)
+{
+    return QMessageFolderPrivate::convert(folder);
+}
+
+}
 
 QMessageFolder::QMessageFolder()
     : d_ptr(new QMessageFolderPrivate)

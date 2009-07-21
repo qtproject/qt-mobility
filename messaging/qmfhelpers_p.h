@@ -123,6 +123,15 @@ QMailFolderSortKey convert(const QMessageFolderSortKey &key);
 QMessageSortKey convert(const QMailMessageSortKey &key);
 QMailMessageSortKey convert(const QMessageSortKey &key);
 
+QMessageAccount convert(const QMailAccount &account);
+QMailAccount convert(const QMessageAccount &account);
+
+QMessageFolder convert(const QMailFolder &folder);
+QMailFolder convert(const QMessageFolder &folder);
+
+QMessage convert(const QMailMessage &message);
+QMailMessage convert(const QMessage &message);
+
 };
 
 bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs);

@@ -43,7 +43,36 @@ class QMessagePrivate
 {
 public:
     QMailMessage _message;
+
+    static QMessage convert(const QMailMessage &message);
+    static QMailMessage convert(const QMessage &message);
 };
+
+QMessage QMessagePrivate::convert(const QMailMessage &message)
+{
+    QMessage result;
+    result.d_ptr->_message = message;
+    return result;
+}
+
+QMailMessage QMessagePrivate::convert(const QMessage &message)
+{
+    return message.d_ptr->_message;
+}
+
+namespace QmfHelpers {
+
+QMessage convert(const QMailMessage &message)
+{
+    return QMessagePrivate::convert(message);
+}
+
+QMailMessage convert(const QMessage &message)
+{
+    return QMessagePrivate::convert(message);
+}
+
+}
 
 namespace {
 
