@@ -42,18 +42,6 @@
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoCoordinate)
 
-namespace QTest {
-    template<>
-    char *toString(const QGeoPositionInfo &info)
-    {
-        QByteArray bytes;
-        bytes += "QGeoPositionInfo(" + info.dateTime().toString();
-        bytes += ", ";
-        bytes += info.coordinate().toString();
-        bytes += ')';
-        return qstrdup(bytes.data());
-    }
-}
 
 class tst_QLocationUtils : public QObject
 {
