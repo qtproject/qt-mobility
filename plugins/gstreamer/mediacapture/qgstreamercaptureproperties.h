@@ -23,6 +23,7 @@ public:
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
     bool setAudioCodec(const QString &codecName);
+    QString audioCodec() const;
 
     int bitrate() const;
     void setBitrate(int);

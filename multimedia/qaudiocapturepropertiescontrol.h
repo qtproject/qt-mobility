@@ -57,8 +57,10 @@ public:
     virtual bool setFormat(const QAudioFormat &format) = 0;
 
     virtual QStringList supportedAudioCodecs() const = 0;
-    virtual QString codecDescription(const QString &codecName) = 0;
+    virtual QString audioCodec() const = 0;
     virtual bool setAudioCodec(const QString &codecName) = 0;
+
+    virtual QString codecDescription(const QString &codecName) = 0;
 
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;

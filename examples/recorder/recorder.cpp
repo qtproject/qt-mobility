@@ -48,7 +48,7 @@ Recorder::Recorder()
     deviceBox = new QComboBox(this);
 
     audioCapture = new QMediaCapture;
-    audioCapture->setSink(QMediaSink(QUrl("/tmp/test.ogg")));
+    audioCapture->setSink(QMediaSink(QUrl("test.ogg")));
     audioDevice = audioCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     if (audioDevice) {
@@ -61,7 +61,29 @@ Recorder::Recorder()
         deviceBox->setEnabled(false);
 
     connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
+    layout->addWidget(new QLabel(tr("Input device:"),this));
     layout->addWidget(deviceBox);
+
+    captureProperties = qobject_cast<QAudioCapturePropertiesControl*>(
+            audioCapture->service()->control("com.nokia.qt.AudioCapturePropertiesControl"));
+
+    if (captureProperties) {
+        qDebug() << "supported audio codecs:" << captureProperties->supportedAudioCodecs();
+        captureProperties->setAudioCodec("lame");
+
+        QComboBox *codecsBox = new QComboBox(this);
+        foreach(const QString &codecName, captureProperties->supportedAudioCodecs()) {
+            QString description = captureProperties->codecDescription(codecName);
+            codecsBox->addItem(codecName+": "+description);
+            if (codecName == captureProperties->audioCodec())
+                codecsBox->setCurrentIndex(codecsBox->count()-1);
+        }
+        connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
+
+
+        layout->addWidget(new QLabel(tr("Audio codec:"),this));
+        layout->addWidget(codecsBox);
+    }
 
     button = new QPushButton(this);
     button->setText(tr("Click to start recording"));
@@ -75,14 +97,6 @@ Recorder::Recorder()
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
-
-    QAudioCapturePropertiesControl *control =
-            qobject_cast<QAudioCapturePropertiesControl*>(audioCapture->service()->control("com.nokia.qt.AudioCapturePropertiesControl"));
-
-    if (control) {
-        qDebug() << "supported audio codecs:" << control->supportedAudioCodecs();
-        control->setAudioCodec("lame");
-    }
 
     active = false;
 }
@@ -103,6 +117,12 @@ void Recorder::deviceChanged(int idx)
 {
     if (audioDevice)
         audioDevice->setSelectedDevice(idx);
+}
+
+void Recorder::codecChanged(int idx)
+{
+    if (captureProperties)
+        captureProperties->setAudioCodec( captureProperties->supportedAudioCodecs()[idx]);
 }
 
 void Recorder::toggleRecord()

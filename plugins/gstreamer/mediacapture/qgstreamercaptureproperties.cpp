@@ -89,6 +89,11 @@ QString QGstreamerCaptureProperties::codecDescription(const QString &codecName)
     return m_codecDescriptions.value(codecName);
 }
 
+QString QGstreamerCaptureProperties::audioCodec() const
+{
+    return m_codec;
+}
+
 bool QGstreamerCaptureProperties::setAudioCodec(const QString &codecName)
 {
     if (m_codec != codecName) {

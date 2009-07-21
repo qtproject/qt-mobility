@@ -47,6 +47,7 @@
 class QComboBox;
 class QLabel;
 class QAudioDeviceEndpoint;
+class QAudioCapturePropertiesControl;
 
 class Recorder : public QMainWindow
 {
@@ -59,10 +60,13 @@ private slots:
     void status();
     void toggleRecord();
     void deviceChanged(int idx);
+    void codecChanged(int idx);
 
 private:
     QMediaCapture* audioCapture;
     QAudioDeviceEndpoint *audioDevice;
+    QAudioCapturePropertiesControl *captureProperties;
+
     QComboBox*     deviceBox;
     QPushButton*   button;
     QLabel*        recTime;
