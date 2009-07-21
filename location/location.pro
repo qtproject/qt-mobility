@@ -21,9 +21,7 @@ HEADERS +=  qlocationglobal.h \
             qsatelliteinfo.h \
             qsatelliteinfosource.h \
             qgeopositioninfosource.h \
-            qgeoareamonitor.h \
-            qnmeapositioninfosource.h \
-            qnmeapositioninfosource_p.h
+            qgeoareamonitor.h
 
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \
@@ -31,5 +29,5 @@ SOURCES +=  qlocationutils.cpp \
             qsatelliteinfo.cpp \
             qsatelliteinfosource.cpp \
             qgeopositioninfosource.cpp \
-            qgeoareamonitor.cpp \
-            qnmeapositioninfosource.cpp
+            qgeoareamonitor.cpp
+

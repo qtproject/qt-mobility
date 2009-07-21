@@ -49,16 +49,3 @@ void QLocationTestUtils::uheap_mark_end()
     __UHEAP_MARKEND;
 #endif
 }
-
-QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
-{
-    Q_ASSERT(sentence[0] == '$' && sentence[sentence.length()-1] == '*');
-
-    // XOR byte value of all characters between '$' and '*'
-    int result = 0;
-    for (int i=1; i<sentence.length()-1; i++)
-        result ^= sentence[i].toAscii();
-    QString sum;
-    sum.sprintf("%02x", result);
-    return sentence + sum + "\r\n";
-}

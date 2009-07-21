@@ -49,7 +49,7 @@
 
     If regular position updates are required, setUpdateInterval() can be used
     to specify how often these updates should be emitted. (If no interval is
-    specified, updates are simply provided whenever they become available.)
+    specified, updates are simply provided whenever they are available.)
     For example:
 
     \code
