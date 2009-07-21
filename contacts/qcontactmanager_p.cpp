@@ -291,3 +291,9 @@ QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actio
     return retn;
 }
 
+// trampoline to engine for asynchronous requests
+QContactManagerEngine* QContactManagerData::engine(const QContactManager* manager)
+{
+    return manager->d->m_engine;
+}
+

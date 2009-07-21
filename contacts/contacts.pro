@@ -3,37 +3,29 @@
 # #####################################################################
 TEMPLATE = lib
 TARGET = QtContacts
-include(../common.pri)
 DEFINES += BUILD_QTCONTACTS \
     QT_ASCII_CAST_WARNINGS
+
+include(../common.pri)
+
+include(details/details.pri)
+include(engines/engines.pri)
+include(filters/filters.pri)
+include(requests/requests.pri)
 
 # Input
 HEADERS += qcontact.h \
     qcontact_p.h \
     qcontactabstractaction.h \
     qcontactabstractactionfactory.h \
-    qcontactaddress.h \
-    qcontactanniversary.h \
-    qcontactavatar.h \
-    qcontactbirthday.h \
     qcontactdetail.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition.h \
     qcontactdetaildefinition_p.h \
-    qcontactdetails.h \
-    qcontactdisplaylabel.h \
     qcontactfilter.h \
     qcontactfilter_p.h \
-    qcontactguid.h \
-    qcontactgender.h \
     qcontactgroup.h \
     qcontactgroup_p.h \
-    qcontactname.h \
-    qcontactorganisation.h \
-    qcontactphonenumber.h \
-    qcontactemailaddress.h \
-    qcontactaddress.h \
-    qcontactguid.h \
     qcontactmanager.h \
     qcontactmanager_p.h \
     qcontactmanagerengine.h \
@@ -42,8 +34,6 @@ HEADERS += qcontact.h \
     qcontacts_p.h \
     qcontactsortorder.h \
     qcontactsortorder_p.h \
-    qcontactsynctarget.h \
-    qcontacturl.h \
     qtcontactsglobal.h \
     qtcontacts.h
 
@@ -52,7 +42,6 @@ SOURCES += qcontact.cpp \
     qcontactabstractactionfactory.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
-    qcontactdetails.cpp \
     qcontactfilter.cpp \
     qcontactgroup.cpp \
     qcontactmanager_p.cpp \
@@ -61,13 +50,3 @@ SOURCES += qcontact.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerinfo.cpp \
     qcontactsortorder.cpp
-
-# invalid backend (nonoptional)
-HEADERS += ./invalid/qcontactinvalidbackend_p.h
-SOURCES += ./invalid/qcontactinvalidbackend.cpp
-
-# in memory backend
-contains(CONTACTS_BACKEND, memory) { 
-    HEADERS += ./memory/qcontactmemorybackend_p.h
-    SOURCES += ./memory/qcontactmemorybackend.cpp
-}

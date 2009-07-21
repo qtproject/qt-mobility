@@ -41,7 +41,7 @@
 #include "sendemailaction_p.h"
 
 #include "qcontactemailaddress.h"
-#include "qcontactfilter.h"
+#include "qcontactfilters.h"
 
 #include <QMessageBox>
 

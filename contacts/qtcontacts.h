@@ -43,13 +43,16 @@
 #include "qcontactmanagerenginefactory.h"       // manage backend instantiator
 #include "qcontactmanagerinfo.h"                // manager information
 #include "qcontact.h"                           // contact
-#include "qcontactgroup.h"                      // group
-#include "qcontactdetaildefinition.h"           // definition
-#include "qcontactdetail.h"                     // detail
-#include "qcontactdetails.h"                    // leaf-details
-#include "qcontactfilter.h"                     // contact filtering
+#include "qcontactgroup.h"                      // contact group
+#include "qcontactdetaildefinition.h"           // detail definition
+#include "qcontactdetail.h"                     // contact detail
+#include "qcontactdetails.h"                    // leaf detail classes
+#include "qcontactfilter.h"                     // contact filter
+#include "qcontactfilters.h"                    // leaf filter classes
+#include "qcontactabstractrequest.h"            // asynchronous request
+#include "qcontactrequests.h"                   // leaf request classes
 #include "qcontactsortorder.h"                  // contact sorting
 #include "qcontactabstractaction.h"             // actions
-#include "qcontactabstractactionfactory.h"      // action plugin interface
+#include "qcontactabstractactionfactory.h"      // action factory
 
 #endif

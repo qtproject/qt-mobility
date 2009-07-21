@@ -7,7 +7,7 @@ include(../../../common.pri)
 
 SOURCES  += tst_qcontact.cpp
 
-INCLUDEPATH += $$SOURCE_DIR/contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
 
 LIBS += -lQtContacts
 

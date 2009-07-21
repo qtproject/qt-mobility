@@ -39,10 +39,9 @@
 #include "qcontactdetails.h"
 
 #include "qcontactgroup_p.h"
-
-#include "qcontactfilter.h"
 #include "qcontactsortorder.h"
 
+#include "qcontactfilters.h"
 #include "qcontactabstractaction.h"
 
 /*!
@@ -1377,4 +1376,183 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     }
     // couldn't find anywhere for it to go.  put it at the end.
     sorted->append(toAdd);
+}
+
+/*!
+ * Allocates the memory required to store information regarding the given \a request, and uses \a request as a key in a map from request pointer to data structure.
+ */
+void QContactManagerEngine::createAsynchronousRequest(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+}
+
+/*!
+ * Cleans up the memory used to store information regarding the given \a request
+ */
+void QContactManagerEngine::destroyAsynchronousRequest(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+}
+
+/*!
+ * Returns true if the state of the given \a request is either QContactAbstractRequest::Finished or QContactAbstractRequest::Cancelled, otherwise returns false.
+ */
+bool QContactManagerEngine::asynchronousRequestIsFinished(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+    return false;
+}
+
+/*!
+ * Returns the error associated with the most recent operation performed as part of the given asynchronous \a request
+ */
+QContactManager::Error QContactManagerEngine::asynchronousRequestError(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+    return QContactManager::NotSupportedError;
+}
+
+/*!
+ * Returns the current status of the given \a request
+ */
+QContactAbstractRequest::Status QContactManagerEngine::asynchronousRequestStatus(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+    return QContactAbstractRequest::Inactive;
+}
+
+/*!
+ * Waits for up to \a msecs milliseconds for the given \a request to enter the QContactAbstractRequest::Finished or QContactAbstractRequest::Cancelled state.  Returns true if the given \a request finishes within the period, else returns false
+ */
+bool QContactManagerEngine::asynchronousRequestWaitForFinished(QContactAbstractRequest* request, int msecs)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(msecs);
+    return false;
+}
+
+/*!
+ * Waits for up to \a msecs milliseconds for the given \a request to emit the QContactAbstractRequest::progress() signal.  Returns true if the given \a request emits the progress signal within the period, else returns false
+ */
+bool QContactManagerEngine::asynchronousRequestWaitForProgress(QContactAbstractRequest* request, int msecs)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(msecs);
+    return false;
+}
+
+/*!
+ * Attempts to cancel the most recent operation of the given \a request
+ */
+void QContactManagerEngine::cancelAsynchronousRequest(QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+}
+
+/*!
+ * Starts the asynchronous \a operation described in the given \a request
+ */
+void QContactManagerEngine::startAsynchronousRequest(QContactAbstractRequest* request, QContactAbstractRequest::Operation operation)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(operation);
+}
+
+/*!
+ * Returns the list of errors which were returned from the most recent asynchronous operation performed according to the given \a request
+ */
+QList<QContactManager::Error> QContactManagerEngine::asynchronousRequestErrors(const QContactAbstractRequest* request)
+{
+    Q_UNUSED(request);
+    return QList<QContactManager::Error>();
+}
+
+/*!
+ * Limits the selection criteria of the contact \a request to contacts whose id is contained in \a ids
+ */
+void QContactManagerEngine::asynchronousRequestSelectById(QContactRequest* request, const QList<QUniqueId>& ids)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(ids);
+}
+
+/*!
+ * Limits the selection criteria of the contact \a request to contacts contained in \a contacts
+ */
+void QContactManagerEngine::asynchronousRequestSelectByObject(QContactRequest* request, const QList<QContact>& contacts)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(contacts);
+}
+
+/*!
+ * Limits the selection criteria of the contact \a request to contacts which match the given \a filter
+ */
+void QContactManagerEngine::asynchronousRequestSelectByFilter(QContactRequest* request, const QContactFilter& filter)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(filter);
+}
+
+/*!
+ * Sets the sort order of the result of the next asynchronous operation for the given \a request to \a sortOrder.  Calling this function has no effect on asynchronous operations which have already been started.
+ */
+void QContactManagerEngine::asynchronousRequestSetSortOrder(QContactRequest* request, const QContactSortOrder& sortOrder)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(sortOrder);
+}
+
+/*!
+ * Returns the sort order which will be used for the next asynchronous operation of \a request
+ */
+QContactSortOrder QContactManagerEngine::asynchronousRequestSortOrder(const QContactRequest* request)
+{
+    Q_UNUSED(request);
+    return QContactSortOrder();
+}
+
+/*!
+ * Clears any result restrictions which have been set for the next asynchronous operation of \a request
+ */
+void QContactManagerEngine::asynchronousRequestClearRestrictions(QContactRequest* request)
+{
+    Q_UNUSED(request);
+}
+
+/*!
+ * Restricts the result of the next asynchronous operation of \a request to the ids of the contacts which would otherwise be returned
+ */
+void QContactManagerEngine::asynchronousRequestRestrictToIds(QContactRequest* request)
+{
+    Q_UNUSED(request);
+}
+
+/*!
+ * Restricts the result of the next asynchronous operation of \a request to those details whose definition name is included in the given list of \a detailDefinitionNames.
+ */
+void QContactManagerEngine::asynchronousRequestRestrictToDetails(QContactRequest* request, const QStringList& detailDefinitionNames)
+{
+    Q_UNUSED(request);
+    Q_UNUSED(detailDefinitionNames);
+}
+
+/*!
+ * Returns the result of the most recent asynchronous operation of the given \a request as a list of contact ids
+ */
+QList<QUniqueId> QContactManagerEngine::asynchronousRequestIds(const QContactRequest* request)
+{
+    Q_UNUSED(request);
+    return QList<QUniqueId>();
+}
+
+/*!
+ * Returns the result of the most recent asynchronous operation of the given \a request as a list of contacts.
+ * If the result had been restricted to ids previously using asynchronousRequestRestrictToIds(), the contacts
+ * will be empty except for their id.
+ */
+QList<QContact> QContactManagerEngine::asynchronousRequestContacts(const QContactRequest* request)
+{
+    Q_UNUSED(request);
+    return QList<QContact>();
 }

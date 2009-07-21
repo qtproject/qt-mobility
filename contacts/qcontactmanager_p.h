@@ -78,6 +78,7 @@ public:
     }
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+    static QContactManagerEngine* engine(const QContactManager* manager);
     static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
     QContactManagerEngine* m_engine;

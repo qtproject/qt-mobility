@@ -145,6 +145,7 @@ signals:
     void groupsRemoved(const QList<QUniqueId>& groupIds);
 
 private:
+    friend class QContactManagerData;
     Q_DISABLE_COPY(QContactManager)
     // private data pointer
     QContactManagerData* d;

@@ -6,9 +6,9 @@
 
 TEMPLATE = app
 TARGET = qtcontactsdocsample
+include(../../../../common.pri)
 DEPENDPATH += .
-INCLUDEPATH += . ../../../../contacts
+INCLUDEPATH += . $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
 LIBS += -lQtContacts
 
-include(../../../../common.pri)
 SOURCES += qtcontactsdocsample.cpp

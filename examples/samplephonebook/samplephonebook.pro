@@ -7,7 +7,7 @@
 TEMPLATE = app
 TARGET = samplephonebook
 DEPENDPATH += .
-INCLUDEPATH += . ../../contacts ../../contacts/$${CONTACTS_BACKEND} ../../util
+INCLUDEPATH += . ../../contacts ../../contacts/details ../../contacts/filters ../../contacts/requests
 LIBS += -lQtContacts
 
 include(../../common.pri)

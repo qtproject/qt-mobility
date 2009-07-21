@@ -47,7 +47,9 @@
 #include "qcontactgroup.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerinfo.h"
+#include "qcontactabstractrequest.h"
 
+class QContactRequest;
 class QContactFilter;
 class QContactSortOrder;
 
@@ -99,6 +101,29 @@ public:
     virtual QList<QUniqueId> groupsAddedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
     virtual QList<QUniqueId> groupsModifiedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
     virtual QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
+
+    /* Asynchronous Request Handling */
+    virtual void createAsynchronousRequest(const QContactAbstractRequest* req);
+    virtual void destroyAsynchronousRequest(const QContactAbstractRequest* req);
+    virtual bool asynchronousRequestIsFinished(const QContactAbstractRequest* req);
+    virtual QContactManager::Error asynchronousRequestError(const QContactAbstractRequest* req);
+    virtual QContactAbstractRequest::Status asynchronousRequestStatus(const QContactAbstractRequest* req);
+    virtual bool asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs);
+    virtual bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
+    virtual void cancelAsynchronousRequest(QContactAbstractRequest* req);
+    virtual void startAsynchronousRequest(QContactAbstractRequest* req, QContactAbstractRequest::Operation operation);
+    virtual QList<QContactManager::Error> asynchronousRequestErrors(const QContactAbstractRequest* req);
+
+    virtual void asynchronousRequestSetSortOrder(QContactRequest* req, const QContactSortOrder& sortOrder);
+    virtual QContactSortOrder asynchronousRequestSortOrder(const QContactRequest* req);
+    virtual void asynchronousRequestSelectById(QContactRequest* req, const QList<QUniqueId>& ids);
+    virtual void asynchronousRequestSelectByObject(QContactRequest* req, const QList<QContact>& contacts);
+    virtual void asynchronousRequestSelectByFilter(QContactRequest* req, const QContactFilter& filter);
+    virtual QList<QContact> asynchronousRequestContacts(const QContactRequest* req);
+    virtual QList<QUniqueId> asynchronousRequestIds(const QContactRequest* req);
+    virtual void asynchronousRequestClearRestrictions(QContactRequest* req);
+    virtual void asynchronousRequestRestrictToIds(QContactRequest* req);
+    virtual void asynchronousRequestRestrictToDetails(QContactRequest* req, const QStringList& detailDefinitionNames);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

@@ -14,7 +14,7 @@ include(../../../../common.pri)
 DEFINES += ACTIONFACTORYPLUGINTARGET=contacts_sendemailactionfactory
 DEFINES += ACTIONFACTORYPLUGINNAME=\\\"SendEmailActionFactory\\\"
 
-INCLUDEPATH += ../../../../contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
 
 LIBS += -lQtContacts
 
