@@ -1220,7 +1220,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         const QContactDetail& detail = details.at(j);
                         const QString& var = detail.value(cdf.detailFieldName());
                         if (!matchEnds) {
-                            // MatchStarts, or MatchFixedString
+                            // MatchStarts or MatchFixedString
                             if (testMin && QString::compare(var, minVal, cs) < minComp)
                                 continue;
                             if (testMax && QString::compare(var, maxVal, cs) >= maxComp)
@@ -1228,14 +1228,14 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                             return true;
                         } else {
                             /* Have to test the length of min & max */
-                            if (testMin && QString::compare(var.right(minVal.length()), minVal, cs) < minComp)
+                            // using refs means the parameter order is backwards, so negate the result of compare
+                            if (testMin && -QString::compare(minVal, var.rightRef(minVal.length()), cs) < minComp)
                                 continue;
-                            if (testMax && QString::compare(var.right(maxVal.length()), maxVal, cs) >= maxComp)
+                            if (testMax && -QString::compare(maxVal, var.rightRef(maxVal.length()), cs) >= maxComp)
                                 continue;
                             return true;
                         }
                     }
-
                     // Fall through to end
                 } else {
                     /* Nope, testing the values as a variant */
