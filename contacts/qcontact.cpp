@@ -152,7 +152,9 @@ QList<QUniqueId> QContact::groups() const
 
 /*!
  * Sets the list of QContactGroups that this contact is
- * a member of.
+ * a member of to those identified in \a groups.
+ * Returns true if the contact was added to the groups
+ * successfully, otherwise returns false.
  *
  * You should check that your \l QContactManager supports
  * groups.

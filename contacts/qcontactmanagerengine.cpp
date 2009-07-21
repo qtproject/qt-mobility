@@ -703,18 +703,9 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  *
- * The default implementation of QContactManagerEngine::removeContacts will
- * call this function with \a batch set to \c true.  All other calls to
- * this function will pass \c false for \a batch.
- *
- * If \a batch is \c false, the backend must (at some point) emit
- * the \c QContactManagerEngine::contactsRemoved signal if the operation was
- * successful.  If the operation fails or \a batch is \c true, no such
- * signal may be emitted as a direct result of the operation.
- *
- * The base implementation of QContactManagerEngine::removeContacts
- * will emit a single contactsRemoved signal once all the removing is
- * complete.
+ * If the backend implementation wishes to have the base implementation emit any signals
+ * as a result of this operation, it should add the affected id(s) to the
+ * \a removed or \a changed sets as appropriate.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
@@ -996,6 +987,11 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * For each contact that was removed succesfully, the corresponding
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
+ *
+ * If the backend implementation wishes to have the base implementation emit
+ * any signals as a result of this operation, it must add the id(s) of affected
+ * groups and contacts to the \a removedContacts and \a changedGroups sets as
+ * appropriate.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.

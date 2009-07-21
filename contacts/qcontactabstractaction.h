@@ -56,7 +56,7 @@ public:
     virtual QString vendor() const = 0;                                     // vendor identification string
     virtual int implementationVersion() const = 0;                          // (minor) implementation version
 
-    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0;                       // use for matching
+    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
     virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
     virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;

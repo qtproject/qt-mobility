@@ -48,30 +48,19 @@ uint qHash(const QContactAbstractActionFactory::ActionDescriptor& ad)
  */
 
 /*!
- * \fn QContactAbstractActionFactory::name()
+ * \fn QContactAbstractActionFactory::name() const
  * Returns the name of this factory.  The name is used to identify the factory
  * when it is retrieved using the Qt Plugin framework.
  */
 
 /*!
- * \fn QContactAbstractActionFactory::actionNames()
- * Returns a list of the names of the actions of which instances of their implementations are able to be retrieved
+ * \fn QContactAbstractActionFactory::actionDescriptors() const
+ * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
  * from this factory.
  */
 
 /*!
- * \fn QContactAbstractActionFactory::instance(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
- * Returns a pointer to an instance of the implementation of the action whose name is \a actionName, which is provided by the given \a vendor and is of
- * the given \a implementationVersion.  If \a vendor is empty, \a implementationVersion is ignored, and an instance of an arbitrary
- * implementation is returned (if available).  If \a vendor and \a implementationVersion are both supplied, an instance of the implementation
- * matching the criteria is returned (if available).  If no implementation matching the given criteria is managed by this factory,
- * a null pointer is returned.
+ * \fn QContactAbstractActionFactory::instance(const ActionDescriptor& descriptor) const
+ * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor
  */
 
-/*!
- * \fn QContactAbstractActionFactory::instances(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1)
- * Returns a list of pointers to instances of the implementations of the actions whose name is \a actionName and is provided by the given \a vendor.
- * If \a actionName is empty but \a vendor is supplied, a list of pointers to instances of all actions implemented by the given \a vendor is returned.
- * If \a vendor is empty, a list of pointers to instances of the actions whose name is \a actionName is returned.
- * If \a actionName and \a vendor are both empty, a list of pointers instances of all implementations managed by this factory is returned.
- */
