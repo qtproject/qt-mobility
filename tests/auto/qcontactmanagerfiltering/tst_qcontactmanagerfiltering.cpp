@@ -2067,8 +2067,8 @@ public:
 
     QString actionName() const {return "Boolean";}
     QVariantMap metadata() const {return QVariantMap();}
-    virtual QString vendor() const {return "BooleanCo";}
-    virtual int implementationVersion() const {return 3;}
+    QString vendor() const {return "BooleanCo";}
+    int implementationVersion() const {return 3;}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2095,6 +2095,114 @@ public:
     }
 };
 
+class RecursiveAction : public QContactAbstractAction
+{
+    Q_OBJECT
+
+public:
+    RecursiveAction() {}
+    ~RecursiveAction() {}
+
+    QString actionName() const {return "Recursive";}
+    QVariantMap metadata() const {return QVariantMap();}
+    QString vendor() const {return "RecursiveCo";}
+    int implementationVersion() const {return 3;}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        /* Return a filter that selects us again.. */
+        QContactActionFilter af;
+        af.setActionName("Recursive");
+        af.setVendor("RecursiveCo", 3);
+        af.setValue(value);
+        return af;
+    }
+    bool supportsDetail(const QContactDetail&) const
+    {
+        return false;
+    }
+    void performAction(const QContact&, const QContactDetail&)
+    {
+
+    }
+};
+
+class AnotherRecursiveAction : public RecursiveAction {
+    Q_OBJECT
+
+public:
+    int implementationVersion() const {return 4;}
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        Q_UNUSED(value);
+        /* Slightly looser filter */
+        QContactActionFilter af;
+        af.setActionName("Recursive");
+        return af;
+    }
+};
+
+/* A pair that reference each other */
+class PairRecursiveAction : public RecursiveAction {
+    Q_OBJECT
+
+public:
+    QString actionName() const {return "PairRecursive";}
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        Q_UNUSED(value);
+        /* Slightly looser filter */
+        QContactActionFilter af;
+        af.setActionName("AnotherPairRecursive");
+        return af;
+    }
+};
+
+class AnotherPairRecursiveAction : public RecursiveAction {
+    Q_OBJECT
+
+public:
+    QString actionName() const {return "AnotherPairRecursive";}
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        Q_UNUSED(value);
+        /* Slightly looser filter */
+        QContactActionFilter af;
+        af.setActionName("PairRecursive");
+        return af;
+    }
+};
+
+class IntersectionRecursiveAction : public RecursiveAction {
+    Q_OBJECT
+
+public:
+    QString actionName() const {return "IntersectionRecursive";}
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        Q_UNUSED(value);
+        /* Slightly looser filter */
+        QContactActionFilter af;
+        af.setActionName("PairRecursive");
+        return QContactFilter() && af;
+    }
+};
+
+class UnionRecursiveAction : public RecursiveAction {
+    Q_OBJECT
+
+public:
+    QString actionName() const {return "UnionRecursive";}
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        Q_UNUSED(value);
+        /* Slightly looser filter */
+        QContactActionFilter af;
+        af.setActionName("PairRecursive");
+        return QContactFilter() || af;
+    }
+};
+
 class FilterActionFactory : public QContactAbstractActionFactory
 {
     Q_OBJECT
@@ -2115,7 +2223,13 @@ public:
 
         ret << ActionDescriptor("Number", "NumberCo", 42)
                 << ActionDescriptor("Number", "IntegerCo", 5)
-                << ActionDescriptor("Boolean", "BooleanCo", 3);
+                << ActionDescriptor("Boolean", "BooleanCo", 3)
+                << ActionDescriptor("Recursive", "RecursiveCo", 3)
+                << ActionDescriptor("Recursive", "RecursiveCo", 4)
+                << ActionDescriptor("PairRecursive", "RecursiveCo", 3)
+                << ActionDescriptor("AnotherPairRecursive", "RecursiveCo", 3)
+                << ActionDescriptor("IntersectionRecursive", "RecursiveCo", 3)
+                << ActionDescriptor("UnionRecursive", "RecursiveCo", 3);
 
         return ret;
     }
@@ -2127,8 +2241,22 @@ public:
                 return new QIntegerAction;
             else
                 return new QNumberAction;
-        } else
+        } else if (descriptor.actionName == "Boolean") {
             return new QBooleanAction;
+        } else if (descriptor.actionName == "Recursive") {
+            if (descriptor.vendorVersion == 3)
+                return new RecursiveAction;
+            else
+                return new AnotherRecursiveAction;
+        } else if (descriptor.actionName == "PairRecursive") {
+            return new PairRecursiveAction;
+        } else if (descriptor.actionName == "AnotherPairRecursive") {
+            return new AnotherPairRecursiveAction;
+        } else if (descriptor.actionName == "IntersectionRecursive") {
+            return new IntersectionRecursiveAction;
+        } else {
+            return new UnionRecursiveAction;
+        }
     }
 };
 

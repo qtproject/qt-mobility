@@ -1327,11 +1327,15 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // or test if a QContactDetailRangeFilter contains this value already
                 for (int j = 0; j < actions.count(); j++) {
                     QContactAbstractAction* action = actions.at(j);
-                    if (action->contactFilter(af.value()) == af)
-                        return false; // No recursion!
+
+                    // Action filters are not allowed to return action filters, at all
+                    // it's too annoying to check for recursion
+                    QContactFilter d = action->contactFilter(af.value());
+                    if (!validateActionFilter(d))
+                        return false;
 
                     // Check for values etc...
-                    if (testFilter(action->contactFilter(af.value()), contact))
+                    if (testFilter(d, contact))
                         return true;
                 }
                 // Fall through to end
@@ -1373,6 +1377,34 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             break;
     }
     return false;
+}
+
+/*!
+ * Given a QContactFilter \a filter retrieved from a QContactAbstractAction,
+ * check that it is valid and cannot cause infinite recursion.
+ *
+ * In particular, a filter from a QContactAbstractAction cannot contain
+ * any instances of a QContactActionFilter.
+ *
+ * Returns true if \a filter seems ok, or false otherwise.
+ */
+
+bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
+{
+    QList<QContactFilter> toVerify;
+    toVerify << filter;
+
+    while(toVerify.count() > 0) {
+        QContactFilter f = toVerify.takeFirst();
+        if (f.type() == QContactFilter::Action)
+            return false;
+        if (f.type() == QContactFilter::Intersection)
+            toVerify.append(QContactIntersectionFilter(f).filters());
+        if (f.type() == QContactFilter::Union)
+            toVerify.append(QContactUnionFilter(f).filters());
+    }
+
+    return true;
 }
 
 /*!
