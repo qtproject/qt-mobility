@@ -43,6 +43,7 @@
 Camera::Camera()
 {
     cam = new QCamera;
+    capture = new QMediaCapture(cam);
 
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
@@ -76,16 +77,16 @@ Camera::~Camera()
 {
 }
 
-void Camera::statusChanged(QVideoStream::State state)
+void Camera::stateChanged(QVideoStream::State state)
 {
-    qWarning()<<"statusChanged() "<<state;
+    qWarning()<<"stateChanged() "<<state;
     //currentTime++;
     //QString str = QString("%1 sec").arg(currentTime);
     //recTime->setText(str);
     //qWarning()<<"time: "<<currentTime;
 }
 
-void Camera::frameReady(QVideoFrame frame)
+void Camera::frameReady(QVideoFrame const &frame)
 {
     qWarning()<<"frameReady";
 }
@@ -99,8 +100,8 @@ void Camera::deviceChanged(int idx)
     QList<QSize> sizes = cam->supportedResolutions(fmts.first());
     format = QVideoFormat(sizes.first(),fmts.first());
     cam->setFormat(format);
-    connect(cam,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(statusChanged(QVideoStream::State)));
-    connect(cam,SIGNAL(frameReady(QVideoFrame)),this,SLOT(frameReady(QVideoFrame)));
+    connect(cam,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(stateChanged(QVideoStream::State)));
+    connect(cam,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
 }
 
 void Camera::togglePlay()

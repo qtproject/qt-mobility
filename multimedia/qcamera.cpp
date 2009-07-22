@@ -69,6 +69,8 @@ QCamera::QCamera(QCameraService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control("camera"));
+        connect(d->control,SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL(stateChanged(QVideoStream::State)));
+        connect(d->control,SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
     } else {
         d->service = 0;
         d->control = 0;
@@ -476,6 +478,14 @@ void QCamera::setDevice(const QByteArray &device)
 
     if(d->control)
         d->control->setDevice(device);
+}
+
+QVideoStream::State QCamera::state() const
+{
+    if(d_func()->control)
+        return d_func()->control->state();
+
+    return QVideoStream::StopState;
 }
 #endif
 bool QCamera::isValid() const

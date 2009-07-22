@@ -103,6 +103,8 @@ public:
     void setDevice(const QByteArray &device);
     bool isValid() const;
 
+    QVideoStream::State state() const;
+
 private:
     CameraService *m_service;
     QVideoCamera* m_camera;

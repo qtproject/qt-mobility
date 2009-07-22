@@ -59,6 +59,22 @@ class QCameraPrivate;
 class QCamera : public QAbstractMediaObject
 {
     Q_OBJECT
+#ifdef VIDEOSERVICES
+    Q_PROPERTY(QVideoFormat format READ format WRITE setFormat)
+    Q_PROPERTY(QVideoStream::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(int framerate READ framerate WRITE setFrameRate)
+    Q_PROPERTY(int brightness READ brightness WRITE setBrightness)
+    Q_PROPERTY(int contrast READ contrast WRITE setContrast)
+    Q_PROPERTY(int saturation READ saturation WRITE setSaturation)
+    Q_PROPERTY(int hue READ hue WRITE setHue)
+    Q_PROPERTY(int sharpness READ sharpness WRITE setSharpness)
+    Q_PROPERTY(int zoom READ zoom WRITE setZoom)
+    Q_PROPERTY(bool backlightCompensation READ backlightCompensation WRITE setBacklightCompensation)
+    Q_PROPERTY(int whitelevel READ whitelevel WRITE setWhitelevel)
+    Q_PROPERTY(int rotation READ rotation WRITE setRotation)
+    Q_PROPERTY(bool flash READ flash WRITE setFlash)
+    Q_PROPERTY(bool autofocus READ autofocus WRITE setAutofocus)
+#endif
 public:
     QCamera(QCameraService *service = createCameraService(), QObject *parent = 0);
     ~QCamera();
@@ -110,6 +126,8 @@ public:
     void setAutofocus(bool);
 
     void setDevice(const QByteArray &device);
+
+    QVideoStream::State state() const;
 #endif
     bool isValid() const;
 
@@ -117,8 +135,8 @@ public:
 
 #ifdef VIDEOSERVICES
 Q_SIGNALS:
-    void frameReady(QVideoFrame frame);
-    void stateChanged(QVideoStream::State state);
+    void frameReady(QVideoFrame const &);
+    void stateChanged(QVideoStream::State);
 #endif
 private:
     Q_DISABLE_COPY(QCamera)
