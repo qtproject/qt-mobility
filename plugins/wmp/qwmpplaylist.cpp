@@ -110,12 +110,8 @@ QMediaResourceList QWmpPlaylist::resources(int pos) const
 
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(pos, &media) == S_OK) {
-        BSTR uri = 0;
-        if (media->get_sourceURL(&uri) == S_OK) {
-            resources.append(QMediaResource(QUrl(
-                    QString::fromWCharArray(static_cast<const wchar_t *>(uri)))));
-            ::SysFreeString(uri);
-        }
+        resources = QWmpMetaData::resources(media);
+
         media->Release();
     }
 

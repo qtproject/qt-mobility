@@ -51,7 +51,12 @@ public:
     }
 
     inline QAutoBStr(const QUrl &url)
-            : m_string(::SysAllocString(static_cast<const wchar_t *>(url.toString().utf16())))
+        : m_string(::SysAllocString(static_cast<const wchar_t *>(url.toString().utf16())))
+    {
+    }
+
+    inline QAutoBStr(const wchar_t *string)
+        : m_string(::SysAllocString(string))
     {
     }
 

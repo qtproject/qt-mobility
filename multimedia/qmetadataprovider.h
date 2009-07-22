@@ -37,6 +37,7 @@
 
 #include <qabstractmediacontrol.h>
 
+#include "qmediaresource.h"
 
 class QMetadataProviderPrivate;
 class Q_MEDIA_EXPORT QMetadataProvider : public QAbstractMediaControl
@@ -52,6 +53,8 @@ public:
     virtual QList<QString> availableMetadata() const = 0;
     virtual QVariant metadata(QString const &name) const = 0;
     virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+
+    virtual QMediaResourceList resources() const;
 
 Q_SIGNALS:
     void metadataChanged();

@@ -146,6 +146,22 @@ void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
 }
 
 /*!
+    \property QMediaMetaData::resources
+    \brief a list a resources belonging to a media item.
+
+    The first resource is always the media item's primary content source, subsequent resources may
+    be alternate encodings of the content or decorative representations of the content such as
+    thumbnails or cover art as given by the role of the resource.
+*/
+
+QMediaResourceList QMediaMetadata::resources() const
+{
+    return d_func()->provider
+            ? d_func()->provider->resources()
+            : QMediaResourceList();
+}
+
+/*!
     \property QMediaMetadata::metadataAvailable
     \brief true if metadata can be read from the Multimedia object.
 */

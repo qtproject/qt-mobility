@@ -83,6 +83,11 @@ void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
     setValue(m_media, name, value);
 }
 
+QMediaResourceList QWmpMetaData::resources() const
+{
+    return resources(m_media);
+}
+
 void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
 {
     IWMPMedia *media = m_media;
@@ -140,13 +145,14 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
     const QAutoBStr bstrKey(key);
 
     QVariantList values;
-    long count = 0;
     IWMPMedia3 *media3 = 0;
     if (media && media->QueryInterface(
             __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
+        long count = 0;
         media3->getAttributeCountByType(bstrKey, 0, &count);
 
-        // Sometimes index 0 will return a valid value despite count being 0.
+        // The count appears to only be valid for static properties, dynamic properties like
+        // PlaylistIndex will have a count of zero but return a value for index 0.
         if (count == 0)
             count = 1;
 
@@ -180,6 +186,60 @@ void QWmpMetaData::setValue(IWMPMedia *media, const QString &key, const QVariant
 {
     if (qVariantCanConvert<QString>(value))
         media->setItemInfo(QAutoBStr(key), QAutoBStr(value.toString()));
+}
+
+QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
+{
+    QMediaResourceList resources;
+
+    BSTR uri = 0;
+    if (media->get_sourceURL(&uri) == S_OK) {
+        resources.append(QMediaResource(QUrl(
+                QString::fromWCharArray(static_cast<const wchar_t *>(uri)))));
+        ::SysFreeString(uri);
+
+        IWMPMedia3 *media3 = 0;
+        if (media->QueryInterface(
+                __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
+            QAutoBStr key(L"WM/Picture");
+
+            VARIANT variant;
+            VariantInit(&variant);
+            for (long i = 0; media3->getItemInfoByType(key, 0, i, &variant) == S_OK; ++i) {
+                IWMPMetadataPicture *picture = 0;
+
+                if (variant.vt == VT_DISPATCH && variant.pdispVal->QueryInterface(
+                        __uuidof(IWMPMetadataPicture),
+                        reinterpret_cast<void **>(&picture)) == S_OK) {
+                    BSTR string = 0;
+
+                    QUrl uri;
+                    QString mimeType;
+                    QMediaResource::ResourceRole role = QMediaResource::ThumbnailRole;
+
+                    if (picture->get_URL(&string) == S_OK) {
+                        uri = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
+
+                        ::SysFreeString(string);
+                    }
+                    if (picture->get_mimeType(&string) == S_OK) {
+                        mimeType = QString::fromWCharArray(
+                                static_cast<wchar_t *>(string), ::SysStringLen(string));
+                        ::SysFreeString(string);
+                    }
+
+                    if (!uri.isEmpty())
+                        resources.append(QMediaResource(uri, mimeType, role));
+
+                    picture->Release();
+                }
+                VariantClear(&variant);
+            }
+            media3->Release();
+        }
+    }
+
+    return resources;
 }
 
 QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
@@ -230,10 +290,13 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
                 }
                 text->Release();
                 return description;
+            } else {
+                qWarning("Unknown dispatch type");
             }
         }
         break;
     default:
+        qWarning("Unsupported Type %d %x", variant.vt, variant.vt);
         break;
     }
 

@@ -36,6 +36,7 @@
 #define QWMPMETADATA_H
 
 #include "qmetadataprovider.h"
+#include "qmediaresource.h"
 
 #include <wmp.h>
 
@@ -55,9 +56,12 @@ public:
     QVariant metadata(QString const &name) const;
     void setMetadata(QString const &name, QVariant const &value);
 
+    QMediaResourceList resources() const;
+
     static QStringList keys(IWMPMedia *media);
     static QVariant value(IWMPMedia *media, const QString &key);
     static void setValue(IWMPMedia *media, const QString &key, const QVariant &value);
+    static QMediaResourceList resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
 
 private Q_SLOTS:
