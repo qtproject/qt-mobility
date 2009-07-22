@@ -42,14 +42,6 @@
 class QMFActivate : public IMFActivate
 {
 public:
-    QMFActivate();
-    virtual ~QMFActivate();
-        
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
-
     // IMFAttributes
     HRESULT STDMETHODCALLTYPE GetItem(REFGUID guidKey, PROPVARIANT *pValue);
     HRESULT STDMETHODCALLTYPE GetItemType(REFGUID guidKey, MF_ATTRIBUTE_TYPE *pType);

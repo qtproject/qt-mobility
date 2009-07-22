@@ -41,7 +41,6 @@
 
 #include "qradiotuner.h"
 #include "qradioplayer.h"
-#include "qmediasource.h"
 
 #include "linux/videodev2.h"
 

@@ -45,7 +45,7 @@ ImageViewer::ImageViewer(QWidget *parent)
     model = new QMediaPlaylistModel(playlist,this);
     navigator = new QMediaPlaylistNavigator(playlist,this);
 
-    connect(navigator, SIGNAL(activated(QMediaSource)), SLOT(display(QMediaSource)));
+    connect(navigator, SIGNAL(activated(QMediaResourceList)), SLOT(display(QMediaResourceList)));
     connect(navigator, SIGNAL(playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode)), SLOT(updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode)));
     connect(ui->listView, SIGNAL(activated(QModelIndex)), SLOT(jump(QModelIndex)));
     connect(navigator, SIGNAL(surroundingItemsChanged()), SLOT(updateNavigationActions()));
@@ -67,7 +67,7 @@ void ImageViewer::addImage()
     if (1 || !fileNames.isEmpty()) {
         int firstPos = playlist->size();
         foreach(const QString &fileName, fileNames) {
-            playlist->append(QMediaSource("image/png", fileName));
+            playlist->append(QMediaResource(QLatin1String("file://") + fileName, "image/png"));
         }
 
         navigator->jump(firstPos);        
@@ -89,14 +89,14 @@ void ImageViewer::shuffle()
     playlist->shuffle();
 }
 
-void ImageViewer::display(const QMediaSource &src)
+void ImageViewer::display(const QMediaResourceList &resources)
 {
-    if (src.isNull()) {
+    if (resources.isEmpty()) {
         ui->listView->clearSelection();
         ui->label->clear();
     } else {
         ui->listView->setCurrentIndex(model->index(navigator->currentPosition()));
-        ui->label->setPixmap(src.dataLocation().toString());
+        ui->label->setPixmap(resources.first().uri().path());
     }
 }
 

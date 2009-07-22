@@ -241,9 +241,9 @@ int QMediaPlayer::playlistPosition() const
 /*!
   Returns the current media source.
 */
-QMediaSource QMediaPlayer::currentMediaSource() const
+QMediaResourceList QMediaPlayer::currentMediaResources() const
 {
-    return mediaPlaylist()->itemAt(playlistPosition());
+    return mediaPlaylist()->resources(playlistPosition());
 }
 
 /*!
@@ -524,7 +524,7 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 
 /*!
     \property QMediaPlayer::mediaSource
-    \brief The active QMediaSource.
+    \brief The resource of the active media.
 
     \sa playlistPosition()
 */
@@ -603,9 +603,9 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 */
 
 /*!
-    \fn void QMediaPlayer::currentMediaSourceChanged(const QMediaSource &currentSource)
+    \fn void QMediaPlayer::currentMediaResourcesChanged(const QMediaResourceList &resources)
 
-    Signal that \a currentSource is the now active QMediaSource.
+    Signals that the current media \a resources have changed.
 
     \sa playlistPositionChanged()
 */

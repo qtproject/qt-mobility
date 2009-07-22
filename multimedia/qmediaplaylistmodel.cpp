@@ -35,6 +35,8 @@
 #include "qmediaplaylistmodel.h"
 #include "qmediaplaylist.h"
 
+#include <QtCore/qurl.h>
+
 #include <QFileInfo>
 
 QMediaPlaylistModel::QMediaPlaylistModel(QMediaPlaylist *playlist, QObject *parent)
@@ -60,7 +62,7 @@ int QMediaPlaylistModel::rowCount(const QModelIndex &parent) const
 QVariant QMediaPlaylistModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole) {
-        QVariant location = m_playlist->itemAt(index.row()).dataLocation();
+        QUrl location = m_playlist->resource(index.row()).uri();
         return QFileInfo(location.toString()).fileName();
     } else
         return QVariant();

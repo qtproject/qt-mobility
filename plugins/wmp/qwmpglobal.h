@@ -38,6 +38,7 @@
 #include <wmp.h>
 
 #include <QtCore/qstring.h>
+#include <QtCore/qurl.h>
 
 const char *qwmp_error_string(HRESULT hr);
 
@@ -45,13 +46,23 @@ class QAutoBStr
 {
 public:
     inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode())))
+        : m_string(::SysAllocString(static_cast<const wchar_t *>(string.utf16())))
+    {
+    }
+
+    inline QAutoBStr(const QUrl &url)
+        : m_string(::SysAllocString(static_cast<const wchar_t *>(url.toString().utf16())))
+    {
+    }
+
+    inline QAutoBStr(const wchar_t *string)
+        : m_string(::SysAllocString(string))
     {
     }
 
     inline ~QAutoBStr()
     {
-        SysFreeString(m_string);
+        ::SysFreeString(m_string);
     }
 
     inline operator BSTR() const { return m_string; }

@@ -37,6 +37,9 @@
 #include "qwmpevents.h"
 #include "qwmpglobal.h"
 
+#include <QtCore/qdir.h>
+#include <QtCore/qfileinfo.h>
+#include <QtCore/qsize.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
@@ -81,6 +84,11 @@ QVariant QWmpMetaData::metadata(const QString &name) const
 void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
 {
     setValue(m_media, name, value);
+}
+
+QMediaResourceList QWmpMetaData::resources() const
+{
+    return resources(m_media);
 }
 
 void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
@@ -140,13 +148,14 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
     const QAutoBStr bstrKey(key);
 
     QVariantList values;
-    long count = 0;
     IWMPMedia3 *media3 = 0;
     if (media && media->QueryInterface(
             __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
+        long count = 0;
         media3->getAttributeCountByType(bstrKey, 0, &count);
 
-        // Sometimes index 0 will return a valid value despite count being 0.
+        // The count appears to only be valid for static properties, dynamic properties like
+        // PlaylistIndex will have a count of zero but return a value for index 0.
         if (count == 0)
             count = 1;
 
@@ -180,6 +189,51 @@ void QWmpMetaData::setValue(IWMPMedia *media, const QString &key, const QVariant
 {
     if (qVariantCanConvert<QString>(value))
         media->setItemInfo(QAutoBStr(key), QAutoBStr(value.toString()));
+}
+
+QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
+{
+    QMediaResourceList resources;
+
+    BSTR string = 0;
+    if (media->get_sourceURL(&string) == S_OK) {
+        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        ::SysFreeString(string);
+
+        resources.append(QMediaResource(QUrl(uri)));
+
+        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
+            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            ::SysFreeString(string);
+
+            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
+            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
+
+            QDir dir = QFileInfo(uri).absoluteDir();
+
+            if (dir.exists(albumArtLarge)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtLarge)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(200, 200));
+
+                resources.append(resource);
+            }
+
+            if (dir.exists(albumArtSmall)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtSmall)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(75, 75));
+
+                resources.append(resource);
+            }
+        }
+    }
+
+    return resources;
 }
 
 QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
@@ -230,10 +284,13 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
                 }
                 text->Release();
                 return description;
+            } else {
+                qWarning("Unknown dispatch type");
             }
         }
         break;
     default:
+        qWarning("Unsupported Type %d %x", variant.vt, variant.vt);
         break;
     }
 

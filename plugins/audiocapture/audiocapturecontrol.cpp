@@ -35,7 +35,6 @@
 #include "audiocapturecontrol.h"
 #include "audiocaptureservice.h"
 #include "audiocapturesession.h"
-#include "qmediasource.h"
 #include "qiodeviceendpoint.h"
 
 #include <QtCore/qdebug.h>

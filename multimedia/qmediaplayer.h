@@ -38,7 +38,7 @@
 #include "qabstractmediaobject.h"
 
 #include "qmediaserviceprovider.h"
-#include "qmediasource.h"
+#include "qmediaresource.h"
 
 
 class QMediaPlayerService;
@@ -53,7 +53,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_OBJECT
 
     Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
-    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaChanged)
+    Q_PROPERTY(QMediaResourceList mediaResources READ currentMediaResources NOTIFY currentMediaResourcesChanged)
     Q_PROPERTY(int playlistPosition READ playlistPosition WRITE setPlaylistPosition NOTIFY playlistPositionChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
@@ -106,7 +106,7 @@ public:
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     int playlistPosition() const;
-    QMediaSource currentMediaSource() const;
+    QMediaResourceList currentMediaResources() const;
 
     qint64 duration() const;
     qint64 position() const;
@@ -150,7 +150,7 @@ Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void playlistPositionChanged(int playlistPosition);
-    void currentMediaSourceChanged(const QMediaSource &currentSource);
+    void currentMediaResourcesChanged(const QMediaResourceList &resources);
     void stateChanged(QMediaPlayer::State newState);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);

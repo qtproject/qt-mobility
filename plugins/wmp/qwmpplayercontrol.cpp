@@ -327,11 +327,13 @@ void QWmpPlayerControl::back()
 void QWmpPlayerControl::proxiedItemsInserted(int start, int end)
 {
     for (int i = start; i <= end; ++i) {
-        QMediaSource source = m_proxiedPlaylist->itemAt(i);
+        QMediaResourceList resources = m_proxiedPlaylist->resources(i);
 
         IWMPMedia *media = 0;
-        if (m_player->newMedia(QAutoBStr(source.dataLocation().toString()), &media) == S_OK)
+        if (!resources.isEmpty() && m_player->newMedia(
+                QAutoBStr(resources.first().uri()), &media) == S_OK) {
             m_proxyPlaylist->appendItem(media);
+        }
     }
 }
 

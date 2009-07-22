@@ -34,7 +34,6 @@
 
 #include "qaudiocapturecontrol.h"
 #include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
 
 QAudioCaptureControl::~QAudioCaptureControl()
 {

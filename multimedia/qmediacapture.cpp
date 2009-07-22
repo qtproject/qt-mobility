@@ -197,8 +197,7 @@ qint64 QMediaCapture::position() const
 void QMediaCapture::setPositionUpdatePeriod(int ms)
 {
     Q_D(QMediaCapture);
-    if (d->control)
-        d->control->setPositionUpdatePeriod(ms);
+    setNotifyInterval(ms);
 }
 
 

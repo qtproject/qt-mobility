@@ -59,8 +59,7 @@ public:
 
     int state() const;
 
-    qint64 position() const;
-    void setPositionUpdatePeriod(int ms);
+    qint64 position() const;    
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
 

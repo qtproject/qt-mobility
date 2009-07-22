@@ -47,6 +47,7 @@
 
 Player::Player(QWidget *parent)
     : QWidget(parent)
+    , coverLabel(0)
     , slider(0)
 {
     player = new QMediaPlayer;
@@ -66,6 +67,8 @@ Player::Player(QWidget *parent)
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
         player->service()->setVideoOutput(videoWidget);
+    } else {
+        coverLabel = new QLabel;
     }
 
     playlistModel = new PlaylistModel(this);
@@ -125,6 +128,7 @@ Player::Player(QWidget *parent)
 
         layout->addWidget(splitter);
     } else {
+        layout->addWidget(coverLabel, 0, Qt::AlignCenter);
         layout->addWidget(playlistView);
     }
     layout->addWidget(slider);
@@ -144,13 +148,14 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
-    if (!fileNames.isEmpty()) {
-        QList<QMediaSource> sources;
-
-        foreach (QString const &fileName, fileNames)
-            sources << QMediaSource("", QLatin1String("file://") + fileName);
-
-        player->mediaPlaylist()->append(sources);
+    foreach (QString const &fileName, fileNames) {
+#ifndef Q_OS_WIN
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file://") + fileName)));
+#else
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
+#endif
     }
 }
 
@@ -171,6 +176,20 @@ void Player::metadataChanged()
         setTrackInfo(QString("%1 - %2")
                 .arg(metaData->metadata(QLatin1String("Artist")).toString())
                 .arg(metaData->metadata(QLatin1String("Title")).toString()));
+
+        if (coverLabel) {
+            QMediaResource cover;
+            foreach (const QMediaResource &resource, metaData->resources()) {
+                if (resource.role() == QMediaResource::CoverArtRole
+                        && (cover.isNull()
+                        || resource.resolution().height() > cover.resolution().height())) {
+                    cover = resource;
+                }
+            }
+            coverLabel->setPixmap(!cover.isNull()
+                    ? QPixmap(cover.uri().toString())
+                    : QPixmap());
+        }
     }
 }
 

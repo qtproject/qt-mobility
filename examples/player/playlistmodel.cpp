@@ -35,6 +35,7 @@
 #include "playlistmodel.h"
 
 #include <QtCore/qfileinfo.h>
+#include <QtCore/qurl.h>
 
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
@@ -78,8 +79,8 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if (index.isValid() && role == Qt::DisplayRole) {
         QVariant    value = m_data[index];
         if (!value.isValid() && index.column() == Title) {
-            QVariant location = m_playlist->itemAt(index.row()).dataLocation();
-            return QFileInfo(location.toString()).fileName();
+            QUrl location = m_playlist->resource(index.row()).uri();
+            return QFileInfo(location.path()).fileName();
         }
 
         return value;

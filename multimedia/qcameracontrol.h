@@ -97,12 +97,14 @@ public:
     virtual void setAutofocus(bool f) = 0;
 
     virtual void setDevice(const QByteArray &device) = 0;
+
+    virtual QVideoStream::State state() const = 0;
 #endif
     virtual bool isValid() const = 0;
-#ifdef VIDEOSERVICES
 Q_SIGNALS:
-    void frameReady(QVideoFrame frame);
-    void stateChanged(QVideoStream::State state);
+#ifdef VIDEOSERVICES
+    void frameReady(QVideoFrame const&);
+    void stateChanged(QVideoStream::State);
 #endif
 protected:
     QCameraControl(QObject* parent);

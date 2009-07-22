@@ -33,10 +33,10 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     gst_object_ref(GST_OBJECT(m_encoderBin)); //Take ownership
     gst_object_sink(GST_OBJECT(m_encoderBin));
 
-    m_identity1 = gst_element_factory_make("identity", NULL);
-    gst_object_ref(GST_OBJECT(m_identity1));
-    gst_object_sink(GST_OBJECT(m_identity1));
-    gst_bin_add(m_encoderBin, m_identity1);
+    m_capsfilter = gst_element_factory_make("capsfilter", NULL);
+    gst_object_ref(GST_OBJECT(m_capsfilter));
+    gst_object_sink(GST_OBJECT(m_capsfilter));
+    gst_bin_add(m_encoderBin, m_capsfilter);
 
     m_identity2 = gst_element_factory_make("identity", NULL);
     gst_object_ref(GST_OBJECT(m_identity2));
@@ -44,7 +44,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     gst_bin_add(m_encoderBin, m_identity2);
 
     // add ghostpads
-    GstPad *pad = gst_element_get_static_pad(m_identity1, "sink");
+    GstPad *pad = gst_element_get_static_pad(m_capsfilter, "sink");
     gst_element_add_pad(GST_ELEMENT(m_encoderBin), gst_ghost_pad_new("sink", pad));
     gst_object_unref(GST_OBJECT(pad));
 
@@ -72,13 +72,34 @@ QAudioFormat QGstreamerAudioEncode::format() const
 bool QGstreamerAudioEncode::isFormatSupported(const QAudioFormat &format) const
 {
     Q_UNUSED(format);
-    return false;
+    return true;
 }
 
 bool QGstreamerAudioEncode::setFormat(const QAudioFormat &format)
 {
-    Q_UNUSED(format);
-    return false;
+    GstCaps *caps = 0;
+    if (!format.isNull()) {
+         caps = gst_caps_new_empty();
+         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
+
+         if ( format.frequency() > 0 )
+             gst_structure_set(structure, "rate", G_TYPE_INT, format.frequency(), NULL );
+
+         if ( format.channels() > 0 )
+             gst_structure_set(structure, "channels", G_TYPE_INT, format.channels(), NULL );
+
+         if ( format.sampleSize() > 0 )
+             gst_structure_set(structure, "width", G_TYPE_INT, format.sampleSize(), NULL );
+
+
+         gst_caps_append_structure(caps,structure);
+
+         qDebug() << "set caps filter:" << gst_caps_to_string(caps);
+    }
+
+    g_object_set(G_OBJECT(m_capsfilter), "caps", caps, NULL);
+
+    return true;
 }
 
 QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
@@ -102,7 +123,7 @@ bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
         m_codec = codecName;
 
         if (m_encoderElement) {
-            gst_element_unlink(m_identity1, m_encoderElement);
+            gst_element_unlink(m_capsfilter, m_encoderElement);
             gst_element_unlink(m_encoderElement, m_muxerElement);
 
             gst_bin_remove(m_encoderBin, m_encoderElement);
@@ -120,7 +141,7 @@ bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
         gst_bin_add(m_encoderBin, m_encoderElement);
         gst_bin_add(m_encoderBin, m_muxerElement);
 
-        gst_element_link_many(m_identity1, m_encoderElement, m_muxerElement, m_identity2, NULL);
+        gst_element_link_many(m_capsfilter, m_encoderElement, m_muxerElement, m_identity2, NULL);
     }
 
     return true;

@@ -34,7 +34,6 @@
 
 #include "qwmpplayerservice.h"
 
-#include "qevrwidget.h"
 #include "qwmpglobal.h"
 #include "qwmpmetadata.h"
 #include "qwmpplaceholderwidget.h"
@@ -48,6 +47,7 @@
 #include <QtCore/qvariant.h>
 #include <QtGui/qevent.h>
 
+#include <d3d9.h>
 #include <wmprealestate.h>
 
 QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
@@ -62,12 +62,12 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     , m_control(0)
     , m_metaData(0)
 #ifdef QWMP_EVR
-    , m_evrHwnd(0)
+    , m_presenter(0)
+    , m_displayControl(0)
+    , m_evrHwnd(LoadLibrary(L"evr"))
+    , ptrMFCreateVideoPresenter(0)
 #endif
 {
-#ifdef QWMP_EVR
-    qRegisterMetaType<IMFActivate *>();
-#endif
     HRESULT hr;
 
     if ((hr = CoCreateInstance(
@@ -92,12 +92,21 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
         m_events = new QWmpEvents(m_player);
         m_metaData = new QWmpMetaData(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
-
     }
 }
 
 QWmpPlayerService::~QWmpPlayerService()
-{
+{    
+    if (m_displayControl) {
+        m_displayControl->Release();
+        m_displayControl = 0;
+    }
+
+    if (m_presenter) {
+        m_presenter->Release();
+        m_presenter = 0;
+    }
+
     if (m_placeholderWidget)
         m_placeholderWidget->removeEventFilter(this);
 
@@ -135,28 +144,30 @@ void QWmpPlayerService::setVideoOutput(QObject *output)
 {
     QAbstractMediaService::setVideoOutput(output);
 
+    if (m_embedMode == RemoteEmbed)
+        return;
+
     if (m_placeholderWidget)
         m_placeholderWidget->removeEventFilter(this);
 
-#ifdef QWMP_EVR
-    IWMPVideoRenderConfig *config = 0;
-
-    if (m_player && m_player->QueryInterface(
-            __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-        IMFActivate *activate = 0;
-
-        if (output)
-            activate = qvariant_cast<IMFActivate *>(output->property("activate"));
-
-        config->put_presenterActivate(activate);
-        config->Release();
-    }
-#endif
     m_placeholderWidget = qobject_cast<QWmpPlaceholderWidget *>(output);
 
+#ifdef QWMP_EVR
+    IWMPVideoRenderConfig *config = 0;
+    if (m_evrHwnd && m_player->QueryInterface(
+            __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
+        if (m_placeholderWidget) {
+            m_placeholderWidget->installEventFilter(this);
+            config->put_presenterActivate(static_cast<IMFActivate *>(this));
+        } else {
+            config->put_presenterActivate(0);
+        }
+        config->Release();
+    } else
+#endif
     if (m_placeholderWidget) {
         m_placeholderWidget->installEventFilter(this);
-        
+
         BSTR mode = ::SysAllocString(L"none");
         m_player->put_uiMode(mode);
         ::SysFreeString(mode);
@@ -167,11 +178,7 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
         QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> interfaces;
-#ifdef QWMP_EVR
-    if (direction == QMediaEndpointInterface::Output && m_evrHwnd)
-        interfaces << QMediaWidgetEndpoint_iid;
-#endif
-    if (direction == QMediaEndpointInterface::Output)
+    if (direction == QMediaEndpointInterface::Output && m_embedMode == LocalEmbed)
         interfaces << QMediaWidgetEndpoint_iid;
 
     return interfaces;
@@ -179,11 +186,7 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
 
 QObject *QWmpPlayerService::createEndpoint(const char *iid)
 {
-#ifdef QWMP_EVR
-    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0 && m_evrHwnd)
-        return new QEvrWidget;
-#endif
-    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0)
+    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0 && m_embedMode == LocalEmbed)
         return new QWmpPlaceholderWidget;
     return 0;
 }
@@ -197,7 +200,17 @@ bool QWmpPlayerService::eventFilter(QObject *object, QEvent *event)
     if (object == m_placeholderWidget) {
         switch (event->type()) {
         case QEvent::Show:
-            {
+#ifdef QWMP_EVR
+            if (m_displayControl) {
+                m_displayControl->SetVideoWindow(m_placeholderWidget->effectiveWinId());
+
+                const QRect rect = m_placeholderWidget->geometry();
+                RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+
+                m_displayControl->SetVideoPosition(0, &displayRect);
+            } else
+#endif
+            if (m_inPlaceObject) {
                 QRect rect = m_placeholderWidget->geometry();
                 rect.moveTo(m_placeholderWidget->mapTo(
                         m_placeholderWidget->nativeParentWidget(), rect.topLeft()));
@@ -215,7 +228,15 @@ bool QWmpPlayerService::eventFilter(QObject *object, QEvent *event)
         case QEvent::Hide:
         case QEvent::Resize:
         case QEvent::Move:
-            {
+#ifdef QWMP_EVR
+            if (m_displayControl) {
+                const QRect rect = m_placeholderWidget->geometry();
+                RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+
+                m_displayControl->SetVideoPosition(0, &displayRect);
+            } else
+#endif
+            if (m_inPlaceObject) {
                 QRect rect = m_placeholderWidget->geometry();
                 rect.moveTo(m_placeholderWidget->mapTo(
                         m_placeholderWidget->nativeParentWidget(), rect.topLeft()));
@@ -258,6 +279,11 @@ HRESULT QWmpPlayerService::QueryInterface(REFIID riid, void **object)
 {
     if (!object) {
         return E_POINTER;
+#ifdef QWMP_EVR
+    } else if (riid == __uuidof(IMFAttributes)
+            || riid == __uuidof(IMFActivate)) {
+        *object = static_cast<IMFActivate *>(this);
+#endif
     } else if (riid == __uuidof(IUnknown)
             || riid == __uuidof(IOleClientSite)) {
         *object = static_cast<IOleClientSite *>(this);
@@ -293,6 +319,84 @@ ULONG QWmpPlayerService::Release()
 
     return ref;
 }
+
+
+#ifdef QWMP_EVR
+// IMFActivate
+HRESULT QWmpPlayerService::ActivateObject(REFIID riid, void **ppv)
+{
+    if (riid != __uuidof(IMFVideoPresenter)) {
+        return E_NOINTERFACE;
+    } else if (!ptrMFCreateVideoPresenter) {
+        return E_NOINTERFACE;
+    } else if (!m_placeholderWidget) {
+        return E_NOINTERFACE;
+    } else if (m_presenter) {
+        *ppv = m_presenter;
+
+        return S_OK;
+    } else {
+        if (m_displayControl) {
+            m_displayControl->Release();
+            m_displayControl = 0;
+        }
+
+        IMFGetService *service;
+        HRESULT hr;
+        if ((hr = (*ptrMFCreateVideoPresenter)(
+                0,
+                __uuidof(IDirect3DDevice9),
+                __uuidof(IMFVideoPresenter),
+                reinterpret_cast<void **>(&m_presenter))) != S_OK) {
+            qWarning("failed to create video presenter");
+        } else if ((hr = m_presenter->QueryInterface(
+                __uuidof(IMFGetService), reinterpret_cast<void **>(&service))) != S_OK) {
+            qWarning("failed to query IMFGetService interface");
+        } else {
+            if ((hr = service->GetService(
+                    MR_VIDEO_RENDER_SERVICE,
+                    __uuidof(IMFVideoDisplayControl),
+                    reinterpret_cast<void **>(&m_displayControl))) != S_OK) {
+                qWarning("failed to get IMFVideoDisplayControl service");
+            }
+            service->Release();
+        }
+
+        if (m_presenter && hr != S_OK) {
+            m_presenter->Release();
+            m_presenter = 0;
+        }
+
+        *ppv = m_presenter;
+
+        return hr;
+    }
+}
+
+HRESULT QWmpPlayerService::ShutdownObject()
+{
+    if (m_displayControl) {
+        m_displayControl->Release();
+        m_displayControl = 0;
+    }
+
+    if (m_presenter) {
+        m_presenter->Release();
+        m_presenter = 0;
+    }
+    return S_OK;
+}
+
+HRESULT QWmpPlayerService::DetachObject()
+{
+    if (m_presenter) {
+        m_presenter->Release();
+        m_presenter = 0;
+    }
+
+    return S_OK;
+}
+#endif
 
 // IOleClientSite
 HRESULT QWmpPlayerService::SaveObject()
@@ -554,11 +658,11 @@ HRESULT QWmpPlayerService::GetServiceType(BSTR *pbstrType)
     if (!pbstrType) {
         return E_POINTER;
     } else if (m_embedMode == RemoteEmbed) {
-        *pbstrType = SysAllocString(L"Remote");
+        *pbstrType = ::SysAllocString(L"Remote");
 
         return S_OK;
     } else {
-        *pbstrType = SysAllocString(L"Local");
+        *pbstrType = ::SysAllocString(L"Local");
 
         return S_OK;
     }
@@ -569,7 +673,7 @@ HRESULT QWmpPlayerService::GetApplicationName(BSTR *pbstrName)
     if (!pbstrName) {
         return E_POINTER;
     } else {
-        *pbstrName = SysAllocString(static_cast<const wchar_t *>(
+        *pbstrName = ::SysAllocString(static_cast<const wchar_t *>(
                 QCoreApplication::applicationName().utf16()));
 
         return S_OK;

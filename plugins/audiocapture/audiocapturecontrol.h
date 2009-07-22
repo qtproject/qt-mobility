@@ -42,7 +42,6 @@
 #endif
 
 #include "qaudiocapturecontrol.h"
-#include "qmediasource.h"
 
 class AudioCaptureService;
 class AudioCaptureSession;

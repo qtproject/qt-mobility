@@ -287,12 +287,20 @@ bool CameraControl::isValid() const
         return false;
 }
 
+QVideoStream::State CameraControl::state() const
+{
+    if(m_camera)
+        return m_camera->preview()->state();
+
+    return QVideoStream::StopState;
+}
+
 void CameraControl::setDevice(const QByteArray &device)
 {
     if(m_camera) delete m_camera;
     m_camera = new QVideoCamera(device,this);
     connect(m_camera->preview(),SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
-    connect(m_camera->preview(),SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL((stateChanged(QVideoStream::State))));
+    connect(m_camera->preview(),SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL(stateChanged(QVideoStream::State)));
 }
 
 

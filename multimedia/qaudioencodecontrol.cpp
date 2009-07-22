@@ -35,6 +35,34 @@
 #include "qaudioencodecontrol.h"
 #include <QtCore/qstringlist.h>
 
+#ifndef AUDIOSERVICES
+//temporary
+QAudioFormat::QAudioFormat() :
+    m_null(true), m_frequency(-1), m_channels(-1), m_sampleSize(-1)
+{
+}
+
+void QAudioFormat::setFrequency(int frequency)
+{
+    m_frequency = frequency;
+    m_null = false;
+}
+
+void QAudioFormat::setChannels(int channels)
+{
+    m_channels = channels;
+    m_null = false;
+}
+
+void QAudioFormat::setSampleSize(int sampleSize)
+{
+    m_sampleSize = sampleSize;
+    m_null = false;
+}
+
+#endif
+
+
 QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
