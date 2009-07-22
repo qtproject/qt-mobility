@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTABSTRACTACTIONFACTORY_H
-#define QCONTACTABSTRACTACTIONFACTORY_H
+#ifndef QCONTACTACTIONFACTORY_H
+#define QCONTACTACTIONFACTORY_H
 
 #include "qtcontactsglobal.h"
 
@@ -44,14 +44,14 @@
 #include <QStringList>
 #include <QHash>
 
-class QContactAbstractAction;
+class QContactAction;
 
-class QTCONTACTS_EXPORT QContactAbstractActionFactory : public QObject
+class QTCONTACTS_EXPORT QContactActionFactory : public QObject
 {
     Q_OBJECT
 
 public:
-    virtual ~QContactAbstractActionFactory() = 0;
+    virtual ~QContactActionFactory() = 0;
 
     struct ActionDescriptor {
         QString actionName;
@@ -94,12 +94,12 @@ public:
 
     virtual QString name() const = 0;
     virtual QList<ActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAbstractAction* instance(const ActionDescriptor& descriptor) const = 0;
+    virtual QContactAction* instance(const ActionDescriptor& descriptor) const = 0;
 };
 
-uint qHash(const QContactAbstractActionFactory::ActionDescriptor& ad);
+uint qHash(const QContactActionFactory::ActionDescriptor& ad);
 
-#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.abstractactionfactory/1.0"
-Q_DECLARE_INTERFACE(QContactAbstractActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
+Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
 
 #endif

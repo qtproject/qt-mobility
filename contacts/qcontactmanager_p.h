@@ -55,7 +55,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerinfo.h"
 
-#include "qcontactabstractactionfactory.h"
+#include "qcontactactionfactory.h"
 
 class QContactManagerEngineFactory;
 
@@ -79,7 +79,7 @@ public:
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     static QContactManagerEngine* engine(const QContactManager* manager);
-    static QList<QContactAbstractAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
     QContactManagerEngine* m_engine;
     QString m_managerName;
@@ -97,9 +97,9 @@ public:
     static void loadFactories();
 
     /* Action Implementations */
-    typedef QHash<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*> DescriptorHash;
-    static QList<QContactAbstractActionFactory*> m_actionfactories; // list of all factories
-    static QList<QContactAbstractActionFactory::ActionDescriptor> m_descriptors; // all descriptors
+    typedef QHash<QContactActionFactory::ActionDescriptor, QContactActionFactory*> DescriptorHash;
+    static QList<QContactActionFactory*> m_actionfactories; // list of all factories
+    static QList<QContactActionFactory::ActionDescriptor> m_descriptors; // all descriptors
     static DescriptorHash m_descriptormap;
     static QHash<QString, int> m_actionmap;
     static QHash<QString, int> m_vendormap;

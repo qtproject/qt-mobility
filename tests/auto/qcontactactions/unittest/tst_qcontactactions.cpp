@@ -37,8 +37,8 @@
 
 #include "qtcontacts.h"
 #include "qcontactmanager_p.h"
-#include "qcontactabstractaction.h"
-#include "qcontactabstractactionfactory.h"
+#include "qcontactaction.h"
+#include "qcontactactionfactory.h"
 
 
 //TESTED_CLASS=
@@ -60,10 +60,10 @@ private slots:
 };
 
 /* Test a static factory as well */
-class DummyStaticActionFactory : public QContactAbstractActionFactory
+class DummyStaticActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactAbstractActionFactory)
+    Q_INTERFACES(QContactActionFactory)
 
 public:
     DummyStaticActionFactory() {}
@@ -74,12 +74,12 @@ public:
         return QString("dummystaticactionfactory");
     }
 
-    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const
+    QList<QContactActionFactory::ActionDescriptor> actionDescriptors() const
     {
-        return QList<QContactAbstractActionFactory::ActionDescriptor>();
+        return QList<QContactActionFactory::ActionDescriptor>();
     }
 
-    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor&) const
+    QContactAction* instance(const QContactActionFactory::ActionDescriptor&) const
     {
         return 0;
     }
@@ -123,7 +123,7 @@ void tst_QContactActions::testSendEmail()
     QVERIFY(QContactManager::availableActions("Test", 1).contains("SendEmail"));
     QVERIFY(QContactManager::availableActions(QString(), -200).contains("SendEmail"));
 
-    QList<QContactAbstractAction*> impls = QContactManager::actions();
+    QList<QContactAction*> impls = QContactManager::actions();
     bool foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         if (impls.at(i)->actionName() == QString("SendEmail")) {
@@ -280,7 +280,7 @@ void tst_QContactActions::testSendEmail()
     QVERIFY(!foundSendEmail);
 
     impls = QContactManager::actions();
-    QContactAbstractAction* sendEmail = 0;
+    QContactAction* sendEmail = 0;
     for (int i = 0; i < impls.size(); i++) {
         if (impls.at(i)->actionName() == QString("SendEmail")
                 && impls.at(i)->vendor() == QString("Test")

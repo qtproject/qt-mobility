@@ -31,14 +31,14 @@
 **
 ****************************************************************************/
 
-#include "qcontactabstractaction.h"
+#include "qcontactaction.h"
 
-QContactAbstractAction::~QContactAbstractAction()
+QContactAction::~QContactAction()
 {
 }
 
 /*!
- * \class QContactAbstractAction
+ * \class QContactAction
  * \brief This class provides an interface for performing an action on a QContact or QContactDetail
  *
  * An action is anything that can be performed on a contact, or a detail of a contact.  An example
@@ -49,12 +49,12 @@ QContactAbstractAction::~QContactAbstractAction()
  */
 
 /*!
- * \fn QContactAbstractAction::~QContactAbstractAction()
+ * \fn QContactAction::~QContactAction()
  * Clears any memory in use by this instance of the action implementation
  */
 
 /*!
- * \fn QContactAbstractAction::actionName() const
+ * \fn QContactAction::actionName() const
  * Returns the name of the action provided by this implementation.
  * The name of the action identifies the action provided; different implementations of an action
  * with the same name must provide the same functionality, but may differ in implementation semantics.
@@ -62,42 +62,42 @@ QContactAbstractAction::~QContactAbstractAction()
  */
 
 /*!
- * \fn QContactAbstractAction::metadata() const
+ * \fn QContactAction::metadata() const
  * Returns the metadata associated with this action, such as icons, labels or sound cues
  */
 
 /*!
- * \fn QContactAbstractAction::vendor() const
+ * \fn QContactAction::vendor() const
  * Returns the identification string of the vendor which has provided this implementation
  */
 
 /*!
- * \fn QContactAbstractAction::implementationVersion() const
+ * \fn QContactAction::implementationVersion() const
  * Returns the (minor) version of the implementation of this action.  Note that the major version
  * (which describes the semantics/outcomes of the action) is included in the action name itself.
  */
 
 /*!
- * \fn QContactAbstractAction::contactFilter(const QVariant& value) const
+ * \fn QContactAction::contactFilter(const QVariant& value) const
  * Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
  * If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
  */
 
 /*!
- * \fn QContactAbstractAction::supportsDetail(const QContactDetail& detail) const
+ * \fn QContactAction::supportsDetail(const QContactDetail& detail) const
  * Returns true if the provided \a detail contains the fields required for this action to be
  * performed on it; otherwise, returns false
  */
 
 /*!
- * \fn QContactAbstractAction::supportedDetails(const QContact& contact) const
+ * \fn QContactAction::supportedDetails(const QContact& contact) const
  * Returns a list of the details saved in the given \a contact which contain the fields required
  * for this action to be performed on them.
  *
  * The default implementation of this function simply tests all the details in the contact
  * using \l supportsDetail()
  */
-QList<QContactDetail> QContactAbstractAction::supportedDetails(const QContact& contact) const
+QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) const
 {
     QList<QContactDetail> ret;
     QList<QContactDetail> details = contact.details();
@@ -109,7 +109,7 @@ QList<QContactDetail> QContactAbstractAction::supportedDetails(const QContact& c
 }
 
 /*!
- * \fn QContactAbstractAction::performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+ * \fn QContactAction::performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
  * Performs the implemented action on the specified \a detail of the given \a contact, or on the first
  * eligible detail saved in the contact if the given \a detail is empty.
  */

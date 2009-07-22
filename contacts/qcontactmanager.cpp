@@ -39,7 +39,7 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 
-#include "qcontactabstractaction.h"
+#include "qcontactaction.h"
 #include "qcontactmanagerinfo.h"
 
 #include <QSharedData>
@@ -107,9 +107,9 @@ QStringList QContactManager::availableActions(const QString& vendor, int impleme
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactAbstractAction*> actionImpls = QContactManagerData::actions(QString(), vendor, implementationVersion);
+    QList<QContactAction*> actionImpls = QContactManagerData::actions(QString(), vendor, implementationVersion);
     for (int i = 0; i < actionImpls.size(); i++) {
-        QContactAbstractAction* actionImpl = actionImpls.at(i);
+        QContactAction* actionImpl = actionImpls.at(i);
         ret.insert(actionImpl->actionName());
 
         // we took ownership; clean up.
@@ -121,7 +121,7 @@ QStringList QContactManager::availableActions(const QString& vendor, int impleme
 }
 
 /*!
- * Returns a list of QContactAbstractAction instances which implement the given \a actionName and is provided by the
+ * Returns a list of QContactAction instances which implement the given \a actionName and is provided by the
  * given \a vendor and is of the given \a implementationVersion.  If \a actionName is empty,
  * implementations of all actions are returned; if \a vendor is empty, implementations provided by any vendor and
  * of any implementation version are returned; if \a implementationVersion is empty, any implementations provided by the
@@ -132,7 +132,7 @@ QStringList QContactManager::availableActions(const QString& vendor, int impleme
  *
  * TODO: fix this.
  */
-QList<QContactAbstractAction*> QContactManager::actions(const QString& actionName, const QString& vendor, int implementationVersion)
+QList<QContactAction*> QContactManager::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
     // the caller takes ownership
     QContactManagerData::loadFactories();

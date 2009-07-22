@@ -39,8 +39,8 @@
 
 #include "qcontact_p.h"
 
-#include "qcontactabstractaction.h"
-#include "qcontactabstractactionfactory.h"
+#include "qcontactaction.h"
+#include "qcontactactionfactory.h"
 
 #include <QSharedData>
 #include <QtPlugin>
@@ -56,8 +56,8 @@
 
 
 /* Shared QContactManager stuff here, default engine stuff below */
-QList<QContactAbstractActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
-QList<QContactAbstractActionFactory::ActionDescriptor> QContactManagerData::m_descriptors;
+QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
+QList<QContactActionFactory::ActionDescriptor> QContactManagerData::m_descriptors;
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
 QContactManagerData::DescriptorHash QContactManagerData::m_descriptormap;
 QHash<QString, int> QContactManagerData::m_vendormap;
@@ -69,7 +69,7 @@ static void qContactsCleanEngines()
 {
     QContactManagerData::m_discovered = false;
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
-    QList<QContactAbstractActionFactory*> actionfactories = QContactManagerData::m_actionfactories;
+    QList<QContactActionFactory*> actionfactories = QContactManagerData::m_actionfactories;
 
     for (int i=0; i < factories.count(); i++) {
         delete factories.at(i);
@@ -128,7 +128,7 @@ void QContactManagerData::loadFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
-            QContactAbstractActionFactory *g = qobject_cast<QContactAbstractActionFactory*>(staticPlugins.at(i));
+            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Static: found an engine plugin" << f << "with name" << name;
@@ -149,10 +149,10 @@ void QContactManagerData::loadFactories()
 
                 m_actionfactories.append(g);
 
-                QList<QContactAbstractActionFactory::ActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*>::iterator it;
+                QList<QContactActionFactory::ActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactActionFactory::ActionDescriptor, QContactActionFactory*>::iterator it;
                 for (int j = 0; j < actions.size(); j++) {
-                    const QContactAbstractActionFactory::ActionDescriptor& desc = actions.at(j);
+                    const QContactActionFactory::ActionDescriptor& desc = actions.at(j);
                     m_descriptormap.insert(desc, g);
                     m_descriptors.append(desc);
                     m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
@@ -200,7 +200,7 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < plugins.count(); i++) {
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
-            QContactAbstractActionFactory *g = qobject_cast<QContactAbstractActionFactory*>(qpl.instance());
+            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
@@ -222,10 +222,10 @@ void QContactManagerData::loadFactories()
 
                 m_actionfactories.append(g);
 
-                QList<QContactAbstractActionFactory::ActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactAbstractActionFactory::ActionDescriptor, QContactAbstractActionFactory*>::iterator it;
+                QList<QContactActionFactory::ActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactActionFactory::ActionDescriptor, QContactActionFactory*>::iterator it;
                 for (int j = 0; j < actions.size(); j++) {
-                    const QContactAbstractActionFactory::ActionDescriptor& desc = actions.at(j);
+                    const QContactActionFactory::ActionDescriptor& desc = actions.at(j);
                     m_descriptormap.insert(desc, g);
                     m_descriptors.append(desc);
                     m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
@@ -239,15 +239,15 @@ void QContactManagerData::loadFactories()
     }
 }
 
-QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actionName, const QString& vendor, int implementationVersion)
+QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
-    QList<QContactAbstractAction*> retn;
+    QList<QContactAction*> retn;
 
     loadFactories();
 
     bool restrict = false;
     QSet<int> subset;
-    QList<QContactAbstractActionFactory::ActionDescriptor> descriptors;
+    QList<QContactActionFactory::ActionDescriptor> descriptors;
 
     // Go through our list of descriptors, looking for a match
     if (!actionName.isEmpty()) {
@@ -284,7 +284,7 @@ QList<QContactAbstractAction*> QContactManagerData::actions(const QString& actio
 
     /* Now loop over the valid descriptors */
     for (int j=0; j < descriptors.size(); j++) {
-        const QContactAbstractActionFactory::ActionDescriptor& descriptor = descriptors.at(j);
+        const QContactActionFactory::ActionDescriptor& descriptor = descriptors.at(j);
         retn += m_descriptormap.value(descriptor)->instance(descriptor);
     }
 

@@ -31,35 +31,36 @@
 **
 ****************************************************************************/
 
+#include "qcontactactionfactory.h"
 
-#ifndef QCONTACTABSTRACTACTION_H
-#define QCONTACTABSTRACTACTION_H
-
-#include "qtcontactsglobal.h"
-
-#include "qcontactfilter.h"
-#include "qcontactdetail.h"
-#include "qcontact.h"
-
-#include <QObject>
-
-class QContactAbstractActionData;
-class QTCONTACTS_EXPORT QContactAbstractAction : public QObject
+QContactActionFactory::~QContactActionFactory()
 {
-    Q_OBJECT
+}
 
-public:
-    virtual ~QContactAbstractAction() = 0;
+uint qHash(const QContactActionFactory::ActionDescriptor& ad)
+{
+    return qHash(ad.actionName) + qHash(ad.vendorName) + ad.vendorVersion;
+}
 
-    virtual QString actionName() const = 0;                                 // name of action this instance implements
-    virtual QVariantMap metadata() const = 0;                               // label, icon etc
-    virtual QString vendor() const = 0;                                     // vendor identification string
-    virtual int implementationVersion() const = 0;                          // (minor) implementation version
+/*!
+ * \fn QContactActionFactory::~QContactActionFactory()
+ * Clears any memory in use by this factory
+ */
 
-    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
-    virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
-    virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
-};
+/*!
+ * \fn QContactActionFactory::name() const
+ * Returns the name of this factory.  The name is used to identify the factory
+ * when it is retrieved using the Qt Plugin framework.
+ */
 
-#endif
+/*!
+ * \fn QContactActionFactory::actionDescriptors() const
+ * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
+ * from this factory.
+ */
+
+/*!
+ * \fn QContactActionFactory::instance(const ActionDescriptor& descriptor) const
+ * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor
+ */
+

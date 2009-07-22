@@ -37,7 +37,7 @@
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
-#include "qcontactabstractaction.h"
+#include "qcontactaction.h"
 
 /*!
  * \class QContact
@@ -412,11 +412,11 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     // ascertain which details are supported by any implementation of the given action
     QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
-    QList<QContactAbstractAction*> implementations = QContactManagerData::actions(actionName);
+    QList<QContactAction*> implementations = QContactManagerData::actions(actionName);
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail detail = d->m_details.at(i);
         for (int j = 0; j < implementations.size(); j++) {
-            QContactAbstractAction* aptr = implementations.at(j);
+            QContactAction* aptr = implementations.at(j);
             if (aptr->supportsDetail(detail)) {
                 retn.append(detail);
                 break;
@@ -436,9 +436,9 @@ QStringList QContact::availableActions() const
     // check every action implementation to see if it supports me.
     QContactData::setError(d, QContact::NoError);
     QSet<QString> validActions;
-    QList<QContactAbstractAction*> implementations = QContactManagerData::actions();
+    QList<QContactAction*> implementations = QContactManagerData::actions();
     for (int i = 0; i < implementations.size(); i++) {
-        QContactAbstractAction* aptr = implementations.at(i);
+        QContactAction* aptr = implementations.at(i);
         if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
             validActions.insert(aptr->actionName());
     }

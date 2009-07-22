@@ -42,7 +42,7 @@
 #include "qcontactsortorder.h"
 
 #include "qcontactfilters.h"
-#include "qcontactabstractaction.h"
+#include "qcontactaction.h"
 
 /*!
  * \class QContactManagerEngine
@@ -1320,13 +1320,13 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactAbstractAction*> actions = QContactManager::actions(af.actionName(), af.vendorName(), af.vendorVersion());
+                QList<QContactAction*> actions = QContactManager::actions(af.actionName(), af.vendorName(), af.vendorVersion());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value
                 // or test if a QContactDetailRangeFilter contains this value already
                 for (int j = 0; j < actions.count(); j++) {
-                    QContactAbstractAction* action = actions.at(j);
+                    QContactAction* action = actions.at(j);
 
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
@@ -1380,10 +1380,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 }
 
 /*!
- * Given a QContactFilter \a filter retrieved from a QContactAbstractAction,
+ * Given a QContactFilter \a filter retrieved from a QContactAction,
  * check that it is valid and cannot cause infinite recursion.
  *
- * In particular, a filter from a QContactAbstractAction cannot contain
+ * In particular, a filter from a QContactAction cannot contain
  * any instances of a QContactActionFilter.
  *
  * Returns true if \a filter seems ok, or false otherwise.

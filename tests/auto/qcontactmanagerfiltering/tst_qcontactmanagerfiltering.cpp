@@ -1981,7 +1981,7 @@ void tst_QContactManagerFiltering::dumpContacts()
 }
 
 /* Static actions for testing matching */
-class QIntegerAction : public QContactAbstractAction
+class QIntegerAction : public QContactAction
 {
     Q_OBJECT
 
@@ -2014,7 +2014,7 @@ public:
     }
 };
 
-class QNumberAction : public QContactAbstractAction
+class QNumberAction : public QContactAction
 {
     Q_OBJECT
 
@@ -2057,7 +2057,7 @@ public:
     }
 };
 
-class QBooleanAction : public QContactAbstractAction
+class QBooleanAction : public QContactAction
 {
     Q_OBJECT
 
@@ -2095,7 +2095,7 @@ public:
     }
 };
 
-class RecursiveAction : public QContactAbstractAction
+class RecursiveAction : public QContactAction
 {
     Q_OBJECT
 
@@ -2203,10 +2203,10 @@ public:
     }
 };
 
-class FilterActionFactory : public QContactAbstractActionFactory
+class FilterActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactAbstractActionFactory)
+    Q_INTERFACES(QContactActionFactory)
 
 public:
     FilterActionFactory() {}
@@ -2217,9 +2217,9 @@ public:
         return QString("FilterActionFactory");
     }
 
-    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const
+    QList<QContactActionFactory::ActionDescriptor> actionDescriptors() const
     {
-        QList<QContactAbstractActionFactory::ActionDescriptor> ret;
+        QList<QContactActionFactory::ActionDescriptor> ret;
 
         ret << ActionDescriptor("Number", "NumberCo", 42)
                 << ActionDescriptor("Number", "IntegerCo", 5)
@@ -2234,7 +2234,7 @@ public:
         return ret;
     }
 
-    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor& descriptor) const
+    QContactAction* instance(const QContactActionFactory::ActionDescriptor& descriptor) const
     {
         if (descriptor.actionName == "Number") {
             if (descriptor.vendorName == "IntegerCo")

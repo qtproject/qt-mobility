@@ -45,28 +45,28 @@
 // We mean it.
 //
 
-#include "qcontactabstractaction.h"
-#include "qcontactabstractactionfactory.h"
+#include "qcontactaction.h"
+#include "qcontactactionfactory.h"
 
 #include <QSharedData>
 #include <QString>
 #include <QVariantMap>
 
-class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactAbstractActionFactory
+class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactAbstractActionFactory)
+    Q_INTERFACES(QContactActionFactory)
 
 public:
     QContactSendEmailActionFactory();
     ~QContactSendEmailActionFactory();
 
     QString name() const;
-    QList<QContactAbstractActionFactory::ActionDescriptor> actionDescriptors() const;
-    QContactAbstractAction* instance(const QContactAbstractActionFactory::ActionDescriptor& descriptor) const;
+    QList<QContactActionFactory::ActionDescriptor> actionDescriptors() const;
+    QContactAction* instance(const QContactActionFactory::ActionDescriptor& descriptor) const;
 };
 
-class QContactSendEmailAction : public QContactAbstractAction
+class QContactSendEmailAction : public QContactAction
 {
     Q_OBJECT
 

@@ -52,7 +52,7 @@
 #include "qcontactabstractrequest.h"            // asynchronous request
 #include "qcontactrequests.h"                   // leaf request classes
 #include "qcontactsortorder.h"                  // contact sorting
-#include "qcontactabstractaction.h"             // actions
-#include "qcontactabstractactionfactory.h"      // action factory
+#include "qcontactaction.h"             // actions
+#include "qcontactactionfactory.h"      // action factory
 
 #endif

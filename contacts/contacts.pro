@@ -16,8 +16,8 @@ include(requests/requests.pri)
 # Input
 HEADERS += qcontact.h \
     qcontact_p.h \
-    qcontactabstractaction.h \
-    qcontactabstractactionfactory.h \
+    qcontactaction.h \
+    qcontactactionfactory.h \
     qcontactdetail.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition.h \
@@ -38,8 +38,8 @@ HEADERS += qcontact.h \
     qtcontacts.h
 
 SOURCES += qcontact.cpp \
-    qcontactabstractaction.cpp \
-    qcontactabstractactionfactory.cpp \
+    qcontactaction.cpp \
+    qcontactactionfactory.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
     qcontactfilter.cpp \
