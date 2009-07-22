@@ -233,16 +233,6 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return QMessageAccount(); // stub
 }
 
-void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
-{
-    Q_UNUSED(maximumBytes)
-}
-
-uint QMessageStore::maximumWorkingMemory()
-{
-    return 0; // stub
-}
-
 void QMessageStore::startNotifications(const QMessageFilterKey &key)
 {
     Q_UNUSED(key)    
