@@ -34,3 +34,6 @@ ABLD.BAT
 #Visual Studio files
 *.sln
 *.vcproj
+
+#QtCreator project files
+*.pro.user
