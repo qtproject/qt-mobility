@@ -49,6 +49,7 @@ class QMediaCapturePrivate;
 class QMediaCapture : public QAbstractMediaObject
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 
 public:
     enum State

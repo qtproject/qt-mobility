@@ -28,13 +28,13 @@ HEADERS = qabstractmediacontrol.h \
     qmediaplaylistsource.h \
     qmediaplaylistioplugin.h \
     qmediaproviderfactory_p.h \
+    qmediaresource.h \
     qmediarecorder.h \
     qmediarecordercontrol.h \
     qmediarecorderservice.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
-    qmediasource.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
@@ -46,8 +46,8 @@ HEADERS = qabstractmediacontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qmediacapturecontrol.h \
-    qaudiocapturepropertiescontrol.h \
-    qvideocapturepropertiescontrol.h \
+    qaudioencodecontrol.h \
+    qvideoencodecontrol.h \
     qmediacapture.h \
     qcamera.h \
     qcameracontrol.h \
@@ -72,9 +72,9 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediarecorder.cpp \
     qmediarecordercontrol.cpp \
     qmediarecorderservice.cpp \
+    qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmediasink.cpp \
-    qmediasource.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradiotuner.cpp \
@@ -85,8 +85,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qmediacapturecontrol.cpp \
-    qaudiocapturepropertiescontrol.cpp \
-    qvideocapturepropertiescontrol.cpp \
+    qaudioencodecontrol.cpp \
+    qvideoencodecontrol.cpp \
     qmediacapture.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \

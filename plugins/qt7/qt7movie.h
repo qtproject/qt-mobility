@@ -37,7 +37,8 @@
 
 #include <QtCore/qobject.h>
 
-class QMediaSource;
+#include "qmediaresource.h"
+
 class Qt7Widget;
 
 class Qt7MoviePrivate;
@@ -76,7 +77,7 @@ public:
     void setVideoOutput(Qt7Widget *outpout);
 
 public slots:
-    void setSource(QMediaSource const &source);
+    void setSource(QMediaResourceList const &source);
 
 private:
     Qt7MoviePrivate *d;

@@ -37,7 +37,7 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmultimediaglobal.h"
+#include "qmediaresource.h"
 
 class QAbstractMediaObject;
 class QMediaMetadataPrivate;
@@ -46,7 +46,8 @@ class Q_MEDIA_EXPORT QMediaMetadata : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)
-    Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged);
+    Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged)
+    Q_PROPERTY(QMediaResourceList resources READ resources)
 
 public:
     QMediaMetadata(QAbstractMediaObject *mediaObject);
@@ -58,6 +59,8 @@ public:
     QList<QString> availableMetadata() const;
     QVariant metadata(QString const &name) const;
     void setMetadata(QString const &name, QVariant const &value);
+
+    QMediaResourceList resources() const;
 
 Q_SIGNALS:
     void metadataChanged();

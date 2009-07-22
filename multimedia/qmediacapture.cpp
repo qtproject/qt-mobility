@@ -38,6 +38,8 @@
 #include "qabstractmediaservice.h"
 #include "qmediaserviceprovider.h"
 
+#include <QtCore/qdebug.h>
+
 
 Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
 {

@@ -32,51 +32,32 @@
 **
 ****************************************************************************/
 
-#ifndef QEVRWIDGET_H
-#define QEVRWIDGET_H
+#include "qaudioencodecontrol.h"
+#include <QtCore/qstringlist.h>
 
-#ifdef QWMP_EVR
-
-#include "qmediawidgetendpoint.h"
-
-#include <QtCore/qmetatype.h>
-
-#include <evr.h>
-
-class QEvrWidgetActivate;
-
-Q_DECLARE_METATYPE(IMFActivate*)
-
-class QEvrWidget : public QMediaWidgetEndpoint
+QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
+    :QAbstractMediaControl(parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(IMFActivate* activate READ activate)
-public:
-    QEvrWidget(QWidget *parent = 0);
-    ~QEvrWidget();
+}
 
-    IMFActivate *activate() const;
+QAudioEncodeControl::~QAudioEncodeControl()
+{
+}
 
-    QSize sizeHint() const;
+QStringList QAudioEncodeControl::supportedEncodingOptions() const
+{
+    return QStringList();
+}
 
-public Q_SLOTS:
-    void setFullscreen(bool fullscreen);
+QVariant QAudioEncodeControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
 
-protected:
-    void paintEvent(QPaintEvent *event);
-    void moveEvent(QMoveEvent *event);
-    void resizeEvent(QResizeEvent *event);
-    bool event(QEvent *event);
+void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
 
-private:
-    void setDisplayControl(IMFVideoDisplayControl *control);
-
-    IMFVideoDisplayControl *m_display;
-    QEvrWidgetActivate *m_activate;
-
-    friend class QEvrWidgetActivate;
-};
-
-#endif
-
-#endif

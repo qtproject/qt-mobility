@@ -34,7 +34,6 @@
 
 #include "qcameracontrol.h"
 #include  "qabstractmediacontrol_p.h"
-#include "qmediasource.h"
 
 QCameraControl::~QCameraControl()
 {

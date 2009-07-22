@@ -2,7 +2,7 @@
 #include "qaudiodeviceendpoint.h"
 #include "qalsaaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
-#include "qgstreamercaptureproperties.h"
+#include "qgstreameraudioencode.h"
 
 QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
     :QAbstractMediaService(parent)
@@ -55,8 +55,8 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
         return m_session;
 
-    if (qstrcmp(name,"com.nokia.qt.AudioCapturePropertiesControl") == 0)
-        return m_session->captureProperties();
+    if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
+        return m_session->audioEncodeControl();
 
     return 0;
 }

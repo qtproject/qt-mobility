@@ -32,48 +32,48 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASOURCE_H
-#define QMEDIASOURCE_H
+#ifndef QAUDIOENCODECONTROL_H
+#define QAUDIOENCODECONTROL_H
 
-#include <QString>
-#include <QVariant>
-#include <QList>
-#include <QSharedDataPointer>
+#include "qabstractmediacontrol.h"
 
-#include "qmultimediaglobal.h"
+class QAudioFormat;
+class QStringList;
 
-class QMediaSourcePrivate;
-class Q_MEDIA_EXPORT QMediaSource
+#ifndef AUDIOSERVICES
+class QAudioFormat
 {
+};
+#endif
+
+class QAudioEncodeControl : public QAbstractMediaControl
+{
+    Q_OBJECT
 public:
-    QMediaSource();
-    QMediaSource(const QString &mimeType, const QVariant &url);
-    QMediaSource(const QMediaSource &other);
-    QMediaSource &operator =(const QMediaSource &other);
-    ~QMediaSource();
+    virtual ~QAudioEncodeControl();
 
-    bool isNull() const;
+    virtual QAudioFormat format() const = 0;    
+    virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
+    virtual bool setFormat(const QAudioFormat &format) = 0;
 
-    QString mimeType() const;
-    void setMimeType(const QString &mimeType);
+    virtual QStringList supportedAudioCodecs() const = 0;
+    virtual QString audioCodec() const = 0;
+    virtual bool setAudioCodec(const QString &codecName) = 0;
 
-    QVariant dataLocation() const;
-    void setDataLocation(const QVariant &url);
+    virtual QString codecDescription(const QString &codecName) = 0;
 
-    int duration() const;
-    void setDuration(int ms);
+    virtual int bitrate() const = 0;
+    virtual void setBitrate(int) = 0;
 
-    QList<QMediaSource> alternativeRepresentations() const;
-    void setAlternativeRepresentations(const QList<QMediaSource> &sources);
-    void addAlternativeRepresentation(const QMediaSource&);
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
 
-    bool operator ==(const QMediaSource& other) const;
-    bool operator !=(const QMediaSource& other) const;
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
 
-private:
-    QSharedDataPointer<QMediaSourcePrivate> d;
+protected:
+    QAudioEncodeControl(QObject *parent);
 };
 
-Q_DECLARE_METATYPE(QMediaSource);
-
-#endif  // QMEDIASOURCE_H
+#endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

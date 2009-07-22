@@ -43,7 +43,7 @@ Q_GLOBAL_STATIC(QMediaStreamInfoPrivate, qt_sharedMediaStreamInfo)
     \ingroup multimedia
 
     \preliminary
-    \brief The QMediaSource class provides information
+    \brief The QMediaStreamInfo class provides information
            about one of current session media stream.
 
     \sa QMediaStreams

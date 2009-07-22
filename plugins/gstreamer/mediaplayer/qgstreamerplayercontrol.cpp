@@ -36,7 +36,6 @@
 #include "qgstreamerplayersession.h"
 
 #include "qmediaplaylistnavigator.h"
-#include "qmediasource.h"
 
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
@@ -55,8 +54,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     m_navigator = new QMediaPlaylistNavigator(playlist,this);    
     m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
-    connect(m_navigator, SIGNAL(activated(QMediaSource)),
-            this, SLOT(play(QMediaSource)));
+    connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
+            this, SLOT(play(QMediaResourceList)));
     connect(m_navigator, SIGNAL(currentPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
 
@@ -90,11 +89,6 @@ QGstreamerPlayerControl::~QGstreamerPlayerControl()
 int QGstreamerPlayerControl::playlistPosition() const
 {
     return m_navigator->currentPosition();
-}
-
-QMediaSource QGstreamerPlayerControl::currentMediaSource() const
-{
-    return m_navigator->currentItem();
 }
 
 qint64 QGstreamerPlayerControl::position() const
@@ -192,18 +186,12 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);    
 }
 
-void QGstreamerPlayerControl::play(const QMediaSource &src)
+void QGstreamerPlayerControl::play(const QMediaResourceList &resources)
 {
-    QVariant location = src.dataLocation();
     QUrl url;
 
-    if (location.convert(QVariant::Url)) {
-        url = location.toUrl();
-    } else if (location.convert(QVariant::String)) {
-        url = QUrl(location.toString());
-    }
-
-    emit currentMediaChanged(src);
+    if (!resources.isEmpty())
+        url = resources.first().uri();
 
     if (url.isValid()) {
         m_session->stop();

@@ -37,9 +37,8 @@
 
 #include "qmediaplayerservice.h"
 
+#include "qmfactivate.h"
 #include "qwmpevents.h"
-
-#include <wmp.h>
 
 class QMediaMetaData;
 class QMediaPlayerControl;
@@ -52,6 +51,9 @@ class QWmpPlaylist;
 
 class QWmpPlayerService
     : public QMediaPlayerService
+#ifdef QWMP_EVR
+    , public QMFActivate
+#endif
     , public IOleClientSite
     , public IOleInPlaceSite
     , public IOleInPlaceFrame
@@ -84,6 +86,14 @@ public:
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
     ULONG STDMETHODCALLTYPE AddRef();
     ULONG STDMETHODCALLTYPE Release();
+
+
+#ifdef QWMP_EVR
+    // IMFActivate
+    HRESULT STDMETHODCALLTYPE ActivateObject(REFIID riid, void **ppv);
+    HRESULT STDMETHODCALLTYPE ShutdownObject();
+    HRESULT STDMETHODCALLTYPE DetachObject();
+#endif
 
     // IOleClientSite
     HRESULT STDMETHODCALLTYPE SaveObject();
@@ -150,7 +160,12 @@ private:
     QWmpMetaData *m_metaData;
 
 #ifdef QWMP_EVR
+    typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
+
+    IMFVideoPresenter *m_presenter;
+    IMFVideoDisplayControl *m_displayControl;
     HINSTANCE m_evrHwnd;
+    PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
 #endif
 };
 

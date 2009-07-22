@@ -1,8 +1,10 @@
-#include "qgstreamercaptureproperties.h"
+#include "qgstreameraudioencode.h"
 #include "qgstreamercapturesession.h"
 
-QGstreamerCaptureProperties::QGstreamerCaptureProperties(QObject *parent)
-    :QAudioCapturePropertiesControl(parent)
+#include <QtCore/qdebug.h>
+
+QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
+    :QAudioEncodeControl(parent)
 {
     QList<QByteArray> codecCandidates;
     codecCandidates << "vorbisenc" << "lame" << "speexenc" << "gsmenc";
@@ -57,43 +59,47 @@ QGstreamerCaptureProperties::QGstreamerCaptureProperties(QObject *parent)
         setAudioCodec(m_codecs[0]);
 }
 
-QGstreamerCaptureProperties::~QGstreamerCaptureProperties()
+QGstreamerAudioEncode::~QGstreamerAudioEncode()
 {
     gst_object_unref(m_encoderBin);
 }
 
-QAudioFormat QGstreamerCaptureProperties::format() const
+QAudioFormat QGstreamerAudioEncode::format() const
 {
     return QAudioFormat();
 }
 
-bool QGstreamerCaptureProperties::isFormatSupported(const QAudioFormat &format) const
+bool QGstreamerAudioEncode::isFormatSupported(const QAudioFormat &format) const
 {
     Q_UNUSED(format);
     return false;
 }
 
-bool QGstreamerCaptureProperties::setFormat(const QAudioFormat &format)
+bool QGstreamerAudioEncode::setFormat(const QAudioFormat &format)
 {
     Q_UNUSED(format);
     return false;
 }
 
-QStringList QGstreamerCaptureProperties::supportedAudioCodecs() const
+QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
 {
     return m_codecs;
 }
 
-QString QGstreamerCaptureProperties::codecDescription(const QString &codecName)
+QString QGstreamerAudioEncode::codecDescription(const QString &codecName)
 {
     return m_codecDescriptions.value(codecName);
 }
 
-bool QGstreamerCaptureProperties::setAudioCodec(const QString &codecName)
+QString QGstreamerAudioEncode::audioCodec() const
+{
+    return m_codec;
+}
+
+bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
 {
     if (m_codec != codecName) {
         m_codec = codecName;
-        m_options.clear();
 
         if (m_encoderElement) {
             gst_element_unlink(m_identity1, m_encoderElement);
@@ -120,48 +126,87 @@ bool QGstreamerCaptureProperties::setAudioCodec(const QString &codecName)
     return true;
 }
 
-int QGstreamerCaptureProperties::bitrate() const
+int QGstreamerAudioEncode::bitrate() const
 {
     return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
 }
 
-void QGstreamerCaptureProperties::setBitrate(int value)
+void QGstreamerAudioEncode::setBitrate(int value)
 {
     setEncodingOption(QLatin1String("bitrate"), QVariant(value));
 }
 
-qreal QGstreamerCaptureProperties::quality() const
+qreal QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(int(-1))).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
 }
 
-void QGstreamerCaptureProperties::setQuality(qreal value)
+void QGstreamerAudioEncode::setQuality(qreal value)
 {
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
 
-QStringList QGstreamerCaptureProperties::supportedEncodingOptions()
+QStringList QGstreamerAudioEncode::supportedEncodingOptions()
 {
     return m_codecOptions.value(m_codec);
 }
 
-QVariant QGstreamerCaptureProperties::encodingOption(const QString &name)
+QVariant QGstreamerAudioEncode::encodingOption(const QString &name)
 {
     return m_options.value(name);
 }
 
-void QGstreamerCaptureProperties::setEncodingOption(const QString &name, const QVariant &value)
+void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVariant &value)
 {
     m_options.insert(name,value);
 }
 
-void QGstreamerCaptureProperties::applyOptions()
+void QGstreamerAudioEncode::applyOptions()
 {
     if (m_encoderElement) {
+        QMapIterator<QString,QVariant> it(m_options);
+        while (it.hasNext()) {
+            it.next();
+            QString option = it.key();
+            QVariant value = it.value();
+
+            if (option == QLatin1String("quality")) {
+                double qualityValue = value.toDouble();
+
+                if (m_codec == QLatin1String("vorbisenc")) {
+                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue/10.0, NULL);
+                } else if (m_codec == QLatin1String("lame")) {                    
+                    int presets[] = {1006, 1001, 1002, 1003}; //Medium, Standard, Extreme, Insane
+                    int preset = presets[ qBound(0, qRound(qualityValue*0.3), 3) ];
+                    g_object_set(G_OBJECT(m_encoderElement), "preset", preset, NULL);
+                } else if (m_codec == QLatin1String("speexenc")) {
+                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue, NULL);
+                }
+
+            } else {
+                switch (value.type()) {
+                case QVariant::Int:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toInt(), NULL);
+                    break;
+                case QVariant::Bool:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toBool(), NULL);
+                    break;
+                case QVariant::Double:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toDouble(), NULL);
+                    break;
+                case QVariant::String:
+                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
+                    break;
+                default:
+                    qWarning() << "unsupported option type:" << option << value;
+                    break;
+                }
+            }
+        }
     }
 }
 
-GstElement *QGstreamerCaptureProperties::encoder()
+GstElement *QGstreamerAudioEncode::encoder()
 {
     return GST_ELEMENT(m_encoderBin);
 }

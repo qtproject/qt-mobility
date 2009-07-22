@@ -37,7 +37,6 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmediasource.h"
 #include "qmediaplayercontrol.h"
 #include "qmediaplayer.h"
 
@@ -69,7 +68,6 @@ public:
     bool isMuted() const;
 
     int playlistPosition() const;
-    QMediaSource currentMediaSource() const;
 
     QMediaPlaylist *mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *);
@@ -97,19 +95,10 @@ public Q_SLOTS:
     void setMuted(bool muted);
 
 signals:
-    void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void playlistPositionChanged(int position);
-    void currentMediaChanged(const QMediaSource&);
-    void stateChanged(int newState);
-    void volumeChanged(int volume);
-    void mutingChanged(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
-    void bufferingChanged(bool buffering);
-    void bufferStatusChanged(int percentFilled);
 
 private slots:
-    void play(const QMediaSource&);
+    void play(const QMediaResourceList &);
     void updateState(QMediaPlayer::State state);    
 
 private:    

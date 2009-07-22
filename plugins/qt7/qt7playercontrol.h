@@ -95,7 +95,7 @@ public:
     void setVideoOutput(Qt7Widget *output);
 
 private slots:
-    void setSource(QMediaSource const &source);
+    void setSource(QMediaResourceList const &resources);
     void update();
 
 private:

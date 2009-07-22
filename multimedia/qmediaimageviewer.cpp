@@ -74,13 +74,13 @@ QMediaImageViewer::State QMediaImageViewer::state() const
     return QMediaImageViewer::StoppedState;
 }
 
-QMediaSource QMediaImageViewer::mediaSource() const
+QMediaResourceList QMediaImageViewer::mediaResources() const
 {
-    return QMediaSource();
+    return QMediaResourceList();
 }
 
 //public Q_SLOTS:
-void QMediaImageViewer::setMediaSource(QMediaSource mediaSource)
+void QMediaImageViewer::setMediaResources(const QMediaResourceList &resources)
 {
 }
 

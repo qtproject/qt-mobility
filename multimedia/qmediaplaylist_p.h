@@ -47,7 +47,6 @@
 //
 
 #include <QtCore/private/qobject_p.h>
-#include "qmediasource.h"
 #include "qmediaplaylist.h"
 
 class QMediaPlaylistSource;

@@ -12,7 +12,6 @@ LIBS += -L$$OUT_PWD/../../lib -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
 HEADERS = \
-    qevrwidget.h \
     qmfactivate.h \
     qwmpevents.h \
     qwmpglobal.h \
@@ -24,7 +23,6 @@ HEADERS = \
     qwmpserviceprovider.h
 
 SOURCES = \
-    qevrwidget.cpp \
     qmfactivate.cpp \
     qwmpevents.cpp \
     qwmpglobal.cpp \

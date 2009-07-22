@@ -58,7 +58,7 @@ Qt7PlayerControl::Qt7PlayerControl(QObject *parent):
 
     navigator = new QMediaPlaylistNavigator(playlist, this);
     navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
-    connect(navigator, SIGNAL(activated(QMediaSource)), SLOT(setSource(QMediaSource)));
+    connect(navigator, SIGNAL(activated(QMediaResourceList)), SLOT(setSource(QMediaResourceList)));
     connect(navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
 
     movie = new Qt7Movie(this);
@@ -223,9 +223,9 @@ void Qt7PlayerControl::setVideoOutput(Qt7Widget *output)
     movie->setVideoOutput(output);
 }
 
-void Qt7PlayerControl::setSource(QMediaSource const &source)
+void Qt7PlayerControl::setSource(QMediaResourceList const &resources)
 {
-    movie->setSource(source);
+    movie->setSource(resources);
     if (d->state == PlayingState)
         movie->play();
 }

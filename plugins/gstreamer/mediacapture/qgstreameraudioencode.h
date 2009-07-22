@@ -1,7 +1,7 @@
-#ifndef QGSTREAMERCAPTUREPROPERTIES_H
-#define QGSTREAMERCAPTUREPROPERTIES_H
+#ifndef QGSTREAMERAUDIOENCODE_H
+#define QGSTREAMERAUDIOENCODE_H
 
-#include "qaudiocapturepropertiescontrol.h"
+#include "qaudioencodecontrol.h"
 class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
@@ -9,12 +9,12 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-class QGstreamerCaptureProperties : public QAudioCapturePropertiesControl
+class QGstreamerAudioEncode : public QAudioEncodeControl
 {
     Q_OBJECT
 public:
-    QGstreamerCaptureProperties(QObject *parent);
-    virtual ~QGstreamerCaptureProperties();
+    QGstreamerAudioEncode(QObject *parent);
+    virtual ~QGstreamerAudioEncode();
 
     QAudioFormat format() const;
     bool isFormatSupported(const QAudioFormat &format) const;
@@ -23,6 +23,7 @@ public:
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
     bool setAudioCodec(const QString &codecName);
+    QString audioCodec() const;
 
     int bitrate() const;
     void setBitrate(int);
