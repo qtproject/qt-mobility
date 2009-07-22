@@ -94,9 +94,6 @@ public:
 #endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    void setMaximumWorkingMemory(uint maximumBytes);
-    uint maximumWorkingMemory();
-    
     static QMessageStore* instance();
     
 signals:

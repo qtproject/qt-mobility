@@ -190,18 +190,6 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return convert(d_ptr->_store->account(convert(id)));
 }
 
-void QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
-{
-    // TODO: implement memory constraints
-    Q_UNUSED(maximumBytes)
-}
-
-uint QMessageStore::maximumWorkingMemory()
-{
-    // TODO: implement memory constraints
-    return 0; // stub
-}
-
 QMessageStore* QMessageStore::instance()
 {
     return QMessageStorePrivate::storeInstance();

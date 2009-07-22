@@ -108,7 +108,7 @@
     \value ContentInaccessible    The operation failed because the content data cannot be accessed by the messaging store.
     \value NotYetImplemented      The operation failed because the messaging store does not yet implement the operation.
     \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
-    \value WorkingMemoryOverflow  The operation failed because the messaging store could not perform the operation within the constraint specified by setMaximumWorkingMemory().
+    \value WorkingMemoryOverflow  The operation failed because the messaging store exhausted all memory available for evaluating queries.
 */
 
 /*!
@@ -292,37 +292,6 @@
     \fn QMessageStore::account(const QMessageAccountId& id) const
     
    Returns the QMessageAccount identified by \a id from the store.
-*/
-
-/*!
-    \fn QMessageStore::setMaximumWorkingMemory(uint maximumBytes)
-    
-   If \a maximumBytes is 0, removes any constraint on the maximum memory 
-   that can be allocated directly by the store when evaluating 
-   countMessages() and queryMessages().
-   
-   Otherwise sets the maximum number of bytes than can be directly allocated 
-   by the store when evaluating countMessages() and queryMessages() to 
-   \a maximumBytes. A failure  to satisfy the working memory constraint is 
-   reported by lastError() returning WorkingMemoryOverflow.
-   
-   The store only directly allocates working memory on platforms where 
-   evaluating a boolean QMessageFilterKey based query requires a combination 
-   of calls to the underlying platform query function.
-   
-   \sa maximumWorkingMemory(), ErrorCode, countMessages(), queryMessages(), lastError()
-*/
-
-/*!
-    \fn QMessageStore::maximumWorkingMemory()
-    
-   Returns 0 if no constraint has been set by setMaximumWorkingMemory().
-   
-   Otherwise returns the maximum working memory as set by setMaximumWorkingMemory().
-   
-   The default maximum working memory is platform specific.
-   
-   \sa setMaximumWorkingMemory(), ErrorCode, countMessages(), queryMessages()
 */
 
 /*!
