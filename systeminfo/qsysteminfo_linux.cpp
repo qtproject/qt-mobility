@@ -44,6 +44,8 @@
 #include <QDesktopWidget>
 #include <QDebug>
 
+#include <QLibraryInfo>
+
 #if !defined(QT_NO_DBUS)
 #include <QtDBus>
 #include <QDBusConnection>
@@ -90,8 +92,36 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    // /usr/lib/locale
-    // locale -a
+#if 0
+    // Qt translations
+    QDir localeDir(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    if(localeDir.exists()) {
+        QStringList langList;
+        QFileInfoList localeList = localeDir.entryInfoList(QStringList() << "qt_*.qm", QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+        foreach(QFileInfo trFileInfo, localeList) {
+            QString lang = trFileInfo.baseName();
+            if(!lang.contains("help")) {
+                lang = lang.mid(lang.indexOf("_")+1,2);
+                if(!langList.contains(lang)) {
+                    langList << lang;
+                }
+            }
+        }
+        return langList;
+    }
+#endif
+    QDir localeDir("/usr/lib/locale");
+    if(localeDir.exists()) {
+        QStringList langList;
+        QStringList localeList = localeDir.entryList( QStringList() ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        foreach(QString localeName, localeList) {
+            QString lang = localeName.left(2);
+            if(!langList.contains(lang) && !lang.isEmpty()) {
+                langList <<lang;
+            }
+        }
+        return langList;
+    }
     return QStringList() << currentLanguage();
 }
 
@@ -266,25 +296,86 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 qint32 QSystemDisplayInfoPrivate::displayBrightness()
 {
-    // laptop_panel
-    // org.freedesktop.Hal.Device.LaptopPanel
-    // SetBrightness
-    // GetBrightness
 #if !defined(QT_NO_DBUS)
     QHalInterface iface;
 
     if (iface.isValid()) {
-            QStringList list = iface.findDeviceByCapability("laptop_panel");
-            if(!list.isEmpty()) {
-//                QHalDeviceInterface *ifaceDevice;
-//                ifaceDevice = new QHalDeviceInterface(vol);
-//                if (ifaceDevice->isValid() && ifaceDevice->getPropertyBool("volume.is_mounted")) {
-//                    qWarning() << ifaceDevice->getPropertyString("volume.mount_point");
-//                }
-
+        QStringList list = iface.findDeviceByCapability("laptop_panel");
+        if(!list.isEmpty()) {
+            foreach(QString lapDev, list) {
+                QHalDeviceInterface ifaceDevice(lapDev);
+                QHalDeviceLaptopPanelInterface lapIface(lapDev);
+                float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels");
+                float curLevel = lapIface.getBrightness();
+            return curLevel / numLevels * 100;
             }
+        }
     }
 #else
+
+    QString backlightPath = "/proc/acpi/video/";
+    QDir videoDir(backlightPath);
+    QStringList filters;
+    filters << "*";
+    QStringList brightnessList = videoDir.entryList(filters,
+                                                    QDir::Dirs
+                                                    | QDir::NoDotAndDotDot,
+                                                    QDir::Name);
+    foreach(QString brightnessFileName, brightnessList) {
+        float numLevels = 0.0;
+        float curLevel = 0.0;
+        QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
+        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning()<<"File not opened";
+        } else {
+            QString  strvalue;
+            strvalue = curBrightnessFile.readAll().trimmed();
+            if(strvalue.contains("levels")) {
+                QStringList list = strvalue.split(" ");
+                numLevels = list.at(2).toFloat();
+            }
+            if(strvalue.contains("current")) {
+                QStringList list = strvalue.split(": ");
+                curLevel = list.at(list.count()-1).toFloat();
+            }
+            curBrightnessFile.close();
+            return curLevel / numLevels * 100;
+        }
+    }
+#if 0
+    QString backlightPath = "/sys/devices/virtual/backlight/";
+    QDir videoDir(backlightPath);
+    QStringList filters;
+    filters << "*";
+    QStringList brightnessList = videoDir.entryList(filters,
+                                                     QDir::Dirs
+                                                     | QDir::NoDotAndDotDot,
+                                                     QDir::Name);
+    foreach(QString brightnessFileName, brightnessList) {
+        float numLevels = 0.0;
+        float curLevel = 0.0;
+        QFile curBrightnessFile(backlightPath+brightnessFileName+"/brightness");
+        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning()<<"File not opened";
+        } else {
+            QString strvalue;
+            strvalue = curBrightnessFile.readLine().trimmed();
+            curBrightnessFile.close();
+            curLevel = strvalue.toFloat();
+
+            QFile maxBrightnessFile(backlightPath+brightnessFileName+"/max_brightness");
+            if(!maxBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning()<<"File not opened";
+            } else {
+                QString strvalue;
+                strvalue = maxBrightnessFile.readLine().trimmed();
+                maxBrightnessFile.close();
+                numLevels = strvalue.toFloat();
+            }
+            return curLevel / numLevels * 100;
+        }
+    }
+#endif
 #endif
     return -1;
 }

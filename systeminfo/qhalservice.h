@@ -66,6 +66,7 @@
 
 #define HAL_DEVICES_PATH "/org/freedesktop/Hal/devices"
 
+#define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
 
 class QHalInterfacePrivate;
 class QHalInterface : public QObject
@@ -110,6 +111,23 @@ public:
 private:
         QHalDeviceInterfacePrivate *d;
 
+};
+
+class QHalDeviceLaptopPanelInterfacePrivate;
+class QHalDeviceLaptopPanelInterface : public QObject
+{
+    Q_OBJECT
+
+public:
+    QHalDeviceLaptopPanelInterface(const QString &devicePathName, QObject *parent = 0);
+    ~QHalDeviceLaptopPanelInterface();
+    bool isValid();
+public:
+    quint32 getBrightness();
+    void setBrightness(quint32);
+
+private:
+        QHalDeviceLaptopPanelInterfacePrivate *d;
 };
 
 #endif //

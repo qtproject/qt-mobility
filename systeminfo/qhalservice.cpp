@@ -51,6 +51,7 @@
 #include <QDBusObjectPath>
 
 #include "qhalservice.h"
+
 static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 class QHalInterfacePrivate
@@ -216,5 +217,62 @@ bool QHalDeviceInterface::queryCapability(const QString &cap)
         qWarning() << reply.error().message();
     }
     return false;
+}
+
+/////////
+
+class QHalDeviceLaptopPanelInterfacePrivate
+{
+public:
+    QDBusInterface *connectionInterface;
+    QString path;
+    bool valid;
+};
+
+QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &devicePathName, QObject *parent )
+        : QObject(parent)
+{
+    d = new QHalDeviceLaptopPanelInterfacePrivate();
+    d->path = devicePathName;
+    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+                                                d->path,
+                                                HAL_DEVICES_LAPTOPPANEL_INTERFACE,
+                                                dbusConnection);
+    if (!d->connectionInterface->isValid()) {
+        d->valid = false;
+        qWarning() << "Could not find HalDeviceLaptopPanelInterface";
+        return;
+    } else {
+        d->valid = true;
+    }
+}
+
+QHalDeviceLaptopPanelInterface::~QHalDeviceLaptopPanelInterface()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QHalDeviceLaptopPanelInterface::isValid()
+{
+    return d->valid;
+}
+
+quint32 QHalDeviceLaptopPanelInterface::getBrightness()
+{
+    QDBusReply< qint32 > reply = d->connectionInterface->call("GetBrightness");
+    if ( reply.isValid() ) {
+        qWarning() << __FUNCTION__ << reply.value();
+        return reply.value();
+    }
+    return -1;
+}
+
+void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
+{
+    QDBusReply< qint32 > reply = d->connectionInterface->call("SetBrightness", brightness);
+    if ( reply.isValid() ) {
+        qWarning() << __FUNCTION__ << reply.value();
+    }
 }
 
