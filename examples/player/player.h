@@ -39,12 +39,14 @@
 
 #include "qmediaplayer.h"
 
+class QLabel;
 class QMediaPlayer;
 class QMediaMetadata;
 class QModelIndex;
-class PlaylistModel;
-class QTableView;
 class QSlider;
+class QTableView;
+
+class PlaylistModel;
 
 class Player : public QWidget
 {
@@ -73,6 +75,7 @@ private:
 
     QMediaPlayer *player;
     QMediaMetadata *metaData;
+    QLabel *coverLabel;
     QSlider *slider;
     PlaylistModel *playlistModel;
     QTableView *playlistView;
