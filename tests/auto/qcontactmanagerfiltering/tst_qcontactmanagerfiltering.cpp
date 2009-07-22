@@ -1633,6 +1633,13 @@ void tst_QContactManagerFiltering::actionFiltering_data()
     QTest::newRow("IntegerCo with 4.0") << es << "IntegerCo" << -1 << QVariant(4.0) << es;
     QTest::newRow("Boolean action matching true") << es << "BooleanCo" << -1 << QVariant(true) << "a";
     QTest::newRow("Boolean action matching false") << es << "BooleanCo" << -1 << QVariant(false) << es;
+
+    /* Recursive filtering */
+    QTest::newRow("Recursive action 1") << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
+    QTest::newRow("Recursive action 2") << "UnionRecursive" << es << -1 << QVariant(false) << es;
+    QTest::newRow("Recursive action 3") << "PairRecursive" << es << -1 << QVariant(false) << es;
+    QTest::newRow("Recursive action 4") << "AnotherPairRecursive" << es << -1 << QVariant(false) << es;
+    QTest::newRow("Recursive action 5") << "Recursive" << es << -1 << QVariant(false) << es;
 }
 
 void tst_QContactManagerFiltering::actionFiltering()
@@ -2184,7 +2191,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return QContactFilter() && af;
+        return af && QContactFilter() && af;
     }
 };
 
@@ -2199,7 +2206,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return QContactFilter() || af;
+        return af || QContactFilter() || af;
     }
 };
 
