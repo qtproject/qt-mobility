@@ -269,6 +269,11 @@ QSystemInfo::QSystemInfo(QObject *parent)
     d = new QSystemInfoPrivate(parent);
 }
 
+QSystemInfo::~QSystemInfo()
+{
+    delete d;
+}
+
 /*!
     Returns the current language in 2 letter ISO 639-1 format.
  */

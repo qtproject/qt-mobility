@@ -54,7 +54,7 @@ class QSystemInfo : public QObject
 public:
 
     QSystemInfo(QObject *parent = 0);
-
+    ~QSystemInfo();
 //    QSystemInfo::Error error() const;
 
 // general
