@@ -80,11 +80,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey)));
-
-    // TODO: Extend QMF to support limit/offset
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
+    return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey), limit, offset));
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -96,11 +92,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryFolders(convert(key), convert(sortKey)));
-
-    // TODO: Extend QMF to support limit/offset
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
+    return convert(d_ptr->_store->queryFolders(convert(key), convert(sortKey), limit, offset));
 }
 #endif
 
@@ -112,11 +104,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryAccounts(convert(key), convert(sortKey)));
-
-    // TODO: Extend QMF to support limit/offset
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
+    return convert(d_ptr->_store->queryAccounts(convert(key), convert(sortKey), limit, offset));
 }
 
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
