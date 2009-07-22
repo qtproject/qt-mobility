@@ -15,6 +15,15 @@ SOURCES += qnetworksession.cpp \
            qnetworkconfigmanager.cpp \
            qnetworkconfiguration.cpp
 
+unix:!symbian:!mac:contains(BACKEND, NetworkManager) {
+    unix:contains(QT_CONFIG,dbus) {
+        DEFINES+=BACKEND_NM
+    } else {
+        message("NetworkManager backend requires Qt DBus support");
+    }
+}
+
+
 symbian: {
     exists($${EPOCROOT}epoc32/release/winscw/udeb/cmmanager.lib)| \
     exists($${EPOCROOT}epoc32/release/armv5/lib/cmmanager.lib) {
@@ -51,7 +60,7 @@ symbian: {
                qnetworksession_p.h
 
     win32:DEFINES += BEARER_ENGINE
-    !mac:unix:DEFINES += BEARER_ENGINE
+    unix:DEFINES += BEARER_ENGINE
 
     contains(DEFINES, BEARER_ENGINE) {
         HEADERS += qnetworksessionengine_p.h \
@@ -63,7 +72,7 @@ symbian: {
                    qgenericengine.cpp
     }
 
-    !mac:unix:contains(QT_CONFIG,dbus): {
+    !mac:unix:contains(QT_CONFIG,dbus):contains(BACKEND, NetworkManager) {
         QT += dbus
         HEADERS += qnmdbushelper_p.h \
                    qnetworkmanagerservice_p.h \

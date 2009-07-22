@@ -49,13 +49,13 @@
 
 #include <QtNetwork/qnetworkinterface.h>
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
 #include "qnmwifiengine_unix_p.h"
 #endif
 
 QT_BEGIN_NAMESPACE
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
 static bool NetworkManagerAvailable()
 {
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
@@ -83,7 +83,7 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
         return nativeWifi;
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if(NetworkManagerAvailable()) {
         QNmWifiEngine *nmwiifi = QNmWifiEngine::instance();
         if (nmwiifi && nmwiifi->hasIdentifier(id))
@@ -264,7 +264,7 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 
 QVariant QNetworkSessionPrivate::property(const QString& key)
 {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if (!publicConfig.isValid())
         return QVariant();
 
@@ -317,7 +317,7 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 
 quint64 QNetworkSessionPrivate::sentData() const
 {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {
         if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
             foreach (const QNetworkConfiguration &config, publicConfig.children()) {
@@ -335,7 +335,7 @@ quint64 QNetworkSessionPrivate::sentData() const
 
 quint64 QNetworkSessionPrivate::receivedData() const
 {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {
         if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
             foreach (const QNetworkConfiguration &config, publicConfig.children()) {
@@ -353,7 +353,7 @@ quint64 QNetworkSessionPrivate::receivedData() const
 
 quint64 QNetworkSessionPrivate::activeTime() const
 {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if (startTime.isNull()) {
         return 0;
     }
@@ -440,7 +440,7 @@ void QNetworkSessionPrivate::networkConfigurationsChanged()
         updateStateFromServiceNetwork();
     else
         updateStateFromActiveConfig();
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
         setActiveTimeStamp();
 #endif
 }
@@ -486,7 +486,7 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
     }
 }
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
 void QNetworkSessionPrivate::setActiveTimeStamp()
 {
     if(NetworkManagerAvailable()) {
