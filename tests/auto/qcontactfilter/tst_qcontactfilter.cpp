@@ -740,6 +740,9 @@ void tst_QContactFilter::sortObject()
     QVERIFY(other == sortorder);
     QVERIFY(!(other != sortorder));
 
+    other.setDetailDefinitionName("Another Definition", "Detail");
+    QVERIFY(other != sortorder);
+
     other.setDetailDefinitionName("Definition", "Another Detail");
     QVERIFY(other != sortorder);
 
