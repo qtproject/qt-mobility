@@ -33,15 +33,68 @@
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
 
+#include <MAPIUtil.h>
+
 class QMessageStorePrivatePlatform
 {
 public:
-    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
-        :d_ptr(d), q_ptr(q) {}
+    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q);
+    ~QMessageStorePrivatePlatform();
+
+    bool login();
+    void logout();
+
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
-    //...
+    QMessageStore::ErrorCode lastError;
+
+    bool mapiInitialized;
+    IMAPISession* mapiSession;
 };
+
+QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
+    :d_ptr(d), 
+     q_ptr(q)
+{
+    mapiSession = 0;
+    mapiInitialized = false;
+    lastError = QMessageStore::NoError;
+#ifndef QT_NO_THREAD
+    // Note MAPIINIT is ignored on Windows Mobile but used on Outlook 2007 see
+    // msdn ms862621 vs cc842343
+    MAPIINIT_0 MAPIINIT = { 0, MAPI_MULTITHREAD_NOTIFICATIONS };
+    if (MAPIInitialize(&MAPIINIT) == S_OK)
+        mapiInitialized = true;
+#else
+    if (MAPIInitialize(0) == S_OK)
+        mapiInitialized = true;
+#endif
+    if (!mapiInitialized)
+        lastError = QMessageStore::ContentInaccessible;
+}
+
+QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
+{
+    logout();
+    MAPIUninitialize();
+}
+
+bool QMessageStorePrivatePlatform::login()
+{
+    // Attempt to start a MAPI session on the default profile
+    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &mapiSession) != S_OK) {
+        lastError = QMessageStore::ContentInaccessible;
+        return false;
+    }
+    return true;
+}
+
+void QMessageStorePrivatePlatform::logout()
+{
+    if (mapiSession)
+        mapiSession->Release();
+    mapiSession = 0;
+}
 
 QMessageStorePrivate::QMessageStorePrivate()
     :p_ptr(0),
@@ -82,7 +135,7 @@ QMessageStore* QMessageStore::instance()
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
 {
-    return NotYetImplemented;
+    return d_ptr->p_ptr->lastError;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
