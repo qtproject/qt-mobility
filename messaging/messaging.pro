@@ -1,6 +1,7 @@
 TEMPLATE = lib
 
 TARGET = QtMessaging
+INCLUDEPATH += .
 
 include(../common.pri)
 
@@ -77,6 +78,8 @@ SOURCES += qmessageid_win.cpp \
            qmessagesortkey_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
+
+LIBS += mapi32.lib 
 } else {
 # QMF headers must be located at $QMF_INCLUDEDIR
 INCLUDEPATH += $$QMF_INCLUDEDIR $$QMF_INCLUDEDIR/support
