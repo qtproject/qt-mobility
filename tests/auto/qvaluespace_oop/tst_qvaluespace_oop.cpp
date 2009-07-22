@@ -36,7 +36,6 @@
 #include <QProcess>
 #include <QFile>
 #include "qvaluespace.h"
-#include <unistd.h>
 #include <QVariant>
 
 #define QTRY_COMPARE(a,e)                       \
