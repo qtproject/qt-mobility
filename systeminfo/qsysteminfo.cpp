@@ -337,6 +337,11 @@ QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     d = new QSystemNetworkInfoPrivate(parent);
 }
 
+QSystemNetworkInfo::~QSystemNetworkInfo()
+{
+    delete d;
+}
+
 /*!
     Returns the status of the cell network.
 */
@@ -432,6 +437,11 @@ QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
 {
     d = new QSystemDisplayInfoPrivate(parent);
 }
+QSystemDisplayInfo::~QSystemDisplayInfo()
+{
+    delete d;
+}
+
 /*!
     Returns the display brightness in %, 1 - 100 scale
 */
@@ -479,6 +489,11 @@ bool QSystemDisplayInfo::isScreenLockOn()
 QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
 {
     d = new QSystemMemoryInfoPrivate(parent);
+}
+
+QSystemMemoryInfo::~QSystemMemoryInfo()
+{
+    delete d;
 }
 
 /*!
@@ -536,6 +551,11 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfo::getVolumeType(const QString &dr
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
     d = new QSystemDeviceInfoPrivate(parent);
+}
+
+QSystemDeviceInfo::~QSystemDeviceInfo()
+{
+    delete d;
 }
 
 /*!

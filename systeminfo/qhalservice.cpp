@@ -51,6 +51,7 @@
 #include <QDBusObjectPath>
 
 #include "qhalservice.h"
+static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 class QHalInterfacePrivate
 {
@@ -62,7 +63,6 @@ public:
 QHalInterface::QHalInterface(QObject *parent)
         : QObject(parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QHalInterfacePrivate();
     d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
                                                 HAL_DBUS_MANAGER_PATH,
@@ -119,9 +119,6 @@ QStringList QHalInterface::getAllDevices()
 
 /////////
 
-
-
-
 class QHalDeviceInterfacePrivate
 {
 public:
@@ -133,7 +130,6 @@ public:
 QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject *parent )
         : QObject(parent)
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
     d = new QHalDeviceInterfacePrivate();
     d->path = devicePathName;
     d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,

@@ -52,7 +52,7 @@ class QSystemInfoPrivate : public QObject
 public:
 
     QSystemInfoPrivate(QObject *parent = 0);
-
+    virtual ~QSystemInfoPrivate();
 // general
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
@@ -72,6 +72,7 @@ class QSystemNetworkInfoPrivate : public QObject
 public:
 
     QSystemNetworkInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::CellNetworkStatus getCellNetworkStatus();
     qint32 networkSignalStrength();
@@ -100,7 +101,7 @@ class QSystemDisplayInfoPrivate : public QObject
 public:
 
     QSystemDisplayInfoPrivate(QObject *parent = 0);
-
+    virtual ~QSystemDisplayInfoPrivate();
 
 
 // display
@@ -118,8 +119,9 @@ class QSystemMemoryInfoPrivate : public QObject
 public:
 
     QSystemMemoryInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemMemoryInfoPrivate();
 
-// memory
+    // memory
     bool hasRamMemoryLevel();
     qint64 freeMemoryLevel() const;
     qint64 availableDiskSpace(const QString &driveVolume);
@@ -146,6 +148,7 @@ class QSystemDeviceInfoPrivate : public QObject
 public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemDeviceInfoPrivate();
 
 // device
 
@@ -162,7 +165,7 @@ public:
     QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile getCurrentProfile();
-    virtual bool isBatteryCharging();
+    bool isBatteryCharging();
 
 
 Q_SIGNALS:

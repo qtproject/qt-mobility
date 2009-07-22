@@ -54,7 +54,7 @@ class QSystemInfo : public QObject
 public:
 
     QSystemInfo(QObject *parent = 0);
-    ~QSystemInfo();
+     virtual ~QSystemInfo();
 //    QSystemInfo::Error error() const;
 
 // general
@@ -111,6 +111,7 @@ class QSystemNetworkInfo : public QObject
 public:
 
     QSystemNetworkInfo(QObject *parent = 0);
+    ~QSystemNetworkInfo();
 
     enum CellNetworkStatus {
         UndefinedStatus = -1,
@@ -166,6 +167,8 @@ class QSystemDisplayInfo : public QObject
 public:
 
     QSystemDisplayInfo(QObject *parent = 0);
+    ~QSystemDisplayInfo();
+
     qint32 displayBrightness();
     qint32 colorDepth(qint32 screen);
     void setScreenSaverEnabled(bool);
@@ -185,6 +188,7 @@ class QSystemMemoryInfo : public QObject
 public:
 
     QSystemMemoryInfo(QObject *parent = 0);
+    ~QSystemMemoryInfo();
 
     enum VolumeType {
         NoVolume = 0,
@@ -215,6 +219,7 @@ class QSystemDeviceInfo : public QObject
 public:
 
     QSystemDeviceInfo(QObject *parent = 0);
+    virtual ~QSystemDeviceInfo();
 
     enum BatteryLevel {
         NoBatteryLevel = 0,

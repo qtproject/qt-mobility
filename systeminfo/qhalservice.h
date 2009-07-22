@@ -52,7 +52,6 @@
 
 
 #include <QDBusPendingCallWatcher>
-static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 #define HAL_DBUS_SERVICE "org.freedesktop.Hal"
 
@@ -68,13 +67,13 @@ static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 #define HAL_DEVICES_PATH "/org/freedesktop/Hal/devices"
 
 
-
 class QHalInterfacePrivate;
 class QHalInterface : public QObject
 {
     Q_OBJECT
 
-        public:
+public:
+
     QHalInterface(QObject *parent = 0);
     ~QHalInterface();
 
