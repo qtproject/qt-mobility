@@ -91,14 +91,14 @@ public:
         UnspecifiedError
     };
 
-    /* Error reporting - Qt idiom is "error" rather than "lastError" */
+    /* Error reporting */
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QContactSortOrder& sortOrder = QContactSortOrder()) const;    // retrieve contact ids
     QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder = QContactSortOrder()) const; // retrieve ids of contacts matching the filter
     QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
-    bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId + storeUri)
+    bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QUniqueId& contactId);      // remove the contact from the persistent store
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);  // batch API - remove
@@ -117,14 +117,6 @@ public:
     QContactDetailDefinition detailDefinition(const QString& definitionId) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def);
     bool removeDetailDefinition(const QString& definitionId);
-
-    /* Changelog Functions */
-    QList<QUniqueId> contactsAddedSince(const QDateTime& timestamp) const;
-    QList<QUniqueId> contactsModifiedSince(const QDateTime& timestamp) const;
-    QList<QUniqueId> contactsRemovedSince(const QDateTime& timestamp) const;
-    QList<QUniqueId> groupsAddedSince(const QDateTime& timestamp) const;
-    QList<QUniqueId> groupsModifiedSince(const QDateTime& timestamp) const;
-    QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp) const;
 
     /* Functionality reporting */
     QContactManagerInfo* information() const;

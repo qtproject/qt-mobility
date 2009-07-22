@@ -94,15 +94,6 @@ public:
     virtual bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
-    /* Changelog Functions */
-    virtual QList<QUniqueId> contactsAddedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsModifiedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> contactsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-
-    virtual QList<QUniqueId> groupsAddedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> groupsModifiedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-    virtual QList<QUniqueId> groupsRemovedSince(const QDateTime& timestamp, QContactManager::Error& error) const;
-
     /* Asynchronous Request Handling */
     virtual void createAsynchronousRequest(const QContactAbstractRequest* req);
     virtual void destroyAsynchronousRequest(const QContactAbstractRequest* req);

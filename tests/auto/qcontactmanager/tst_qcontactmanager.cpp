@@ -1083,21 +1083,6 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    /* Changelog */
-    QDateTime historic(QDate(600, 1, 1), QTime());
-    QVERIFY(manager.contactsAddedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.contactsModifiedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.contactsRemovedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.groupsAddedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.groupsModifiedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.groupsRemovedSince(historic).count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-
     /* Capabilities */
     QContactManagerInfo* info = manager.information();
     QVERIFY(info->supportedDataTypes().count() == 0);
