@@ -294,6 +294,8 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
 // trampoline to engine for asynchronous requests
 QContactManagerEngine* QContactManagerData::engine(const QContactManager* manager)
 {
-    return manager->d->m_engine;
+    if (manager)
+        return manager->d->m_engine;
+    return 0;
 }
 

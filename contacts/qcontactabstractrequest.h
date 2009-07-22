@@ -41,6 +41,7 @@
 class QContactAbstractRequest : public QObject
 {
 public:
+    QContactAbstractRequest() {}
     ~QContactAbstractRequest() {}
 
     enum Status {
@@ -79,6 +80,9 @@ public slots:
     /* Verbs */
     virtual void start(Operation operation = QContactAbstractRequest::RetrieveOperation) = 0;
     virtual void cancel() = 0;
+
+private:
+    Q_DISABLE_COPY(QContactAbstractRequest);
 };
 
 #endif

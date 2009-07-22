@@ -18,4 +18,5 @@ SUBDIRS +=  qcontact\
             qcontactgroup\
             qcontactmanager\
             qcontactmanagerplugins\
-            qcontactmanagerfiltering
+            qcontactmanagerfiltering\
+            qcontactrequest

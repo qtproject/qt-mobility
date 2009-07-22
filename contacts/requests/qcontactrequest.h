@@ -61,6 +61,8 @@ public:
     QContactManager::Error error() const;
     QContactAbstractRequest::Status status() const;
 
+    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::Contact;}
+
     /* Filtering */
     void selectById(const QList<QUniqueId>& contactIds);
     void selectByObject(const QList<QContact>& contacts);
@@ -73,7 +75,7 @@ public:
     /* What to get/store */
     void clearRestrictions();                                // full contact
     void restrictToIds();                                    // just ids
-    void restrictToDetails(QStringList detailDefinitionIds); // partial contact
+    void restrictToDetails(const QStringList& detailDefinitionIds); // partial contact
 
 public slots:
     /* Base class slots */
@@ -93,7 +95,8 @@ signals:
     void progress(QContactRequest* self, bool appendOnly);   // appendOnly true if ids/contacts order has not changed, just stuff added
 
 private:
-    QSharedDataPointer<QContactRequestData> d;
+    Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
+    QContactRequestData* d;
 };
 
 #endif

@@ -37,102 +37,184 @@
 #include "qcontactmanager_p.h"
 
 QContactRequest::QContactRequest(QContactManager* manager)
+    : d(new QContactRequestData(manager))
 {
-    d->m_manager = manager;
-    QContactManagerData::engine(d->m_manager)->createAsynchronousRequest(this);
 }
 
 QContactRequest::~QContactRequest()
 {
-    QContactManagerData::engine(d->m_manager)->destroyAsynchronousRequest(this);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->destroyAsynchronousRequest(this);
+    delete d;
 }
 
+/*!
+ * Limits the selection criteria of the request to contacts whose id is contained in \a ids
+ */
+void QContactRequest::selectById(const QList<QUniqueId>& contactIds)
+{
+    d->m_requestIds = contactIds;
+    d->m_requestFilter = QContactFilter();
+    d->m_requestObjects.clear();
+}
+
+/*!
+ * Limits the selection criteria of the contact request to contacts contained in \a contacts
+ */
+void QContactRequest::selectByObject(const QList<QContact>& contacts)
+{
+    d->m_requestIds.clear();
+    d->m_requestFilter = QContactFilter();
+    d->m_requestObjects = contacts;
+}
+
+/*!
+ * Limits the selection criteria of the contact request to contacts which match the given \a filter
+ */
+void QContactRequest::selectByFilter(const QContactFilter& filter)
+{
+    d->m_requestIds.clear();
+    d->m_requestFilter = filter;
+    d->m_requestObjects.clear();
+}
+
+/*!
+ * Sets the sort order of the result of the next asynchronous operation to \a sortOrder.
+ *
+ * Calling this function has no effect on asynchronous operations which have already been started.
+ */
+void QContactRequest::setSortOrder(const QContactSortOrder& order)
+{
+    d->m_sortorder = order;
+}
+
+/*!
+ * Returns the sort order which will be used for the next asynchronous operation of \a request
+ */
+QContactSortOrder QContactRequest::sortOrder() const
+{
+    return d->m_sortorder;
+}
+
+
+/*!
+ * Clears any result restrictions which have been set for the next asynchronous operation of \a request
+ */
+void QContactRequest::clearRestrictions()
+{
+    d->m_isRestrictedDefs = false;
+    d->m_isRestrictedIds = false;
+}
+
+/*!
+ * Restricts the result of the next asynchronous operation of \a request to the ids of the contacts which would otherwise be returned
+ */
+void QContactRequest::restrictToIds()
+{
+    d->m_isRestrictedIds = true;
+    d->m_isRestrictedDefs = false;
+}
+
+/*!
+ * Restricts the result of the next asynchronous operation of \a request to those details whose definition name is included in the given list of \a detailDefinitionNames.
+ */
+void QContactRequest::restrictToDetails(const QStringList& detailDefinitionIds)
+{
+    d->m_isRestrictedIds = false;
+    d->m_isRestrictedDefs = true;
+    d->m_restrictDefinitions = detailDefinitionIds;
+}
+
+/*!
+ * Returns true if the state of the given \a request is either QContactAbstractRequest::Finished
+ * or QContactAbstractRequest::Cancelled.  Also returns true if the QContactManager supplied to
+ * this request has been deleted.  Otherwise, returns false;
+ */
 bool QContactRequest::isFinished() const
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestIsFinished(this);
+    if (!d->m_manager)
+        return true;
+    return d->m_status == QContactAbstractRequest::Finished || d->m_status == QContactAbstractRequest::Cancelled;
 }
 
+/*!
+ * Returns the error associated with the most recent operation performed as part of the given asynchronous \a request
+ */
 QContactManager::Error QContactRequest::error() const
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestError(this);
+    if (!d->m_manager)
+        return QContactManager::DoesNotExistError;
+    return d->m_error;
 }
 
+/*!
+ * Returns the current status of the given \a request
+ */
 QContactRequest::Status QContactRequest::status() const
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestStatus(this);
+    if (!d->m_manager)
+        return QContactAbstractRequest::Finished;
+    return d->m_status;
 }
+
+/* =============== Dynamic functions below (trampoline to the engine) */
 
 bool QContactRequest::waitForFinished(int msecs)
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestWaitForFinished(this, msecs);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        return engine->asynchronousRequestWaitForFinished(this, msecs);
+    return false;
 }
 
 bool QContactRequest::waitForProgress(int msecs)
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestWaitForProgress(this, msecs);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        return engine->asynchronousRequestWaitForProgress(this, msecs);
+    return false;
 }
 
 void QContactRequest::cancel()
 {
-    QContactManagerData::engine(d->m_manager)->cancelAsynchronousRequest(this);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->cancelAsynchronousRequest(this);
 }
 
 void QContactRequest::start(QContactAbstractRequest::Operation operation)
 {
-    QContactManagerData::engine(d->m_manager)->startAsynchronousRequest(this, operation);
-}
-
-void QContactRequest::selectById(const QList<QUniqueId>& contactIds)
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestSelectById(this, contactIds);
-}
-
-void QContactRequest::selectByObject(const QList<QContact>& contacts)
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestSelectByObject(this, contacts);
-}
-
-void QContactRequest::selectByFilter(const QContactFilter& filter)
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestSelectByFilter(this, filter);
-}
-
-void QContactRequest::setSortOrder(const QContactSortOrder& order)
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestSetSortOrder(this, order);
-}
-
-QContactSortOrder QContactRequest::sortOrder() const
-{
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestSortOrder(this);
-}
-
-void QContactRequest::clearRestrictions()
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestClearRestrictions(this);
-}
-
-void QContactRequest::restrictToIds()
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestRestrictToIds(this);
-}
-
-void QContactRequest::restrictToDetails(QStringList detailDefinitionIds)
-{
-    QContactManagerData::engine(d->m_manager)->asynchronousRequestRestrictToDetails(this, detailDefinitionIds);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->startAsynchronousRequest(this, operation);
 }
 
 QList<QUniqueId> QContactRequest::ids()
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestIds(this);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        return engine->asynchronousRequestIds(this);
+
+    return QList<QUniqueId>();
 }
 
 QList<QContact> QContactRequest::contacts()
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestContacts(this);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        return engine->asynchronousRequestContacts(this);
+
+    return QList<QContact>();
 }
 
 QList<QContactManager::Error> QContactRequest::errors()
 {
-    return QContactManagerData::engine(d->m_manager)->asynchronousRequestErrors(this);
+    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        return engine->asynchronousRequestErrors(this);
+
+    return QList<QContactManager::Error>();
 }
+
+#include "moc_qcontactrequest.cpp"
