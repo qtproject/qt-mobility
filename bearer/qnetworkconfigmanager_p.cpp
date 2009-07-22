@@ -40,7 +40,7 @@
 #ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
 #endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
 #include <qnetworkmanagerservice_p.h>
 #include "qnmwifiengine_unix_p.h"
 #endif
@@ -51,7 +51,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     static QDBusConnection dbusConnection = QDBusConnection::systemBus();
     static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
 #endif
@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 #if !defined(Q_OS_WIN32)
 static bool NetworkManagerAvailable()
 {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
@@ -240,50 +240,49 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         onlineConfigurations = 0;
 
         generic = QGenericEngine::instance();
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
         if(!NetworkManagerAvailable()) {
             usingNetworkManager = false;
 #endif
-        if (generic) {
-            connect(generic, SIGNAL(configurationsChanged()),
-                    this, SLOT(updateConfigurations()));
-        }
+            if (generic) {
+                connect(generic, SIGNAL(configurationsChanged()),
+                        this, SLOT(updateConfigurations()));
+            }
 
 #ifdef Q_OS_WIN
-        nla = QNlaEngine::instance();
-        if (nla) {
-            connect(nla, SIGNAL(configurationsChanged()),
-                    this, SLOT(updateConfigurations()));
-        }
+            nla = QNlaEngine::instance();
+            if (nla) {
+                connect(nla, SIGNAL(configurationsChanged()),
+                        this, SLOT(updateConfigurations()));
+            }
 #endif
 
 #ifdef Q_OS_WIN32
-        nativeWifi = QNativeWifiEngine::instance();
-        if (nativeWifi) {
-            connect(nativeWifi, SIGNAL(configurationsChanged()),
-                    this, SLOT(updateConfigurations()));
-
-            capFlags |= QNetworkConfigurationManager::BearerManagement;
-        }
-#endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-    } else {
-            usingNetworkManager = true;
-        nmWifi = QNmWifiEngine::instance();
-        if (nmWifi) {
-
-            if (firstUpdate) {
-                connect(nmWifi, SIGNAL(configurationsChanged()),
+            nativeWifi = QNativeWifiEngine::instance();
+            if (nativeWifi) {
+                connect(nativeWifi, SIGNAL(configurationsChanged()),
                         this, SLOT(updateConfigurations()));
+
+                capFlags |= QNetworkConfigurationManager::BearerManagement;
+            }
+#endif
+#if defined(BACKEND_NM)
+        } else {
+            usingNetworkManager = true;
+            nmWifi = QNmWifiEngine::instance();
+            if (nmWifi) {
+                if (firstUpdate) {
+                    connect(nmWifi, SIGNAL(configurationsChanged()),
+                            this, SLOT(updateConfigurations()));
+                }
             }
         }
-    }
 #endif
     }
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
         if(usingNetworkManager) {
             if (engine == nmWifi)
                 updateState &= ~NmUpdating;
@@ -302,7 +301,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     }
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
         if(usingNetworkManager) {
             if (nmWifi) {
                 engines << nmWifi;
@@ -408,7 +407,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+#if defined(BACKEND_NM)
     if(usingNetworkManager) {
         if (nmWifi) {
             updateState |= NmUpdating;
