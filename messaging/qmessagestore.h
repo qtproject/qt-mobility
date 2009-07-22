@@ -67,6 +67,7 @@ public:
         WorkingMemoryOverflow
     };
 
+    QMessageStore(QObject *parent = 0);
     virtual ~QMessageStore();
 
     QMessageStore::ErrorCode lastError() const;
@@ -108,7 +109,6 @@ public slots:
     void stopNotifications();
 
 private:
-    QMessageStore(QObject *parent = 0);
     QMessageStorePrivate *d_ptr;
 };
 
