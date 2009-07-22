@@ -325,10 +325,9 @@ bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>
     for (int i=0; i < g.members().count(); i++) {
         int idx = d->m_contactIds.indexOf(g.members().value(i));
         QList<QUniqueId> groups = d->m_contacts[idx].groups();
-        if (groups.removeAll(groupId)) {
-            d->m_contacts[idx].setGroups(groups);
-            contactsChanged << d->m_contacts[idx].id();
-        }
+        groups.removeAll(groupId);
+        d->m_contacts[idx].setGroups(groups);
+        contactsChanged << d->m_contacts[idx].id();
     }
 
     d->m_groups.remove(groupId);

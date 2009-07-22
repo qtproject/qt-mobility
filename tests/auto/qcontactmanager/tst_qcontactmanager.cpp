@@ -554,6 +554,38 @@ void tst_QContactManager::groups()
         QCOMPARE(g2.members(), g3.members());
         /* We don't check order at this time */
 
+        /* Remove one member and save again */
+        g3.removeMember(c.id());
+        QVERIFY(cm->saveGroup(&g3));
+        g2 = cm->group(g3.id());
+        QVERIFY(g2.id() == g3.id());
+        QVERIFY(g2.members().count() == 1);
+        QCOMPARE(g2.members(), g3.members());
+
+        /* Add it back again */
+        g3.addMember(c.id());
+        QVERIFY(cm->saveGroup(&g3));
+        g2 = cm->group(g3.id());
+        QVERIFY(g2.id() == g3.id());
+        QVERIFY(g2.members().count() == 2);
+        QCOMPARE(g2.members(), g3.members());
+
+
+        /* Add the first group back again */
+        QVERIFY(cm->saveGroup(&g));
+        /* Add the g group to another two contacts */
+        c = cm->contact(c.id());
+        QList<QUniqueId> ids = c.groups();
+        ids.append(g.id());
+        c.setGroups(ids);
+        b = cm->contact(b.id());
+        ids = b.groups();
+        ids.append(g.id());
+        b.setGroups(ids);
+        QList<QContact> contacts;
+        contacts << b << c;
+        QVERIFY(cm->saveContacts(&contacts).count() == 2);
+
         /* Now remove the contacts, make sure they disappear from the groups */
         QVERIFY(cm->removeContact(a.id()));
         QVERIFY(cm->removeContact(b.id()));
@@ -577,6 +609,14 @@ void tst_QContactManager::groups()
         /* Test double remove */
         QVERIFY(cm->removeGroup(g3.id()) == false);
         QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+        /* Test that g is empty as well */
+        g2 = cm->group(g.id());
+        QVERIFY(g2.id() == g.id());
+        QVERIFY(g2.members().count() == 0);
+
+        /* Remove g as well */
+        QVERIFY(cm->removeGroup(g.id()));
 
         /* And remove c as well */
         QVERIFY(cm->removeContact(c.id()));
