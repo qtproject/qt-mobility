@@ -31,7 +31,9 @@
 **
 ****************************************************************************/
 #include "qvaluespace.h"
+#include "qvaluespacemanager_p.h"
 #include "qmallocpool.h"
+
 #include <QByteArray>
 #include <QObject>
 #include <QMap>
@@ -241,36 +243,6 @@
   */
 
 ///////////////////////////////////////////////////////////////////////////////
-// declare QValueSpaceManager
-///////////////////////////////////////////////////////////////////////////////
-class QValueSpaceManager
-{
-public:
-    QValueSpaceManager();
-
-    void initServer();
-    void init();
-    void reinit();
-    bool isServer() const;
-
-    void install(QAbstractValueSpaceLayer * layer);
-    void install(QValueSpace::LayerCreateFunc func);
-    QList<QAbstractValueSpaceLayer *> const & getLayers();
-
-private:
-    void commonInit(QAbstractValueSpaceLayer::Type);
-    void commonReinit();
-    bool initLayer(QAbstractValueSpaceLayer* layer);
-    bool reinitLayer(QAbstractValueSpaceLayer* layer);
-
-    enum { Uninit, Server, Client } type;
-    QList<QAbstractValueSpaceLayer *> layers;
-    QList<QValueSpace::LayerCreateFunc> funcs;
-};
-
-Q_GLOBAL_STATIC(QValueSpaceManager, valueSpaceManager);
-
-///////////////////////////////////////////////////////////////////////////////
 // define QValueSpace
 ///////////////////////////////////////////////////////////////////////////////
 /*!
@@ -303,7 +275,7 @@ Q_GLOBAL_STATIC(QValueSpaceManager, valueSpaceManager);
  */
 void QValueSpace::initValuespaceManager()
 {
-    valueSpaceManager()->initServer();
+    QValueSpaceManager::instance()->initServer();
 }
 
 /*!
@@ -312,7 +284,7 @@ void QValueSpace::initValuespaceManager()
   */
 void QValueSpace::initValuespace()
 {
-    valueSpaceManager()->init();
+    QValueSpaceManager::instance()->init();
 }
 
 /*!
@@ -321,7 +293,7 @@ void QValueSpace::initValuespace()
   */
 void QValueSpace::reinitValuespace()
 {
-    valueSpaceManager()->reinit();
+    QValueSpaceManager::instance()->reinit();
 }
 
 /*!
@@ -330,7 +302,7 @@ void QValueSpace::reinitValuespace()
   */
 void QValueSpace::installLayer(QAbstractValueSpaceLayer * layer)
 {
-    valueSpaceManager()->install(layer);
+    QValueSpaceManager::instance()->install(layer);
 }
 
 /*!
@@ -338,131 +310,9 @@ void QValueSpace::installLayer(QAbstractValueSpaceLayer * layer)
   */
 void QValueSpace::installLayer(LayerCreateFunc func)
 {
-    valueSpaceManager()->install(func);
+    QValueSpaceManager::instance()->install(func);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// define QValueSpaceManager
-///////////////////////////////////////////////////////////////////////////////
-QValueSpaceManager::QValueSpaceManager()
-: type(Uninit)
-{
-}
-
-void QValueSpaceManager::initServer()
-{
-    Q_ASSERT(Uninit == type);
-
-    commonInit(QAbstractValueSpaceLayer::Server);
-}
-
-void QValueSpaceManager::init()
-{
-    if(Uninit != type)
-        return; // Already initialized
-
-    commonInit(QAbstractValueSpaceLayer::Client);
-}
-
-void QValueSpaceManager::reinit()
-{
-    if(Uninit == type)
-        return; // Not already initialized
-
-    commonReinit();
-}
-
-void QValueSpaceManager::commonInit(QAbstractValueSpaceLayer::Type vsltype)
-{
-    Q_ASSERT(Uninit == type);
-
-    // Install all the dormant layers
-    for(int ii = 0; ii < funcs.count(); ++ii)
-        install(funcs[ii]());
-    funcs.clear();
-
-    type = (vsltype == QAbstractValueSpaceLayer::Server)?Server:Client;
-
-    for(int ii = 0; ii < layers.count(); ++ii) {
-        if(!initLayer(layers.at(ii))) {
-            layers.removeAt(ii);
-            --ii;
-        }
-    }
-}
-
-void QValueSpaceManager::commonReinit()
-{
-    Q_ASSERT(Uninit != type);
-
-    for(int ii = 0; ii < layers.count(); ++ii) {
-        if(!reinitLayer(layers.at(ii))) {
-            layers.removeAt(ii);
-            --ii;
-        }
-    }
-}
-
-bool QValueSpaceManager::isServer() const
-{
-    return (Server == type);
-}
-
-void QValueSpaceManager::install(QAbstractValueSpaceLayer * layer)
-{
-    Q_ASSERT(Uninit == type);
-    Q_ASSERT(layer);
-    unsigned int cOrder = layer->order();
-    int inserted = -1;
-    for(int ii = 0; !inserted && ii < layers.count(); ++ii) {
-        unsigned int lOrder = layers.at(ii)->order();
-        Q_ASSERT(layer != layers.at(ii));
-        if(lOrder < cOrder) {
-            // Do nothing
-        } else if(lOrder == cOrder) {
-            if(layers.at(ii)->id() > layer->id()) {
-                layers.insert(ii, layer);
-                inserted = ii;
-            }
-        } else if(lOrder > cOrder) {
-            layers.insert(ii, layer);
-            inserted = ii;
-        }
-    }
-
-    if(-1 == inserted) {
-        inserted = layers.count();
-        layers.append(layer);
-    }
-}
-
-void QValueSpaceManager::install(QValueSpace::LayerCreateFunc func)
-{
-    Q_ASSERT(Uninit == type);
-    funcs.append(func);
-}
-
-QList<QAbstractValueSpaceLayer *> const & QValueSpaceManager::getLayers()
-{
-    init(); // Fallback init
-
-    return layers;
-}
-
-bool QValueSpaceManager::initLayer(QAbstractValueSpaceLayer* layer)
-{
-    Q_ASSERT(Uninit != type);
-
-    return layer->startup((type==Client)?QAbstractValueSpaceLayer::Client:
-                                         QAbstractValueSpaceLayer::Server);
-}
-
-bool QValueSpaceManager::reinitLayer(QAbstractValueSpaceLayer* layer)
-{
-    Q_ASSERT(Uninit != type);
-
-    return layer->restart();
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // define QValueSpaceItem
@@ -512,8 +362,8 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         if(path.length() != 1 && '/' == *(path.constData() + path.length() - 1))
             path.truncate(path.length() - 1);
 
-        QValueSpaceManager * man = valueSpaceManager();
-        if(!man)
+        QValueSpaceManager *man = QValueSpaceManager::instance();
+        if (!man)
             return;
 
         const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();

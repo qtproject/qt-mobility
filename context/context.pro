@@ -6,8 +6,14 @@ include(../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
-HEADERS += qcontextglobal.h qpacketprotocol.h qvaluespace.h
-SOURCES += qpacketprotocol.cpp qvaluespace.cpp
+HEADERS += qcontextglobal.h \
+           qpacketprotocol.h \
+           qvaluespace.h \
+           qvaluespacemanager_p.h
+
+SOURCES += qpacketprotocol.cpp \
+           qvaluespace.cpp \
+           qvaluespacemanager.cpp
 
 unix {
     HEADERS += qmallocpool.h \
