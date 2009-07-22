@@ -65,6 +65,17 @@ bool QContactSortOrder::isValid() const
     return true;
 }
 
+bool QContactSortOrder::operator ==(const QContactSortOrder& other) const
+{
+    if (d->m_blankPolicy == other.d->m_blankPolicy &&
+        d->m_direction == other.d->m_direction &&
+        d->m_sensitivity == other.d->m_sensitivity &&
+        d->m_definitionId == other.d->m_definitionId &&
+        d->m_fieldId == other.d->m_fieldId)
+        return true;
+    return false;
+}
+
 void QContactSortOrder::setDetailDefinitionName(const QString& definitionId, const QString& fieldId)
 {
     if (definitionId.isEmpty() || fieldId.isEmpty()) {

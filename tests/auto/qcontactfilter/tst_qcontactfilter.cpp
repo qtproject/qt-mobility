@@ -611,6 +611,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder == QContactSortOrder());
 
     /* Blank Policy */
     sortorder.setBlankPolicy(QContactSortOrder::BlanksFirst);
@@ -620,6 +621,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder != QContactSortOrder());
 
     sortorder.setBlankPolicy(QContactSortOrder::BlanksLast);
     QVERIFY(sortorder.blankPolicy() == QContactSortOrder::BlanksLast);
@@ -628,6 +630,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder == QContactSortOrder());
 
     /* Direction */
     sortorder.setDirection(Qt::DescendingOrder);
@@ -637,6 +640,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder != QContactSortOrder());
 
     sortorder.setDirection(Qt::AscendingOrder);
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
@@ -645,6 +649,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder == QContactSortOrder());
 
     /* Case sensitivity */
     sortorder.setCaseSensitivity(Qt::CaseInsensitive);
@@ -654,6 +659,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseInsensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder != QContactSortOrder());
 
     sortorder.setCaseSensitivity(Qt::CaseSensitive);
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
@@ -662,6 +668,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(sortorder.caseSensitivity() == Qt::CaseSensitive);
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder == QContactSortOrder());
 
     /* Definitions */
     sortorder.setDetailDefinitionName(QString(), QString());
@@ -698,6 +705,7 @@ void tst_QContactFilter::sortObject()
     QVERIFY(sortorder.detailDefinitionName().isEmpty());
     QVERIFY(sortorder.detailFieldName().isEmpty());
     QVERIFY(!sortorder.isValid());
+    QVERIFY(sortorder == QContactSortOrder());
 
     sortorder.setDetailDefinitionName("Definition", "Detail");
     QVERIFY(sortorder.direction() == Qt::AscendingOrder);
@@ -729,6 +737,11 @@ void tst_QContactFilter::sortObject()
     QVERIFY(other.detailDefinitionName() == "Definition");
     QVERIFY(other.detailFieldName() == "Detail");
     QVERIFY(other.isValid());
+    QVERIFY(other == sortorder);
+    QVERIFY(!(other != sortorder));
+
+    other.setDetailDefinitionName("Definition", "Another Detail");
+    QVERIFY(other != sortorder);
 
     /* Assignment operator */
     QContactSortOrder another;
@@ -736,16 +749,20 @@ void tst_QContactFilter::sortObject()
     QVERIFY(another.direction() == Qt::DescendingOrder);
     QVERIFY(another.blankPolicy() == QContactSortOrder::BlanksFirst);
     QVERIFY(another.detailDefinitionName() == "Definition");
-    QVERIFY(another.detailFieldName() == "Detail");
+    QVERIFY(another.detailFieldName() == "Another Detail");
     QVERIFY(another.isValid());
+    QVERIFY(another == other);
+    QVERIFY(!(other != another));
 
     /* Self assignment */
     another = another;
     QVERIFY(another.direction() == Qt::DescendingOrder);
     QVERIFY(another.blankPolicy() == QContactSortOrder::BlanksFirst);
     QVERIFY(another.detailDefinitionName() == "Definition");
-    QVERIFY(another.detailFieldName() == "Detail");
+    QVERIFY(another.detailFieldName() == "Another Detail");
     QVERIFY(another.isValid());
+    QVERIFY(another == other);
+    QVERIFY(!(other != another));
 }
 
 QTEST_MAIN(tst_QContactFilter)

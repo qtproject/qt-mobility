@@ -68,6 +68,10 @@ public:
     Qt::CaseSensitivity caseSensitivity() const;
 
     bool isValid() const;
+
+    bool operator==(const QContactSortOrder& other) const;
+    bool operator!=(const QContactSortOrder& other) const {return !operator==(other);}
+
 private:
     QSharedDataPointer<QContactSortOrderPrivate> d;
 };
