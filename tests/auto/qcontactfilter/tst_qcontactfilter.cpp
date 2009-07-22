@@ -215,6 +215,26 @@ void tst_QContactFilter::intersectionFilter()
     bf2.remove(bf);
     QCOMPARE(bf2.filters().count(), 1);
     QVERIFY(bf2.filters().at(0) == df3);
+
+    /* Append/prepend */
+    QContactIntersectionFilter bf3;
+    bf3.append(df);
+    QVERIFY(bf3.filters().count() == 1);
+    bf3.prepend(df2);
+    QVERIFY(bf3.filters().count() == 2);
+    QVERIFY(bf3.filters().at(0) == df2);
+    QVERIFY(bf3.filters().at(1) == df);
+    bf3.append(df3);
+    QVERIFY(bf3.filters().count() == 3);
+    QVERIFY(bf3.filters().at(0) == df2);
+    QVERIFY(bf3.filters().at(1) == df);
+    QVERIFY(bf3.filters().at(2) == df3);
+    bf3.prepend(df3);
+    QVERIFY(bf3.filters().count() == 4);
+    QVERIFY(bf3.filters().at(0) == df3);
+    QVERIFY(bf3.filters().at(1) == df2);
+    QVERIFY(bf3.filters().at(2) == df);
+    QVERIFY(bf3.filters().at(3) == df3);
 }
 
 void tst_QContactFilter::unionFilter()
@@ -288,6 +308,26 @@ void tst_QContactFilter::unionFilter()
     QCOMPARE(bf2.filters().count(), 2);
     QVERIFY(bf2.filters().at(0) == df3);
     QVERIFY(bf2.filters().at(1) == df2);
+
+    /* Append/prepend */
+    QContactUnionFilter bf3;
+    bf3.append(df);
+    QVERIFY(bf3.filters().count() == 1);
+    bf3.prepend(df2);
+    QVERIFY(bf3.filters().count() == 2);
+    QVERIFY(bf3.filters().at(0) == df2);
+    QVERIFY(bf3.filters().at(1) == df);
+    bf3.append(df3);
+    QVERIFY(bf3.filters().count() == 3);
+    QVERIFY(bf3.filters().at(0) == df2);
+    QVERIFY(bf3.filters().at(1) == df);
+    QVERIFY(bf3.filters().at(2) == df3);
+    bf3.prepend(df3);
+    QVERIFY(bf3.filters().count() == 4);
+    QVERIFY(bf3.filters().at(0) == df3);
+    QVERIFY(bf3.filters().at(1) == df2);
+    QVERIFY(bf3.filters().at(2) == df);
+    QVERIFY(bf3.filters().at(3) == df3);
 }
 
 void tst_QContactFilter::actionFilter()
