@@ -175,20 +175,6 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
     return QMessageFilterKey(); // stub
 }
 
-QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
-}
-
-QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
-}
-
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)

@@ -252,24 +252,6 @@
 */
 
 /*!
-    \fn QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-  
-    Returns a key matching messages whose body is textual and matches \a value, according 
-    to \a cmp.
-
-    \sa QMessage::body()
-*/
-
-/*!
-    \fn QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
-    Returns a key matching messages whose body is textual and matches the 
-    substring \a value, according to \a cmp.
-
-    \sa QMessage::body()
-*/
-
-/*!
     \fn QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose timestamp matches \a value, according to \a cmp.

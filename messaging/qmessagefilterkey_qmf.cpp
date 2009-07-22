@@ -227,22 +227,6 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    QMessageFilterKey result;
-    // TODO:
-    //result.d_ptr->_key = QMailMessageKey::body(value, convert(cmp));
-    return result;
-}
-
-QMessageFilterKey QMessageFilterKey::body(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    QMessageFilterKey result;
-    // TODO:
-    //result.d_ptr->_key = QMailMessageKey::body(value, convert(cmp));
-    return result;
-}
-
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
