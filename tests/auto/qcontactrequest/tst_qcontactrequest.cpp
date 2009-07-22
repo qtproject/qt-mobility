@@ -99,6 +99,10 @@ void tst_QContactRequest::contactRequest()
     QVERIFY(req.sortOrder().detailDefinitionName() == so.detailDefinitionName());
     QVERIFY(req.sortOrder().detailFieldName() == so.detailFieldName());
 
+    /* Without having ever started this request, the results should be empty */
+    QVERIFY(req.ids().count() == 0);
+    QVERIFY(req.contacts().count() == 0);
+    QVERIFY(req.errors().count() == 0);
 
     /* Now delete the manager and make sure we don't crash */
     delete cm;
@@ -111,6 +115,17 @@ void tst_QContactRequest::contactRequest()
     QVERIFY(req.type() == QContactAbstractRequest::Contact);
 
     QVERIFY(req.sortOrder() == so);
+
+    QVERIFY(req.ids().count() == 0);
+    QVERIFY(req.contacts().count() == 0);
+    QVERIFY(req.errors().count() == 0);
+
+    /* Test creating a request and deleting it before the manager, too */
+    cm = new QContactManager("memory");
+    QContactRequest* preq = new QContactRequest(cm);
+    delete preq;
+
+    delete cm;
 }
 
 QTEST_MAIN(tst_QContactRequest)
