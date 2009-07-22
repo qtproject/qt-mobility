@@ -149,6 +149,22 @@
 */
 
 /*!
+    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit, uint offset) const
+    
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
+    only messages matching the parameters set by \a key and with a body containing the 
+    string \a body will be returned, otherwise all message identifiers for messages with
+    a body containing \a body will be returned.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+*/
+
+/*!
     \fn QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 

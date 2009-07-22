@@ -83,6 +83,11 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey), limit, offset));
 }
 
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit, uint offset) const
+{
+    return QMessageIdList(); // stub
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
 {
