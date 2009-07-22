@@ -76,7 +76,7 @@ Recorder::Recorder(QWidget *parent) :
                 ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
         }
 
-        ui->qualitySlider->setValue( qRound(encodeControl->quality()));
+        ui->qualitySlider->setValue(qRound(encodeControl->quality()));
     } else {
         ui->audioCodecBox->setEnabled(false);
         ui->qualitySlider->setEnabled(false);
@@ -99,10 +99,21 @@ void Recorder::setInputDevice(int idx)
         audioDevice->setSelectedDevice(idx);
 }
 
-void Recorder::setCodec(int idx)
+void Recorder::setAudioCodec(int idx)
 {
-    if (encodeControl)
-        encodeControl->setAudioCodec( encodeControl->supportedAudioCodecs()[idx]);
+    if (encodeControl) {
+        QString codecName = encodeControl->supportedAudioCodecs()[idx];
+        encodeControl->setAudioCodec(codecName);
+
+        QAudioFormat audioFormat;
+        //speex works better with 32kHz sample rate
+        if (codecName == QLatin1String("speexenc")) {
+            audioFormat.setFrequency(32000);
+        }
+
+        encodeControl->setFormat(audioFormat);
+
+    }
 }
 
 void Recorder::setQuality(int value)
