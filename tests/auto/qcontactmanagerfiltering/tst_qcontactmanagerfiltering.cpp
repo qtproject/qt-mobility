@@ -91,6 +91,8 @@ private slots:
 
     void sorting(); // XXX should take all managers
     void sorting_data();
+
+    void invalidFiltering();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
@@ -1657,6 +1659,32 @@ void tst_QContactManagerFiltering::actionFiltering()
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
+
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::invalidFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+
+    QContactFilter f; // invalid
+
+    ids = cm->contacts(f);
+
+    QVERIFY(ids.count() == 0);
+
+    // Try unions/intersections of invalids too
+    ids = cm->contacts(f || f);
+    QVERIFY(ids.count() == 0);
+
+    ids = cm->contacts(f && f);
+    QVERIFY(ids.count() == 0);
 
     delete cm;
 }

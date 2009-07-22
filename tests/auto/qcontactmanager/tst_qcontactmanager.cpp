@@ -972,6 +972,20 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.saveContacts(0) == QList<QContactManager::Error>());
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
+
+    /* filters */
+    QContactFilter f; // invalid
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
+    QVERIFY(manager.contacts(QContactFilter()).count() == 0);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.contacts(df).count() == 0);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.contacts(f || f).count() == 0);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.contacts(df || df).count() == 0);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+
     QList<QContact> list;
     list << foo;
     QVERIFY(manager.saveContacts(&list) == (QList<QContactManager::Error>() << QContactManager::NotSupportedError));

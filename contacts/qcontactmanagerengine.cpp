@@ -173,12 +173,12 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, c
     /* Slow way */
     QList<QUniqueId> ret;
 
-    /* Try to do some early out, just in case */
+    /* Retrieve each contact.. . . */
+    const QList<QUniqueId>& all = contacts(sortOrder, error);
+    if (error != QContactManager::NoError)
+        return ret;
+
     if (filter.type() != QContactFilter::Invalid) {
-        /* Retrieve each contact.. . . */
-        const QList<QUniqueId>& all = contacts(sortOrder, error);
-        if (error != QContactManager::NoError)
-            return ret;
         for (int j = 0; j < all.count(); j++) {
             if (testFilter(filter, contact(all.at(j), error)))
                 ret << all.at(j);
