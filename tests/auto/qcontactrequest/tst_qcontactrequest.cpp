@@ -80,6 +80,19 @@ void tst_QContactRequest::contactRequest()
 {
     QContactManager *cm = new QContactManager("memory");
 
+    QList<QUniqueId> ids;
+    ids << 3 << 4 << 5;
+    QList<QContact> contacts;
+
+    QContactSortOrder so;
+    so.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
+
+    QContact a,b,c;
+    contacts << a << b << c;
+
+    QContactDetailFilter df;
+    df.setDetailDefinitionName("Definition", "Field");
+
     QContactRequest req(cm);
 
     QVERIFY(req.isFinished() == false);
@@ -90,14 +103,74 @@ void tst_QContactRequest::contactRequest()
 
     QVERIFY(!req.sortOrder().isValid());
 
-    QContactSortOrder so;
-    so.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
-
+    /* Sort order */
     req.setSortOrder(so);
     QVERIFY(req.sortOrder().isValid());
     QVERIFY(req.sortOrder().blankPolicy() == so.blankPolicy());
     QVERIFY(req.sortOrder().detailDefinitionName() == so.detailDefinitionName());
     QVERIFY(req.sortOrder().detailFieldName() == so.detailFieldName());
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactRequest::NoRestriction);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.restrictToIds();
+    QVERIFY(req.restriction() == QContactRequest::RestrictToIds);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactRequest::NoRestriction);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.restrictToDetails(QStringList("Detail"));
+    QVERIFY(req.restriction() == QContactRequest::RestrictToDetails);
+    QVERIFY(req.detailRestrictions() == QStringList("Detail"));
+
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactRequest::NoRestriction);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    /* Selection type */
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByFilter(df);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByFilter);
+    QVERIFY(req.filterSelection() == df);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectById(ids);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByIds);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection() == ids);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByObject(contacts);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByObject);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.idSelection().isEmpty());
+    QVERIFY(req.contactSelection() == contacts);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
 
     /* Without having ever started this request, the results should be empty */
     QVERIFY(req.ids().count() == 0);
@@ -119,6 +192,64 @@ void tst_QContactRequest::contactRequest()
     QVERIFY(req.ids().count() == 0);
     QVERIFY(req.contacts().count() == 0);
     QVERIFY(req.errors().count() == 0);
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactRequest::NoRestriction);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.restrictToIds();
+    QVERIFY(req.restriction() == QContactRequest::RestrictToIds);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactRequest::NoRestriction);
+    QVERIFY(req.detailRestrictions().isEmpty());
+
+    req.restrictToDetails(QStringList("Detail"));
+    QVERIFY(req.restriction() == QContactRequest::RestrictToDetails);
+    QVERIFY(req.detailRestrictions() == QStringList("Detail"));
+
+    /* Selection type */
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByFilter(df);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByFilter);
+    QVERIFY(req.filterSelection() == df);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectById(ids);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByIds);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection() == ids);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByObject(contacts);
+    QVERIFY(req.selectionType() == QContactRequest::SelectByObject);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.idSelection().isEmpty());
+    QVERIFY(req.contactSelection() == contacts);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactRequest::SelectAll);
+    QVERIFY(req.filterSelection().type() == QContactFilter::Invalid);
+    QVERIFY(req.contactSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
 
     /* Test creating a request and deleting it before the manager, too */
     cm = new QContactManager("memory");

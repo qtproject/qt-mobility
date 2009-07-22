@@ -64,18 +64,38 @@ public:
     QContactAbstractRequest::Type type() const {return QContactAbstractRequest::Contact;}
 
     /* Filtering */
+    enum SelectionType {
+        SelectAll,
+        SelectByIds,
+        SelectByObject,
+        SelectByFilter
+    };
+    void clearSelection();
     void selectById(const QList<QUniqueId>& contactIds);
     void selectByObject(const QList<QContact>& contacts);
     void selectByFilter(const QContactFilter& filter);
+
+    SelectionType selectionType() const;
+    QList<QUniqueId> idSelection() const;
+    QList<QContact> contactSelection() const;
+    QContactFilter filterSelection() const;
 
     /* Sorting */
     void setSortOrder(const QContactSortOrder& order);
     QContactSortOrder sortOrder() const;
 
     /* What to get/store */
+    enum Restriction {
+        NoRestriction,
+        RestrictToIds,
+        RestrictToDetails
+    };
+
     void clearRestrictions();                                // full contact
     void restrictToIds();                                    // just ids
     void restrictToDetails(const QStringList& detailDefinitionIds); // partial contact
+    Restriction restriction();
+    QStringList detailRestrictions() const;
 
 public slots:
     /* Base class slots */

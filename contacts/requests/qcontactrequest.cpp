@@ -105,6 +105,7 @@ void QContactRequest::clearRestrictions()
 {
     d->m_isRestrictedDefs = false;
     d->m_isRestrictedIds = false;
+    d->m_restrictDefinitions.clear();
 }
 
 /*!
@@ -114,6 +115,7 @@ void QContactRequest::restrictToIds()
 {
     d->m_isRestrictedIds = true;
     d->m_isRestrictedDefs = false;
+    d->m_restrictDefinitions.clear();
 }
 
 /*!
@@ -157,6 +159,55 @@ QContactRequest::Status QContactRequest::status() const
         return QContactAbstractRequest::Finished;
     return d->m_status;
 }
+
+
+void QContactRequest::clearSelection()
+{
+    d->m_requestFilter = QContactFilter();
+    d->m_requestIds.clear();
+    d->m_requestObjects.clear();
+}
+
+QContactRequest::SelectionType QContactRequest::selectionType() const
+{
+    if (d->m_requestIds.size() > 0)
+        return QContactRequest::SelectByIds;
+    if (d->m_requestObjects.size() > 0)
+        return QContactRequest::SelectByObject;
+    if (d->m_requestFilter.type() != QContactFilter::Invalid)
+        return QContactRequest::SelectByFilter;
+    return QContactRequest::SelectAll;
+}
+
+QList<QUniqueId> QContactRequest::idSelection() const
+{
+    return d->m_requestIds;
+}
+
+QList<QContact> QContactRequest::contactSelection() const
+{
+    return d->m_requestObjects;
+}
+
+QContactFilter QContactRequest::filterSelection() const
+{
+    return d->m_requestFilter;
+}
+
+QContactRequest::Restriction QContactRequest::restriction()
+{
+    if (d->m_isRestrictedDefs)
+        return QContactRequest::RestrictToDetails;
+    if (d->m_isRestrictedIds)
+        return QContactRequest::RestrictToIds;
+    return QContactRequest::NoRestriction;
+}
+
+QStringList QContactRequest::detailRestrictions() const
+{
+    return d->m_restrictDefinitions;
+}
+
 
 /* =============== Dynamic functions below (trampoline to the engine) */
 
