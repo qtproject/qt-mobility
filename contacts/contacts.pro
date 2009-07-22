@@ -16,6 +16,7 @@ include(requests/requests.pri)
 # Input
 HEADERS += qcontact.h \
     qcontact_p.h \
+    qcontactabstractrequest.h \
     qcontactaction.h \
     qcontactactionfactory.h \
     qcontactdetail.h \
