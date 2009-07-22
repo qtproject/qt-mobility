@@ -32,42 +32,28 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#ifndef QCAMERASERVICE_H
+#define QCAMERASERVICE_H
 
-namespace Ui {
-    class Recorder;
-}
+#include "qabstractmediaservice.h"
+#include "qcameracontrol.h"
 
-#include <QMainWindow>
 
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
-
-class Recorder : public QMainWindow
+class QCameraServicePrivate;
+class QCameraService : public QAbstractMediaService
 {
     Q_OBJECT
+
 public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+    ~QCameraService();
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
+    virtual QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const = 0;
+    virtual QObject *createEndpoint(const char *interface) = 0;
 
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
-private:
-    Ui::Recorder *ui;
-
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
+protected:
+    QCameraService(QObject *parent);
 };
 
-#endif
+#endif  // QCAMERASERVICE_H

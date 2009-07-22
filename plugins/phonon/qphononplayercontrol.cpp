@@ -134,6 +134,7 @@ float QPhononPlayerControl::playbackRate() const
 
 void QPhononPlayerControl::setPlaybackRate(float rate)
 {
+    Q_UNUSED(rate);
 }
 
 void QPhononPlayerControl::setPlaylistPosition(int playlistPosition)

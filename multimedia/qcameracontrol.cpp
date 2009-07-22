@@ -32,13 +32,15 @@
 **
 ****************************************************************************/
 
-#include "qaudiocapturepropertiescontrol.h"
+#include "qcameracontrol.h"
+#include  "qabstractmediacontrol_p.h"
 
-QAudioCapturePropertiesControl::QAudioCapturePropertiesControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+QCameraControl::~QCameraControl()
 {
 }
 
-QAudioCapturePropertiesControl::~QAudioCapturePropertiesControl()
+QCameraControl::QCameraControl(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
 }
+

@@ -32,42 +32,45 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#include <QtCore/qvariant.h>
+#include <QtCore/qdebug.h>
+#include <QtGui/qwidget.h>
 
-namespace Ui {
-    class Recorder;
+#include <QtMultimedia/qvideocamera.h>
+
+#include "endpoints/qvideorendererendpoint.h"
+
+#include "cameraservice.h"
+#include "cameracontrol.h"
+
+CameraService::CameraService(QObject *parent)
+    : QCameraService(parent)
+{
+    m_control = new CameraControl(this, this);
 }
 
-#include <QMainWindow>
-
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
-
-class Recorder : public QMainWindow
+CameraService::~CameraService()
 {
-    Q_OBJECT
-public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+    delete m_control;
+}
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
+QAbstractMediaControl *CameraService::control(const char *name) const
+{
+    return m_control;
+}
 
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
+QList<QByteArray> CameraService::supportedEndpointInterfaces(
+        QMediaEndpointInterface::Direction direction) const
+{
+    QList<QByteArray> list;
+    list = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
+    return list;
+}
 
-private:
-    Ui::Recorder *ui;
+QObject *CameraService::createEndpoint(const char *interface)
+{
+    return new QVideoRendererEndpoint;
+}
 
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
-};
 
-#endif
+

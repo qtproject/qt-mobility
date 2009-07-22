@@ -32,28 +32,69 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOCAPTUREPROPERTIESCONTROL_H
-#define QVIDEOCAPTUREPROPERTIESCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#ifndef QGSTREAMERCAPTURESESSION_H
+#define QGSTREAMERCAPTURESESSION_H
 
-class QByteArray;
+#include "qmediacapturecontrol.h"
+#include "qmediasink.h"
+#include "qmediacapture.h"
 
-class QVideoCapturePropertiesControl : public QAbstractMediaControl
+#include <gst/gst.h>
+
+class QGstreamerMessage;
+class QGstreamerBusHelper;
+class QGstreamerAudioEncode;
+
+class QGstreamerCaptureSession : public QMediaCaptureControl
 {
+    Q_OBJECT
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
-    virtual ~QVideoCapturePropertiesControl();
+    QGstreamerCaptureSession(QObject *parent);
+    ~QGstreamerCaptureSession();
 
-    virtual QList<QByteArray> supportedVideoCodecs() const = 0;
-    virtual bool setVideoCodec(const QByteArray &codecName) = 0;
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink& sink);
 
-    virtual int bitrate() const = 0;
-    virtual bool setBitrate(int) = 0;
-    virtual int minimumBitrate() const = 0;
-    virtual int maximumBitrate() const = 0;
+    int state() const;
 
-protected:
-    QVideoCapturePropertiesControl(QObject *parent);
+    qint64 position() const;
+    void setPositionUpdatePeriod(int ms);
+
+    QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
+
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
+    void setCaptureDevice(const QString &deviceName);
+
+private slots:
+    void busMessage(const QGstreamerMessage &message);
+
+private:
+    QMediaSink m_sink;
+    QMediaCapture::State m_state;
+    QGstreamerBusHelper *m_busHelper;
+    QGstreamerAudioEncode *m_audioEncodeControl;
+    GstBus* m_bus;
+
+    GstElement *m_pipeline;
+
+    GstElement *m_audiosrc;
+    GstElement *m_tee;
+    GstElement *m_audioconvert1;
+    GstElement *m_volume;
+    GstElement *m_encoder;    
+    GstElement *m_filesink;
+    GstElement *m_audioconvert2;
+    GstElement *m_fakesink;
 };
 
-#endif // QVIDEOCAPTUREPROPERTIESCONTROL_H
+#endif // QGSTREAMERCAPTURESESSION_H

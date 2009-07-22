@@ -32,13 +32,37 @@
 **
 ****************************************************************************/
 
-#include "qvideocapturepropertiescontrol.h"
+#ifndef CAMERA_H
+#define CAMERA_H
 
-QVideoCapturePropertiesControl::~QVideoCapturePropertiesControl()
-{
-}
+#include <QtGui>
 
-QVideoCapturePropertiesControl::QVideoCapturePropertiesControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+#include <qcamera.h>
+
+class QComboBox;
+class QLabel;
+
+class Camera : public QMainWindow
 {
-}
+    Q_OBJECT
+public:
+    Camera();
+    ~Camera();
+
+private slots:
+    void deviceChanged(int idx);
+    void togglePlay();
+    void statusChanged(QVideoStream::State state);
+    void frameReady(QVideoFrame frame);
+
+private:
+    QCamera*       cam;
+    QVideoFormat   format;
+    QComboBox*     deviceBox;
+    QLabel*        recTime;
+    QPushButton*   button;
+    bool           active;
+    int            currentTime;
+};
+
+#endif

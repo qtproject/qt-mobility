@@ -32,42 +32,44 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#include "qvideoencodecontrol.h"
+#include <QtCore/qstringlist.h>
+#include <QtCore/qvariant.h>
 
-namespace Ui {
-    class Recorder;
+
+QVideoEncodeControl::QVideoEncodeControl(QObject *parent)
+    :QAbstractMediaControl(parent)
+{
 }
 
-#include <QMainWindow>
-
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
-
-class Recorder : public QMainWindow
+QVideoEncodeControl::~QVideoEncodeControl()
 {
-    Q_OBJECT
-public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+}
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
 
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
+QStringList QVideoEncodeControl::supportedEncodingOptions() const
+{
+    return QStringList();
+}
 
-private:
-    Ui::Recorder *ui;
+QVariant QVideoEncodeControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
 
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
-};
+void QVideoEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
 
-#endif
+QList<QSize> QVideoEncodeControl::supportedResolutions() const
+{
+    return QList<QSize>();
+}
+
+QList< QPair<int,int> > QVideoEncodeControl::supportedFrameRates() const
+{
+    return QList< QPair<int,int> >();
+}

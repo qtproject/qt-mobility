@@ -32,61 +32,54 @@
 **
 ****************************************************************************/
 
+#ifndef QVIDEOENCODECONTROL_H
+#define QVIDEOENCODECONTROL_H
 
-#ifndef QGSTREAMERCAPTURESESSION_H
-#define QGSTREAMERCAPTURESESSION_H
+#include "qabstractmediacontrol.h"
 
-#include "qmediacapturecontrol.h"
-#include "qmediasink.h"
-#include "qmediacapture.h"
+#include <QtCore/qpair.h>
+#include <QtCore/qsize.h>
 
-#include <gst/gst.h>
+class QByteArray;
+class QStringList;
 
-class QGstreamerMessage;
-class QGstreamerBusHelper;
-
-class QGstreamerCaptureSession : public QMediaCaptureControl
+class QVideoEncodeControl : public QAbstractMediaControl
 {
     Q_OBJECT
-public:
-    QGstreamerCaptureSession(QObject *parent);
-    ~QGstreamerCaptureSession();
+public:    
+    virtual ~QVideoEncodeControl();
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink& sink);
+    virtual QSize resolution() const = 0;
+    virtual QSize minimumResolution() const = 0;
+    virtual QSize maximumResolution() const = 0;
+    virtual QList<QSize> supportedResolutions() const;
+    virtual void setResolution(const QSize &) = 0;
 
-    int state() const;
+    virtual QPair<int,int> frameRate() const = 0;
+    virtual QPair<int,int> minumumFrameRate() const = 0;
+    virtual QPair<int,int> maximumFrameRate() const = 0;
+    virtual QList< QPair<int,int> > supportedFrameRates() const;
+    virtual void setFrameRate(QPair<int,int>) = 0;
 
-    qint64 position() const;
-    void setPositionUpdatePeriod(int ms);
+    virtual QStringList supportedVideoCodecs() const = 0;
+    virtual QString videoCodec() const = 0;
+    virtual bool setVideoCodec(const QString &codecName) = 0;
 
-signals:
-    void stateChanged(int state);
-    void positionChanged(qint64 position);
+    virtual QString videoCodecDescription(const QString &codecName) const = 0;
 
-public slots:
-    void record();
-    void pause();
-    void stop();
 
-    void setCaptureDevice(const QString &deviceName);
+    virtual int bitrate() const = 0;
+    virtual void setBitrate(int) = 0;
 
-private slots:
-    void busMessage(const QGstreamerMessage &message);
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
 
-private:
-    QMediaSink m_sink;
-    QMediaCapture::State m_state;
-    QGstreamerBusHelper *m_busHelper;
-    GstBus* m_bus;
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
 
-    GstElement *m_pipeline;
-
-    GstElement *m_alsasrc;
-    GstElement *m_audioconvert;
-    GstElement *m_encoder;
-    GstElement *m_muxer;
-    GstElement *m_filesink;
+protected:
+    QVideoEncodeControl(QObject *parent);
 };
 
-#endif // QGSTREAMERCAPTURESESSION_H
+#endif // QVIDEOCAPTUREPROPERTIESCONTROL_H

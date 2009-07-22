@@ -32,25 +32,48 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOCAPTUREPROPERTIESCONTROL_H
-#define QAUDIOCAPTUREPROPERTIESCONTROL_H
+#ifndef QAUDIOENCODECONTROL_H
+#define QAUDIOENCODECONTROL_H
 
 #include "qabstractmediacontrol.h"
 
 class QAudioFormat;
+class QStringList;
 
-class QAudioCapturePropertiesControl : public QAbstractMediaControl
+#ifndef AUDIOSERVICES
+class QAudioFormat
 {
+};
+#endif
+
+class QAudioEncodeControl : public QAbstractMediaControl
+{
+    Q_OBJECT
 public:
-    virtual ~QAudioCapturePropertiesControl();
+    virtual ~QAudioEncodeControl();
 
     virtual QAudioFormat format() const = 0;    
     virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
 
+    virtual QStringList supportedAudioCodecs() const = 0;
+    virtual QString audioCodec() const = 0;
+    virtual bool setAudioCodec(const QString &codecName) = 0;
+
+    virtual QString codecDescription(const QString &codecName) = 0;
+
+    virtual int bitrate() const = 0;
+    virtual void setBitrate(int) = 0;
+
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
+
+    virtual QStringList supportedEncodingOptions() const;
+    virtual QVariant encodingOption(const QString &name);
+    virtual void setEncodingOption(const QString &name, const QVariant &value);
 
 protected:
-    QAudioCapturePropertiesControl(QObject *parent);
+    QAudioEncodeControl(QObject *parent);
 };
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

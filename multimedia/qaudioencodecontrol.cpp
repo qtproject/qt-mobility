@@ -32,42 +32,32 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#include "qaudioencodecontrol.h"
+#include <QtCore/qstringlist.h>
 
-namespace Ui {
-    class Recorder;
+QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
+    :QAbstractMediaControl(parent)
+{
 }
 
-#include <QMainWindow>
-
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
-
-class Recorder : public QMainWindow
+QAudioEncodeControl::~QAudioEncodeControl()
 {
-    Q_OBJECT
-public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+}
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
+QStringList QAudioEncodeControl::supportedEncodingOptions() const
+{
+    return QStringList();
+}
 
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
+QVariant QAudioEncodeControl::encodingOption(const QString &name)
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
 
-private:
-    Ui::Recorder *ui;
+void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
 
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
-};
-
-#endif

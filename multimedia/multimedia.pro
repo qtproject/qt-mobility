@@ -2,6 +2,8 @@ TEMPLATE = lib
 
 # QT += multimedia
 # DEFINES += AUDIOSERVICES
+# DEFINES += VIDEOSERVICES
+
 # distinct from QtMultimedia
 TARGET = QtMedia
 DESTDIR = $$OUT_PWD/../lib
@@ -44,9 +46,13 @@ HEADERS = qabstractmediacontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qmediacapturecontrol.h \
-    qaudiocapturepropertiescontrol.h \
-    qvideocapturepropertiescontrol.h \
-    qmediacapture.h
+    qaudioencodecontrol.h \
+    qvideoencodecontrol.h \
+    qmediacapture.h \
+    qcamera.h \
+    qcameracontrol.h \
+    qcameraservice.h
+
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
@@ -79,7 +85,11 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qmediacapturecontrol.cpp \
-    qaudiocapturepropertiescontrol.cpp \
-    qvideocapturepropertiescontrol.cpp \
-    qmediacapture.cpp
+    qaudioencodecontrol.cpp \
+    qvideoencodecontrol.cpp \
+    qmediacapture.cpp \
+    qcamera.cpp \
+    qcameracontrol.cpp \
+    qcameraservice.cpp
+
 include (endpoints/endpoints.pri)

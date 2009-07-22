@@ -32,42 +32,80 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#ifndef CAMERACONTROL_H
+#define CAMERACONTROL_H
 
-namespace Ui {
-    class Recorder;
-}
+#include <QtCore/qobject.h>
 
-#include <QMainWindow>
+#include "qcameracontrol.h"
+#include "qmediasource.h"
 
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
+#include <QtMultimedia/qvideoframe.h>
+#include <QtMultimedia/qvideoformat.h>
 
-class Recorder : public QMainWindow
+
+class CameraService;
+class QVideoCamera;
+
+class CameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+    CameraControl(QObject *parent = 0);
+    CameraControl(CameraService *service, QObject *parent = 0);
+    ~CameraControl();
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
+    QList<QVideoFrame::Type> supportedColorFormats();
+    QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
+
+    QVideoFormat format() const;
+    void setFormat(const QVideoFormat &format);
+
+    void start();
     void stop();
 
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
+    int framerate() const;
+    void setFrameRate(int rate);
+
+    int brightness() const;
+    void setBrightness(int b);
+
+    int contrast() const;
+    void setContrast(int c);
+
+    int saturation() const;
+    void setSaturation(int s);
+
+    int hue() const;
+    void setHue(int h);
+
+    int sharpness() const;
+    void setSharpness(int s);
+
+    int zoom() const;
+    void setZoom(int z);
+
+    bool backlightCompensation() const;
+    void setBacklightCompensation(bool);
+
+    int whitelevel() const;
+    void setWhitelevel(int w);
+
+    int rotation() const;
+    void setRotation(int r);
+
+    bool flash() const;
+    void setFlash(bool f);
+
+    bool autofocus() const;
+    void setAutofocus(bool f);
+
+    void setDevice(const QByteArray &device);
+    bool isValid() const;
 
 private:
-    Ui::Recorder *ui;
-
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
+    CameraService *m_service;
+    QVideoCamera* m_camera;
 };
 
 #endif

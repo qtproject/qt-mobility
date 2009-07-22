@@ -32,42 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-namespace Ui {
-    class Recorder;
-}
+#include "cameraserviceplugin.h"
+#include "cameraservice.h"
 
-#include <QMainWindow>
+#include <qmediaserviceprovider.h>
 
-class QMediaCapture;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
 
-class Recorder : public QMainWindow
+class CameraProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+    QObject* createObject(const char *interface) const
+    {
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
+            return new CameraService;
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
-
-    void setInputDevice(int idx);
-    void setCodec(int idx);
-    void setQuality(int value);
-
-private:
-    Ui::Recorder *ui;
-
-    QMediaCapture* audioCapture;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
+        return 0;
+    }
 };
 
-#endif
+QStringList CameraServicePlugin::keys() const
+{
+    return QStringList() << "camera";
+}
+
+QMediaServiceProvider* CameraServicePlugin::create(QString const& key)
+{
+    if (key == "camera")
+        return new CameraProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
+}
+
+#include "cameraserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(cameraserviceplugin, CameraServicePlugin);
+

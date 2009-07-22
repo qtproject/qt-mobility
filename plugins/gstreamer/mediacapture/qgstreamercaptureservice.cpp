@@ -2,6 +2,7 @@
 #include "qaudiodeviceendpoint.h"
 #include "qalsaaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
+#include "qgstreameraudioencode.h"
 
 QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
     :QAbstractMediaService(parent)
@@ -16,7 +17,12 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 QList<QByteArray> QGstreamerCaptureService::supportedEndpointInterfaces(
       QMediaEndpointInterface::Direction direction) const
 {
-    return QList<QByteArray>() << QByteArray(QAudioDeviceEndpoint_iid);
+    QList<QByteArray> res;
+
+    if (direction == QMediaEndpointInterface::Input)
+        res << QByteArray(QAudioDeviceEndpoint_iid);
+
+    return res;
 }
 
 QObject *QGstreamerCaptureService::createEndpoint(const char *interface)
@@ -48,6 +54,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
         return m_session;
+
+    if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
+        return m_session->audioEncodeControl();
 
     return 0;
 }
