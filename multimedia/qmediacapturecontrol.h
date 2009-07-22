@@ -50,8 +50,7 @@ public:
 
     virtual int state() const = 0;
 
-    virtual qint64 position() const = 0;
-    virtual void setPositionUpdatePeriod(int ms) = 0;
+    virtual qint64 position() const = 0;    
 
 signals:
     void stateChanged(int state);

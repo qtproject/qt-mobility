@@ -125,11 +125,6 @@ qint64 QGstreamerCaptureSession::position() const
         return 0;
 }
 
-void QGstreamerCaptureSession::setPositionUpdatePeriod(int ms)
-{
-    Q_UNUSED(ms);
-}
-
 void QGstreamerCaptureSession::record()
 {
     if (m_pipeline) {
