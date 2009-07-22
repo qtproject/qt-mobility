@@ -80,9 +80,6 @@ public:
     static QMessageFilterKey subject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey subject(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey body(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey body(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-
     static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
 
