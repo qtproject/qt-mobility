@@ -38,7 +38,7 @@
 #include "qcontactmanager.h"
 #include <QObject>
 
-class QContactAbstractRequest : public QObject
+class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
 {
 public:
     QContactAbstractRequest() {}

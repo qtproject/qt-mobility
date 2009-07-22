@@ -48,7 +48,7 @@
 #include <QStringList>
 
 class QContactRequestData;
-class QContactRequest : public QContactAbstractRequest
+class QTCONTACTS_EXPORT QContactRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 
