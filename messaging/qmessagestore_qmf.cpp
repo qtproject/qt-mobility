@@ -101,8 +101,14 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey), limit, offset));
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, QMessageDataComparator::Options options, uint limit, uint offset) const
 {
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(body)
+    Q_UNUSED(options)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
     return QMessageIdList(); // stub
 }
 

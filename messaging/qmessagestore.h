@@ -73,7 +73,7 @@ public:
     QMessageStore::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, QMessageDataComparator::Options options, uint limit = 0, uint offset = 0) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit = 0, uint offset = 0) const;
 #endif
