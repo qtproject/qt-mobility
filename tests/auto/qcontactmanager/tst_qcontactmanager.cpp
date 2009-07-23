@@ -2218,10 +2218,10 @@ void tst_QContactManager::displayName()
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old = d.displayLabel();
-    QVERIFY(d.details().count() == 2);
+    int count = d.details().count();
     QVERIFY(d.removeDetail(&old));
     QVERIFY(d.isEmpty() == false);
-    QVERIFY(d.details().count() == 2); // it should not be removed, only cleared (!)
+    QVERIFY(d.details().count() == count); // it should not be removed, only cleared (!)
 
     /* Save the contact again */
     QVERIFY(cm->saveContact(&d));

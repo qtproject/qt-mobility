@@ -1212,9 +1212,22 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::ChangeLog:
             {
-                // Well, the base implementation of this depends on having
-                // the QContactTimestamp detail, which is NYI.
-                // XXX TODO
+                QContactChangeLogFilter ccf(filter);
+
+                // See what we can do...
+                QContactTimestamp ts = contact.detail(QContactTimestamp::DefinitionName);
+
+                // See if timestamps are even supported
+                if (ts.isEmpty())
+                    break;
+
+                if (ccf.changeType() == QContactChangeLogFilter::Added)
+                    return ccf.since() <= ts.created();
+                if (ccf.changeType() == QContactChangeLogFilter::Changed)
+                    return ccf.since() <= ts.lastModified();
+
+                // You can't emulate a removed..
+                // Fall through
             }
             break;
 

@@ -62,9 +62,8 @@ private:
     QList<QUniqueId> prepareModel(QContactManager* cm); // add the standard contacts
 
     QString convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids); // convert back to "abcd"
-public slots:
-    void init();
-    void cleanup();
+
+    QList<QContactManager*> cleanupStack;
 
 private slots:
     void rangeFiltering(); // XXX should take all managers
@@ -89,6 +88,9 @@ private slots:
     void unionFiltering();
     void unionFiltering_data();
 
+    void changelogFiltering();
+    void changelogFiltering_data();
+
     void sorting(); // XXX should take all managers
     void sorting_data();
 
@@ -104,14 +106,9 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
 tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
 {
-}
-
-void tst_QContactManagerFiltering::init()
-{
-}
-
-void tst_QContactManagerFiltering::cleanup()
-{
+    // Cleanup whatever is left over
+    qDeleteAll(cleanupStack);
+    cleanupStack.clear();
 }
 
 QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids)
@@ -1768,7 +1765,6 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     QVERIFY(contacts.count() == 4);
 
-
     QContactFilter f; // invalid
 
     ids = cm->contacts(f);
@@ -1783,6 +1779,123 @@ void tst_QContactManagerFiltering::invalidFiltering()
     QVERIFY(ids.count() == 0);
 
     delete cm;
+}
+
+Q_DECLARE_METATYPE(QContactManager*);
+Q_DECLARE_METATYPE(QList<QUniqueId>);
+void tst_QContactManagerFiltering::changelogFiltering_data()
+{
+    // Clean out the cleanup stack
+    qDeleteAll(cleanupStack);
+    cleanupStack.clear();
+
+    QTest::addColumn<QContactManager *>("cm");
+    QTest::addColumn<QList<QUniqueId> >("contacts");
+    QTest::addColumn<int>("changeType");
+    QTest::addColumn<QDateTime>("since");
+    QTest::addColumn<QString>("expected");
+
+    int added = (int)QContactChangeLogFilter::Added;
+    int changed = (int)QContactChangeLogFilter::Changed;
+    int removed = (int)QContactChangeLogFilter::Removed;
+
+    QContactManager *manager = new QContactManager("memory");
+    QList<QUniqueId> contacts;
+
+    // Manually create contacts with the appropriate changes
+    QContact a,b,c,d;
+    a.setDisplayLabel("Alfred");
+    b.setDisplayLabel("Bob");
+    c.setDisplayLabel("Carol");
+    d.setDisplayLabel("David");
+
+    qDebug() << "Generating contacts with different timestamps, please wait..";
+    manager->saveContact(&a);
+    QTest::qSleep(2000);
+    manager->saveContact(&b);
+    QTest::qSleep(2000);
+    manager->saveContact(&c);
+    QTest::qSleep(2000);
+    manager->saveContact(&d);
+
+    // now update c
+    QTest::qSleep(2000);
+    c.setDisplayLabel("Clarence");
+    manager->saveContact(&c);
+    // b
+    QTest::qSleep(2000);
+    b.setDisplayLabel("Boris");
+    manager->saveContact(&b);
+    // a
+    QTest::qSleep(2000);
+    a.setDisplayLabel("Albert");
+    manager->saveContact(&a);
+    qDebug() << "Done!";
+
+    contacts << a.id() << b.id() << c.id() << d.id();
+
+    QDateTime ac = a.detail<QContactTimestamp>().created();
+    QDateTime bc = b.detail<QContactTimestamp>().created();
+    QDateTime cc = c.detail<QContactTimestamp>().created();
+    QDateTime dc = d.detail<QContactTimestamp>().created();
+
+    QDateTime am = a.detail<QContactTimestamp>().lastModified();
+    QDateTime bm = b.detail<QContactTimestamp>().lastModified();
+    QDateTime cm = c.detail<QContactTimestamp>().lastModified();
+    QDateTime dm = d.detail<QContactTimestamp>().lastModified();
+
+    QTest::newRow("Added since before start") << manager << contacts << added << ac.addSecs(-1) << "abcd";
+    QTest::newRow("Added since first") << manager << contacts << added << ac << "abcd";
+    QTest::newRow("Added since second") << manager << contacts << added << bc << "bcd";
+    QTest::newRow("Added since third") << manager << contacts << added << cc << "cd";
+    QTest::newRow("Added since fourth") << manager << contacts << added << dc << "d";
+    QTest::newRow("Added since after fourth") << manager << contacts << added << dc.addSecs(1) << "";
+    QTest::newRow("Added since first changed") << manager << contacts << added << am << "";
+    QTest::newRow("Added since second changed") << manager << contacts << added << bm << "";
+    QTest::newRow("Added since third changed") << manager << contacts << added << cm << "";
+    QTest::newRow("Added since fourth changed") << manager << contacts << added << cm << "";
+
+    QTest::newRow("Changed since before start") << manager << contacts << changed << ac.addSecs(-1) << "abcd";
+    QTest::newRow("Changed since first") << manager << contacts << changed << ac << "abcd";
+    QTest::newRow("Changed since second") << manager << contacts << changed << bc << "abcd";
+    QTest::newRow("Changed since third") << manager << contacts << changed << cc << "abcd";
+    QTest::newRow("Changed since fourth") << manager << contacts << changed << dc << "abcd";
+    QTest::newRow("Changed since after fourth") << manager << contacts << changed << dc.addSecs(1) << "abc";
+    QTest::newRow("Changed since first changed") << manager << contacts << changed << am << "a";
+    QTest::newRow("Changed since second changed") << manager << contacts << changed << bm << "ab";
+    QTest::newRow("Changed since third changed") << manager << contacts << changed << cm << "abc";
+    QTest::newRow("Changed since fourth changed") << manager << contacts << changed << dm << "abcd";
+
+    // These are currently useless..
+    QTest::newRow("Removed since before start") << manager << contacts << removed << ac.addSecs(-1) << "";
+    QTest::newRow("Removed since first") << manager << contacts << removed << ac << "";
+    QTest::newRow("Removed since second") << manager << contacts << removed << bc << "";
+    QTest::newRow("Removed since third") << manager << contacts << removed << cc << "";
+    QTest::newRow("Removed since fourth") << manager << contacts << removed << dc << "";
+    QTest::newRow("Removed since after fourth") << manager << contacts << removed << dc.addSecs(1) << "";
+
+    cleanupStack << manager;
+}
+
+void tst_QContactManagerFiltering::changelogFiltering()
+{
+    QFETCH(int, changeType);
+    QFETCH(QDateTime, since);
+    QFETCH(QString, expected);
+    QFETCH(QContactManager*, cm);
+    QFETCH(QList<QUniqueId>, contacts);
+
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    QContactChangeLogFilter clf((QContactChangeLogFilter::ChangeType)changeType);
+    clf.setSince(since);
+
+    ids = cm->contacts(clf);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 }
 
 QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)

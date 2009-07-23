@@ -196,12 +196,20 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QSet<QUniqueId>& conta
             d->m_groups[git.next()].removeMember(contact->id());
         };
 
+        QContactTimestamp ts = contact->detail(QContactTimestamp::DefinitionName);
+        ts.setLastModified(QDateTime::currentDateTime());
+        contact->saveDetail(&ts);
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *contact);
 
         contactsChanged << contact->id();
     } else {
         /* New contact */
+        QContactTimestamp ts = contact->detail(QContactTimestamp::DefinitionName);
+        ts.setLastModified(QDateTime::currentDateTime());
+        ts.setCreated(ts.lastModified());
+        contact->saveDetail(&ts);
 
         // update the contact item - set its ID
         contact->setId(++d->m_nextContactId);
