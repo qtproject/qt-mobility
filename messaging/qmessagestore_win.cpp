@@ -44,12 +44,16 @@ public:
     bool login();
     void logout();
 
+    static QString stringFromLpctstr(LPCTSTR lpszValue);
+
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
 
     bool mapiInitialized;
     IMAPISession* mapiSession;
+    LPMDB mapiStore;
+    bool openDefaultMapiStore();
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
@@ -57,6 +61,7 @@ QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate 
      q_ptr(q)
 {
     mapiSession = 0;
+    mapiStore = 0;
     mapiInitialized = false;
     lastError = QMessageStore::NoError;
 #ifndef QT_NO_THREAD
@@ -91,6 +96,9 @@ bool QMessageStorePrivatePlatform::login()
 
 void QMessageStorePrivatePlatform::logout()
 {
+    if (mapiStore)
+        mapiStore->Release();
+    mapiStore = 0;
     if (mapiSession)
         mapiSession->Release();
     mapiSession = 0;
@@ -100,6 +108,58 @@ QMessageStorePrivate::QMessageStorePrivate()
     :p_ptr(0),
      q_ptr(0)
 {
+}
+
+QString QMessageStorePrivatePlatform::stringFromLpctstr(LPCTSTR lpszValue)
+{
+    if (lpszValue)
+        return QString::fromWCharArray(lpszValue);
+    return QString::null;
+}
+
+bool QMessageStorePrivatePlatform::openDefaultMapiStore()
+{
+    if (!mapiInitialized || !mapiSession)
+        return false;
+
+    IMAPITable *mapiMessageStoresTable(0);
+    SizedSPropTagArray(3, columns) = {3, {PR_DEFAULT_STORE, PR_DISPLAY_NAME, PR_ENTRYID}};
+    LPSRowSet rows(0);
+    bool result(false);
+
+    if (mapiStore)
+        mapiStore->Release();
+    mapiStore = 0;
+    
+    if (mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK)
+        return false;
+    if (mapiMessageStoresTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
+        mapiMessageStoresTable->Release();
+        return false;
+    }
+
+    // TODO: Consider handling MAPI_E_BUSY by calling IMAPITable::WaitForCompletion
+    while (true) {
+        if (mapiMessageStoresTable->QueryRows(1, 0, &rows) != S_OK) {
+            MAPIFreeBuffer(rows);
+            break;
+        }
+        if (rows->cRows != 1) {
+            FreeProws(rows);
+            break;
+        }
+        if (rows->aRow[0].lpProps[0].Value.b) {
+            // default store found
+            ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
+            ULONG cbEntryId(rows->aRow[0].lpProps[2].Value.bin.cb);
+            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rows->aRow[0].lpProps[2].Value.bin.lpb));
+            result = (mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK);
+            FreeProws(rows);
+            break;
+        }
+    }
+    mapiMessageStoresTable->Release();
+    return result;
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
