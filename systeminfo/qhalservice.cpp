@@ -161,7 +161,6 @@ bool QHalDeviceInterface::getPropertyBool(const QString &prop)
 {
     QDBusReply< bool > reply = d->connectionInterface->call("GetPropertyBoolean", prop);
     if ( reply.isValid() ) {
-//        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();
     } else {
         qWarning() << reply.error().message();
@@ -173,7 +172,6 @@ QString QHalDeviceInterface::getPropertyString(const QString &prop)
 {
     QDBusReply< QString > reply = d->connectionInterface->call("GetPropertyString", prop);
     if ( reply.isValid() ) {
-//        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();
     } else {
         qWarning() << reply.error().message();
@@ -185,7 +183,6 @@ QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
 {
     QDBusReply< QStringList > reply = d->connectionInterface->call("GetPropertyStringList", prop);
     if ( reply.isValid() ) {
-//        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();
     } else {
         qWarning() << reply.error().message();
@@ -195,10 +192,8 @@ QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
 
 qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
 {
-    qWarning() << __FUNCTION__;
     QDBusReply< qint32 > reply = d->connectionInterface->call("GetPropertyInteger", prop);
     if ( reply.isValid() ) {
-//        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();
     } else {
         qWarning() << reply.error().message();
@@ -211,7 +206,6 @@ bool QHalDeviceInterface::queryCapability(const QString &cap)
 {
     QDBusReply< bool > reply = d->connectionInterface->call("QueryCapability", cap);
     if ( reply.isValid() ) {
-//        qWarning() << __FUNCTION__ << reply.value();
         return reply.value();
     } else {
         qWarning() << reply.error().message();
