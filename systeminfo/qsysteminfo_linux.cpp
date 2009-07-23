@@ -926,11 +926,11 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
     }
     if(level != 0 && levelWhenFull != 0) {
         level = level / levelWhenFull * 100;
-        if(level > 4) {
+        if(level < 4) {
             return QSystemDeviceInfo::BatteryCritical;
-        } else if (level > 11) {
+        } else if (level < 11) {
             return QSystemDeviceInfo::BatteryVeryLow;
-        } else if (level > 41) {
+        } else if (level < 41) {
             return QSystemDeviceInfo::BatteryLow;
         } else {
             return QSystemDeviceInfo::BatteryNormal;
