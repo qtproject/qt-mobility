@@ -58,13 +58,15 @@ private slots:
 
 private:
     QMediaCapture* capture;
-    QCamera*       cam;
+    QCamera*       camera;
     QVideoFormat   format;
     QComboBox*     deviceBox;
     QLabel*        recTime;
     QPushButton*   button;
     bool           active;
     int            currentTime;
+    int            framerate;
+    QMediaSink     destination;
 };
 
 #endif

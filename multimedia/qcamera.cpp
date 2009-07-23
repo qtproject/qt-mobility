@@ -68,7 +68,7 @@ QCamera::QCamera(QCameraService *service, QObject *parent)
 
     if(service) {
         d->service = service;
-        d->control = qobject_cast<QCameraControl *>(service->control("camera"));
+        d->control = qobject_cast<QCameraControl *>(service->control("com.nokia.qt.CameraControl"));
         connect(d->control,SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL(stateChanged(QVideoStream::State)));
         connect(d->control,SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
     } else {
@@ -85,6 +85,16 @@ QCamera::~QCamera()
 {
 }
 #ifdef VIDEOSERVICES
+
+QList<QByteArray> QCamera::deviceList()
+{
+    Q_D(QCamera);
+
+    QList<QByteArray> deviceNames;
+    deviceNames = d->service->deviceList();
+
+    return deviceNames;
+}
 
 QList<QVideoFrame::Type> QCamera::supportedColorFormats()
 {

@@ -32,32 +32,42 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERASERVICE_H
-#define CAMERASERVICE_H
+#ifndef MEDIACONTROL_H
+#define MEDIACONTROL_H
 
 #include <QtCore/qobject.h>
 
-#include "qcameraservice.h"
+#include "qmediasink.h"
+#include "qmediacapture.h"
+#include "qmediacapturecontrol.h"
+#include "qcameracontrol.h"
 
-class CameraControl;
-class MediaControl;
-
-class CameraService : public QCameraService
+class MediaControl : public QMediaCaptureControl
 {
     Q_OBJECT
 public:
-    CameraService(QObject *parent = 0);
-    ~CameraService();
+    MediaControl(QObject *parent = 0);
+    ~MediaControl();
 
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    QObject *createEndpoint(const char *interface);
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink &sink);
 
-    QAbstractMediaControl *control(const char *name) const;
+    int state() const;
 
-    QList<QByteArray> deviceList();
+    qint64 position() const;
+    void setPositionUpdatePeriod(int ms);
+
+    void setCameraControl(QCameraControl* control);
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
 private:
-    CameraControl *m_control;
-    MediaControl  *m_media;
+    QMediaSink           m_sink;
+    QMediaCapture::State m_state;
+    QCameraControl*      m_cameracontrol;
 };
 
 #endif

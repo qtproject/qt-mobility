@@ -35,21 +35,23 @@
 #include "camera.h"
 
 #include <qabstractmediaservice.h>
-#include <qvideorendererendpoint.h>
+#include <qcameracontrol.h>
 
 #include <QtGui>
 
-
 Camera::Camera()
 {
-    cam = new QCamera;
-    capture = new QMediaCapture(cam);
+    camera = new QCamera;
+    capture = new QMediaCapture(camera);
+
+    destination.setDataLocation("file:///tmp/test.avi");
+    capture->setSink(destination);
 
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
 
     deviceBox = new QComboBox(this);
-    QList<QByteArray> devices = cam->service()->supportedEndpointInterfaces(QMediaEndpointInterface::Input);
+    QList<QByteArray> devices = camera->deviceList();
     for(int i = 0; i < devices.size(); ++i) {
         deviceBox->addItem(devices.at(i));
     }
@@ -71,6 +73,7 @@ Camera::Camera()
     window->show();
 
     active = false;
+    framerate = 25;
 }
 
 Camera::~Camera()
@@ -80,43 +83,51 @@ Camera::~Camera()
 void Camera::stateChanged(QVideoStream::State state)
 {
     qWarning()<<"stateChanged() "<<state;
-    //currentTime++;
-    //QString str = QString("%1 sec").arg(currentTime);
-    //recTime->setText(str);
-    //qWarning()<<"time: "<<currentTime;
 }
 
 void Camera::frameReady(QVideoFrame const &frame)
 {
     qWarning()<<"frameReady";
+
+    currentTime++;
+    QString str = QString("%1 sec").arg(currentTime/framerate);
+    recTime->setText(str);
 }
 
 void Camera::deviceChanged(int idx)
 {
     QByteArray device;
     device = deviceBox->itemText(idx).toLocal8Bit().constData();
-    cam->setDevice(device);
-    QList<QVideoFrame::Type> fmts = cam->supportedColorFormats();
-    QList<QSize> sizes = cam->supportedResolutions(fmts.first());
+    camera->setDevice(device);
+    QList<QVideoFrame::Type> fmts = camera->supportedColorFormats();
+    qWarning()<<"fmts = "<<fmts;
+    QList<QSize> sizes = camera->supportedResolutions(fmts.first());
+    qWarning()<<"sizes = "<<sizes;
     format = QVideoFormat(sizes.first(),fmts.first());
-    cam->setFormat(format);
-    connect(cam,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(stateChanged(QVideoStream::State)));
-    connect(cam,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
+    camera->setFormat(format);
+
+    // Change a camera property
+    camera->setBrightness(camera->brightness());
+    framerate = camera->framerate();
+    if(framerate == 0) framerate = 25;
+
+    connect(camera,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(stateChanged(QVideoStream::State)));
+    connect(camera,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
 }
 
 void Camera::togglePlay()
 {
-    if(!cam) return;
+    if(!camera) return;
 
     if(!active) {
         recTime->setText("0 sec");
         currentTime = 0;
-        cam->start();
+        capture->record();
 
         button->setText(tr("Click to stop"));
         active = true;
     } else {
-        cam->stop();
+        capture->stop();
         button->setText(tr("Click to start"));
         active = false;
     }
