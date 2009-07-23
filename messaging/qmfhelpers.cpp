@@ -32,6 +32,16 @@
 ****************************************************************************/
 
 #include "qmfhelpers_p.h"
+#include "qmessagestore.h"
+
+namespace {
+
+quint64 messageStatusMask(const QString &field)
+{
+    return QmfHelpers::convert(QMessageStore::instance())->messageStatusMask(field);
+}
+
+}
 
 namespace QmfHelpers {
 
@@ -429,6 +439,22 @@ QMailFolder convert(const QMessageFolder &folder);
 QMessage convert(const QMailMessage &message);
 QMailMessage convert(const QMessage &message);
 */
+
+/* in qmessagestore_qmf.cpp
+QMailStore *convert(QMessageStore *store);
+*/
+
+quint64 highPriorityMask()
+{
+    static quint64 mask(messageStatusMask("QMessage::HighPriority"));
+    return mask;
+}
+
+quint64 lowPriorityMask()
+{
+    static quint64 mask(messageStatusMask("QMessage::LowPriority"));
+    return mask;
+}
 
 }
 

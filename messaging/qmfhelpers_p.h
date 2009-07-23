@@ -132,6 +132,11 @@ QMailFolder convert(const QMessageFolder &folder);
 QMessage convert(const QMailMessage &message);
 QMailMessage convert(const QMessage &message);
 
+QMailStore *convert(QMessageStore *store);
+
+quint64 highPriorityMask();
+quint64 lowPriorityMask();
+
 };
 
 bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs);

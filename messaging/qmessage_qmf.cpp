@@ -360,25 +360,37 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
 
 QMessage::Priority QMessage::priority() const
 {
-    QString priority = d_ptr->_message.customField("QMessage::priority");
+    quint64 status(d_ptr->_message.status());
 
-    if (priority == "high") {
+    if (status & highPriorityMask()) {
         return QMessage::High;
-    } else if (priority == "low") {
+    } else if (status & lowPriorityMask()) {
         return QMessage::Low;
     }
 
-    return QMessage::Low;
+    return QMessage::Normal;
 }
 
 void QMessage::setPriority(Priority newPriority)
 {
+    quint64 setMask(0);
+    quint64 unsetMask(0);
+
     if (newPriority == QMessage::High) {
-        d_ptr->_message.setCustomField("QMessage::priority", "high");
+        setMask = highPriorityMask();
+        unsetMask = lowPriorityMask();
     } else if (newPriority == QMessage::Low) {
-        d_ptr->_message.setCustomField("QMessage::priority", "low");
+        unsetMask = highPriorityMask();
+        setMask = lowPriorityMask();
     } else {
-        d_ptr->_message.removeCustomField("QMessage::priority");
+        unsetMask = (highPriorityMask() | lowPriorityMask());
+    }
+
+    if (setMask) {
+        d_ptr->_message.setStatus(setMask, true);
+    }
+    if (unsetMask) {
+        d_ptr->_message.setStatus(unsetMask, false);
     }
 }
 

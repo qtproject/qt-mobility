@@ -31,8 +31,12 @@
 **
 ****************************************************************************/
 #include "qmessagesortkey.h"
+#include "qmessagestore.h"
+#include "qmfhelpers_p.h"
 
 #include <qmailmessagesortkey.h>
+
+using namespace QmfHelpers;
 
 class QMessageSortKeyPrivate
 {
@@ -164,11 +168,16 @@ QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 {
     QMessageSortKey key;
-    // TODO: We need to implement sort on custom field value in QMF
-    //key.d_ptr->_key = QMailMessageSortKey::custom("QMessage::Priority", order);
-    return key;
 
-    Q_UNUSED(order)
+    if (order == Qt::DescendingOrder) {
+        // Sort High descending, then Low ascending
+        key.d_ptr->_key = QMailMessageSortKey::status(highPriorityMask()) & QMailMessageSortKey::status(lowPriorityMask(), Qt::AscendingOrder);
+    } else {
+        // Sort Low descending, then High ascending
+        key.d_ptr->_key = QMailMessageSortKey::status(lowPriorityMask()) & QMailMessageSortKey::status(highPriorityMask(), Qt::AscendingOrder);
+    }
+
+    return key;
 }
 
 QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
