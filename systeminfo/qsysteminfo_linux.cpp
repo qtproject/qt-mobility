@@ -32,7 +32,6 @@
 ****************************************************************************/
 #include <qsysteminfo.h>
 #include <qsysteminfo_p.h>
-#include <qhalservice.h>
 
 #include <QStringList>
 #include <QSize>
@@ -47,6 +46,7 @@
 #include <QLibraryInfo>
 
 #if !defined(QT_NO_DBUS)
+#include <qhalservice.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
