@@ -89,6 +89,11 @@
  */
 
 /*!
+ * \class QContactTimestamp
+ * \brief Contains the creation and last-modified timestamp associated with the contact
+ */
+
+/*!
  * \class QContactUrl
  * \brief A url associated with a contact
  */
@@ -124,6 +129,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
+ * \variable QContactTimestamp::DefinitionName
+ * The constant string which identifies the definition of details which are contact synchronisation timestamps
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
+
+/*!
  * \variable QContactGuid::DefinitionName
  * The constant string which identifies the definition of details which are globally unique identifiers
  */
@@ -140,12 +151,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::DefinitionName, "EmailAddress");
  * The constant string which identifies the definition of details which are universal resource location paths
  */
 Q_DEFINE_LATIN1_LITERAL(QContactUrl::DefinitionName, "Url");
-
-///*!
-// * \variable QContactMeeting::DefinitionName
-// * The constant string which identifies the definition of details which are the date and time of a meeting
-// */
-//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::DefinitionName, "Meeting");
 
 /*!
  * \variable QContactBirthday::DefinitionName
@@ -281,12 +286,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
  */
 Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldUrl, "Url");
 
-///*!
-// * \variable QContactMeeting::FieldMeeting
-// * The constant key for which the meeting date and time value is stored in details of the QContactMeeting type
-// */
-//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::FieldMeeting, "Meeting");
-
 /*!
  * \variable QContactBirthday::FieldBirthday
  * The constant key for which the birthday date value is stored in details of the QContactBirthday type
@@ -340,6 +339,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
  * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesised by a QContactManager or set manually.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
+
+/*!
+ * \variable QContactTimestamp::FieldModificationTimestamp
+ * The constant key for the value which is stored in details of the QContactTimestamp type which describes the last modification date and time of a contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
+
+/*!
+ * \variable QContactTimestamp::FieldCreationTimestamp
+ * The constant key for the value which is stored in details of the QContactTimestamp type which describes the creation date and time of a contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldCreationTimestamp, "CreationTimestamp");
 
 
 /*!

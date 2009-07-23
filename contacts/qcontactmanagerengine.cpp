@@ -314,6 +314,18 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.id(), d);
 
+    // timestamp
+    fields.clear();
+    f.dataType = QVariant::DateTime;
+    f.allowableValues = QVariantList();
+    d.setId(QContactTimestamp::DefinitionName);
+    fields.insert(QContactTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QContactTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+    retn.insert(d.id(), d);
+
     // guid
     fields.clear();
     f.dataType = QVariant::String;
@@ -400,32 +412,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.id(), d);
-
-#if 0 // leaf class not yet accepted into master
-    // meeting
-    fields.clear();
-    f.dataType = QVariant::DateTime;
-    f.allowableValues = QVariantList();
-    d.setId(QContactMeeting::DefinitionName);
-    fields.insert(QContactMeeting::FieldMeeting, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
-    retn.insert(d.id(), d);
-#endif
-
-#if 0 // leaf class not yet accepted into master
-    // tag
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    d.setId(QContactTag::DefinitionName);
-    fields.insert(QContactTag::FieldTag, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
-    retn.insert(d.id(), d);
-#endif
 
     // url
     fields.clear();

@@ -62,6 +62,7 @@ private slots:
     void name();
     void phoneNumber();
     void syncTarget();
+    void timestamp();
     void url();
 
     // custom definition testing
@@ -569,6 +570,44 @@ void tst_QContactDetails::syncTarget()
     QVERIFY(c.removeDetail(&s2) == false);
     QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::timestamp()
+{
+    QContact c;
+    QContactTimestamp t1, t2;
+    QDateTime modified = QDateTime::currentDateTime();
+    QDateTime created = modified.addSecs(-43);
+
+    // test property set
+    t1.setCreated(created);
+    QCOMPARE(t1.created(), created);
+    QCOMPARE(t1.variantValue(QContactTimestamp::FieldCreationTimestamp).toDateTime(), created);
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 1);
+    QCOMPARE(QContactTimestamp(c.details(QContactTimestamp::DefinitionName).value(0)).created(), t1.created());
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setLastModified(modified);
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).value(0).variantValue(QContactTimestamp::FieldCreationTimestamp).toDateTime(), created);
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).value(0).variantValue(QContactTimestamp::FieldModificationTimestamp).toDateTime(), modified);
+
+    // test property remove
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
+    t2.setCreated(created.addSecs(15));
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2));
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&t2) == false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+    QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::url()

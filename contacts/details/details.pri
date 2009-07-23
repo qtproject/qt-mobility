@@ -1,5 +1,4 @@
 INCLUDEPATH += details
-
 HEADERS += details/qcontactaddress.h \
     details/qcontactanniversary.h \
     details/qcontactavatar.h \
@@ -13,6 +12,6 @@ HEADERS += details/qcontactaddress.h \
     details/qcontactorganisation.h \
     details/qcontactphonenumber.h \
     details/qcontactsynctarget.h \
+    details/qcontacttimestamp.h \
     details/qcontacturl.h
-
 SOURCES += details/qcontactdetails.cpp
