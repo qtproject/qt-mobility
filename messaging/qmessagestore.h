@@ -72,17 +72,17 @@ public:
 
     QMessageStore::ErrorCode lastError() const;
 
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit = 0, uint offset = 0) const;
-    QMessageIdList queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, QMessageDataComparator::Options options, uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), QMessageDataComparator::Options options = 0, uint limit = 0, uint offset = 0) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    QMessageFolderIdList queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit = 0, uint offset = 0) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilterKey &key = QMessageFolderFilterKey(), const QMessageFolderSortKey &sortKey = QMessageFolderSortKey(), uint limit = 0, uint offset = 0) const;
 #endif
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit = 0, uint offset = 0) const;
-    int countMessages(const QMessageFilterKey &key) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilterKey &key = QMessageAccountFilterKey(), const QMessageAccountSortKey &sortKey = QMessageAccountSortKey(), uint limit = 0, uint offset = 0) const;
+    int countMessages(const QMessageFilterKey &key = QMessageFilterKey()) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    int countFolders(const QMessageFolderFilterKey &key) const;
+    int countFolders(const QMessageFolderFilterKey &key = QMessageFolderFilterKey()) const;
 #endif
-    int countAccounts(const QMessageAccountFilterKey &key) const;
+    int countAccounts(const QMessageAccountFilterKey &key = QMessageAccountFilterKey()) const;
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
