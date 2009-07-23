@@ -37,6 +37,9 @@
 #include "qwmpevents.h"
 #include "qwmpglobal.h"
 
+#include <QtCore/qdir.h>
+#include <QtCore/qfileinfo.h>
+#include <QtCore/qsize.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
@@ -192,50 +195,41 @@ QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
 {
     QMediaResourceList resources;
 
-    BSTR uri = 0;
-    if (media->get_sourceURL(&uri) == S_OK) {
-        resources.append(QMediaResource(QUrl(
-                QString::fromWCharArray(static_cast<const wchar_t *>(uri)))));
-        ::SysFreeString(uri);
+    BSTR string = 0;
+    if (media->get_sourceURL(&string) == S_OK) {
+        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        ::SysFreeString(string);
 
-        IWMPMedia3 *media3 = 0;
-        if (media->QueryInterface(
-                __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
-            QAutoBStr key(L"WM/Picture");
+        resources.append(QMediaResource(QUrl(uri)));
 
-            VARIANT variant;
-            VariantInit(&variant);
-            for (long i = 0; media3->getItemInfoByType(key, 0, i, &variant) == S_OK; ++i) {
-                IWMPMetadataPicture *picture = 0;
+        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
+            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            ::SysFreeString(string);
 
-                if (variant.vt == VT_DISPATCH && variant.pdispVal->QueryInterface(
-                        __uuidof(IWMPMetadataPicture),
-                        reinterpret_cast<void **>(&picture)) == S_OK) {
-                    BSTR string = 0;
+            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
+            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
 
-                    QUrl uri;
-                    QString mimeType;
-                    QMediaResource::ResourceRole role = QMediaResource::ThumbnailRole;
+            QDir dir = QFileInfo(uri).absoluteDir();
 
-                    if (picture->get_URL(&string) == S_OK) {
-                        uri = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
+            if (dir.exists(albumArtLarge)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtLarge)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(200, 200));
 
-                        ::SysFreeString(string);
-                    }
-                    if (picture->get_mimeType(&string) == S_OK) {
-                        mimeType = QString::fromWCharArray(
-                                static_cast<wchar_t *>(string), ::SysStringLen(string));
-                        ::SysFreeString(string);
-                    }
-
-                    if (!uri.isEmpty())
-                        resources.append(QMediaResource(uri, mimeType, role));
-
-                    picture->Release();
-                }
-                VariantClear(&variant);
+                resources.append(resource);
             }
-            media3->Release();
+
+            if (dir.exists(albumArtSmall)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtSmall)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(75, 75));
+
+                resources.append(resource);
+            }
         }
     }
 

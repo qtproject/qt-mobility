@@ -41,8 +41,28 @@ class QAudioFormat;
 class QStringList;
 
 #ifndef AUDIOSERVICES
+//temporary
 class QAudioFormat
 {
+public:
+    QAudioFormat();
+
+    bool isNull() const { return m_null; }
+
+    void setFrequency(int frequency);
+    int frequency() const { return m_frequency; }
+
+    void setChannels(int channels);
+    int channels() const { return m_channels; }
+
+    void setSampleSize(int sampleSize);
+    int sampleSize() const  { return m_sampleSize; }
+
+private:
+    bool m_null;
+    int m_frequency;
+    int m_channels;
+    int m_sampleSize;
 };
 #endif
 

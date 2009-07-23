@@ -42,7 +42,7 @@ private:
     GstBin *m_encoderBin;
     GstElement *m_encoderElement;
     GstElement *m_muxerElement;
-    GstElement *m_identity1;
+    GstElement *m_capsfilter;
     GstElement *m_identity2;
 
     QMap<QString, QVariant> m_options;

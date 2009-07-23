@@ -59,7 +59,7 @@ private slots:
     void stop();
 
     void setInputDevice(int idx);
-    void setCodec(int idx);
+    void setAudioCodec(int idx);
     void setQuality(int value);
 
 private:

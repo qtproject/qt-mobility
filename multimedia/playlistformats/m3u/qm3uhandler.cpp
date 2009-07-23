@@ -38,6 +38,7 @@
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qtextstream.h>
 #include <QFile>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 
@@ -93,7 +94,7 @@ public:
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            nextResource = QMediaResource(QString(), line);
+            nextResource = QMediaResource(QUrl(line));
             break;
         }
 
@@ -126,8 +127,13 @@ public:
 
     virtual bool writeItem(const QMediaResource& item)
     {
-        *m_textStream << item.dataLocation().toString() << endl;
+        *m_textStream << item.uri().toString() << endl;
         return true;
+    }
+
+    virtual bool writeItem(const QMediaResourceList &resources)
+    {
+        return writeItem(resources[0]);
     }
 
     virtual void close()

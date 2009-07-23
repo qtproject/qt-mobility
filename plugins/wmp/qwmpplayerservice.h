@@ -150,7 +150,7 @@ public:
 
 private:
     volatile LONG m_ref;
-    EmbedMode m_embedMode;
+    const EmbedMode m_embedMode;
     IWMPPlayer4 *m_player;
     IOleObject *m_oleObject;
     IOleInPlaceObject *m_inPlaceObject;

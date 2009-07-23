@@ -144,6 +144,9 @@ void QWmpPlayerService::setVideoOutput(QObject *output)
 {
     QAbstractMediaService::setVideoOutput(output);
 
+    if (m_embedMode == RemoteEmbed)
+        return;
+
     if (m_placeholderWidget)
         m_placeholderWidget->removeEventFilter(this);
 
@@ -175,7 +178,7 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
         QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> interfaces;
-    if (direction == QMediaEndpointInterface::Output)
+    if (direction == QMediaEndpointInterface::Output && m_embedMode == LocalEmbed)
         interfaces << QMediaWidgetEndpoint_iid;
 
     return interfaces;
@@ -183,7 +186,7 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
 
 QObject *QWmpPlayerService::createEndpoint(const char *iid)
 {
-    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0)
+    if (strcmp(iid, QMediaWidgetEndpoint_iid) == 0 && m_embedMode == LocalEmbed)
         return new QWmpPlaceholderWidget;
     return 0;
 }
