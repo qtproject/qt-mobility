@@ -107,10 +107,8 @@ void Camera::deviceChanged(int idx)
     camera->setFormat(format);
 
     // Change a camera property
-    QCameraControl* controls = qobject_cast<QCameraControl*>(camera->service()->control("com.nokia.qt.CameraControl"));
-    int b = controls->brightness();
-    controls->setBrightness(b);
-    framerate = controls->framerate();
+    camera->setBrightness(camera->brightness());
+    framerate = camera->framerate();
     if(framerate == 0) framerate = 25;
 
     connect(camera,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(stateChanged(QVideoStream::State)));
