@@ -694,63 +694,138 @@ QString QSystemDeviceInfoPrivate::imsi()
 
 QString QSystemDeviceInfoPrivate::manufacturer() const
 {
-    QString manu;
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString manu;
         if (iface.isValid()) {
             manu = iface.getPropertyString("system.firmware.vendor");
             if(manu.isEmpty()) {
-                manu = iface.getPropertyString("system.hardware.vendor");
+                return iface.getPropertyString("system.hardware.vendor");
+            } else {
+                return manu;
             }
         }
 #endif
     } else {
-
+        QFile vendorId("/sys/devices/virtual/dmi/id/board_vendor");
+        if (vendorId.open(QIODevice::ReadOnly)) {
+            QTextStream cpuinfo(&vendorId);
+            return cpuinfo.readLine().trimmed();
+        } else {
+//        qWarning() << "Could not open /sys/devices/virtual/dmi/id/board_vendor";
+            QFile file("/proc/cpuinfo");
+            if (!file.open(QIODevice::ReadOnly)) {
+                qWarning() << "Could not open /proc/cpuinfo";
+            } else {
+                QTextStream cpuinfo(&file);
+                QString line = cpuinfo.readLine();
+                while (!line.isNull()) {
+                    line = cpuinfo.readLine();
+                    if(line.contains("vendor_id")) {
+                        return line.split(": ").at(1).trimmed();
+                    }
+                }
+            }
+        }
     }
-
-    return manu;
+    return QString();
 }
 
 QString QSystemDeviceInfoPrivate::model() const
 {
-    QString model;
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-
-        if (iface.isValid()) {
-            model = iface.getPropertyString("system.kernel.machine");
-            if(!model.isEmpty())
-                model += " ";
-            model += iface.getPropertyString("system.chassis.type");
-        }
-#endif
-    } else {
-
-    }
-
-    return model;
-}
-
-QString QSystemDeviceInfoPrivate::productName() const
-{
-    QString productName;
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
         if (iface.isValid()) {
-            productName = iface.getPropertyString("info.product");
-            if(productName.isEmpty())
-                productName = iface.getPropertyString("system.product");
+            model = iface.getPropertyString("system.kernel.machine");
+            if(!model.isEmpty())
+                model += " ";
+            model += iface.getPropertyString("system.chassis.type");
+            return model;
         }
 #endif
     } else {
-
+        QFile file("/proc/cpuinfo");
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/cpuinfo";
+        } else {
+            QTextStream cpuinfo(&file);
+            QString line = cpuinfo.readLine();
+            while (!line.isNull()) {
+                line = cpuinfo.readLine();
+                if(line.contains("model name")) {
+                    return line.split(": ").at(1).trimmed();
+                }
+            }
+        }
     }
+    return QString();
+}
 
-    return productName;
+QString QSystemDeviceInfoPrivate::productName() const
+{
+    if(halIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString productName;
+        if (iface.isValid()) {         
+            productName = iface.getPropertyString("info.product");
+            if(productName.isEmpty()) {
+                return iface.getPropertyString("system.product");
+            } else {
+                return productName;
+            }
+        }
+#endif
+    } else {
+        QDir dir("/etc");
+        if(dir.exists()) {
+            QStringList langList;
+            QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
+                                                         QDir::Files | QDir::NoDotAndDotDot,
+                                                         QDir::Name);
+            foreach(QFileInfo fileInfo, localeList) {
+                QString filepath = fileInfo.filePath();
+                QFile file(filepath);
+                if (file.open(QIODevice::ReadOnly)) {
+                    QTextStream prodinfo(&file);
+                    QString line = prodinfo.readLine();
+                    while (!line.isNull()) {
+                        if(filepath.contains("lsb.release")) {
+                            if(line.contains("DISTRIB_DESCRIPTION")) {
+                                return line.split("=").at(1).trimmed();
+                            }
+                        } else {
+                            return line;
+                        }
+                        line = prodinfo.readLine();
+                    }
+                }
+            } //end foreach
+        }
+
+        QFile file("/etc/issue");
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/cpuinfo";
+        } else {
+            QTextStream prodinfo(&file);
+            QString line = prodinfo.readLine();
+            while (!line.isNull()) {
+                line = prodinfo.readLine();
+                if(!line.isEmpty()) {
+                    QStringList lineList = line.split(" ");
+                    for(int i = 0; i < lineList.count(); i++) {
+                        if(lineList.at(i).toFloat()) {
+                            return lineList.at(i-1) + " "+ lineList.at(i);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return QString();
 }
 
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
@@ -770,48 +845,98 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
         }
 #endif
     } else {
-
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("charging state")) {
+                    if(line.split(" ").at(1).trimmed() == "charging") {
+                        isCharging = true;
+                        break;
+                    }
+                }
+                line = batstate.readLine();
+            }
+            statefile.close();
+        }
     }
     return isCharging;
 }
 
 QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
 {
-    //    qWarning() << __FUNCTION__;
+    float levelWhenFull = 0.0;
+    float level = 0.0;
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
             foreach(QString dev, list) {
-                //            qWarning() << dev;
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
                     if(!ifaceDevice.getPropertyBool("battery.present") ){
                         return QSystemDeviceInfo::NoBatteryLevel;
                     } else {
-                        float levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
-                        float level = ifaceDevice.getPropertyInt("battery.charge_level.current");
-                        level =  level / levelWhenFull * 100;
-                        //                    qWarning()
-                        //                            << level;
-                        if(level > 4) {
-                            return QSystemDeviceInfo::BatteryCritical;
-                        } else if (level > 11) {
-                            return QSystemDeviceInfo::BatteryVeryLow;
-                        } else if (level > 41) {
-                            return QSystemDeviceInfo::BatteryLow;
-                        } else  {
-                            return QSystemDeviceInfo::BatteryNormal;
-                        }
-                    };
+                        levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
+                        level = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                    }
                 }
             }
         }
 #endif
     } else {
+        QFile infofile("/proc/acpi/battery/BAT0/info");
+        if (!infofile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batinfo(&infofile);
+            QString line = batinfo.readLine();
+            while (!line.isNull()) {
+                if(line.contains("design capacity")) {
+                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                    infofile.close();
+                    break;
+                }
+                line = batinfo.readLine();
+            }
+            infofile.close();
+        }
 
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("remaining capacity")) {
+                    level = line.split(" ").at(1).trimmed().toFloat();
+                    statefile.close();
+                    break;
+                }
+                line = batstate.readLine();
+            }
+        }
     }
+    if(level != 0 && levelWhenFull != 0) {
+        level = level / levelWhenFull * 100;
+        if(level > 4) {
+            return QSystemDeviceInfo::BatteryCritical;
+        } else if (level > 11) {
+            return QSystemDeviceInfo::BatteryVeryLow;
+        } else if (level > 41) {
+            return QSystemDeviceInfo::BatteryLow;
+        } else {
+            return QSystemDeviceInfo::BatteryNormal;
+        }
+    }
+
     return QSystemDeviceInfo::NoBatteryLevel;
 }
 
