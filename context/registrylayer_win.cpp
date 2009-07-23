@@ -64,11 +64,8 @@ public:
     virtual HANDLE item(HANDLE parent, const QByteArray &path);
     virtual void setProperty(HANDLE handle, Properties);
     virtual void remHandle(HANDLE);
-    virtual bool remove(HANDLE);
-    virtual bool remove(HANDLE, const QByteArray &);
     virtual bool syncChanges();
 
-    void removeItems(QValueSpaceObject *creator, HANDLE parent);
     void removeWatches(QValueSpaceObject *creator, HANDLE parent);
 
     /* QValueSpaceItem functions */
@@ -77,8 +74,10 @@ public:
     bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray());
 
     /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, HANDLE, const QVariant &);
-    bool setValue(QValueSpaceObject *creator, HANDLE, const QByteArray &, const QVariant &);
+    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &data);
+    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data);
+    bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &subPath);
+    bool removeSubTree(QValueSpaceObject *creator, HANDLE parent);
 
     /* Private implementation functions */
     void emitHandleChanged(HKEY key);
@@ -88,6 +87,7 @@ public:
 private:
     void openRegistryKey(HANDLE handle);
     void createRegistryKey(HANDLE handle);
+    bool removeRegistryValue(HANDLE handle, const QByteArray &path);
 
     QHash<QByteArray, HANDLE> handles;
     QList<HANDLE> valueHandles;
@@ -180,8 +180,9 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
     QByteArray path(subPath);
     while (path.endsWith('/'))
         path.chop(1);
-    while (path.startsWith('/'))
-        path = path.mid(1);
+    if (handle != InvalidHandle)
+        while (path.startsWith('/'))
+            path = path.mid(1);
 
     int index = path.lastIndexOf('/', -1);
 
@@ -423,11 +424,6 @@ void RegistryLayer::remHandle(HANDLE handle)
     RegCloseKey(key);
 }
 
-bool RegistryLayer::remove(HANDLE handle)
-{
-    return remove(InvalidHandle, handles.key(handle));
-}
-
 static LSTATUS qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
 {
     HKEY key;
@@ -454,7 +450,7 @@ static LSTATUS qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
     return RegDeleteKey(hKey, lpSubKey);
 }
 
-bool RegistryLayer::remove(HANDLE handle, const QByteArray &subPath)
+bool RegistryLayer::removeRegistryValue(HANDLE handle, const QByteArray &subPath)
 {
     if (handle != InvalidHandle && !handles.values().contains(handle))
         return false;
@@ -741,10 +737,10 @@ void RegistryLayer::createRegistryKey(HANDLE handle)
         hKeys.insert(handle, key);
 }
 
-void RegistryLayer::removeItems(QValueSpaceObject *creator, HANDLE handle)
+bool RegistryLayer::removeSubTree(QValueSpaceObject *creator, HANDLE handle)
 {
     if (!handles.values().contains(handle))
-        return;
+        return false;
 
     QList<QByteArray> paths = creators.value(creator);
 
@@ -755,7 +751,7 @@ void RegistryLayer::removeItems(QValueSpaceObject *creator, HANDLE handle)
         if (!item.startsWith(rootPath))
             continue;
 
-        remove(InvalidHandle, item);
+        removeRegistryValue(InvalidHandle, item);
         creators[creator].removeOne(item);
 
         int index = item.lastIndexOf('/');
@@ -766,6 +762,27 @@ void RegistryLayer::removeItems(QValueSpaceObject *creator, HANDLE handle)
         if (!paths.contains(item))
             paths.append(item);
     }
+
+    return true;
+}
+
+bool RegistryLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &subPath)
+{
+    if (!handles.values().contains(handle))
+        return false;
+
+    QByteArray fullPath(handles.key(handle));
+    if (!subPath.startsWith('/'))
+        fullPath.append('/');
+    fullPath.append(subPath);
+
+    if (!creators[creator].contains(fullPath))
+        return false;
+
+   removeRegistryValue(InvalidHandle, fullPath);
+   creators[creator].removeOne(fullPath);
+
+   return true;
 }
 
 void RegistryLayer::removeWatches(QValueSpaceObject *creator, HANDLE handle)

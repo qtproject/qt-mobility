@@ -236,7 +236,7 @@ QValueSpaceObject::~QValueSpaceObject()
         return;
 
     if (d->hasSet)
-        d->layer->removeItems(this, d->handle);
+        d->layer->removeSubTree(this, d->handle);
 
     if (d->hasWatch)
         d->layer->removeWatches(this, d->handle);
@@ -362,8 +362,7 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
 void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
 {
     VS_CALL_ASSERT;
-
-    qDebug() << "not removing attribute" << attribute;
+    d->layer->removeValue(this, d->handle, attribute);
 }
 
 void QValueSpaceObject::connectNotify(const char *member)

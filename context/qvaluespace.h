@@ -75,10 +75,6 @@ public:
        with '/' */
     virtual bool value(HANDLE, const QByteArray &, QVariant *) = 0;
 
-    /* Removes all keys under handle */
-    virtual bool remove(HANDLE) = 0;
-    /* Removes all keys under a subpath or handle */
-    virtual bool remove(HANDLE, const QByteArray &) = 0;
     /* Commit any changes (if needed) made through setValue() now */
     virtual bool syncChanges() = 0;
 
@@ -96,9 +92,6 @@ public:
     /* Removes a previously allocated handle. */
     virtual void remHandle(HANDLE) = 0;
 
-    /* Removes all items created by QValueSpaceObject */
-    virtual void removeItems(QValueSpaceObject *creator, HANDLE parent) = 0;
-
     /* Removes all watches created by QValueSpaceObject */
     virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
 
@@ -108,9 +101,10 @@ public:
     virtual bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) = 0;
 
     /* QValueSpaceObject side functions */
-    virtual bool setValue(QValueSpaceObject *creator, HANDLE, const QVariant &) = 0;
-    virtual bool setValue(QValueSpaceObject *creator, HANDLE, const QByteArray &, const QVariant &) = 0;
-
+    virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) = 0;
+    virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) = 0;
+    virtual bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) = 0;
+    virtual bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) = 0;
 
 signals:
     void handleChanged(unsigned int);
