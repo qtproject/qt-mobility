@@ -612,7 +612,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
 
 QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 {
-    QSystemDeviceInfo::InputMethods methods;
+    QSystemDeviceInfo::InputMethods methods = 0;
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface2;
@@ -641,7 +641,8 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
                     };
                 }
             }
-            return methods;
+            if(methods != 0)
+                return methods;
         }
     }
 #endif
@@ -743,7 +744,8 @@ QString QSystemDeviceInfoPrivate::model() const
             if(!model.isEmpty())
                 model += " ";
             model += iface.getPropertyString("system.chassis.type");
-            return model;
+            if(!model.isEmpty())
+                return model;
         }
     }
 #endif
@@ -772,7 +774,9 @@ QString QSystemDeviceInfoPrivate::productName() const
         if (iface.isValid()) {         
             productName = iface.getPropertyString("info.product");
             if(productName.isEmpty()) {
-                return iface.getPropertyString("system.product");
+                productName = iface.getPropertyString("system.product");
+                if(!productName.isEmpty())
+                    return productName;
             } else {
                 return productName;
             }
