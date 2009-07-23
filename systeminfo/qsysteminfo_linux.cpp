@@ -644,8 +644,8 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
             if(methods != 0)
                 return methods;
         }
-    }
 #endif
+    }
     QString inputsPath = "/sys/class/input/";
     QDir inputDir(inputsPath);
     QStringList filters;
@@ -708,8 +708,8 @@ QString QSystemDeviceInfoPrivate::manufacturer() const
                 }
             }
         }
-    }
 #endif
+    }
     QFile vendorId("/sys/devices/virtual/dmi/id/board_vendor");
     if (vendorId.open(QIODevice::ReadOnly)) {
         QTextStream cpuinfo(&vendorId);
@@ -747,8 +747,8 @@ QString QSystemDeviceInfoPrivate::model() const
             if(!model.isEmpty())
                 return model;
         }
-    }
 #endif
+    }
     QFile file("/proc/cpuinfo");
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Could not open /proc/cpuinfo";
@@ -781,8 +781,8 @@ QString QSystemDeviceInfoPrivate::productName() const
                 return productName;
             }
         }
-    }
 #endif
+    }
     QDir dir("/etc");
     if(dir.exists()) {
         QStringList langList;
@@ -845,8 +845,8 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
                 }
             }
         }
-    }
 #endif
+    }
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (!statefile.open(QIODevice::ReadOnly)) {
         qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
@@ -888,8 +888,8 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
                 }
             }
         }
-    }
 #endif
+    }
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
         qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
