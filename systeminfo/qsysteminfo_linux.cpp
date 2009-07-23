@@ -741,8 +741,6 @@ QString QSystemDeviceInfoPrivate::productName() const
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
         if (iface.isValid()) {
-            qWarning() << iface.getPropertyString("linux.sysfs_path");
-
             productName = iface.getPropertyString("info.product");
             if(productName.isEmpty())
                 productName = iface.getPropertyString("system.product");
