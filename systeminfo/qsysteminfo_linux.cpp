@@ -78,7 +78,7 @@ static bool halAvailable()
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Ha2l");
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
