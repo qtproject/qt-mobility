@@ -61,7 +61,27 @@ SOURCES += qmessageid.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
 
-win32: {
+
+symbian|win32 {
+symbian {
+SOURCES += qmessageid_symbian.cpp \
+           qmessagecontentcontainerid_symbian.cpp \
+           qmessagefolderid_symbian.cpp \
+           qmessageaccountid_symbian.cpp \
+           qmessagecontentcontainer_symbian.cpp \
+           qmessage_symbian.cpp \
+           qmessagefolder_symbian.cpp \
+           qmessageaccount_symbian.cpp \
+           qmessageaccountfilterkey_symbian.cpp \
+           qmessageaccountsortkey_symbian.cpp \
+           qmessagefolderfilterkey_symbian.cpp \
+           qmessagefoldersortkey_symbian.cpp \
+           qmessagefilterkey_symbian.cpp \
+           qmessagesortkey_symbian.cpp \
+           qmessagestore_symbian.cpp \
+           qmessageserviceaction_symbian.cpp 
+}
+win32 {
 SOURCES += qmessageid_win.cpp \
            qmessagecontentcontainerid_win.cpp \
            qmessagefolderid_win.cpp \
@@ -80,6 +100,7 @@ SOURCES += qmessageid_win.cpp \
            qmessageserviceaction_win.cpp 
 
 LIBS += mapi32.lib 
+}
 } else {
 # QMF headers must be located at $QMF_INCLUDEDIR
 INCLUDEPATH += $$QMF_INCLUDEDIR $$QMF_INCLUDEDIR/support

@@ -47,9 +47,27 @@ public:
     QMessageStore::ErrorCode _error;
 
     Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
+
+    static void createNonexistentFolder(QMailStore *store, const QString &path, quint64 status);
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
+
+void QMessageStorePrivate::createNonexistentFolder(QMailStore *store, const QString &path, quint64 status)
+{
+    QMailFolderKey pathKey(QMailFolderKey::path(path));
+    QMailFolderKey accountKey(QMailFolderKey::parentAccountId(QMailAccountId()));
+
+    if (store->countFolders(pathKey & accountKey) == 0) {
+        QMailFolder folder;
+        folder.setPath(path);
+        folder.setStatus(status);
+
+        if (!store->addFolder(&folder)) {
+            qWarning() << "Unable to add folder for:" << path;
+        }
+    }
+}
 
 QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
@@ -83,8 +101,14 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey), limit, offset));
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, QMessageDataComparator::Options options, uint limit, uint offset) const
 {
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(body)
+    Q_UNUSED(options)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
     return QMessageIdList(); // stub
 }
 
@@ -197,7 +221,27 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
 QMessageStore* QMessageStore::instance()
 {
-    return QMessageStorePrivate::storeInstance();
+    static bool initialised(false);
+
+    QMessageStore* store(QMessageStorePrivate::storeInstance());
+
+    if (!initialised) {
+        initialised = true;
+
+        // Perform any initialisation tasks
+
+        // Create the standard folders if they do not exist
+        typedef QPair<const char*, quint64> FolderAttributes;
+        foreach (const FolderAttributes &folder, QList<FolderAttributes>() << FolderAttributes("Inbox", QMailFolder::Incoming)
+                                                                           << FolderAttributes("Outbox", QMailFolder::Outgoing)
+                                                                           << FolderAttributes("Drafts", QMailFolder::Outgoing | QMailFolder::Trash)
+                                                                           << FolderAttributes("Sent", QMailFolder::Outgoing | QMailFolder::Sent)
+                                                                           << FolderAttributes("Trash", QMailFolder::Trash)) {
+            QMessageStorePrivate::createNonexistentFolder(store->d_ptr->_store, folder.first, folder.second);
+        }
+    }
+
+    return store;
 }
     
 void QMessageStore::startNotifications(const QMessageFilterKey &key)

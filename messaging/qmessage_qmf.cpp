@@ -44,9 +44,50 @@ class QMessagePrivate
 public:
     QMailMessage _message;
 
+    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
+    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
+
+    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
+    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
+
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
 };
+
+Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
+
+QMessageFolderId QMessagePrivate::standardFolderId(QMessage::StandardFolder folder)
+{
+    StandardFolderMap::const_iterator it = standardFolderMap()->find(folder);
+    if (it == standardFolderMap()->end()) {
+        const char *path((folder == QMessage::InboxFolder ? "Inbox" : 
+                         (folder == QMessage::OutboxFolder ? "Outbox" : 
+                         (folder == QMessage::DraftsFolder ? "Drafts" : 
+                         (folder == QMessage::SentFolder ? "Sent" : 
+                         (folder == QMessage::TrashFolder ? "Trash" : ""))))));
+
+        // Find the ID for this standard folder
+        QMessageFolderFilterKey pathKey(QMessageFolderFilterKey::path(path));
+        QMessageFolderFilterKey accountKey(QMessageFolderFilterKey::parentAccountId(QMessageAccountId()));
+
+        QMessageFolderId folderId(QMessageStore::instance()->queryFolders(pathKey & accountKey, QMessageFolderSortKey()).first());
+        it = standardFolderMap()->insert(folder, folderId);
+    }
+
+    return *it;
+}
+
+QMessage::StandardFolder QMessagePrivate::standardFolder(QMessageFolderId folderId)
+{
+    StandardFolderMap::const_iterator it = standardFolderMap()->begin(), end = standardFolderMap()->end();
+    for ( ; it != end; ++it) {
+        if (it.value() == folderId) {
+            return it.key();
+        }
+    }
+
+    return QMessage::InboxFolder;
+}
 
 QMessage QMessagePrivate::convert(const QMailMessage &message)
 {
@@ -223,14 +264,13 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
-    // TODO
-    return QMessage::InboxFolder;
+    return QMessagePrivate::standardFolder(convert(d_ptr->_message.parentFolderId()));
 }
 
 void QMessage::setStandardFolder(StandardFolder sf)
 {
-    // TODO
-    Q_UNUSED(sf)
+    QMessageFolderId folderId(QMessagePrivate::standardFolderId(sf));
+    d_ptr->_message.setParentFolderId(convert(folderId));
 }
 
 QMessageAddress QMessage::from() const

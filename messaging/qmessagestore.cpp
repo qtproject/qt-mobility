@@ -149,7 +149,7 @@
 */
 
 /*!
-    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, uint limit, uint offset) const
+    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, const QString &body, QMessageDataComparator::Options options, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key and with a body containing the 
