@@ -133,6 +133,9 @@ private:
     QNativeWifiEngine *nativeWifi;
 #endif
 #endif
+#ifdef BACKEND_NM
+    QNmWifiEngine *nmWifi;
+#endif
 
     uint onlineConfigurations;
 
@@ -147,9 +150,6 @@ private:
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
 
     EngineUpdateState updateState;
-#endif
-#if BACKEND_NM
-    QNmWifiEngine *nmWifi;
 #endif
 
 private Q_SLOTS:

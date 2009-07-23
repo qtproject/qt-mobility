@@ -54,12 +54,6 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#if BACKEND_NM
-#include <QDBusPendingCallWatcher>
-#endif
-
-QT_BEGIN_NAMESPACE
-
 #ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
@@ -148,7 +142,7 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if BACKEND_NM
+#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
     void setActiveTimeStamp();
 #endif
