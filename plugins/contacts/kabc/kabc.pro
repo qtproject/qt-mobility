@@ -13,7 +13,7 @@ include(../../../common.pri)
 HEADERS += qcontactkabcbackend_p.h
 SOURCES += qcontactkabcbackend.cpp
 
-INCLUDEPATH += ../../../contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
     
 LIBS += -lakonadi-kabc -lkpimutils -lakonadi-kde -lkabc
 

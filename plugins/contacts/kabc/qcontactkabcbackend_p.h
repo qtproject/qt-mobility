@@ -58,6 +58,8 @@
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
+#include "qcontactmanagerengine.h"
+#include "qcontactmanagerenginefactory.h"
 
 class QContactKabcEngineData : public QSharedData
 {
@@ -167,7 +169,7 @@ class Q_DECL_EXPORT ContactKabcFactory : public QObject, public QContactManagerE
     Q_INTERFACES(QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-        QString managerId() const;
+        QString managerName() const;
 };
 
 #endif

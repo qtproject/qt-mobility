@@ -55,7 +55,7 @@ QContactManagerEngine* ContactKabcFactory::engine(const QMap<QString, QString>& 
     return new QContactKabcEngine(parameters, error);
 }
 
-QString ContactKabcFactory::managerId() const
+QString ContactKabcFactory::managerName() const
 {
     return QString("kabc");
 }
@@ -163,14 +163,14 @@ void QContactKabcEngine::settingsFileChanged()
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
 
         // modification: avatar is unique.
-        QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionId);
+        QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionName);
         avatarDef.setUnique(true);
-        d->m_definitions.insert(QContactAvatar::DefinitionId, avatarDef);
+        d->m_definitions.insert(QContactAvatar::DefinitionName, avatarDef);
 
         // modification: url is unique.
-        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionId);
+        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionName);
         urlDef.setUnique(true);
-        d->m_definitions.insert(QContactUrl::DefinitionId, urlDef);
+        d->m_definitions.insert(QContactUrl::DefinitionName, urlDef);
 
         // now save each of our definitions
         QContactManager::Error error; // dummy only; if it fails we ignore.
@@ -241,20 +241,21 @@ QList<QUniqueId> QContactKabcEngine::contacts(QContactManager::Error& error) con
     return allCIds;
 }
 
-QList<QUniqueId> QContactKabcEngine::contactsWithDetail(const QString& definitionId, const QVariant& value, QContactManager::Error& error) const
+/*
+QList<QUniqueId> QContactKabcEngine::contactsWithDetail(const QString& definitionName, const QVariant& value, QContactManager::Error& error) const
 {
     QList<QUniqueId> retn;
     error = QContactManager::NoError;
 
     // firstly, use KABC's native API
-    if (definitionId == "EmailAddress") {
+    if (definitionName == "EmailAddress") {
         QList<KABC::Addressee> matches = d->ab->findByEmail(value.toString());
         foreach (const KABC::Addressee& a, matches)
             retn.append(getIdOfAddressee(a, error));
         if (retn.isEmpty() && error == QContactManager::NoError)
             error = QContactManager::DoesNotExistError;
         return retn;
-    } else if (definitionId == "Name") {
+    } else if (definitionName == "Name") {
         QList<KABC::Addressee> matches = d->ab->findByName(value.toString());
         foreach (const KABC::Addressee& a, matches)
             retn.append(getIdOfAddressee(a, error));
@@ -264,8 +265,9 @@ QList<QUniqueId> QContactKabcEngine::contactsWithDetail(const QString& definitio
     }
 
     // if that doesn't work, use our default (slow) implementation
-    return QContactManagerEngine::contactsWithDetail(definitionId, value, error);
+    return QContactManagerEngine::contactsWithDetail(definitionName, value, error);
 }
+*/
 
 QContact QContactKabcEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
 {
@@ -560,12 +562,12 @@ QMap<QString, QContactDetailDefinition> QContactKabcEngine::detailDefinitions(QC
     return d->m_definitions;
 }
 
-QContactDetailDefinition QContactKabcEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
+QContactDetailDefinition QContactKabcEngine::detailDefinition(const QString& definitionName, QContactManager::Error& error) const
 {
     error = QContactManager::DoesNotExistError;
-    if (d->m_definitions.contains(definitionId))
+    if (d->m_definitions.contains(definitionName))
         error = QContactManager::NoError;
-    return d->m_definitions.value(definitionId);
+    return d->m_definitions.value(definitionName);
 }
 
 bool QContactKabcEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
@@ -692,12 +694,12 @@ QString QContactKabcEngine::escaped(const QString& input) const
 QString QContactKabcEngine::convertDetail(const QContactDetail& detail, const QContact& contact) const
 {
     // the format of the converted detail will be:
-    // X-com-nokia-mobility-contacts-kabcbackend-detail-UUID:definitionId;key=value,key=value;attr=bute,attr=bute;preferredFor=actionId,actionId
+    // X-com-nokia-mobility-contacts-kabcbackend-detail-UUID:definitionName;key=value,key=value;attr=bute,attr=bute;preferredFor=actionId,actionId
     // where each of the elements are escaped strings.
     QString retn = "X-com-nokia-mobility-contacts-kabcbackend-detail-";
     retn += escaped(QUuid::createUuid().toString());
     retn += ":";
-    retn += escaped(detail.definitionId());
+    retn += escaped(detail.definitionName());
     retn += ";";
 
     QVariantMap vals = detail.values();
@@ -743,8 +745,8 @@ QContactDetail QContactKabcEngine::convertCustomString(const QString& customStri
     int nextSection = customString.indexOf(":") + 1;
     int oldNextSection = nextSection; 
 
-    // first, we parse the definitionId from the string.
-    QString definitionId = "";
+    // first, we parse the definitionName from the string.
+    QString definitionName = "";
     for (int i = nextSection; i < customString.length(); i++) {
         QChar currChar = customString.at(i);
         if (currChar == ';') {
@@ -754,7 +756,7 @@ QContactDetail QContactKabcEngine::convertCustomString(const QString& customStri
             // the next character is escaped.
             i += 1;
         }
-        definitionId += customString.at(i);
+        definitionName += customString.at(i);
     }
 
     // check to see whether this custom string was built by us
@@ -873,8 +875,8 @@ QContactDetail QContactKabcEngine::convertCustomString(const QString& customStri
         return QContactDetail();
     }
 
-    // having parsed the definitionId, values and attributes, we build the detail.
-    QContactDetail retn(definitionId);
+    // having parsed the definitionName, values and attributes, we build the detail.
+    QContactDetail retn(definitionName);
     retn.setValues(values);
     retn.setAttributes(attrs);
     return retn;
@@ -887,12 +889,12 @@ bool QContactKabcEngine::compareDetails(const QContactDetail& fromNative, const 
     // Requires both details to have their definitions set properly.
     // Performs value matching (ie, considers only the fields stored in the definition)
 
-    QString definitionId = fromNative.definitionId();
-    if (definitionId != fromCustom.definitionId())
+    QString definitionName = fromNative.definitionName();
+    if (definitionName != fromCustom.definitionName())
         return false;
 
     QContactManager::Error error = QContactManager::NoError;
-    QContactDetailDefinition dd = detailDefinition(definitionId, error);
+    QContactDetailDefinition dd = detailDefinition(definitionName, error);
     if (error != QContactManager::NoError)
         return false;
     QMap<QString, QContactDetailDefinition::Field> fields = dd.fields();
@@ -990,10 +992,14 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         name.setLast(a.familyName());
     if (!a.suffix().isEmpty())
         name.setSuffix(a.suffix());
-    if (name.displayName() != a.formattedName())
-        name.setDisplayName(a.formattedName());
-    if (a.formattedName().isEmpty())
-        name.removeValue(QContactName::FieldDisplayName);
+
+    QContact nameSynthesis;
+    nameSynthesis.saveDetail(&name); // temporary
+    QContactManager::Error error;
+
+    if (!a.formattedName().isEmpty() && synthesiseDisplayLabel(nameSynthesis, error) != a.formattedName())
+        retn.setDisplayLabel(a.formattedName());
+
     QString dupKey = findDuplicate(name, customDetails);
     if (!dupKey.isEmpty()) {
         // we have found a matching custom detail.  add it, then remove from map.
@@ -1226,15 +1232,15 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         QContactDetail det = customDetails.value(key);
 
         // we ignore any details whose definitions we have already dealt with
-        QString defId = det.definitionId();
-        if (defId == QContactName::DefinitionId
-                || defId == QContactAddress::DefinitionId
-                || defId == QContactPhoneNumber::DefinitionId
-                || defId == QContactEmailAddress::DefinitionId
-                || defId == QContactAvatar::DefinitionId
-                || defId == QContactBirthday::DefinitionId
-                || defId == QContactUrl::DefinitionId
-                || defId == QContactBirthday::DefinitionId) {
+        QString defId = det.definitionName();
+        if (defId == QContactName::DefinitionName
+                || defId == QContactAddress::DefinitionName
+                || defId == QContactPhoneNumber::DefinitionName
+                || defId == QContactEmailAddress::DefinitionName
+                || defId == QContactAvatar::DefinitionName
+                || defId == QContactBirthday::DefinitionName
+                || defId == QContactUrl::DefinitionName
+                || defId == QContactBirthday::DefinitionName) {
             // discard this custom detail.  we should already have dealt with it;
             // the fact that we haven't means that the user has used the native
             // KABC api to delete the associated data.
@@ -1254,7 +1260,6 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
     }
 
     // perform step 10.
-    QContactManager::Error error;
     retn.setId(getIdOfAddressee(a, error));
 
     return retn;
@@ -1266,15 +1271,18 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
     retn.setUid(d->m_QUniqueIdToKabcUid.value(contact.id())); 
 
     foreach (const QContactDetail& det, contact.details()) {
-        QString definitionId = det.definitionId();
-        if (definitionId == QContactName::DefinitionId) {
-            retn.setFormattedName(det.value(QContactName::FieldDisplayName));
+        QString definitionName = det.definitionName();
+        if (definitionName == QContactName::DefinitionName) {
             retn.setPrefix(det.value(QContactName::FieldPrefix));
             retn.setGivenName(det.value(QContactName::FieldFirst));
             retn.setAdditionalName(det.value(QContactName::FieldMiddle));
             retn.setFamilyName(det.value(QContactName::FieldLast));
             retn.setSuffix(det.value(QContactName::FieldSuffix));
-        } else if (definitionId == QContactAddress::DefinitionId) {
+        } else if (definitionName == QContactDisplayLabel::DefinitionName) {
+            if (!det.variantValue(QContactDisplayLabel::FieldSynthesised).toBool()) {
+                retn.setFormattedName(det.value(QContactDisplayLabel::FieldLabel));
+            }
+        } else if (definitionName == QContactAddress::DefinitionName) {
             KABC::Address kadr;
             KABC::Address::Type typeFlags = 0x00;
 
@@ -1300,9 +1308,9 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
 
             kadr.setType(typeFlags);
             retn.insertAddress(kadr);
-        } else if (definitionId == QContactEmailAddress::DefinitionId) {
+        } else if (definitionName == QContactEmailAddress::DefinitionName) {
             retn.insertEmail(det.value(QContactEmailAddress::FieldEmailAddress));
-        } else if (definitionId == QContactPhoneNumber::DefinitionId) {
+        } else if (definitionName == QContactPhoneNumber::DefinitionName) {
             KABC::PhoneNumber phn;
             KABC::PhoneNumber::Type typeFlags = 0x00;
 
@@ -1318,15 +1326,15 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
 
             phn.setType(typeFlags);
             retn.insertPhoneNumber(phn);
-        } else if (definitionId == QContactAvatar::DefinitionId) {
+        } else if (definitionName == QContactAvatar::DefinitionName) {
             retn.setPhoto(det.value(QContactAvatar::FieldAvatar));
-        } else if (definitionId == QContactBirthday::DefinitionId) {
+        } else if (definitionName == QContactBirthday::DefinitionName) {
             retn.setBirthday(QDateTime(det.value<QDate>(QContactBirthday::FieldBirthday)));
-        } else if (definitionId == QContactGuid::DefinitionId) {
+        } else if (definitionName == QContactGuid::DefinitionName) {
             // TODO: resolve c.id() vs c.guid() problem...
-        } else if (definitionId == QContactUrl::DefinitionId) {
+        } else if (definitionName == QContactUrl::DefinitionName) {
             retn.setUrl(det.value(QContactUrl::FieldUrl));
-        } else if (definitionId == QContactBirthday::DefinitionId) {
+        } else if (definitionName == QContactBirthday::DefinitionName) {
             retn.setNote(det.value(QContactBirthday::FieldBirthday));
         } else {
             // there is no kabc field mapping for this detail;
