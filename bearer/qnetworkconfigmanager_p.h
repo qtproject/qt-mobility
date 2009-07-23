@@ -150,7 +150,6 @@ private:
 #endif
 #if BACKEND_NM
     QNmWifiEngine *nmWifi;
-    bool usingNetworkManager;
 #endif
 
 private Q_SLOTS:
