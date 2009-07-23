@@ -14,8 +14,10 @@ INCLUDEPATH += . \
 # Input
 HEADERS += cameracontrol.h \
     cameraservice.h \
+    mediacontrol.h \
     cameraserviceplugin.h
 
 SOURCES += cameracontrol.cpp \
     cameraservice.cpp \
+    mediacontrol.cpp \
     cameraserviceplugin.cpp

@@ -38,7 +38,6 @@
 #include <QtCore/qobject.h>
 
 #include "qcameracontrol.h"
-#include "qmediasource.h"
 
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qvideoformat.h>

@@ -38,6 +38,7 @@
 
 #include <QtMultimedia/qvideocamera.h>
 
+#include "mediacontrol.h"
 #include "endpoints/qvideorendererendpoint.h"
 
 #include "cameraservice.h"
@@ -47,30 +48,51 @@ CameraService::CameraService(QObject *parent)
     : QCameraService(parent)
 {
     m_control = new CameraControl(this, this);
+    m_media = new MediaControl(this);
+    m_media->setCameraControl(m_control);
 }
 
 CameraService::~CameraService()
 {
+    delete m_media;
     delete m_control;
 }
 
 QAbstractMediaControl *CameraService::control(const char *name) const
 {
-    return m_control;
+    if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
+        return m_media;
+
+    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
+        return m_control;
+
+    return 0;
 }
 
 QList<QByteArray> CameraService::supportedEndpointInterfaces(
         QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> list;
-    list = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
+
+    if (direction == QMediaEndpointInterface::Input)
+        list << QByteArray(QVideoRendererEndpoint_iid);
+
     return list;
 }
 
 QObject *CameraService::createEndpoint(const char *interface)
 {
-    return new QVideoRendererEndpoint;
+    if (qstrcmp(interface, QVideoRendererEndpoint_iid) == 0) {
+        return new QVideoRendererEndpoint(this);
+    }
+
+    return 0;
 }
 
-
+QList<QByteArray> CameraService::deviceList()
+{
+    QList<QByteArray> devices;
+    devices = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
+    return devices;
+}
 

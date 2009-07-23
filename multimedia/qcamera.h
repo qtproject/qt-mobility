@@ -80,6 +80,7 @@ public:
     ~QCamera();
 
 #ifdef VIDEOSERVICES
+    QList<QByteArray> deviceList();
     QList<QVideoFrame::Type> supportedColorFormats();
     QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
 

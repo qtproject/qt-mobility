@@ -52,6 +52,8 @@ public:
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
+    virtual QList<QByteArray> deviceList() = 0;
+
 protected:
     QCameraService(QObject *parent);
 };

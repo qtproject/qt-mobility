@@ -34,7 +34,6 @@
 
 #include "cameracontrol.h"
 #include "cameraservice.h"
-#include "qmediasource.h"
 #include "qvideorendererendpoint.h"
 
 #include <QtMultimedia/qvideocamera.h>
@@ -297,6 +296,8 @@ QVideoStream::State CameraControl::state() const
 
 void CameraControl::setDevice(const QByteArray &device)
 {
+    qWarning()<<"setDevice "<<device;
+
     if(m_camera) delete m_camera;
     m_camera = new QVideoCamera(device,this);
     connect(m_camera->preview(),SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
