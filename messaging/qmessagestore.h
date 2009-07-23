@@ -67,9 +67,6 @@ public:
         WorkingMemoryOverflow
     };
 
-    QMessageStore(QObject *parent = 0);
-    virtual ~QMessageStore();
-
     QMessageStore::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
@@ -107,6 +104,10 @@ public slots:
     void stopNotifications();
 
 private:
+    friend class QGlobalStaticDeleter<QMessageStore>;
+    QMessageStore(QObject *parent = 0);
+    virtual ~QMessageStore();
+
     QMessageStorePrivate *d_ptr;
 };
 
