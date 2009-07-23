@@ -641,38 +641,38 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
                     };
                 }
             }
+            return methods;
         }
+    }
 #endif
-    } else {
-        QString inputsPath = "/sys/class/input/";
-        QDir inputDir(inputsPath);
-        QStringList filters;
-        filters << "event*";
-        QStringList inputList = inputDir.entryList( filters ,QDir::Dirs, QDir::Name);
-        foreach(QString inputFileName, inputList) {
-            QFile file(inputsPath+inputFileName+"/device/name");
-            if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString strvalue;
-                strvalue = file.readLine();
-                file.close();
-                if(strvalue.contains("keyboard")) {
-                    if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
-                        methods = (methods | QSystemDeviceInfo::Keyboard);
-                    }
-                } else if(strvalue.contains("Mouse")) {
-                    if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
-                        methods = (methods | QSystemDeviceInfo::Mouse);
-                    }
-                } else if(strvalue.contains("Button")) {
-                    if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
-                        methods = (methods | QSystemDeviceInfo::Keys);
-                    }
-                } else if(strvalue.contains("TouchScreen")) {
-                    if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
-                        methods = (methods | QSystemDeviceInfo::SingleTouch);
-                    }
+    QString inputsPath = "/sys/class/input/";
+    QDir inputDir(inputsPath);
+    QStringList filters;
+    filters << "event*";
+    QStringList inputList = inputDir.entryList( filters ,QDir::Dirs, QDir::Name);
+    foreach(QString inputFileName, inputList) {
+        QFile file(inputsPath+inputFileName+"/device/name");
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning()<<"File not opened";
+        } else {
+            QString strvalue;
+            strvalue = file.readLine();
+            file.close();
+            if(strvalue.contains("keyboard")) {
+                if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                    methods = (methods | QSystemDeviceInfo::Keyboard);
+                }
+            } else if(strvalue.contains("Mouse")) {
+                if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+                    methods = (methods | QSystemDeviceInfo::Mouse);
+                }
+            } else if(strvalue.contains("Button")) {
+                if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
+                    methods = (methods | QSystemDeviceInfo::Keys);
+                }
+            } else if(strvalue.contains("TouchScreen")) {
+                if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
+                    methods = (methods | QSystemDeviceInfo::SingleTouch);
                 }
             }
         }
@@ -701,30 +701,30 @@ QString QSystemDeviceInfoPrivate::manufacturer() const
         if (iface.isValid()) {
             manu = iface.getPropertyString("system.firmware.vendor");
             if(manu.isEmpty()) {
-                return iface.getPropertyString("system.hardware.vendor");
-            } else {
-                return manu;
+                manu = iface.getPropertyString("system.hardware.vendor");
+                if(!manu.isEmpty()) {
+                    return manu;
+                }
             }
         }
+    }
 #endif
+    QFile vendorId("/sys/devices/virtual/dmi/id/board_vendor");
+    if (vendorId.open(QIODevice::ReadOnly)) {
+        QTextStream cpuinfo(&vendorId);
+        return cpuinfo.readLine().trimmed();
     } else {
-        QFile vendorId("/sys/devices/virtual/dmi/id/board_vendor");
-        if (vendorId.open(QIODevice::ReadOnly)) {
-            QTextStream cpuinfo(&vendorId);
-            return cpuinfo.readLine().trimmed();
+        //        qWarning() << "Could not open /sys/devices/virtual/dmi/id/board_vendor";
+        QFile file("/proc/cpuinfo");
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open /proc/cpuinfo";
         } else {
-//        qWarning() << "Could not open /sys/devices/virtual/dmi/id/board_vendor";
-            QFile file("/proc/cpuinfo");
-            if (!file.open(QIODevice::ReadOnly)) {
-                qWarning() << "Could not open /proc/cpuinfo";
-            } else {
-                QTextStream cpuinfo(&file);
-                QString line = cpuinfo.readLine();
-                while (!line.isNull()) {
-                    line = cpuinfo.readLine();
-                    if(line.contains("vendor_id")) {
-                        return line.split(": ").at(1).trimmed();
-                    }
+            QTextStream cpuinfo(&file);
+            QString line = cpuinfo.readLine();
+            while (!line.isNull()) {
+                line = cpuinfo.readLine();
+                if(line.contains("vendor_id")) {
+                    return line.split(": ").at(1).trimmed();
                 }
             }
         }
@@ -745,19 +745,18 @@ QString QSystemDeviceInfoPrivate::model() const
             model += iface.getPropertyString("system.chassis.type");
             return model;
         }
+    }
 #endif
+    QFile file("/proc/cpuinfo");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/cpuinfo";
     } else {
-        QFile file("/proc/cpuinfo");
-        if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/cpuinfo";
-        } else {
-            QTextStream cpuinfo(&file);
-            QString line = cpuinfo.readLine();
-            while (!line.isNull()) {
-                line = cpuinfo.readLine();
-                if(line.contains("model name")) {
-                    return line.split(": ").at(1).trimmed();
-                }
+        QTextStream cpuinfo(&file);
+        QString line = cpuinfo.readLine();
+        while (!line.isNull()) {
+            line = cpuinfo.readLine();
+            if(line.contains("model name")) {
+                return line.split(": ").at(1).trimmed();
             }
         }
     }
@@ -778,48 +777,47 @@ QString QSystemDeviceInfoPrivate::productName() const
                 return productName;
             }
         }
+    }
 #endif
-    } else {
-        QDir dir("/etc");
-        if(dir.exists()) {
-            QStringList langList;
-            QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
-                                                         QDir::Files | QDir::NoDotAndDotDot,
-                                                         QDir::Name);
-            foreach(QFileInfo fileInfo, localeList) {
-                QString filepath = fileInfo.filePath();
-                QFile file(filepath);
-                if (file.open(QIODevice::ReadOnly)) {
-                    QTextStream prodinfo(&file);
-                    QString line = prodinfo.readLine();
-                    while (!line.isNull()) {
-                        if(filepath.contains("lsb.release")) {
-                            if(line.contains("DISTRIB_DESCRIPTION")) {
-                                return line.split("=").at(1).trimmed();
-                            }
-                        } else {
-                            return line;
+    QDir dir("/etc");
+    if(dir.exists()) {
+        QStringList langList;
+        QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
+                                                     QDir::Files | QDir::NoDotAndDotDot,
+                                                     QDir::Name);
+        foreach(QFileInfo fileInfo, localeList) {
+            QString filepath = fileInfo.filePath();
+            QFile file(filepath);
+            if (file.open(QIODevice::ReadOnly)) {
+                QTextStream prodinfo(&file);
+                QString line = prodinfo.readLine();
+                while (!line.isNull()) {
+                    if(filepath.contains("lsb.release")) {
+                        if(line.contains("DISTRIB_DESCRIPTION")) {
+                            return line.split("=").at(1).trimmed();
                         }
-                        line = prodinfo.readLine();
+                    } else {
+                        return line;
                     }
+                    line = prodinfo.readLine();
                 }
-            } //end foreach
-        }
+            }
+        } //end foreach
+    }
 
-        QFile file("/etc/issue");
-        if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/cpuinfo";
-        } else {
-            QTextStream prodinfo(&file);
-            QString line = prodinfo.readLine();
-            while (!line.isNull()) {
-                line = prodinfo.readLine();
-                if(!line.isEmpty()) {
-                    QStringList lineList = line.split(" ");
-                    for(int i = 0; i < lineList.count(); i++) {
-                        if(lineList.at(i).toFloat()) {
-                            return lineList.at(i-1) + " "+ lineList.at(i);
-                        }
+    QFile file("/etc/issue");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/cpuinfo";
+    } else {
+        QTextStream prodinfo(&file);
+        QString line = prodinfo.readLine();
+        while (!line.isNull()) {
+            line = prodinfo.readLine();
+            if(!line.isEmpty()) {
+                QStringList lineList = line.split(" ");
+                for(int i = 0; i < lineList.count(); i++) {
+                    if(lineList.at(i).toFloat()) {
+                        return lineList.at(i-1) + " "+ lineList.at(i);
                     }
                 }
             }
@@ -843,25 +841,24 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
                 }
             }
         }
+    }
 #endif
+    QFile statefile("/proc/acpi/battery/BAT0/state");
+    if (!statefile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
     } else {
-        QFile statefile("/proc/acpi/battery/BAT0/state");
-        if (!statefile.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-        } else {
-            QTextStream batstate(&statefile);
-            QString line = batstate.readLine();
-            while (!line.isNull()) {
-                if(line.contains("charging state")) {
-                    if(line.split(" ").at(1).trimmed() == "charging") {
-                        isCharging = true;
-                        break;
-                    }
+        QTextStream batstate(&statefile);
+        QString line = batstate.readLine();
+        while (!line.isNull()) {
+            if(line.contains("charging state")) {
+                if(line.split(" ").at(1).trimmed() == "charging") {
+                    isCharging = true;
+                    break;
                 }
-                line = batstate.readLine();
             }
-            statefile.close();
+            line = batstate.readLine();
         }
+        statefile.close();
     }
     return isCharging;
 }
@@ -887,41 +884,40 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
                 }
             }
         }
+    }
 #endif
+    QFile infofile("/proc/acpi/battery/BAT0/info");
+    if (!infofile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+        return QSystemDeviceInfo::NoBatteryLevel;
     } else {
-        QFile infofile("/proc/acpi/battery/BAT0/info");
-        if (!infofile.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
-            return QSystemDeviceInfo::NoBatteryLevel;
-        } else {
-            QTextStream batinfo(&infofile);
-            QString line = batinfo.readLine();
-            while (!line.isNull()) {
-                if(line.contains("design capacity")) {
-                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                    infofile.close();
-                    break;
-                }
-                line = batinfo.readLine();
+        QTextStream batinfo(&infofile);
+        QString line = batinfo.readLine();
+        while (!line.isNull()) {
+            if(line.contains("design capacity")) {
+                levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                infofile.close();
+                break;
             }
-            infofile.close();
+            line = batinfo.readLine();
         }
+        infofile.close();
+    }
 
-        QFile statefile("/proc/acpi/battery/BAT0/state");
-        if (!statefile.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-            return QSystemDeviceInfo::NoBatteryLevel;
-        } else {
-            QTextStream batstate(&statefile);
-            QString line = batstate.readLine();
-            while (!line.isNull()) {
-                if(line.contains("remaining capacity")) {
-                    level = line.split(" ").at(1).trimmed().toFloat();
-                    statefile.close();
-                    break;
-                }
-                line = batstate.readLine();
+    QFile statefile("/proc/acpi/battery/BAT0/state");
+    if (!statefile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+        return QSystemDeviceInfo::NoBatteryLevel;
+    } else {
+        QTextStream batstate(&statefile);
+        QString line = batstate.readLine();
+        while (!line.isNull()) {
+            if(line.contains("remaining capacity")) {
+                level = line.split(" ").at(1).trimmed().toFloat();
+                statefile.close();
+                break;
             }
+            line = batstate.readLine();
         }
     }
     if(level != 0 && levelWhenFull != 0) {
