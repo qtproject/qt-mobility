@@ -503,7 +503,15 @@ void QNmWifiEngine::requestUpdate()
 
 QNmWifiEngine *QNmWifiEngine::instance()
 {
-    return nmWifiEngine();
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
+        if (reply.isValid() && reply.value())
+            return nmWifiEngine();
+    }
+
+    return 0;
 }
 
 void  QNmWifiEngine::getKnownSsids()

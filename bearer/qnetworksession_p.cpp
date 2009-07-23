@@ -482,6 +482,7 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
             lastError = QNetworkSession::UnknownSessionError;
         }
 
+        emit quitPendingWaitsForOpened();
         emit q->error(lastError);
     }
 }

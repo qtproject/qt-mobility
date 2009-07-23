@@ -41,7 +41,6 @@
 #include "qnativewifiengine_win_p.h"
 #endif
 #if defined(BACKEND_NM)
-#include <qnetworkmanagerservice_p.h>
 #include "qnmwifiengine_unix_p.h"
 #endif
 
@@ -50,27 +49,6 @@
 #include <QtCore/qstringlist.h>
 
 QT_BEGIN_NAMESPACE
-
-#if defined(BACKEND_NM)
-    static QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
-#endif
-
-#if !defined(Q_OS_WIN32)
-static bool NetworkManagerAvailable()
-{
-#if defined(BACKEND_NM)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
-        if (reply.isValid())
-            return reply.value();
-    }
-#endif
-    return false;
-}
-#endif
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
@@ -239,15 +217,21 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         updateState = NotUpdating;
         onlineConfigurations = 0;
 
-        generic = QGenericEngine::instance();
 #if defined(BACKEND_NM)
-        if(!NetworkManagerAvailable()) {
-            usingNetworkManager = false;
+        nmWifi = QNmWifiEngine::instance();
+        if (nmWifi) {
+            connect(nmWifi, SIGNAL(configurationsChanged()),
+                    this, SLOT(updateConfigurations()));
+        } else {
 #endif
+            generic = QGenericEngine::instance();
             if (generic) {
                 connect(generic, SIGNAL(configurationsChanged()),
                         this, SLOT(updateConfigurations()));
             }
+#if defined(BACKEND_NM)
+        }
+#endif
 
 #ifdef Q_OS_WIN
             nla = QNlaEngine::instance();
@@ -266,30 +250,19 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                 capFlags |= QNetworkConfigurationManager::BearerManagement;
             }
 #endif
-#if defined(BACKEND_NM)
-        } else {
-            usingNetworkManager = true;
-            nmWifi = QNmWifiEngine::instance();
-            if (nmWifi) {
-                if (firstUpdate) {
-                    connect(nmWifi, SIGNAL(configurationsChanged()),
-                            this, SLOT(updateConfigurations()));
-                }
-            }
-        }
-#endif
     }
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
 #if defined(BACKEND_NM)
-        if(usingNetworkManager) {
-            if (engine == nmWifi)
-                updateState &= ~NmUpdating;
-        }   else
-#endif
+        if (engine == nmWifi)
+            updateState &= ~NmUpdating;
+        else if (engine == generic)
+            updateState &= ~GenericUpdating;
+#else
         if (engine == generic)
             updateState &= ~GenericUpdating;
+#endif
 #ifdef Q_OS_WIN
         else if (engine == nla)
             updateState &= ~NlaUpdating;
@@ -302,16 +275,14 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
 #if defined(BACKEND_NM)
-        if(usingNetworkManager) {
-            if (nmWifi) {
-                engines << nmWifi;
-            }
-        }else
+        if (nmWifi)
+            engines << nmWifi;
+        else if (generic)
+            engines << generic;
+#else
+        if (generic)
+            engines << generic;
 #endif
-        {
-            if (generic)
-                engines << generic;
-        }
 #ifdef Q_OS_WIN
         if (nla)
             engines << nla;
@@ -408,11 +379,12 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
     updateState = Updating;
 
 #if defined(BACKEND_NM)
-    if(usingNetworkManager) {
-        if (nmWifi) {
-            updateState |= NmUpdating;
-            nmWifi->requestUpdate();
-        }
+    if (nmWifi) {
+        updateState |= NmUpdating;
+        nmWifi->requestUpdate();
+    } else if (generic) {
+        updateState |= GenericUpdating;
+        generic->requestUpdate();
     }
 #else
     if (generic) {
