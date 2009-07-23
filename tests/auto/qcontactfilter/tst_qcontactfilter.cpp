@@ -137,14 +137,14 @@ void tst_QContactFilter::classHierarchy()
     BadFilter bad, bad2;
 
     QVERIFY(bad.type() == QContactFilter::Invalid);
-    QVERIFY(bad != bad2);
+    QVERIFY(bad == bad2);
     QVERIFY(bad != drf2);
     QVERIFY(drf2 != bad);
 
     QContactFilter fbad = bad;
     QVERIFY(fbad.type() == QContactFilter::Invalid);
-    QVERIFY(fbad != bad);
-    QVERIFY(fbad != bad2);
+    QVERIFY(fbad == bad);
+    QVERIFY(fbad == bad2);
 
     /* Now test some "cross casting" */
 
