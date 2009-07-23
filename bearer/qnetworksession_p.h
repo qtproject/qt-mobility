@@ -54,7 +54,7 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
+#if BACKEND_NM
 #include <QDBusPendingCallWatcher>
 #endif
 
@@ -148,7 +148,7 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && defined(BEARER_ENGINE)
+#if BACKEND_NM
     QDateTime startTime;
     void setActiveTimeStamp();
 #endif

@@ -148,7 +148,7 @@ private:
 
     EngineUpdateState updateState;
 #endif
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && defined(BEARER_ENGINE)
+#if BACKEND_NM
     QNmWifiEngine *nmWifi;
     bool usingNetworkManager;
 #endif
