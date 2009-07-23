@@ -72,10 +72,28 @@
 
 QT_BEGIN_NAMESPACE
 
+static bool halAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Ha2l");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    qDebug() << "Hal is not running";
+    return false;
+}
+
+bool halIsAvailable;
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
+    halIsAvailable = halAvailable();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
@@ -288,6 +306,7 @@ QString QSystemNetworkInfoPrivate::operatorName()
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    halIsAvailable = halAvailable();
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
@@ -296,50 +315,51 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 qint32 QSystemDisplayInfoPrivate::displayBrightness()
 {
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalInterface iface;
-
-    if (iface.isValid()) {
-        QStringList list = iface.findDeviceByCapability("laptop_panel");
-        if(!list.isEmpty()) {
-            foreach(QString lapDev, list) {
-                QHalDeviceInterface ifaceDevice(lapDev);
-                QHalDeviceLaptopPanelInterface lapIface(lapDev);
-                float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels");
-                float curLevel = lapIface.getBrightness();
-            return curLevel / numLevels * 100;
+        QHalInterface iface;
+        if (iface.isValid()) {
+            QStringList list = iface.findDeviceByCapability("laptop_panel");
+            if(!list.isEmpty()) {
+                foreach(QString lapDev, list) {
+                    QHalDeviceInterface ifaceDevice(lapDev);
+                    QHalDeviceLaptopPanelInterface lapIface(lapDev);
+                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels");
+                    float curLevel = lapIface.getBrightness();
+                    return curLevel / numLevels * 100;
+                }
             }
         }
-    }
-#else
-
-    QString backlightPath = "/proc/acpi/video/";
-    QDir videoDir(backlightPath);
-    QStringList filters;
-    filters << "*";
-    QStringList brightnessList = videoDir.entryList(filters,
-                                                    QDir::Dirs
-                                                    | QDir::NoDotAndDotDot,
-                                                    QDir::Name);
-    foreach(QString brightnessFileName, brightnessList) {
-        float numLevels = 0.0;
-        float curLevel = 0.0;
-        QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
-        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning()<<"File not opened";
-        } else {
-            QString  strvalue;
-            strvalue = curBrightnessFile.readAll().trimmed();
-            if(strvalue.contains("levels")) {
-                QStringList list = strvalue.split(" ");
-                numLevels = list.at(2).toFloat();
+#endif
+    } else {
+        QString backlightPath = "/proc/acpi/video/";
+        QDir videoDir(backlightPath);
+        QStringList filters;
+        filters << "*";
+        QStringList brightnessList = videoDir.entryList(filters,
+                                                        QDir::Dirs
+                                                        | QDir::NoDotAndDotDot,
+                                                        QDir::Name);
+        foreach(QString brightnessFileName, brightnessList) {
+            float numLevels = 0.0;
+            float curLevel = 0.0;
+            QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
+            if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning()<<"File not opened";
+            } else {
+                QString  strvalue;
+                strvalue = curBrightnessFile.readAll().trimmed();
+                if(strvalue.contains("levels")) {
+                    QStringList list = strvalue.split(" ");
+                    numLevels = list.at(2).toFloat();
+                }
+                if(strvalue.contains("current")) {
+                    QStringList list = strvalue.split(": ");
+                    curLevel = list.at(list.count()-1).toFloat();
+                }
+                curBrightnessFile.close();
+                return curLevel / numLevels * 100;
             }
-            if(strvalue.contains("current")) {
-                QStringList list = strvalue.split(": ");
-                curLevel = list.at(list.count()-1).toFloat();
-            }
-            curBrightnessFile.close();
-            return curLevel / numLevels * 100;
         }
     }
 #if 0
@@ -376,7 +396,6 @@ qint32 QSystemDisplayInfoPrivate::displayBrightness()
         }
     }
 #endif
-#endif
     return -1;
 }
 
@@ -403,6 +422,7 @@ bool QSystemDisplayInfoPrivate::isScreenLockOn()
 QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    halIsAvailable = halAvailable();
 }
 
 
@@ -459,28 +479,28 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
 {
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QStringList mountedVol;
-
-    QHalInterface iface;
-
-    QStringList list = iface.findDeviceByCapability("volume");
-
-    if(!list.isEmpty()) {
-        foreach(QString vol, list) {
-            QHalDeviceInterface ifaceDevice(vol);
-            if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
-                QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
-                if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
-                    return QSystemMemoryInfo::Removable;
-                } else {
-                    return QSystemMemoryInfo::Internal;
+        QStringList mountedVol;
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("volume");
+        if(!list.isEmpty()) {
+            foreach(QString vol, list) {
+                QHalDeviceInterface ifaceDevice(vol);
+                if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
+                    QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
+                    if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
+                        return QSystemMemoryInfo::Removable;
+                    } else {
+                        return QSystemMemoryInfo::Internal;
+                    }
                 }
             }
         }
-    }
-#else
 #endif
+    } else {
+
+    }
     return QSystemMemoryInfo::Internal;
 }
 
@@ -578,6 +598,7 @@ else
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    halIsAvailable = halAvailable();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -592,73 +613,71 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
 QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 {
     QSystemDeviceInfo::InputMethods methods;
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalInterface iface2;
-
-    if (iface2.isValid()) {
-
-        QStringList capList;
-        capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
-
-        for(int i = 0; i < capList.count(); i++) {
-
-            QStringList list = iface2.findDeviceByCapability(capList.at(i));
-            if(!list.isEmpty()) {
-                switch(i) {
-                case 0:
-                    methods = (methods | QSystemDeviceInfo::Keyboard);
-                    break;
-                case 1:
-                    methods = (methods | QSystemDeviceInfo::Keys);
-                    break;
-                case 2:
-                    methods = (methods | QSystemDeviceInfo::Keypad);
-                    break;
-                case 3:
-                    methods = (methods | QSystemDeviceInfo::Mouse);
-                    break;
-                case 4:
-                    methods = (methods | QSystemDeviceInfo::SingleTouch);
-                    break;
-                };
-            }
-        }
-    }
-#else
-    QString inputsPath = "/sys/class/input/";
-    QDir inputDir(inputsPath);
-    QStringList filters;
-    filters << "event*";
-    QStringList inputList = inputDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(QString inputFileName, inputList) {
-        QFile file(inputsPath+inputFileName+"/device/name");
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning()<<"File not opened";
-        } else {
-            QString strvalue;
-            strvalue = file.readLine();
-            file.close();
-            if(strvalue.contains("keyboard")) {
-                if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
-                    methods = (methods | QSystemDeviceInfo::Keyboard);
-                }
-            } else if(strvalue.contains("Mouse")) {
-                if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
-                    methods = (methods | QSystemDeviceInfo::Mouse);
-                }
-            } else if(strvalue.contains("Button")) {
-                if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
-                    methods = (methods | QSystemDeviceInfo::Keys);
-                }
-            } else if(strvalue.contains("TouchScreen")) {
-                if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
-                    methods = (methods | QSystemDeviceInfo::SingleTouch);
+        QHalInterface iface2;
+        if (iface2.isValid()) {
+            QStringList capList;
+            capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
+            for(int i = 0; i < capList.count(); i++) {
+                QStringList list = iface2.findDeviceByCapability(capList.at(i));
+                if(!list.isEmpty()) {
+                    switch(i) {
+                    case 0:
+                        methods = (methods | QSystemDeviceInfo::Keyboard);
+                        break;
+                    case 1:
+                        methods = (methods | QSystemDeviceInfo::Keys);
+                        break;
+                    case 2:
+                        methods = (methods | QSystemDeviceInfo::Keypad);
+                        break;
+                    case 3:
+                        methods = (methods | QSystemDeviceInfo::Mouse);
+                        break;
+                    case 4:
+                        methods = (methods | QSystemDeviceInfo::SingleTouch);
+                        break;
+                    };
                 }
             }
         }
-    }
 #endif
-    return  methods;
+    } else {
+        QString inputsPath = "/sys/class/input/";
+        QDir inputDir(inputsPath);
+        QStringList filters;
+        filters << "event*";
+        QStringList inputList = inputDir.entryList( filters ,QDir::Dirs, QDir::Name);
+        foreach(QString inputFileName, inputList) {
+            QFile file(inputsPath+inputFileName+"/device/name");
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning()<<"File not opened";
+            } else {
+                QString strvalue;
+                strvalue = file.readLine();
+                file.close();
+                if(strvalue.contains("keyboard")) {
+                    if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                        methods = (methods | QSystemDeviceInfo::Keyboard);
+                    }
+                } else if(strvalue.contains("Mouse")) {
+                    if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+                        methods = (methods | QSystemDeviceInfo::Mouse);
+                    }
+                } else if(strvalue.contains("Button")) {
+                    if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
+                        methods = (methods | QSystemDeviceInfo::Keys);
+                    }
+                } else if(strvalue.contains("TouchScreen")) {
+                    if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
+                        methods = (methods | QSystemDeviceInfo::SingleTouch);
+                    }
+                }
+            }
+        }
+    }
+    return methods;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -676,110 +695,125 @@ QString QSystemDeviceInfoPrivate::imsi()
 QString QSystemDeviceInfoPrivate::manufacturer() const
 {
     QString manu;
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-    if (iface.isValid()) {
-        manu = iface.getPropertyString("system.firmware.vendor");
-        if(manu.isEmpty()) {
-            manu = iface.getPropertyString("system.hardware.vendor");
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        if (iface.isValid()) {
+            manu = iface.getPropertyString("system.firmware.vendor");
+            if(manu.isEmpty()) {
+                manu = iface.getPropertyString("system.hardware.vendor");
+            }
         }
-    }
-#else
 #endif
-    qWarning() << manu;
+    } else {
+
+    }
+
     return manu;
 }
 
 QString QSystemDeviceInfoPrivate::model() const
 {
-#if !defined(QT_NO_DBUS)
-    QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
     QString model;
+    if(halIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
 
-    if (iface.isValid()) {
-        model = iface.getPropertyString("system.kernel.machine");
-        if(!model.isEmpty())
-            model += " ";
+        if (iface.isValid()) {
+            model = iface.getPropertyString("system.kernel.machine");
+            if(!model.isEmpty())
+                model += " ";
             model += iface.getPropertyString("system.chassis.type");
-    }
-#else
+        }
 #endif
-    qWarning() << model;
+    } else {
+
+    }
+
     return model;
 }
 
 QString QSystemDeviceInfoPrivate::productName() const
 {
     QString productName;
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-    QString model;
-    if (iface.isValid()) {
-                qWarning() << iface.getPropertyString("linux.sysfs_path");
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString model;
+        if (iface.isValid()) {
+            qWarning() << iface.getPropertyString("linux.sysfs_path");
 
-        productName = iface.getPropertyString("info.product");
-        if(productName.isEmpty())
-            productName = iface.getPropertyString("system.product");
-    }
-#else
+            productName = iface.getPropertyString("info.product");
+            if(productName.isEmpty())
+                productName = iface.getPropertyString("system.product");
+        }
 #endif
-    qWarning() << productName;
+    } else {
+
+    }
+
     return productName;
 }
 
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
 {
     bool isCharging = false;
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalInterface iface;
-    QStringList list = iface.findDeviceByCapability("battery");
-    if(!list.isEmpty()) {
-        foreach(QString dev, list) {
-            QHalDeviceInterface ifaceDevice(dev);
-            if (iface.isValid()) {
-                isCharging = ifaceDevice.getPropertyBool("battery.rechargeable.is_charging");
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (iface.isValid()) {
+                    isCharging = ifaceDevice.getPropertyBool("battery.rechargeable.is_charging");
+                }
             }
         }
-    }
-#else
 #endif
+    } else {
+
+    }
     return isCharging;
 }
 
 QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
 {
-//    qWarning() << __FUNCTION__;
+    //    qWarning() << __FUNCTION__;
+    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
-    QHalInterface iface;
-    QStringList list = iface.findDeviceByCapability("battery");
-    if(!list.isEmpty()) {
-        foreach(QString dev, list) {
-//            qWarning() << dev;
-            QHalDeviceInterface ifaceDevice(dev);
-            if (ifaceDevice.isValid()) {
-                if(!ifaceDevice.getPropertyBool("battery.present") ){
-                    return QSystemDeviceInfo::NoBatteryLevel;
-                } else {
-                    float levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
-                    float level = ifaceDevice.getPropertyInt("battery.charge_level.current");
-                    level =  level / levelWhenFull * 100;
-//                    qWarning()
-//                            << level;
-                    if(level > 4) {
-                        return QSystemDeviceInfo::BatteryCritical;
-                    } else if (level > 11) {
-                        return QSystemDeviceInfo::BatteryVeryLow;
-                    } else if (level > 41) {
-                        return QSystemDeviceInfo::BatteryLow;
-                    } else  {
-                        return QSystemDeviceInfo::BatteryNormal;
-                    }
-                };
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                //            qWarning() << dev;
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    if(!ifaceDevice.getPropertyBool("battery.present") ){
+                        return QSystemDeviceInfo::NoBatteryLevel;
+                    } else {
+                        float levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
+                        float level = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                        level =  level / levelWhenFull * 100;
+                        //                    qWarning()
+                        //                            << level;
+                        if(level > 4) {
+                            return QSystemDeviceInfo::BatteryCritical;
+                        } else if (level > 11) {
+                            return QSystemDeviceInfo::BatteryVeryLow;
+                        } else if (level > 41) {
+                            return QSystemDeviceInfo::BatteryLow;
+                        } else  {
+                            return QSystemDeviceInfo::BatteryNormal;
+                        }
+                    };
+                }
             }
         }
-    }
-#else
 #endif
+    } else {
+
+    }
     return QSystemDeviceInfo::NoBatteryLevel;
 }
 
