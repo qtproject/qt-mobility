@@ -114,17 +114,14 @@ void QContactMemoryEngine::deref()
 }
 
 /*! \reimp */
-QList<QUniqueId> QContactMemoryEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
+QList<QUniqueId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    error = QContactManager::NoError;
-    if (!sortOrder.isValid())
-        return d->m_contactIds;
-
     // TODO: this needs to be done properly...
+    error = QContactManager::NoError;
     QList<QUniqueId> sortedIds;
     QList<QContact> sortedContacts;
     for (int i = 0; i < d->m_contacts.size(); i++)
-        QContactManagerEngine::addSorted(&sortedContacts, d->m_contacts.at(i), sortOrder);
+        QContactManagerEngine::addSorted(&sortedContacts, d->m_contacts.at(i), sortOrders);
     for (int i = 0; i < sortedContacts.size(); i++)
         sortedIds.append(sortedContacts.at(i).id());
     return sortedIds;

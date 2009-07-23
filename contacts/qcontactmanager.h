@@ -97,6 +97,8 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QContactSortOrder& sortOrder = QContactSortOrder()) const;    // retrieve contact ids
     QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder = QContactSortOrder()) const; // retrieve ids of contacts matching the filter
+    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders) const;    // retrieve contact ids
+    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const; // retrieve ids of contacts matching the filter
     QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QUniqueId& contactId);      // remove the contact from the persistent store

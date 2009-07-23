@@ -291,7 +291,9 @@ QContactManager::Error QContactManager::error() const
 /*! Return the list of added contact ids, sorted according to the given \a sortOrder */
 QList<QUniqueId> QContactManager::contacts(const QContactSortOrder& sortOrder) const
 {
-    return d->m_engine->contacts(sortOrder, d->m_error);
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+    return d->m_engine->contacts(sortOrders, d->m_error);
 }
 
 /*!
@@ -302,7 +304,25 @@ QList<QUniqueId> QContactManager::contacts(const QContactSortOrder& sortOrder) c
  */
 QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const QContactSortOrder& sortOrder) const
 {
-    return d->m_engine->contacts(filter, sortOrder, d->m_error);
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+    return d->m_engine->contacts(filter, sortOrders, d->m_error);
+}
+
+/*! Return the list of added contact ids, sorted according to the given list of \a sortOrders */
+QList<QUniqueId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contacts(sortOrders, d->m_error);
+}
+
+/*!
+ * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+ *
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ */
+QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
 /*! Returns the contact in the database identified by \a contactId */

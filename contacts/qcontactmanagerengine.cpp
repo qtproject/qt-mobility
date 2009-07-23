@@ -155,9 +155,9 @@
  *
  * Any errors encountered should be stored to \a error.
  */
-QList<QUniqueId> QContactManagerEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
+QList<QUniqueId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    Q_UNUSED(sortOrder);
+    Q_UNUSED(sortOrders);
     error = QContactManager::NotSupportedError;
     return QList<QUniqueId>();
 }
@@ -168,13 +168,13 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactSortOrder& sortOr
  *
  * The default implementation will retrieve all contacts and test them with testFilter.
  */
-QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const
+QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     /* Slow way */
     QList<QUniqueId> ret;
 
     /* Retrieve each contact.. . . */
-    const QList<QUniqueId>& all = contacts(sortOrder, error);
+    const QList<QUniqueId>& all = contacts(sortOrders, error);
     if (error != QContactManager::NoError)
         return ret;
 
@@ -1309,44 +1309,60 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
     return true;
 }
 
-/*!
- * Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrder
- */
-void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder)
-{
-    if (!sortOrder.isValid()) {
-        sorted->append(toAdd);
-    } else {
-        const QVariant& newValue = toAdd.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
-        if (newValue.isNull()) {
-            if (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst)
-                sorted->prepend(toAdd);
-            else
-                sorted->append(toAdd);
+/*!
+ * Compares two contacts (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
+ * before \a b according to the sort order, a positive number if \a a should appear after \a b according to the sort order,
+ * and zero if the two are unable to be sorted.
+ */
+int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, const QList<QContactSortOrder>& sortOrders)
+{
+    QList<QContactSortOrder> copy = sortOrders;
+    while (copy.size()) {
+        // retrieve the next sort order in the list
+        QContactSortOrder sortOrder = copy.takeFirst();
+        if (!sortOrder.isValid())
+            break;
+
+        // obtain the values which this sort order concerns
+        const QVariant& aVal = a.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
+        const QVariant& bVal = b.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
+
+        // early exit error checking
+        if (aVal.isNull())
+            return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? -1 : 1);
+        if (bVal.isNull())
+            return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? 1 : -1);
+
+        // real comparison
+        int comparison = compareVariant(aVal, bVal, sortOrder.caseSensitivity()) * (sortOrder.direction() == Qt::AscendingOrder ? 1 : -1);
+        if (comparison == 0)
+            continue;
+        return comparison;
+    }
+
+    return 0; // or according to id? return (a.id() < b.id() ? -1 : 1);
+}
+
+
+/*!
+ * Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrder list.
+ * The first QContactSortOrder in the list has the highest priority; if the contact \a toAdd is deemed equal to another
+ * in the \a sorted list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted
+ * or there are no more sort order objects in the list).
+ */
+void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders)
+{
+    for (int i = 0; i < sorted->size(); i++) {
+        // check to see if the new contact should be inserted here
+        int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
+        if (comparison > 0) {
+            sorted->insert(i, toAdd);
             return;
         }
-
-        // XXX use a binary search or a proper insertion sort
-        for (int i = 0; i < sorted->size(); i++) {
-            const QContact& curr = sorted->at(i);
-
-            // Multiple details of the same type are intrisically broken
-            const QVariant& currValue = curr.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
-            if (sortOrder.direction() == Qt::AscendingOrder) {
-                if (compareVariant(newValue, currValue, sortOrder.caseSensitivity()) < 0) {
-                    sorted->insert(i, toAdd);
-                    return;
-                }
-            } else {
-                if (compareVariant(newValue, currValue, sortOrder.caseSensitivity()) > 0) {
-                    sorted->insert(i, toAdd);
-                    return;
-                }
-            }
-        }
     }
-    // couldn't find anywhere for it to go.  put it at the end.
+
+    // hasn't been inserted yet?  append to the list.
     sorted->append(toAdd);
 }
 

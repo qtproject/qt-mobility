@@ -62,10 +62,10 @@ public:
     virtual void deref() = 0;
 
     /* Filtering */
-    virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
+    virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    virtual QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
+    virtual QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
@@ -123,7 +123,8 @@ signals:
 
 public:
     /* Helper functions */
-    static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QContactSortOrder& sortOrder);
+    static int compareContact(const QContact& a, const QContact& b, const QList<QContactSortOrder>& sortOrders);
+    static void addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QContactFilter& filter, const QContact& contact);
     static bool validateActionFilter(const QContactFilter& filter);

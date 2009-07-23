@@ -92,6 +92,9 @@ private slots:
     void sorting(); // XXX should take all managers
     void sorting_data();
 
+    void multiSorting();
+    void multiSorting_data();
+
     void invalidFiltering();
 };
 
@@ -1531,6 +1534,92 @@ void tst_QContactManagerFiltering::sorting()
         s.setBlankPolicy(blankpolicy);
 
     ids = cm->contacts(s);
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::multiSorting_data()
+{
+    QTest::addColumn<QString>("fsdefname");
+    QTest::addColumn<QString>("fsfieldname");
+    QTest::addColumn<int>("fsdirectioni");
+
+    QTest::addColumn<QString>("ssdefname");
+    QTest::addColumn<QString>("ssfieldname");
+    QTest::addColumn<int>("ssdirectioni");
+
+    QTest::addColumn<QString>("expected");
+
+
+    QString firstname = QContactName::FieldFirst;
+    QString lastname = QContactName::FieldLast;
+    QString namedef = QContactName::DefinitionName;
+
+
+    QTest::newRow("1") << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << namedef << lastname << (int)(Qt::AscendingOrder)
+                       << "abcdefg";
+    QTest::newRow("2") << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << namedef << lastname << (int)(Qt::DescendingOrder)
+                       << "abcdgfe";
+    QTest::newRow("3") << namedef << firstname << (int)(Qt::DescendingOrder)
+                       << namedef << lastname << (int)(Qt::AscendingOrder)
+                       << "efgdcba";
+    QTest::newRow("4") << namedef << firstname << (int)(Qt::DescendingOrder)
+                       << namedef << lastname << (int)(Qt::DescendingOrder)
+                       << "gfedcba";
+}
+
+void tst_QContactManagerFiltering::multiSorting()
+{
+    QFETCH(QString, fsdefname);
+    QFETCH(QString, fsfieldname);
+    QFETCH(int, fsdirectioni);
+    QFETCH(QString, ssdefname);
+    QFETCH(QString, ssfieldname);
+    QFETCH(int, ssdirectioni);
+    QFETCH(QString, expected);
+
+    Qt::SortOrder fsdirection = (Qt::SortOrder)fsdirectioni;
+    Qt::SortOrder ssdirection = (Qt::SortOrder)ssdirectioni;
+
+    /* Try the memory database first */
+    QContactManager* cm = new QContactManager("memory");
+
+    QContact e,f,g;
+    QContactName n;
+    n.setFirst("John");
+    n.setLast("Smithee");
+    e.saveDetail(&n);
+    n.setLast("Smithey");
+    f.saveDetail(&n);
+    n.setLast("Smithy");
+    g.saveDetail(&n);
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    Q_ASSERT(cm->saveContact(&e));
+    Q_ASSERT(cm->saveContact(&f));
+    Q_ASSERT(cm->saveContact(&g));
+
+    contacts = cm->contacts();
+    QCOMPARE(contacts.count(), 7);
+
+    /* Build the sort orders */
+    QContactSortOrder fs;
+    fs.setDetailDefinitionName(fsdefname, fsfieldname);
+    fs.setDirection(fsdirection);
+    QContactSortOrder ss;
+    ss.setDetailDefinitionName(ssdefname, ssfieldname);
+    ss.setDirection(ssdirection);
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(fs);
+    sortOrders.append(ss);
+
+    ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
 
