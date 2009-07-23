@@ -46,12 +46,25 @@ public:
     QMailStore *_store;
     QMessageStore::ErrorCode _error;
 
+    static QMailStore *convert(QMessageStore *store);
+
     Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
 
+    static void registerMessageStatus(QMailStore *store, const QString &field);
     static void createNonexistentFolder(QMailStore *store, const QString &path, quint64 status);
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
+
+QMailStore *QMessageStorePrivate::convert(QMessageStore *store)
+{
+    return store->d_ptr->_store;
+}
+
+void QMessageStorePrivate::registerMessageStatus(QMailStore *store, const QString &field)
+{
+    store->registerMessageStatusFlag(field);
+}
 
 void QMessageStorePrivate::createNonexistentFolder(QMailStore *store, const QString &path, quint64 status)
 {
@@ -67,6 +80,15 @@ void QMessageStorePrivate::createNonexistentFolder(QMailStore *store, const QStr
             qWarning() << "Unable to add folder for:" << path;
         }
     }
+}
+
+namespace QmfHelpers {
+
+QMailStore *convert(QMessageStore *store)
+{
+    return QMessageStorePrivate::convert(store);
+}
+
 }
 
 QMessageStore::QMessageStore(QObject *parent)
@@ -228,7 +250,11 @@ QMessageStore* QMessageStore::instance()
     if (!initialised) {
         initialised = true;
 
+        QMailStore *mailStore(convert(store));
+
         // Perform any initialisation tasks
+        QMessageStorePrivate::registerMessageStatus(mailStore, "QMessage::HighPriority");
+        QMessageStorePrivate::registerMessageStatus(mailStore, "QMessage::LowPriority");
 
         // Create the standard folders if they do not exist
         typedef QPair<const char*, quint64> FolderAttributes;
@@ -237,7 +263,7 @@ QMessageStore* QMessageStore::instance()
                                                                            << FolderAttributes("Drafts", QMailFolder::Outgoing | QMailFolder::Trash)
                                                                            << FolderAttributes("Sent", QMailFolder::Outgoing | QMailFolder::Sent)
                                                                            << FolderAttributes("Trash", QMailFolder::Trash)) {
-            QMessageStorePrivate::createNonexistentFolder(store->d_ptr->_store, folder.first, folder.second);
+            QMessageStorePrivate::createNonexistentFolder(mailStore, folder.first, folder.second);
         }
     }
 

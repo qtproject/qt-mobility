@@ -272,8 +272,22 @@ QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessage
 QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
-    // TODO:
-    //result.d_ptr->_key = QMailMessageKey::priority(convert(value), convert(cmp));
+
+    switch (value)
+    {
+    case QMessage::High: 
+        result.d_ptr->_key = QMailMessageKey::status(highPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes)); 
+        break;
+
+    case QMessage::Low: 
+        result.d_ptr->_key = QMailMessageKey::status(lowPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes)); 
+        break;
+
+    case QMessage::Normal:
+        result.d_ptr->_key = QMailMessageKey::status(lowPriorityMask() | highPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Excludes : QMailDataComparator::Includes)); 
+        break;
+    }
+
     return result;
 }
 
