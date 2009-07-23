@@ -201,7 +201,9 @@ void tst_QNetworkSession::userChoiceSession()
 
         session.open();
 
-        QTRY_VERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
+        session.waitForOpened();
+
+        QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
@@ -314,7 +316,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         session.open();
 
-        QTRY_VERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
+        session.waitForOpened();
+
+        QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
