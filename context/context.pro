@@ -9,11 +9,13 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 HEADERS += qcontextglobal.h \
            qpacketprotocol.h \
            qvaluespace.h \
-           qvaluespacemanager_p.h
+           qvaluespacemanager_p.h \
+           qvaluespaceobject.h
 
 SOURCES += qpacketprotocol.cpp \
            qvaluespace.cpp \
-           qvaluespacemanager.cpp
+           qvaluespacemanager.cpp \
+           qvaluespaceobject.cpp
 
 unix {
     HEADERS += qmallocpool.h \

@@ -21,6 +21,7 @@
 #include <QSet>
 
 #include <qvaluespace.h>
+#include <qvaluespaceobject.h>
 
 #ifdef USE_READLINE
 #include <stdio.h>

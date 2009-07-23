@@ -30,6 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include <qvaluespace.h>
+#include <qvaluespaceobject.h>
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <QVariant>
@@ -128,6 +132,7 @@ void tst_QValueSpaceItem::init()
 void tst_QValueSpaceItem::cleanupTestCase()
 {
     delete root;
+    delete busy;
 }
 
 void tst_QValueSpaceItem::dataVersatility_data()

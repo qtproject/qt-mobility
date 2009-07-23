@@ -41,6 +41,8 @@
 
 #include "qcontextglobal.h"
 
+class QValueSpaceObject;
+
 class Q_CFW_EXPORT QAbstractValueSpaceLayer : public QObject
 {
 Q_OBJECT
@@ -77,11 +79,6 @@ public:
     virtual bool remove(HANDLE) = 0;
     /* Removes all keys under a subpath or handle */
     virtual bool remove(HANDLE, const QByteArray &) = 0;
-    /* Sets the current value of \a handle, if possible */
-    virtual bool setValue(HANDLE, const QVariant &) = 0;
-    /* Sets the current value of a subpath of \a handle, if possible.  subPath
-       must start with '/' */
-    virtual bool setValue(HANDLE, const QByteArray &, const QVariant &) = 0;
     /* Commit any changes (if needed) made through setValue() now */
     virtual bool syncChanges() = 0;
 
@@ -98,6 +95,22 @@ public:
 
     /* Removes a previously allocated handle. */
     virtual void remHandle(HANDLE) = 0;
+
+    /* Removes all items created by QValueSpaceObject */
+    virtual void removeItems(QValueSpaceObject *creator, HANDLE parent) = 0;
+
+    /* Removes all watches created by QValueSpaceObject */
+    virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
+
+    /* QValueSpaceItem side functions */
+    virtual bool requestSetValue(HANDLE handle, const QVariant &data) = 0;
+    virtual bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) = 0;
+    virtual bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) = 0;
+
+    /* QValueSpaceObject side functions */
+    virtual bool setValue(QValueSpaceObject *creator, HANDLE, const QVariant &) = 0;
+    virtual bool setValue(QValueSpaceObject *creator, HANDLE, const QByteArray &, const QVariant &) = 0;
+
 
 signals:
     void handleChanged(unsigned int);
@@ -178,40 +191,6 @@ private:
     QValueSpaceItemPrivate * d;
     friend class QValueSpaceSubItemIterator;
     friend class QValueSpaceSubItemIteratorPrivate;
-};
-
-class QValueSpaceObjectPrivate;
-class Q_CFW_EXPORT QValueSpaceObject : public QObject
-{
-Q_OBJECT
-public:
-    explicit QValueSpaceObject(const char *objectPath, QObject *parent = 0);
-    explicit QValueSpaceObject(const QString &objectPath, QObject *parent = 0);
-    explicit QValueSpaceObject(const QByteArray &objectPath, QObject *parent = 0);
-    ~QValueSpaceObject();
-
-    QString objectPath() const;
-    static void sync();
-
-signals:
-    void itemRemove(const QByteArray &attribute);
-    void itemSetValue(const QByteArray &attribute, const QVariant &value);
-
-public slots:
-    void setAttribute(const char *attribute, const QVariant &data);
-    void removeAttribute(const char *attribute);
-    void setAttribute(const QString &attribute, const QVariant &data);
-    void removeAttribute(const QString &attribute);
-    void setAttribute(const QByteArray &attribute, const QVariant &data);
-    void removeAttribute(const QByteArray &attribute);
-
-protected:
-    virtual void connectNotify(const char *);
-
-private:
-    friend class ApplicationLayer;
-    Q_DISABLE_COPY(QValueSpaceObject)
-    QValueSpaceObjectPrivate * d;
 };
 
 #endif // _QVALUESPACE_H_

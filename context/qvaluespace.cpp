@@ -45,6 +45,8 @@
 #include <QVarLengthArray>
 #include <qpacketprotocol.h>
 
+#include <QtCore/qdebug.h>
+
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -946,27 +948,27 @@ bool QValueSpaceItem::sync()
         if(ops.at(ii).type == QValueSpaceItemPrivateWrite::Op::Set) {
             if(path.isEmpty()) {
                 for(int ii = md->readers.count(); ii > 0; --ii) {
-                    if(!md->readers[ii - 1].first->setValue(md->readers[ii - 1].second,
+                    if(!md->readers[ii - 1].first->requestSetValue(md->readers[ii - 1].second,
                             value)) rv = false;
                 }
             } else {
                 QByteArray vpath =
                     ((*path.constData()) == '/')?path:(QByteArray("/") + path);
                 for(int ii = md->readers.count(); ii > 0; --ii) {
-                    if(!md->readers[ii - 1].first->setValue(md->readers[ii - 1].second,
+                    if(!md->readers[ii - 1].first->requestSetValue(md->readers[ii - 1].second,
                             vpath, value)) rv = false;
                 }
             }
         } else {
             if(path.isEmpty()) {
                 for(int ii = md->readers.count(); ii > 0; --ii) {
-                    if(!md->readers[ii - 1].first->remove(md->readers[ii - 1].second)) rv = false;
+                    if(!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second)) rv = false;
                 }
             } else {
                 QByteArray vpath =
                     ((*path.constData()) == '/')?path:(QByteArray("/") + path);
                 for(int ii = md->readers.count(); ii > 0; --ii) {
-                    if(!md->readers[ii - 1].first->remove(md->readers[ii - 1].second, vpath)) rv = false;
+                    if(!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second, vpath)) rv = false;
                 }
             }
         }

@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "qvaluespace.h"
+#include "qvaluespaceobject.h"
 
 #include <QSet>
 #include <QStringList>
@@ -50,6 +51,7 @@ public:
     RegistryLayer();
     ~RegistryLayer();
 
+    /* Common functions */
     virtual QString name();
     virtual bool startup(Type t);
     virtual bool restart();
@@ -64,10 +66,21 @@ public:
     virtual void remHandle(HANDLE);
     virtual bool remove(HANDLE);
     virtual bool remove(HANDLE, const QByteArray &);
-    virtual bool setValue(HANDLE handle, const QVariant &data);
-    virtual bool setValue(HANDLE handle, const QByteArray &subPath, const QVariant &data);
     virtual bool syncChanges();
 
+    void removeItems(QValueSpaceObject *creator, HANDLE parent);
+    void removeWatches(QValueSpaceObject *creator, HANDLE parent);
+
+    /* QValueSpaceItem functions */
+    bool requestSetValue(HANDLE handle, const QVariant &data);
+    bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
+    bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray());
+
+    /* QValueSpaceObject functions */
+    bool setValue(QValueSpaceObject *creator, HANDLE, const QVariant &);
+    bool setValue(QValueSpaceObject *creator, HANDLE, const QByteArray &, const QVariant &);
+
+    /* Private implementation functions */
     void emitHandleChanged(HKEY key);
 
     static RegistryLayer *instance();
@@ -82,6 +95,8 @@ private:
 
     QMap<HANDLE, HKEY> hKeys;
     QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
+
+    QMap<QValueSpaceObject *, QList<QByteArray> > creators;
 };
 
 #include <registrylayer_win.moc>
@@ -165,6 +180,8 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
     QByteArray path(subPath);
     while (path.endsWith('/'))
         path.chop(1);
+    while (path.startsWith('/'))
+        path = path.mid(1);
 
     int index = path.lastIndexOf('/', -1);
 
@@ -455,6 +472,8 @@ bool RegistryLayer::remove(HANDLE handle, const QByteArray &subPath)
         // want a value that is in a sub path under handle
         value = QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
         path.truncate(index);
+        if (path.isEmpty())
+            path.append('/');
 
         handle = item(handle, path);
     }
@@ -477,12 +496,12 @@ bool RegistryLayer::remove(HANDLE handle, const QByteArray &subPath)
     return result == ERROR_SUCCESS;
 }
 
-bool RegistryLayer::setValue(HANDLE handle, const QVariant &data)
+bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &data)
 {
-    return setValue(handle, QByteArray(), data);
+    return setValue(creator, handle, QByteArray(), data);
 }
 
-bool RegistryLayer::setValue(HANDLE handle, const QByteArray &subPath, const QVariant &data)
+bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &subPath, const QVariant &data)
 {
     if (!handles.values().contains(handle))
         return false;
@@ -575,6 +594,10 @@ bool RegistryLayer::setValue(HANDLE handle, const QByteArray &subPath, const QVa
     };
 
     long result = RegSetValueEx(key, value.utf16(), 0, regType, regData, regSize);
+
+    const QByteArray fullPath = handles.key(handle) + '/' + value.toUtf8();
+    if (!creators[creator].contains(fullPath))
+        creators[creator].append(fullPath);
 
     delete[] toDelete;
 
@@ -718,89 +741,50 @@ void RegistryLayer::createRegistryKey(HANDLE handle)
         hKeys.insert(handle, key);
 }
 
-class QValueSpaceObjectPrivate
+void RegistryLayer::removeItems(QValueSpaceObject *creator, HANDLE handle)
 {
-public:
-    QAbstractValueSpaceLayer::HANDLE handle;
-    QString objectPath;
-};
+    if (!handles.values().contains(handle))
+        return;
 
-QValueSpaceObject::QValueSpaceObject(const char *objectPath, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate)
-{
-    d->objectPath = objectPath;
+    QList<QByteArray> paths = creators.value(creator);
 
-    RegistryLayer *layer = registryLayer();
+    QByteArray rootPath = handles.key(handle);
 
-    d->handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, objectPath);
+    while (!paths.isEmpty()) {
+        QByteArray item = paths.takeFirst();
+        if (!item.startsWith(rootPath))
+            continue;
+
+        remove(InvalidHandle, item);
+        creators[creator].removeOne(item);
+
+        int index = item.lastIndexOf('/');
+        if (index == -1)
+            continue;
+
+        item.truncate(index);
+        if (!paths.contains(item))
+            paths.append(item);
+    }
 }
 
-QValueSpaceObject::QValueSpaceObject(const QString &objectPath, QObject *parent)
-:    QObject(parent), d(new QValueSpaceObjectPrivate)
+void RegistryLayer::removeWatches(QValueSpaceObject *creator, HANDLE handle)
 {
-    d->objectPath = objectPath;
-
-    RegistryLayer *layer = registryLayer();
-
-    d->handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, objectPath.toUtf8());
+    qDebug() << Q_FUNC_INFO << "Need to remove all watches created by" << creator
+                            << "and rooted at" << handles.key(handle);
 }
 
-QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, QObject *parent)
-:    QObject(parent), d(new QValueSpaceObjectPrivate)
+bool RegistryLayer::requestSetValue(HANDLE, const QVariant &)
 {
-    d->objectPath = objectPath;
-
-    RegistryLayer *layer = registryLayer();
-
-    d->handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, objectPath);
+    return false;
 }
 
-QValueSpaceObject::~QValueSpaceObject()
+bool RegistryLayer::requestSetValue(HANDLE, const QByteArray &, const QVariant &)
 {
-    delete d;
+    return false;
 }
 
-QString QValueSpaceObject::objectPath() const
+bool RegistryLayer::requestRemoveValue(HANDLE, const QByteArray &)
 {
-    return d->objectPath;
-}
-
-void QValueSpaceObject::sync()
-{
-    registryLayer()->syncChanges();
-}
-
-void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
-{
-    registryLayer()->setValue(d->handle, QByteArray(attribute), data);
-}
-
-void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &data)
-{
-    registryLayer()->setValue(d->handle, attribute.toUtf8(), data);
-}
-
-void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant &data)
-{
-    registryLayer()->setValue(d->handle, attribute, data);
-}
-
-void QValueSpaceObject::removeAttribute(const char *attribute)
-{
-    registryLayer()->remove(d->handle, QByteArray(attribute));
-}
-
-void QValueSpaceObject::removeAttribute(const QString &attribute)
-{
-    registryLayer()->remove(d->handle, attribute.toUtf8());
-}
-
-void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
-{
-    registryLayer()->remove(d->handle, attribute);
-}
-
-void QValueSpaceObject::connectNotify(const char *method)
-{
-    QObject::connectNotify(method);
+    return false;
 }

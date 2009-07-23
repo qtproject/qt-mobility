@@ -31,8 +31,10 @@
 **
 ****************************************************************************/
 
+#include <qvaluespace.h>
+#include <qvaluespaceobject.h>
+
 #include <QCoreApplication>
-#include "qvaluespace.h"
 #include <QTest>
 #include <QFile>
 #include <QTimer>

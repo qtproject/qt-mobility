@@ -30,12 +30,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include <qvaluespace.h>
+#include <qvaluespaceobject.h>
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <QVariant>
 #include <QProcess>
 #include <QFile>
-#include "qvaluespace.h"
 #include <QVariant>
 
 #define QTRY_COMPARE(a,e)                       \
