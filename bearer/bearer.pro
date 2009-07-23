@@ -2,6 +2,8 @@
 TEMPLATE = lib
 TARGET = bearer
 
+QT += network
+
 DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
@@ -14,15 +16,6 @@ HEADERS += qnetworkconfiguration.h \
 SOURCES += qnetworksession.cpp \
            qnetworkconfigmanager.cpp \
            qnetworkconfiguration.cpp
-
-unix:!symbian:!mac:contains(BACKEND, NetworkManager) {
-    unix:contains(QT_CONFIG,dbus) {
-        DEFINES+=BACKEND_NM
-    } else {
-        message("NetworkManager backend requires Qt DBus support");
-    }
-}
-
 
 symbian: {
     exists($${EPOCROOT}epoc32/release/winscw/udeb/cmmanager.lib)| \
@@ -55,32 +48,34 @@ symbian: {
 
     TARGET.CAPABILITY = All -TCB
 } else {
+    DEFINES += BEARER_ENGINE
+
     HEADERS += qnetworkconfigmanager_p.h \
                qnetworkconfiguration_p.h \
-               qnetworksession_p.h
+               qnetworksession_p.h \
+               qnetworksessionengine_p.h \
+               qgenericengine_p.h
 
-    win32:DEFINES += BEARER_ENGINE
-    unix:DEFINES += BEARER_ENGINE
+    SOURCES += qnetworkconfigmanager_p.cpp \
+               qnetworksession_p.cpp \
+               qnetworksessionengine.cpp \
+               qgenericengine.cpp
 
-    contains(DEFINES, BEARER_ENGINE) {
-        HEADERS += qnetworksessionengine_p.h \
-                   qgenericengine_p.h
+    unix:!mac:contains(BACKEND, NetworkManager) {
+        contains(QT_CONFIG,dbus) {
+            DEFINES += BACKEND_NM
+            QT += dbus
 
-        SOURCES += qnetworkconfigmanager_p.cpp \
-                   qnetworksession_p.cpp \
-                   qnetworksessionengine.cpp \
-                   qgenericengine.cpp
-    }
+            HEADERS += qnmdbushelper_p.h \
+                       qnetworkmanagerservice_p.h \
+                       qnmwifiengine_unix_p.h
 
-    !mac:unix:contains(QT_CONFIG,dbus):contains(BACKEND, NetworkManager) {
-        QT += dbus
-        HEADERS += qnmdbushelper_p.h \
-                   qnetworkmanagerservice_p.h \
-                   qnmwifiengine_unix_p.h
-
-        SOURCES += qnmdbushelper.cpp \
-                   qnetworkmanagerservice_p.cpp \
-                   qnmwifiengine_unix.cpp
+            SOURCES += qnmdbushelper.cpp \
+                       qnetworkmanagerservice_p.cpp \
+                       qnmwifiengine_unix.cpp
+        } else {
+            message("NetworkManager backend requires Qt DBus support");
+        }
     }
 
     win32: {
@@ -96,8 +91,6 @@ symbian: {
         wince*:LIBS += -lWs2
     }
 }
-
-QT += network
 
 include (../common.pri)
 
