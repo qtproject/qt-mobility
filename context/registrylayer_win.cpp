@@ -290,7 +290,7 @@ QAbstractValueSpaceLayer::HANDLE RegistryLayer::item(HANDLE parent, const QByteA
     QByteArray fullPath;
 
     // Fail on invalid path.
-    if (path.contains("//"))
+    if (path.isEmpty() || path.contains("//"))
         return InvalidHandle;
 
     if (parent == InvalidHandle) {
@@ -677,6 +677,9 @@ void RegistryLayer::openRegistryKey(HANDLE handle)
         QByteArray valueName = path.mid(index + 1);
 
         HANDLE parentHandle = item(InvalidHandle, parentPath);
+        if (parentHandle == InvalidHandle)
+            return;
+
         openRegistryKey(parentHandle);
         if (!hKeys.contains(parentHandle))
             return;
