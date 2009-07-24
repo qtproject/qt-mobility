@@ -103,10 +103,10 @@ LIBS += mapi32.lib
 }
 } else {
 # QMF headers must be located at $QMF_INCLUDEDIR
-INCLUDEPATH += $$QMF_INCLUDEDIR $$QMF_INCLUDEDIR/support
+INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
 # QMF libraries must be located at $QMF_LIBDIR
-LIBS += -L $$QMF_LIBDIR -lqtopiamail
+LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 
 DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
