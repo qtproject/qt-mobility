@@ -1539,10 +1539,12 @@ void tst_QContactManagerFiltering::sorting()
 
 void tst_QContactManagerFiltering::multiSorting_data()
 {
+    QTest::addColumn<bool>("firstsort");
     QTest::addColumn<QString>("fsdefname");
     QTest::addColumn<QString>("fsfieldname");
     QTest::addColumn<int>("fsdirectioni");
 
+    QTest::addColumn<bool>("secondsort");
     QTest::addColumn<QString>("ssdefname");
     QTest::addColumn<QString>("ssfieldname");
     QTest::addColumn<int>("ssdirectioni");
@@ -1553,27 +1555,56 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QString firstname = QContactName::FieldFirst;
     QString lastname = QContactName::FieldLast;
     QString namedef = QContactName::DefinitionName;
+    QString urldef = QContactUrl::DefinitionName;
+    QString urlfield = QContactUrl::FieldUrl;
+    QString phonedef = QContactPhoneNumber::DefinitionName;
+    QString numberfield = QContactPhoneNumber::FieldNumber;
 
-
-    QTest::newRow("1") << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << namedef << lastname << (int)(Qt::AscendingOrder)
+    QTest::newRow("1") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "abcdefg";
-    QTest::newRow("2") << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << namedef << lastname << (int)(Qt::DescendingOrder)
+    QTest::newRow("2") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
                        << "abcdgfe";
-    QTest::newRow("3") << namedef << firstname << (int)(Qt::DescendingOrder)
-                       << namedef << lastname << (int)(Qt::AscendingOrder)
+    QTest::newRow("3") << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "efgdcba";
-    QTest::newRow("4") << namedef << firstname << (int)(Qt::DescendingOrder)
-                       << namedef << lastname << (int)(Qt::DescendingOrder)
+    QTest::newRow("4") << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
                        << "gfedcba";
+
+    QTest::newRow("5") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << false << namedef << lastname << (int)(Qt::AscendingOrder)
+                       << "abcdefg";
+
+    QTest::newRow("6") << false << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
+                       << "bacdefg";
+
+    QTest::newRow("7") << false << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << false << namedef << lastname << (int)(Qt::AscendingOrder)
+                       << "abcdefg";
+
+    QTest::newRow("8") << true << urldef << urlfield << (int)(Qt::AscendingOrder)
+                       << false << urldef << urlfield << (int)(Qt::DescendingOrder)
+                       << "gfedcba";
+
+    QTest::newRow("9") << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
+                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
+                       << "abgfedc";
+
+    QTest::newRow("10") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                        << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                        << "abcdefg";
 }
 
 void tst_QContactManagerFiltering::multiSorting()
 {
+    QFETCH(bool, firstsort);
     QFETCH(QString, fsdefname);
     QFETCH(QString, fsfieldname);
     QFETCH(int, fsdirectioni);
+    QFETCH(bool, secondsort);
     QFETCH(QString, ssdefname);
     QFETCH(QString, ssfieldname);
     QFETCH(int, ssdirectioni);
@@ -1613,8 +1644,10 @@ void tst_QContactManagerFiltering::multiSorting()
     ss.setDetailDefinitionName(ssdefname, ssfieldname);
     ss.setDirection(ssdirection);
     QList<QContactSortOrder> sortOrders;
-    sortOrders.append(fs);
-    sortOrders.append(ss);
+    if (firstsort)
+        sortOrders.append(fs);
+    if (secondsort)
+        sortOrders.append(ss);
 
     ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
