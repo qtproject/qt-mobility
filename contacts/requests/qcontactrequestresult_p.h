@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTREQUEST_P_H
-#define QCONTACTREQUEST_P_H
+#ifndef QCONTACTREQUESTRESULT_P_H
+#define QCONTACTREQUESTRESULT_P_H
 
 //
 //  W A R N I N G
@@ -46,53 +46,30 @@
 // We mean it.
 //
 
-#include <QPointer>
 
-#include "qcontactabstractrequest.h"
-#include "qcontactmanager.h"
-#include "qcontact.h"
-#include "qcontactfilter.h"
-#include "qcontactrequestresult.h"
+#include "qcontactabstractrequestresult_p.h"
 
-class QContactRequestData
+class QContactRequestResultData : public QContactAbstractRequestResultData
 {
 public:
-    QContactRequestData(QContactManager* manager)
-        :   m_isRestrictedDefs(false),
-            m_isRestrictedIds(false),
-            m_status(QContactAbstractRequest::Inactive),
-            m_error(QContactManager::NoError),
-            m_manager(manager),
-            m_result(0)
+    QContactRequestResultData()
+        :   QContactAbstractRequestResultData()
     {
     }
 
-    ~QContactRequestData()
+    QContactRequestResultData(const QContactRequestResultData& other)
+        :   QContactAbstractRequestResultData(other),
+        m_contacts(other.m_contacts),
+        m_contactIds(other.m_contactIds)
     {
     }
 
-    void _q_statusUpdate(const QContactAbstractRequest::Status& status, const QContactManager::Error& error)
+    ~QContactRequestResultData()
     {
-        m_status = status;
-        m_error = error;
-        // XXX emit status update?
     }
 
-
-    QStringList m_restrictDefinitions;
-    bool m_isRestrictedDefs;
-    bool m_isRestrictedIds;
-
-    QList<QUniqueId> m_requestIds;
-    QList<QContact> m_requestObjects;
-    QContactFilter m_requestFilter;
-
-    QContactSortOrder m_sortorder;
-    QContactAbstractRequest::Status m_status;
-    QContactManager::Error m_error;
-
-    QPointer<QContactManager> m_manager;
-    QContactRequestResult* m_result;
+    QList<QContact> m_contacts;
+    QList<QUniqueId> m_contactIds;
 };
 
 #endif

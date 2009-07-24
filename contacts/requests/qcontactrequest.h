@@ -111,10 +111,10 @@ public:
     QList<QContactManager::Error> errors();
 
 signals:
-    void finished(QContactRequest* self);
-    void progress(QContactRequest* self, bool appendOnly);   // appendOnly true if ids/contacts order has not changed, just stuff added
+    void progress(QContactRequest* self, bool finished, bool appendOnly);   // appendOnly true if ids/contacts order has not changed, just stuff added
 
 private:
+    friend class QContactRequestResult;
     Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
     QContactRequestData* d;
 };

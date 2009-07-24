@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTREQUEST_P_H
-#define QCONTACTREQUEST_P_H
+#ifndef QCONTACTABSTRACTREQUESTRESULT_P_H
+#define QCONTACTABSTRACTREQUESTRESULT_P_H
 
 //
 //  W A R N I N G
@@ -46,53 +46,34 @@
 // We mean it.
 //
 
-#include <QPointer>
-
-#include "qcontactabstractrequest.h"
 #include "qcontactmanager.h"
-#include "qcontact.h"
-#include "qcontactfilter.h"
-#include "qcontactrequestresult.h"
 
-class QContactRequestData
+#include <QSharedData>
+#include <QList>
+
+class QContactAbstractRequestResultData : public QSharedData
 {
 public:
-    QContactRequestData(QContactManager* manager)
-        :   m_isRestrictedDefs(false),
-            m_isRestrictedIds(false),
-            m_status(QContactAbstractRequest::Inactive),
-            m_error(QContactManager::NoError),
-            m_manager(manager),
-            m_result(0)
+    QContactAbstractRequestResultData()
+        : QSharedData(),
+        m_error(QContactManager::NoError),
+        m_appendOnly(false)
     {
     }
 
-    ~QContactRequestData()
+    QContactAbstractRequestResultData(const QContactAbstractRequestResultData& other)
+        : QSharedData(other),
+        m_error(other.m_error),
+        m_errors(other.m_errors),
+        m_appendOnly(other.m_appendOnly)
     {
     }
 
-    void _q_statusUpdate(const QContactAbstractRequest::Status& status, const QContactManager::Error& error)
-    {
-        m_status = status;
-        m_error = error;
-        // XXX emit status update?
-    }
+    ~QContactAbstractRequestResultData() {}
 
-
-    QStringList m_restrictDefinitions;
-    bool m_isRestrictedDefs;
-    bool m_isRestrictedIds;
-
-    QList<QUniqueId> m_requestIds;
-    QList<QContact> m_requestObjects;
-    QContactFilter m_requestFilter;
-
-    QContactSortOrder m_sortorder;
-    QContactAbstractRequest::Status m_status;
     QContactManager::Error m_error;
-
-    QPointer<QContactManager> m_manager;
-    QContactRequestResult* m_result;
+    QList<QContactManager::Error> m_errors;
+    bool m_appendOnly;
 };
 
 #endif

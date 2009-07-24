@@ -31,68 +31,32 @@
 **
 ****************************************************************************/
 
+#ifndef QCONTACTABSTRACTREQUESTRESULT_H
+#define QCONTACTABSTRACTREQUESTRESULT_H
 
-#ifndef QCONTACTREQUEST_P_H
-#define QCONTACTREQUEST_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QPointer>
-
-#include "qcontactabstractrequest.h"
 #include "qcontactmanager.h"
-#include "qcontact.h"
-#include "qcontactfilter.h"
-#include "qcontactrequestresult.h"
+#include "qcontactabstractrequest.h"
 
-class QContactRequestData
-{
+#include <QSharedDataPointer>
+
+class QContactAbstractRequestResultData;
+class QContactAbstractRequestResult {
 public:
-    QContactRequestData(QContactManager* manager)
-        :   m_isRestrictedDefs(false),
-            m_isRestrictedIds(false),
-            m_status(QContactAbstractRequest::Inactive),
-            m_error(QContactManager::NoError),
-            m_manager(manager),
-            m_result(0)
-    {
-    }
+    QContactAbstractRequestResult();
+    ~QContactAbstractRequestResult();
 
-    ~QContactRequestData()
-    {
-    }
+    // any errors which occurred
+    void setErrors(const QList<QContactManager::Error>& errors);
+    void setError(const QContactManager::Error& error);
+    QList<QContactManager::Error> errors() const;
+    QContactManager::Error error() const;
 
-    void _q_statusUpdate(const QContactAbstractRequest::Status& status, const QContactManager::Error& error)
-    {
-        m_status = status;
-        m_error = error;
-        // XXX emit status update?
-    }
+    // does the updated result have a different order to the previous update?
+    void setAppendOnly(bool appendOnly);
+    bool appendOnly() const;
 
-
-    QStringList m_restrictDefinitions;
-    bool m_isRestrictedDefs;
-    bool m_isRestrictedIds;
-
-    QList<QUniqueId> m_requestIds;
-    QList<QContact> m_requestObjects;
-    QContactFilter m_requestFilter;
-
-    QContactSortOrder m_sortorder;
-    QContactAbstractRequest::Status m_status;
-    QContactManager::Error m_error;
-
-    QPointer<QContactManager> m_manager;
-    QContactRequestResult* m_result;
+private:
+    QSharedDataPointer<QContactAbstractRequestResultData> d;
 };
 
 #endif

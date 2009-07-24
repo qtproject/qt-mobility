@@ -46,5 +46,6 @@
 // provided by the Qt Contacts API.
 
 #include "qcontactrequest.h"
+#include "qcontactrequestresult.h"
 
 #endif
