@@ -160,7 +160,6 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="ContextType" fullname="QServiceContext::ContextType" href="qservicecontext.html#ContextType-enum" location="qservicecontext.h">
                 <value name="DisplayContext" value="0"></value>
                 <value name="ScriptContext" value="1"></value>
-                <value name="ServiceFrameworkContext" value="2"></value>
                 <value name="UserDefined" value="100"></value>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceContext" fullname="QServiceContext::QServiceContext" href="qservicecontext.html#QServiceContext" location="qservicecontext.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceContext(QObject * parent)">

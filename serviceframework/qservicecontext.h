@@ -53,7 +53,6 @@ public:
     enum ContextType {
         DisplayContext = 0,
         ScriptContext,
-        ServiceFrameworkContext,
         UserDefined = 100
     };
 

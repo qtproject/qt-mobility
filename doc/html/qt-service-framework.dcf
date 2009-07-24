@@ -9,7 +9,6 @@
     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
         <keyword ref="qservicecontext.html">QServiceContext</keyword>
         <keyword ref="qservicecontext.html#ContextType-enum">ContextType</keyword>
-        <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::ServiceFrameworkContext</keyword>
         <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::ScriptContext</keyword>
         <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::UserDefined</keyword>
         <keyword ref="qservicecontext.html#ContextType-enum">QServiceContext::DisplayContext</keyword>
