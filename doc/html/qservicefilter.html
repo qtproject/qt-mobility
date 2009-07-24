@@ -97,7 +97,7 @@
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
 <h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3>
-<p>The filter only matches implementations which have the custom constraint <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
+<p>The filter only matches implementations which have the custom property <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
 <p>See also <a href="qservicefilter.html#customProperty">customProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
 <h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>

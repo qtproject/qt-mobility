@@ -39,7 +39,7 @@
 </ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>The Qt Service framework provides a set of APIs that allows clients to discover and instanciate arbitrary services. This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms. Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection it may even be used to unify and access multiple platform specific service implementations via the same Qt-based client application.</p>
+<p>The Qt Service framework provides a set of APIs that allows clients to discover and instantiate arbitrary services. This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms. Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection it may even be used to unify and access multiple platform specific service implementations via the same Qt-based client application.</p>
 <a name="overview"></a>
 <h2>Overview</h2>
 <p>A service is an independent component that allows a client to perform a well-defined operation. Clients can find services based on their name and version as well as the interface that is implemented by the service object. Once the service has been identified the framework starts the service and returns a pointer to it. <a href="qservicemanager.html">QServiceManager</a> is the main interface through which clients can access the mentioned framework functionality. In addition services themselves may also act as clients to the service framework by requesting other services installed on the system.</p>
@@ -49,7 +49,7 @@
 <a name="using-the-framework"></a>
 <h2>Using the framework</h2>
 <p>This section assumes that the user wants to access the <i>FileManager</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
-<p><a href="qservicemanager.html">QServiceManager</a> is the main class to lookup and instanciate services. Services can be found by constraining the search via service meta data or by using the default lookup mechanism.</p>
+<p><a href="qservicemanager.html">QServiceManager</a> is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or by using the default lookup mechanism.</p>
 <a name="verbose-lookup"></a>
 <h3>Verbose lookup</h3>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
@@ -59,7 +59,7 @@
     QList&lt;QServiceInterfaceDescriptor&gt; objs = manager-&gt;findInterfaces(filter);
     Q_ASSERT(objs.count());
 
-<span class="comment">    //instanciate the FileStorage object</span>
+<span class="comment">    //instantiate the FileStorage object</span>
     QObject* service = manager-&gt;loadInterface(objs.at(0));</pre>
 <a name="default-lookup"></a>
 <h3>Default lookup</h3>
