@@ -88,6 +88,7 @@ private:
     void openRegistryKey(HANDLE handle);
     void createRegistryKey(HANDLE handle);
     bool removeRegistryValue(HANDLE handle, const QByteArray &path);
+    void closeRegistryKey(HANDLE handle);
 
     QHash<QByteArray, HANDLE> handles;
     QList<HANDLE> valueHandles;
@@ -433,6 +434,14 @@ void RegistryLayer::remHandle(HANDLE handle)
     handles.remove(handles.key(handle));
     valueHandles.removeOne(handle);
 
+    closeRegistryKey(handle);
+}
+
+void RegistryLayer::closeRegistryKey(HANDLE handle)
+{
+    if (!hKeys.contains(handle))
+        return;
+
     HKEY key = hKeys.take(handle);
 
     // Check if other handles are using this registry key.
@@ -513,6 +522,17 @@ bool RegistryLayer::removeRegistryValue(HANDLE handle, const QByteArray &subPath
     long result = RegDeleteValue(key, value.utf16());
     if (result == ERROR_FILE_NOT_FOUND) {
         result = qRegDeleteTree(key, value.utf16());
+        if (result == ERROR_SUCCESS) {
+            const QByteArray rootPath = handles.key(handle);
+
+            QList<QByteArray> paths = handles.keys();
+            while (!paths.isEmpty()) {
+                QByteArray p = paths.takeFirst();
+
+                if (p.startsWith(rootPath))
+                    closeRegistryKey(handles.value(p));
+            }
+        }
         if (result != ERROR_SUCCESS)
             qDebug() << "RegDeleteTree failed with error" << result;
     } else if (result != ERROR_SUCCESS) {
