@@ -186,6 +186,8 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
 
     int index = path.lastIndexOf('/', -1);
 
+    bool createdHandle = false;
+
     QString value;
     if (index == -1) {
         value = QString::fromUtf8(path.constData(), path.length());
@@ -195,11 +197,16 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
         path.truncate(index);
 
         handle = item(handle, path);
+        createdHandle = true;
     }
 
     openRegistryKey(handle);
-    if (!hKeys.contains(handle))
+    if (!hKeys.contains(handle)) {
+        if (createdHandle)
+            remHandle(handle);
+
         return false;
+    }
 
     HKEY key = hKeys.value(handle);
 
@@ -207,9 +214,13 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
     long result = RegQueryValueEx(key, value.utf16(), 0, 0, 0, &regSize);
     if (result == ERROR_FILE_NOT_FOUND) {
         *data = QVariant();
+        if (createdHandle)
+            remHandle(handle);
         return false;
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegQueryValueEx failed with error" << result;
+        if (createdHandle)
+            remHandle(handle);
         return false;
     }
 
@@ -219,6 +230,8 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
     result = RegQueryValueEx(key, value.utf16(), 0, &regType, regData, &regSize);
     if (result != ERROR_SUCCESS) {
         qDebug() << "real RegQueryValueEx failed with error" << result;
+        if (createdHandle)
+            remHandle(handle);
         return false;
     }
 
@@ -254,11 +267,17 @@ bool RegistryLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *da
     default:
         qDebug() << "Unknown REG type" << regType;
         delete[] regData;
+        if (createdHandle)
+            remHandle(handle);
         return false;
         break;
     }
 
     delete[] regData;
+
+    if (createdHandle)
+        remHandle(handle);
+
     return true;
 }
 
@@ -416,6 +435,10 @@ void RegistryLayer::remHandle(HANDLE handle)
 
     HKEY key = hKeys.take(handle);
 
+    // Check if other handles are using this registry key.
+    if (!hKeys.keys(key).isEmpty())
+        return;
+
     QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
     UnregisterWait(wait.second);
@@ -461,6 +484,8 @@ bool RegistryLayer::removeRegistryValue(HANDLE handle, const QByteArray &subPath
 
     int index = path.lastIndexOf('/', -1);
 
+    bool createdHandle = false;
+
     QString value;
     if (index == -1) {
         value = path;
@@ -472,11 +497,16 @@ bool RegistryLayer::removeRegistryValue(HANDLE handle, const QByteArray &subPath
             path.append('/');
 
         handle = item(handle, path);
+        createdHandle = true;
     }
 
     openRegistryKey(handle);
-    if (!hKeys.contains(handle))
+    if (!hKeys.contains(handle)) {
+        if (createdHandle)
+            remHandle(handle);
+
         return false;
+    }
 
     HKEY key = hKeys.value(handle);
 
@@ -488,6 +518,9 @@ bool RegistryLayer::removeRegistryValue(HANDLE handle, const QByteArray &subPath
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegDeleteValue failed with error" << result;
     }
+
+    if (createdHandle)
+        remHandle(handle);
 
     return result == ERROR_SUCCESS;
 }
@@ -508,6 +541,8 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QB
 
     int index = path.lastIndexOf('/', -1);
 
+    bool createdHandle = false;
+
     QString value;
     if (index == -1) {
         value = path;
@@ -517,11 +552,16 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QB
         path.truncate(index);
 
         handle = item(handle, path);
+        createdHandle = true;
     }
 
     createRegistryKey(handle);
-    if (!hKeys.contains(handle))
+    if (!hKeys.contains(handle)) {
+        if (createdHandle)
+            remHandle(handle);
+
         return false;
+    }
 
     HKEY key = hKeys.value(handle);
 
@@ -596,6 +636,9 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QB
         creators[creator].append(fullPath);
 
     delete[] toDelete;
+
+    if (createdHandle)
+        remHandle(handle);
 
     return result == ERROR_SUCCESS;
 }
@@ -700,16 +743,22 @@ void RegistryLayer::openRegistryKey(HANDLE handle)
             return;
 
         openRegistryKey(parentHandle);
-        if (!hKeys.contains(parentHandle))
+        if (!hKeys.contains(parentHandle)) {
+            remHandle(parentHandle);
             return;
+        }
 
         // Check if value exists.
-        if (!children(parentHandle).contains(valueName))
+        if (!children(parentHandle).contains(valueName)) {
+            remHandle(parentHandle);
             return;
+        }
 
         if (!valueHandles.contains(handle))
             valueHandles.append(handle);
         hKeys.insert(handle, hKeys.value(parentHandle));
+
+        remHandle(parentHandle);
     }
 }
 
