@@ -1534,6 +1534,14 @@ void tst_QContactManagerFiltering::sorting()
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
 
+    /* Now do a check with a filter involved; the filter should not affect the sort order */
+    QContactDetailFilter presenceName;
+    presenceName.setDetailDefinitionName(QContactName::DefinitionName);
+    ids = cm->contacts(presenceName, s);
+    output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+
     delete cm;
 }
 
