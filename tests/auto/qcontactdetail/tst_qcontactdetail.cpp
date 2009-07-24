@@ -386,6 +386,30 @@ void tst_QContactDetail::classHierarchy()
     QCOMPARE(goodleaf2.error(), QContactDetail::NoError);
     QCOMPARE(goodleafbase.error(), QContactDetail::NoError);
 
+    /* Try a reference */
+    QContactDetail& ref = p1;
+    QVERIFY(p1.number() == "123456");
+    QVERIFY(p1.value(QContactPhoneNumber::FieldNumber) == "123456");
+    QVERIFY(ref.value(QContactPhoneNumber::FieldNumber) == "123456");
+    QVERIFY(p1 == ref);
+    QVERIFY(ref == p1);
+
+    /* Try changing the original */
+    p1.setNumber("56789");
+    QVERIFY(p1.number() == "56789");
+    QVERIFY(p1.value(QContactPhoneNumber::FieldNumber) == "56789");
+    QVERIFY(ref.value(QContactPhoneNumber::FieldNumber) == "56789");
+    QVERIFY(p1 == ref);
+    QVERIFY(ref == p1);
+
+    /* Try changing the reference */
+    ref.setValue(QContactPhoneNumber::FieldNumber, "654321");
+    QVERIFY(p1.number() == "654321");
+    QVERIFY(p1.value(QContactPhoneNumber::FieldNumber) == "654321");
+    QVERIFY(ref.value(QContactPhoneNumber::FieldNumber) == "654321");
+    QVERIFY(p1 == ref);
+    QVERIFY(ref == p1);
+
     /* Random other test */
     MaliciousDetail md;
     QVERIFY(md.setValue("key", "value"));

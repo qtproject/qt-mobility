@@ -286,6 +286,24 @@ void tst_QContact::details()
     QVERIFY(c.removeDetail(0) == false);
     QVERIFY(c.error() == QContact::BadArgumentError);
 
+    // Reference tests...
+    QContactDetail& ref = one;
+    QVERIFY(c.saveDetail(&one));
+    QVERIFY(ref == one);
+    one.setNumber("56678");
+    QVERIFY(c.saveDetail(&one));
+    QVERIFY(ref == one);
+
+    // Retrieve the detail again and modify it
+    QContactPhoneNumber three = c.detail<QContactPhoneNumber>();
+    QVERIFY(ref == three);
+    QVERIFY(one == three);
+    three.setNumber("542343");
+    QVERIFY(c.saveDetail(&three));
+
+    // Now see if we got any updates to ref/one
+    QVERIFY(ref == one);
+    QVERIFY(ref != three);
 }
 
 void tst_QContact::actions()
