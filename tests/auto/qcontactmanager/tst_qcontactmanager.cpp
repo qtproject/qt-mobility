@@ -1042,6 +1042,9 @@ void tst_QContactManager::invalidManager()
     /* Groups */
     QVERIFY(manager.groups().count() == 0);
 
+    QVERIFY(manager.saveGroup(0) == false);
+    QVERIFY(manager.error() == QContactManager::BadArgumentError);
+
     QContactGroup group;
     group.addMember(foo.id());
     QVERIFY(manager.saveGroup(&group) == false);
