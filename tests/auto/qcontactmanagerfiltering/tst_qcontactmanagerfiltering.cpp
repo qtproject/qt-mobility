@@ -1492,6 +1492,8 @@ void tst_QContactManagerFiltering::sorting_data()
     QString firstname = QContactName::FieldFirst;
     QString lastname = QContactName::FieldLast;
     QString namedef = QContactName::DefinitionName;
+    QString urldef = QContactUrl::DefinitionName;
+    QString urlfield = QContactUrl::FieldUrl;
 
     QTest::newRow("first ascending") << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcd";
     QTest::newRow("first descending") << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "dcba";
@@ -1501,6 +1503,8 @@ void tst_QContactManagerFiltering::sorting_data()
     QTest::newRow("integer descending, blanks last") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacd";
     QTest::newRow("integer ascending, blanks first") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dcab";
     QTest::newRow("integer descending, blanks first") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dbac";
+    QTest::newRow("url ascending (null value), blanks first") << urldef << urlfield << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "abcd";
+    QTest::newRow("url ascending (null value), blanks last") << urldef << urlfield << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "dcba";
 }
 
 void tst_QContactManagerFiltering::sorting()
