@@ -59,7 +59,7 @@ QMailAccount QMessageAccountPrivate::convert(const QMessageAccount &account)
     return account.d_ptr->_account;
 }
 
-namespace {
+namespace QmfHelpers {
 
 QMessageAccount convert(const QMailAccount &account)
 {
