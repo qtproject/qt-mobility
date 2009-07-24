@@ -99,6 +99,8 @@ private slots:
 
 void tst_QValueSpaceItem::initTestCase()
 {
+    qRegisterMetaType<QVariant>("QVariant");
+
     QValueSpace::initValuespaceManager();
 
     root = new QValueSpaceObject("/");
