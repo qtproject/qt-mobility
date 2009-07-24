@@ -54,6 +54,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QSharedMemory>
+#include <QTime>
 
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
@@ -1795,7 +1796,6 @@ private:
 
     unsigned int forceChangeCount;
 
-    int clientIndexShmId;
     uchar *clientIndex;
     void incNode(unsigned short);
     void decNode(unsigned short);
@@ -1813,6 +1813,7 @@ private:
     unsigned long *m_statKeepCost;
 
     QSharedMemory* shm;
+    QSharedMemory* subShm;
 };
 
 QVALUESPACE_AUTO_INSTALL_LAYER(ApplicationLayer);
@@ -1842,18 +1843,16 @@ struct ApplicationLayerClient : public QPacketProtocol
 ApplicationLayer::ApplicationLayer()
 : type(Client), layer(0), lock(0), todoTimer(0),
   nextPackId(1), lastSentId(0), lastRecvId(0), valid(false),
-  forceChangeCount(0), clientIndexShmId(0), clientIndex(0),
+  forceChangeCount(0), clientIndex(0),
   changedNodesCount(0),
   m_statPoolSize(0), m_statMaxSystemBytes(0), m_statSystemBytes(0),
-  m_statInuseBytes(0), m_statKeepCost(0), shm(0)
+  m_statInuseBytes(0), m_statKeepCost(0), shm(0), subShm(0)
 {
     sserver = new ALServerImpl( this );
 }
 
 ApplicationLayer::~ApplicationLayer()
 {
-    if(clientIndex)
-        ::shmdt(clientIndex);
 }
 
 QString ApplicationLayer::name()
@@ -1864,10 +1863,6 @@ QString ApplicationLayer::name()
 static void AppLayerNodeChanged(unsigned short, void *);
 bool ApplicationLayer::startup(Type type)
 {
-    int subShmId = 0;
-
-    void * subShmptr = 0;
-
     valid = false;
 
     Q_ASSERT(!layer);
@@ -1913,27 +1908,28 @@ bool ApplicationLayer::startup(Type type)
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
-        subShmId = ::shmget(IPC_PRIVATE, (VERSION_TABLE_ENTRIES + 7) / 8, IPC_CREAT | 00644);
-        subShmptr = ::shmat(subShmId, 0, 0);
-        struct shmid_ds sds;
-        ::shmctl(subShmId, IPC_RMID, &sds);
+        qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+        subShm = new QSharedMemory(socket()+QString::number(qrand()), this);
+        if (!subShm->create((VERSION_TABLE_ENTRIES + 7) / 8, QSharedMemory::ReadWrite)) {
+            qWarning() << "AppLayer client cannot create clientIndex:" <<subShm->errorString() << subShm->key();
+        }
 
         lock = new QSystemReadWriteLock(key, false);
     }
     
-    if(shm->error() != QSharedMemory::NoError ||
-       ((subShmId == -1 || !subShmptr) && Server != type)) {
+    if(shm->error() != QSharedMemory::NoError || 
+            ((!subShm || subShm->error()!= QSharedMemory::NoError) && Server != type)) {
         qFatal("ApplicationLayer: Unable to create or access shared "
-               "resources. (%s)",shm->errorString().toLatin1().constData());
+               "resources. (%s - %s)",shm->errorString().toLatin1().constData(),subShm->errorString().toLatin1().constData() );
         return false;
     }
 
-    clientIndexShmId = subShmId;
-    clientIndex = (uchar *)subShmptr;
+    if (subShm)
+        clientIndex = (uchar *)subShm->data();
     if(Client == type) {
         QPacket mem;
         mem << (unsigned int)0
-            << (quint8)APPLAYER_SUBINDEX << (unsigned int)clientIndexShmId
+            << (quint8)APPLAYER_SUBINDEX << subShm->key()
             << (quint8)APPLAYER_DONE;
         (*connections.begin())->send(mem);
     }
@@ -2283,18 +2279,15 @@ void ApplicationLayer::readyRead()
 
                 case APPLAYER_SUBINDEX:
                     {
-                        unsigned int id;
-                        pack >> id;
+                        QString shmkey;
+                        pack >> shmkey;
 
-                        void* shmatRV = ::shmat(id, 0, SHM_RDONLY);
-                        if (shmatRV == reinterpret_cast<void*>(-1)) {
-                            if (errno == EINVAL) {
-                                // The application has probably closed already, and its shm region has been removed
-                            } else {
-                                qWarning() << "ApplicationLayer: Unable to shmat with id:" << id << "error:" << ::strerror(errno);
-                            }
+                        QSharedMemory* mem = new QSharedMemory(shmkey, protocol);
+                        if (!mem->attach(QSharedMemory::ReadOnly)) {
+                            qWarning() << "ApplicationLayer: Unable to shmat with id:" << shmkey << "error:" << mem->errorString();
+                            delete mem;
                         } else {
-                            static_cast<ApplicationLayerClient *>(protocol)->index = reinterpret_cast<uchar *>(shmatRV);
+                            static_cast<ApplicationLayerClient *>(protocol)->index = reinterpret_cast<uchar *>(mem->data());
                         }
                     }
                     break;
