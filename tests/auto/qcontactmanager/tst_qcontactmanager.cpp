@@ -300,7 +300,7 @@ void tst_QContactManager::nullIdOperations()
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
     QVERIFY(!cm->removeGroup(QUniqueId()));
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    QVERIFY(cm->error() == QContactManager::NotSupportedError || cm->error() == QContactManager::DoesNotExistError);
 
     QContact c = cm->contact(QUniqueId());
     QVERIFY(c.id() == 0);

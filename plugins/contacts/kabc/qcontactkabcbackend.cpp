@@ -227,7 +227,7 @@ void QContactKabcEngine::settingsFileChanged()
     }
 }
 
-QList<QUniqueId> QContactKabcEngine::contacts(QContactManager::Error& error) const
+QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QUniqueId> allCIds;
     error = QContactManager::NoError;
@@ -236,9 +236,16 @@ QList<QUniqueId> QContactKabcEngine::contacts(QContactManager::Error& error) con
         allCIds.append(getIdOfAddressee(curr, error));
     }
 
-    if (allCIds.count() > 0 && error == QContactManager::NoError)
-        error = QContactManager::DoesNotExistError;
-    return allCIds;
+    // return the list sorted according to sortOrders
+    QContactManager::Error sortError;
+    QList<QContact> sorted;
+    QList<QUniqueId> sortedIds;
+    for (int i = 0; i < allCIds.size(); i++)
+        QContactManagerEngine::addSorted(&sorted, contact(allCIds.at(i), sortError), sortOrders);
+    for (int i = 0; i < sorted.size(); i++)
+        sortedIds.append(sorted.at(i).id());
+
+    return sortedIds;
 }
 
 /*
@@ -283,7 +290,7 @@ QContact QContactKabcEngine::contact(const QUniqueId& contactId, QContactManager
     return QContact();
 }
 
-bool QContactKabcEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
+bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     if (contact == 0) {
         error = QContactManager::BadArgumentError;
@@ -292,14 +299,12 @@ bool QContactKabcEngine::saveContact(QContact* contact, bool batch, QContactMana
 
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
-qDebug() << "KABC::saveContact(): invalid detail error (didn't validate)";
         error = QContactManager::InvalidDetailError;
         return false;
     }
 
     KABC::Ticket *ticket = d->ab->requestSaveTicket();
     KABC::Addressee converted = convertContact(*contact);
-    bool newContact = false;
     if (contact->id() == 0) {
         // new contact
         d->m_lastUsedId += 1;
@@ -310,32 +315,46 @@ qDebug() << "KABC::saveContact(): invalid detail error (didn't validate)";
         d->m_kabcUidToQUniqueId.insert(newUuid, contact->id());
         QSettings definitions(d->m_settingsFile, QSettings::IniFormat);
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId + 1));
-        newContact = true;
+        contactsAdded.insert(contact->id());
+    } else {
+        contactsChanged.insert(contact->id());
+    }
+
+    // update groups if required.
+    QContactManager::Error groupError;
+    QList<QUniqueId> allGroups = groups(groupError);
+    QList<QUniqueId> contactGroups = contact->groups();
+    for (int i = 0; i < allGroups.size(); i++) {
+        QSet<QUniqueId> temp1, temp2, temp3;
+        QContactGroup curr = group(allGroups.at(i), groupError);
+        if (contactGroups.contains(allGroups.at(i))) {
+            // the contact should be part of this group
+            if (!curr.hasMember(contact->id())) {
+                curr.addMember(contact->id());
+                saveGroup(&curr, temp1, temp2, temp3, groupError);
+                groupsChanged.insert(curr.id());
+            }
+        } else {
+            // the contact should not be part of this group
+            if (curr.hasMember(contact->id())) {
+                curr.removeMember(contact->id());
+                saveGroup(&curr, temp1, temp2, temp3, groupError);
+                groupsChanged.insert(curr.id());
+            }
+        }
     }
     
+    // save to KABC database
     converted.setUid(d->m_QUniqueIdToKabcUid.value(contact->id()));
     d->ab->insertAddressee(converted);
     d->ab->save(ticket);
 
     // success!
     error = QContactManager::NoError;
-
-    // if we need to emit signals (ie, this isn't part of a batch operation)
-    // then emit the correct one.
-    if (!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contact->id());
-        if (newContact) {
-            emit contactsAdded(emitList);
-        } else {
-            emit contactsChanged(emitList);
-        }
-    }
-
     return true;
 }
 
-bool QContactKabcEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool QContactKabcEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     if (!d->m_QUniqueIdToKabcUid.contains(contactId)) {
         error = QContactManager::DoesNotExistError;
@@ -349,41 +368,38 @@ bool QContactKabcEngine::removeContact(const QUniqueId& contactId, bool batch, Q
     d->ab->save(ticket);
     error = QContactManager::NoError;
 
-    // if we need to emit signals (ie, this isn't part of a batch operation)
-    // then emit the correct one.
-    if (!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contactId);
-        emit contactsRemoved(emitList);
+    // remove the contact from any groups it might have been in
+    QContactManager::Error groupError;
+    QList<QUniqueId> allGroups = groups(groupError);
+    for (int i = 0; i < allGroups.size(); i++) {
+        QSet<QUniqueId> temp1, temp2, temp3;
+        QContactGroup curr = group(allGroups.at(i), groupError);
+        if (curr.hasMember(contactId)) {
+            curr.removeMember(contactId);
+            saveGroup(&curr, temp1, temp2, temp3, groupError);
+            groupsChanged.insert(curr.id());
+        }
     }
 
+    // success
+    contactsChanged.insert(contactId);
     return true;
 }
 
-QList<QContactManager::Error> QContactKabcEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+QList<QContactManager::Error> QContactKabcEngine::saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     QContactManager::Error functionError = QContactManager::NoError;
-    QList<QUniqueId> addedList;
-    QList<QUniqueId> changedList;
 
     for (int i = 0; i < contacts->count(); i++) {
-        QContact current = contacts->at(i);
-        int oldId = current.id();
+        QContact current = contacts->takeAt(i);
 
         // perform a save operation as part of the batch operation.
-        if (!saveContact(&current, true, error)) {
+        if (!saveContact(&current, contactsAdded, contactsChanged, groupsChanged, error)) {
             functionError = error;
             ret.append(functionError);
+            current.setId(0);
         } else {
-            // depending on whether or not it was a new contact,
-            // add the id to the correct signal emission list.
-            if (oldId == 0) {
-                addedList.append(current.id());
-            } else {
-                changedList.append(current.id());
-            }
-
             // this contact was saved successfully.
             ret.append(QContactManager::NoError);
         }
@@ -393,30 +409,23 @@ QList<QContactManager::Error> QContactKabcEngine::saveContacts(QList<QContact>* 
 
     error = functionError; // set the last real error for the batch operation.
 
-    // emit the required signals.
-    if (!addedList.isEmpty())
-        emit contactsAdded(addedList);
-    if (!changedList.isEmpty())
-        emit contactsChanged(changedList);
-
     // return the list of errors.
     return ret;
 }
 
-QList<QContactManager::Error> QContactKabcEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactKabcEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     QContactManager::Error functionError = QContactManager::NoError;
-    QList<QUniqueId> removedList;
 
     for (int i = 0; i < contactIds->count(); i++) {
         QUniqueId current = contactIds->at(i);
         // remove the contact as part of a batch operation
-        if (!removeContact(current, true, error)) {
+        if (!removeContact(current, contactsChanged, groupsChanged, error)) {
             functionError = error;
             ret.append(functionError);
         } else {
-            removedList.append(current);
+            // successfully removed.
             ret.append(QContactManager::NoError);
         }
 
@@ -424,8 +433,6 @@ QList<QContactManager::Error> QContactKabcEngine::removeContacts(QList<QUniqueId
     }
 
     error = functionError;
-    if (!removedList.isEmpty())
-        emit contactsRemoved(removedList);
     return ret;
 }
 
@@ -632,7 +639,7 @@ QStringList QContactKabcEngine::fastFilterableDefinitions() const
 }
 
 /*!
- * Returns the list of data types supported by the vCard engine
+ * Returns the list of data types supported by the KABC engine
  */
 QList<QVariant::Type> QContactKabcEngine::supportedDataTypes() const
 {

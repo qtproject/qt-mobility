@@ -776,11 +776,12 @@ QContactGroup QContactManagerEngine::group(const QUniqueId& groupId, QContactMan
  */
 bool QContactManagerEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
 {
-    Q_UNUSED(group);
     Q_UNUSED(groupsAdded);
     Q_UNUSED(groupsChanged);
     Q_UNUSED(contactsChanged);
     error = QContactManager::NotSupportedError;
+    if (group == 0)
+        error = QContactManager::BadArgumentError;
     return false;
 }
 
