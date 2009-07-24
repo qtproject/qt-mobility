@@ -249,7 +249,7 @@ QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
 
 QMessage::StatusFlags convert(quint64 v)
 {
-    QMessage::StatusFlags result;
+    QMessage::StatusFlags result(0);
 
     if (v & (QMailMessage::Read | QMailMessage::ReadElsewhere)) {
         result |= QMessage::Read;
@@ -269,7 +269,7 @@ QMessage::StatusFlags convert(quint64 v)
 
 quint64 convert(QMessage::StatusFlags v)
 {
-    quint64 result;
+    quint64 result(0);
 
     if (v & QMessage::Read) {
         result |= QMailMessage::Read;
