@@ -39,19 +39,25 @@ void clearMessageStore()
 {
 }
 
-void addAccount(const Parameters &params)
+QMessageAccountId addAccount(const Parameters &params)
 {
     Q_UNUSED(params)
+
+    return QMessageAccountId();
 }
 
-void addFolder(const Parameters &params)
+QMessageFolderId addFolder(const Parameters &params)
 {
     Q_UNUSED(params)
+
+    return QMessageFolderId();
 }
 
-void addMessage(const Parameters &params)
+QMessageId addMessage(const Parameters &params)
 {
     Q_UNUSED(params)
+
+    return QMessageId();
 }
 
 }

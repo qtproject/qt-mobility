@@ -36,15 +36,19 @@
 #include <QMap>
 #include <QString>
 
+class QMessageAccountId;
+class QMessageFolderId;
+class QMessageId;
+
 namespace Support {
 
 typedef QMap<QString, QString> Parameters;
 
 void clearMessageStore();
 
-void addAccount(const Parameters &params);
-void addFolder(const Parameters &params);
-void addMessage(const Parameters &params);
+QMessageAccountId addAccount(const Parameters &params);
+QMessageFolderId addFolder(const Parameters &params);
+QMessageId addMessage(const Parameters &params);
 
 }
 

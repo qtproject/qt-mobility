@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "support.h"
+#include "qmfhelpers_p.h"
 
 #include <qmailaccount.h>
 #include <qmailaddress.h>
@@ -51,7 +52,7 @@ void clearMessageStore()
     tst_QMailStore::clearMessageStore();
 }
 
-void addAccount(const Parameters &params)
+QMessageAccountId addAccount(const Parameters &params)
 {
     QString name(params["name"]);
     QString fromAddress(params["fromAddress"]);
@@ -65,18 +66,26 @@ void addAccount(const Parameters &params)
 
         if (!QMailStore::instance()->addAccount(&account, 0)) {
             qWarning() << "Unable to addAccount:" << name;
+        } else {
+            return QmfHelpers::convert(account.id());
         }
     }
+
+    return QMessageAccountId();
 }
 
-void addFolder(const Parameters &params)
+QMessageFolderId addFolder(const Parameters &params)
 {
     Q_UNUSED(params)
+
+    return QMessageFolderId();
 }
 
-void addMessage(const Parameters &params)
+QMessageId addMessage(const Parameters &params)
 {
     Q_UNUSED(params)
+
+    return QMessageId();
 }
 
 }

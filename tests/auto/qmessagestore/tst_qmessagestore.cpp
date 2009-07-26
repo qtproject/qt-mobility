@@ -65,7 +65,7 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
-    void testInfrastructure();
+    void testAccount();
 };
 
 QTEST_MAIN(tst_QMessageStore)
@@ -93,7 +93,7 @@ void tst_QMessageStore::cleanupTestCase()
 {
 }
 
-void tst_QMessageStore::testInfrastructure()
+void tst_QMessageStore::testAccount()
 {
     Support::Parameters p;
     p.insert("name", "Test Account");

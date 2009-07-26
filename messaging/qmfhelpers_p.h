@@ -35,8 +35,8 @@
 #define _QMFHELPERS_H_
 
 #include "qmessage.h"
-#include "qmessageaccountid.h"
-#include "qmessagefolderid.h"
+#include "qmessageaccount.h"
+#include "qmessagefolder.h"
 #include "qmessagestore.h"
 #include "qmessagedatacomparator.h"
 
