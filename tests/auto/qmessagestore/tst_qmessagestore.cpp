@@ -65,6 +65,7 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+    void testAccount_data();
     void testAccount();
 };
 
@@ -93,16 +94,34 @@ void tst_QMessageStore::cleanupTestCase()
 {
 }
 
+void tst_QMessageStore::testAccount_data()
+{
+    QTest::addColumn<QString>("name");
+    QTest::addColumn<QString>("fromAddress");
+
+    QTest::newRow("1") << "Test Account #1" << "tester1@example.com";
+    QTest::newRow("2") << "Test Account #2" << "tester2@example.com";
+}
+
 void tst_QMessageStore::testAccount()
 {
-    Support::Parameters p;
-    p.insert("name", "Test Account");
-    p.insert("fromAddress", "tester@example.com");
+    QFETCH(QString, name);
+    QFETCH(QString, fromAddress);
 
-    Support::addAccount(p);
+    Support::Parameters p;
+    p.insert("name", name);
+    p.insert("fromAddress", fromAddress);
+
+    QMessageAccountId accountId(Support::addAccount(p));
+    QVERIFY(!(accountId == QMessageAccountId()));
     
-    foreach (const QMessageAccount &account, QMessageStore::instance()->queryAccounts()) {
-        qDebug() << "Account:" << account.name();
-    }
+    QMessageAccount account(accountId);
+    QCOMPARE(account.id(), accountId);
+    QCOMPARE(account.name(), name);
+    QCOMPARE(account.fromAddress().recipient(), fromAddress);
+    QCOMPARE(account.fromAddress().type(), QMessageAddress::Email);
+
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
+    QVERIFY(accountIds.contains(accountId));
 }
 
