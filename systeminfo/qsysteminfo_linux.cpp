@@ -324,6 +324,16 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::FmradioFeature :
+        {
+            QString sysPath = "/sys/class/video4linux/";
+            QDir sysDir(sysPath);
+            QStringList filters;
+            filters << "*";
+            QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+            if(sysList.contains("radio")) {
+                featureSupported = true;
+            }
+        }
         break;
     case QSystemInfo::IrFeature :
         {
@@ -405,6 +415,16 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 #endif
         break;
     case QSystemInfo::VideoOutFeature :
+        {
+            QString sysPath = "/sys/class/video4linux/";
+            QDir sysDir(sysPath);
+            QStringList filters;
+            filters << "*";
+            QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+            if(sysList.contains("video")) {
+                featureSupported = true;
+            }
+        }
         break;
     case QSystemInfo::HapticsFeature:
         break;
