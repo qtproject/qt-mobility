@@ -267,6 +267,6 @@ void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
     QDBusReply< qint32 > reply = d->connectionInterface->call("SetBrightness", brightness);
     if ( reply.isValid() ) {
 //        qDebug() << __FUNCTION__ << reply.value();
-//    }
+    }
 }
 
