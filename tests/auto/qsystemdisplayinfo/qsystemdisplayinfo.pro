@@ -3,8 +3,8 @@ HEADERS  +=
 TARGET = tst_qsystemdisplayinfo
 CONFIG+=testcase
 QT += testlib
-QT -= gui
-QT = core network
+
+QT = core network gui
 
 INCLUDEPATH += ../../../systeminfo
 
