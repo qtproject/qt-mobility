@@ -35,10 +35,6 @@
 #include "qmallocpool.h"
 #include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/shm.h>
-#include <sys/sem.h>
 #include <errno.h>
 #include <QSet>
 #include "qsystemlock.h"
