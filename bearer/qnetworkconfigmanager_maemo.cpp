@@ -45,11 +45,13 @@
 
 #include <QDebug>
 #include <QtDBus>
+#include <QRegExp>
 
-#include <duivaluespace.h>
+#include <wlancond.h>
+#include <libicd-network-wlan-dev.h>
 #include <maemo_icd.h>
+#include <iapconf.h>
 
-#define CONF_IAP "system.osso.connectivity.IAP"
 
 QT_BEGIN_NAMESPACE
 
@@ -62,52 +64,98 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 }
 
 
+static inline QString network_attrs_to_security(uint network_attrs)
+{
+    uint cap;
+    nwattr2cap(network_attrs, &cap); /* from libicd-network-wlan-dev.h */
+    if (cap & WLANCOND_OPEN)
+	return "NONE";
+    else if (cap & WLANCOND_WEP)
+	return "WEP";
+    else if (cap & WLANCOND_WPA_PSK)
+	return "WPA_PSK";
+    else if (cap & WLANCOND_WPA_EAP)
+	return "WPA_EAP";
+    return "";
+}
+
+
+struct SSIDInfo {
+    QString iap_id;
+    QString wlan_security;
+};
+
 void QNetworkConfigurationManagerPrivate::updateConfigurations()
 {
-    QHash<QString, bool> knownConfigs; /* Contains known network id (like ssid) */
+    /* Contains known network id (like ssid) from storage */
+    QMultiHash<QByteArray, SSIDInfo* > knownConfigs;
+
+    /* All the scanned access points */
     QList<Maemo::IcdScanResult> scanned;
-    QHash<QString, QString> network_id_and_iap_id_mapping;
 
-    /* We return currently configured IAPs in the first run and
-     * do the WLAN scan in subsequent runs.
+    const QRegExp wlan = QRegExp("WLAN.*");
+
+    /* We return currently configured IAPs in the first run and do the WLAN
+     * scan in subsequent runs.
      */
-    DuiConfItem configured_iaps(CONF_IAP);
-    QList<QString> all_iaps = configured_iaps.listDirs();
+    QList<QString> all_iaps;
+    Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString iap_path, all_iaps) {
-	const bool found = true;
+    foreach (QString iap_id, all_iaps) {
+	QByteArray ssid;
+	Maemo::IAPConf saved_ap(iap_id);
+	bool is_temporary = saved_ap.value("temporary").toBool();
+	if (is_temporary) {
+	    qDebug() << "IAP" << iap_id << "is temporary, skipping it.";
+	    continue;
+	}
 
-	QString str = iap_path.section('.', 4);
-	DuiConfItem ap_id(iap_path + ".wlan_ssid"); // TODO: fix GPRS case as it has no ssid
-	QString ssid = ap_id.value().toByteArray().data();
-	knownConfigs.insert(ssid, found);
+	QString iap_type = saved_ap.value("type").toString();
+	if (iap_type.contains(wlan)) {
+	    ssid = saved_ap.value("wlan_ssid").toByteArray();
+	    if (ssid.isEmpty()) {
+		qWarning() << "Cannot get ssid for" << iap_id;
+		continue;
+	    }
 
-	if (!accessPointConfigurations.contains(str)) {
-	    DuiConfItem iap_info(iap_path + ".name");
+	    QString security_method = saved_ap.value("wlan_security").toString();
+	    SSIDInfo *info = new SSIDInfo;
+	    info->iap_id = iap_id;
+	    info->wlan_security = security_method;
+	    knownConfigs.insert(ssid, info);
+	} else if (iap_type.isEmpty()) {
+	    qWarning() << "IAP" << iap_id << "network type is not set! Skipping it";
+	    continue;
+	} else {
+	    qDebug() << "IAP" << iap_id << "network type is" << iap_type;
+	    ssid.clear();
+	}
+
+	if (!accessPointConfigurations.contains(iap_id)) {
 	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-	    cpPriv->name = iap_info.value().toString();
+	    //cpPriv->name = iap_info.value().toString();
+	    cpPriv->name = saved_ap.value("name").toString();
 	    if (cpPriv->name.isEmpty())
-		cpPriv->name = ssid;
+		if (ssid.size() > 0)
+		    cpPriv->name = ssid.data();
+		else
+		    cpPriv->name = iap_id;
 	    cpPriv->isValid = true;
-	    cpPriv->id = str;
+	    cpPriv->id = iap_id;
 	    cpPriv->network_id = ssid;
+	    cpPriv->iap_type = iap_type;
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Defined;
 
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
-	    accessPointConfigurations.insert(str, ptr);
+	    accessPointConfigurations.insert(iap_id, ptr);
 
-	    qDebug() << "IAP" << str << cpPriv->name << ssid << "added to known list.";
+	    qDebug("IAP: %s, name: %s, ssid: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data(), ssid.size() ? ssid.data() : "-");
 	} else {
-	    qDebug() << "IAP" << str << ssid << "already exists in the known list.";
+	    qDebug("IAP: %s, ssid: %s, already exists in the known list", iap_id.toAscii().data(), ssid.size() ? ssid.data() : "-");
 	}
     }
 
-#if 0
-    foreach (QString iap, knownConfigs) {
-	qDebug() << "Value" << iap;
-    }
-#endif
 
     if (!firstUpdate) {
 	QStringList scannedNetworkTypes;
@@ -126,87 +174,82 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	}
     }
 
-    /* This is skipped in the first update */
-    if (scanned.size()) {
-	/* In order to speed up things within next for loop, we create a separate hash
-	 * that maps network id and IAP id.
-	 */
-	// TODO: network type needs to be also in the hash
-	network_id_and_iap_id_mapping.clear();
-	QHashIterator<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > i(accessPointConfigurations);
-	while (i.hasNext()) {
-	    i.next();
-	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = i.value();
-	    qDebug() << "Mapping:" << priv->network_id << "-->" << priv->id;
-	    network_id_and_iap_id_mapping.insert(priv->network_id, priv->id);
-	}
-    }
 
-    /* This is skipped in the first update */
+    /* This is skipped in the first update as scanned size is zero */
     for (int i=0; i<scanned.size(); ++i) {
-	const Maemo::IcdScanResult &ap = scanned.at(i); 
-	QString ap_id = ap.scan.network_id.data();
-	QString iap_id = network_id_and_iap_id_mapping.value(ap_id);
+	const Maemo::IcdScanResult ap = scanned.at(i); 
 
-	/* Remove scanned AP from known configurations so that we can
-	 * emit configurationRemoved signal later
-	 */
-	if (!iap_id.isEmpty() && knownConfigs.contains(iap_id)) {
-	    qDebug() << "IAP" << iap_id << ap_id << "already known.";
-	    knownConfigs.remove(iap_id);
-	}
+	if (ap.scan.network_attrs & ICD_NW_ATTR_IAPNAME) {
+	    /* The network_id is IAP id, so the IAP is a known one */
+	    QString iapid = ap.scan.network_id.data();
+	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iapid);
+	    if (priv) {
+		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
+		accessPointConfigurations.insert(iapid, priv);
+		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
 
-	/* Be very carefull with the IAP id and network id concept!
-	 * Now next block mixes these two things (because we do not know
-	 * the IAP id).
-	 */
-	if (iap_id.isEmpty()) {
-	    // The IAP is not found in permanent storage so accessPointConfigurations
-	    // will not contain the IAP id
+		if (!ap.scan.network_type.contains(wlan))
+		    continue; // not a wlan AP
+
+		/* Remove scanned AP from known configurations so that we can
+		 * emit configurationRemoved signal later
+		 */
+		QList<SSIDInfo* > known_iaps = knownConfigs.values(priv->network_id);
+	    rescan_list:
+		for (int k=0; k<known_iaps.size(); ++k) {
+		    SSIDInfo *iap = known_iaps.at(k);
+		    if (iap->wlan_security == 
+			network_attrs_to_security(ap.scan.network_attrs)) {
+			/* Remove IAP from the list */
+			knownConfigs.remove(priv->network_id, iap);
+			qDebug() << "Removed IAP" << iap->iap_id << "from known config";
+			known_iaps.removeAt(k);
+			delete iap;
+			goto rescan_list;
+		    }
+		}
+	    } else {
+		qWarning() << "IAP" << iapid << "is missing!";
+	    }
+
+	} else {
+	    /* Non saved access point data */
+	    QByteArray scanned_ssid = ap.scan.network_id;
 	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-	    QString hrs = ap_id;
+	    QString hrs = scanned_ssid.data();
 	    cpPriv->name = ap.network_name.isEmpty() ? hrs : ap.network_name;
 	    cpPriv->isValid = true;
-	    cpPriv->id = ap_id;  // Note: id is now ssid, it must be set to IAP id if the IAP is saved
-	    cpPriv->network_id = ap_id;
+	    cpPriv->id = scanned_ssid.data();  // Note: id is now ssid, it should be set to IAP id if the IAP is saved
+	    cpPriv->network_id = scanned_ssid;
+	    cpPriv->iap_type = ap.scan.network_type;
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Undefined;
 
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
-	    accessPointConfigurations.insert(ap_id, ptr);
+	    accessPointConfigurations.insert(cpPriv->id, ptr);
 
-	    qDebug() << "IAP with network id" << ap_id << "was found in the scan.";
+	    qDebug() << "IAP with network id" << cpPriv->id << "was found in the scan.";
 
 	    QNetworkConfiguration item;
 	    item.d = ptr;
 	    emit configurationAdded(item);
-
-	} else {
-	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
-	    if (priv) {
-		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
-		accessPointConfigurations.insert(iap_id, priv);
-		qDebug() << "IAP" << iap_id << ap_id << "discovered.";
-	    } else {
-		qWarning() << "IAP is missing!!!";
-	    }
 	}
     }
 
-    network_id_and_iap_id_mapping.clear();
 
     /* Remove non existing iaps since last update */
     if (!firstUpdate) {
-	QHashIterator<QString, bool> i(knownConfigs);
+	QHashIterator<QByteArray, SSIDInfo* > i(knownConfigs);
 	while (i.hasNext()) {
 	    i.next();
-	    //qDebug() << i.key() << ": " << i.value();
+	    SSIDInfo *iap = i.value();
+	    QString iap_id = iap->iap_id;
+	    //qDebug() << i.key() << ": " << iap_id;
 
-	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(i.key());
+	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
 	    if (priv) {
 		priv->isValid = false;
-
-		qDebug() << "IAP" << i.key() << "was removed as it was not found in scan.";
+		qDebug() << "IAP" << iap_id << "was removed as it was not found in scan.";
 
 		QNetworkConfiguration item;
 		item.d = priv;
@@ -216,6 +259,15 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		//from existing ServiceNetworks to the removed access point configuration
 	    }
 	}
+    }
+
+
+    QMutableHashIterator<QByteArray, SSIDInfo* > i(knownConfigs);
+    while (i.hasNext()) {
+	i.next();
+	SSIDInfo *iap = i.value();
+	delete iap;
+	i.remove();
     }
 
     if (firstUpdate)

@@ -45,8 +45,8 @@
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
-#include <duivaluespace.h>
 #include <maemo_icd.h>
+#include <iapconf.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -69,7 +69,6 @@ static inline DBusConnection *get_dbus_conn(DBusError *error)
     DBusConnection *conn = dbus_bus_get(DBUS_BUS_SYSTEM, error);
     qDebug() << "Listening to bus" << dbus_bus_get_unique_name(conn);
 
-    dbus_connection_setup_with_g_main(conn, NULL);
     return conn;
 }
 
@@ -309,6 +308,43 @@ QString QNetworkSessionPrivate::updateIdentifier(QString &newId)
 }
 
 
+#if 0
+/* Currently not used func because this cannot be called from sentData() or
+ * receivedData() as those funcs are const.
+ */
+void QNetworkSessionPrivate::updateStatistics(void)
+{
+    /* This could be also implemented by using the Maemo::Icd::statistics()
+     * that gets the statistics data for a specific IAP. Change if
+     * necessary.
+     */
+    Maemo::Icd icd;
+    QList<Maemo::IcdStatisticsResult> stats_results;
+
+    if (!icd.statistics(stats_results)) {
+	return;
+    }
+
+    foreach (Maemo::IcdStatisticsResult res, stats_results) {
+	if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
+	    /* network_id is the IAP UUID */
+	    if (QString(res.params.network_id.data()) == activeConfig.identifier()) {
+		tx_data = res.bytes_sent;
+		rx_data = res.bytes_received;
+	    }
+	} else {
+	    /* We probably will never get to this branch */
+	    QNetworkConfigurationPrivate *d = activeConfig.d.data();
+	    if (res.params.network_id == d->network_id) {
+		tx_data = res.bytes_sent;
+		rx_data = res.bytes_received;
+	    }
+	}
+    }
+}
+#endif
+
+
 quint64 QNetworkSessionPrivate::sentData() const
 {
     return tx_data;
@@ -403,8 +439,8 @@ void QNetworkSessionPrivate::open()
 
 	publicConfig.d->isValid = true;
 
-	DuiConfItem iap_name("system.osso.connectivity.IAP." + publicConfig.d->id + ".name");
-	publicConfig.d->name = iap_name.value().toString();
+	Maemo::IAPConf iap_name(publicConfig.d->id);
+	publicConfig.d->name = iap_name.value("name").toString();
 	publicConfig.d->state = QNetworkConfiguration::Active;
 	publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 

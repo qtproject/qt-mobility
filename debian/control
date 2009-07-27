@@ -2,8 +2,8 @@ Source: libbearer
 Priority: optional
 Maintainer: Jukka Rissanen <jukka.rissanen@nokia.com>
 Build-Depends: debhelper (>= 7.0.17), qt4-dev-tools (>= 4.5),
- libqt4-dev (>= 4.5), libduivaluespace-dev (>= 0.7), icd2-dev, icd2-osso-ic-dev,
- libconninet0-dev (>= 0.9)
+ libqt4-dev (>= 4.5), libdui-dev (>= 0.8), icd2-dev, icd2-osso-ic-dev,
+ libconninet0-dev (>= 0.15), libicd-network-wlan-dev, osso-wlan-dev
 Standards-Version: 3.7.2
 Section: net
 
@@ -25,7 +25,8 @@ Package: libbearer-dev
 Section: net
 Architecture: any
 Depends: libbearer (= ${Source-Version}), libqt4-dev (>= 4.5.0),
- icd2-osso-ic-dev, icd2-dev, libduivaluespace-dev, libconninet0-dev (>= 0.9)
+ icd2-osso-ic-dev, icd2-dev (>= 0.89), libdui-dev (>= 0.8),
+ libconninet0-dev (>= 0.15), libicd-network-wlan-dev, osso-wlan-dev
 Description: Qt network Bearer API development files
  Qt network Bearer API development files.
 
@@ -38,7 +39,7 @@ Description: Qt network Bearer API documentation files
 Package: libbearer-test
 Section: net
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, connectivity-test-stubs | icd2, dbus, gconf2
+Depends: ${misc:Depends}, ${shlibs:Depends}, dbus, gconf2, connectivity-test-stubs | icd2
 Description: CI tests for libbearer
  This package contains continuous integration tests for the code inside
  libbearer source package.

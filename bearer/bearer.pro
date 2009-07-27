@@ -111,8 +111,11 @@ maemo {
 	HEADERS -= qnmdbushelper_p.h
 	HEADERS -= qnetworkmanagerservice_p.h
 
-	PKGCONFIG += glib-2.0 dbus-glib-1 duivaluespace-1.0 osso-ic conninet
+	PKGCONFIG += glib-2.0 dbus-glib-1 osso-ic conninet
 	DEFINES += MAEMO
+
+	# TODO: how to remove debian build dirs
+	#QMAKE_DISTCLEAN += ../debian/libbearer ../debian/libbearer-dbg ../debian/libbearer-dev ../debian/libbearer-doc ../debian/libbearer-examples ../debian/libbearer-test ../debian/tmp ../debian/files ../debian/*.substvars ../debian/*.debhelper
 }
 
 include (../common.pri)

@@ -1,3 +1,12 @@
+libbearer (0.13) unstable; urgency=low
+
+  * Using IAPConf class instead of DuiGConfItem and/or DuiValueSpace (which is
+    deprecated) in order to hide gconf details.
+  * Statistics support added to QNetworkSession class
+  * QNetworkConfigurationManager::updateConfigurations() internal logic fixed
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Fri,  3 Jul 2009 11:40:40 +0300
+
 libbearer (0.12) unstable; urgency=low
 
   * Merging with the latest upstream version.

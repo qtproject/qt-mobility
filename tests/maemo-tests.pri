@@ -9,5 +9,5 @@ maemo {
 	INSTALLS += target
 	DEFINES += MAEMO
 
-	PKGCONFIG += glib-2.0 dbus-glib-1 duivaluespace-1.0 osso-ic conninet
+	PKGCONFIG += glib-2.0 dbus-glib-1 osso-ic conninet
 }

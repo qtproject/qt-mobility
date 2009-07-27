@@ -93,7 +93,8 @@ public:
 
 #ifdef MAEMO
     /* In Maemo the id field (defined above) is the IAP id (which typically is UUID) */
-    QString network_id; /* typically WLAN ssid or similar (TODO: should this be byte array?) */
+    QByteArray network_id; /* typically WLAN ssid or similar */
+    QString iap_type; /* is this one WLAN or GPRS */
 #endif
 
 private:

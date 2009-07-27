@@ -203,6 +203,7 @@ private:
     friend class IcdListener;
     void updateState(QNetworkSession::State);
     QString updateIdentifier(QString &newId);
+    void updateStatistics(void);
     void cleanupSession(void);
 #endif
 };

@@ -43,6 +43,10 @@
 #include "qnetworkconfiguration.h"
 #include "qnetworkconfigmanager.h"
 
+#ifdef MAEMO
+#include <iapconf.h>
+#endif
+
 class tst_QNetworkConfiguration : public QObject
 {
     Q_OBJECT
@@ -59,6 +63,8 @@ private slots:
 
 private:
 #ifdef MAEMO
+    Maemo::IAPConf *iapconf;
+    Maemo::IAPConf *gprsiap;
     QProcess *icd_stub;
 #endif
 };
@@ -66,23 +72,27 @@ private:
 void tst_QNetworkConfiguration::init()
 {
 #ifdef MAEMO
-    // Add IAP to setup
-    QProcess gconftool;
-    gconftool.start("gconftool-2 --recursive-unset "
-                    "/system/osso/connectivity/IAP/007");
-    gconftool.waitForFinished();
+    iapconf = new Maemo::IAPConf("007");
+    iapconf->clear();
+    iapconf->setValue("ipv4_type", "AUTO");
+    iapconf->setValue("wlan_wepkey1", "connt");
+    iapconf->setValue("wlan_wepdefkey", 1);
+    iapconf->setValue("wlan_ssid", QByteArray("JamesBond"));
+    iapconf->setValue("name", "James Bond");
+    iapconf->setValue("type", "WLAN_INFRA");
 
-    gconftool.start("gconftool-2 --set --type string "
-                    "/system/osso/connectivity/IAP/007/type WLAN_INFRA");
-    gconftool.waitForFinished();
-    gconftool.start("gconftool-2 --set --type string "
-                    "/system/osso/connectivity/IAP/007/wlan_ssid JamesBond");
-    gconftool.waitForFinished();
-    gconftool.start("gconftool-2 --set --type string "
-                    "/system/osso/connectivity/IAP/007/name James_Bond");
-    gconftool.waitForFinished();
+    gprsiap = new Maemo::IAPConf("This-is-GPRS-IAP");
+    gprsiap->clear();
+    gprsiap->setValue("ask_password", false);
+    gprsiap->setValue("gprs_accesspointname", "internet");
+    gprsiap->setValue("gprs_password", "");
+    gprsiap->setValue("gprs_username", "");
+    gprsiap->setValue("ipv4_autodns", true);
+    gprsiap->setValue("ipv4_type", "AUTO");
+    gprsiap->setValue("sim_imsi", "244070123456789");
+    gprsiap->setValue("name", "MI6");
+    gprsiap->setValue("type", "GPRS");
 
-    // Start icd2 stub
     icd_stub = new QProcess(this);
     icd_stub->start("/usr/bin/icd2_stub.py");
     QTest::qWait(1000);
@@ -101,11 +111,10 @@ void tst_QNetworkConfiguration::init()
 void tst_QNetworkConfiguration::cleanup()
 {
 #ifdef MAEMO
-    // Remove IAP we just added
-    QProcess gconftool;
-    gconftool.start("gconftool-2 --recursive-unset "
-                    "/system/osso/connectivity/IAP/007");
-    gconftool.waitForFinished();
+    iapconf->clear();
+    delete iapconf;
+    gprsiap->clear();
+    delete gprsiap;
 
     // Terminate icd2 stub
     icd_stub->terminate();
