@@ -8,7 +8,7 @@ QT = core network
 INCLUDEPATH += ../../../bearer
 
 include(../../../common.pri)
-LIBS += -lbearer
+LIBS += -lQtBearer
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

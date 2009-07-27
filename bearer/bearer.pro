@@ -1,6 +1,6 @@
 # Qt bearer management library
 TEMPLATE = lib
-TARGET = bearer
+TARGET = QtBearer
 
 DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 

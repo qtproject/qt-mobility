@@ -15,6 +15,6 @@ INCLUDEPATH += ../../bearer
 
 include(../../common.pri)
 
-LIBS += -lbearer
+LIBS += -lQtBearer
 
 CONFIG += console
