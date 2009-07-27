@@ -51,14 +51,18 @@ by using the default lookup mechanism.
 The client code has precise knowledge of the service and its interfaces. 
 
 \code
-    QServiceManager* manager = new QServiceManager(this);
+    QServiceManager manager;
     QServiceFilter filter("com.nokia.qt.examples.FileStorage");
     filter.setServiceName("FileManager");
-    QList<QServiceInterfaceDescriptor> objs = manager->findInterfaces(filter);
-    Q_ASSERT(objs.count());
 
-    //instantiate the FileStorage object
-    QObject* service = manager->loadInterface(objs.at(0));
+    // find services complying with filter
+    QList<QServiceInterfaceDescriptor> foundServices
+    foundServices = manager.findInterfaces(filter);
+    Q_ASSERT(foundServices.count());
+
+    // instantiate the FileStorage object
+    QObject* fileStorage;
+    fileStorage = manager.loadInterface(foundServices.at(0));
 \endcode
 
 \section2 Default lookup
@@ -69,8 +73,9 @@ the same interface the latest version is returned. Therefore subsequent versions
 compatible to previous versions.
 
 \code
-    QServiceManager* manager = ...
-    QObject* storage = manager->loadInterface("com.nokia.qt.examples.FileStorage");
+    QServiceManager manager;
+    QObject *storage;
+    storage = manager->loadInterface("com.nokia.qt.examples.FileStorage");
 \endcode
 
 \section2 Header lookup
@@ -85,8 +90,9 @@ The subsequent code snippet demonstrates how this may look like:
 ...
 QServiceManager manager;
 FileStorage* storage = 0;
-manager->setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
+...
+manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
+storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
 
 \endcode
 
@@ -233,16 +239,20 @@ by QServiceInterfaceDescriptor which can be used to request references to servic
 
 QServiceFilter simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example
 demonstrates the interaction between QServiceInterfaceDescriptor and QServiceFilter by creating references to all services that implement the 
-above \i com.nokia.qt.TestService interface:
+interface \i com.nokia.qt.ILocation:
 
 \code
     QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.TestService");
+    filter.setInterfaceName("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
-    for( int i = 0; i<list.size(); i++) {
-        QObject* obj = mgr.loadInterface(list[i]);
-        if (obj) obj.setParent(this); //returned object owned by client
+    for(int i = 0; i < list.size(); i++) {
+        QObject* serviceObject;
+        serviceObject = mgr.loadInterface(list[i]);
+
+        // returned object owned by client
+        if (serviceObject)
+            serviceObject->setParent(this);
     }
 \endcode
 

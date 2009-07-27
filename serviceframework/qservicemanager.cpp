@@ -372,7 +372,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     const QStringList serviceCaps = descriptor.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
     if ( session && !session->isAllowed(serviceCaps) ) {
         d->setError(ServiceCapabilityDenied);
-        return 0;  //TODO set error state on context object, if it exists
+        return 0;
     }
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(

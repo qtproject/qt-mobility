@@ -53,19 +53,24 @@
 <a name="verbose-lookup"></a>
 <h3>Verbose lookup</h3>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
-<pre>    QServiceManager* manager = new QServiceManager(this);
+<pre>    QServiceManager manager;
     QServiceFilter filter(&quot;com.nokia.qt.examples.FileStorage&quot;);
     filter.setServiceName(&quot;FileManager&quot;);
-    QList&lt;QServiceInterfaceDescriptor&gt; objs = manager-&gt;findInterfaces(filter);
-    Q_ASSERT(objs.count());
 
-<span class="comment">    //instantiate the FileStorage object</span>
-    QObject* service = manager-&gt;loadInterface(objs.at(0));</pre>
+<span class="comment">    // find services complying with filter</span>
+    QList&lt;QServiceInterfaceDescriptor&gt; foundServices
+    foundServices = manager.findInterfaces(filter);
+    Q_ASSERT(foundServices.count());
+
+<span class="comment">    // instantiate the FileStorage object</span>
+    QObject* fileStorage;
+    fileStorage = manager.loadInterface(foundServices.at(0));</pre>
 <a name="default-lookup"></a>
 <h3>Default lookup</h3>
 <p>The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
-<pre>    QServiceManager* manager = ...
-    QObject* storage = manager-&gt;loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+<pre>    QServiceManager manager;
+    QObject *storage;
+    storage = manager-&gt;loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="header-lookup"></a>
 <h3>Header lookup</h3>
 <p>So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The subsequent code snippet demonstrates how this may look like:</p>
@@ -73,8 +78,9 @@
     ...
     QServiceManager manager;
     FileStorage* storage = 0;
-    manager-&gt;setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
-    storage = manager-&gt;getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+    ...
+    manager.setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
+    storage = manager.getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="database-scope"></a>
 <h3>Database scope</h3>
 <p>A <a href="qservicemanager.html">QServiceManager</a> operates in either <a href="qservicemanager.html#Scope-enum">User scope</a> or <a href="qservicemanager.html#Scope-enum">System scope</a>. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.</p>
@@ -151,14 +157,18 @@
 <a name="identifying-services"></a>
 <h2>Identifying services</h2>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
-<p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the above <i>com.nokia.qt.TestService</i> interface:</p>
+<p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
 <pre>        QServiceManager mgr;
         QServiceFilter filter;
-        filter.setInterfaceName(&quot;com.nokia.qt.TestService&quot;);
+        filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
         QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
-        for( int i = 0; i&lt;list.size(); i++) {
-            QObject* obj = mgr.loadInterface(list[i]);
-            if (obj) obj.setParent(this); <span class="comment">//returned object owned by client</span>
+        for(int i = 0; i &lt; list.size(); i++) {
+            QObject* serviceObject;
+            serviceObject = mgr.loadInterface(list[i]);
+
+            <span class="comment">// returned object owned by client</span>
+            if (serviceObject)
+                serviceObject-&gt;setParent(this);
         }</pre>
 <a name="upgrading-services"></a>
 <h2>Upgrading services</h2>
