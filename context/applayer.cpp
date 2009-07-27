@@ -1679,15 +1679,13 @@ public:
     virtual void remHandle(HANDLE);
     virtual bool remove(HANDLE);
     virtual bool remove(HANDLE, const QByteArray &);
-    virtual bool setValue(HANDLE, const QVariant &);
-    virtual bool setValue(HANDLE, const QByteArray &, const QVariant &);
     virtual bool syncChanges() { return true; }
 
     void removeWatches(QValueSpaceObject *creator, HANDLE parent) { }
 
     /* QValueSpaceItem functions */
-    bool requestSetValue(HANDLE handle, const QVariant &data) { return false; }
-    bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) { return false; }
+    bool requestSetValue(HANDLE handle, const QVariant &data);
+    bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) { return false; }
 
     /* QValueSpaceObject functions */
@@ -2434,57 +2432,6 @@ bool ApplicationLayer::remove(HANDLE handle, const QByteArray &subPath)
             changed = doRemove(rhandle->path + subPath);
         else
             changed = doRemove(subPath);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool ApplicationLayer::setValue(HANDLE handle, const QVariant &value)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    ReadHandle * rhandle = rh(handle);
-
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        todo << (quint8)APPLAYER_WRITE << rhandle->path << value;
-        triggerTodo();
-    } else {
-        bool changed = doWriteItem(rhandle->path, value);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool ApplicationLayer::setValue(HANDLE handle, const QByteArray &subPath,
-                                const QVariant &value)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == '/');
-
-    ReadHandle * rhandle = rh(handle);
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        if(rhandle->path != "/")
-            todo << (quint8)APPLAYER_WRITE << (rhandle->path + subPath) << value;
-        else
-            todo << (quint8)APPLAYER_WRITE << subPath << value;
-        triggerTodo();
-    } else {
-        bool changed;
-        if(rhandle->path != "/")
-            changed = doWriteItem(rhandle->path + subPath, value);
-        else
-            changed = doWriteItem(subPath, value);
-
         if(changed) triggerTodo();
     }
     return true;
@@ -3373,6 +3320,56 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
             emit obj->itemSetValue(QByteArray(), newData);
         }
     }
+}
+
+bool ApplicationLayer::requestSetValue(HANDLE handle, const QVariant &value)
+{
+    if (!valid)
+        return false;
+    Q_ASSERT(layer);
+    ReadHandle * rhandle = rh(handle);
+
+    if(Client == type) {
+        if(todo.isEmpty())
+            todo << newPackId();
+
+        todo << (quint8)APPLAYER_WRITE << rhandle->path << value;
+        triggerTodo();
+    } else {
+        bool changed = doWriteItem(rhandle->path, value);
+        if(changed) triggerTodo();
+    }
+    return true;
+}
+
+bool ApplicationLayer::requestSetValue(HANDLE handle, const QByteArray &subPath, const QVariant &value)
+{
+    if (!valid)
+        return false;
+    Q_ASSERT(layer);
+    Q_ASSERT(!subPath.isEmpty());
+    Q_ASSERT(*subPath.constData() == '/');
+
+    ReadHandle * rhandle = rh(handle);
+    if(Client == type) {
+        if(todo.isEmpty())
+            todo << newPackId();
+
+        if(rhandle->path != "/")
+            todo << (quint8)APPLAYER_WRITE << (rhandle->path + subPath) << value;
+        else
+            todo << (quint8)APPLAYER_WRITE << subPath << value;
+        triggerTodo();
+    } else {
+        bool changed;
+        if(rhandle->path != "/")
+            changed = doWriteItem(rhandle->path + subPath, value);
+        else
+            changed = doWriteItem(subPath, value);
+
+        if(changed) triggerTodo();
+    }
+    return true;
 }
 
 bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data)
