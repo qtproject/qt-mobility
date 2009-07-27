@@ -31,6 +31,54 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
+#include "qmessage_p.h"
+
+/*
+    Sets the identifier of the message to \a id.
+    
+    \sa id()
+*/
+void QMessagePrivate::setId(const QMessageId &id)
+{
+    Q_UNUSED(id)
+}
+
+/*
+    Sets the modified data state of the message to \a modified.
+*/
+void QMessagePrivate::setDataModified(bool modified)
+{
+    Q_UNUSED(modified);
+}
+
+/*
+    Sets the identifier of the parent account of the message to \a accountId.
+*/
+void QMessagePrivate::setParentAccountId(const QMessageAccountId &accountId)
+{
+    Q_UNUSED(accountId)
+}
+
+/*!
+    Sets the identifier of the folder that contains the message to \a folderId.
+*/
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+void QMessagePrivate::setParentFolderId(const QMessageFolderId &folderId)
+{
+    Q_UNUSED(folderId)
+}
+#endif
+
+/*
+    Sets the complete size of the message as found on the originating server to \a size.
+    
+    \sa size()
+*/
+void QMessagePrivate::setSize(uint size)
+{
+    Q_UNUSED(size)
+}
+
 
 QMessage::QMessage()
 {
@@ -55,6 +103,7 @@ const QMessage& QMessage::operator=(const QMessage& other)
 
 QMessage::~QMessage()
 {
+    d_ptr = 0;
 }
 
 QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
