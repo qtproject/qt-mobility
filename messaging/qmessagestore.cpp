@@ -145,7 +145,7 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
@@ -161,7 +161,7 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
@@ -176,7 +176,7 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
@@ -191,7 +191,7 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
@@ -201,7 +201,7 @@
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!
@@ -211,7 +211,7 @@
     filtering criteria defined in QMessageFolderFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!
@@ -221,7 +221,7 @@
     filtering criteria defined in QMessageAccountFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!
