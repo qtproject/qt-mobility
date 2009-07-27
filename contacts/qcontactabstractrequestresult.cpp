@@ -46,6 +46,12 @@ QContactAbstractRequestResult::QContactAbstractRequestResult()
 {
 }
 
+/*! Constructs a copy of the \a other request result */
+QContactAbstractRequestResult::QContactAbstractRequestResult(const QContactAbstractRequestResult& other)
+    : d(other.d)
+{
+}
+
 /*! Clears the memory used by this result */
 QContactAbstractRequestResult::~QContactAbstractRequestResult()
 {

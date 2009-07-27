@@ -43,6 +43,7 @@ class QContactAbstractRequestResultData;
 class QContactAbstractRequestResult {
 public:
     QContactAbstractRequestResult();
+    QContactAbstractRequestResult(const QContactAbstractRequestResult& other);
     ~QContactAbstractRequestResult();
 
     // any errors which occurred
