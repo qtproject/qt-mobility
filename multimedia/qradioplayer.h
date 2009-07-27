@@ -80,6 +80,7 @@ public:
 
     int volume() const;
     bool isMuted() const;
+    bool isValid() const;
 
     QAbstractMediaService* service() const;
 

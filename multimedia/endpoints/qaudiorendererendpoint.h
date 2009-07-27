@@ -51,10 +51,6 @@ class Q_MEDIA_EXPORT QAudioRendererEndpoint: public QObject, public QMediaEndpoi
 {
     Q_OBJECT
 
-#ifdef AUDIOSERVICES
-    Q_PROPERTY(QAudioFormat format READ format WRITE setFormat)
-#endif
-
     Q_INTERFACES(QMediaEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioRendererEndpoint)
 public:
@@ -62,14 +58,6 @@ public:
     ~QAudioRendererEndpoint();
 
     Direction direction() const;
-
-#ifdef AUDIOSERVICES
-    virtual QAudioFormat format() const;
-    virtual void setFormat(const QAudioFormat &format);
-    virtual bool isFormatSupported(const QAudioFormat &format) const;
-    virtual QAudioFormat preferredFormat() const;
-    virtual QAudioFormat nearestFormat(const QAudioFormat &format) const;
-#endif
 
     QIODevice *device() const;
     virtual void setDevice(QIODevice *device);

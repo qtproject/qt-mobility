@@ -66,6 +66,8 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMuted(bool muted) = 0;
 
+    virtual bool isValid() const = 0;
+
     virtual void searchForward() = 0;
     virtual void searchBackward() = 0;
 
