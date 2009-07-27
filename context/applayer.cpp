@@ -54,6 +54,8 @@
 #include <QSharedMemory>
 #include <QTime>
 
+#include "qvaluespaceobject.cpp"
+
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
 
@@ -1690,7 +1692,7 @@ public:
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
-    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) { return false; }
+    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) { return false; }
     bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) { return false; }
 
@@ -3304,6 +3306,7 @@ ApplicationLayer * ApplicationLayer::instance()
     return applicationLayer();
 }
 
+#if 0
 ///////////////////////////////////////////////////////////////////////////////
 // declare QValueSpaceObjectPrivate
 // define QValueSpaceObjectPrivate
@@ -3325,6 +3328,7 @@ public:
     bool hasSet;
     bool hasWatch;
 };
+#endif
 typedef QSet<QValueSpaceObject *> WatchObjects;
 Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 
@@ -3369,6 +3373,30 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
             emit obj->itemSetValue(QByteArray(), newData);
         }
     }
+}
+
+bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data)
+{
+    if (!handles.values().contains(reinterpret_cast<ReadHandle *>(handle)))
+        return false;
+
+    NodeOwner owner;
+    owner.data1 = reinterpret_cast<unsigned long>(creator);
+    owner.data2 = reinterpret_cast<unsigned long>(creator);
+
+    const QByteArray parentPath = handles.key(reinterpret_cast<ReadHandle *>(handle));
+
+    QByteArray fullPath(parentPath);
+    if (!fullPath.endsWith('/'))
+        fullPath.append('/');
+
+    int index = 0;
+    while (index < path.length() && path[index] == '/')
+        ++index;
+
+    fullPath.append(path.mid(index));
+
+    return setItem(owner, fullPath, data);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3453,51 +3481,7 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
   \sa QValueSpaceItem
  */
 
-/*!
-  \overload
-
-  Construct a Value Space object rooted at \a objectPath with the specified
-  \a parent.  This constructor is equivalent to
-  \c {QValueSpaceObject(QByteArray(objectPath), parent)}.
-  */
-QValueSpaceObject::QValueSpaceObject(const char *objectPath,
-                                     QObject *parent)
-: QObject(parent), d(new QValueSpaceObjectPrivate(objectPath))
-{
-    VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
-//    Q_ASSERT(applicationLayer()->isValid());
-}
-
-/*!
-  \overload
-
-  Construct a Value Space object rooted at \a objectPath with the specified
-  \a parent.  This constructor is equivalent to
-  \c {QValueSpaceObject(objectPath.toUtf8(), parent)}.
-  */
-QValueSpaceObject::QValueSpaceObject(const QString &objectPath,
-                                     QObject *parent)
-: QObject(parent), d(new QValueSpaceObjectPrivate(objectPath.toUtf8()))
-{
-    VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
-//    Q_ASSERT(applicationLayer()->isValid());
-}
-
-/*!
-  Construct a Value Space object rooted at \a objectPath with the specified
-  \a parent.
-  */
-QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath,
-                                     QObject *parent)
-: QObject(parent), d(new QValueSpaceObjectPrivate(objectPath))
-{
-    VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
-//    Q_ASSERT(applicationLayer()->isValid());
-}
-
+#if 0
 /*!
   Destroys the Value Space object.  This will remove the object and all its
   attributes from the Value Space.
@@ -3531,16 +3515,7 @@ QValueSpaceObject::~QValueSpaceObject()
     delete d;
     d = 0;
 }
-
-/*!
-  Returns the full path to this object as passed to the QValueSpaceObject
-  constructor.
- */
-QString QValueSpaceObject::objectPath() const
-{
-    VS_CALL_ASSERT;
-    return QString::fromUtf8(d->path);
-}
+#endif
 
 /*!
   Forcibly sync all Value Space objects.
@@ -3577,30 +3552,7 @@ void QValueSpaceObject::sync()
   object may chose to honor, ignore or transform the set value request.
  */
 
-/*!
-  \overload
-  This is a convenience overload and is equivalent to
-  \c {setAttribute(QByteArray(attribute), data)}.
- */
-void QValueSpaceObject::setAttribute(const char *attribute,
-                                     const QVariant &data)
-{
-    VS_CALL_ASSERT;
-    setAttribute(QByteArray(attribute), data);
-}
-
-/*!
-  \overload
-  This is a convenience overload and is equivalent to
-  \c {setAttribute(attribute.toUtf8(), data)}.
- */
-void QValueSpaceObject::setAttribute(const QString &attribute,
-                                     const QVariant &data)
-{
-    VS_CALL_ASSERT;
-    setAttribute(attribute.toUtf8(), data);
-}
-
+#if 0
 /*!
   Set an \a attribute on the object to \a data.  If attribute is empty, this
   call will set the object's value.
@@ -3645,6 +3597,7 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute,
 
     appLayer->setItem(owner, path, data);
 }
+#endif
 /*!
   \overload
 
