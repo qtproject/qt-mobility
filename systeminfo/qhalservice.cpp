@@ -70,7 +70,7 @@ QHalInterface::QHalInterface(QObject *parent)
                                                 HAL_DBUS_MANAGER_INTERFACE,
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
-        qWarning() << "Could not find Hal";
+        qDebug() << "Could not find Hal";
         d->valid = false;
         return;
     } else {
@@ -98,7 +98,7 @@ QStringList QHalInterface::findDeviceByCapability(const QString &cap)
 {
     QDBusReply<  QStringList > reply = d->connectionInterface->call("FindDeviceByCapability", cap);
     if (!reply.isValid()) {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     } else {
 
         return reply.value();
@@ -110,7 +110,7 @@ QStringList QHalInterface::getAllDevices()
 {
     QDBusReply<  QStringList > reply = d->connectionInterface->call("GetAllDevices");
     if (!reply.isValid()) {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     } else {
 
         return reply.value();
@@ -139,7 +139,7 @@ QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject 
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find HalDeviceInterface";
+        qDebug() << "Could not find HalDeviceInterface";
         return;
     } else {
         d->valid = true;
@@ -163,7 +163,7 @@ bool QHalDeviceInterface::getPropertyBool(const QString &prop)
     if ( reply.isValid() ) {
         return reply.value();
     } else {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     }
     return false;
 }
@@ -174,7 +174,7 @@ QString QHalDeviceInterface::getPropertyString(const QString &prop)
     if ( reply.isValid() ) {
         return reply.value();
     } else {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     }
     return QString();
 }
@@ -185,7 +185,7 @@ QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
     if ( reply.isValid() ) {
         return reply.value();
     } else {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     }
     return QStringList();
 }
@@ -196,7 +196,7 @@ qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
     if ( reply.isValid() ) {
         return reply.value();
     } else {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     }
     return 0;
 }
@@ -208,7 +208,7 @@ bool QHalDeviceInterface::queryCapability(const QString &cap)
     if ( reply.isValid() ) {
         return reply.value();
     } else {
-        qWarning() << reply.error().message();
+//        qDebug() << reply.error().message();
     }
     return false;
 }
@@ -234,7 +234,7 @@ QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &de
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find HalDeviceLaptopPanelInterface";
+        qDebug() << "Could not find HalDeviceLaptopPanelInterface";
         return;
     } else {
         d->valid = true;
@@ -256,7 +256,7 @@ quint32 QHalDeviceLaptopPanelInterface::getBrightness()
 {
     QDBusReply< qint32 > reply = d->connectionInterface->call("GetBrightness");
     if ( reply.isValid() ) {
-        qWarning() << __FUNCTION__ << reply.value();
+//        qDebug() << __FUNCTION__ << reply.value();
         return reply.value();
     }
     return -1;
@@ -266,7 +266,7 @@ void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
 {
     QDBusReply< qint32 > reply = d->connectionInterface->call("SetBrightness", brightness);
     if ( reply.isValid() ) {
-        qWarning() << __FUNCTION__ << reply.value();
-    }
+//        qDebug() << __FUNCTION__ << reply.value();
+//    }
 }
 
