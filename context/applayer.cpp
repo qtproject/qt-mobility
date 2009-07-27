@@ -1694,7 +1694,7 @@ public:
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &);
-    bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) { return false; }
+    bool removeSubTree(QValueSpaceObject *creator, HANDLE handle);
 
     // Other
     bool doRemove(const QByteArray &path);
@@ -3411,6 +3411,20 @@ bool ApplicationLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, co
     owner.data2 = reinterpret_cast<unsigned int>(creator);
 
     remItems(owner, readHandle->path + '/' + path);
+}
+
+bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, HANDLE handle)
+{
+    ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
+
+    if (!handles.values().contains(readHandle))
+        return false;
+
+    NodeOwner owner;
+    owner.data1 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<unsigned int>(creator);
+
+    remItems(owner, readHandle->path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
