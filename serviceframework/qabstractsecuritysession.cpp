@@ -39,6 +39,9 @@ QT_BEGIN_NAMESPACE
     \class QAbstractSecuritySession
     \brief The QAbstractSecuritySession class provides a generic mechanism to enable
     permission checks for services.
+    
+    QAbstractSecuritySession describes the abstract interface that security/permission
+    engines must implement in order to provide capability related functionality.
 
     A QAbstractSecuritySession encapsulates the service client's capabilities. QServiceManager
     can match those capabilites with the capabilites required by a particular service. 
@@ -48,10 +51,19 @@ QT_BEGIN_NAMESPACE
     is passing a security session object QServiceManager ensures that the permissions
     are checked before the requested service is loaded and forwards the session to the 
     service in case the service intends to implement additional checks. If no security 
-    session is passed to QServiceManager capability checks are not performed.
+    session is passed to QServiceManager capability checks are not performed. Note that
+    the security session is no substitute for platform security such as control over
+    a processes ability to load arbitrary plug-ins.
 
-    QAbstractSecuritySession describes the abstract interface that security/permission
-    engines must implement in order to provide capability related functionality.
+    Since the service loader controls whether a security session is passed to the
+    QServiceManager instance it is assumed that the calling context can be trusted. Possible
+    use cases for a security session could be arbitrary Javascript applications which run
+    within a trusted browser environment. The QAbstractSecuritySession interface would allow
+    the browser to provide access to platform services while at the same time being able to
+    ensure that certain Javascript application (depending on e.g their context, URL or signatures)
+    can not access more sensitive system services.
+
+    Framework clients with purely native code bases are likely to never have any security sessions.
 
     \sa QServiceManager, QServicePluginInterface
 */

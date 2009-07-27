@@ -117,11 +117,13 @@
 <p>Loads the service object implementing <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from QObject.</p>
 <p>If <i>interfaceName</i> is not a known interface the returned pointer will be null.</p>
 <p>The caller takes ownership of the returned pointer.</p>
+<p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <h3 class="fn"><a name="getInterface-2"></a>T * QServiceManager::getInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>serviceDescriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Loads the service object identified by <i>serviceDescriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from QObject.</p>
 <p>If the <i>serviceDescriptor</i> is not valid the returned pointer will be null.</p>
 <p>The caller takes ownership of the returned pointer.</p>
+<p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <h3 class="fn"><a name="interfaceDefault"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::interfaceDefault ( const QString &amp; <i>interfaceName</i> ) const</h3>
 <p>Returns the default interface implementation for the given <i>interfaceName</i>.</p>
 <p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
@@ -129,11 +131,13 @@
 <p>Loads and returns the interface specified by <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>This function returns a null pointer if the requested service cannot be found.</p>
+<p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <h3 class="fn"><a name="loadInterface-2"></a>QObject * QServiceManager::loadInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i> = 0, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> = 0 )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Loads and returns the interface specified by <i>descriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>This function returns a null pointer if the requested service cannot be found.</p>
+<p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <h3 class="fn"><a name="removeService"></a>bool QServiceManager::removeService ( const QString &amp; <i>serviceName</i> )</h3>
 <p>Unregisters the service specified by <i>serviceName</i>.</p>
 <p>Returns true if the unregistration succeeded, and false otherwise.</p>

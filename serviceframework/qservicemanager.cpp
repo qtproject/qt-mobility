@@ -336,6 +336,11 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
     The caller takes ownership of the returned pointer.
     
     This function returns a null pointer if the requested service cannot be found.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -350,6 +355,11 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
     The caller takes ownership of the returned pointer.
 
     This function returns a null pointer if the requested service cannot be found.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -403,6 +413,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If \a interfaceName is not a known interface the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 
 
@@ -417,6 +432,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 
 /*!
