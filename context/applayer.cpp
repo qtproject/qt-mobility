@@ -1679,20 +1679,21 @@ public:
     virtual void remHandle(HANDLE);
     virtual bool remove(HANDLE);
     virtual bool remove(HANDLE, const QByteArray &);
-    virtual bool syncChanges() { return true; }
-
 
     /* QValueSpaceItem functions */
     bool requestSetValue(HANDLE handle, const QVariant &data);
     bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray());
+    bool syncRequests();
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &);
     bool removeSubTree(QValueSpaceObject *creator, HANDLE handle);
+    void addWatch(QValueSpaceObject *creator, HANDLE handle);
     void removeWatches(QValueSpaceObject *creator, HANDLE parent);
+    void sync();
 
     // Other
     bool doRemove(const QByteArray &path);
@@ -1718,7 +1719,6 @@ public:
                     const QByteArray &path);
 
     QString socket() const;
-    void sync();
 
     static QVariant fromDatum(const NodeDatum * data);
 
@@ -3402,6 +3402,11 @@ bool ApplicationLayer::requestRemoveValue(HANDLE handle, const QByteArray &subPa
     return true;
 }
 
+bool ApplicationLayer::syncRequests()
+{
+    return true;
+}
+
 bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data)
 {
     if (!handles.values().contains(reinterpret_cast<ReadHandle *>(handle)))
@@ -3452,6 +3457,22 @@ bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, HANDLE handle)
     owner.data2 = reinterpret_cast<unsigned int>(creator);
 
     return remItems(owner, readHandle->path);
+}
+
+void ApplicationLayer::addWatch(QValueSpaceObject *creator, HANDLE handle)
+{
+    watchObjects()->insert(creator);
+
+    ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
+
+    if (!handles.values().contains(readHandle))
+        return;
+
+    NodeWatch owner;
+    owner.data1 = 0;
+    owner.data2 = reinterpret_cast<unsigned long>(creator);
+
+    setWatch(owner, readHandle->path);
 }
 
 void ApplicationLayer::removeWatches(QValueSpaceObject *creator, HANDLE parent)
@@ -3552,61 +3573,6 @@ void ApplicationLayer::removeWatches(QValueSpaceObject *creator, HANDLE parent)
   \sa QValueSpaceItem
  */
 
-#if 0
-/*!
-  Destroys the Value Space object.  This will remove the object and all its
-  attributes from the Value Space.
-  */
-QValueSpaceObject::~QValueSpaceObject()
-{
-    VS_CALL_ASSERT;
-    ApplicationLayer *appLayer = applicationLayer();
-    if(!appLayer) return;
-
-    if(d->hasSet) {
-        NodeOwner owner;
-        owner.data1 = (unsigned long)this;
-        owner.data2 = (unsigned long)this;
-        if(d->path.isEmpty())
-            appLayer->remItems(owner, "/");
-        else
-            appLayer->remItems(owner, d->path);
-    }
-    if(d->hasWatch) {
-        watchObjects()->remove(this);
-        NodeWatch owner;
-        owner.data1 = (unsigned long)this;
-        owner.data2 = (unsigned long)this;
-        if(d->path.isEmpty())
-            appLayer->remWatch(owner, "/");
-        else
-            appLayer->remWatch(owner, d->path);
-    }
-
-    delete d;
-    d = 0;
-}
-#endif
-
-/*!
-  Forcibly sync all Value Space objects.
-
-  For performance reasons attribute changes are batched internally by
-  QValueSpaceObject instances.  In cases where the visibility of changes must
-  be synchronized with other processes, calling QValueSpaceObject::sync() will
-  flush these batches.  By the time sync() returns, all other processes in the
-  system will be able to see the attribute changes.
-
-  In the common asynchronous case, calling sync() is unnecessary.
- */
-void QValueSpaceObject::sync()
-{
-    VS_CALL_ASSERT;
-    ApplicationLayer *appLayer = applicationLayer();
-    if(!appLayer) return;
-    appLayer->sync();
-}
-
 /*!
   \fn void QValueSpaceObject::itemRemove(const QByteArray &attribute)
 
@@ -3622,28 +3588,5 @@ void QValueSpaceObject::sync()
   \a value through a call to QValueSpaceItem::setValue().  The provider of this
   object may chose to honor, ignore or transform the set value request.
  */
-
-
-/*! \internal */
-void QValueSpaceObject::connectNotify(const char *method)
-{
-    VS_CALL_ASSERT;
-    if(!d->hasWatch && (*method - '0') ==  QSIGNAL_CODE) {
-        ApplicationLayer *appLayer = applicationLayer();
-        if(!appLayer) return;
-
-        watchObjects()->insert(this);
-        d->hasWatch = true;
-
-        NodeWatch owner;
-        owner.data1 = (unsigned long)0;
-        owner.data2 = (unsigned long)this;
-        if(d->path.isEmpty())
-            appLayer->setWatch(owner, "/");
-        else
-            appLayer->setWatch(owner, d->path);
-    }
-    QObject::connectNotify(method);
-}
 
 #include "applayer.moc"

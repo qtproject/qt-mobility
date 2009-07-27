@@ -975,7 +975,7 @@ bool QValueSpaceItem::sync()
     }
 
     for(int ii = md->readers.count(); ii > 0; --ii) {
-        if(!md->readers[ii - 1].first->syncChanges())
+        if (!md->readers[ii - 1].first->syncRequests())
             rv = false;
     }
     return rv;

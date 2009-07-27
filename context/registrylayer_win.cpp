@@ -64,7 +64,6 @@ public:
     virtual HANDLE item(HANDLE parent, const QByteArray &path);
     virtual void setProperty(HANDLE handle, Properties);
     virtual void remHandle(HANDLE);
-    virtual bool syncChanges();
 
     void removeWatches(QValueSpaceObject *creator, HANDLE parent);
 
@@ -72,12 +71,14 @@ public:
     bool requestSetValue(HANDLE handle, const QVariant &data);
     bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray());
+    bool syncRequests();
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &data);
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &subPath);
     bool removeSubTree(QValueSpaceObject *creator, HANDLE parent);
+    void sync();
 
     /* Private implementation functions */
     void emitHandleChanged(HKEY key);
@@ -663,14 +664,11 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QB
     return result == ERROR_SUCCESS;
 }
 
-bool RegistryLayer::syncChanges()
+void RegistryLayer::sync()
 {
-    bool failed = false;
-
     // Wait for change notification callbacks before returning
     QEventLoop loop;
     connect(this, SIGNAL(handleChanged(uint)), &loop, SLOT(quit()));
-    bool wait = false;
 
     QList<HKEY> keys = hKeys.values();
     while (!keys.isEmpty()) {
@@ -679,15 +677,13 @@ bool RegistryLayer::syncChanges()
         if (!wait && waitHandles.contains(key))
             wait = true;
 
-        failed |= (RegFlushKey(key) != ERROR_SUCCESS);
+        RegFlushKey(key);
     }
 
     if (wait) {
         QTimer::singleShot(1000, &loop, SLOT(quit()));
         loop.exec();
     }
-
-    return failed;
 }
 
 void RegistryLayer::emitHandleChanged(HKEY key)
@@ -873,4 +869,9 @@ bool RegistryLayer::requestSetValue(HANDLE, const QByteArray &, const QVariant &
 bool RegistryLayer::requestRemoveValue(HANDLE, const QByteArray &)
 {
     return false;
+}
+
+bool RegistryLayer::syncRequests()
+{
+    return true;
 }

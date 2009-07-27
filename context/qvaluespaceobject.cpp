@@ -253,7 +253,6 @@ QString QValueSpaceObject::objectPath() const
     return QString::fromUtf8(d->path);
 }
 
-#if 0
 /*!
     Forcibly sync all Value Space objects.
 
@@ -270,9 +269,8 @@ void QValueSpaceObject::sync()
     VS_CALL_ASSERT;
 
     foreach (QAbstractValueSpaceLayer *layer, QValueSpaceManager::instance()->getLayers())
-        layer->syncChanges();
+        layer->sync();
 }
-#endif
 
 /*!
     \overload
@@ -367,10 +365,16 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
     d->layer->removeValue(this, d->handle, attribute);
 }
 
-#if 0
 void QValueSpaceObject::connectNotify(const char *member)
 {
+    VS_CALL_ASSERT;
+
+    if (!d->hasWatch && (*member - '0') == QSIGNAL_CODE) {
+        d->layer->addWatch(this, d->handle);
+        d->hasWatch = true;
+    }
+
     QObject::connectNotify(member);
 }
-#endif
+
 QT_END_NAMESPACE

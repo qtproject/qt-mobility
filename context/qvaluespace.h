@@ -75,9 +75,6 @@ public:
        with '/' */
     virtual bool value(HANDLE, const QByteArray &, QVariant *) = 0;
 
-    /* Commit any changes (if needed) made through setValue() now */
-    virtual bool syncChanges() = 0;
-
     /* Returns the list of immediate children, or an empty set if no children */
     virtual QSet<QByteArray> children(HANDLE) = 0;
     /* Returns an item handle.  Use of an invalid parent is allowed.  Returning
@@ -96,13 +93,16 @@ public:
     virtual bool requestSetValue(HANDLE handle, const QVariant &data) = 0;
     virtual bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) = 0;
     virtual bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) = 0;
+    virtual bool syncRequests() = 0;
 
     /* QValueSpaceObject functions */
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) = 0;
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) = 0;
     virtual bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) = 0;
     virtual bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) = 0;
+    virtual void addWatch(QValueSpaceObject *creator, HANDLE handle) = 0;
     virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
+    virtual void sync() = 0;
 
 signals:
     void handleChanged(unsigned int);
