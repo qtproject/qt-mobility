@@ -90,7 +90,7 @@ static bool halAvailable()
         }
     }
 #endif
-    qDebug() << "Hal is not running";
+  //  qDebug() << "Hal is not running";
     return false;
 }
 
@@ -280,6 +280,25 @@ bool QSystemInfoPrivate::hasHalUsbFeature(quint32 usbClass)
 }
 #endif
 
+bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
+{
+    QString sysPath = "/sys/class/";
+    QDir sysDir(sysPath);
+    QStringList filters;
+    filters << "*";
+    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+    foreach(QString dir, sysList) {
+        QDir sysDir2(sysPath + dir);
+        if(dir.contains(featureStr)) {
+            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
+            if(!sysList2.isEmpty()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
@@ -287,35 +306,45 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::BluetoothFeature :
         {
 #if !defined(QT_NO_DBUS)
-            return hasHalDeviceFeature("bluetooth");
+            featureSupported = hasHalDeviceFeature("bluetooth");
+            if(featureSupported)
+                return featureSupported;
 #endif
+            featureSupported = hasSysFeature("bluetooth");
         }
         break;
     case QSystemInfo::CameraFeature :
         {
 #if !defined(QT_NO_DBUS)
             featureSupported = hasHalUsbFeature(0x06); // image
-//            if(featureSupported) {
-//                featureSupported = hasHalUsbFeature(0x0E); // video cam
-//            }
+            if(featureSupported)
+                return featureSupported;
 #endif
+            featureSupported = hasSysFeature("video");
         }
         break;
     case QSystemInfo::FmradioFeature :
         break;
     case QSystemInfo::IrFeature :
+        {
 #if !defined(QT_NO_DBUS)
-            featureSupported = hasHalUsbFeature(0xFE);
+        featureSupported = hasHalUsbFeature(0xFE);
+        if(featureSupported)
+            return featureSupported;
 #endif
-            break;
+        featureSupported = hasSysFeature("irda"); //?
+    }
+        break;
     case QSystemInfo::LedFeature :
+        {
+            featureSupported = hasSysFeature("led"); //?
+        }
         break;
     case QSystemInfo::MemcardFeature :
         {
 #if !defined(QT_NO_DBUS)
             QHalInterface iface;
             if (iface.isValid()) {
-
                 QHalInterface halIface;
                 QStringList halDevices = halIface.getAllDevices();
                 foreach(QString device, halDevices) {
@@ -329,17 +358,26 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                         }
                     }
                 }
-
             }
 #endif
         }
         break;
     case QSystemInfo::UsbFeature :
+        {
 #if !defined(QT_NO_DBUS)
-        return hasHalDeviceFeature("usb");
+        featureSupported = hasHalDeviceFeature("usb");
+        if(featureSupported)
+            return featureSupported;
 #endif
+            featureSupported = hasSysFeature("usb_host");
+        }
         break;
     case QSystemInfo::VibFeature :
+#if !defined(QT_NO_DBUS)
+        featureSUpported = hasHalDeviceFeature("vibrator"); //might not always be true
+        if(featureSupported)
+            return featureSupported;
+#endif
         break;
     case QSystemInfo::WlanFeature :
         {
@@ -353,11 +391,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                 }
             }
 #endif
+            featureSupported = hasSysFeature("80211");
         }
         break;
     case QSystemInfo::SimFeature :
         break;
     case QSystemInfo::LocationFeature :
+#if !defined(QT_NO_DBUS)
+        featureSupported = hasHalDeviceFeature("gps"); //might not always be true
+        if(featureSupported)
+            return featureSupported;
+
+#endif
         break;
     case QSystemInfo::VideoOutFeature :
         break;
@@ -366,7 +411,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::UnknownFeature :
     default:
         featureSupported = true;
-    break;
+        break;
     };
     return featureSupported;
 }

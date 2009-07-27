@@ -68,6 +68,7 @@ private:
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(quint32 usbClass);
 #endif
+    bool hasSysFeature(const QString &featureStr);
 };
 
 class QSystemNetworkInfoPrivate : public QObject
