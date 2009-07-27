@@ -31,30 +31,48 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTRESULT_H
-#define QCONTACTREQUESTRESULT_H
 
-#include "qcontactmanager.h"
-#include "qcontactrequest.h"
-#include "qcontactabstractrequestresult.h"
+#ifndef QCONTACTDETAILDEFINITIONREQUESTRESULT_P_H
+#define QCONTACTDETAILDEFINITIONREQUESTRESULT_P_H
 
-#include <QSharedDataPointer>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QContactRequestResultData;
-class QTCONTACTS_EXPORT QContactRequestResult : public QContactAbstractRequestResult {
+#include "qcontactabstractrequestresult_p.h"
+#include "qcontactdetaildefinition.h"
+
+#include <QList>
+#include <QStringList>
+
+class QContactDetailDefinitionRequestResultData : public QContactAbstractRequestResultData
+{
 public:
-    QContactRequestResult();
-    ~QContactRequestResult();
+    QContactDetailDefinitionRequestResultData()
+        :   QContactAbstractRequestResultData()
+    {
+    }
 
-    void setContactIds(const QList<QUniqueId>& ids);
-    void setContacts(const QList<QContact>& contacts);
-    QList<QUniqueId> contactIds() const;
-    QList<QContact> contacts() const;
+    QContactDetailDefinitionRequestResultData(const QContactDetailDefinitionRequestResultData& other)
+        :   QContactAbstractRequestResultData(other),
+        m_definitions(other.m_definitions),
+        m_definitionNames(other.m_definitionNames)
+    {
+    }
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
+    ~QContactDetailDefinitionRequestResultData()
+    {
+    }
 
-private:
-    QSharedDataPointer<QContactRequestResultData> d;
+    QList<QContactDetailDefinition> m_definitions;
+    QStringList m_definitionNames;
 };
 
 #endif

@@ -31,30 +31,61 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTRESULT_H
-#define QCONTACTREQUESTRESULT_H
 
+#ifndef QCONTACTGROUPREQUEST_P_H
+#define QCONTACTGROUPREQUEST_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QPointer>
+
+#include "qcontactabstractrequest.h"
 #include "qcontactmanager.h"
-#include "qcontactrequest.h"
-#include "qcontactabstractrequestresult.h"
+#include "qcontactgrouprequestresult.h"
+#include "qcontactgroup.h"
 
-#include <QSharedDataPointer>
-
-class QContactRequestResultData;
-class QTCONTACTS_EXPORT QContactRequestResult : public QContactAbstractRequestResult {
+class QContactGroupRequestData
+{
 public:
-    QContactRequestResult();
-    ~QContactRequestResult();
+    QContactGroupRequestData(QContactManager* manager)
+        :   m_isRestrictedIds(false),
+            m_status(QContactAbstractRequest::Inactive),
+            m_error(QContactManager::NoError),
+            m_manager(manager),
+            m_result(0)
+    {
+    }
 
-    void setContactIds(const QList<QUniqueId>& ids);
-    void setContacts(const QList<QContact>& contacts);
-    QList<QUniqueId> contactIds() const;
-    QList<QContact> contacts() const;
+    ~QContactGroupRequestData()
+    {
+    }
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
+    void _q_statusUpdate(const QContactAbstractRequest::Status& status, const QContactManager::Error& error)
+    {
+        m_status = status;
+        m_error = error;
+        // XXX emit status update?
+    }
 
-private:
-    QSharedDataPointer<QContactRequestResultData> d;
+    bool m_isRestrictedIds;
+
+    QList<QUniqueId> m_requestIds;
+    QList<QContactGroup> m_requestObjects;
+
+    QContactAbstractRequest::Status m_status;
+    QContactManager::Error m_error;
+
+    QPointer<QContactManager> m_manager;
+    QContactGroupRequestResult* m_result;
 };
 
 #endif

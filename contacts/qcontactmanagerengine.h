@@ -50,6 +50,8 @@
 #include "qcontactabstractrequest.h"
 
 class QContactRequest;
+class QContactDetailDefinitionRequest;
+class QContactGroupRequest;
 class QContactFilter;
 class QContactSortOrder;
 
@@ -100,10 +102,6 @@ public:
     virtual bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
     virtual void cancelAsynchronousRequest(QContactAbstractRequest* req);
     virtual void startAsynchronousRequest(QContactAbstractRequest* req, QContactAbstractRequest::Operation operation);
-    virtual QList<QContactManager::Error> asynchronousRequestErrors(const QContactAbstractRequest* req);
-
-    virtual QList<QContact> asynchronousRequestContacts(const QContactRequest* req);
-    virtual QList<QUniqueId> asynchronousRequestIds(const QContactRequest* req);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

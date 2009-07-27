@@ -153,7 +153,7 @@ QContactManager::Error QContactRequest::error() const
 /*!
  * Returns the current status of the given \a request
  */
-QContactRequest::Status QContactRequest::status() const
+QContactAbstractRequest::Status QContactRequest::status() const
 {
     if (!d->m_manager)
         return QContactAbstractRequest::Finished;
@@ -243,29 +243,26 @@ void QContactRequest::start(QContactAbstractRequest::Operation operation)
 
 QList<QUniqueId> QContactRequest::ids()
 {
-    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
-    if (engine)
-        return engine->asynchronousRequestIds(this);
+    if (!d->m_result)
+        return QList<QUniqueId>();
 
-    return QList<QUniqueId>();
+    return d->m_result->contactIds();
 }
 
 QList<QContact> QContactRequest::contacts()
 {
-    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
-    if (engine)
-        return engine->asynchronousRequestContacts(this);
+    if (!d->m_result)
+        return QList<QContact>();
 
-    return QList<QContact>();
+    return d->m_result->contacts();
 }
 
 QList<QContactManager::Error> QContactRequest::errors()
 {
-    QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
-    if (engine)
-        return engine->asynchronousRequestErrors(this);
+    if (!d->m_result)
+        return QList<QContactManager::Error>();
 
-    return QList<QContactManager::Error>();
+    return d->m_result->errors();
 }
 
 #include "moc_qcontactrequest.cpp"

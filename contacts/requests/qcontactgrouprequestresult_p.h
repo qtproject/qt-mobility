@@ -31,30 +31,48 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTRESULT_H
-#define QCONTACTREQUESTRESULT_H
 
-#include "qcontactmanager.h"
-#include "qcontactrequest.h"
-#include "qcontactabstractrequestresult.h"
+#ifndef QCONTACTGROUPREQUESTRESULT_P_H
+#define QCONTACTGROUPREQUESTRESULT_P_H
 
-#include <QSharedDataPointer>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QContactRequestResultData;
-class QTCONTACTS_EXPORT QContactRequestResult : public QContactAbstractRequestResult {
+
+#include "qcontactabstractrequestresult_p.h"
+#include "qcontactgroup.h"
+
+#include <QList>
+
+class QContactGroupRequestResultData : public QContactAbstractRequestResultData
+{
 public:
-    QContactRequestResult();
-    ~QContactRequestResult();
+    QContactGroupRequestResultData()
+        :   QContactAbstractRequestResultData()
+    {
+    }
 
-    void setContactIds(const QList<QUniqueId>& ids);
-    void setContacts(const QList<QContact>& contacts);
-    QList<QUniqueId> contactIds() const;
-    QList<QContact> contacts() const;
+    QContactGroupRequestResultData(const QContactGroupRequestResultData& other)
+        :   QContactAbstractRequestResultData(other),
+        m_groups(other.m_groups),
+        m_groupIds(other.m_groupIds)
+    {
+    }
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
+    ~QContactGroupRequestResultData()
+    {
+    }
 
-private:
-    QSharedDataPointer<QContactRequestResultData> d;
+    QList<QContactGroup> m_groups;
+    QList<QUniqueId> m_groupIds;
 };
 
 #endif

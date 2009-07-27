@@ -32,56 +32,56 @@
 ****************************************************************************/
 
 
-#include "qcontactrequestresult.h"
-#include "qcontactrequestresult_p.h"
-#include "qcontactrequest.h"
-#include "qcontactrequest_p.h"
+#include "qcontactgrouprequestresult.h"
+#include "qcontactgrouprequestresult_p.h"
+#include "qcontactgrouprequest.h"
+#include "qcontactgrouprequest_p.h"
 
 /*!
- * \class QContactRequestResult
- * \brief The current result of an asynchronous request for contacts
- * This class allows the result of an asynchronous request for contacts to be returned
+ * \class QContactGroupRequestResult
+ * \brief The current result of an asynchronous request for groups
+ * This class allows the result of an asynchronous request for groups to be returned
  * to the request.  It provides an interface to manager engines which allows them
  * to set the result and status of a particular request.
  */
 
 /*! Cosntructs a new contact request result */
-QContactRequestResult::QContactRequestResult()
-    : d(new QContactRequestResultData)
+QContactGroupRequestResult::QContactGroupRequestResult()
+    : d(new QContactGroupRequestResultData)
 {
 }
 
 /*! Clears any memory in use by this contact request result */
-QContactRequestResult::~QContactRequestResult()
+QContactGroupRequestResult::~QContactGroupRequestResult()
 {
 }
 
-/*! Sets the result contact ids to \a ids */
-void QContactRequestResult::setContactIds(const QList<QUniqueId>& ids)
+/*! Sets the result group ids to \a ids */
+void QContactGroupRequestResult::setGroupIds(const QList<QUniqueId>& ids)
 {
-    d->m_contactIds = ids;
+    d->m_groupIds = ids;
 }
 
-/*! Sets the result contacts to \a contacts */
-void QContactRequestResult::setContacts(const QList<QContact>& contacts)
+/*! Sets the result groups to \a groups */
+void QContactGroupRequestResult::setGroups(const QList<QContactGroup>& groups)
 {
-    d->m_contacts = contacts;
+    d->m_groups = groups;
 }
 
-/*! Returns the result list of contact ids */
-QList<QUniqueId> QContactRequestResult::contactIds() const
+/*! Returns the result list of group ids */
+QList<QUniqueId> QContactGroupRequestResult::groupIds() const
 {
-    return d->m_contactIds;
+    return d->m_groupIds;
 }
 
-/*! Returns the result list of contacts */
-QList<QContact> QContactRequestResult::contacts() const
+/*! Returns the result list of groups */
+QList<QContactGroup> QContactGroupRequestResult::groups() const
 {
-    return d->m_contacts;
+    return d->m_groups;
 }
 
 /*! Sets the result of the given \a request to be this result and updates the status of the \a request to \a status, before emitting the progress signal */
-void QContactRequestResult::updateRequest(QContactRequest* request, QContactAbstractRequest::Status status)
+void QContactGroupRequestResult::updateRequest(QContactGroupRequest* request, QContactAbstractRequest::Status status)
 {
     request->d->m_status = status;
     request->d->m_result = this;

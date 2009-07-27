@@ -1424,32 +1424,3 @@ void QContactManagerEngine::startAsynchronousRequest(QContactAbstractRequest* re
     Q_UNUSED(request);
     Q_UNUSED(operation);
 }
-
-/*!
- * Returns the list of errors which were returned from the most recent asynchronous operation performed according to the given \a request
- */
-QList<QContactManager::Error> QContactManagerEngine::asynchronousRequestErrors(const QContactAbstractRequest* request)
-{
-    Q_UNUSED(request);
-    return QList<QContactManager::Error>();
-}
-
-/*!
- * Returns the result of the most recent asynchronous operation of the given \a request as a list of contact ids
- */
-QList<QUniqueId> QContactManagerEngine::asynchronousRequestIds(const QContactRequest* request)
-{
-    Q_UNUSED(request);
-    return QList<QUniqueId>();
-}
-
-/*!
- * Returns the result of the most recent asynchronous operation of the given \a request as a list of contacts.
- * If the result had been restricted to ids previously using asynchronousRequestRestrictToIds(), the contacts
- * will be empty except for their id.
- */
-QList<QContact> QContactManagerEngine::asynchronousRequestContacts(const QContactRequest* request)
-{
-    Q_UNUSED(request);
-    return QList<QContact>();
-}

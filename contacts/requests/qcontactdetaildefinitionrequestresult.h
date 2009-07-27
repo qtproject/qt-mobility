@@ -31,30 +31,33 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTRESULT_H
-#define QCONTACTREQUESTRESULT_H
+#ifndef QCONTACTDETAILDEFINITIONREQUESTRESULT_H
+#define QCONTACTDETAILDEFINITIONREQUESTRESULT_H
 
 #include "qcontactmanager.h"
-#include "qcontactrequest.h"
+#include "qcontactdetaildefinition.h"
+#include "qcontactdetaildefinitionrequest.h"
 #include "qcontactabstractrequestresult.h"
 
 #include <QSharedDataPointer>
+#include <QStringList>
+#include <QList>
 
-class QContactRequestResultData;
-class QTCONTACTS_EXPORT QContactRequestResult : public QContactAbstractRequestResult {
+class QContactDetailDefinitionRequestResultData;
+class QTCONTACTS_EXPORT QContactDetailDefinitionRequestResult : public QContactAbstractRequestResult {
 public:
-    QContactRequestResult();
-    ~QContactRequestResult();
+    QContactDetailDefinitionRequestResult();
+    ~QContactDetailDefinitionRequestResult();
 
-    void setContactIds(const QList<QUniqueId>& ids);
-    void setContacts(const QList<QContact>& contacts);
-    QList<QUniqueId> contactIds() const;
-    QList<QContact> contacts() const;
+    void setDefinitionNames(const QStringList& names);
+    void setDefinitions(const QList<QContactDetailDefinition>& definitions);
+    QStringList definitionNames() const;
+    QList<QContactDetailDefinition> definitions() const;
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
+    void updateRequest(QContactDetailDefinitionRequest* request, QContactAbstractRequest::Status status);
 
 private:
-    QSharedDataPointer<QContactRequestResultData> d;
+    QSharedDataPointer<QContactDetailDefinitionRequestResultData> d;
 };
 
 #endif

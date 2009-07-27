@@ -46,8 +46,10 @@
 // We mean it.
 //
 
-
 #include "qcontactabstractrequestresult_p.h"
+#include "qcontact.h"
+
+#include <QList>
 
 class QContactRequestResultData : public QContactAbstractRequestResultData
 {

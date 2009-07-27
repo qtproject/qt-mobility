@@ -60,7 +60,7 @@ public:
     enum Type {
         Invalid = 0,
         Contact,
-        Definition,
+        DetailDefinition,
         Group
     };
 

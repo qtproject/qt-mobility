@@ -31,30 +31,30 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTRESULT_H
-#define QCONTACTREQUESTRESULT_H
+#ifndef QCONTACTGROUPREQUESTRESULT_H
+#define QCONTACTGROUPREQUESTRESULT_H
 
 #include "qcontactmanager.h"
-#include "qcontactrequest.h"
+#include "qcontactgrouprequest.h"
 #include "qcontactabstractrequestresult.h"
 
 #include <QSharedDataPointer>
 
-class QContactRequestResultData;
-class QTCONTACTS_EXPORT QContactRequestResult : public QContactAbstractRequestResult {
+class QContactGroupRequestResultData;
+class QTCONTACTS_EXPORT QContactGroupRequestResult : public QContactAbstractRequestResult {
 public:
-    QContactRequestResult();
-    ~QContactRequestResult();
+    QContactGroupRequestResult();
+    ~QContactGroupRequestResult();
 
-    void setContactIds(const QList<QUniqueId>& ids);
-    void setContacts(const QList<QContact>& contacts);
-    QList<QUniqueId> contactIds() const;
-    QList<QContact> contacts() const;
+    void setGroupIds(const QList<QUniqueId>& ids);
+    void setGroups(const QList<QContactGroup>& groups);
+    QList<QUniqueId> groupIds() const;
+    QList<QContactGroup> groups() const;
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
+    void updateRequest(QContactGroupRequest* request, QContactAbstractRequest::Status status);
 
 private:
-    QSharedDataPointer<QContactRequestResultData> d;
+    QSharedDataPointer<QContactGroupRequestResultData> d;
 };
 
 #endif
