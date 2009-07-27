@@ -40,7 +40,7 @@
 #include <QSharedDataPointer>
 
 class QContactAbstractRequestResultData;
-class QContactAbstractRequestResult {
+class QTCONTACTS_EXPORT QContactAbstractRequestResult {
 public:
     QContactAbstractRequestResult();
     QContactAbstractRequestResult(const QContactAbstractRequestResult& other);
