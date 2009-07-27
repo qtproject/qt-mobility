@@ -70,6 +70,12 @@
 #include <sys/vfs.h>
 #include <mntent.h>
 
+#ifdef Q_WS_X11
+#include <QX11Info>
+#include <X11/Xlib.h>
+
+#endif
+
 QT_BEGIN_NAMESPACE
 
 static bool halAvailable()
@@ -147,28 +153,90 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString &parameter) const
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Installed";
+    QString errorStr = "Not Available";
+    bool useDate = false;
+    if(parameter == "versionDate") {
+        useDate = true;
+    }
     switch(type) {
     case QSystemInfo::Os :
-       break;
+        {
+#if !defined(QT_NO_DBUS)
+            QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+            QString str;
+            if (iface.isValid()) {
+                str = iface.getPropertyString("system.kernel.version");
+                if(!str.isEmpty()) {
+                    return str;
+                }
+            }
+#endif
+            QString versionPath = "/proc/version";
+            QFile versionFile(versionPath);
+            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning()<<"File not opened";
+            } else {
+                QString  strvalue;
+                strvalue = versionFile.readAll().trimmed();
+                strvalue = strvalue.split(" ").at(2);
+                versionFile.close();
+                return strvalue;
+            }
+        }
+        break;
     case QSystemInfo::QtCore :
        return  qVersion();
        break;
     case QSystemInfo::WrtCore :
+        {
+        }
        break;
     case QSystemInfo::Webkit :
+        {
+        }
        break;
     case QSystemInfo::ServiceFramework :
+        {
+        }
        break;
     case QSystemInfo::WrtExtensions :
+        {
+        }
        break;
     case QSystemInfo::ServiceProvider :
+        {
+        }
        break;
     case QSystemInfo::NetscapePlugin :
+        {
+        }
        break;
     case QSystemInfo::WebApp :
+        {
+        }
        break;
-    case QSystemInfo::Firmware :
+   case QSystemInfo::Firmware :
+       {
+#if !defined(QT_NO_DBUS)
+           QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+           QString str;
+           if (iface.isValid()) {
+               if(useDate) {
+                   str = iface.getPropertyString("system.firmware.release_date");
+                   if(!str.isEmpty()) {
+                       return str;
+                   }
+               } else {
+                   str = iface.getPropertyString("system.firmware.version");
+                   if(str.isEmpty()) {
+                       if(!str.isEmpty()) {
+                           return str;
+                       }
+                   }
+               }
+           }
+#endif
+       }
        break;
     };
   return errorStr;
@@ -181,45 +249,119 @@ QString QSystemInfoPrivate::countryCode() const
     return QString(setlocale(LC_ALL,"")).mid(3,2);
 }
 
+#if !defined(QT_NO_DBUS)
+bool QSystemInfoPrivate::hasHalDeviceFeature(const QString &param)
+{
+    QHalInterface halIface;
+    QStringList halDevices = halIface.getAllDevices();
+    foreach(QString device, halDevices) {
+        if(device.contains(param)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool QSystemInfoPrivate::hasHalUsbFeature(quint32 usbClass)
+{
+    QHalInterface halIface;
+    QStringList halDevices = halIface.getAllDevices();
+    foreach(QString device, halDevices) {
+        QHalDeviceInterface ifaceDevice(device);
+        if (ifaceDevice.isValid()) {
+            if(ifaceDevice.getPropertyString("info.subsystem") == "usb_device") {
+                if(ifaceDevice.getPropertyInt("usb.interface.class") == usbClass) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+#endif
+
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
-        featureSupported = true;
+        {
+#if !defined(QT_NO_DBUS)
+            return hasHalDeviceFeature("bluetooth");
+#endif
+        }
         break;
     case QSystemInfo::CameraFeature :
-        featureSupported = true;
+        {
+#if !defined(QT_NO_DBUS)
+            featureSupported = hasHalUsbFeature(0x06); // image
+//            if(featureSupported) {
+//                featureSupported = hasHalUsbFeature(0x0E); // video cam
+//            }
+#endif
+        }
         break;
     case QSystemInfo::FmradioFeature :
-        featureSupported = false;
         break;
     case QSystemInfo::IrFeature :
-        featureSupported = true;
-        break;
+#if !defined(QT_NO_DBUS)
+            featureSupported = hasHalUsbFeature(0xFE);
+#endif
+            break;
     case QSystemInfo::LedFeature :
-        featureSupported = true;
         break;
     case QSystemInfo::MemcardFeature :
-        featureSupported = true;
+        {
+#if !defined(QT_NO_DBUS)
+            QHalInterface iface;
+            if (iface.isValid()) {
+
+                QHalInterface halIface;
+                QStringList halDevices = halIface.getAllDevices();
+                foreach(QString device, halDevices) {
+                    QHalDeviceInterface ifaceDevice(device);
+                    if (ifaceDevice.isValid()) {
+                        if(ifaceDevice.getPropertyString("info.subsystem") == "mmc_host") {
+                            return true;
+                        }
+                        if(ifaceDevice.getPropertyBool("storage.removable")) {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+#endif
+        }
         break;
     case QSystemInfo::UsbFeature :
-        featureSupported = true;
+#if !defined(QT_NO_DBUS)
+        return hasHalDeviceFeature("usb");
+#endif
         break;
     case QSystemInfo::VibFeature :
-        featureSupported = false;
         break;
     case QSystemInfo::WlanFeature :
-        featureSupported = true;
+        {
+#if !defined(QT_NO_DBUS)
+            QHalInterface iface;
+            if (iface.isValid()) {
+                QStringList list = iface.findDeviceByCapability("net.80211");
+                if(!list.isEmpty()) {
+                    featureSupported = true;
+                    break;
+                }
+            }
+#endif
+        }
         break;
     case QSystemInfo::SimFeature :
-        featureSupported = false;
         break;
     case QSystemInfo::LocationFeature :
-        featureSupported = false;
         break;
     case QSystemInfo::VideoOutFeature :
-        featureSupported = false;
+        break;
+    case QSystemInfo::HapticsFeature:
         break;
     case QSystemInfo::UnknownFeature :
     default:
@@ -401,6 +543,21 @@ qint32 QSystemDisplayInfoPrivate::displayBrightness()
 
 void QSystemDisplayInfoPrivate::setScreenSaverEnabled(bool)
 {
+    QDesktopWidget wid;
+#ifdef Q_WS_X11
+ qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+    Display *dip = QX11Info::display();
+ //   XActivateScreenSaver(dip);
+ qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+int timeout;
+int interval;
+int preferBlank;
+int allowExp;
+    XGetScreenSaver(dip, &timeout, &interval, &preferBlank, &allowExp);
+    qWarning() << "XScreensaver" << timeout << interval << preferBlank << allowExp;
+#endif
+
+//    wid.x11Info();
 }
 
 void QSystemDisplayInfoPrivate::setScreenBlankingEnabled(bool)
@@ -410,7 +567,12 @@ void QSystemDisplayInfoPrivate::setScreenBlankingEnabled(bool)
 qint32 QSystemDisplayInfoPrivate::colorDepth(qint32 screen)
 {
     Q_UNUSED(screen);
-    return QPixmap::defaultDepth();
+#ifdef Q_WS_X11
+    QDesktopWidget wid;
+    return wid.x11Info().depth();
+#else
+        return QPixmap::defaultDepth();
+#endif
 }
 
 bool QSystemDisplayInfoPrivate::isScreenLockOn()
@@ -771,7 +933,7 @@ QString QSystemDeviceInfoPrivate::productName() const
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
-        if (iface.isValid()) {         
+        if (iface.isValid()) {
             productName = iface.getPropertyString("info.product");
             if(productName.isEmpty()) {
                 productName = iface.getPropertyString("system.product");

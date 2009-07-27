@@ -63,6 +63,11 @@ public:
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
     QString getDetailOfFeature(QSystemInfo::Feature feature);
+private:
+#if !defined(QT_NO_DBUS)
+    bool hasHalDeviceFeature(const QString &param);
+    bool hasHalUsbFeature(quint32 usbClass);
+#endif
 };
 
 class QSystemNetworkInfoPrivate : public QObject
