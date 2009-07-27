@@ -4,6 +4,8 @@ TARGET = QtBearer
 
 QT += network
 
+QT += network
+
 DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
