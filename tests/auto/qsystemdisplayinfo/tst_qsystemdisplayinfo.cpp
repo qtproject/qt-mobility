@@ -49,19 +49,19 @@ private slots:
 void tst_QSystemDisplayInfo::tst_displayBrightness()
 {
     QSystemDisplayInfo di;
-
-qWarning() << di.displayBrightness();
+    QVERIFY(di.displayBrightness() > -2);
 }
 
 void tst_QSystemDisplayInfo::tst_colorDepth()
 {
     QSystemDisplayInfo di;
-    qWarning() << di.colorDepth(0);
+    QVERIFY(di.colorDepth(0) > 0);
 }
 
 void tst_QSystemDisplayInfo::tst_setScreenSaverEnabled()
 {
     QSystemDisplayInfo di;
+di.setScreenSaverEnabled(true);
 }
 
 void tst_QSystemDisplayInfo::tst_setScreenBlankingEnabled()
@@ -72,7 +72,8 @@ void tst_QSystemDisplayInfo::tst_setScreenBlankingEnabled()
 void tst_QSystemDisplayInfo::tst_isScreenLockOn()
 {
     QSystemDisplayInfo di;
-    qWarning() << di.isScreenLockOn();
+    bool lock = di.isScreenLockOn();
+    QVERIFY(lock == true || lock == false);
 }
 
 
