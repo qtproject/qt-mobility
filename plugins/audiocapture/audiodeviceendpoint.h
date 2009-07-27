@@ -32,45 +32,44 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOCAPTURECONTROL_H
-#define AUDIOCAPTURECONTROL_H
+#ifndef AUDIODEVICEENDPOINT_H
+#define AUDIODEVICEENDPOINT_H
 
-#include <QtCore/qobject.h>
+#include "qaudiodeviceendpoint.h"
+#include <QStringList>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudioformat.h>
-#endif
-
-#include "qaudiocapturecontrol.h"
-
-class AudioCaptureService;
-class AudioCaptureSession;
-
-class AudioCaptureControl : public QAudioCaptureControl
+class AudioDeviceEndpoint : public QAudioDeviceEndpoint
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    AudioCaptureControl(QObject *parent = 0);
-    AudioCaptureControl(AudioCaptureService *service, QObject *parent = 0);
-    ~AudioCaptureControl();
+    AudioDeviceEndpoint(QObject *parent);
+    virtual ~AudioDeviceEndpoint();
 
-#ifdef AUDIOSERVICES
-    QAudioFormat inputFormat() const;
-    bool setInputFormat(const QAudioFormat &format);
-    QAudioFormat outputFormat() const;
-    bool setOutputFormat(const QAudioFormat &format);
-#endif
-    void setInputDevice(QIODevice *device);
-    void setOutputDevice(QIODevice *device);
+    void setDirectionFilter(DeviceDirection direction);
+    void setRoleFilter(Roles roles);
+    void setFormFactorFilter(FormFactors forms);
+
+    int deviceCount() const;
+
+    int direction(int index) const;
+    Roles roles(int index) const;
+    FormFactor formFactor(int index) const;
+
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+
+    int defaultInputDevice(Role role) const;
+    int defaultOutputDevice(Role role) const;
 
 private:
-    AudioCaptureService *m_service;
-    AudioCaptureSession *m_session;
+    void update();
 
-#ifdef AUDIOSERVICES
-    QAudioFormat m_inputFormat;
-    QAudioFormat m_outputFormat;;
-#endif
+    QStringList m_names;
+    QStringList m_descriptions;
+    QList<int> m_directions;
+    QList<Roles> m_roles;
+    QList<FormFactor> m_formFactors;
 };
 
-#endif
+#endif // AUDIODEVICEENDPOINT_H

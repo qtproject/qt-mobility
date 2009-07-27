@@ -32,25 +32,20 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
-
 #ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 #endif
 
 #include "audiocaptureservice.h"
-#include "audiocapturecontrol.h"
+#include "qaudiodeviceendpoint.h"
+#include "audiodeviceendpoint.h"
 #include "audiocapturesession.h"
-#include "qiodeviceendpoint.h"
+#include "audioencode.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent)
-    : QAudioCaptureService(parent)
+    :QAbstractMediaService(parent)
 {
-    m_control = new AudioCaptureControl(this, this);
+    m_session = new AudioCaptureSession(this);
 }
 
 AudioCaptureService::~AudioCaptureService()
@@ -59,20 +54,49 @@ AudioCaptureService::~AudioCaptureService()
 
 QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 {
-    return m_control;
+    if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
+        return m_session;
+
+    if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
+        return m_session->audioEncodeControl();
+
+    return 0;
 }
 
 QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
         QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> list;
-    list << "QIODevice";
+
+    if (direction == QMediaEndpointInterface::Input)
+        list << QByteArray(QAudioDeviceEndpoint_iid);
+
     return list;
 }
 
 QObject *AudioCaptureService::createEndpoint(const char *interface)
 {
-    return new QIODeviceEndpoint;
+    if (qstrcmp(interface, QAudioDeviceEndpoint_iid) == 0) {
+        return new AudioDeviceEndpoint(this);
+    }
+
+    return 0;
+}
+
+void AudioCaptureService::setAudioInput(QObject *input)
+{
+    AudioDeviceEndpoint *endPoint = qobject_cast<AudioDeviceEndpoint*>(input);
+
+    if (endPoint) {
+        endPoint->setDirectionFilter(AudioDeviceEndpoint::InputDevice);
+
+        if (audioInput())
+            disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
+
+        connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
+
+    }
+    QAbstractMediaService::setAudioInput(endPoint);
 }
 
 

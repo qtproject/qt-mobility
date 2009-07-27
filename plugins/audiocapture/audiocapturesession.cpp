@@ -32,38 +32,115 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include "audiocapturesession.h"
+#include "audioencode.h"
+#include "qmediastreams.h"
+#include "qmediacapture.h"
+
+#include <QDebug>
+#include <QUrl>
+
+#include <QtMultimedia/qaudiodeviceinfo.h>
 
 AudioCaptureSession::AudioCaptureSession(QObject *parent)
-    : QObject(parent)
+    :QMediaCaptureControl(parent),
+    m_state(QMediaCapture::StoppedState)
 {
+    m_audioInput = 0;
+    m_position = 0;
+    m_audioEncodeControl = new AudioEncode(this);
 }
 
 AudioCaptureSession::~AudioCaptureSession()
 {
+    stop();
+
+    if(m_audioInput)
+        delete m_audioInput;
 }
 
-void AudioCaptureSession::dataReady()
+QMediaSink AudioCaptureSession::sink() const
 {
-    // for now just pass through
-    int len = 4096;
-    if(len > 0) {
-        char* data = new char[16384];
-        if(len > 16384) len = 16384;
-        qint64 l = input->read(data,len);
-        if(l > 0)
-            output->write(data,l);
-        delete data;
+    return m_sink;
+}
+
+bool AudioCaptureSession::setSink(const QMediaSink& sink)
+{
+    m_sink = sink;
+    file.setFileName(sink.dataLocation().toString());
+    return true;
+}
+
+int AudioCaptureSession::state() const
+{
+    return int(m_state);
+}
+
+qint64 AudioCaptureSession::position() const
+{
+    return m_position;
+}
+
+void AudioCaptureSession::record()
+{
+    if(m_audioInput) {
+        if(m_state == QMediaCapture::StoppedState)
+            file.open(QIODevice::WriteOnly);
+
+        m_audioInput->start(qobject_cast<QIODevice*>(&file));
+    }
+
+    m_state = QMediaCapture::RecordingState;
+}
+
+void AudioCaptureSession::pause()
+{
+    if(m_audioInput)
+        m_audioInput->stop();
+
+    m_state = QMediaCapture::PausedState;
+}
+
+void AudioCaptureSession::stop()
+{
+    if(m_audioInput) {
+        m_audioInput->stop();
+        file.close();
+        m_position = 0;
+    }
+    m_state = QMediaCapture::StoppedState;
+}
+
+void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
+{
+    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    for(int i=0;i<devices.size();i++) {
+        if(QAudioDeviceInfo(devices.at(i),this).deviceName().contains(deviceName)) {
+            m_audioInput = new QAudioInput(devices.at(i),m_audioEncodeControl->format(),this);
+            connect(m_audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(stateChanged(QAudio::State)));
+            connect(m_audioInput,SIGNAL(notify()),this,SLOT(notify()));
+            return;
+        }
     }
 }
 
-void AudioCaptureSession::setOutputDevice(QIODevice* device)
+void AudioCaptureSession::stateChanged(QAudio::State state)
 {
-    output = device;
+    switch(state) {
+        case QAudio::ActiveState:
+            emit stateChanged(QMediaCapture::RecordingState);
+            break;
+        default:
+            if(!((m_state == QMediaCapture::PausedState)||(m_state == QMediaCapture::StoppedState)))
+                m_state = QMediaCapture::StoppedState;
+
+            emit stateChanged(m_state);
+            break;
+    }
 }
 
-void AudioCaptureSession::setInputDevice(QIODevice* device)
+void AudioCaptureSession::notify()
 {
-    input = device;
+    m_position += m_audioInput->notifyInterval();
+    emit positionChanged(m_position);
 }
