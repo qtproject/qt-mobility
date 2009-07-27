@@ -85,6 +85,7 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
             d_ptr->_id = other.d_ptr->_id;
         } else {
             delete d_ptr;
+            d_ptr = 0;
         }
     }
 
