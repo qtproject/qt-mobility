@@ -321,7 +321,6 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
     d->layer->setValue(this, d->handle, attribute, data);
 }
 
-#if 0
 /*!
     \overload
 
@@ -368,6 +367,7 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
     d->layer->removeValue(this, d->handle, attribute);
 }
 
+#if 0
 void QValueSpaceObject::connectNotify(const char *member)
 {
     QObject::connectNotify(member);

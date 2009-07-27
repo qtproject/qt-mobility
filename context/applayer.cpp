@@ -1693,7 +1693,7 @@ public:
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
-    bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) { return false; }
+    bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &);
     bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) { return false; }
 
     // Other
@@ -3399,6 +3399,20 @@ bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const
     return setItem(owner, fullPath, data);
 }
 
+bool ApplicationLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path)
+{
+    ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
+
+    if (!handles.values().contains(readHandle))
+        return false;
+
+    NodeOwner owner;
+    owner.data1 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<unsigned int>(creator);
+
+    remItems(owner, readHandle->path + '/' + path);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // define QValueSpaceObject
 ///////////////////////////////////////////////////////////////////////////////
@@ -3552,63 +3566,6 @@ void QValueSpaceObject::sync()
   object may chose to honor, ignore or transform the set value request.
  */
 
-#if 0
-/*!
-  Set an \a attribute on the object to \a data.  If attribute is empty, this
-  call will set the object's value.
-
-  For example:
-
-  \code
-  QValueSpaceObject object("/Device");
-  object.setAttribute("State", "Starting");
-  object.sync();
-
-  // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
-  \endcode
- */
-void QValueSpaceObject::setAttribute(const QByteArray &attribute,
-                                     const QVariant &data)
-{
-    VS_CALL_ASSERT;
-    ApplicationLayer *appLayer = applicationLayer();
-    if(!appLayer) return;
-
-    d->hasSet = true;
-    QByteArray attr = attribute;
-    if(attr.endsWith('/'))
-        attr.truncate(attr.length() - 1);
-
-    NodeOwner owner;
-    owner.data1 = (unsigned long)this;
-    owner.data2 = (unsigned long)this;
-
-    QByteArray path;
-
-    if(attr.startsWith('/'))
-        path = d->path + attr;
-    else if(attr.isEmpty())  {
-        if(d->path.isEmpty())
-            path = "/";
-        else
-            path = d->path;
-    } else
-        path = d->path + "/" + attr;
-
-    appLayer->setItem(owner, path, data);
-}
-#endif
-/*!
-  \overload
-
-  This is a convenience overload and is equivalent to
-  \c {removeAttribute(attribute.toUtf8())}.
- */
-void QValueSpaceObject::removeAttribute(const QString &attribute)
-{
-    VS_CALL_ASSERT;
-    removeAttribute(attribute.toUtf8());
-}
 
 /*! \internal */
 void QValueSpaceObject::connectNotify(const char *method)
@@ -3630,63 +3587,6 @@ void QValueSpaceObject::connectNotify(const char *method)
             appLayer->setWatch(owner, d->path);
     }
     QObject::connectNotify(method);
-}
-
-/*!
-  \overload
-
-  This is a convenience overload and is equivalent to
-  \c {removeAttribute(QByteArray(attribute))}.
- */
-void QValueSpaceObject::removeAttribute(const char *attribute)
-{
-    VS_CALL_ASSERT;
-    removeAttribute(QByteArray(attribute));
-}
-
-/*!
-  Removes the object \a attribute and all sub-attributes from the system.
-
-  For example:
-  \code
-  QValueSpaceObject object("/Device");
-  object.setAttribute("State", "Starting");
-  object.setAttribute("State/Memory", "1000");
-  object.sync();
-  // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
-  // QValueSpaceItem("/Device/State/Memory").value() == QVariant("1000")
-
-  object.removeAttribute("State");
-  object.sync();
-  // QValueSpaceItem("/Device/State").value() == QVariant();
-  // QValueSpaceItem("/Device/State/Memory").value() == QVariant();
-  \endcode
-*/
-void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
-{
-    VS_CALL_ASSERT;
-    if(!d->hasSet)
-        return;
-    ApplicationLayer *appLayer = applicationLayer();
-    if(!appLayer)
-        return;
-
-    QByteArray attr = attribute;
-    if(attr.endsWith('/'))
-        attr.truncate(attr.length() - 1);
-
-    NodeOwner owner;
-    owner.data1 = (unsigned long)this;
-    owner.data2 = (unsigned long)this;
-    if(attr.startsWith('/'))
-        appLayer->remItems(owner, d->path + attr);
-    else if(attr.isEmpty()) {
-        if(d->path.isEmpty())
-            appLayer->remItems(owner, "/");
-        else
-            appLayer->remItems(owner, d->path);
-    } else
-        appLayer->remItems(owner, d->path + "/" + attr);
 }
 
 #include "applayer.moc"
