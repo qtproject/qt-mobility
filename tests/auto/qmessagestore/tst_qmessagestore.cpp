@@ -67,6 +67,9 @@ private slots:
 
     void testAccount_data();
     void testAccount();
+
+    void testFolder_data();
+    void testFolder();
 };
 
 QTEST_MAIN(tst_QMessageStore)
@@ -113,7 +116,7 @@ void tst_QMessageStore::testAccount()
     p.insert("fromAddress", fromAddress);
 
     QMessageAccountId accountId(Support::addAccount(p));
-    QVERIFY(!(accountId == QMessageAccountId()));
+    QVERIFY(accountId.isValid());
     
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
@@ -123,5 +126,63 @@ void tst_QMessageStore::testAccount()
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
+}
+
+void tst_QMessageStore::testFolder_data()
+{
+    QTest::addColumn<QString>("path");
+    QTest::addColumn<QString>("displayName");
+    QTest::addColumn<QString>("parentFolderPath");
+    QTest::addColumn<QString>("displayNameResult");
+
+    QTest::newRow("Inbox") << "INBOX" << "Inbox" << "" << "Inbox";
+    QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
+    QTest::newRow("Archived") << "INBOX/archived" << "Archived" << "INBOX" << "Archived";
+    QTest::newRow("Backup") << "INBOX/archived/backup" << "" << "INBOX/archived" << "INBOX/archived/backup";
+}
+
+void tst_QMessageStore::testFolder()
+{
+    // Ensure we have an account to link these folders to
+    static const QString testAccountName("testAccount");
+    QMessageAccountId testAccountId;
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+    if (accountIds.isEmpty()) {
+        Support::Parameters p;
+        p.insert("name", testAccountName);
+        testAccountId = Support::addAccount(p);
+    } else {
+        testAccountId = accountIds.first();
+    }
+    QVERIFY(testAccountId.isValid());
+
+    QFETCH(QString, path);
+    QFETCH(QString, displayName);
+    QFETCH(QString, parentFolderPath);
+    QFETCH(QString, displayNameResult);
+
+    Support::Parameters p;
+    p.insert("path", path);
+    p.insert("displayName", displayName);
+    p.insert("parentAccountName", testAccountName);
+    p.insert("parentFolderPath", parentFolderPath);
+
+    QMessageFolderId folderId(Support::addFolder(p));
+    QVERIFY(folderId.isValid());
+    
+    QMessageFolder folder(folderId);
+    QCOMPARE(folder.id(), folderId);
+    QCOMPARE(folder.path(), path);
+    QCOMPARE(folder.displayName(), displayNameResult);
+    QCOMPARE(folder.parentAccountId(), testAccountId);
+
+    if (!parentFolderPath.isEmpty()) {
+        QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(testAccountId));
+        QMessageFolderId parentFolderId(QMessageStore::instance()->queryFolders(key).first());
+        QCOMPARE(folder.parentFolderId(), parentFolderId);
+    }
+
+    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders());
+    QVERIFY(folderIds.contains(folderId));
 }
 

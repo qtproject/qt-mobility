@@ -57,12 +57,15 @@ QMessageAccountId addAccount(const Parameters &params)
     QString name(params["name"]);
     QString fromAddress(params["fromAddress"]);
 
-    if (!name.isEmpty() && !fromAddress.isEmpty()) {
+    if (!name.isEmpty()) {
         QMailAccount account;
         account.setName(name);
-        account.setFromAddress(QMailAddress(fromAddress));
         account.setStatus(QMailAccount::Enabled, true);
         account.setMessageType(QMailMessage::Email);
+
+        if (!fromAddress.isEmpty()) {
+            account.setFromAddress(QMailAddress(fromAddress));
+        }
 
         if (!QMailStore::instance()->addAccount(&account, 0)) {
             qWarning() << "Unable to addAccount:" << name;
@@ -76,7 +79,42 @@ QMessageAccountId addAccount(const Parameters &params)
 
 QMessageFolderId addFolder(const Parameters &params)
 {
-    Q_UNUSED(params)
+    QString path(params["path"]);
+    QString displayName(params["displayName"]);
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
+
+    if (!path.isEmpty() && !parentAccountName.isEmpty()) {
+        // Find the named account
+        QMailAccountIdList accountIds(QMailStore::instance()->queryAccounts(QMailAccountKey::name(parentAccountName)));
+        if (accountIds.count() == 1) {
+            QMailFolder folder;
+            folder.setPath(path);
+            folder.setParentAccountId(accountIds.first());
+
+            if (!displayName.isEmpty()) {
+                folder.setDisplayName(displayName);
+            }
+
+            if (!parentFolderPath.isEmpty()) {
+                QMailFolderKey key(QMailFolderKey::path(parentFolderPath) & QMailFolderKey::parentAccountId(folder.parentAccountId()));
+                QMailFolderIdList folderIds(QMailStore::instance()->queryFolders(key));
+                if (folderIds.count() == 1) {
+                    folder.setParentFolderId(folderIds.first());
+                } else {
+                    qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+                }
+            }
+
+            if (!QMailStore::instance()->addFolder(&folder)) {
+                qWarning() << "Unable to addFolder:" << path;
+            } else {
+                return QmfHelpers::convert(folder.id());
+            }
+        } else {
+            qWarning() << "Unable to locate parent account:" << parentAccountName;
+        }
+    }
 
     return QMessageFolderId();
 }
