@@ -14,7 +14,8 @@ HEADERS += qcontextglobal.h \
 
 SOURCES += qpacketprotocol.cpp \
            qvaluespace.cpp \
-           qvaluespacemanager.cpp
+           qvaluespacemanager.cpp \
+           qvaluespaceobject.cpp
 
 unix {
     HEADERS += qmallocpool.h \

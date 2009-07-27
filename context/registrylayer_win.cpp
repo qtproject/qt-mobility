@@ -65,8 +65,6 @@ public:
     virtual void setProperty(HANDLE handle, Properties);
     virtual void remHandle(HANDLE);
 
-    void removeWatches(QValueSpaceObject *creator, HANDLE parent);
-
     /* QValueSpaceItem functions */
     bool requestSetValue(HANDLE handle, const QVariant &data);
     bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
@@ -78,6 +76,8 @@ public:
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &subPath);
     bool removeSubTree(QValueSpaceObject *creator, HANDLE parent);
+    void addWatch(QValueSpaceObject *creator, HANDLE handle);
+    void removeWatches(QValueSpaceObject *creator, HANDLE parent);
     void sync();
 
     /* Private implementation functions */
@@ -669,6 +669,7 @@ void RegistryLayer::sync()
     // Wait for change notification callbacks before returning
     QEventLoop loop;
     connect(this, SIGNAL(handleChanged(uint)), &loop, SLOT(quit()));
+    bool wait = false;
 
     QList<HKEY> keys = hKeys.values();
     while (!keys.isEmpty()) {
@@ -848,6 +849,10 @@ bool RegistryLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, const
    creators[creator].removeOne(fullPath);
 
    return true;
+}
+
+void RegistryLayer::addWatch(QValueSpaceObject *creator, HANDLE handle)
+{
 }
 
 void RegistryLayer::removeWatches(QValueSpaceObject *creator, HANDLE handle)
