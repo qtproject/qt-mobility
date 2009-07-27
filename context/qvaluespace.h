@@ -92,9 +92,6 @@ public:
     /* Removes a previously allocated handle. */
     virtual void remHandle(HANDLE) = 0;
 
-    /* Removes all watches created by QValueSpaceObject */
-    virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
-
     /* QValueSpaceItem functions */
     virtual bool requestSetValue(HANDLE handle, const QVariant &data) = 0;
     virtual bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) = 0;
@@ -105,6 +102,7 @@ public:
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) = 0;
     virtual bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) = 0;
     virtual bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) = 0;
+    virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
 
 signals:
     void handleChanged(unsigned int);

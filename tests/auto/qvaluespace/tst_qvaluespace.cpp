@@ -949,6 +949,7 @@ void tst_QValueSpaceItem::removeValue()
     delete object;
     delete rel_object;
 }
+
 void tst_QValueSpaceItem::ipcSetValue()
 {
 #if defined(QT_NO_PROCESS)
