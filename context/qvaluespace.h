@@ -95,12 +95,12 @@ public:
     /* Removes all watches created by QValueSpaceObject */
     virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
 
-    /* QValueSpaceItem side functions */
+    /* QValueSpaceItem functions */
     virtual bool requestSetValue(HANDLE handle, const QVariant &data) = 0;
     virtual bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) = 0;
     virtual bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) = 0;
 
-    /* QValueSpaceObject side functions */
+    /* QValueSpaceObject functions */
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) = 0;
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) = 0;
     virtual bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) = 0;

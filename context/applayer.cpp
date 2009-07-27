@@ -33,6 +33,8 @@
 
 #include "qvaluespace.h"
 #include "qmallocpool.h"
+#include "qvaluespaceobject.h"
+
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/stat.h>
@@ -1681,6 +1683,19 @@ public:
     virtual bool setValue(HANDLE, const QVariant &);
     virtual bool setValue(HANDLE, const QByteArray &, const QVariant &);
     virtual bool syncChanges() { return true; }
+
+    void removeWatches(QValueSpaceObject *creator, HANDLE parent) { }
+
+    /* QValueSpaceItem functions */
+    bool requestSetValue(HANDLE handle, const QVariant &data) { return false; }
+    bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) { return false; }
+    bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) { return false; }
+
+    /* QValueSpaceObject functions */
+    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
+    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) { return false; }
+    bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) { return false; }
+    bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) { return false; }
 
     // Other
     bool doRemove(const QByteArray &path);

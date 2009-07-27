@@ -45,6 +45,8 @@ QT_BEGIN_NAMESPACE
 class QValueSpaceObjectPrivate;
 class Q_CFW_EXPORT QValueSpaceObject : public QObject
 {
+    friend class ApplicationLayer;
+
     Q_OBJECT
 
 public:
