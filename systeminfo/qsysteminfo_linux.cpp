@@ -374,7 +374,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VibFeature :
 #if !defined(QT_NO_DBUS)
-        featureSUpported = hasHalDeviceFeature("vibrator"); //might not always be true
+        featureSupported = hasHalDeviceFeature("vibrator"); //might not always be true
         if(featureSupported)
             return featureSupported;
 #endif
