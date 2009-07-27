@@ -63,21 +63,21 @@
     Q_ASSERT(foundServices.count());
 
 <span class="comment">    // instantiate the FileStorage object</span>
-    QObject* fileStorage;
+    QObject *fileStorage;
     fileStorage = manager.loadInterface(foundServices.at(0));</pre>
 <a name="default-lookup"></a>
 <h3>Default lookup</h3>
 <p>The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
 <pre>    QServiceManager manager;
     QObject *storage;
-    storage = manager-&gt;loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="header-lookup"></a>
 <h3>Header lookup</h3>
 <p>So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The subsequent code snippet demonstrates how this may look like:</p>
 <pre>    #include &lt;filestorage.h&gt;
     ...
     QServiceManager manager;
-    FileStorage* storage = 0;
+    FileStorage *storage = 0;
     ...
     manager.setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
     storage = manager.getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
@@ -163,7 +163,7 @@
         filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
         QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
         for(int i = 0; i &lt; list.size(); i++) {
-            QObject* serviceObject;
+            QObject *serviceObject;
             serviceObject = mgr.loadInterface(list[i]);
 
             <span class="comment">// returned object owned by client</span>

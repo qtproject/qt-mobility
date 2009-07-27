@@ -61,7 +61,7 @@ The client code has precise knowledge of the service and its interfaces.
     Q_ASSERT(foundServices.count());
 
     // instantiate the FileStorage object
-    QObject* fileStorage;
+    QObject *fileStorage;
     fileStorage = manager.loadInterface(foundServices.at(0));
 \endcode
 
@@ -75,7 +75,7 @@ compatible to previous versions.
 \code
     QServiceManager manager;
     QObject *storage;
-    storage = manager->loadInterface("com.nokia.qt.examples.FileStorage");
+    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
 \endcode
 
 \section2 Header lookup
@@ -89,7 +89,7 @@ The subsequent code snippet demonstrates how this may look like:
 #include <filestorage.h>
 ...
 QServiceManager manager;
-FileStorage* storage = 0;
+FileStorage *storage = 0;
 ...
 manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
 storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
@@ -247,7 +247,7 @@ interface \i com.nokia.qt.ILocation:
     filter.setInterfaceName("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
     for(int i = 0; i < list.size(); i++) {
-        QObject* serviceObject;
+        QObject *serviceObject;
         serviceObject = mgr.loadInterface(list[i]);
 
         // returned object owned by client
