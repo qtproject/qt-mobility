@@ -47,5 +47,9 @@
 
 #include "qcontactrequest.h"
 #include "qcontactrequestresult.h"
+#include "qcontactgrouprequest.h"
+#include "qcontactgrouprequestresult.h"
+#include "qcontactdetaildefinitionrequest.h"
+#include "qcontactdetaildefinitionrequestresult.h"
 
 #endif

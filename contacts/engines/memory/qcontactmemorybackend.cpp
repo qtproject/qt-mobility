@@ -41,6 +41,11 @@
 
 #include "qcontactmemorybackend_p.h"
 
+#include "qcontactabstractrequest.h"
+#include "qcontactabstractrequestresult.h"
+#include "qcontactrequests.h"
+
+#include <QTimer>
 #include <QUuid>
 #include <QSharedData>
 
@@ -391,6 +396,195 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
     else
         error = QContactManager::DoesNotExistError;
     return success;
+}
+
+/*!
+ * \reimp
+ */
+void QContactMemoryEngine::destroyAsynchronousRequest(QContactAbstractRequest* req)
+{
+    if (req->status() != QContactAbstractRequest::Finished && req->status() != QContactAbstractRequest::Cancelled)
+        return; // cannot destroy request if not cancelled or finished
+
+    if (d->m_asynchronousRequests.contains(req)) {
+        delete (d->m_asynchronousRequests.value(req));
+        d->m_asynchronousRequests.remove(req);
+    }
+}
+
+/*!
+ * \reimp
+ */
+bool QContactMemoryEngine::asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs)
+{
+    Q_UNUSED(req);
+    Q_UNUSED(msecs);
+}
+
+/*!
+ * \reimp
+ */
+bool QContactMemoryEngine::asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs)
+{
+    Q_UNUSED(req);
+    Q_UNUSED(msecs);
+}
+
+/*!
+ * \reimp
+ */
+void QContactMemoryEngine::cancelAsynchronousRequest(QContactAbstractRequest* req)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * \reimp
+ */
+void QContactMemoryEngine::startAsynchronousRequest(QContactAbstractRequest* req, QContactAbstractRequest::Operation operation)
+{
+    // check to see that the request isn't already started
+    if (req->status() == QContactAbstractRequest::Pending || req->status() == QContactAbstractRequest::Cancelling)
+        return;
+
+    // we can start the request.
+    QContactAbstractRequestResult *requestResult;
+    switch (req->type()) {
+        case QContactAbstractRequest::Contact:
+        {
+            requestResult = new QContactRequestResult;
+            QContactRequest *creq = static_cast<QContactRequest*>(req);
+            static_cast<QContactRequestResult*>(requestResult)->updateRequest(creq, QContactAbstractRequest::Pending);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinition:
+        {
+            requestResult = new QContactDetailDefinitionRequestResult;
+            QContactDetailDefinitionRequest *dreq = static_cast<QContactDetailDefinitionRequest*>(req);
+            static_cast<QContactDetailDefinitionRequestResult*>(requestResult)->updateRequest(dreq, QContactAbstractRequest::Pending);
+        }
+        break;
+
+        case QContactAbstractRequest::Group:
+        {
+            requestResult = new QContactGroupRequestResult;
+            QContactGroupRequest *greq = static_cast<QContactGroupRequest*>(req);
+            static_cast<QContactGroupRequestResult*>(requestResult)->updateRequest(greq, QContactAbstractRequest::Pending);
+        }
+        break;
+
+        default: // unknown request type
+        return;
+    }
+
+    // clean up memory in use from previous operation
+    if (d->m_asynchronousRequests.contains(req)) {
+        delete d->m_asynchronousRequests.value(req);
+    }
+
+    // and start the new operation
+    d->m_asynchronousRequests.insert(req, requestResult);
+    d->m_asynchronousOperations.enqueue(QPair<QContactAbstractRequest*, QContactAbstractRequest::Operation>(req, operation));
+    QTimer::singleShot(2000, this, SLOT(performAsynchronousOperation()));
+}
+
+/*!
+ * This slot is called some time after an asynchronous request is started.
+ * It performs the required operation, sets the result and returns.
+ */
+void QContactMemoryEngine::performAsynchronousOperation()
+{
+    QContactAbstractRequest *currentRequest;
+    QContactAbstractRequest::Operation operation;
+
+    // take the first pending, non-destroyed request and finish it
+    while (true) {
+        currentRequest = d->m_asynchronousOperations.head().first;
+        operation = d->m_asynchronousOperations.dequeue().second;
+        if (d->m_asynchronousRequests.contains(currentRequest))
+            break;
+        if (d->m_asynchronousOperations.isEmpty())
+            return;
+    }
+
+    QSet<QUniqueId> contactsChanged;
+    QSet<QUniqueId> contactsAdded;
+    QSet<QUniqueId> groupsChanged;
+
+    if (currentRequest->status() == QContactAbstractRequest::Pending) {
+        switch (currentRequest->type()) {
+            case QContactAbstractRequest::Contact:
+            {
+                QContactRequest *cr = static_cast<QContactRequest*>(currentRequest);
+                QContactRequestResult *crr = static_cast<QContactRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactManager::Error asynchronousError = QContactManager::UnspecifiedError;
+                if (operation == QContactAbstractRequest::SaveOperation) {
+                    // save
+                    QList<QContact> selection = cr->contactSelection();
+                    crr->setErrors(saveContacts(&selection, contactsAdded, contactsChanged, groupsChanged, asynchronousError));
+                } else {
+                    // retrieve or remove
+                    QList<QContact> result;
+                    QList<QUniqueId> translatedRequest;
+                    asynchronousError = QContactManager::DoesNotExistError;
+                    if (cr->selectionType() == QContactRequest::SelectByIds) {
+                        translatedRequest = cr->idSelection();
+                    } else if (cr->selectionType() == QContactRequest::SelectByFilter) {
+                        QContactFilter fil = cr->filterSelection();
+                        QList<QContactSortOrder> defaultSortOrder;
+                        translatedRequest = contacts(fil, defaultSortOrder, asynchronousError);
+                    } else if (cr->selectionType() == QContactRequest::SelectAll) {
+                        translatedRequest = contacts(QList<QContactSortOrder>(), asynchronousError);
+                    } else {
+                        // invalid selection type...
+                        asynchronousError = QContactManager::BadArgumentError;
+                    }
+
+                    if (operation == QContactAbstractRequest::RetrieveOperation) {
+                        // retrieve the specified contacts
+                        for (int i = 0; i < d->m_contacts.size(); i++) {
+                            if (translatedRequest.contains(d->m_contacts.at(i).id())) {
+                                result.append(d->m_contacts.at(i));
+                                asynchronousError = QContactManager::NoError;
+                            }
+                        }
+                        crr->setContacts(result);
+                    } else {
+                        // remove the specified contacts
+                        crr->setErrors(removeContacts(&translatedRequest, contactsChanged, groupsChanged, asynchronousError));
+                    }
+                }
+
+                crr->setError(asynchronousError);
+                crr->updateRequest(cr, QContactAbstractRequest::Finished);
+            }
+            break;
+
+            case QContactAbstractRequest::DetailDefinition:
+            {
+                QContactDetailDefinitionRequestResult *drr = static_cast<QContactDetailDefinitionRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                if (operation == QContactAbstractRequest::SaveOperation) {
+                } else if (operation == QContactAbstractRequest::RetrieveOperation) {
+                } else {
+                }
+            }
+            break;
+
+            case QContactAbstractRequest::Group:
+            {
+                QContactGroupRequestResult *grr = static_cast<QContactGroupRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                if (operation == QContactAbstractRequest::SaveOperation) {
+                } else if (operation == QContactAbstractRequest::RetrieveOperation) {
+                } else {
+                }
+            }
+            break;
+
+            default: // unknown request type...
+            return;
+        }
+    }
 }
 
 /*!

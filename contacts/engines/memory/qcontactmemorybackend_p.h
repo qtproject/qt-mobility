@@ -50,6 +50,8 @@
 #include <QMap>
 #include <QMultiMap>
 #include <QList>
+#include <QQueue>
+#include <QPair>
 #include <QSet>
 #include <QDateTime>
 #include <QString>
@@ -57,6 +59,7 @@
 #include "qcontact.h"
 #include "qcontactmanager.h"
 #include "qcontactdetaildefinition.h"
+#include "qcontactabstractrequest.h"
 
 class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
@@ -82,6 +85,9 @@ public:
     QAtomicInt m_refCount;
     QString m_id;
 
+    QMap<QContactAbstractRequest*, QContactAbstractRequestResult*> m_asynchronousRequests;
+    QQueue<QPair<QContactAbstractRequest*, QContactAbstractRequest::Operation> > m_asynchronousOperations;
+
     QList<QContact> m_contacts;                    // list of contacts
     QMap<QUniqueId, QContactGroup> m_groups;       // map of group id to groups.
     QList<QUniqueId> m_contactIds;                 // list of contact Id's
@@ -95,6 +101,8 @@ public:
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
 {
 public:
+    using QContactManagerEngine::contacts;
+
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
     void deref();
 
@@ -115,6 +123,13 @@ public:
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
+    /* Asynchronous - Request Trampolines */
+    void destroyAsynchronousRequest(QContactAbstractRequest* req);
+    bool asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs);
+    bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
+    void cancelAsynchronousRequest(QContactAbstractRequest* req);
+    void startAsynchronousRequest(QContactAbstractRequest* req, QContactAbstractRequest::Operation operation);
+
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     virtual bool filterSupported(const QContactFilter& filter) const;
@@ -122,6 +137,9 @@ public:
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);
+
+private slots:
+    void performAsynchronousOperation();
 
 private:
     QContactMemoryEngineData* d;

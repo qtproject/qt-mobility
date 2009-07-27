@@ -1417,7 +1417,8 @@ void QContactManagerEngine::cancelAsynchronousRequest(QContactAbstractRequest* r
 }
 
 /*!
- * Starts the asynchronous \a operation described in the given \a request
+ * Starts the asynchronous \a operation described in the given \a request if the \a request is not in the QContactAbstractRequest::Pending or
+ * QContactAbstractRequest::Cancelling states.  If the given \a request is pending or cancelling, calling this function will have no effect.
  */
 void QContactManagerEngine::startAsynchronousRequest(QContactAbstractRequest* request, QContactAbstractRequest::Operation operation)
 {
