@@ -71,8 +71,6 @@ Q_DECLARE_METATYPE(QValueSpaceItem*)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QList<QString>)
 
-Q_GLOBAL_STATIC(QProcess, vsm);
-
 class tst_QValueSpaceItem_oop: public QObject
 {
     Q_OBJECT
@@ -80,7 +78,6 @@ class tst_QValueSpaceItem_oop: public QObject
 private:
     QValueSpaceObject* root;
     QValueSpaceObject* busy;
-    QProcess *vsManager;
 
 private slots:
     void initTestCase();
@@ -105,22 +102,6 @@ void tst_QValueSpaceItem_oop::initTestCase()
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
-    /*QFile::remove("valuespacesync.txt");
-    QVERIFY(!QFile::exists("valuespacesync.txt"));*/
-
-    //vsManager calls QValueSpace::initValuespaceManager()
-    /*vsManager = vsm();
-    vsManager->setProcessChannelMode(QProcess::ForwardedChannels);
-    vsManager->start("./valuespacemanager");
-    vsManager->waitForStarted();
-    
-    QTRY_VERIFY(QFile::exists("valuespacesync.txt"));
-    QVERIFY(QFile::remove("valuespacesync.txt"));
-    
-    QValueSpaceItem item("/usr/tmp/ready");
-    QCOMPARE(item.value("", false).toBool(), true);*/
-    
-
     root = new QValueSpaceObject("/");
     root->setAttribute("/home/user/bool", true);
     root->setAttribute("/home/user/int", 3);
@@ -151,11 +132,6 @@ void tst_QValueSpaceItem_oop::cleanupTestCase()
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     delete root;
-    vsManager->terminate();
-    /*QTest::qWait(1000);
-    QVERIFY(vsManager->waitForFinished(5000));
-    qDebug() << vsManager->state() << vsManager->exitCode() << vsManager->exitStatus();*/
-    
 #endif
 }
 
