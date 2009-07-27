@@ -6,7 +6,6 @@ INCLUDEPATH += .
 # Input
 HEADERS += qsysteminfo.h qsysteminfo_p.h
 SOURCES += qsysteminfo.cpp  
-#QT += dbus
 
 
 win32 {
@@ -18,6 +17,7 @@ INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" "C:\Progr
 
 unix: {
     linux-*: {
+    QT += gui
     SOURCES += qsysteminfo_linux.cpp
         contains(QT_CONFIG,dbus): {
            QT += dbus
