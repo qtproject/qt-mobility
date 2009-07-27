@@ -61,16 +61,16 @@
     Constructs an empty message address.
 */
 QMessageAddress::QMessageAddress()
+    : d_ptr(new QMessageAddressPrivate(this))
 {
-    d_ptr = new QMessageAddressPrivate(this);
 }
 
 /*!
     Constructs a message address with the given recipient \a recipient and type \a type.
 */
 QMessageAddress::QMessageAddress(const QString &recipient, Type type)
+    : d_ptr(new QMessageAddressPrivate(this))
 {
-    d_ptr = new QMessageAddressPrivate(this);
     d_ptr->recipient = recipient;
     d_ptr->type = type;
 }
@@ -81,8 +81,9 @@ QMessageAddress::QMessageAddress(const QString &recipient, Type type)
     \sa operator=()
 */
 QMessageAddress::QMessageAddress(const QMessageAddress &other)
+    : d_ptr(new QMessageAddressPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 /*!
@@ -90,8 +91,12 @@ QMessageAddress::QMessageAddress(const QMessageAddress &other)
 */
 const QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        d_ptr->recipient = other.d_ptr->recipient;
+        d_ptr->type = other.d_ptr->type;
+    }
+
+    return *this;
 }
 
 /*!
