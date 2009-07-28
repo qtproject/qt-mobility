@@ -1,3 +1,9 @@
+libbearer (0.15) unstable; urgency=low
+
+  * Adding stress test by creating large number of IAPs in various test cases.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 28 Jul 2009 09:33:37 +0300
+
 libbearer (0.14) unstable; urgency=low
 
   * Enabled statistics in session class.

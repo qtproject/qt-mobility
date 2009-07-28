@@ -44,6 +44,7 @@
 #include "qnetworkconfigmanager.h"
 
 #ifdef MAEMO
+#include <stdio.h>
 #include <iapconf.h>
 #endif
 
@@ -52,8 +53,8 @@ class tst_QNetworkConfiguration : public QObject
     Q_OBJECT
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
     void invalidPoint();
@@ -65,15 +66,16 @@ private:
 #ifdef MAEMO
     Maemo::IAPConf *iapconf;
     Maemo::IAPConf *gprsiap;
+#define MAX_IAPS 100
+    Maemo::IAPConf *iaps[MAX_IAPS];
     QProcess *icd_stub;
 #endif
 };
 
-void tst_QNetworkConfiguration::init()
+void tst_QNetworkConfiguration::initTestCase()
 {
 #ifdef MAEMO
     iapconf = new Maemo::IAPConf("007");
-    iapconf->clear();
     iapconf->setValue("ipv4_type", "AUTO");
     iapconf->setValue("wlan_wepkey1", "connt");
     iapconf->setValue("wlan_wepdefkey", 1);
@@ -82,7 +84,6 @@ void tst_QNetworkConfiguration::init()
     iapconf->setValue("type", "WLAN_INFRA");
 
     gprsiap = new Maemo::IAPConf("This-is-GPRS-IAP");
-    gprsiap->clear();
     gprsiap->setValue("ask_password", false);
     gprsiap->setValue("gprs_accesspointname", "internet");
     gprsiap->setValue("gprs_password", "");
@@ -93,9 +94,27 @@ void tst_QNetworkConfiguration::init()
     gprsiap->setValue("name", "MI6");
     gprsiap->setValue("type", "GPRS");
 
+    /* Create huge number of IAPs in the gconf and see what happens */
+    fflush(stdout);
+    printf("Creating %d IAPS: ", MAX_IAPS);
+    for (int i=0; i<MAX_IAPS; i++) {
+	QString num = QString().sprintf("%d", i);
+	QString iap = "iap-" + num;
+	iaps[i] = new Maemo::IAPConf(iap);
+	iaps[i]->setValue("name", QString("test-iap-")+num);
+	iaps[i]->setValue("type", "WLAN_INFRA");
+	iaps[i]->setValue("wlan_ssid", QString(QString("test-ssid-")+num).toAscii());
+	iaps[i]->setValue("wlan_security", "WPA_PSK");
+	iaps[i]->setValue("EAP_wpa_preshared_passphrase", QString("test-passphrase-")+num);
+	printf(".");
+	fflush(stdout);
+    }
+    printf("\n");
+    fflush(stdout);
+
     icd_stub = new QProcess(this);
     icd_stub->start("/usr/bin/icd2_stub.py");
-    QTest::qWait(1000);
+    //QTest::qWait(1000);
 
     // Add a known network to scan list that icd2 stub returns
     QProcess dbus_send;
@@ -108,13 +127,23 @@ void tst_QNetworkConfiguration::init()
 #endif
 }
 
-void tst_QNetworkConfiguration::cleanup()
+void tst_QNetworkConfiguration::cleanupTestCase()
 {
 #ifdef MAEMO
     iapconf->clear();
     delete iapconf;
     gprsiap->clear();
     delete gprsiap;
+
+    printf("Deleting %d IAPS : ", MAX_IAPS);
+    for (int i=0; i<MAX_IAPS; i++) {
+	iaps[i]->clear();
+	delete iaps[i];
+	printf(".");
+	fflush(stdout);
+    }
+    printf("\n");
+    qDebug() << "Deleted" << MAX_IAPS << "IAPs";
 
     // Terminate icd2 stub
     icd_stub->terminate();
