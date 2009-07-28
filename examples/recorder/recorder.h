@@ -62,6 +62,8 @@ private slots:
     void setAudioCodec(int idx);
     void setQuality(int value);
 
+    void displayErrorMessage();
+
 private:
     Ui::Recorder *ui;
 

@@ -79,7 +79,7 @@ public:
     QMediaCapture::Error error;
     QString errorString;
 
-    void _q_stateChanged(int state);    
+    void _q_stateChanged(int state);
     void _q_error(int error, const QString &errorString);
 };
 
@@ -88,7 +88,7 @@ QMediaCapturePrivate::QMediaCapturePrivate(QAbstractMediaService *service)
      service(service),
      error(QMediaCapture::NoError)
 {
-    control = qobject_cast<QMediaCaptureControl *>(service->control("com.nokia.qt.MediaCaptureControl"));    
+    control = qobject_cast<QMediaCaptureControl *>(service->control("com.nokia.qt.MediaCaptureControl"));
 }
 
 void QMediaCapturePrivate::_q_stateChanged(int state)
@@ -123,7 +123,7 @@ QMediaCapture::QMediaCapture(QAbstractMediaService *service, QObject *parent)
 {
     Q_D(QMediaCapture);
 
-    if (d->control) {        
+    if (d->control) {
         connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
     }
@@ -167,12 +167,12 @@ bool QMediaCapture::setSink(const QMediaSink &sink)
 }
 
 QMediaCapture::State QMediaCapture::state() const
-{    
+{
     return d_func()->control ? QMediaCapture::State(d_func()->control->state()) : StoppedState;
 }
 
 QMediaCapture::Error QMediaCapture::error() const
-{    
+{
     return d_func()->error;
 }
 

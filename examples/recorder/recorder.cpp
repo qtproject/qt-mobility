@@ -57,6 +57,7 @@ Recorder::Recorder(QWidget *parent) :
     audioDevice = audioCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     connect(audioCapture, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
+    connect(audioCapture, SIGNAL(error(QMediaCapture::Error)), this, SLOT(displayErrorMessage()));
 
     if (audioDevice) {
         audioCapture->service()->setAudioInput(audioDevice);
@@ -143,4 +144,9 @@ void Recorder::stop()
 {
     if (audioCapture)
         audioCapture->stop();
+}
+
+void Recorder::displayErrorMessage()
+{
+    QMessageBox::warning(this, "Capture error", audioCapture->errorString());
 }

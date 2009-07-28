@@ -61,6 +61,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
+    m_videoEncodeControl = new QGstreamerVideoEncode(this);
     m_captureControl = new QGstreamerCaptureControl(this);
 
     setState(PreviewState);
@@ -166,6 +167,8 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             break;
     }
 
+    bool ok = true;
+
     switch (newMode) {
         case EmptyPipeline:
             break;
@@ -173,13 +176,13 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             m_audioSrc = buildAudioSrcBin();
             m_audioPreview = buildAudioPreviewBin();
             gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
-            gst_element_link(m_audioSrc, m_audioPreview);
+            ok &= gst_element_link(m_audioSrc, m_audioPreview);
             break;
         case RecordingPipeline:
             m_audioSrc = buildAudioSrcBin();
             m_encodeBin = buildEncodeBin();
             gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_encodeBin, NULL);
-            gst_element_link(m_audioSrc, m_encodeBin);
+            ok &= gst_element_link(m_audioSrc, m_encodeBin);
             break;
         case PreviewAndRecordingPipeline:
             m_audioSrc = buildAudioSrcBin();
@@ -188,10 +191,14 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             m_audioTee = gst_element_factory_make("tee", NULL);
             gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
                                 m_audioPreview, m_encodeBin, NULL);
-            gst_element_link(m_audioSrc, m_audioTee);
-            gst_element_link(m_audioTee, m_audioPreview);
-            gst_element_link(m_audioTee, m_encodeBin);
+            ok &= gst_element_link(m_audioSrc, m_audioTee);
+            ok &= gst_element_link(m_audioTee, m_audioPreview);
+            ok &= gst_element_link(m_audioTee, m_encodeBin);
             break;
+    }
+
+    if (!ok) {
+        emit error(int(QMediaCapture::FormatError),tr("Failed to build media capture pipeline."));
     }
 
     dumpGraph( QString("rebuild_graph_%1_%2").arg(m_pipelineMode).arg(newMode) );

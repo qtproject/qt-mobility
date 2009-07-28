@@ -70,7 +70,7 @@ public:
     qint64 position() const;
 
 signals:
-    void stateChanged(State state);
+    void stateChanged(QGstreamerCaptureSession::State state);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
 
