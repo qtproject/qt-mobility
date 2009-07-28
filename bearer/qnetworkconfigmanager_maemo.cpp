@@ -202,7 +202,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 			network_attrs_to_security(ap.scan.network_attrs)) {
 			/* Remove IAP from the list */
 			knownConfigs.remove(priv->network_id, iap);
-			qDebug() << "Removed IAP" << iap->iap_id << "from known config";
+			qDebug() << "Removed IAP" << iap->iap_id << "from unknown config";
 			known_iaps.removeAt(k);
 			delete iap;
 			goto rescan_list;
