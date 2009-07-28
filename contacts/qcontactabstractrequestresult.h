@@ -43,7 +43,6 @@ class QContactAbstractRequestResultData;
 class QTCONTACTS_EXPORT QContactAbstractRequestResult {
 public:
     QContactAbstractRequestResult();
-    QContactAbstractRequestResult(const QContactAbstractRequestResult& other);
     ~QContactAbstractRequestResult();
 
     // any errors which occurred
@@ -57,6 +56,7 @@ public:
     bool appendOnly() const;
 
 private:
+    Q_DISABLE_COPY(QContactAbstractRequestResult);
     QSharedDataPointer<QContactAbstractRequestResultData> d;
 };
 

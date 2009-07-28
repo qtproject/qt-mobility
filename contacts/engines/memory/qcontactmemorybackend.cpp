@@ -419,6 +419,8 @@ bool QContactMemoryEngine::asynchronousRequestWaitForFinished(QContactAbstractRe
 {
     Q_UNUSED(req);
     Q_UNUSED(msecs);
+
+    return false;
 }
 
 /*!
@@ -428,6 +430,8 @@ bool QContactMemoryEngine::asynchronousRequestWaitForProgress(QContactAbstractRe
 {
     Q_UNUSED(req);
     Q_UNUSED(msecs);
+
+    return false;
 }
 
 /*!
