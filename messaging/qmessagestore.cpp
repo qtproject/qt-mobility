@@ -138,14 +138,14 @@
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
-    all message identifiers will be returned.
+    identifiers for all messages will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
     set by \a sortKey.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
@@ -153,7 +153,7 @@
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key and with a body containing the 
-    string \a body will be returned, otherwise all message identifiers for messages with
+    string \a body will be returned, otherwise identifiers for all messages with 
     a body containing \a body will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
     set by \a sortKey.
@@ -161,67 +161,67 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
     \fn QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
     
-    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
-    only messages matching the parameters set by \a key will be returned, otherwise 
-    all message identifiers will be returned.
+    Returns the \l{QMessageFolderId}s of folders in the messaging store. If \a key 
+    is not empty only folders matching the parameters set by \a key will be returned,
+    otherwise identifiers for all folders will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
     set by \a sortKey.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
     \fn QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
     
-    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
-    only messages matching the parameters set by \a key will be returned, otherwise 
-    all message identifiers will be returned.
+    Returns the \l{QMessageAccountId}s of messages in the messaging store. If \a key 
+    is not empty only accounts matching the parameters set by \a key will be returned, 
+    otherwise identifiers for all accounts will be returned.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
     set by \a sortKey.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages(), setMaximumWorkingMemory()
+    \sa lastError(), countMessages()
 */
 
 /*!
     \fn QMessageStore::countMessages(const QMessageFilterKey& key) const
     
-    Returns the count of the number of messages which match the 
+    Returns the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!
     \fn QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
     
-    Returns the count of the number of messages which match the 
+    Returns the number of messages which match the 
     filtering criteria defined in QMessageFolderFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!
     \fn QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
     
-    Returns the count of the number of messages which match the 
+    Returns the number of messages which match the 
     filtering criteria defined in QMessageAccountFilterKey \a key. If 
     key is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages(), setMaximumWorkingMemory()
+    \sa lastError(), queryMessages()
 */
 
 /*!

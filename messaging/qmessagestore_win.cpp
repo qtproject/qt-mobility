@@ -32,8 +32,58 @@
 ****************************************************************************/
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
+#include "qmessage_p.h"
+#include <QSharedDataPointer>
+#include <QMap>
+
+#include <qdebug.h>
 
 #include <MAPIUtil.h>
+
+typedef QByteArray MapiRecordKey;
+typedef QByteArray MapiEntryId;
+
+// TODO Retrieve record key, message count, and hasSubfolders flag for message folders.
+// TODO Open message given it's entry id, needs minimal QMessage implementation first (constructor, destructor, copy constructor, assigment)
+// TODO Find a message's entryid given its record key, store record key, and parent record key, with or without using cached folder map.
+// TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
+// TODO ref counted mapi store with auto logging in/out
+// TODO MailFolderRef class for ref counting com objects, 
+//   giving MapiFolders a parent store object, store objects a parent session,
+//   and automatically releasing all store and folder objects when logging out of the session.
+
+class MapiFolderData : public QSharedData
+{
+public:
+    bool _isValid;
+    LPMAPIFOLDER _folder;
+    QString _name;
+    LPMAPITABLE _subFolders;
+    uint _itemCount;
+    MapiEntryId _entryId;
+    MapiRecordKey _recordKey;
+};
+
+class MapiFolder {
+public:
+    MapiFolder();
+    MapiFolder(LPMAPIFOLDER folder, const QString &name = QString());
+    void findSubFolders();
+    MapiFolder nextSubFolder();
+    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    void release();
+    bool isValid() const { return d->_isValid; }
+    LPMAPIFOLDER folder() { return d->_folder; }
+    QString name() const { return d->_name; }
+    LPMAPITABLE subFolders() { return d->_subFolders; }
+
+    static MapiFolder rootFolder(LPMDB mapiStore);
+
+private:
+    QSharedDataPointer<MapiFolderData> d;
+
+    enum columnOrder { entryIdColumn = 0, nameColumn };
+};
 
 class QMessageStorePrivatePlatform
 {
@@ -44,8 +94,6 @@ public:
     bool login();
     void logout();
 
-    static QString stringFromLpctstr(LPCTSTR lpszValue);
-
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
@@ -53,8 +101,193 @@ public:
     bool mapiInitialized;
     IMAPISession* mapiSession;
     LPMDB mapiStore;
+
     bool openDefaultMapiStore();
+
+    QMap<MapiEntryId, MapiFolder > mapiFolderMap;
 };
+
+static QString stringFromLpctstr(LPCTSTR lpszValue)
+{
+    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1))
+        return QString::null;
+    if (lpszValue)
+        return QString::fromWCharArray(lpszValue);
+    return QString::null;
+}
+
+MapiFolder::MapiFolder() 
+{
+    d = new MapiFolderData();
+    d->_isValid = false;
+}
+
+MapiFolder MapiFolder::rootFolder(LPMDB mapiStore)
+{
+    if (!mapiStore)
+        return MapiFolder();
+
+    SPropValue *rgProps(0);
+    ULONG rgTags[] = {1, PR_IPM_SUBTREE_ENTRYID};
+    ULONG cCount;
+   
+    if (mapiStore->GetProps(reinterpret_cast<LPSPropTagArray>(rgTags), MAPI_UNICODE, &cCount, &rgProps) != S_OK)
+        return MapiFolder();
+
+    // TODO:See MS KB article 312013, OpenEntry is not re-entrant, also true of MAPI functions in general?
+    // TODO:See ms859378, GetPropsExample for alternative memory allocation technique
+    LPMAPIFOLDER mapiFolder;
+    ULONG ulObjectType;
+    LPUNKNOWN FAR *mapiFolderPtr(reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder));
+    ULONG cbEntryId(rgProps[0].Value.bin.cb);
+    LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rgProps[0].Value.bin.lpb));
+
+//XXX NO_CACHE    if (mapiStore->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, mapiFolderPtr) != S_OK)
+    if (mapiStore->OpenEntry(cbEntryId, lpEntryId, 0, 0, &ulObjectType, mapiFolderPtr) != S_OK)
+        mapiFolder = 0;
+
+    MAPIFreeBuffer(rgProps);
+    if (mapiFolder)
+        return MapiFolder(mapiFolder);
+    return MapiFolder();
+}
+
+void MapiFolder::findSubFolders()
+{
+    LPMAPITABLE subFolders(0);
+
+    d->_isValid = false;
+    if (!d->_folder || (d->_folder->GetHierarchyTable(0, &subFolders) != S_OK))
+        return;
+
+    // Order of properties must be consistent with columnOrder enum.
+    const int nCols(5);
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK) {
+        d->_subFolders = subFolders;
+        d->_isValid = true;
+    }
+}
+
+MapiFolder::MapiFolder(LPMAPIFOLDER folder, const QString &name)
+{
+    d = new MapiFolderData();
+    d->_isValid = false;
+    d->_folder = folder;
+    d->_name = name;
+    findSubFolders();
+}
+
+MapiFolder MapiFolder::nextSubFolder()
+{
+    if (!d->_isValid || !d->_folder || !d->_subFolders)
+        return MapiFolder();
+
+    DWORD objectType;
+    LPSRowSet rows(0);
+    LPMAPIFOLDER subFolder(0);
+    QString name;
+
+    if (d->_subFolders->QueryRows(1, 0, &rows) == S_OK) {
+        if (rows->cRows == 1) {
+            LPSPropValue entryId(&rows->aRow[0].lpProps[entryIdColumn]);
+            ULONG cbEntryId(entryId->Value.bin.cb);
+            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryId->Value.bin.lpb));
+            if (d->_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
+                name = stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
+                // TODO: Make a copy of entry id, record key, message count, and hasSubFolers property values.
+            }
+        }
+        FreeProws(rows);
+    }
+    MAPIFreeBuffer(rows);
+    return MapiFolder(subFolder, name);
+}
+
+QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+{
+    Q_UNUSED(key)
+    Q_UNUSED(sortKey)
+    Q_UNUSED(offset)
+
+    if (!d->_isValid)
+        return QMessageIdList();
+
+    QMessageIdList result;
+    LPMAPITABLE messagesTable;
+    if (d->_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK)
+        return QMessageIdList(); // TODO retry? assert?
+
+    // TODO remove flags, sender, subject
+    const int nCols(5);
+    enum { entryIdColumn = 0, recordKeyColumn, flagsColumn, senderColumn, subjectColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
+    if (messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK)
+        return QMessageIdList();
+
+    LPSRowSet rows(0);
+    uint workingLimit(limit);
+
+    while (messagesTable->QueryRows(1, 0, &rows) == S_OK) {
+        if (rows->cRows == 1) {
+            if (limit)
+                --workingLimit;
+            LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
+            ULONG cbEntryId(entryIdProp->Value.bin.cb);
+            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryIdProp->Value.bin.lpb));
+            bool read(rows->aRow[0].lpProps[flagsColumn].Value.ul & MSGFLAG_READ);
+            QString sender = stringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);
+            QString subject = stringFromLpctstr(rows->aRow[0].lpProps[subjectColumn].Value.LPSZ);
+            qDebug() << ((!read) ? '*' : ' ') << sender.leftJustified(25, ' ', true) << subject.leftJustified(46, ' ' , true); //XXX
+            LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
+            QByteArray recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+            QByteArray entryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            QByteArray encodedId;
+            QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+            encodedIdStream << recordKey;
+            encodedIdStream << entryId;
+            QMessageId messageId(encodedId.toBase64()); // TODO This is too inefficient maybe QMessageStore should be a friend of the id classes
+
+            /**** XXX Test copy begin ****/
+            QByteArray recordKeyTest;
+            QByteArray entryIdTest;
+            QDataStream testStream(encodedId);
+            testStream >> recordKeyTest;
+            testStream >> entryIdTest;
+            qDebug() << "encodedIdStream" << encodedId.toBase64();
+            qDebug() << "recordKeyA" << recordKey.toBase64();
+            qDebug() << "recordKeyB" << recordKeyTest.toBase64();
+            qDebug() << "entryIdA" << entryId.toBase64();
+            qDebug() << "entryIdB" << entryIdTest.toBase64();
+            Q_ASSERT( recordKey == recordKeyTest);
+            Q_ASSERT( entryId == entryIdTest);
+            /**** XXX Test copy end ****/
+
+            result.append(QMessageId(encodedId.toBase64()));
+        }
+        FreeProws(rows);
+        if (limit && !workingLimit)
+            break;
+        if (!rows->cRows)
+            break;
+    }
+    MAPIFreeBuffer(rows);
+
+    return result;
+//    return QMessageIdList(); // gets limit messages in each folder TODO remove this line
+}
+
+void MapiFolder::release()
+{
+    if (!d->_isValid)
+        return;
+    if (d->_subFolders)
+        d->_subFolders->Release();
+    d->_subFolders = 0;
+    if (d->_folder)
+        d->_folder->Release();
+    d->_folder = 0;
+}
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
@@ -110,20 +343,15 @@ QMessageStorePrivate::QMessageStorePrivate()
 {
 }
 
-QString QMessageStorePrivatePlatform::stringFromLpctstr(LPCTSTR lpszValue)
-{
-    if (lpszValue)
-        return QString::fromWCharArray(lpszValue);
-    return QString::null;
-}
-
 bool QMessageStorePrivatePlatform::openDefaultMapiStore()
 {
     if (!mapiInitialized || !mapiSession)
         return false;
 
     IMAPITable *mapiMessageStoresTable(0);
-    SizedSPropTagArray(3, columns) = {3, {PR_DEFAULT_STORE, PR_DISPLAY_NAME, PR_ENTRYID}};
+    const int nCols(4);
+    enum { defaultStoreColumn = 0, nameColumn, entryIdColumn, recordKeyColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_DISPLAY_NAME, PR_ENTRYID, PR_RECORD_KEY}};
     LPSRowSet rows(0);
     bool result(false);
 
@@ -148,11 +376,23 @@ bool QMessageStorePrivatePlatform::openDefaultMapiStore()
             FreeProws(rows);
             break;
         }
-        if (rows->aRow[0].lpProps[0].Value.b) {
+        if (rows->aRow[0].lpProps[defaultStoreColumn].Value.b) {
             // default store found
             ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
-            ULONG cbEntryId(rows->aRow[0].lpProps[2].Value.bin.cb);
-            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rows->aRow[0].lpProps[2].Value.bin.lpb));
+            ULONG cbEntryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);
+            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rows->aRow[0].lpProps[entryIdColumn].Value.bin.lpb));
+            /**** XXX Test copy begin ****/
+            SPropValue storeRecordKey;
+            SPropValue storeEntryKey;
+            PropCopyMore(&storeEntryKey, &(rows->aRow[0].lpProps[entryIdColumn]), MAPIAllocateMore, 0);
+            PropCopyMore(&storeRecordKey, &(rows->aRow[0].lpProps[recordKeyColumn]), MAPIAllocateMore, 0);
+            qDebug() << "rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb" << rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb;
+            qDebug() << "storeRecordKey.Value.bin.cb" << storeRecordKey.Value.bin.cb;
+            QByteArray storeRecordKeyA((const char*)rows->aRow[0].lpProps[recordKeyColumn].Value.bin.lpb, rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb);
+            QByteArray storeRecordKeyB((const char*)storeRecordKey.Value.bin.lpb, storeRecordKey.Value.bin.cb);
+            qDebug() << "pre  copy key" << storeRecordKeyA.toHex();
+            qDebug() << "post copy key" << storeRecordKeyB.toHex();
+            /**** XXX Test copy end ****/
             result = (mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK);
             FreeProws(rows);
             break;
@@ -202,9 +442,44 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 {
     Q_UNUSED(key)
     Q_UNUSED(sortKey)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
+    QMessageIdList result;
+    QStringList path;
+    QList<MapiFolder> folders; // depth first search;
+
+    if(!d_ptr->p_ptr->mapiInitialized || !d_ptr->p_ptr->login() || !d_ptr->p_ptr->openDefaultMapiStore()) {
+        // XXX TODO change to log
+		qDebug() << "Failed to initialize MAPI";
+        return QMessageIdList();
+	}
+
+    folders.append(MapiFolder::rootFolder(d_ptr->p_ptr->mapiStore));
+    path.append(folders.back().name());
+    while (!folders.isEmpty()) {
+        if (!folders.back().isValid()) {
+            folders.pop_back();
+            path.pop_back();
+            continue;
+        }
+
+        MapiFolder folder(folders.back().nextSubFolder());
+        if (folder.isValid() && (!limit || workingLimit)) {
+            uint oldCount(result.count());
+            folders.append(folder);
+            path.append(folder.name());
+            qDebug() << "Path: " << path; // XXX todo remove debug;
+            result.append(folder.queryMessages(QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
+            if (limit)
+                workingLimit -= (result.count() - oldCount);
+        } else {
+            folders.back().release();
+            folders.pop_back();
+            path.pop_back();
+        }
+    }
+	d_ptr->p_ptr->logout();
+
+    return result.mid(offset); // stub
 }
 
 QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey,  QMessageDataComparator::Options options, uint limit, uint offset) const
@@ -286,8 +561,24 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    QMessage result;
+    /* Begin debug code */
+    QByteArray recordKey;
+    QByteArray entryId;
+    qDebug() << "id to string" << id.toString();
+
+    QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
+    idStream >> recordKey;
+    if (!idStream.atEnd())
+        idStream >> entryId;
+
+    qDebug() << "QMessageStore::message recordKey" << recordKey.toBase64();
+    qDebug() << "QMessageStore::message entryId" << entryId.toBase64();
+    //TODO fall back recordKey if entryId is invalid.
+    /* end debug code */
+
+//    result.d_ptr->setId(id); TODO need to implement QMessage copy constructor etc
+    return result;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
