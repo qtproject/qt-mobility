@@ -54,7 +54,9 @@ typedef QByteArray MapiEntryId;
 //   and automatically releasing all store and folder objects when logging out of the session.
 
 class MapiFolder;
+class MapiStore;
 typedef QSharedPointer<MapiFolder> MapiFolderPtr;
+typedef QSharedPointer<MapiStore> MapiStorePtr;
 
 static QString stringFromLpctstr(LPCTSTR lpszValue)
 {
@@ -267,7 +269,6 @@ void MapiFolder::release()
     _folder = 0;
 }
 
-
 class QMessageStorePrivatePlatform
 {
 public:
@@ -281,34 +282,32 @@ public:
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
 
-    bool mapiInitialized;
-    IMAPISession* mapiSession;
-    LPMDB mapiStore;
+    bool _mapiInitialized;
+    IMAPISession* _mapiSession;
+    LPMDB _mapiStore;
 
     bool openDefaultMapiStore();
-
-    QMap<MapiEntryId, MapiFolder > mapiFolderMap;
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
      q_ptr(q)
 {
-    mapiSession = 0;
-    mapiStore = 0;
-    mapiInitialized = false;
+    _mapiSession = 0;
+    _mapiStore = 0;
+    _mapiInitialized = false;
     lastError = QMessageStore::NoError;
 #ifndef QT_NO_THREAD
     // Note MAPIINIT is ignored on Windows Mobile but used on Outlook 2007 see
     // msdn ms862621 vs cc842343
     MAPIINIT_0 MAPIINIT = { 0, MAPI_MULTITHREAD_NOTIFICATIONS };
     if (MAPIInitialize(&MAPIINIT) == S_OK)
-        mapiInitialized = true;
+        _mapiInitialized = true;
 #else
     if (MAPIInitialize(0) == S_OK)
-        mapiInitialized = true;
+        _mapiInitialized = true;
 #endif
-    if (!mapiInitialized)
+    if (!_mapiInitialized)
         lastError = QMessageStore::ContentInaccessible;
 }
 
@@ -321,7 +320,7 @@ QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
 bool QMessageStorePrivatePlatform::login()
 {
     // Attempt to start a MAPI session on the default profile
-    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &mapiSession) != S_OK) {
+    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession) != S_OK) {
         lastError = QMessageStore::ContentInaccessible;
         return false;
     }
@@ -330,12 +329,12 @@ bool QMessageStorePrivatePlatform::login()
 
 void QMessageStorePrivatePlatform::logout()
 {
-    if (mapiStore)
-        mapiStore->Release();
-    mapiStore = 0;
-    if (mapiSession)
-        mapiSession->Release();
-    mapiSession = 0;
+    if (_mapiStore)
+        _mapiStore->Release();
+    _mapiStore = 0;
+    if (_mapiSession)
+        _mapiSession->Release();
+    _mapiSession = 0;
 }
 
 QMessageStorePrivate::QMessageStorePrivate()
@@ -346,7 +345,7 @@ QMessageStorePrivate::QMessageStorePrivate()
 
 bool QMessageStorePrivatePlatform::openDefaultMapiStore()
 {
-    if (!mapiInitialized || !mapiSession)
+    if (!_mapiInitialized || !_mapiSession)
         return false;
 
     IMAPITable *mapiMessageStoresTable(0);
@@ -356,11 +355,11 @@ bool QMessageStorePrivatePlatform::openDefaultMapiStore()
     LPSRowSet rows(0);
     bool result(false);
 
-    if (mapiStore)
-        mapiStore->Release();
-    mapiStore = 0;
+    if (_mapiStore)
+        _mapiStore->Release();
+    _mapiStore = 0;
     
-    if (mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK)
+    if (_mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK)
         return false;
     if (mapiMessageStoresTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
         mapiMessageStoresTable->Release();
@@ -394,7 +393,7 @@ bool QMessageStorePrivatePlatform::openDefaultMapiStore()
             qDebug() << "pre  copy key" << storeRecordKeyA.toHex();
             qDebug() << "post copy key" << storeRecordKeyB.toHex();
             /**** XXX Test copy end ****/
-            result = (mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK);
+            result = (_mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &_mapiStore) == S_OK);
             FreeProws(rows);
             break;
         }
@@ -448,13 +447,13 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     QStringList path;
     QList<MapiFolderPtr> folders; // depth first search;
 
-    if(!d_ptr->p_ptr->mapiInitialized || !d_ptr->p_ptr->login() || !d_ptr->p_ptr->openDefaultMapiStore()) {
+    if(!d_ptr->p_ptr->_mapiInitialized || !d_ptr->p_ptr->login() || !d_ptr->p_ptr->openDefaultMapiStore()) {
         // XXX TODO change to log
 		qDebug() << "Failed to initialize MAPI";
         return QMessageIdList();
 	}
 
-    folders.append(MapiFolder::rootFolder(d_ptr->p_ptr->mapiStore));
+    folders.append(MapiFolder::rootFolder(d_ptr->p_ptr->_mapiStore));
     path.append(folders.back()->name());
     while (!folders.isEmpty()) {
         if (!folders.back()->isValid()) {
