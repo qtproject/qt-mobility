@@ -51,49 +51,36 @@ public:
     typedef quintptr Handle;
     static const Handle InvalidHandle = ~Handle(0);
 
-    /* Returns the layer name */
     virtual QString name() = 0;
 
     enum Type { Server, Client };
-    /* Called by the value space to initialize the layer */
-    virtual bool startup(Type) = 0;
-    /* Called by the value space to re-initialize the layer */
+
+    virtual bool startup(Type type) = 0;
     virtual bool restart() = 0;
-    /* Called by the value space server to shutdown the layer */
     virtual void shutdown() = 0;
 
     virtual QUuid id() = 0;
     virtual unsigned int order() = 0;
 
-    /* Returns the current value of \a handle */
-    virtual bool value(Handle, QVariant *) = 0;
-    /* Returns the current value of a subpath of handle. subPath must start
-       with '/' */
-    virtual bool value(Handle, const QByteArray &, QVariant *) = 0;
-
-    /* Returns the list of immediate children, or an empty set if no children */
-    virtual QSet<QByteArray> children(Handle) = 0;
-    /* Returns an item handle.  Use of an invalid parent is allowed.  Returning
-       an InvalidHandle means that you will never, ever expose that key or any
-       sub key. Path must start with '/'*/
-    virtual Handle item(Handle parent, const QByteArray &) = 0;
-
     enum Properties { Publish = 0x00000001 };
-    /* Set a property on a handle. */
-    virtual void setProperty(Handle handle, Properties) = 0;
 
-    /* Removes a previously allocated handle. */
-    virtual void remHandle(Handle) = 0;
+    virtual Handle item(Handle parent, const QByteArray &subPath) = 0;
+    virtual void removeHandle(Handle handle) = 0;
+    virtual void setProperty(Handle handle, Properties properties) = 0;
+
+    virtual bool value(Handle handle, QVariant *data) = 0;
+    virtual bool value(Handle handle, const QByteArray &subPath, QVariant *data) = 0;
+    virtual QSet<QByteArray> children(Handle handle) = 0;
 
     /* QValueSpaceItem functions */
-    virtual bool requestSetValue(Handle handle, const QVariant &data) = 0;
-    virtual bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data) = 0;
+    virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
+    virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
     virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0;
     virtual bool syncRequests() = 0;
 
     /* QValueSpaceObject functions */
-    virtual bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &, const QVariant &) = 0;
-    virtual bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &) = 0;
+    virtual bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
+    virtual bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath) = 0;
     virtual bool removeSubTree(QValueSpaceObject *creator, Handle handle) = 0;
     virtual void addWatch(QValueSpaceObject *creator, Handle handle) = 0;
     virtual void removeWatches(QValueSpaceObject *creator, Handle parent) = 0;
@@ -105,7 +92,7 @@ protected:
     void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data);
 
 signals:
-    void handleChanged(unsigned int);
+    void handleChanged(quintptr);
 };
 
 // syncqtopia header QValueSpace

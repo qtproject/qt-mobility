@@ -66,10 +66,10 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 ///////////////////////////////////////////////////////////////////////////////
 
 /*!
-  \class QAbstractValueSpaceLayer
-  \brief The QAbstractValueSpaceLayer class provides support for adding new logical data
-  layers to the Qt Value Space.
-  */
+    \class QAbstractValueSpaceLayer
+    \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
+    to the Qt Value Space.
+*/
 
 /*!
     \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
@@ -82,179 +82,239 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-  \typedef QAbstractValueSpaceLayer::Handle
+    \typedef QAbstractValueSpaceLayer::Handle
 
-  The Handle type is an opaque, pointer sized contextual handle used to
-  represent paths within value space layers.  Handles are only ever created by
-  QAbstractValueSpaceLayer::item() and are always released by calls to
-  QAbstractValueSpaceLayer::remHandle().  The special, \c {InvalidHandle} is reserved to
-  represent an invalid handle.
+    The Handle type is an opaque, pointer sized contextual handle used to represent paths within
+    value space layers.  Handles are only ever created by QAbstractValueSpaceLayer::item() and are
+    always released by calls to QAbstractValueSpaceLayer::removeHandle().  The special value,
+    \c {InvalidHandle} is reserved to represent an invalid handle.
  */
 
 /*!
-  \enum QAbstractValueSpaceLayer::Properties
+    \enum QAbstractValueSpaceLayer::Type
 
-  To allow for efficient layer implementations, expensive handle operations,
-  currently only monitoring for changes, are enabled and disabled as needed on
-  a per-handle basis.  The Properties enumeration is a bitmask representing
-  the different properties that can exist on a handle.
+    Value Space layers are initialized in either a "Server" or a "Client" context.  There is only
+    a single server in the value space architecture, and its layers are always initialized before
+    any clients.  This distinction allows layers to implement Client/Server architecture
+    \i {if required}.  If not, layers are free to treat Server and Client contexts identically.
 
-  \value Publish Enable change notification for the handle.  When set, the layer
-         should emit QAbstractValueSpaceLayer::handleChanged() signals when appropriate
-         for the handle.
+    \value Server The layer is being initialized in the "server" context.
+    \value Client The layer is being initialized in the "client" context.
  */
 
 /*!
-  \enum QAbstractValueSpaceLayer::Type
+    \enum QAbstractValueSpaceLayer::Properties
 
-  Value Space layers are initialized in either a "Server" or a "Client"
-  context.  There is only a single server in the value space architecture, and
-  its layers are always initialized before any clients.  This distinction allows
-  layers to implement Client/Server architecture \i {if required}.  If not,
-  layers are free to treat Server and Client contexts identically.
+    To allow for efficient layer implementations, expensive handle operations, currently only
+    monitoring for changes, are enabled and disabled as needed on a per-handle basis.  The
+    Properties enumeration is a bitmask representing the different properties that can exist on a
+    handle.
 
-  \value Server The layer is being initialized in the "server" context.
-  \value Client The layer is being initialized in the "client" context.
- */
-
-/*!
-  \fn QString QAbstractValueSpaceLayer::name()
-
-  Returns the name of the Value Space layer.  This name is only used for
-  diagnostics purposes.
- */
+    \value Publish Enable change notification for the handle.  When set, the layer should emit
+                   QAbstractValueSpaceLayer::handleChanged() signals when appropriate for the
+                   handle.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::startup(Type type)
+    \fn QString QAbstractValueSpaceLayer::name()
 
-  Called by the Value Space system to initialize each layer.  The \a type
-  parameter will be set accordingly, and layer implementors can use this to
-  implement a client/server architecture if desired.
-  Returns true upon success; otherwise returns false.
- */
+    Returns the name of the Value Space layer.  This name is only used for diagnostics purposes.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::restart()
+    \fn bool QAbstractValueSpaceLayer::startup(Type type)
 
-  Called by the Value Space system to restart each layer.
-  Returns true upon success; otherwise returns false.
- */
+    Called by the Value Space system to initialize each layer.  The \a type parameter will be set
+    accordingly, and layer implementors can use this to implement a client/server architecture if
+    desired.
 
-/*!
-  \fn void QAbstractValueSpaceLayer::shutdown()
-
-  Called by the Value Space system to uninitialize each layer.  The shutdown
-  call can be used to release any resources in use by the layer.
- */
+    Returns true upon success; otherwise returns false.
+*/
 
 /*!
-  \fn QUuid QAbstractValueSpaceLayer::id()
+    \fn bool QAbstractValueSpaceLayer::restart()
 
-  Return a globally unique id for the layer.  This id is used to break ordering
-  ties.
- */
+    Called by the Value Space system to restart each layer.
 
-/*!
-  \fn unsigned int QAbstractValueSpaceLayer::order()
-
-  Return the position in the Value Space layer stack that this layer should
-  reside.  Higher numbers mean the layer has a higher precedence and its values
-  will "shadow" those below it.  If two layers specify the same ordering, the
-  QAbstractValueSpaceLayer::id() value is used to break the tie.
- */
+    Returns true upon success; otherwise returns false.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::value(Handle handle, QVariant *data)
+    \fn void QAbstractValueSpaceLayer::shutdown()
 
-  Returns the value for a particular \a handle.  If a value is available, the
-  layer will set \a data and return true.  If no value is available, false is
-  returned.
-  */
-
-/*!
-  \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
-
-  Returns the value for a particular \a subPath of \a handle.  If a value is
-  available, the layer will set \a data and return true.  If no value is
-  available, false is returned.
-  */
+    Called by the Value Space system to uninitialize each layer.  The shutdown call can be used to
+    release any resources in use by the layer.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::remove(Handle handle)
+    \fn QUuid QAbstractValueSpaceLayer::id()
 
-  Process a client side QValueSpaceItem::remove() for the specified \a handle.
-  Return true on success and false on failure.
- */
-
-/*!
-  \fn bool QAbstractValueSpaceLayer::remove(Handle handle, const QByteArray &subPath)
-
-  Process a client side QValueSpaceItem::remove() for the specified \a subPath
-  of \a handle.  Return true on success and false on failure.
- */
+    Return a globally unique id for the layer.  This id is used to break ordering ties.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::setValue(Handle handle, const QVariant &value)
+    \fn unsigned int QAbstractValueSpaceLayer::order()
 
-  Process a client side QValueSpaceItem::setValue() for the specified \a handle
-  and \a value.  Return true on success and false on failure.
-  */
-
-/*!
-  \fn bool QAbstractValueSpaceLayer::setValue(Handle handle, const QByteArray &subPath, const QVariant &value)
-
-  Process a client side QValueSpaceItem::setValue() for the specified \a subPath
-  of \a handle and the provided \a value.  Return true on success and false on
-  failure.
-  */
+    Return the position in the Value Space layer stack that this layer should reside.  Higher
+    numbers mean the layer has a higher precedence and its values will "shadow" those below it.
+    If two layers specify the same ordering, the id() value is used to break the tie.
+*/
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::syncChanges()
+    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
 
-  Commit any changes made through setValue().  Return true on success and false
-  on failure.
-  */
+    Returns a new opaque handle for the requested \a subPath of \a parent.  If \a parent is an
+    InvalidHandle, \a subPath is an absolute path.
 
-/*!
-  \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
-
-  Returns the set of children of \a handle.  For example, in a layer providing
-  the following items:
-
-  \code
-  /Device/Configuration/Applications/FocusedApplication
-  /Device/Configuration/Buttons/PrimaryInput
-  /Device/Configuration/Name
-  \endcode
-
-  a request for children of "/Device/Configuration" will return
-  { "Applications", "Buttons", "Name" }.
- */
+    The caller should call removeHandle() to free resources used by the handle when it is no longer
+    required.
+*/
 
 /*!
-  \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
+    \fn void QAbstractValueSpaceLayer::removeHandle(Handle handle)
 
-  Returns a new opaque handle for the requested \a subPath of \a parent.  If
-  \a parent is an InvalidHandle, \a subPath is an absolute path.
-  */
-
-/*!
-  \fn void QAbstractValueSpaceLayer::setProperty(Handle handle, Properties property)
-
-  Apply the specified \a property mask to \a handle.
- */
+    Releases a \a handle previously returned from QAbstractValueSpaceLayer::item().
+*/
 
 /*!
-  \fn void QAbstractValueSpaceLayer::remHandle(Handle handle)
+    \fn void QAbstractValueSpaceLayer::setProperty(Handle handle, Properties property)
 
-  Releases a \a handle previously returned from QAbstractValueSpaceLayer::item().
- */
+    Apply the specified \a property mask to \a handle.
+*/
 
 /*!
-  \fn void QAbstractValueSpaceLayer::handleChanged(unsigned int handle)
+    \fn bool QAbstractValueSpaceLayer::value(Handle handle, QVariant *data)
 
-  Emitted whenever the \a handle's value, or any sub value, changes.
-  */
+    Returns the value for a particular \a handle.  If a value is available, the layer will set
+    \a data and return true.  If no value is available, false is returned.
+*/
+
+/*!
+    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+
+    Returns the value for a particular \a subPath of \a handle.  If a value is available, the
+    layer will set \a data and return true.  If no value is available, false is returned.
+*/
+
+/*!
+    \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
+
+    Returns the set of children of \a handle.  For example, in a layer providing the following
+    items:
+
+    \code
+        /Device/Configuration/Applications/FocusedApplication
+        /Device/Configuration/Buttons/PrimaryInput
+        /Device/Configuration/Name
+    \endcode
+
+    a request for children of "/Device/Configuration" will return
+    { "Applications", "Buttons", "Name" }.
+*/
+
+/*!
+    \fn bool requestSetValue(Handle handle, const QVariant &value)
+
+    Process a client side QValueSpaceItem::setValue() call by sending a request to the value
+    provider to set the value of the path specified by \a handle to \a value.
+
+    Returns true if the request was successfully sent; otherwise returns false.
+
+    \sa handleChanged()
+*/
+
+/*!
+    \fn bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
+
+    Process a client side QValueSpaceItem::setValue() call by sending a request to the value
+    provider to set the value of the \a subPath under \a handle to \a value.
+
+    Returns true if the request was successfully sent; otherwise returns false.
+*/
+
+/*!
+    \fn bool requestRemoveValue(Handle handle, const QByteArray &subPath)
+
+    Process a client side QValueSpaceItem::remove() call by sending a request to the value provider
+    to remove the value of the \a subPath under \a handle.
+
+    Returns true if the request was successfully sent; otherwise returns false.
+*/
+
+/*!
+    \fn bool syncRequests()
+
+    Commit any pending request made through call to requestSetValue() and requestRemoveValue().
+
+    Returns true on success; otherwise returns false.
+*/
+
+/*!
+    \fn bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
+
+    Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
+    \a subPath under \a handle to \a value.
+
+    Returns true on success; otherwise returns false.
+*/
+
+/*!
+    \fn bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+
+    Process calls to QValueSpaceObject::removeAttribute() by removing the value specified by the
+    \a subPath under \a handle.
+
+    Returns true on success; otherwise returns false.
+*/
+
+/*!
+    \fn bool removeSubTree(QValueSpaceObject *creator, Handle handle)
+
+    Process calls to QValueSpaceObject::~QValueSpaceObject() by removing the entire sub tree
+    created by \a creator under \a handle.
+
+    Returns true on success; otherwise returns false.
+*/
+
+/*!
+    \fn void addWatch(QValueSpaceObject *creator, Handle handle)
+
+    Registers \a creator for change notifications to values under \a handle.
+
+    \sa removeWatches(), emitItemRemove(), emitItemSetValue()
+*/
+
+/*!
+    \fn void removeWatches(QValueSpaceObject *creator, Handle parent)
+
+    Removes all registered change notifications for \a creator under \a parent.
+
+    \sa addWatch(), emitItemRemove(), emitItemSetValue()
+*/
+
+/*!
+    \fn void sync()
+
+    Flushes all pending changes made by calls to setValue(), removeValue() and removeSubTree().
+*/
+
+/*!
+    \fn void emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
+
+    Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
+*/
+
+/*!
+    \fn void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
+
+    Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
+*/
+
+/*!
+    \fn void QAbstractValueSpaceLayer::handleChanged(quintptr handle)
+
+    Emitted whenever the \a handle's value, or any sub value, changes.
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // define QValueSpace
@@ -298,6 +358,7 @@ void QValueSpace::initValuespaceManager()
   */
 void QValueSpace::initValuespace()
 {
+    qRegisterMetaType<quintptr>("quintptr");
     QValueSpaceManager::instance()->init();
 }
 
@@ -338,7 +399,7 @@ signals:
     void changed();
 
 public slots:
-    void handleChanged(unsigned int handle)
+    void handleChanged(quintptr handle)
     {
         for(int ii = 0; ii < readers.count(); ++ii)
             if(readers.at(ii).second == handle) {
@@ -396,7 +457,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
     ~QValueSpaceItemPrivateData()
     {
         for(int ii = 0; ii < readers.count(); ++ii)
-            readers[ii].first->remHandle(readers[ii].second);
+            readers[ii].first->removeHandle(readers[ii].second);
 
         if(connections)
             delete connections;
@@ -415,7 +476,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
                              space, SIGNAL(contentsChanged()));
             for(int ii = 0; ii < readers.count(); ++ii) {
                 readers.at(ii).first->setProperty(readers.at(ii).second, QAbstractValueSpaceLayer::Publish);
-                QObject::connect(readers.at(ii).first, SIGNAL(handleChanged(uint)), connections, SLOT(handleChanged(uint)));
+                QObject::connect(readers.at(ii).first, SIGNAL(handleChanged(quintptr)), connections, SLOT(handleChanged(quintptr)));
             }
         } else if(!connections->connections.contains(space)) {
             connections->connections[space] = 1;

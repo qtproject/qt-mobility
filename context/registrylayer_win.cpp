@@ -54,18 +54,22 @@ public:
     ~RegistryLayer();
 
     /* Common functions */
-    virtual QString name();
-    virtual bool startup(Type t);
-    virtual bool restart();
-    virtual void shutdown();
-    virtual QUuid id();
-    virtual unsigned int order();
-    virtual bool value(Handle handle, QVariant *data);
-    virtual bool value(Handle handle, const QByteArray &subPath, QVariant *data);
-    virtual QSet<QByteArray> children(Handle handle);
-    virtual Handle item(Handle parent, const QByteArray &path);
-    virtual void setProperty(Handle handle, Properties);
-    virtual void remHandle(Handle);
+    QString name();
+
+    bool startup(Type t);
+    bool restart();
+    void shutdown();
+
+    QUuid id();
+    unsigned int order();
+
+    Handle item(Handle parent, const QByteArray &path);
+    void removeHandle(Handle handle);
+    void setProperty(Handle handle, Properties);
+
+    bool value(Handle handle, QVariant *data);
+    bool value(Handle handle, const QByteArray &subPath, QVariant *data);
+    QSet<QByteArray> children(Handle handle);
 
     /* QValueSpaceItem functions */
     bool requestSetValue(Handle handle, const QVariant &data);
@@ -160,7 +164,7 @@ RegistryLayer::~RegistryLayer()
 
         if (handle->valueHandle) {
             qDebug() << "removing value" << handle->path;
-            remHandle(Handle(handle));
+            removeHandle(Handle(handle));
         }
     }
 
@@ -168,7 +172,7 @@ RegistryLayer::~RegistryLayer()
     while (i.hasNext()) {
         i.next();
 
-        remHandle(Handle(i.value()));
+        removeHandle(Handle(i.value()));
     }
 }
 
@@ -247,7 +251,7 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
     openRegistryKey(rh);
     if (!hKeys.contains(rh)) {
         if (createdHandle)
-            remHandle(handle);
+            removeHandle(handle);
 
         return false;
     }
@@ -259,12 +263,12 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
     if (result == ERROR_FILE_NOT_FOUND) {
         *data = QVariant();
         if (createdHandle)
-            remHandle(handle);
+            removeHandle(handle);
         return false;
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegQueryValueEx failed with error" << result;
         if (createdHandle)
-            remHandle(handle);
+            removeHandle(handle);
         return false;
     }
 
@@ -275,7 +279,7 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
     if (result != ERROR_SUCCESS) {
         qDebug() << "real RegQueryValueEx failed with error" << result;
         if (createdHandle)
-            remHandle(handle);
+            removeHandle(handle);
         return false;
     }
 
@@ -312,7 +316,7 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
         qDebug() << "Unknown REG type" << regType;
         delete[] regData;
         if (createdHandle)
-            remHandle(handle);
+            removeHandle(handle);
         return false;
         break;
     }
@@ -320,7 +324,7 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
     delete[] regData;
 
     if (createdHandle)
-        remHandle(handle);
+        removeHandle(handle);
 
     return true;
 }
@@ -463,7 +467,7 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
     }
 }
 
-void RegistryLayer::remHandle(Handle handle)
+void RegistryLayer::removeHandle(Handle handle)
 {
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
@@ -554,7 +558,7 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
     openRegistryKey(rh);
     if (!hKeys.contains(rh)) {
         if (createdHandle)
-            remHandle(Handle(rh));
+            removeHandle(Handle(rh));
 
         return false;
     }
@@ -582,7 +586,7 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
     }
 
     if (createdHandle)
-        remHandle(Handle(rh));
+        removeHandle(Handle(rh));
 
     return result == ERROR_SUCCESS;
 }
@@ -621,7 +625,7 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
     createRegistryKey(rh);
     if (!hKeys.contains(rh)) {
         if (createdHandle)
-            remHandle(Handle(rh));
+            removeHandle(Handle(rh));
 
         return false;
     }
@@ -701,7 +705,7 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
     delete[] toDelete;
 
     if (createdHandle)
-        remHandle(Handle(rh));
+        removeHandle(Handle(rh));
 
     return result == ERROR_SUCCESS;
 }
@@ -710,7 +714,7 @@ void RegistryLayer::sync()
 {
     // Wait for change notification callbacks before returning
     QEventLoop loop;
-    connect(this, SIGNAL(handleChanged(uint)), &loop, SLOT(quit()));
+    connect(this, SIGNAL(handleChanged(quintptr)), &loop, SLOT(quit()));
     bool wait = false;
 
     QList<HKEY> keys = hKeys.values();
@@ -801,13 +805,13 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 
         openRegistryKey(parentHandle);
         if (!hKeys.contains(parentHandle)) {
-            remHandle(Handle(parentHandle));
+            removeHandle(Handle(parentHandle));
             return;
         }
 
         // Check if value exists.
         if (!children(Handle(parentHandle)).contains(valueName)) {
-            remHandle(Handle(parentHandle));
+            removeHandle(Handle(parentHandle));
             return;
         }
 
@@ -815,7 +819,7 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 
         hKeys.insert(handle, hKeys.value(parentHandle));
 
-        remHandle(Handle(parentHandle));
+        removeHandle(Handle(parentHandle));
     }
 }
 

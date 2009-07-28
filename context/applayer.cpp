@@ -1662,21 +1662,23 @@ public:
     ApplicationLayer();
     virtual ~ApplicationLayer();
 
-    // QAbstractValueSpaceLayer
-    virtual QString name();
-    virtual bool startup(Type);
-    virtual bool restart();
-    virtual void shutdown();
-    virtual QUuid id();
-    virtual unsigned int order();
-    virtual bool value(Handle, QVariant *);
-    virtual bool value(Handle, const QByteArray &, QVariant *);
-    virtual QSet<QByteArray> children(Handle);
-    virtual Handle item(Handle parent, const QByteArray &);
-    virtual void setProperty(Handle handle, Properties);
-    virtual void remHandle(Handle);
-    virtual bool remove(Handle);
-    virtual bool remove(Handle, const QByteArray &);
+    /* Common functions */
+    QString name();
+
+    bool startup(Type);
+    bool restart();
+    void shutdown();
+
+    QUuid id();
+    unsigned int order();
+
+    Handle item(Handle parent, const QByteArray &);
+    void removeHandle(Handle);
+    void setProperty(Handle handle, Properties);
+
+    bool value(Handle, QVariant *);
+    bool value(Handle, const QByteArray &, QVariant *);
+    QSet<QByteArray> children(Handle);
 
     /* QValueSpaceItem functions */
     bool requestSetValue(Handle handle, const QVariant &data);
@@ -1693,6 +1695,9 @@ public:
     void sync();
 
     // Other
+    bool remove(Handle);
+    bool remove(Handle, const QByteArray &);
+
     bool doRemove(const QByteArray &path);
     bool doWriteItem(const QByteArray &path, const QVariant &val);
     bool isValid() const;
@@ -2366,7 +2371,7 @@ void ApplicationLayer::doClientEmit()
     for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
             ++iter)
-        remHandle((Handle)*iter);
+        removeHandle((Handle)*iter);
 }
 
 void ApplicationLayer::shutdown()
@@ -2712,7 +2717,7 @@ void ApplicationLayer::setProperty(Handle, Properties)
     // Properties aren't used by application layer (always emits changed)
 }
 
-void ApplicationLayer::remHandle(Handle h)
+void ApplicationLayer::removeHandle(Handle h)
 {
     Q_ASSERT(layer);
     Q_ASSERT(h && INVALID_HANDLE != h);
