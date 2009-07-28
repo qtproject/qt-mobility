@@ -1,3 +1,9 @@
+libbearer (0.14) unstable; urgency=low
+
+  * Enabled statistics in session class.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 28 Jul 2009 08:59:51 +0300
+
 libbearer (0.13) unstable; urgency=low
 
   * Using IAPConf class instead of DuiGConfItem and/or DuiValueSpace (which is

@@ -308,11 +308,10 @@ QString QNetworkSessionPrivate::updateIdentifier(QString &newId)
 }
 
 
-#if 0
-/* Currently not used func because this cannot be called from sentData() or
- * receivedData() as those funcs are const.
+/* The function does not update the tx_data and rx_data class vars because
+ * the this update func is called from const function.
  */
-void QNetworkSessionPrivate::updateStatistics(void)
+quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 {
     /* This could be also implemented by using the Maemo::Icd::statistics()
      * that gets the statistics data for a specific IAP. Change if
@@ -320,39 +319,44 @@ void QNetworkSessionPrivate::updateStatistics(void)
      */
     Maemo::Icd icd;
     QList<Maemo::IcdStatisticsResult> stats_results;
+    quint64 counter_rx = 0, counter_tx = 0;
 
     if (!icd.statistics(stats_results)) {
-	return;
+	return 0;
     }
 
     foreach (Maemo::IcdStatisticsResult res, stats_results) {
 	if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
 	    /* network_id is the IAP UUID */
 	    if (QString(res.params.network_id.data()) == activeConfig.identifier()) {
-		tx_data = res.bytes_sent;
-		rx_data = res.bytes_received;
+		counter_tx = res.bytes_sent;
+		counter_rx = res.bytes_received;
 	    }
 	} else {
 	    /* We probably will never get to this branch */
 	    QNetworkConfigurationPrivate *d = activeConfig.d.data();
 	    if (res.params.network_id == d->network_id) {
-		tx_data = res.bytes_sent;
-		rx_data = res.bytes_received;
+		counter_tx = res.bytes_sent;
+		counter_rx = res.bytes_received;
 	    }
 	}
     }
+
+    if (sent)
+	return counter_tx;
+    else
+	return counter_rx;
 }
-#endif
 
 
 quint64 QNetworkSessionPrivate::sentData() const
 {
-    return tx_data;
+    return getStatistics(true);
 }
 
 quint64 QNetworkSessionPrivate::receivedData() const
 {
-    return rx_data;
+    return getStatistics(false);
 }
 
 quint64 QNetworkSessionPrivate::activeTime() const
