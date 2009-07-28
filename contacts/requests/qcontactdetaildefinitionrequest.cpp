@@ -101,7 +101,7 @@ bool QContactDetailDefinitionRequest::isFinished() const
 QContactManager::Error QContactDetailDefinitionRequest::error() const
 {
     if (!d->m_manager)
-        return QContactManager::DoesNotExistError;
+        return QContactManager::NoError;
     return d->m_error;
 }
 
@@ -111,7 +111,7 @@ QContactManager::Error QContactDetailDefinitionRequest::error() const
 QContactAbstractRequest::Status QContactDetailDefinitionRequest::status() const
 {
     if (!d->m_manager)
-        return QContactAbstractRequest::Finished;
+        return QContactAbstractRequest::Inactive;
     return d->m_status;
 }
 

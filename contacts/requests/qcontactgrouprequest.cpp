@@ -101,7 +101,7 @@ bool QContactGroupRequest::isFinished() const
 QContactManager::Error QContactGroupRequest::error() const
 {
     if (!d->m_manager)
-        return QContactManager::DoesNotExistError;
+        return QContactManager::NoError;
     return d->m_error;
 }
 
@@ -111,7 +111,7 @@ QContactManager::Error QContactGroupRequest::error() const
 QContactAbstractRequest::Status QContactGroupRequest::status() const
 {
     if (!d->m_manager)
-        return QContactAbstractRequest::Finished;
+        return QContactAbstractRequest::Inactive;
     return d->m_status;
 }
 

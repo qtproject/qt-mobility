@@ -72,7 +72,13 @@ public slots:
     void cleanup();
 private slots:
     void contactRequest();
-    void asynchronous();
+    void asynchronousContacts();
+
+    void detailDefinitionRequest();
+    void asynchronousDetailDefinitions();
+
+    void groupRequest();
+    void asynchronousGroups();
 };
 
 tst_QContactRequest::tst_QContactRequest()
@@ -275,7 +281,7 @@ void tst_QContactRequest::contactRequest()
     delete cm;
 }
 
-void tst_QContactRequest::asynchronous()
+void tst_QContactRequest::asynchronousContacts()
 {
     QContactManager *cm = new QContactManager("memory");
 
@@ -338,6 +344,242 @@ void tst_QContactRequest::asynchronous()
     QCOMPARE(cm->contacts().count(), 2);
     QVERIFY(cm->contact(b.id()).isEmpty());
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+    delete cm;
+}
+
+void tst_QContactRequest::detailDefinitionRequest()
+{
+    QContactManager *cm = new QContactManager("memory");
+
+    QStringList names;
+    names << QContactPhoneNumber::DefinitionName << QContactUrl::DefinitionName;
+
+    QList<QContactDetailDefinition> defs;
+    defs << cm->detailDefinition(QContactPhoneNumber::DefinitionName);
+    defs << cm->detailDefinition(QContactUrl::DefinitionName);
+
+    QContactDetailDefinitionRequest req;
+
+    QCOMPARE(req.isFinished(), true); // not started yet.
+    QCOMPARE(req.status(), QContactAbstractRequest::Inactive);
+    QCOMPARE(req.error(), QContactManager::NoError);
+    QCOMPARE(req.type(), QContactAbstractRequest::DetailDefinition);
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::NoRestriction);
+    req.restrictToNames();
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::RestrictToNames);
+
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::NoRestriction);
+
+    /* Selection type */
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    req.selectByName(names);
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectByNames);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection() == names);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    req.selectByObject(defs);
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectByObject);
+    QVERIFY(req.nameSelection().isEmpty());
+    QVERIFY(req.definitionSelection() == defs);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    /* Without having ever started this request, the results should be empty */
+    QVERIFY(req.names().count() == 0);
+    QVERIFY(req.definitions().count() == 0);
+    QVERIFY(req.errors().count() == 0);
+
+    /* Now delete the manager and make sure we don't crash */
+    delete cm;
+
+    /* A request with no result is inactive */
+    QVERIFY(req.isFinished() == true);
+    QVERIFY(req.status() == QContactAbstractRequest::Inactive);
+    QVERIFY(req.error() == QContactManager::NoError);
+
+    QVERIFY(req.type() == QContactAbstractRequest::DetailDefinition);
+
+    QVERIFY(req.names().count() == 0);
+    QVERIFY(req.definitions().count() == 0);
+    QVERIFY(req.errors().count() == 0);
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::NoRestriction);
+
+    req.restrictToNames();
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::RestrictToNames);
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactDetailDefinitionRequest::NoRestriction);
+
+    /* Selection type */
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    req.selectByName(names);
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectByNames);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection() == names);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    req.selectByObject(defs);
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectByObject);
+    QVERIFY(req.nameSelection().isEmpty());
+    QVERIFY(req.definitionSelection() == defs);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactDetailDefinitionRequest::SelectAll);
+    QVERIFY(req.definitionSelection().isEmpty());
+    QVERIFY(req.nameSelection().isEmpty());
+
+    /* Test creating a request and deleting it before the manager, too */
+    /* TODO: test this after calling preq->start(cm) */
+    cm = new QContactManager("memory");
+    QContactDetailDefinitionRequest* preq = new QContactDetailDefinitionRequest;
+    delete preq;
+
+    delete cm;
+}
+
+void tst_QContactRequest::asynchronousDetailDefinitions()
+{
+
+}
+
+void tst_QContactRequest::groupRequest()
+{
+    QContactManager *cm = new QContactManager("memory");
+
+    QList<QUniqueId> ids;
+    ids << 3 << 4 << 5;
+    QList<QContactGroup> groups;
+    QContactGroup a,b,c;
+    groups << a << b << c;
+
+    QContactGroupRequest req;
+
+    QCOMPARE(req.isFinished(), true); // not started yet.
+    QCOMPARE(req.status(), QContactAbstractRequest::Inactive);
+    QCOMPARE(req.error(), QContactManager::NoError);
+    QCOMPARE(req.type(), QContactAbstractRequest::Group);
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactGroupRequest::NoRestriction);
+    req.restrictToIds();
+    QVERIFY(req.restriction() == QContactGroupRequest::RestrictToIds);
+
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactGroupRequest::NoRestriction);
+
+    /* Selection type */
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectById(ids);
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectByIds);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection() == ids);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByObject(groups);
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectByObject);
+    QVERIFY(req.idSelection().isEmpty());
+    //QVERIFY(req.groupSelection() == groups);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    /* Without having ever started this request, the results should be empty */
+    QVERIFY(req.ids().count() == 0);
+    QVERIFY(req.groups().count() == 0);
+    QVERIFY(req.errors().count() == 0);
+
+    /* Now delete the manager and make sure we don't crash */
+    delete cm;
+
+    /* A request with no result is inactive */
+    QVERIFY(req.isFinished() == true);
+    QVERIFY(req.status() == QContactAbstractRequest::Inactive);
+    QVERIFY(req.error() == QContactManager::NoError);
+
+    QVERIFY(req.type() == QContactAbstractRequest::Group);
+
+    QVERIFY(req.ids().count() == 0);
+    QVERIFY(req.groups().count() == 0);
+    QVERIFY(req.errors().count() == 0);
+
+    /* Restrictions */
+    QVERIFY(req.restriction() == QContactGroupRequest::NoRestriction);
+
+    req.restrictToIds();
+    QVERIFY(req.restriction() == QContactGroupRequest::RestrictToIds);
+    req.clearRestrictions();
+    QVERIFY(req.restriction() == QContactGroupRequest::NoRestriction);
+
+    /* Selection type */
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectById(ids);
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectByIds);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection() == ids);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    req.selectByObject(groups);
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectByObject);
+    QVERIFY(req.idSelection().isEmpty());
+    //QVERIFY(req.groupSelection() == groups);
+
+    req.clearSelection();
+    QVERIFY(req.selectionType() == QContactGroupRequest::SelectAll);
+    QVERIFY(req.groupSelection().isEmpty());
+    QVERIFY(req.idSelection().isEmpty());
+
+    /* Test creating a request and deleting it before the manager, too */
+    /* TODO: test this after calling preq->start(cm) */
+    cm = new QContactManager("memory");
+    QContactGroupRequest* preq = new QContactGroupRequest;
+    delete preq;
+
+    delete cm;
+}
+
+void tst_QContactRequest::asynchronousGroups()
+{
 }
 
 QTEST_MAIN(tst_QContactRequest)

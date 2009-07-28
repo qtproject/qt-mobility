@@ -61,8 +61,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
-
-class QContactAbstractRequestResult;
+#include "qcontactabstractrequestresult.h"
 
 class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
@@ -83,7 +82,13 @@ public:
     {
     }
 
-    ~QContactMemoryEngineData() {}
+    ~QContactMemoryEngineData()
+    {
+        QList<QContactAbstractRequestResult*> allResults = m_asynchronousRequests.values();
+        for (int i = 0; i < allResults.size(); i++) {
+            delete allResults.at(i);
+        }
+    }
 
     QAtomicInt m_refCount;
     QString m_id;

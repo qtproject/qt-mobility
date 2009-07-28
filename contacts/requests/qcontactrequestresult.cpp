@@ -77,7 +77,6 @@ QList<QUniqueId> QContactRequestResult::contactIds() const
 /*! Returns the result list of contacts */
 QList<QContact> QContactRequestResult::contacts() const
 {
-    // TODO: if selection type is just id's, need to build empty contacts with ids set.
     return d->m_contacts;
 }
 
