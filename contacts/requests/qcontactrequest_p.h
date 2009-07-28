@@ -71,14 +71,6 @@ public:
     {
     }
 
-    void _q_statusUpdate(const QContactAbstractRequest::Status& status, const QContactManager::Error& error)
-    {
-        m_status = status;
-        m_error = error;
-        // XXX emit status update?
-    }
-
-
     QStringList m_restrictDefinitions;
     bool m_isRestrictedDefs;
     bool m_isRestrictedIds;

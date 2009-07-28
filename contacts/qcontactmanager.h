@@ -43,9 +43,6 @@
 #include <QList>
 #include <QDateTime>
 
-#include <QSharedPointer>
-
-
 #include "qcontact.h"
 #include "qcontactgroup.h"
 #include "qcontactmanagerinfo.h"

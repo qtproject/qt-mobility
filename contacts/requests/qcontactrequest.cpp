@@ -212,6 +212,29 @@ QStringList QContactRequest::detailRestrictions() const
     return d->m_restrictDefinitions;
 }
 
+QList<QUniqueId> QContactRequest::ids()
+{
+    if (!d->m_result)
+        return QList<QUniqueId>();
+
+    return d->m_result->contactIds();
+}
+
+QList<QContact> QContactRequest::contacts()
+{
+    if (!d->m_result)
+        return QList<QContact>();
+
+    return d->m_result->contacts();
+}
+
+QList<QContactManager::Error> QContactRequest::errors()
+{
+    if (!d->m_result)
+        return QList<QContactManager::Error>();
+
+    return d->m_result->errors();
+}
 
 /* =============== Dynamic functions below (trampoline to the engine) */
 
@@ -254,30 +277,6 @@ void QContactRequest::start(QContactManager *manager, QContactAbstractRequest::O
     engine = QContactManagerData::engine(d->m_manager);
     if (engine)
         engine->startAsynchronousRequest(this, operation);
-}
-
-QList<QUniqueId> QContactRequest::ids()
-{
-    if (!d->m_result)
-        return QList<QUniqueId>();
-
-    return d->m_result->contactIds();
-}
-
-QList<QContact> QContactRequest::contacts()
-{
-    if (!d->m_result)
-        return QList<QContact>();
-
-    return d->m_result->contacts();
-}
-
-QList<QContactManager::Error> QContactRequest::errors()
-{
-    if (!d->m_result)
-        return QList<QContactManager::Error>();
-
-    return d->m_result->errors();
 }
 
 #include "moc_qcontactrequest.cpp"
