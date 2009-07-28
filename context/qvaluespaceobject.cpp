@@ -120,7 +120,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn virtual bool requestSetValue(HANDLE handle, const QVariant &data) = 0
+    \fn virtual bool requestSetValue(Handle handle, const QVariant &data) = 0
 
     Sends a request to the provider of the value space item identified by \a handle to set it to
     \a data.
@@ -129,7 +129,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn virtual bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data) = 0
+    \fn virtual bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data) = 0
 
     Sends a request to the provider of the value space item identified by \a handle and \a path
     to set it to \a data.
@@ -138,7 +138,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn virtual bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray()) = 0
+    \fn virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0
 
     Sends a request to the provider of the value space item identified by \a handle and \a path
     to remove the item.
@@ -156,7 +156,7 @@ public:
     QByteArray path;
 
     QAbstractValueSpaceLayer *layer;
-    QAbstractValueSpaceLayer::HANDLE handle;
+    QAbstractValueSpaceLayer::Handle handle;
 
     bool hasSet;
     bool hasWatch;
@@ -177,7 +177,7 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath)
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {
-        QAbstractValueSpaceLayer::HANDLE h =
+        QAbstractValueSpaceLayer::Handle h =
             layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 
         if (h != QAbstractValueSpaceLayer::InvalidHandle) {

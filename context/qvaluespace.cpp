@@ -82,10 +82,10 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-  \typedef QAbstractValueSpaceLayer::HANDLE
+  \typedef QAbstractValueSpaceLayer::Handle
 
-  The HANDLE type is an opaque, pointer sized contextual handle used to
-  represent paths within value space layers.  HANDLES are only ever created by
+  The Handle type is an opaque, pointer sized contextual handle used to
+  represent paths within value space layers.  Handles are only ever created by
   QAbstractValueSpaceLayer::item() and are always released by calls to
   QAbstractValueSpaceLayer::remHandle().  The special, \c {InvalidHandle} is reserved to
   represent an invalid handle.
@@ -164,7 +164,7 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
  */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::value(HANDLE handle, QVariant *data)
+  \fn bool QAbstractValueSpaceLayer::value(Handle handle, QVariant *data)
 
   Returns the value for a particular \a handle.  If a value is available, the
   layer will set \a data and return true.  If no value is available, false is
@@ -172,7 +172,7 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
   */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::value(HANDLE handle, const QByteArray &subPath, QVariant *data)
+  \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
 
   Returns the value for a particular \a subPath of \a handle.  If a value is
   available, the layer will set \a data and return true.  If no value is
@@ -180,28 +180,28 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
   */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::remove(HANDLE handle)
+  \fn bool QAbstractValueSpaceLayer::remove(Handle handle)
 
   Process a client side QValueSpaceItem::remove() for the specified \a handle.
   Return true on success and false on failure.
  */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::remove(HANDLE handle, const QByteArray &subPath)
+  \fn bool QAbstractValueSpaceLayer::remove(Handle handle, const QByteArray &subPath)
 
   Process a client side QValueSpaceItem::remove() for the specified \a subPath
   of \a handle.  Return true on success and false on failure.
  */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::setValue(HANDLE handle, const QVariant &value)
+  \fn bool QAbstractValueSpaceLayer::setValue(Handle handle, const QVariant &value)
 
   Process a client side QValueSpaceItem::setValue() for the specified \a handle
   and \a value.  Return true on success and false on failure.
   */
 
 /*!
-  \fn bool QAbstractValueSpaceLayer::setValue(HANDLE handle, const QByteArray &subPath, const QVariant &value)
+  \fn bool QAbstractValueSpaceLayer::setValue(Handle handle, const QByteArray &subPath, const QVariant &value)
 
   Process a client side QValueSpaceItem::setValue() for the specified \a subPath
   of \a handle and the provided \a value.  Return true on success and false on
@@ -216,7 +216,7 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
   */
 
 /*!
-  \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(HANDLE handle)
+  \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
 
   Returns the set of children of \a handle.  For example, in a layer providing
   the following items:
@@ -232,20 +232,20 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
  */
 
 /*!
-  \fn HANDLE QAbstractValueSpaceLayer::item(HANDLE parent, const QByteArray &subPath)
+  \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
 
   Returns a new opaque handle for the requested \a subPath of \a parent.  If
   \a parent is an InvalidHandle, \a subPath is an absolute path.
   */
 
 /*!
-  \fn void QAbstractValueSpaceLayer::setProperty(HANDLE handle, Properties property)
+  \fn void QAbstractValueSpaceLayer::setProperty(Handle handle, Properties property)
 
   Apply the specified \a property mask to \a handle.
  */
 
 /*!
-  \fn void QAbstractValueSpaceLayer::remHandle(HANDLE handle)
+  \fn void QAbstractValueSpaceLayer::remHandle(Handle handle)
 
   Releases a \a handle previously returned from QAbstractValueSpaceLayer::item().
  */
@@ -353,7 +353,7 @@ public slots:
     }
 
 public:
-    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::HANDLE> > readers;
+    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
     QHash<QValueSpaceItem *,int> connections;
 };
 
@@ -386,7 +386,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
             QAbstractValueSpaceLayer * read = readerList.at(ii);
             if(!read) continue;
 
-            QAbstractValueSpaceLayer::HANDLE handle = read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+            QAbstractValueSpaceLayer::Handle handle = read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
             if(QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
             }
@@ -464,7 +464,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
 
     unsigned int refCount;
     QByteArray path;
-    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::HANDLE> > readers;
+    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
     QValueSpaceItemPrivateProxy * connections;
 };
 

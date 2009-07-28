@@ -1669,27 +1669,27 @@ public:
     virtual void shutdown();
     virtual QUuid id();
     virtual unsigned int order();
-    virtual bool value(HANDLE, QVariant *);
-    virtual bool value(HANDLE, const QByteArray &, QVariant *);
-    virtual QSet<QByteArray> children(HANDLE);
-    virtual HANDLE item(HANDLE parent, const QByteArray &);
-    virtual void setProperty(HANDLE handle, Properties);
-    virtual void remHandle(HANDLE);
-    virtual bool remove(HANDLE);
-    virtual bool remove(HANDLE, const QByteArray &);
+    virtual bool value(Handle, QVariant *);
+    virtual bool value(Handle, const QByteArray &, QVariant *);
+    virtual QSet<QByteArray> children(Handle);
+    virtual Handle item(Handle parent, const QByteArray &);
+    virtual void setProperty(Handle handle, Properties);
+    virtual void remHandle(Handle);
+    virtual bool remove(Handle);
+    virtual bool remove(Handle, const QByteArray &);
 
     /* QValueSpaceItem functions */
-    bool requestSetValue(HANDLE handle, const QVariant &data);
-    bool requestSetValue(HANDLE handle, const QByteArray &path, const QVariant &data);
-    bool requestRemoveValue(HANDLE handle, const QByteArray &path = QByteArray());
+    bool requestSetValue(Handle handle, const QVariant &data);
+    bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
+    bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
     bool syncRequests();
 
     /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
-    bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &);
-    bool removeSubTree(QValueSpaceObject *creator, HANDLE handle);
-    void addWatch(QValueSpaceObject *creator, HANDLE handle);
-    void removeWatches(QValueSpaceObject *creator, HANDLE parent);
+    bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &, const QVariant &);
+    bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &);
+    bool removeSubTree(QValueSpaceObject *creator, Handle handle);
+    void addWatch(QValueSpaceObject *creator, Handle handle);
+    void removeWatches(QValueSpaceObject *creator, Handle parent);
     void sync();
 
     // Other
@@ -1770,7 +1770,7 @@ private:
            a change should be emitted anyway. */
         bool forceChange;
     };
-    ReadHandle * rh(QAbstractValueSpaceLayer::HANDLE handle) const
+    ReadHandle * rh(QAbstractValueSpaceLayer::Handle handle) const
     {
         Q_ASSERT(handle && INVALID_HANDLE != handle);
         return reinterpret_cast<ReadHandle *>(handle);
@@ -2336,14 +2336,14 @@ void ApplicationLayer::doClientEmit()
                 (*iter)->forceChange = false;
             }
 
-            emit handleChanged((HANDLE)*iter);
+            emit handleChanged((Handle)*iter);
         } else {
 
             if((*iter)->forceChange) {
                 Q_ASSERT(forceChangeCount);
                 --forceChangeCount;
                 (*iter)->forceChange = false;
-                emit handleChanged((HANDLE)*iter);
+                emit handleChanged((Handle)*iter);
             }
         }
     }
@@ -2357,7 +2357,7 @@ void ApplicationLayer::doClientEmit()
                 Q_ASSERT(forceChangeCount);
                 --forceChangeCount;
                 (*iter)->forceChange = false;
-                emit handleChanged((HANDLE)*iter);
+                emit handleChanged((Handle)*iter);
             }
 
         }
@@ -2366,7 +2366,7 @@ void ApplicationLayer::doClientEmit()
     for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
             ++iter)
-        remHandle((HANDLE)*iter);
+        remHandle((Handle)*iter);
 }
 
 void ApplicationLayer::shutdown()
@@ -2384,7 +2384,7 @@ unsigned int ApplicationLayer::order()
     return 0x10000000;
 }
 
-bool ApplicationLayer::remove(HANDLE handle)
+bool ApplicationLayer::remove(Handle handle)
 {
     if (!valid)
         return false;
@@ -2404,7 +2404,7 @@ bool ApplicationLayer::remove(HANDLE handle)
     return true;
 }
 
-bool ApplicationLayer::remove(HANDLE handle, const QByteArray &subPath)
+bool ApplicationLayer::remove(Handle handle, const QByteArray &subPath)
 {
     if (!valid)
         return false;
@@ -2434,7 +2434,7 @@ bool ApplicationLayer::remove(HANDLE handle, const QByteArray &subPath)
     return true;
 }
 
-bool ApplicationLayer::value(HANDLE handle, QVariant *data)
+bool ApplicationLayer::value(Handle handle, QVariant *data)
 {
     if (!valid)
         return false;
@@ -2481,7 +2481,7 @@ bool ApplicationLayer::value(HANDLE handle, QVariant *data)
     return rv;
 }
 
-bool ApplicationLayer::value(HANDLE handle, const QByteArray &subPath,
+bool ApplicationLayer::value(Handle handle, const QByteArray &subPath,
                              QVariant *data)
 {
     Q_ASSERT(layer);
@@ -2524,7 +2524,7 @@ bool ApplicationLayer::value(HANDLE handle, const QByteArray &subPath,
     return rv;
 }
 
-QSet<QByteArray> ApplicationLayer::children(HANDLE handle)
+QSet<QByteArray> ApplicationLayer::children(Handle handle)
 {
     Q_ASSERT(layer);
     ReadHandle * rhandle = rh(handle);
@@ -2570,7 +2570,7 @@ QSet<QByteArray> ApplicationLayer::children(HANDLE handle)
     return rv;
 }
 
-ApplicationLayer::HANDLE ApplicationLayer::item(HANDLE parent,
+ApplicationLayer::Handle ApplicationLayer::item(Handle parent,
                                                 const QByteArray &key)
 {
     Q_UNUSED(parent);
@@ -2580,7 +2580,7 @@ ApplicationLayer::HANDLE ApplicationLayer::item(HANDLE parent,
     QMap<QByteArray, ReadHandle *>::Iterator iter = handles.find(key);
     if(iter != handles.end()) {
         ++(*iter)->refCount;
-        return (QAbstractValueSpaceLayer::HANDLE)*iter;
+        return (QAbstractValueSpaceLayer::Handle)*iter;
     } else {
         ReadHandle * handle = new ReadHandle(key);
         clearHandle(handle);
@@ -2588,7 +2588,7 @@ ApplicationLayer::HANDLE ApplicationLayer::item(HANDLE parent,
         refreshHandle(handle);
         lock->unlock();
         handles.insert(key, handle);
-        return (QAbstractValueSpaceLayer::HANDLE)(handle);
+        return (QAbstractValueSpaceLayer::Handle)(handle);
     }
 }
 
@@ -2707,12 +2707,12 @@ void ApplicationLayer::triggerTodo()
     todoTimer = startTimer(0);
 }
 
-void ApplicationLayer::setProperty(HANDLE, Properties)
+void ApplicationLayer::setProperty(Handle, Properties)
 {
     // Properties aren't used by application layer (always emits changed)
 }
 
-void ApplicationLayer::remHandle(HANDLE h)
+void ApplicationLayer::remHandle(Handle h)
 {
     Q_ASSERT(layer);
     Q_ASSERT(h && INVALID_HANDLE != h);
@@ -3296,7 +3296,7 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
     }
 }
 
-bool ApplicationLayer::requestSetValue(HANDLE handle, const QVariant &value)
+bool ApplicationLayer::requestSetValue(Handle handle, const QVariant &value)
 {
     if (!valid)
         return false;
@@ -3316,7 +3316,7 @@ bool ApplicationLayer::requestSetValue(HANDLE handle, const QVariant &value)
     return true;
 }
 
-bool ApplicationLayer::requestSetValue(HANDLE handle, const QByteArray &subPath, const QVariant &value)
+bool ApplicationLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
 {
     if (!valid)
         return false;
@@ -3346,7 +3346,7 @@ bool ApplicationLayer::requestSetValue(HANDLE handle, const QByteArray &subPath,
     return true;
 }
 
-bool ApplicationLayer::requestRemoveValue(HANDLE handle, const QByteArray &subPath)
+bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
 {
     if (!valid)
         return false;
@@ -3381,7 +3381,7 @@ bool ApplicationLayer::syncRequests()
     return true;
 }
 
-bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path, const QVariant &data)
+bool ApplicationLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path, const QVariant &data)
 {
     if (!handles.values().contains(reinterpret_cast<ReadHandle *>(handle)))
         return false;
@@ -3405,7 +3405,7 @@ bool ApplicationLayer::setValue(QValueSpaceObject *creator, HANDLE handle, const
     return setItem(owner, fullPath, data);
 }
 
-bool ApplicationLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &path)
+bool ApplicationLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3419,7 +3419,7 @@ bool ApplicationLayer::removeValue(QValueSpaceObject *creator, HANDLE handle, co
     return remItems(owner, readHandle->path + '/' + path);
 }
 
-bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, HANDLE handle)
+bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3433,7 +3433,7 @@ bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, HANDLE handle)
     return remItems(owner, readHandle->path);
 }
 
-void ApplicationLayer::addWatch(QValueSpaceObject *creator, HANDLE handle)
+void ApplicationLayer::addWatch(QValueSpaceObject *creator, Handle handle)
 {
     watchObjects()->insert(creator);
 
@@ -3449,7 +3449,7 @@ void ApplicationLayer::addWatch(QValueSpaceObject *creator, HANDLE handle)
     setWatch(owner, readHandle->path);
 }
 
-void ApplicationLayer::removeWatches(QValueSpaceObject *creator, HANDLE parent)
+void ApplicationLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
 {
     watchObjects()->remove(creator);
 
