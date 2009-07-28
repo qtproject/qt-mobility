@@ -34,6 +34,7 @@
 #include "qmessagestore_p.h"
 #include "qmessage_p.h"
 #include <QSharedDataPointer>
+#include <QSharedPointer>
 #include <QMap>
 
 #include <qdebug.h>
@@ -48,13 +49,31 @@ typedef QByteArray MapiEntryId;
 // TODO Find a message's entryid given its record key, store record key, and parent record key, with or without using cached folder map.
 // TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
 // TODO ref counted mapi store with auto logging in/out
-// TODO MailFolderRef class for ref counting com objects, 
+// TODO typedef QSharedPointer<MapiFolder> MailFolderPtr class for ref counting com objects, 
 //   giving MapiFolders a parent store object, store objects a parent session,
 //   and automatically releasing all store and folder objects when logging out of the session.
 
-class MapiFolderData : public QSharedData
-{
+class MapiFolder;
+typedef QSharedPointer<MapiFolder> MapiFolderPtr;
+
+class MapiFolder {
 public:
+    MapiFolder();
+    MapiFolder(LPMAPIFOLDER folder, const QString &name = QString());
+    ~MapiFolder() { release(); };
+    void findSubFolders();
+    MapiFolderPtr nextSubFolder();
+    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    bool isValid() const { return _isValid; }
+    LPMAPIFOLDER folder() { return _folder; }
+    QString name() const { return _name; }
+    LPMAPITABLE subFolders() { return _subFolders; }
+
+    static MapiFolderPtr rootFolder(LPMDB mapiStore);
+
+private:
+    void release();
+
     bool _isValid;
     LPMAPIFOLDER _folder;
     QString _name;
@@ -62,25 +81,6 @@ public:
     uint _itemCount;
     MapiEntryId _entryId;
     MapiRecordKey _recordKey;
-};
-
-class MapiFolder {
-public:
-    MapiFolder();
-    MapiFolder(LPMAPIFOLDER folder, const QString &name = QString());
-    void findSubFolders();
-    MapiFolder nextSubFolder();
-    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    void release();
-    bool isValid() const { return d->_isValid; }
-    LPMAPIFOLDER folder() { return d->_folder; }
-    QString name() const { return d->_name; }
-    LPMAPITABLE subFolders() { return d->_subFolders; }
-
-    static MapiFolder rootFolder(LPMDB mapiStore);
-
-private:
-    QSharedDataPointer<MapiFolderData> d;
 
     enum columnOrder { entryIdColumn = 0, nameColumn };
 };
@@ -118,21 +118,20 @@ static QString stringFromLpctstr(LPCTSTR lpszValue)
 
 MapiFolder::MapiFolder() 
 {
-    d = new MapiFolderData();
-    d->_isValid = false;
+    _isValid = false;
 }
 
-MapiFolder MapiFolder::rootFolder(LPMDB mapiStore)
+MapiFolderPtr MapiFolder::rootFolder(LPMDB mapiStore)
 {
     if (!mapiStore)
-        return MapiFolder();
+        return MapiFolderPtr(new MapiFolder());
 
     SPropValue *rgProps(0);
     ULONG rgTags[] = {1, PR_IPM_SUBTREE_ENTRYID};
     ULONG cCount;
    
     if (mapiStore->GetProps(reinterpret_cast<LPSPropTagArray>(rgTags), MAPI_UNICODE, &cCount, &rgProps) != S_OK)
-        return MapiFolder();
+        return MapiFolderPtr(new MapiFolder());
 
     // TODO:See MS KB article 312013, OpenEntry is not re-entrant, also true of MAPI functions in general?
     // TODO:See ms859378, GetPropsExample for alternative memory allocation technique
@@ -148,52 +147,51 @@ MapiFolder MapiFolder::rootFolder(LPMDB mapiStore)
 
     MAPIFreeBuffer(rgProps);
     if (mapiFolder)
-        return MapiFolder(mapiFolder);
-    return MapiFolder();
+        return MapiFolderPtr(new MapiFolder(mapiFolder));
+    return MapiFolderPtr(new MapiFolder());
 }
 
 void MapiFolder::findSubFolders()
 {
     LPMAPITABLE subFolders(0);
 
-    d->_isValid = false;
-    if (!d->_folder || (d->_folder->GetHierarchyTable(0, &subFolders) != S_OK))
+    _isValid = false;
+    if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK))
         return;
 
     // Order of properties must be consistent with columnOrder enum.
     const int nCols(5);
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
     if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK) {
-        d->_subFolders = subFolders;
-        d->_isValid = true;
+        _subFolders = subFolders;
+        _isValid = true;
     }
 }
 
 MapiFolder::MapiFolder(LPMAPIFOLDER folder, const QString &name)
 {
-    d = new MapiFolderData();
-    d->_isValid = false;
-    d->_folder = folder;
-    d->_name = name;
+    _isValid = false;
+    _folder = folder;
+    _name = name;
     findSubFolders();
 }
 
-MapiFolder MapiFolder::nextSubFolder()
+MapiFolderPtr MapiFolder::nextSubFolder()
 {
-    if (!d->_isValid || !d->_folder || !d->_subFolders)
-        return MapiFolder();
+    if (!_isValid || !_folder || !_subFolders)
+        return MapiFolderPtr(new MapiFolder());
 
     DWORD objectType;
     LPSRowSet rows(0);
     LPMAPIFOLDER subFolder(0);
     QString name;
 
-    if (d->_subFolders->QueryRows(1, 0, &rows) == S_OK) {
+    if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
         if (rows->cRows == 1) {
             LPSPropValue entryId(&rows->aRow[0].lpProps[entryIdColumn]);
             ULONG cbEntryId(entryId->Value.bin.cb);
             LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryId->Value.bin.lpb));
-            if (d->_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
+            if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
                 // TODO: Make a copy of entry id, record key, message count, and hasSubFolers property values.
             }
@@ -201,7 +199,7 @@ MapiFolder MapiFolder::nextSubFolder()
         FreeProws(rows);
     }
     MAPIFreeBuffer(rows);
-    return MapiFolder(subFolder, name);
+    return MapiFolderPtr(new MapiFolder(subFolder, name));
 }
 
 QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
@@ -210,12 +208,12 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
     Q_UNUSED(sortKey)
     Q_UNUSED(offset)
 
-    if (!d->_isValid)
+    if (!_isValid)
         return QMessageIdList();
 
     QMessageIdList result;
     LPMAPITABLE messagesTable;
-    if (d->_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK)
+    if (_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK)
         return QMessageIdList(); // TODO retry? assert?
 
     // TODO remove flags, sender, subject
@@ -249,6 +247,7 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             QMessageId messageId(encodedId.toBase64()); // TODO This is too inefficient maybe QMessageStore should be a friend of the id classes
 
             /**** XXX Test copy begin ****/
+/*
             QByteArray recordKeyTest;
             QByteArray entryIdTest;
             QDataStream testStream(encodedId);
@@ -261,14 +260,14 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             qDebug() << "entryIdB" << entryIdTest.toBase64();
             Q_ASSERT( recordKey == recordKeyTest);
             Q_ASSERT( entryId == entryIdTest);
+*/
             /**** XXX Test copy end ****/
-
             result.append(QMessageId(encodedId.toBase64()));
         }
         FreeProws(rows);
         if (limit && !workingLimit)
             break;
-        if (!rows->cRows)
+        if (rows->cRows != 1)
             break;
     }
     MAPIFreeBuffer(rows);
@@ -279,14 +278,15 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
 
 void MapiFolder::release()
 {
-    if (!d->_isValid)
+    if (!_isValid)
         return;
-    if (d->_subFolders)
-        d->_subFolders->Release();
-    d->_subFolders = 0;
-    if (d->_folder)
-        d->_folder->Release();
-    d->_folder = 0;
+    qDebug() << "Releasing" << _name;
+    if (_subFolders)
+        _subFolders->Release();
+    _subFolders = 0;
+    if (_folder)
+        _folder->Release();
+    _folder = 0;
 }
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
@@ -445,7 +445,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
     QMessageIdList result;
     QStringList path;
-    QList<MapiFolder> folders; // depth first search;
+    QList<MapiFolderPtr> folders; // depth first search;
 
     if(!d_ptr->p_ptr->mapiInitialized || !d_ptr->p_ptr->login() || !d_ptr->p_ptr->openDefaultMapiStore()) {
         // XXX TODO change to log
@@ -454,25 +454,24 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 	}
 
     folders.append(MapiFolder::rootFolder(d_ptr->p_ptr->mapiStore));
-    path.append(folders.back().name());
+    path.append(folders.back()->name());
     while (!folders.isEmpty()) {
-        if (!folders.back().isValid()) {
+        if (!folders.back()->isValid()) {
             folders.pop_back();
             path.pop_back();
             continue;
         }
 
-        MapiFolder folder(folders.back().nextSubFolder());
-        if (folder.isValid() && (!limit || workingLimit)) {
+        MapiFolderPtr folder(folders.back()->nextSubFolder());
+        if (folder->isValid() && (!limit || workingLimit)) {
             uint oldCount(result.count());
             folders.append(folder);
-            path.append(folder.name());
+            path.append(folder->name());
             qDebug() << "Path: " << path; // XXX todo remove debug;
-            result.append(folder.queryMessages(QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
+            result.append(folder->queryMessages(QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
             if (limit)
                 workingLimit -= (result.count() - oldCount);
         } else {
-            folders.back().release();
             folders.pop_back();
             path.pop_back();
         }
