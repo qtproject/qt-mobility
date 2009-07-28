@@ -29,39 +29,12 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
         }
     }
 
-    m_encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
-    Q_ASSERT(m_encoderBin);
-    gst_object_ref(GST_OBJECT(m_encoderBin)); //Take ownership
-    gst_object_sink(GST_OBJECT(m_encoderBin));
-
-    m_capsfilter = gst_element_factory_make("capsfilter-video", NULL);
-    gst_object_ref(GST_OBJECT(m_capsfilter));
-    gst_object_sink(GST_OBJECT(m_capsfilter));
-    gst_bin_add(m_encoderBin, m_capsfilter);
-
-    m_identity = gst_element_factory_make("identity-video", NULL);
-    gst_object_ref(GST_OBJECT(m_identity));
-    gst_object_sink(GST_OBJECT(m_identity));
-    gst_bin_add(m_encoderBin, m_identity);
-
-    // add ghostpads
-    GstPad *pad = gst_element_get_static_pad(m_capsfilter, "sink");
-    gst_element_add_pad(GST_ELEMENT(m_encoderBin), gst_ghost_pad_new("sink", pad));
-    gst_object_unref(GST_OBJECT(pad));
-
-    pad = gst_element_get_static_pad(m_identity, "src");
-    gst_element_add_pad(GST_ELEMENT(m_encoderBin), gst_ghost_pad_new("src", pad));
-    gst_object_unref(GST_OBJECT(pad));
-
-    m_encoderElement = 0;
-
     if (!m_codecs.isEmpty())
         setVideoCodec(m_codecs[0]);
 }
 
 QGstreamerVideoEncode::~QGstreamerVideoEncode()
 {
-    gst_object_unref(m_encoderBin);
 }
 
 QSize QGstreamerVideoEncode::resolution() const
@@ -122,23 +95,7 @@ QString QGstreamerVideoEncode::audioCodec() const
 
 bool QGstreamerVideoEncode::setVideoCodec(const QString &codecName)
 {
-    if (m_codec != codecName) {
-        m_codec = codecName;
-
-        if (m_encoderElement) {
-            gst_element_unlink(m_capsfilter, m_encoderElement);
-            gst_element_unlink(m_encoderElement, m_identity);
-
-            gst_bin_remove(m_encoderBin, m_encoderElement);
-            gst_object_unref(m_encoderElement);
-            m_encoderElement = 0;
-        }
-
-        m_encoderElement = gst_element_factory_make(codecName.toAscii(), "encoder");
-        gst_bin_add(m_encoderBin, m_encoderElement);
-        gst_element_link_many(m_capsfilter, m_encoderElement, m_identity, NULL);
-    }
-
+    m_codec = codecName;
     return true;
 }
 
@@ -182,9 +139,27 @@ void QGstreamerVideoEncode::setEncodingOption(const QString &name, const QVarian
     m_options.insert(name,value);
 }
 
-void QGstreamerVideoEncode::applyOptions()
+GstElement *QGstreamerVideoEncode::createEncoder()
 {
-    if (m_encoderElement) {
+    GstBin *encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
+    Q_ASSERT(encoderBin);
+
+    GstElement *capsfilter = gst_element_factory_make("capsfilter-video", NULL);
+    gst_bin_add(encoderBin, capsfilter);
+
+    GstElement *encoderElement = gst_element_factory_make(m_codec.toAscii(), "video-encoder");
+    gst_bin_add(encoderBin, encoderElement);
+
+    // add ghostpads
+    GstPad *pad = gst_element_get_static_pad(capsfilter, "sink");
+    gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("sink", pad));
+    gst_object_unref(GST_OBJECT(pad));
+
+    pad = gst_element_get_static_pad(encoderElement, "src");
+    gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("src", pad));
+    gst_object_unref(GST_OBJECT(pad));
+
+    if (encoderElement) {
         QMapIterator<QString,QVariant> it(m_options);
         while (it.hasNext()) {
             it.next();
@@ -195,28 +170,28 @@ void QGstreamerVideoEncode::applyOptions()
                 double qualityValue = value.toDouble();
 
                 if (m_codec == QLatin1String("vorbisenc")) {
-                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue/10.0, NULL);
+                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
                 } else if (m_codec == QLatin1String("lame")) {
                     int presets[] = {1006, 1001, 1002, 1003}; //Medium, Standard, Extreme, Insane
                     int preset = presets[ qBound(0, qRound(qualityValue*0.3), 3) ];
-                    g_object_set(G_OBJECT(m_encoderElement), "preset", preset, NULL);
+                    g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
                 } else if (m_codec == QLatin1String("speexenc")) {
-                    g_object_set(G_OBJECT(m_encoderElement), "quality", qualityValue, NULL);
+                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue, NULL);
                 }
 
             } else {
                 switch (value.type()) {
                 case QVariant::Int:
-                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toInt(), NULL);
+                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toInt(), NULL);
                     break;
                 case QVariant::Bool:
-                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toBool(), NULL);
+                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toBool(), NULL);
                     break;
                 case QVariant::Double:
-                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toDouble(), NULL);
+                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toDouble(), NULL);
                     break;
                 case QVariant::String:
-                    g_object_set(G_OBJECT(m_encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
+                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
                     break;
                 default:
                     qWarning() << "unsupported option type:" << option << value;
@@ -225,10 +200,8 @@ void QGstreamerVideoEncode::applyOptions()
             }
         }
     }
-}
 
-GstElement *QGstreamerVideoEncode::encoder()
-{
-    return GST_ELEMENT(m_encoderBin);
-}
+    //TODO: set caps filter, if necessary
 
+    return GST_ELEMENT(encoderBin);
+}

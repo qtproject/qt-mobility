@@ -86,11 +86,15 @@ private slots:
 private:
     enum PipelineMode { EmptyPipeline, PreviewPipeline, RecordingPipeline, PreviewAndRecordingPipeline };
 
-    void buildEncodeBin();
+    GstElement *buildEncodeBin();
+    GstElement *buildAudioSrcBin();
+    GstElement *buildAudioPreviewBin();
+
     void waitForStopped();
     void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
 
     QMediaSink m_sink;
+    QString m_captureDevice;
     State m_state;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
@@ -106,20 +110,9 @@ private:
     GstElement *m_audioSrc;
     GstElement *m_audioTee;
     GstElement *m_audioPreview;
-    GstElement *m_audioPreviewQueue;
-    GstElement *m_audioEncodeQueue;
-
-    GstPad *m_audioPreviewPad;
-    GstPad *m_audioCapturePad;
 
     GstElement *m_encodeBin;
 
-    GstElement *m_muxer;
-    GstElement *m_fileSink;
-
-    GstElement *m_audioConvert;
-    GstElement *m_audioQueue;
-    GstElement *m_volume;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H

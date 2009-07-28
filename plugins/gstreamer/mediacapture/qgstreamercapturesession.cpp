@@ -60,30 +60,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_bus = gst_element_get_bus(m_pipeline);
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
-
-    buildEncodeBin();
-
-    if (m_captureMode & Audio) {
-        m_audioSrc = gst_element_factory_make("osssrc", "audio_src");
-        gstRef(m_audioSrc);
-
-        m_audioTee = gst_element_factory_make("tee", "audio_tee");
-        gstRef(m_audioTee);
-        m_audioPreview = gst_element_factory_make("fakesink", "audio-fake-sink");
-        gstRef(m_audioPreview);
-
-        m_audioPreviewPad = gst_element_get_request_pad(m_audioTee, "src%d");
-        gstRef(m_audioPreviewPad);
-        m_audioCapturePad = gst_element_get_request_pad(m_audioTee, "src%d");
-        gstRef(m_audioCapturePad);
-
-        m_audioPreviewQueue = gst_element_factory_make("queue", "audio_preview_queue");
-        gstRef(m_audioPreviewQueue);
-
-        m_audioEncodeQueue = gst_element_factory_make("queue", "audio_encode_queue");
-        gstRef(m_audioEncodeQueue);
-    }
-
+    m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_captureControl = new QGstreamerCaptureControl(this);
 
     setState(PreviewState);
@@ -91,70 +68,73 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
 {
-    if (m_encodeBin) {
-        delete m_busHelper;
-        gst_object_unref(GST_OBJECT(m_encodeBin));
-        gst_object_unref(GST_OBJECT(m_audioConvert));
-        gst_object_unref(GST_OBJECT(m_muxer));
-        gst_object_unref(GST_OBJECT(m_fileSink));
-    }
+    gst_object_unref(GST_OBJECT(m_pipeline));
 }
 
-void QGstreamerCaptureSession::buildEncodeBin()
+
+GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
-    m_encodeBin = gst_bin_new("encode-bin");
-    gstRef(m_encodeBin);
+    GstElement *encodeBin = gst_bin_new("encode-bin");
 
-    m_muxer = gst_element_factory_make("matroskamux", "muxer");
-    gstRef(m_muxer);
-    m_fileSink = gst_element_factory_make("filesink", "filesink");
-    gstRef(m_fileSink);
-    g_object_set(G_OBJECT(m_fileSink), "location", "tmp.mkv", NULL);
+    //m_muxer = gst_element_factory_make("matroskamux", "muxer");
+    GstElement *muxer = gst_element_factory_make("oggmux", "muxer");
+    GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
-    m_audioEncodeControl = 0;
-    m_videoEncodeControl = 0;
+    QUrl url = m_sink.dataLocation().toUrl();
+    g_object_set(G_OBJECT(fileSink), "location", url.toString().toLocal8Bit().constData(), NULL);
 
-    gst_bin_add_many(GST_BIN(m_encodeBin), m_muxer, m_fileSink,  NULL);
-    gst_element_link(m_muxer, m_fileSink);
+    gst_bin_add_many(GST_BIN(encodeBin), muxer, fileSink,  NULL);
+    gst_element_link(muxer, fileSink);
 
     if (m_captureMode & Audio) {
-        m_audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
-        gstRef(m_audioConvert);
-        m_audioQueue = gst_element_factory_make("queue", "audio-queue");
-        gstRef(m_audioQueue);
-        m_volume = gst_element_factory_make("volume", "volume");
-        gstRef(m_volume);
-        m_audioEncodeControl = new QGstreamerAudioEncode(this);
+        GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
+        GstElement *audioQueue = gst_element_factory_make("queue", "audio-encode-queue");
+        GstElement *volume = gst_element_factory_make("volume", "volume");
+        GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
 
-        gst_bin_add_many(GST_BIN(m_encodeBin), m_audioConvert, /*m_audioQueue,*/ m_volume, m_audioEncodeControl->encoder(),  NULL);
+        gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, volume, audioEncoder,  NULL);
 
-        gst_element_link_many(m_audioConvert, /*m_audioQueue,*/ m_volume, m_audioEncodeControl->encoder(), m_muxer, NULL);
-        g_object_set(G_OBJECT(m_volume), "volume", 10.0, NULL);
-
+        gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
+        g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
 
         // add ghostpads
-        GstPad *pad = gst_element_get_static_pad(m_audioConvert, "sink");
+        GstPad *pad = gst_element_get_static_pad(audioConvert, "sink");
         Q_ASSERT(pad);
-        gst_element_add_pad(GST_ELEMENT(m_encodeBin), gst_ghost_pad_new("audiosink", pad));
+        gst_element_add_pad(GST_ELEMENT(encodeBin), gst_ghost_pad_new("audiosink", pad));
         gst_object_unref(GST_OBJECT(pad));
     }
 
-    /*if (m_captureMode & Video) {
-        m_videoqueue = gst_element_factory_make("queue", "video-queue");
-        m_fakevideosink = gst_element_factory_make("fakesink", "video-fake-sink");
-
-        m_colorconvert = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace");
-        m_videoEncodeControl = new QGstreamerVideoEncode(this);
-
-        gst_bin_add_many(GST_BIN(m_encodeBin), m_colorconvert, m_videoqueue, m_videoEncodeControl->encoder(),  NULL);
-        gst_element_link_many(m_colorconvert, m_videoqueue, m_videoEncodeControl->encoder(), m_muxer, NULL);
-
-        // add ghostpads
-        GstPad *pad = gst_element_get_static_pad(m_colorconvert, "sink");
-        gst_element_add_pad(GST_ELEMENT(m_encodeBin), gst_ghost_pad_new("videosink", pad));
-        gst_object_unref(GST_OBJECT(pad));
-    }*/
+    return encodeBin;
 }
+
+GstElement *QGstreamerCaptureSession::buildAudioSrcBin()
+{
+    //GstBin *bin = gst_bin_new("audio-src-bin");
+    GstElement *audioSrc = gst_element_factory_make("osssrc", "audio_src");
+
+    if (!m_captureDevice.isEmpty())
+        g_object_set(G_OBJECT(audioSrc), "device", m_captureDevice.toLocal8Bit().constData(), NULL);
+
+    return audioSrc;
+}
+
+GstElement *QGstreamerCaptureSession::buildAudioPreviewBin()
+{
+    GstElement *bin = gst_bin_new("audio-preview-bin");
+    GstElement *audioQueue = gst_element_factory_make("queue", "audio-preview-queue");
+    GstElement *preview = gst_element_factory_make("fakesink", "audio-preview");
+    gst_bin_add_many(GST_BIN(bin), audioQueue, preview,  NULL);
+    gst_element_link(audioQueue,preview);
+
+    // add ghostpads
+    GstPad *pad = gst_element_get_static_pad(audioQueue, "sink");
+    Q_ASSERT(pad);
+    gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("audiosink", pad));
+    gst_object_unref(GST_OBJECT(pad));
+
+    return bin;
+}
+
 
 void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
 {
@@ -164,47 +144,53 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
         case PreviewPipeline:
             gst_element_unlink(m_audioSrc, m_audioPreview);
             gst_bin_remove_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
+            gstUnref(m_audioSrc);
+            gstUnref(m_audioPreview);
             break;
         case RecordingPipeline:
             gst_element_unlink(m_audioSrc, m_encodeBin);
             gst_bin_remove_many(GST_BIN(m_pipeline), m_audioSrc, m_encodeBin, NULL);
+            gstUnref(m_audioSrc);
+            gstUnref(m_encodeBin);
             break;
         case PreviewAndRecordingPipeline:
             gst_element_unlink(m_audioSrc, m_audioTee);
-            gst_element_unlink(m_audioTee, m_audioPreviewQueue);
-            gst_element_unlink(m_audioPreviewQueue, m_audioPreview);
-            gst_element_unlink(m_audioTee, m_audioEncodeQueue);
-            gst_element_unlink(m_audioEncodeQueue, m_encodeBin);
-            gst_bin_remove_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee, m_audioPreviewQueue,
-                                m_audioPreview, m_audioEncodeQueue, m_encodeBin, NULL);
+            gst_element_unlink(m_audioTee, m_audioPreview);
+            gst_element_unlink(m_audioTee, m_encodeBin);
+            gst_bin_remove_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
+                                m_audioPreview, m_encodeBin, NULL);
+            gstUnref(m_audioSrc);
+            gstUnref(m_encodeBin);
+            gstUnref(m_audioTee);
+            gstUnref(m_audioPreview);
             break;
     }
-
-    gstUnref(m_audioSrc);
-    m_audioSrc = gst_element_factory_make("osssrc", "audio_src");
-    gstRef(m_audioSrc);
 
     switch (newMode) {
         case EmptyPipeline:
             break;
         case PreviewPipeline:
+            m_audioSrc = buildAudioSrcBin();
+            m_audioPreview = buildAudioPreviewBin();
             gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
             gst_element_link(m_audioSrc, m_audioPreview);
             break;
         case RecordingPipeline:
+            m_audioSrc = buildAudioSrcBin();
+            m_encodeBin = buildEncodeBin();
             gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_encodeBin, NULL);
-            m_audioEncodeControl->applyOptions();
             gst_element_link(m_audioSrc, m_encodeBin);
             break;
         case PreviewAndRecordingPipeline:
-            gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee, m_audioPreviewQueue,
-                                m_audioPreview, m_audioEncodeQueue, m_encodeBin, NULL);
-            m_audioEncodeControl->applyOptions();
+            m_audioSrc = buildAudioSrcBin();
+            m_encodeBin = buildEncodeBin();
+            m_audioPreview = buildAudioPreviewBin();
+            m_audioTee = gst_element_factory_make("tee", NULL);
+            gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
+                                m_audioPreview, m_encodeBin, NULL);
             gst_element_link(m_audioSrc, m_audioTee);
-            gst_element_link(m_audioTee, m_audioPreviewQueue);
-            gst_element_link(m_audioPreviewQueue, m_audioPreview);
-            gst_element_link(m_audioTee, m_audioEncodeQueue);
-            gst_element_link(m_audioEncodeQueue, m_encodeBin);
+            gst_element_link(m_audioTee, m_audioPreview);
+            gst_element_link(m_audioTee, m_encodeBin);
             break;
     }
 
@@ -226,8 +212,6 @@ QMediaSink QGstreamerCaptureSession::sink() const
 bool QGstreamerCaptureSession::setSink(const QMediaSink& sink)
 {
     m_sink = sink;
-    QUrl url = sink.dataLocation().toUrl();
-    g_object_set(G_OBJECT(m_fileSink), "location", url.toString().toLocal8Bit().constData(), NULL);
     return true;
 }
 
@@ -302,7 +286,7 @@ qint64 QGstreamerCaptureSession::position() const
 
 void QGstreamerCaptureSession::setCaptureDevice(const QString &deviceName)
 {
-    g_object_set(G_OBJECT(m_audioSrc), "device", deviceName.toLocal8Bit().constData(), NULL);
+    m_captureDevice = deviceName;
 }
 
 void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)

@@ -43,21 +43,15 @@ public:
     QVariant encodingOption(const QString &name);
     void setEncodingOption(const QString &name, const QVariant &value);
 
-    void applyOptions();
-    GstElement *encoder();
+    GstElement *createEncoder();
 
 private:
-    GstBin *m_encoderBin;
-    GstElement *m_encoderElement;
-    GstElement *m_capsfilter;
-    GstElement *m_identity;
-
-    QMap<QString, QVariant> m_options;
-    QString m_codec;
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
 
+    QString m_codec;
+    QMap<QString, QVariant> m_options;
     QSize m_resolution;
     QPair<int,int> m_frameRate;
 };

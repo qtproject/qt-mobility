@@ -71,7 +71,7 @@ Recorder::Recorder(QWidget *parent) :
             audioCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
 
     if (encodeControl) {
-        encodeControl->setAudioCodec("lame");
+        //encodeControl->setAudioCodec("lame");
 
         foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
             QString description = encodeControl->codecDescription(codecName);

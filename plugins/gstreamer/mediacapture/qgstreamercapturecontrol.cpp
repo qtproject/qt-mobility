@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-
 #include "qgstreamercapturecontrol.h"
+#include <QtCore/QDebug>
 
 QGstreamerCaptureControl::QGstreamerCaptureControl(QGstreamerCaptureSession *session)
     :QMediaCaptureControl(session), m_session(session)
@@ -82,6 +82,7 @@ void QGstreamerCaptureControl::updateState()
 
 qint64 QGstreamerCaptureControl::position() const
 {
+    qDebug() << "position asked" <<m_session->position();
     return m_session->position();
 }
 

@@ -42,6 +42,7 @@
 class QGstreamerCaptureControl : public QMediaCaptureControl
 {
 Q_OBJECT
+Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
     QGstreamerCaptureControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerCaptureControl();
