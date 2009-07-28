@@ -20,7 +20,7 @@
 <ul><li><a href="#verbose-lookup">Verbose lookup</a></li>
 <li><a href="#default-lookup">Default lookup</a></li>
 <li><a href="#header-lookup">Header lookup</a></li>
-<li><a href="#database-scope">Database scope</a></li>
+<li><a href="#service-scope">Service scope</a></li>
 <ul><li><a href="#user-scope">User scope</a></li>
 <li><a href="#system-scope">System scope</a></li>
 </ul>
@@ -81,12 +81,12 @@
     ...
     manager.setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
     storage = manager.getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
-<a name="database-scope"></a>
-<h3>Database scope</h3>
-<p>A <a href="qservicemanager.html">QServiceManager</a> operates in either <a href="qservicemanager.html#Scope-enum">User scope</a> or <a href="qservicemanager.html#Scope-enum">System scope</a>. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.</p>
+<a name="service-scope"></a>
+<h3>Service scope</h3>
+<p>The <a href="qservicemanager.html">QServiceManager</a> operates in either <a href="qservicemanager.html#Scope-enum">User scope</a> or <a href="qservicemanager.html#Scope-enum">System scope</a>. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.</p>
 <a name="user-scope"></a>
 <h4>User scope</h4>
-<p>In user scope, services are registered in a storage location specific to the current user; for example, in the user's home directory. When a default service is set for an interface using <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a>, the referenced service can be either a user-specific or system-wide service.</p>
+<p>In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a>, the referenced service can be either a user-specific or system-wide service.</p>
 <p>For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.</p>
 <p>The <a href="qservicemanager.html#serviceAdded">QServiceManager::serviceAdded</a>() and <a href="qservicemanager.html#serviceRemoved">QServiceManager::serviceRemoved</a>() notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a <tt>scope</tt> parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)</p>
 <a name="system-scope"></a>

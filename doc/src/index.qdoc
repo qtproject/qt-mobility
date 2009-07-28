@@ -97,13 +97,13 @@ storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage")
 \endcode
 
 
-\section2 Database scope
+\section2 Service scope
 
-A QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.
+The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.
 
 \section3 User scope
 
-In user scope, services are registered in a storage location specific to the current user; for example, in the user's home directory. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
+In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
 
 For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.
 

@@ -256,7 +256,7 @@
             <contents name="verbose-lookup" title="Verbose lookup" level="2"></contents>
             <contents name="default-lookup" title="Default lookup" level="2"></contents>
             <contents name="header-lookup" title="Header lookup" level="2"></contents>
-            <contents name="database-scope" title="Database scope" level="2"></contents>
+            <contents name="service-scope" title="Service scope" level="2"></contents>
             <contents name="user-scope" title="User scope" level="3"></contents>
             <contents name="system-scope" title="System scope" level="3"></contents>
             <contents name="adding-and-removing-of-services" title="Adding and removing of services" level="1"></contents>
