@@ -67,7 +67,16 @@ QMessageAccountId addAccount(const Parameters &params)
             account.setFromAddress(QMailAddress(fromAddress));
         }
 
-        if (!QMailStore::instance()->addAccount(&account, 0)) {
+        // Ensure that we initialise to the current version for file storage
+        const QString key("qtopiamailfile");
+
+        QMailAccountConfiguration config;
+        config.addServiceConfiguration(key);
+        QMailAccountConfiguration::ServiceConfiguration &svcCfg(config.serviceConfiguration(key));
+        svcCfg.setValue("servicetype", "storage");
+        svcCfg.setValue("version", "101");
+
+        if (!QMailStore::instance()->addAccount(&account, &config)) {
             qWarning() << "Unable to addAccount:" << name;
         } else {
             return QmfHelpers::convert(account.id());
