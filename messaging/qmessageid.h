@@ -59,4 +59,7 @@ private:
 };
 
 typedef QList<QMessageId> QMessageIdList;
+
+uint qHash(const QMessageId &id);
+
 #endif

@@ -114,3 +114,10 @@
 
     Qt-style synonym for QList<QMessageId>
 */
+
+/*! 
+    \fn uint qHash(const QMessageId&);
+
+    \internal
+*/
+    

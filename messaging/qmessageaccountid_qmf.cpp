@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "qmessageaccountid.h"
+#include "qmfhelpers_p.h"
 
 #include <qmailid.h>
 
@@ -99,5 +100,10 @@ QString QMessageAccountId::toString() const
 bool QMessageAccountId::isValid() const
 {
     return (d_ptr && d_ptr->_id.isValid());
+}
+
+uint qHash(const QMessageAccountId &id)
+{
+    return qHash(QmfHelpers::convert(id));
 }
 

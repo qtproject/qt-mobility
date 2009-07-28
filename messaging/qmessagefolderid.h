@@ -60,5 +60,8 @@ private:
 };
 
 typedef QList<QMessageFolderId> QMessageFolderIdList;
+
+uint qHash(const QMessageFolderId &id);
+
 #endif
 #endif

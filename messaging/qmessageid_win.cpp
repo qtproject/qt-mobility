@@ -116,3 +116,9 @@ bool QMessageId::isValid() const
 {
     return (d_ptr && !d_ptr->_recordKey.isEmpty()); //TODO again _recordKey should be 16 bytes
 }
+
+uint qHash(const QMessageId &id)
+{
+    return 0; // stub
+}
+

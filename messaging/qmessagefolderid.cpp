@@ -112,3 +112,10 @@
 
     Qt-style synonym for QList<QMessageFolderId>
 */
+
+/*! 
+    \fn uint qHash(const QMessageFolderId&);
+
+    \internal
+*/
+    
