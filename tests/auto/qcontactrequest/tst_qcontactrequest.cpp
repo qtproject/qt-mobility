@@ -463,7 +463,57 @@ void tst_QContactRequest::detailDefinitionRequest()
 
 void tst_QContactRequest::asynchronousDetailDefinitions()
 {
+    QContactManager *cm = new QContactManager("memory");
 
+    // first, test retrieval
+    QStringList idsel;
+    idsel << QContactPhoneNumber::DefinitionName << QContactUrl::DefinitionName << QContactDisplayLabel::DefinitionName;
+    qRegisterMetaType<QContactDetailDefinitionRequest*>("QContactDetailDefinitionRequest*");
+    QContactDetailDefinitionRequest retrieveRequest;
+    QSignalSpy retrieveSpy(&retrieveRequest, SIGNAL(progress(QContactDetailDefinitionRequest*, bool, bool)));
+    retrieveRequest.selectByName(idsel);
+    retrieveRequest.start(cm, QContactAbstractRequest::RetrieveOperation);
+    QTRY_COMPARE(retrieveSpy.count(), 2); // contacts retrieval should result in 2 signals: pending, finished.
+
+    // test that the definitions were retrieved successfully
+    QList<QContactDetailDefinition> retrievedDefinitions = retrieveRequest.definitions();
+    QVERIFY(retrievedDefinitions.contains(cm->detailDefinition(QContactPhoneNumber::DefinitionName)));
+    QVERIFY(retrievedDefinitions.contains(cm->detailDefinition(QContactUrl::DefinitionName)));
+    QVERIFY(retrievedDefinitions.contains(cm->detailDefinition(QContactDisplayLabel::DefinitionName)));
+    QVERIFY(!retrievedDefinitions.contains(cm->detailDefinition(QContactAddress::DefinitionName))); // didn't retrieve this.
+
+    // second, test saving
+    QContactDetailDefinition phdef = cm->detailDefinition(QContactPhoneNumber::DefinitionName);
+    QContactDetailDefinition::Field labelField;
+    labelField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinition::Field> phnfields = phdef.fields();
+    phnfields.insert("TestLabel", labelField);
+
+    QContactDetailDefinitionRequest saveRequest;
+    QList<QContactDetailDefinition> saveList;
+    saveList.append(phdef);
+    QSignalSpy saveSpy(&saveRequest, SIGNAL(progress(QContactDetailDefinitionRequest*, bool, bool)));
+    saveRequest.selectByObject(saveList);
+    saveRequest.start(cm, QContactAbstractRequest::SaveOperation);
+    QTRY_COMPARE(saveSpy.count(), 2); // contacts save should result in 2 signals: pending, finished.
+
+    // test that the definition was saved successfully
+    QCOMPARE(phdef, cm->detailDefinition(QContactPhoneNumber::DefinitionName));
+
+    // finally, test removal
+    idsel.clear();
+    idsel.append(QContactPhoneNumber::DefinitionName);
+    QContactDetailDefinitionRequest removeRequest;
+    QSignalSpy removeSpy(&removeRequest, SIGNAL(progress(QContactDetailDefinitionRequest*, bool, bool)));
+    removeRequest.selectByName(idsel);
+    removeRequest.start(cm, QContactAbstractRequest::RemoveOperation);
+    QTRY_COMPARE(removeSpy.count(), 2); // contacts remove should result in 2 signals: pending, finished.
+
+    // test that the definition was removed successfully
+    QVERIFY(cm->detailDefinition(QContactPhoneNumber::DefinitionName).isEmpty());
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+    delete cm;
 }
 
 void tst_QContactRequest::groupRequest()
@@ -580,6 +630,69 @@ void tst_QContactRequest::groupRequest()
 
 void tst_QContactRequest::asynchronousGroups()
 {
+    QContactManager *cm = new QContactManager("memory");
+
+    QContactGroup a,b,c;
+    a.setName("group one");
+    b.setName("group two");
+    c.setName("group three");
+    cm->saveGroup(&a);
+    cm->saveGroup(&b);
+    cm->saveGroup(&c);
+
+    // first, test retrieval
+    QList<QUniqueId> idsel;
+    idsel.append(a.id());
+    idsel.append(c.id());
+    qRegisterMetaType<QContactGroupRequest*>("QContactGroupRequest*");
+    QContactGroupRequest retrieveRequest;
+    QSignalSpy retrieveSpy(&retrieveRequest, SIGNAL(progress(QContactGroupRequest*, bool, bool)));
+    retrieveRequest.selectById(idsel);
+    retrieveRequest.start(cm, QContactAbstractRequest::RetrieveOperation);
+    QTRY_COMPARE(retrieveSpy.count(), 2); // groups retrieval should result in 2 signals: pending, finished.
+
+    // test that the groups were retrieved successfully
+    QList<QContactGroup> retrievedGroups = retrieveRequest.groups();
+    QCOMPARE(retrievedGroups.count(), 2);
+    //QVERIFY(retrievedGroups.contains(a));
+    //QVERIFY(!retrievedGroups.contains(b));
+    //QVERIFY(retrievedGroups.contains(c));
+
+    // second, test saving
+    QContact john;
+    john.setDisplayLabel("John Citizen");
+    cm->saveContact(&john);
+    QContactGroupRequest saveRequest;
+    QList<QContactGroup> saveList;
+    a.addMember(john.id());
+    b.addMember(john.id());
+    saveList.append(a);
+    saveList.append(b);
+    QSignalSpy saveSpy(&saveRequest, SIGNAL(progress(QContactGroupRequest*, bool, bool)));
+    saveRequest.selectByObject(saveList);
+    saveRequest.start(cm, QContactAbstractRequest::SaveOperation);
+    QTRY_COMPARE(saveSpy.count(), 2); // groups save should result in 2 signals: pending, finished.
+
+    // test that the groups were saved successfully
+    QVERIFY(a.hasMember(john.id()));
+    QVERIFY(b.hasMember(john.id()));
+    QVERIFY(!c.hasMember(john.id()));
+
+    // finally, test removal
+    idsel.clear();
+    idsel.append(b.id());
+    QContactGroupRequest removeRequest;
+    QSignalSpy removeSpy(&removeRequest, SIGNAL(progress(QContactGroupRequest*, bool, bool)));
+    removeRequest.selectById(idsel);
+    removeRequest.start(cm, QContactAbstractRequest::RemoveOperation);
+    QTRY_COMPARE(removeSpy.count(), 2); // contacts remove should result in 2 signals: pending, finished.
+
+    // test that the group was removed successfully
+    QCOMPARE(cm->groups().count(), 2);
+    QVERIFY(cm->group(b.id()).members().isEmpty());
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+    delete cm;
 }
 
 QTEST_MAIN(tst_QContactRequest)

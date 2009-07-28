@@ -97,6 +97,16 @@ bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other)
     return true;
 }
 
+/*! Returns true if the id and fields of this definition are empty */
+bool QContactDetailDefinition::isEmpty() const
+{
+    if (!d->m_id.isEmpty())
+        return false;
+    if (!d->m_fields.isEmpty())
+        return false;
+    return true;
+}
+
 /*! Sets the unique identifier of this detail type to \a id. */
 void QContactDetailDefinition::setId(const QString& id)
 {

@@ -60,6 +60,9 @@ public:
     bool operator==(const QContactDetailDefinition& other) const;
     bool operator!=(const QContactDetailDefinition& other) const {return !operator==(other);}
 
+    /* Check emptiness */
+    bool isEmpty() const;
+
     /* "id string" of the definition */
     void setId(const QString& definitionId);
     QString id() const;
