@@ -30,9 +30,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qvaluespace.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool.h"
+#include "qvaluespaceobject.h"
 
 #include <QByteArray>
 #include <QObject>
@@ -46,6 +48,16 @@
 #include <qpacketprotocol.h>
 
 #include <QtCore/qdebug.h>
+
+void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
+{
+   emit object->itemRemove(path);
+}
+
+void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
+{
+   emit object->itemSetValue(path, data);
+}
 
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
 

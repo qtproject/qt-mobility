@@ -96,13 +96,17 @@ public:
     virtual bool syncRequests() = 0;
 
     /* QValueSpaceObject functions */
-    virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) = 0;
     virtual bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &) = 0;
     virtual bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &) = 0;
     virtual bool removeSubTree(QValueSpaceObject *creator, HANDLE handle) = 0;
     virtual void addWatch(QValueSpaceObject *creator, HANDLE handle) = 0;
     virtual void removeWatches(QValueSpaceObject *creator, HANDLE parent) = 0;
     virtual void sync() = 0;
+
+protected:
+    /* QValueSpaceObject functions */
+    void emitItemRemove(QValueSpaceObject *object, const QByteArray &path);
+    void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data);
 
 signals:
     void handleChanged(unsigned int);

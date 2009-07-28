@@ -54,8 +54,6 @@
 #include <QSharedMemory>
 #include <QTime>
 
-#include "qvaluespaceobject.cpp"
-
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
 
@@ -1687,7 +1685,6 @@ public:
     bool syncRequests();
 
     /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, HANDLE handle, const QVariant &) { return false; }
     bool setValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &, const QVariant &);
     bool removeValue(QValueSpaceObject *creator, HANDLE handle, const QByteArray &);
     bool removeSubTree(QValueSpaceObject *creator, HANDLE handle);
@@ -3253,29 +3250,6 @@ ApplicationLayer * ApplicationLayer::instance()
     return applicationLayer();
 }
 
-#if 0
-///////////////////////////////////////////////////////////////////////////////
-// declare QValueSpaceObjectPrivate
-// define QValueSpaceObjectPrivate
-///////////////////////////////////////////////////////////////////////////////
-class QValueSpaceObjectPrivate
-{
-public:
-    QValueSpaceObjectPrivate(const QByteArray &_path)
-        : hasSet(false), hasWatch(false)
-    {
-        if(!_path.startsWith('/'))
-            path.append('/');
-        path.append(_path);
-        if(path.endsWith('/'))
-            path.truncate(path.length() - 1);
-    }
-
-    QByteArray path;
-    bool hasSet;
-    bool hasWatch;
-};
-#endif
 typedef QSet<QValueSpaceObject *> WatchObjects;
 Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 
@@ -3290,13 +3264,13 @@ void ApplicationLayer::doClientRemove(const QByteArray &path)
 
         QValueSpaceObject * obj = *iter;
 
-        if(obj->d->path.length() < path.length()) {
-            if(path.startsWith(path) &&
-               path.at(obj->d->path.length()) == '/') {
-                emit obj->itemRemove(path.mid(obj->d->path.length()));
-            }
-        } else if(obj->d->path == path) {
-            emit obj->itemRemove(QByteArray());
+        const QByteArray objectPath = obj->objectPath().toUtf8();
+
+        if (objectPath.length() < path.length()) {
+            if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
+                emitItemRemove(obj, path.mid(objectPath.length()));
+        } else if (objectPath == path) {
+            emitItemRemove(obj, QByteArray());
         }
     }
 }
@@ -3311,13 +3285,13 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
             ++iter) {
         QValueSpaceObject * obj = *iter;
 
-        if(obj->d->path.length() < path.length()) {
-            if(path.startsWith(path) &&
-               path.at(obj->d->path.length()) == '/') {
-                emit obj->itemSetValue(path.mid(obj->d->path.length()), newData);
-            } 
-        } else if(obj->d->path == path) {
-            emit obj->itemSetValue(QByteArray(), newData);
+        const QByteArray objectPath = obj->objectPath().toUtf8();
+
+        if (objectPath.length() < path.length()) {
+            if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
+                emitItemSetValue(obj, path.mid(objectPath.length()), newData);
+        } else if (objectPath == path) {
+            emitItemSetValue(obj, QByteArray(), newData);
         }
     }
 }
@@ -3490,103 +3464,5 @@ void ApplicationLayer::removeWatches(QValueSpaceObject *creator, HANDLE parent)
 
     remWatch(owner, readHandle->path);
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// define QValueSpaceObject
-///////////////////////////////////////////////////////////////////////////////
-#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
-
-/*!
-  \class QValueSpaceObject
-
-  \brief The QValueSpaceObject class allows applications to add entries to the
-         Value Space.
-
-  For an overview of the Qt Value Space, please see the QValueSpaceItem
-  documentation.
-
-  The QValueSpaceObject class allows applications to write entries into the
-  Value Space that are automatically removed when the QValueSpaceObject is
-  destroyed, or the application exits either cleanly or abnormally.  All
-  applications in the system will have access to the data set through
-  QValueSpaceObject and, if desired, can be notified when the data changes.
-
-  Although, logically, the Value Space is a simple collection of
-  hierarchical paths, these paths can conceptually be visualized as a set of
-  objects with attributes.  For example, rather than viewing the following list
-  as 12 distinct Value Space paths:
-
-  \code
-  /Device/Network/Interfaces/eth0/Name
-  /Device/Network/Interfaces/eth0/Type
-  /Device/Network/Interfaces/eth0/Status
-  /Device/Network/Interfaces/eth0/BytesSent
-  /Device/Network/Interfaces/eth0/BytesReceived
-  /Device/Network/Interfaces/eth0/Time
-  /Device/Network/Interfaces/ppp0/Name
-  /Device/Network/Interfaces/ppp0/Type
-  /Device/Network/Interfaces/ppp0/Status
-  /Device/Network/Interfaces/ppp0/BytesSent
-  /Device/Network/Interfaces/ppp0/BytesReceived
-  /Device/Network/Interfaces/ppp0/Time
-  \endcode
-
-  it can be thought of as describing two Value Space objects,
-  \c { { /Device/Network/Interfaces /eth0, /Device/Network/Interfaces/ppp0 } },
-  each with the six attributes \c { {Name, Type, Status, BytesSent,
-  BytesReceived, Time} }.  The QValueSpaceObject class encapsulates this
-  abstraction.
-
-  In the case of two or more applications creating an application object with
-  overlapping attributes, only the first is visible to observers in the system.
-  The other attributes are not discarded, but are buffered until the first
-  releases its hold on the attribute, either by manually removing it, destroying
-  the QValueSpaceObject or by terminating.  For example:
-
-  \code
-  QValueSpaceObject * object1 = new QValueSpaceObject("/Device");
-  object1->setAttribute("Buttons", 2);
-
-  // QValueSpaceItem("/Device/Buttons") == QVariant(2)
-
-  QValueSpaceObject * object2 = new QValueSpaceObject("/Device");
-  object2->setAttribute("Buttons", 3);
-
-  // QValueSpaceItem("/Device/Buttons") == QVariant(2)
-
-  object2->removeAttribute("Buttons");
-  // QValueSpaceItem("/Device/Buttons") == QVariant(3)
-  \endcode
-
-  For performance reasons the setting of and removing of attributes is buffered
-  internally by the QValueSpaceObject and applied as a batch sometime later.
-  Normally this occurs the next time the application enters the Qt event loop,
-  but this behaviour should not be relied apon.  If an application must
-  synchronize application objects with others, the QValueSpaceObject::sync()
-  method can be used to force the application of changes.  This call is
-  generally unnecessary, and should be used sparingly to prevent unnecessary
-  load on the system.
-
-  \i {Note:} The QValueSpaceObject class is not thread safe and may only be used from
-  an application's main thread.
-
-  \sa QValueSpaceItem
- */
-
-/*!
-  \fn void QValueSpaceObject::itemRemove(const QByteArray &attribute)
-
-  Emitted whenever a client requests that the \a attribute be removed through
-  a call to QValueSpaceItem::remove().  The provider of this object may choose
-  to honor, ignore or transform the remove request.
- */
-
-/*!
-  \fn void QValueSpaceObject::itemSetValue(const QByteArray &attribute, const QVariant &value)
-
-  Emitted whenever a client requests that the \a attribute value be changed to
-  \a value through a call to QValueSpaceItem::setValue().  The provider of this
-  object may chose to honor, ignore or transform the set value request.
- */
 
 #include "applayer.moc"
