@@ -40,6 +40,10 @@
 #include <qaudiodeviceendpoint.h>
 #include <qaudioencodecontrol.h>
 
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#endif
+
 #include <QtGui>
 
 Recorder::Recorder(QWidget *parent) :
@@ -119,7 +123,7 @@ void Recorder::setAudioCodec(int idx)
 void Recorder::setQuality(int value)
 {
     if (encodeControl)
-        encodeControl->setQuality(value);    
+        encodeControl->setQuality(value);
 }
 
 void Recorder::record()

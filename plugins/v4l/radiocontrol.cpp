@@ -322,6 +322,11 @@ void RadioControl::search()
     emit signalStrengthChanged(signalStrength());
 }
 
+bool RadioControl::isValid() const
+{
+    return available;
+}
+
 bool RadioControl::initRadio()
 {
     v4l2_tuner tuner;
