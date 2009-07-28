@@ -56,6 +56,15 @@ typedef QByteArray MapiEntryId;
 class MapiFolder;
 typedef QSharedPointer<MapiFolder> MapiFolderPtr;
 
+static QString stringFromLpctstr(LPCTSTR lpszValue)
+{
+    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1))
+        return QString::null;
+    if (lpszValue)
+        return QString::fromWCharArray(lpszValue);
+    return QString::null;
+}
+
 class MapiFolder {
 public:
     MapiFolder();
@@ -85,40 +94,34 @@ private:
     enum columnOrder { entryIdColumn = 0, nameColumn };
 };
 
-class QMessageStorePrivatePlatform
-{
-public:
-    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q);
-    ~QMessageStorePrivatePlatform();
-
-    bool login();
-    void logout();
-
-    QMessageStorePrivate *d_ptr;
-    QMessageStore *q_ptr;
-    QMessageStore::ErrorCode lastError;
-
-    bool mapiInitialized;
-    IMAPISession* mapiSession;
-    LPMDB mapiStore;
-
-    bool openDefaultMapiStore();
-
-    QMap<MapiEntryId, MapiFolder > mapiFolderMap;
-};
-
-static QString stringFromLpctstr(LPCTSTR lpszValue)
-{
-    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1))
-        return QString::null;
-    if (lpszValue)
-        return QString::fromWCharArray(lpszValue);
-    return QString::null;
-}
-
 MapiFolder::MapiFolder() 
 {
     _isValid = false;
+}
+
+void MapiFolder::findSubFolders()
+{
+    LPMAPITABLE subFolders(0);
+
+    _isValid = false;
+    if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK))
+        return;
+
+    // Order of properties must be consistent with columnOrder enum.
+    const int nCols(5);
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK) {
+        _subFolders = subFolders;
+        _isValid = true;
+    }
+}
+
+MapiFolder::MapiFolder(LPMAPIFOLDER folder, const QString &name)
+{
+    _isValid = false;
+    _folder = folder;
+    _name = name;
+    findSubFolders();
 }
 
 MapiFolderPtr MapiFolder::rootFolder(LPMDB mapiStore)
@@ -149,31 +152,6 @@ MapiFolderPtr MapiFolder::rootFolder(LPMDB mapiStore)
     if (mapiFolder)
         return MapiFolderPtr(new MapiFolder(mapiFolder));
     return MapiFolderPtr(new MapiFolder());
-}
-
-void MapiFolder::findSubFolders()
-{
-    LPMAPITABLE subFolders(0);
-
-    _isValid = false;
-    if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK))
-        return;
-
-    // Order of properties must be consistent with columnOrder enum.
-    const int nCols(5);
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
-    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK) {
-        _subFolders = subFolders;
-        _isValid = true;
-    }
-}
-
-MapiFolder::MapiFolder(LPMAPIFOLDER folder, const QString &name)
-{
-    _isValid = false;
-    _folder = folder;
-    _name = name;
-    findSubFolders();
 }
 
 MapiFolderPtr MapiFolder::nextSubFolder()
@@ -288,6 +266,29 @@ void MapiFolder::release()
         _folder->Release();
     _folder = 0;
 }
+
+
+class QMessageStorePrivatePlatform
+{
+public:
+    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q);
+    ~QMessageStorePrivatePlatform();
+
+    bool login();
+    void logout();
+
+    QMessageStorePrivate *d_ptr;
+    QMessageStore *q_ptr;
+    QMessageStore::ErrorCode lastError;
+
+    bool mapiInitialized;
+    IMAPISession* mapiSession;
+    LPMDB mapiStore;
+
+    bool openDefaultMapiStore();
+
+    QMap<MapiEntryId, MapiFolder > mapiFolderMap;
+};
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
