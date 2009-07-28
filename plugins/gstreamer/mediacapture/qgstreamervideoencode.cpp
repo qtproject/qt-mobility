@@ -1,18 +1,22 @@
-#include "qgstreameraudioencode.h"
+#include "qgstreamervideoencode.h"
 #include "qgstreamercapturesession.h"
 
 #include <QtCore/qdebug.h>
 
-QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
-    :QAudioEncodeControl(parent)
+QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
+    :QVideoEncodeControl(parent)
 {
-    QList<QByteArray> codecCandidates;
-    codecCandidates << "lame" << "vorbisenc" << "speexenc" << "gsmenc";
+    m_frameRate = qMakePair<int,int>(-1,1);
 
-    m_codecOptions["vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
-    m_codecOptions["lame"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
-    m_codecOptions["speexenc"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
-    m_codecOptions["gsmenc"] = QStringList();
+    QList<QByteArray> codecCandidates;
+    codecCandidates << "x264enc" << "xvidenc" << "ffenc_mpeg4" << "ffenc_mpeg1video" << "ffenc_mpeg2video" << "theoraenc";
+
+    m_codecOptions["x264enc"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["xvidenc"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
+    m_codecOptions["ffenc_mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["ffenc_mpeg1video"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["ffenc_mpeg2video"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["theoraenc"] = QStringList() << "quality" << "bitrate";
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         GstElementFactory *factory = gst_element_factory_find(codecName.constData());
@@ -25,17 +29,17 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
         }
     }
 
-    m_encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
+    m_encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
     Q_ASSERT(m_encoderBin);
     gst_object_ref(GST_OBJECT(m_encoderBin)); //Take ownership
     gst_object_sink(GST_OBJECT(m_encoderBin));
 
-    m_capsfilter = gst_element_factory_make("capsfilter", NULL);
+    m_capsfilter = gst_element_factory_make("capsfilter-video", NULL);
     gst_object_ref(GST_OBJECT(m_capsfilter));
     gst_object_sink(GST_OBJECT(m_capsfilter));
     gst_bin_add(m_encoderBin, m_capsfilter);
 
-    m_identity = gst_element_factory_make("identity", NULL);
+    m_identity = gst_element_factory_make("identity-video", NULL);
     gst_object_ref(GST_OBJECT(m_identity));
     gst_object_sink(GST_OBJECT(m_identity));
     gst_bin_add(m_encoderBin, m_identity);
@@ -52,114 +56,74 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     m_encoderElement = 0;
 
     if (!m_codecs.isEmpty())
-        setAudioCodec(m_codecs[0]);
-
-    applyOptions();
+        setVideoCodec(m_codecs[0]);
 }
 
-QGstreamerAudioEncode::~QGstreamerAudioEncode()
+QGstreamerVideoEncode::~QGstreamerVideoEncode()
 {
     gst_object_unref(m_encoderBin);
 }
 
-QAudioFormat QGstreamerAudioEncode::format() const
+QSize QGstreamerVideoEncode::resolution() const
 {
-    return QAudioFormat();
+    return m_resolution;
 }
 
-bool QGstreamerAudioEncode::isFormatSupported(const QAudioFormat &format) const
+QSize QGstreamerVideoEncode::minimumResolution() const
 {
-    Q_UNUSED(format);
-    return true;
+    return QSize(16,16);
 }
 
-bool QGstreamerAudioEncode::setFormat(const QAudioFormat &format)
+QSize QGstreamerVideoEncode::maximumResolution() const
 {
-    GstCaps *caps = 0;
-    if (!format.isNull()) {
-         caps = gst_caps_new_empty();
-         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
-
-         if ( format.frequency() > 0 )
-             gst_structure_set(structure, "rate", G_TYPE_INT, format.frequency(), NULL );
-
-         if ( format.channels() > 0 )
-             gst_structure_set(structure, "channels", G_TYPE_INT, format.channels(), NULL );
-
-         if ( format.sampleSize() > 0 )
-             gst_structure_set(structure, "width", G_TYPE_INT, format.sampleSize(), NULL );
-
-
-         gst_caps_append_structure(caps,structure);
-
-         qDebug() << "set caps filter:" << gst_caps_to_string(caps);
-    }
-
-    g_object_set(G_OBJECT(m_capsfilter), "caps", caps, NULL);
-
-    return true;
+    return QSize(4096,4096);
 }
 
-QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
+void QGstreamerVideoEncode::setResolution(const QSize &r)
+{
+    m_resolution = r;
+}
+
+QPair<int,int> QGstreamerVideoEncode::frameRate() const
+{
+    return m_frameRate;
+}
+
+QPair<int,int> QGstreamerVideoEncode::minumumFrameRate() const
+{
+    return qMakePair<int,int>(1,1);
+}
+
+QPair<int,int> QGstreamerVideoEncode::maximumFrameRate() const
+{
+    return qMakePair<int,int>(1024,1);
+}
+
+void QGstreamerVideoEncode::setFrameRate(QPair<int,int> rate)
+{
+    m_frameRate = rate;
+}
+
+
+QStringList QGstreamerVideoEncode::supportedVideoCodecs() const
 {
     return m_codecs;
 }
 
-QString QGstreamerAudioEncode::codecDescription(const QString &codecName)
+QString QGstreamerVideoEncode::videoCodecDescription(const QString &codecName) const
 {
     return m_codecDescriptions.value(codecName);
 }
 
-QString QGstreamerAudioEncode::audioCodec() const
+QString QGstreamerVideoEncode::audioCodec() const
 {
     return m_codec;
 }
 
-bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
+bool QGstreamerVideoEncode::setVideoCodec(const QString &codecName)
 {
-    m_requestedCodec = codecName;
-    return true;
-}
-
-int QGstreamerAudioEncode::bitrate() const
-{
-    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
-}
-
-void QGstreamerAudioEncode::setBitrate(int value)
-{
-    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
-}
-
-qreal QGstreamerAudioEncode::quality() const
-{
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
-}
-
-void QGstreamerAudioEncode::setQuality(qreal value)
-{
-    setEncodingOption(QLatin1String("quality"), QVariant(value));
-}
-
-QStringList QGstreamerAudioEncode::supportedEncodingOptions()
-{
-    return m_codecOptions.value(m_codec);
-}
-
-QVariant QGstreamerAudioEncode::encodingOption(const QString &name)
-{
-    return m_options.value(name);
-}
-
-void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVariant &value)
-{
-    m_options.insert(name,value);
-}
-
-void QGstreamerAudioEncode::applyOptions()
-{
-    if (m_codec != m_requestedCodec) {
-        m_codec = m_requestedCodec;
+    if (m_codec != codecName) {
+        m_codec = codecName;
 
         if (m_encoderElement) {
             gst_element_unlink(m_capsfilter, m_encoderElement);
@@ -170,14 +134,56 @@ void QGstreamerAudioEncode::applyOptions()
             m_encoderElement = 0;
         }
 
-        m_encoderElement = gst_element_factory_make(m_codec.toAscii(), NULL);
-        gst_object_ref(GST_OBJECT(m_encoderElement));
-        gst_object_sink(GST_OBJECT(m_encoderElement));
-
+        m_encoderElement = gst_element_factory_make(codecName.toAscii(), "encoder");
         gst_bin_add(m_encoderBin, m_encoderElement);
         gst_element_link_many(m_capsfilter, m_encoderElement, m_identity, NULL);
     }
 
+    return true;
+}
+
+QString QGstreamerVideoEncode::videoCodec() const
+{
+    return m_codec;
+}
+
+int QGstreamerVideoEncode::bitrate() const
+{
+    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
+}
+
+void QGstreamerVideoEncode::setBitrate(int value)
+{
+    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
+}
+
+qreal QGstreamerVideoEncode::quality() const
+{
+    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+}
+
+void QGstreamerVideoEncode::setQuality(qreal value)
+{
+    setEncodingOption(QLatin1String("quality"), QVariant(value));
+}
+
+QStringList QGstreamerVideoEncode::supportedEncodingOptions()
+{
+    return m_codecOptions.value(m_codec);
+}
+
+QVariant QGstreamerVideoEncode::encodingOption(const QString &name)
+{
+    return m_options.value(name);
+}
+
+void QGstreamerVideoEncode::setEncodingOption(const QString &name, const QVariant &value)
+{
+    m_options.insert(name,value);
+}
+
+void QGstreamerVideoEncode::applyOptions()
+{
     if (m_encoderElement) {
         QMapIterator<QString,QVariant> it(m_options);
         while (it.hasNext()) {
@@ -221,7 +227,8 @@ void QGstreamerAudioEncode::applyOptions()
     }
 }
 
-GstElement *QGstreamerAudioEncode::encoder()
+GstElement *QGstreamerVideoEncode::encoder()
 {
     return GST_ELEMENT(m_encoderBin);
 }
+

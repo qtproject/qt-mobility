@@ -45,55 +45,81 @@
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
+class QGstreamerVideoEncode;
+class QGstreamerCaptureControl;
 
-class QGstreamerCaptureSession : public QMediaCaptureControl
+class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
-    QGstreamerCaptureSession(QObject *parent);
+    enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
+    enum State { StoppedState, PreviewState, PausedState, RecordingState };
+
+    QGstreamerCaptureSession( CaptureMode captureMode,  QObject *parent);
     ~QGstreamerCaptureSession();
 
     QMediaSink sink() const;
     bool setSink(const QMediaSink& sink);
 
-    int state() const;
-
-    qint64 position() const;    
-
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
+    QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
+    QGstreamerCaptureControl *captureControl() const { return m_captureControl; }
+
+    State state() const;
+    qint64 position() const;
 
 signals:
-    void stateChanged(int state);
+    void stateChanged(State state);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 public slots:
-    void record();
-    void pause();
-    void stop();
-
+    void setState(QGstreamerCaptureSession::State);
     void setCaptureDevice(const QString &deviceName);
+
+    void dumpGraph(const QString &fileName);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
 
 private:
-    QMediaSink m_sink;
-    QMediaCapture::State m_state;
-    QGstreamerBusHelper *m_busHelper;
-    QGstreamerAudioEncode *m_audioEncodeControl;
-    GstBus* m_bus;
+    enum PipelineMode { EmptyPipeline, PreviewPipeline, RecordingPipeline, PreviewAndRecordingPipeline };
 
+    void buildEncodeBin();
+    void waitForStopped();
+    void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
+
+    QMediaSink m_sink;
+    State m_state;
+    PipelineMode m_pipelineMode;
+    QGstreamerCaptureSession::CaptureMode m_captureMode;
+
+    QGstreamerAudioEncode *m_audioEncodeControl;
+    QGstreamerVideoEncode *m_videoEncodeControl;
+    QGstreamerCaptureControl *m_captureControl;
+
+    QGstreamerBusHelper *m_busHelper;
+    GstBus* m_bus;
     GstElement *m_pipeline;
 
-    GstElement *m_audiosrc;
-    GstElement *m_tee;
-    GstElement *m_audioconvert1;
+    GstElement *m_audioSrc;
+    GstElement *m_audioTee;
+    GstElement *m_audioPreview;
+    GstElement *m_audioPreviewQueue;
+    GstElement *m_audioEncodeQueue;
+
+    GstPad *m_audioPreviewPad;
+    GstPad *m_audioCapturePad;
+
+    GstElement *m_encodeBin;
+
+    GstElement *m_muxer;
+    GstElement *m_fileSink;
+
+    GstElement *m_audioConvert;
+    GstElement *m_audioQueue;
     GstElement *m_volume;
-    GstElement *m_encoder;    
-    GstElement *m_filesink;
-    GstElement *m_audioconvert2;
-    GstElement *m_fakesink;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H

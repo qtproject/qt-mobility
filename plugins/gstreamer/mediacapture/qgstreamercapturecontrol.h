@@ -32,25 +32,26 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIACAPTURECONTROL_H
-#define QMEDIACAPTURECONTROL_H
 
-#include "qabstractmediacontrol.h"
+#ifndef QGSTREAMERCAPTURECONTROL_H
+#define QGSTREAMERCAPTURECONTROL_H
 
-class QMediaSink;
+#include "qmediacapturecontrol.h"
+#include "qgstreamercapturesession.h"
 
-class QMediaCaptureControl : public QAbstractMediaControl
+class QGstreamerCaptureControl : public QMediaCaptureControl
 {
 Q_OBJECT
 public:
-    virtual ~QMediaCaptureControl();
+    QGstreamerCaptureControl(QGstreamerCaptureSession *session);
+    virtual ~QGstreamerCaptureControl();
 
-    virtual QMediaSink sink() const = 0;
-    virtual bool setSink(const QMediaSink &sink) = 0;
+    virtual QMediaSink sink() const;
+    virtual bool setSink(const QMediaSink &sink);
 
-    virtual int state() const = 0;
+    virtual int state() const;
 
-    virtual qint64 position() const = 0;
+    virtual qint64 position() const;
 
 signals:
     void stateChanged(int state);
@@ -58,12 +59,15 @@ signals:
     void error(int error, const QString &errorString);
 
 public slots:
-    virtual void record() = 0;
-    virtual void pause() = 0;
-    virtual void stop() = 0;
+    virtual void record();
+    virtual void pause();
+    virtual void stop();
 
-protected:
-    QMediaCaptureControl(QObject* parent);
+private slots:
+    void updateState();
+
+private:
+    QGstreamerCaptureSession *m_session;
 };
 
-#endif // QMEDIACAPTURECONTROL_H
+#endif // QGSTREAMERCAPTURECORNTROL_H

@@ -2,12 +2,21 @@
 #include "qaudiodeviceendpoint.h"
 #include "qalsaaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
+#include "qgstreamercapturecontrol.h"
 #include "qgstreameraudioencode.h"
+#include "qgstreamervideoencode.h"
+#include "qgstreamerbushelper.h"
 
 QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
     :QAbstractMediaService(parent)
 {
-    m_session = new QGstreamerCaptureSession(this);
+    static bool initialized = false;
+    if (!initialized) {
+        initialized = true;
+        gst_init(NULL, NULL);
+    }
+
+    m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
@@ -42,9 +51,9 @@ void QGstreamerCaptureService::setAudioInput(QObject *input)
         endPoint->setDirectionFilter(QAlsaAudioDeviceEndpoint::InputDevice);
 
         if (audioInput())
-            disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
+            disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
-        connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
+        connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
     }
     QAbstractMediaService::setAudioInput(endPoint);
@@ -53,10 +62,13 @@ void QGstreamerCaptureService::setAudioInput(QObject *input)
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
-        return m_session;
+        return m_captureSession->captureControl();
 
     if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
-        return m_session->audioEncodeControl();
+        return m_captureSession->audioEncodeControl();
+
+    if (qstrcmp(name,"com.nokia.qt.VideoEncodeControl") == 0)
+        return m_captureSession->videoEncodeControl();
 
     return 0;
 }

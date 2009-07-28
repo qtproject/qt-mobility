@@ -1,7 +1,7 @@
-#ifndef QGSTREAMERAUDIOENCODE_H
-#define QGSTREAMERAUDIOENCODE_H
+#ifndef QGSTREAMERVIDEOENCODE_H
+#define QGSTREAMERVIDEOENCODE_H
 
-#include "qaudioencodecontrol.h"
+#include "qvideoencodecontrol.h"
 class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
@@ -9,20 +9,28 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-class QGstreamerAudioEncode : public QAudioEncodeControl
+class QGstreamerVideoEncode : public QVideoEncodeControl
 {
     Q_OBJECT
 public:
-    QGstreamerAudioEncode(QObject *parent);
-    virtual ~QGstreamerAudioEncode();
+    QGstreamerVideoEncode(QObject *parent);
+    virtual ~QGstreamerVideoEncode();
 
-    QAudioFormat format() const;
-    bool isFormatSupported(const QAudioFormat &format) const;
-    bool setFormat(const QAudioFormat &format);
+    QSize resolution() const;
+    QSize minimumResolution() const;
+    QSize maximumResolution() const;
+    void setResolution(const QSize &);
 
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName);
-    bool setAudioCodec(const QString &codecName);
+    QPair<int,int> frameRate() const;
+    QPair<int,int> minumumFrameRate() const;
+    QPair<int,int> maximumFrameRate() const;
+    void setFrameRate(QPair<int,int>);
+
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+
+    QString videoCodec() const;
+    bool setVideoCodec(const QString &codecName);
     QString audioCodec() const;
 
     int bitrate() const;
@@ -46,10 +54,12 @@ private:
 
     QMap<QString, QVariant> m_options;
     QString m_codec;
-    QString m_requestedCodec;
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
+
+    QSize m_resolution;
+    QPair<int,int> m_frameRate;
 };
 
 #endif

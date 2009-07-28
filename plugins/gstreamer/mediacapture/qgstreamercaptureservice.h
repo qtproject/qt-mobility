@@ -3,7 +3,11 @@
 
 #include "qabstractmediaservice.h"
 
+#include <gst/gst.h>
+
 class QGstreamerCaptureSession;
+class QGstreamerMessage;
+class QGstreamerBusHelper;
 
 class QGstreamerCaptureService : public QAbstractMediaService
 {
@@ -22,8 +26,9 @@ public:
     QAbstractMediaControl *control(const char *name) const;
 
 private:
-    QGstreamerCaptureSession *m_session;
+    void setAudioPreview(GstElement*);
 
+    QGstreamerCaptureSession *m_captureSession;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H
