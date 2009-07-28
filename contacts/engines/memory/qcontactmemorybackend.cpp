@@ -439,7 +439,48 @@ bool QContactMemoryEngine::asynchronousRequestWaitForProgress(QContactAbstractRe
  */
 void QContactMemoryEngine::cancelAsynchronousRequest(QContactAbstractRequest* req)
 {
-    Q_UNUSED(req);
+    // check to see that the request is able to be cancelled
+    if (req->status() != QContactAbstractRequest::Pending)
+        return;
+
+    // we can start the request.
+    QContactAbstractRequestResult *requestResult;
+    switch (req->type()) {
+        case QContactAbstractRequest::Contact:
+        {
+            requestResult = new QContactRequestResult;
+            QContactRequest *creq = static_cast<QContactRequest*>(req);
+            static_cast<QContactRequestResult*>(requestResult)->updateRequest(creq, QContactAbstractRequest::Cancelling);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinition:
+        {
+            requestResult = new QContactDetailDefinitionRequestResult;
+            QContactDetailDefinitionRequest *dreq = static_cast<QContactDetailDefinitionRequest*>(req);
+            static_cast<QContactDetailDefinitionRequestResult*>(requestResult)->updateRequest(dreq, QContactAbstractRequest::Cancelling);
+        }
+        break;
+
+        case QContactAbstractRequest::Group:
+        {
+            requestResult = new QContactGroupRequestResult;
+            QContactGroupRequest *greq = static_cast<QContactGroupRequest*>(req);
+            static_cast<QContactGroupRequestResult*>(requestResult)->updateRequest(greq, QContactAbstractRequest::Cancelling);
+        }
+        break;
+
+        default: // unknown request type
+        return;
+    }
+
+    // clean up memory in use from previous operation
+    if (d->m_asynchronousRequests.contains(req)) {
+        delete d->m_asynchronousRequests.value(req);
+    }
+
+    // and insert our new (cancelling) operation.
+    d->m_asynchronousRequests.insert(req, requestResult);
 }
 
 /*!
@@ -588,6 +629,35 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             default: // unknown request type...
             return;
+        }
+    } else if (currentRequest->status() == QContactAbstractRequest::Cancelling) {
+        switch (currentRequest->type()) {
+            case QContactAbstractRequest::Contact:
+            {
+                QContactRequestResult *crr = static_cast<QContactRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactRequest *creq = static_cast<QContactRequest*>(currentRequest);
+                crr->updateRequest(creq, QContactAbstractRequest::Cancelled);
+            }
+            break;
+
+            case QContactAbstractRequest::DetailDefinition:
+            {
+                QContactDetailDefinitionRequestResult *drr = static_cast<QContactDetailDefinitionRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactDetailDefinitionRequest *dreq = static_cast<QContactDetailDefinitionRequest*>(currentRequest);
+                drr->updateRequest(dreq, QContactAbstractRequest::Cancelled);
+            }
+            break;
+
+            case QContactAbstractRequest::Group:
+            {
+                QContactGroupRequestResult *grr = static_cast<QContactGroupRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactGroupRequest *greq = static_cast<QContactGroupRequest*>(currentRequest);
+                grr->updateRequest(greq, QContactAbstractRequest::Cancelled);
+            }
+            break;
+
+            default:
+            break;
         }
     }
 
