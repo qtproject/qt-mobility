@@ -66,6 +66,8 @@ QMailFolderId convert(const QMessageFolderId &id);
 QMessageContentContainerId convert(const QMailMessagePart::Location &location);
 QMailMessagePart::Location convert(const QMessageContentContainerId &id);
 
+QMessageContentContainerId bodyId(const QMailMessageId &id);
+
 QMessageIdList convert(const QList<QMailMessageId> &ids);
 QList<QMailMessageId> convert(const QMessageIdList &ids);
 

@@ -217,9 +217,7 @@ QMessageContentContainerId QMessageContentContainer::containerId() const
     if (d_ptr->_container == &d_ptr->_part) {
         return convert(d_ptr->_part.location());
     } else {
-        QMailMessagePart::Location loc;
-        loc.setContainingMessageId(convert(d_ptr->_message)->id());
-        return convert(loc);
+        return QmfHelpers::bodyId(convert(d_ptr->_message)->id());
     }
 }
 

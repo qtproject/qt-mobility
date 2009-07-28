@@ -416,10 +416,7 @@ uint QMessage::size() const
 QMessageContentContainerId QMessage::body() const
 {
     if (d_ptr->_message.hasBody()) {
-        // Return a location with no indices
-        QMailMessagePart::Location location;
-        location.setContainingMessageId(d_ptr->_message.id());
-        return convert(location);
+        return QmfHelpers::bodyId(d_ptr->_message.id());
     }
 
     // Return the first text part
