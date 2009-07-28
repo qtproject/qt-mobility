@@ -41,6 +41,8 @@
 
 #include <QDebug>
 
+// Define win32 version to pull in RegisterWaitForSingleObject and UnregisterWait.
+#define _WIN32_WINNT 0x0500
 #include <windows.h>
 
 class RegistryLayer : public QAbstractValueSpaceLayer
