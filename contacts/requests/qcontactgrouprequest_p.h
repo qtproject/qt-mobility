@@ -56,11 +56,11 @@
 class QContactGroupRequestData
 {
 public:
-    QContactGroupRequestData(QContactManager* manager)
+    QContactGroupRequestData()
         :   m_isRestrictedIds(false),
             m_status(QContactAbstractRequest::Inactive),
             m_error(QContactManager::NoError),
-            m_manager(manager),
+            m_manager(0),
             m_result(0)
     {
     }

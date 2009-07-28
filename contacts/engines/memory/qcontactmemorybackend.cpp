@@ -508,9 +508,10 @@ void QContactMemoryEngine::performAsynchronousOperation()
             return;
     }
 
-    QSet<QUniqueId> contactsChanged;
-    QSet<QUniqueId> contactsAdded;
-    QSet<QUniqueId> groupsChanged;
+    QSet<QUniqueId> removedContacts;
+    QSet<QUniqueId> changedContacts;
+    QSet<QUniqueId> addedContacts;
+    QSet<QUniqueId> changedGroups;
 
     if (currentRequest->status() == QContactAbstractRequest::Pending) {
         switch (currentRequest->type()) {
@@ -522,7 +523,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 if (operation == QContactAbstractRequest::SaveOperation) {
                     // save
                     QList<QContact> selection = cr->contactSelection();
-                    crr->setErrors(saveContacts(&selection, contactsAdded, contactsChanged, groupsChanged, asynchronousError));
+                    crr->setErrors(saveContacts(&selection, addedContacts, changedContacts, changedGroups, asynchronousError));
                 } else {
                     // retrieve or remove
                     QList<QContact> result;
@@ -552,7 +553,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                         crr->setContacts(result);
                     } else {
                         // remove the specified contacts
-                        crr->setErrors(removeContacts(&translatedRequest, contactsChanged, groupsChanged, asynchronousError));
+                        crr->setErrors(removeContacts(&translatedRequest, removedContacts, changedGroups, asynchronousError));
                     }
                 }
 
@@ -585,6 +586,20 @@ void QContactMemoryEngine::performAsynchronousOperation()
             return;
         }
     }
+
+    // now emit any signals we have to emit
+    QList<QUniqueId> currEmit = removedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsRemoved(currEmit);
+    currEmit = changedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsChanged(currEmit);
+    currEmit = addedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsAdded(currEmit);
+    currEmit = changedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsChanged(currEmit);
 }
 
 /*!

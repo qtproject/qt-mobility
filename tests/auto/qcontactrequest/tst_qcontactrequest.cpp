@@ -42,6 +42,20 @@
 
 #include "qtcontacts.h"
 
+// Will try to wait for the condition while allowing event processing
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 2100; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -58,6 +72,7 @@ public slots:
     void cleanup();
 private slots:
     void contactRequest();
+    void asynchronous();
 };
 
 tst_QContactRequest::tst_QContactRequest()
@@ -93,13 +108,13 @@ void tst_QContactRequest::contactRequest()
     QContactDetailFilter df;
     df.setDetailDefinitionName("Definition", "Field");
 
-    QContactRequest req(cm);
+    QContactRequest req;
 
-    QVERIFY(req.isFinished() == false);
-    QVERIFY(req.status() == QContactAbstractRequest::Inactive);
-    QVERIFY(req.error() == QContactManager::NoError);
+    QCOMPARE(req.isFinished(), true); // not started yet.
+    QCOMPARE(req.status(), QContactAbstractRequest::Inactive);
+    QCOMPARE(req.error(), QContactManager::NoError);
 
-    QVERIFY(req.type() == QContactAbstractRequest::Contact);
+    QCOMPARE(req.type(), QContactAbstractRequest::Contact);
 
     QVERIFY(!req.sortOrder().isValid());
 
@@ -180,10 +195,10 @@ void tst_QContactRequest::contactRequest()
     /* Now delete the manager and make sure we don't crash */
     delete cm;
 
-    /* A request with no manager is finished, and has an error */
+    /* A request with no result is inactive */
     QVERIFY(req.isFinished() == true);
-    QVERIFY(req.status() == QContactAbstractRequest::Finished);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
+    QVERIFY(req.status() == QContactAbstractRequest::Inactive);
+    QVERIFY(req.error() == QContactManager::NoError);
 
     QVERIFY(req.type() == QContactAbstractRequest::Contact);
 
@@ -252,11 +267,41 @@ void tst_QContactRequest::contactRequest()
     QVERIFY(req.idSelection().isEmpty());
 
     /* Test creating a request and deleting it before the manager, too */
+    /* TODO: test this after calling preq->start(cm) */
     cm = new QContactManager("memory");
-    QContactRequest* preq = new QContactRequest(cm);
+    QContactRequest* preq = new QContactRequest;
     delete preq;
 
     delete cm;
+}
+
+void tst_QContactRequest::asynchronous()
+{
+    QContactManager *cm = new QContactManager("memory");
+    QContactRequest req;
+
+    QContact a,b,c;
+    a.setDisplayLabel("Aaron Aaronson");
+    b.setDisplayLabel("Bob Aaronsun");
+    c.setDisplayLabel("Borris Aaronsen");
+    cm->saveContact(&a);
+    cm->saveContact(&b);
+    cm->saveContact(&c);
+
+    QList<QUniqueId> idsel;
+    idsel.append(a.id());
+    idsel.append(c.id());
+    req.selectById(idsel);
+
+    qRegisterMetaType<QContactRequest*>("QContactRequest*");
+    QSignalSpy spy(&req, SIGNAL(progress(QContactRequest*, bool, bool)));
+    req.start(cm, QContactAbstractRequest::RetrieveOperation);
+    QTRY_COMPARE(spy.count(), 2); // contacts retrieval should result in 2 signals: pending, finished.
+
+    QList<QContact> retrievedContacts = req.contacts();
+    QVERIFY(retrievedContacts.contains(a));
+    QVERIFY(!retrievedContacts.contains(b));
+    QVERIFY(retrievedContacts.contains(c));
 }
 
 QTEST_MAIN(tst_QContactRequest)

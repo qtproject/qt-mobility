@@ -36,8 +36,8 @@
 
 #include "qcontactmanager_p.h"
 
-QContactGroupRequest::QContactGroupRequest(QContactManager* manager)
-    : d(new QContactGroupRequestData(manager))
+QContactGroupRequest::QContactGroupRequest()
+    : d(new QContactGroupRequestData)
 {
 }
 
@@ -174,9 +174,20 @@ void QContactGroupRequest::cancel()
         engine->cancelAsynchronousRequest(this);
 }
 
-void QContactGroupRequest::start(QContactAbstractRequest::Operation operation)
+void QContactGroupRequest::start(QContactManager *manager, QContactAbstractRequest::Operation operation)
 {
+    if (status() != QContactAbstractRequest::Inactive
+        && status() != QContactAbstractRequest::Cancelled
+        && status() != QContactAbstractRequest::Finished) {
+        return; // unable to start operation; another operation already in progress.
+    }
+
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->destroyAsynchronousRequest(this);
+
+    d->m_manager = manager;
+    engine = QContactManagerData::engine(d->m_manager);
     if (engine)
         engine->startAsynchronousRequest(this, operation);
 }

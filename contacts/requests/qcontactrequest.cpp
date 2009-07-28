@@ -36,8 +36,8 @@
 
 #include "qcontactmanager_p.h"
 
-QContactRequest::QContactRequest(QContactManager* manager)
-    : d(new QContactRequestData(manager))
+QContactRequest::QContactRequest()
+    : d(new QContactRequestData)
 {
 }
 
@@ -145,8 +145,8 @@ bool QContactRequest::isFinished() const
  */
 QContactManager::Error QContactRequest::error() const
 {
-    if (!d->m_manager)
-        return QContactManager::DoesNotExistError;
+    if (!d->m_result)
+        return QContactManager::NoError; // no operation started.
     return d->m_error;
 }
 
@@ -156,7 +156,7 @@ QContactManager::Error QContactRequest::error() const
 QContactAbstractRequest::Status QContactRequest::status() const
 {
     if (!d->m_manager)
-        return QContactAbstractRequest::Finished;
+        return QContactAbstractRequest::Inactive;
     return d->m_status;
 }
 
@@ -234,9 +234,20 @@ void QContactRequest::cancel()
         engine->cancelAsynchronousRequest(this);
 }
 
-void QContactRequest::start(QContactAbstractRequest::Operation operation)
+void QContactRequest::start(QContactManager *manager, QContactAbstractRequest::Operation operation)
 {
+    if (status() != QContactAbstractRequest::Inactive
+        && status() != QContactAbstractRequest::Cancelled
+        && status() != QContactAbstractRequest::Finished) {
+        return; // unable to start operation; another operation already in progress.
+    }
+
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->destroyAsynchronousRequest(this);
+
+    d->m_manager = manager;
+    engine = QContactManagerData::engine(d->m_manager);
     if (engine)
         engine->startAsynchronousRequest(this, operation);
 }

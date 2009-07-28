@@ -78,7 +78,7 @@ public slots:
     virtual bool waitForProgress(int msecs = 0) = 0; /* also waits for progress emitted by finished */
 
     /* Verbs */
-    virtual void start(Operation operation = QContactAbstractRequest::RetrieveOperation) = 0;
+    virtual void start(QContactManager *manager, Operation operation = QContactAbstractRequest::RetrieveOperation) = 0;
     virtual void cancel() = 0;
 
 private:

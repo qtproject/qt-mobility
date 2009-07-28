@@ -36,8 +36,8 @@
 
 #include "qcontactmanager_p.h"
 
-QContactDetailDefinitionRequest::QContactDetailDefinitionRequest(QContactManager* manager)
-    : d(new QContactDetailDefinitionRequestData(manager))
+QContactDetailDefinitionRequest::QContactDetailDefinitionRequest()
+    : d(new QContactDetailDefinitionRequestData)
 {
 }
 
@@ -173,9 +173,20 @@ void QContactDetailDefinitionRequest::cancel()
         engine->cancelAsynchronousRequest(this);
 }
 
-void QContactDetailDefinitionRequest::start(QContactAbstractRequest::Operation operation)
+void QContactDetailDefinitionRequest::start(QContactManager *manager, QContactAbstractRequest::Operation operation)
 {
+    if (status() != QContactAbstractRequest::Inactive
+        && status() != QContactAbstractRequest::Cancelled
+        && status() != QContactAbstractRequest::Finished) {
+        return; // unable to start operation; another operation already in progress.
+    }
+
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
+    if (engine)
+        engine->destroyAsynchronousRequest(this);
+
+    d->m_manager = manager;
+    engine = QContactManagerData::engine(d->m_manager);
     if (engine)
         engine->startAsynchronousRequest(this, operation);
 }

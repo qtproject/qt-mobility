@@ -56,11 +56,11 @@
 class QContactDetailDefinitionRequestData
 {
 public:
-    QContactDetailDefinitionRequestData(QContactManager* manager)
+    QContactDetailDefinitionRequestData()
         :   m_isRestrictedNames(false),
             m_status(QContactAbstractRequest::Inactive),
             m_error(QContactManager::NoError),
-            m_manager(manager),
+            m_manager(0),
             m_result(0)
     {
     }

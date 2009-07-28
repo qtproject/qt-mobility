@@ -58,8 +58,11 @@
 
 #include "qcontact.h"
 #include "qcontactmanager.h"
+#include "qcontactmanagerengine.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
+
+class QContactAbstractRequestResult;
 
 class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
@@ -100,6 +103,8 @@ public:
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
 {
+    Q_OBJECT
+
 public:
     using QContactManagerEngine::contacts;
 

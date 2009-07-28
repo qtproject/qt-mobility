@@ -52,7 +52,7 @@ class QTCONTACTS_EXPORT QContactDetailDefinitionRequest : public QContactAbstrac
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionRequest(QContactManager* manager);
+    QContactDetailDefinitionRequest();
     ~QContactDetailDefinitionRequest();
 
     /* First, the base class functionality */
@@ -90,7 +90,7 @@ public slots:
     /* Base class slots */
     bool waitForFinished(int msecs = 0);
     bool waitForProgress(int msecs = 0);
-    void start(QContactAbstractRequest::Operation operation);
+    void start(QContactManager *manager, QContactAbstractRequest::Operation operation);
     void cancel();
 
 public:
@@ -103,6 +103,7 @@ signals:
     void progress(QContactDetailDefinitionRequest* self, bool finished, bool appendOnly);   // appendOnly true if ids/contacts order has not changed, just stuff added
 
 private:
+    Q_DISABLE_COPY(QContactDetailDefinitionRequest);
     friend class QContactDetailDefinitionRequestResult;
     Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
     QContactDetailDefinitionRequestData* d;

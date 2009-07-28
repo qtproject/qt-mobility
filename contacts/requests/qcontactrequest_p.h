@@ -57,12 +57,12 @@
 class QContactRequestData
 {
 public:
-    QContactRequestData(QContactManager* manager)
+    QContactRequestData()
         :   m_isRestrictedDefs(false),
             m_isRestrictedIds(false),
             m_status(QContactAbstractRequest::Inactive),
             m_error(QContactManager::NoError),
-            m_manager(manager),
+            m_manager(0),
             m_result(0)
     {
     }

@@ -53,7 +53,7 @@ class QTCONTACTS_EXPORT QContactRequest : public QContactAbstractRequest
     Q_OBJECT
 
 public:
-    QContactRequest(QContactManager* manager);
+    QContactRequest();
     ~QContactRequest();
 
     /* First, the base class functionality */
@@ -101,7 +101,7 @@ public slots:
     /* Base class slots */
     bool waitForFinished(int msecs = 0);
     bool waitForProgress(int msecs = 0);
-    void start(QContactAbstractRequest::Operation operation);
+    void start(QContactManager *manager, QContactAbstractRequest::Operation operation);
     void cancel();
 
 public:
@@ -114,6 +114,7 @@ signals:
     void progress(QContactRequest* self, bool finished, bool appendOnly);   // appendOnly true if ids/contacts order has not changed, just stuff added
 
 private:
+    Q_DISABLE_COPY(QContactRequest);
     friend class QContactRequestResult;
     Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
     QContactRequestData* d;
