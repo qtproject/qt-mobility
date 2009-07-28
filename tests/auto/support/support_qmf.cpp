@@ -121,7 +121,50 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
-    Q_UNUSED(params)
+    QString to(params["to"]);
+    QString from(params["from"]);
+    QString date(params["date"]);
+    QString subject(params["subject"]);
+    QString text(params["text"]);
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
+
+    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() && !text.isEmpty() && 
+        !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
+        // Find the named account
+        QMailAccountIdList accountIds(QMailStore::instance()->queryAccounts(QMailAccountKey::name(parentAccountName)));
+        if (accountIds.count() == 1) {
+            // Find the specified folder
+            QMailFolderKey key(QMailFolderKey::path(parentFolderPath) & QMailFolderKey::parentAccountId(accountIds.first()));
+            QMailFolderIdList folderIds(QMailStore::instance()->queryFolders(key));
+            if (folderIds.count() == 1) {
+                QMailMessage message;
+
+                message.setParentAccountId(accountIds.first());
+                message.setParentFolderId(folderIds.first());
+
+                message.setMessageType(QMailMessage::Email);
+                message.setTo(QMailAddress(to));
+                message.setFrom(QMailAddress(from));
+                message.setDate(QMailTimeStamp(QDateTime::fromString(date, Qt::ISODate)));
+                message.setSubject(subject);
+
+                QMailMessageContentType ct("text/plain; charset=UTF-8");
+                message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
+                message.setStatus(QMailMessage::ContentAvailable, true);
+
+                if (!QMailStore::instance()->addMessage(&message)) {
+                    qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                } else {
+                    return QmfHelpers::convert(message.id());
+                }
+            } else {
+                qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+            }
+        } else {
+            qWarning() << "Necessary information missing";
+        }
+    }
 
     return QMessageId();
 }

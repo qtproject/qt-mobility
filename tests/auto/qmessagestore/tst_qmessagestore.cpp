@@ -70,6 +70,9 @@ private slots:
 
     void testFolder_data();
     void testFolder();
+
+    void testMessage_data();
+    void testMessage();
 };
 
 QTEST_MAIN(tst_QMessageStore)
@@ -184,5 +187,124 @@ void tst_QMessageStore::testFolder()
 
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders());
     QVERIFY(folderIds.contains(folderId));
+}
+
+void tst_QMessageStore::testMessage_data()
+{
+    /*
+    QTest::addColumn<QString>("fileName");
+
+    QTest::newRow("1") << "1.txt";
+    */
+
+    QTest::addColumn<QString>("to");
+    QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("date");
+    QTest::addColumn<QString>("subject");
+    QTest::addColumn<QString>("text");
+
+    QTest::newRow("1") 
+        << "alice@example.com"
+        << "bob@example.com"
+        << "1999-12-31T23:59:59Z"
+        << "Last message..."
+        << "...before Y2K";
+}
+
+void tst_QMessageStore::testMessage()
+{
+    // Ensure we have an account to create messages with
+    static const QString testAccountName("testAccount");
+
+    QMessageAccountId testAccountId;
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+    if (accountIds.isEmpty()) {
+        Support::Parameters p;
+        p.insert("name", testAccountName);
+        testAccountId = Support::addAccount(p);
+    } else {
+        testAccountId = accountIds.first();
+    }
+    QVERIFY(testAccountId.isValid());
+
+    QMessageFolderId testFolderId;
+    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(QMessageFolderFilterKey::parentAccountId(testAccountId)));
+    if (folderIds.isEmpty()) {
+        Support::Parameters p;
+        p.insert("path", "INBOX");
+        testFolderId = Support::addFolder(p);
+    } else {
+        testFolderId = folderIds.first();
+    }
+    QVERIFY(testFolderId.isValid());
+
+    QMessageFolder testFolder(testFolderId);
+
+    /*
+    QFETCH(QString, fileName);
+
+    QString path(SRCDIR "/testdata/" + fileName);
+
+    QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
+    */
+
+    QFETCH(QString, to);
+    QFETCH(QString, from);
+    QFETCH(QString, date);
+    QFETCH(QString, subject);
+    QFETCH(QString, text);
+
+    Support::Parameters p;
+    p.insert("to", to);
+    p.insert("from", from);
+    p.insert("date", date);
+    p.insert("subject", subject);
+    p.insert("text", text);
+    p.insert("parentAccountName", testAccountName);
+    p.insert("parentFolderPath", testFolder.path());
+
+    QMessageId messageId(Support::addMessage(p));
+    QVERIFY(messageId.isValid());
+    
+    QMessage message(messageId);
+    QCOMPARE(message.id(), messageId);
+
+    QCOMPARE(message.to().first().recipient(), to);
+    QCOMPARE(message.from().recipient(), from);
+    QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
+    QCOMPARE(message.subject(), subject);
+
+    QMessageContentContainerId bodyId(message.body());
+    QVERIFY(bodyId.isValid());
+
+    QMessageContentContainer body(message.container(bodyId));
+    // Note: this is not true, which is somewhat counter-intuitive:
+    //QVERIFY(body.containerId().isValid());
+
+    QCOMPARE(body.contentType().toLower(), QByteArray("text"));
+    QCOMPARE(body.contentSubType().toLower(), QByteArray("plain"));
+    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
+    QCOMPARE(body.contentAvailable(), true);
+    QCOMPARE(body.decodedTextContent(), text);
+
+    QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
+    QVERIFY(messageIds.contains(messageId));
+
+    QString replacementText("This is replacement text.");
+
+    QMessageContentContainer replacement;
+    replacement.setContentType("text");
+    replacement.setContentSubType("fancy");
+    replacement.setContentCharset("UTF-8");
+    replacement.setContent(QByteArray(replacementText.toAscii()));
+
+    message.replaceContent(bodyId, replacement);
+    body = message.container(bodyId);
+
+    QCOMPARE(body.contentType().toLower(), QByteArray("text"));
+    QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
+    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
+    QCOMPARE(body.contentAvailable(), true);
+    QCOMPARE(body.decodedTextContent(), replacementText);
 }
 
