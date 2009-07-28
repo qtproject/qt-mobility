@@ -459,7 +459,7 @@ void RegistryLayer::closeRegistryKey(Handle handle)
     RegCloseKey(key);
 }
 
-static LSTATUS qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
+static LONG qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
 {
     HKEY key;
     long result = RegOpenKeyEx(hKey, lpSubKey, 0, KEY_ALL_ACCESS, &key);
