@@ -39,6 +39,7 @@
 #include <qmessagecontentcontainerid.h>
 #include <qmessageid.h>
 
+class QMessage;
 class QMessageContentContainerPrivate;
 
 class Q_MESSAGING_EXPORT QMessageContentContainer {
@@ -101,7 +102,10 @@ protected:
 #endif
 
 private:
+    friend class QMessage;
     friend class QMessageStore;
+
+    QMessageContentContainer(QMessage *derived);
 
     QMessageContentContainerPrivate *d_ptr;
 };

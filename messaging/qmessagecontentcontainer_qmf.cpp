@@ -33,14 +33,17 @@
 #include "qmessagecontentcontainer.h"
 #include "qmfhelpers_p.h"
 
-using namespace QmfHelpers;
-
 #include <QTextCodec>
+#include <QDebug>
+
+using namespace QmfHelpers;
 
 class QMessageContentContainerPrivate
 {
 public:
+    mutable QMessage *_message;
     mutable QMailMessagePart _part;
+    mutable QMailMessagePartContainer *_container;
 
     QByteArray _type;
     QByteArray _subType;
@@ -49,6 +52,18 @@ public:
     QByteArray _content;
     QString _textContent;
     QString _filename;
+
+    QMessageContentContainerPrivate() 
+        : _message(0),
+          _container(&_part)
+    {
+    }
+
+    QMessageContentContainerPrivate(QMessage *derived) 
+        : _message(derived),
+          _container(convert(_message))
+    {
+    }
 
     QMailMessageContentType contentType() const 
     {
@@ -64,11 +79,11 @@ public:
     void applyPendingChanges() const
     {
         if (!_content.isEmpty()) {
-            _part.setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+            _container->setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
         } else if (!_textContent.isEmpty()) {
-            _part.setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
+            _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
         } else if (!_filename.isEmpty()) {
-            _part.setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+            _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
         }
     }
 };
@@ -162,9 +177,13 @@ struct SizeAccumulator
 }
 
 QMessageContentContainer::QMessageContentContainer()
-    : d_ptr(0)
+    : d_ptr(new QMessageContentContainerPrivate)
 {
-    clearContents();
+}
+
+QMessageContentContainer::QMessageContentContainer(QMessage *derived)
+    : d_ptr(new QMessageContentContainerPrivate(derived))
+{
 }
 
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
@@ -176,7 +195,13 @@ QMessageContentContainer::QMessageContentContainer(const QMessageContentContaine
 const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
     if (&other != this) {
-        d_ptr->_part = other.d_ptr->_part;
+        if (other.d_ptr->_container == &other.d_ptr->_part) {
+            d_ptr->_part = other.d_ptr->_part;
+            d_ptr->_container = &d_ptr->_part;
+        } else {
+            d_ptr->_part = QMailMessagePart();
+            d_ptr->_container = convert(d_ptr->_message);
+        }
     }
 
     return *this;
@@ -189,12 +214,22 @@ QMessageContentContainer::~QMessageContentContainer()
 
 QMessageContentContainerId QMessageContentContainer::containerId() const
 {
-    return convert(d_ptr->_part.location());
+    if (d_ptr->_container == &d_ptr->_part) {
+        return convert(d_ptr->_part.location());
+    } else {
+        QMailMessagePart::Location loc;
+        loc.setContainingMessageId(convert(d_ptr->_message)->id());
+        return convert(loc);
+    }
 }
 
 QMessageId QMessageContentContainer::messageId() const
 {
-    return convert(d_ptr->_part.location().containingMessageId());
+    if (d_ptr->_container == &d_ptr->_part) {
+        return convert(d_ptr->_part.location().containingMessageId());
+    } else {
+        return convert(convert(d_ptr->_message)->id());
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL
@@ -210,7 +245,7 @@ QByteArray QMessageContentContainer::contentType() const
     if (!d_ptr->_type.isEmpty()) {
         return d_ptr->_type;
     }
-    return d_ptr->_part.contentType().type();
+    return d_ptr->_container->contentType().type();
 }
 
 #ifdef QMESSAGING_OPTIONAL
@@ -225,7 +260,7 @@ QByteArray QMessageContentContainer::contentSubType() const
     if (!d_ptr->_subType.isEmpty()) {
         return d_ptr->_subType;
     }
-    return d_ptr->_part.contentType().subType();
+    return d_ptr->_container->contentType().subType();
 }
 
 #ifdef QMESSAGING_OPTIONAL
@@ -240,7 +275,7 @@ QByteArray QMessageContentContainer::contentCharset() const
     if (!d_ptr->_charset.isEmpty()) {
         return d_ptr->_charset;
     }
-    return d_ptr->_part.contentType().charset();
+    return d_ptr->_container->contentType().charset();
 }
 
 #ifdef QMESSAGING_OPTIONAL
@@ -255,7 +290,7 @@ QByteArray QMessageContentContainer::contentFileName() const
     if (!d_ptr->_name.isEmpty()) {
         return d_ptr->_name;
     }
-    return d_ptr->_part.contentType().name();
+    return d_ptr->_container->contentType().name();
 }
 
 bool QMessageContentContainer::contentAvailable() const
@@ -263,7 +298,7 @@ bool QMessageContentContainer::contentAvailable() const
     if (!d_ptr->_content.isEmpty()) {
         return true;
     }
-    return d_ptr->_part.contentAvailable();
+    return d_ptr->_container->contentAvailable();
 }
 
 uint QMessageContentContainer::size() const
@@ -271,7 +306,7 @@ uint QMessageContentContainer::size() const
     d_ptr->applyPendingChanges();
 
     SizeAccumulator accumulator;
-    d_ptr->_part.foreachPart<SizeAccumulator&>(accumulator);
+    d_ptr->_container->foreachPart<SizeAccumulator&>(accumulator);
 
     return accumulator._size;
 }
@@ -279,13 +314,13 @@ uint QMessageContentContainer::size() const
 QString QMessageContentContainer::decodedTextContent() const
 {
     d_ptr->applyPendingChanges();
-    return d_ptr->_part.body().data();
+    return d_ptr->_container->body().data();
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
 {
     d_ptr->applyPendingChanges();
-    return d_ptr->_part.body().data(QMailMessageBody::Decoded);
+    return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
 QString QMessageContentContainer::decodedContentFileName() const
@@ -297,8 +332,8 @@ QString QMessageContentContainer::decodedContentFileName() const
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
     d_ptr->applyPendingChanges();
-    if (d_ptr->_part.hasBody()) {
-        d_ptr->_part.body().toStream(out, QMailMessageBody::Decoded);
+    if (d_ptr->_container->hasBody()) {
+        d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);
     }
 }
 
@@ -372,20 +407,36 @@ QMessageContentContainerId QMessageContentContainer::appendContent(const QMessag
     }
 
     content.d_ptr->applyPendingChanges();
-    d_ptr->_part.appendPart(content.d_ptr->_part);
+    d_ptr->_container->appendPart(content.d_ptr->_part);
 
-    return convert(d_ptr->_part.partAt(d_ptr->_part.partCount() - 1).location());
+    return convert(d_ptr->_container->partAt(d_ptr->_container->partCount() - 1).location());
 }
 
-void QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
+void QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content)
 {
     QMailMessagePart::Location location(convert(id));
 
-    PartLocator locator(location);
-    d_ptr->_part.foreachPart<PartLocator&>(locator);
+    if (location.isValid()) {
+        PartLocator locator(location);
+        d_ptr->_part.foreachPart<PartLocator&>(locator);
 
-    if (locator._part) {
-        *locator._part = content.d_ptr->_part;
+        if (locator._part) {
+            content.d_ptr->applyPendingChanges();
+            *locator._part = content.d_ptr->_part;
+        }
+    } else {
+        if (location.containingMessageId() == convert(d_ptr->_message)->id()) {
+            // Replace the body with the replacement content
+            content.d_ptr->applyPendingChanges();
+
+            QMailMessageContentType ct;
+            ct.setType(content.contentType());
+            ct.setSubType(content.contentSubType());
+            ct.setCharset(content.contentCharset());
+
+            convert(d_ptr->_message)->setBody(QMailMessageBody::fromData(content.decodedContent(), ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+            d_ptr->_container = convert(d_ptr->_message);
+        }
     }
 }
 #endif
@@ -394,8 +445,8 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
     QMessageContentContainerIdList ids;
 
-    for (uint i = 0; i < d_ptr->_part.partCount(); ++i) {
-        ids.append(convert(d_ptr->_part.partAt(i).location()));
+    for (uint i = 0; i < d_ptr->_container->partCount(); ++i) {
+        ids.append(convert(d_ptr->_container->partAt(i).location()));
     }
 
     return ids;
@@ -407,11 +458,22 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 
     QMailMessagePart::Location location(convert(id));
 
-    PartLocator locator(location);
-    d_ptr->_part.foreachPart<PartLocator&>(locator);
+    if (location.isValid()) {
+        PartLocator locator(location);
+        d_ptr->_part.foreachPart<PartLocator&>(locator);
 
-    if (locator._part) {
-        container.d_ptr->_part = *locator._part;
+        if (locator._part) {
+            container.d_ptr->_part = *locator._part;
+            container.d_ptr->_container = &container.d_ptr->_part;
+        }
+    } else {
+        if (location.containingMessageId() == convert(d_ptr->_message)->id()) {
+            // Create a part containing the body content of this message
+            QMailMessage *message(convert(d_ptr->_message));
+            QMailMessageContentDisposition cd(QMailMessageContentDisposition::Inline);
+            container.d_ptr->_part = QMailMessagePart::fromData(message->body().data(), cd, message->contentType(), QMailMessageBody::Base64);
+            container.d_ptr->_container = &container.d_ptr->_part;
+        }
     }
 
     return container;
@@ -421,10 +483,13 @@ bool QMessageContentContainer::contains(const QMessageContentContainerId &id) co
 {
     QMailMessagePart::Location location(convert(id));
 
-    PartLocator locator(location);
-    d_ptr->_part.foreachPart<PartLocator&>(locator);
-
-    return (locator._part != 0);
+    if (location.isValid()) {
+        PartLocator locator(location);
+        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        return (locator._part != 0);
+    } else {
+        return (location.containingMessageId() == convert(d_ptr->_message)->id());
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL
@@ -447,18 +512,18 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 
 QString QMessageContentContainer::headerField(const QByteArray &name) const
 {
-    return d_ptr->_part.headerFieldText(name);
+    return d_ptr->_container->headerFieldText(name);
 }
 
 QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
-    return d_ptr->_part.headerFieldsText(name);
+    return d_ptr->_container->headerFieldsText(name);
 }
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
     QList<QByteArray> fields;
-    foreach (const QMailMessageHeaderField &field, d_ptr->_part.headerFields()) {
+    foreach (const QMailMessageHeaderField &field, d_ptr->_container->headerFields()) {
         fields.append(field.id());
     }
 
@@ -468,12 +533,12 @@ QList<QByteArray> QMessageContentContainer::headerFields() const
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    d_ptr->_part.appendHeaderField(name, value);
+    d_ptr->_container->appendHeaderField(name, value);
 }
 
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    d_ptr->_part.setHeaderField(name, value);
+    d_ptr->_container->setHeaderField(name, value);
 }
 #endif
 
@@ -503,8 +568,8 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     }
 
     content.d_ptr->applyPendingChanges();
-    d_ptr->_part.prependPart(content.d_ptr->_part);
+    d_ptr->_container->prependPart(content.d_ptr->_part);
 
-    return convert(d_ptr->_part.partAt(0).location());
+    return convert(d_ptr->_container->partAt(0).location());
 }
 #endif

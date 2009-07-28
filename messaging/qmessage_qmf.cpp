@@ -52,6 +52,7 @@ public:
 
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
+    static QMailMessage *convert(QMessage *message);
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
@@ -101,6 +102,11 @@ QMailMessage QMessagePrivate::convert(const QMessage &message)
     return message.d_ptr->_message;
 }
 
+QMailMessage *QMessagePrivate::convert(QMessage *message)
+{
+    return &message->d_ptr->_message;
+}
+
 namespace QmfHelpers {
 
 QMessage convert(const QMailMessage &message)
@@ -109,6 +115,11 @@ QMessage convert(const QMailMessage &message)
 }
 
 QMailMessage convert(const QMessage &message)
+{
+    return QMessagePrivate::convert(message);
+}
+
+QMailMessage *convert(QMessage *message)
 {
     return QMessagePrivate::convert(message);
 }
@@ -172,18 +183,20 @@ struct AttachmentLocator
 }
 
 QMessage::QMessage()
-    : d_ptr(new QMessagePrivate)
+    : QMessageContentContainer(this),
+      d_ptr(new QMessagePrivate)
 {
 }
 
 QMessage::QMessage(const QMessageId& id)
-    : d_ptr(new QMessagePrivate)
+    : QMessageContentContainer(this),
+      d_ptr(new QMessagePrivate)
 {
     *this = QMessageStore::instance()->message(id);
 }
 
 QMessage::QMessage(const QMessage &other)
-    : QMessageContentContainer(other),
+    : QMessageContentContainer(this),
       d_ptr(new QMessagePrivate)
 {
     this->operator=(other);
@@ -193,6 +206,7 @@ const QMessage& QMessage::operator=(const QMessage& other)
 {
     if (&other != this) {
         d_ptr->_message = other.d_ptr->_message;
+        QMessageContentContainer::operator=(other);
     }
 
     return *this;

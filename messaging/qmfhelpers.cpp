@@ -438,6 +438,7 @@ QMailFolder convert(const QMessageFolder &folder);
 /* in qmessage_qmf.cpp
 QMessage convert(const QMailMessage &message);
 QMailMessage convert(const QMessage &message);
+QMailMessage* convert(QMessage *message);
 */
 
 /* in qmessagestore_qmf.cpp

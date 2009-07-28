@@ -36,6 +36,11 @@ QMessageContentContainer::QMessageContentContainer()
 {
 }
 
+QMessageContentContainer::QMessageContentContainer(QMessage *derived)
+{
+    Q_UNUSED(derived)
+}
+
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
 {
     Q_UNUSED(other)

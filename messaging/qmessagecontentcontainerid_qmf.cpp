@@ -55,7 +55,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     : d_ptr(0)
 {
     QMailMessagePart::Location loc(id);
-    if (loc.isValid(true)) {
+    if (loc.isValid(true) || loc.containingMessageId().isValid()) {
         d_ptr = new QMessageContentContainerIdPrivate;
         d_ptr->_location = loc;
     }
