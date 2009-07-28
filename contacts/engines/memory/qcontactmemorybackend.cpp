@@ -401,14 +401,11 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 /*!
  * \reimp
  */
-void QContactMemoryEngine::destroyAsynchronousRequest(QContactAbstractRequest* req)
+void QContactMemoryEngine::asynchronousRequestDestroyed(QContactAbstractRequest* req)
 {
-    if (req->status() != QContactAbstractRequest::Finished && req->status() != QContactAbstractRequest::Cancelled)
-        return; // cannot destroy request if not cancelled or finished
-
+    // delete the result associated with the request and remove it from the map.
     if (d->m_asynchronousRequests.contains(req)) {
-        delete (d->m_asynchronousRequests.value(req));
-        d->m_asynchronousRequests.remove(req);
+        delete (d->m_asynchronousRequests.take(req));
     }
 }
 
@@ -556,7 +553,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
     QSet<QUniqueId> removedContacts;
     QSet<QUniqueId> changedContacts;
     QSet<QUniqueId> addedContacts;
+    QSet<QUniqueId> removedGroups;
     QSet<QUniqueId> changedGroups;
+    QSet<QUniqueId> addedGroups;
 
     if (currentRequest->status() == QContactAbstractRequest::Pending) {
         switch (currentRequest->type()) {
@@ -573,6 +572,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                     // retrieve or remove
                     QList<QContact> result;
                     QList<QUniqueId> translatedRequest;
+                    QList<QContactManager::Error> errors;
                     asynchronousError = QContactManager::DoesNotExistError;
                     if (cr->selectionType() == QContactRequest::SelectByIds) {
                         translatedRequest = cr->idSelection();
@@ -589,12 +589,11 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
                     if (operation == QContactAbstractRequest::RetrieveOperation) {
                         // retrieve the specified contacts
-                        for (int i = 0; i < d->m_contacts.size(); i++) {
-                            if (translatedRequest.contains(d->m_contacts.at(i).id())) {
-                                result.append(d->m_contacts.at(i));
-                                asynchronousError = QContactManager::NoError;
-                            }
+                        for (int i = 0; i < translatedRequest.size(); i++) {
+                            result.append(contact(translatedRequest.at(i), asynchronousError));
+                            errors.append(asynchronousError);
                         }
+                        crr->setErrors(errors);
                         crr->setContacts(result);
                     } else {
                         // remove the specified contacts
@@ -609,21 +608,107 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             case QContactAbstractRequest::DetailDefinition:
             {
+                QContactDetailDefinitionRequest *dr = static_cast<QContactDetailDefinitionRequest*>(currentRequest);
                 QContactDetailDefinitionRequestResult *drr = static_cast<QContactDetailDefinitionRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactManager::Error asynchronousError = QContactManager::UnspecifiedError;
                 if (operation == QContactAbstractRequest::SaveOperation) {
+                    // save
+                    QList<QContactDetailDefinition> selection = dr->definitionSelection();
+                    QList<QContactManager::Error> errors;
+                    for (int i = 0; i < selection.size(); i++) {
+                        saveDetailDefinition(selection.at(i), asynchronousError);
+                        errors.append(asynchronousError);
+                        if (asynchronousError != QContactManager::NoError) {
+                            drr->setError(asynchronousError);
+                        }
+                    }
+
+                    drr->setErrors(errors);
                 } else if (operation == QContactAbstractRequest::RetrieveOperation) {
+                    // retrieve
+                    QStringList defNames = dr->nameSelection();
+                    QMap<QString, QContactDetailDefinition> allDefs = detailDefinitions(asynchronousError);
+                    QList<QContactDetailDefinition> defs;
+                    QList<QContactManager::Error> errors;
+                    for (int i = 0; i < defNames.size(); i++) {
+                        if (allDefs.contains(defNames.at(i))) {
+                            defs.append(allDefs.value(defNames.at(i)));
+                            errors.append(QContactManager::NoError);
+                        } else {
+                            defs.append(QContactDetailDefinition());
+                            errors.append(QContactManager::DoesNotExistError);
+                        }
+                    }
+
+                    drr->setError(asynchronousError);
+                    drr->setErrors(errors);
+                    drr->setDefinitions(defs);
                 } else {
+                    // remove.
+                    QStringList defNames = dr->nameSelection();
+                    QList<QContactManager::Error> errors;
+                    for (int i = 0; i < defNames.size(); i++) {
+                        removeDetailDefinition(defNames.at(i), asynchronousError);
+                        errors.append(asynchronousError);
+                    }
+                    drr->setErrors(errors);
+                    drr->setError(QContactManager::NoError);
                 }
+
+                drr->updateRequest(dr, QContactAbstractRequest::Finished);
             }
             break;
 
             case QContactAbstractRequest::Group:
             {
+                QContactGroupRequest *gr = static_cast<QContactGroupRequest*>(currentRequest);
                 QContactGroupRequestResult *grr = static_cast<QContactGroupRequestResult*>(d->m_asynchronousRequests.value(currentRequest));
+                QContactManager::Error asynchronousError = QContactManager::UnspecifiedError;
                 if (operation == QContactAbstractRequest::SaveOperation) {
-                } else if (operation == QContactAbstractRequest::RetrieveOperation) {
+                    // save
+                    QList<QContactGroup> selection = gr->groupSelection();
+                    QList<QContactManager::Error> errors;
+                    for (int i = 0; i < selection.size(); i++) {
+                        QContactGroup g = selection.at(i);
+                        saveGroup(&g, addedGroups, changedGroups, changedContacts, asynchronousError);
+                        errors.append(asynchronousError);
+                    }
+                    grr->setErrors(errors);
                 } else {
+                    // retrieve or remove
+                    QList<QContactGroup> result;
+                    QList<QUniqueId> translatedRequest;
+                    QList<QContactManager::Error> errors;
+                    asynchronousError = QContactManager::DoesNotExistError;
+                    if (gr->selectionType() == QContactGroupRequest::SelectByIds) {
+                        translatedRequest = gr->idSelection();
+                    } else if (gr->selectionType() == QContactRequest::SelectAll) {
+                        translatedRequest = groups(asynchronousError);
+                    } else {
+                        // invalid selection type...
+                        asynchronousError = QContactManager::BadArgumentError;
+                    }
+
+                    if (operation == QContactAbstractRequest::RetrieveOperation) {
+                        // retrieve the specified groups
+                        for (int i = 0; i < translatedRequest.size(); i++) {
+                            result.append(group(translatedRequest.at(i), asynchronousError));
+                            errors.append(asynchronousError);
+                        }
+                        grr->setErrors(errors);
+                        grr->setGroups(result);
+                    } else {
+                        // remove the specified groups
+                        for (int i = 0; i < translatedRequest.size(); i++) {
+                            removeGroup(translatedRequest.at(i), removedGroups, changedGroups, asynchronousError);
+                            errors.append(asynchronousError);
+                        }
+                        grr->setErrors(removeContacts(&translatedRequest, removedContacts, changedGroups, asynchronousError));
+                    }
                 }
+
+                grr->setError(asynchronousError);
+                grr->updateRequest(gr, QContactAbstractRequest::Finished);
             }
             break;
 
@@ -671,9 +756,15 @@ void QContactMemoryEngine::performAsynchronousOperation()
     currEmit = addedContacts.toList();
     if (!currEmit.isEmpty())
         emit contactsAdded(currEmit);
+    currEmit = removedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsRemoved(currEmit);
     currEmit = changedGroups.toList();
     if (!currEmit.isEmpty())
         emit groupsChanged(currEmit);
+    currEmit = addedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsAdded(currEmit);
 }
 
 /*!

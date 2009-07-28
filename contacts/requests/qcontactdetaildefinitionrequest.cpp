@@ -45,7 +45,7 @@ QContactDetailDefinitionRequest::~QContactDetailDefinitionRequest()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
     if (engine)
-        engine->destroyAsynchronousRequest(this);
+        engine->asynchronousRequestDestroyed(this);
     delete d;
 }
 
@@ -183,7 +183,7 @@ void QContactDetailDefinitionRequest::start(QContactManager *manager, QContactAb
 
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
     if (engine)
-        engine->destroyAsynchronousRequest(this);
+        engine->asynchronousRequestDestroyed(this);
 
     d->m_manager = manager;
     engine = QContactManagerData::engine(d->m_manager);

@@ -129,7 +129,7 @@ public:
     bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
     /* Asynchronous - Request Trampolines */
-    void destroyAsynchronousRequest(QContactAbstractRequest* req);
+    void asynchronousRequestDestroyed(QContactAbstractRequest* req);
     bool asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs);
     bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
     void cancelAsynchronousRequest(QContactAbstractRequest* req);

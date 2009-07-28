@@ -1383,7 +1383,7 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
 /*!
  * Cleans up the memory used to store information regarding the given \a request
  */
-void QContactManagerEngine::destroyAsynchronousRequest(const QContactAbstractRequest* request)
+void QContactManagerEngine::asynchronousRequestDestroyed(const QContactAbstractRequest* request)
 {
     Q_UNUSED(request);
 }
