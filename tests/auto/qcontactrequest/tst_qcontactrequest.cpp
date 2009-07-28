@@ -278,7 +278,6 @@ void tst_QContactRequest::contactRequest()
 void tst_QContactRequest::asynchronous()
 {
     QContactManager *cm = new QContactManager("memory");
-    QContactRequest req;
 
     QContact a,b,c;
     a.setDisplayLabel("Aaron Aaronson");
@@ -288,20 +287,57 @@ void tst_QContactRequest::asynchronous()
     cm->saveContact(&b);
     cm->saveContact(&c);
 
+    // first, test retrieval
     QList<QUniqueId> idsel;
     idsel.append(a.id());
     idsel.append(c.id());
-    req.selectById(idsel);
-
     qRegisterMetaType<QContactRequest*>("QContactRequest*");
-    QSignalSpy spy(&req, SIGNAL(progress(QContactRequest*, bool, bool)));
-    req.start(cm, QContactAbstractRequest::RetrieveOperation);
-    QTRY_COMPARE(spy.count(), 2); // contacts retrieval should result in 2 signals: pending, finished.
+    QContactRequest retrieveRequest;
+    QSignalSpy retrieveSpy(&retrieveRequest, SIGNAL(progress(QContactRequest*, bool, bool)));
+    retrieveRequest.selectById(idsel);
+    retrieveRequest.start(cm, QContactAbstractRequest::RetrieveOperation);
+    QTRY_COMPARE(retrieveSpy.count(), 2); // contacts retrieval should result in 2 signals: pending, finished.
 
-    QList<QContact> retrievedContacts = req.contacts();
+    // test that the contacts were retrieved successfully
+    QList<QContact> retrievedContacts = retrieveRequest.contacts();
     QVERIFY(retrievedContacts.contains(a));
     QVERIFY(!retrievedContacts.contains(b));
     QVERIFY(retrievedContacts.contains(c));
+
+    // second, test saving
+    QContactPhoneNumber n;
+    n.setNumber("12345");
+    a.saveDetail(&n);
+    QContactUrl u;
+    u.setUrl("http://test.nokia.com");
+    b.saveDetail(&u);
+    QContactRequest saveRequest;
+    QList<QContact> saveList;
+    saveList.append(a);
+    saveList.append(b);
+    QSignalSpy saveSpy(&saveRequest, SIGNAL(progress(QContactRequest*, bool, bool)));
+    saveRequest.selectByObject(saveList);
+    saveRequest.start(cm, QContactAbstractRequest::SaveOperation);
+    QTRY_COMPARE(saveSpy.count(), 2); // contacts save should result in 2 signals: pending, finished.
+
+    // test that the contacts were saved successfully
+    QCOMPARE(a.detail(QContactPhoneNumber::DefinitionName), cm->contact(a.id()).detail(QContactPhoneNumber::DefinitionName));
+    QCOMPARE(b.detail(QContactUrl::DefinitionName), cm->contact(b.id()).detail(QContactUrl::DefinitionName));
+    QVERIFY(cm->contact(b.id()).detail(QContactPhoneNumber::DefinitionName).isEmpty());
+
+    // finally, test removal
+    idsel.clear();
+    idsel.append(b.id());
+    QContactRequest removeRequest;
+    QSignalSpy removeSpy(&removeRequest, SIGNAL(progress(QContactRequest*, bool, bool)));
+    removeRequest.selectById(idsel);
+    removeRequest.start(cm, QContactAbstractRequest::RemoveOperation);
+    QTRY_COMPARE(removeSpy.count(), 2); // contacts remove should result in 2 signals: pending, finished.
+
+    // test that the contact was removed successfully
+    QCOMPARE(cm->contacts().count(), 2);
+    QVERIFY(cm->contact(b.id()).isEmpty());
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 }
 
 QTEST_MAIN(tst_QContactRequest)
