@@ -47,6 +47,7 @@ class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
 class QGstreamerCaptureControl;
+class QGstreamerMediaFormatControl;
 
 class QGstreamerElementFactory
 {
@@ -71,6 +72,7 @@ public:
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerCaptureControl *captureControl() const { return m_captureControl; }
+    QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
 
     void setAudioInput(QGstreamerElementFactory *audioInput);
     void setAudioPreview(QGstreamerElementFactory *audioPreview);
@@ -121,6 +123,7 @@ private:
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
     QGstreamerCaptureControl *m_captureControl;
+    QGstreamerMediaFormatControl *m_mediaFormatControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;

@@ -33,25 +33,29 @@
 ****************************************************************************/
 
 
-#ifndef QMEDIAFORMATCONTROL_H
-#define QMEDIAFORMATCONTROL_H
+#ifndef QGSTREAMERMEDIAFORMATCONTROL_H
+#define QGSTREAMERMEDIAFORMATCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include "qmediaformatcontrol.h"
+#include <QtCore/qstringlist.h>
 
-class QMediaFormatControl : public QAbstractMediaControl
+class QGstreamerMediaFormatControl : public QMediaFormatControl
 {
 Q_OBJECT
 public:
-    virtual ~QMediaFormatControl();
+    QGstreamerMediaFormatControl(QObject *parent);
+    virtual ~QGstreamerMediaFormatControl() {};
 
-    virtual QStringList supportedFormats() const = 0;
-    virtual QString format() const = 0;
-    virtual void setFormat(const QString &formatMimeType) = 0;
+    virtual QStringList supportedFormats() const { return m_supportedFormats; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    virtual QString formatDescription(const QString &formatMimeType) = 0;
+    virtual QString formatDescription(const QString &formatMimeType) { return m_formatDescriptions.value(formatMimeType); }
 
-protected:
-    QMediaFormatControl(QObject *parent);
+private:
+    QString m_format;
+    QStringList m_supportedFormats;
+    QMap<QString, QString> m_formatDescriptions;
 };
 
-#endif // QMEDIAFORMATCONTROL_H
+#endif // QGSTREAMERMEDIAFORMATCONTROL_H

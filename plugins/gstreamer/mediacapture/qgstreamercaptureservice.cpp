@@ -3,6 +3,7 @@
 #include "qalsaaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamercapturecontrol.h"
+#include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerbushelper.h"
@@ -75,6 +76,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 
     if (qstrcmp(name,"com.nokia.qt.VideoEncodeControl") == 0)
         return m_captureSession->videoEncodeControl();
+
+    if (qstrcmp(name,"com.nokia.qt.MediaFormatControl") == 0)
+        return m_captureSession->mediaFormatControl();
 
     return 0;
 }

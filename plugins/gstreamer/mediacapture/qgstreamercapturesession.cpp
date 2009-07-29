@@ -34,6 +34,7 @@
 
 #include "qgstreamercapturesession.h"
 #include "qgstreamercapturecontrol.h"
+#include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerbushelper.h"
@@ -74,6 +75,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
     m_captureControl = new QGstreamerCaptureControl(this);
+    m_mediaFormatControl = new QGstreamerMediaFormatControl(this);
 
     setState(PreviewState);
 }
@@ -88,7 +90,7 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
-    GstElement *muxer = gst_element_factory_make("matroskamux", "muxer");
+    GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->format().toAscii(), "muxer");
     //GstElement *muxer = gst_element_factory_make("oggmux", "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 

@@ -32,26 +32,30 @@
 **
 ****************************************************************************/
 
+#include "qgstreamermediaformatcontrol.h"
+#include <gst/gst.h>
 
-#ifndef QMEDIAFORMATCONTROL_H
-#define QMEDIAFORMATCONTROL_H
-
-#include "qabstractmediacontrol.h"
-
-class QMediaFormatControl : public QAbstractMediaControl
+QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-Q_OBJECT
-public:
-    virtual ~QMediaFormatControl();
+    QList<QByteArray> formatCandidates;
+    formatCandidates << "oggmux" << "matroskamux" << "qtmux" << "mp4mux" << "avimux" << "gppmux";
+    formatCandidates << "flvmux" << "wavenc" << "ffmux_amr" << "ffmux_asf" << "ffmux_dv" << "ffmux_gif";
+    formatCandidates << "ffmux_mov" << "ffmux_mp4" << "ffmux_mpeg" << "ffmux_vob" << "ffmux_mpegts" << "ffmux_3g2" << "ffmux_3gp";
 
-    virtual QStringList supportedFormats() const = 0;
-    virtual QString format() const = 0;
-    virtual void setFormat(const QString &formatMimeType) = 0;
 
-    virtual QString formatDescription(const QString &formatMimeType) = 0;
+    foreach( const QByteArray& formatName, formatCandidates ) {
+        GstElementFactory *factory = gst_element_factory_find(formatName.constData());
+        if (factory) {
+            m_supportedFormats.append(formatName);
+            const gchar *descr = gst_element_factory_get_description(factory);
+            m_formatDescriptions.insert(formatName, QString::fromUtf8(descr));
 
-protected:
-    QMediaFormatControl(QObject *parent);
-};
+            gst_object_unref(GST_OBJECT(factory));
+        }
+    }
 
-#endif // QMEDIAFORMATCONTROL_H
+    if (!m_supportedFormats.isEmpty())
+        setFormat(m_supportedFormats[0]);
+}
+
