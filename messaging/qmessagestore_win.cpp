@@ -71,11 +71,11 @@ class MapiFolder {
 public:
     MapiFolder();
     MapiFolder(LPMAPIFOLDER folder, const QString &name = QString());
-    ~MapiFolder() { release(); };
+    ~MapiFolder();
     void findSubFolders();
     MapiFolderPtr nextSubFolder();
     QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    bool isValid() const { return _isValid; }
+    bool isValid() { return _valid; }
     LPMAPIFOLDER folder() { return _folder; }
     QString name() const { return _name; }
     LPMAPITABLE subFolders() { return _subFolders; }
@@ -83,9 +83,7 @@ public:
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
 private:
-    void release();
-
-    bool _isValid;
+    bool _valid;
     LPMAPIFOLDER _folder;
     QString _name;
     LPMAPITABLE _subFolders;
@@ -96,39 +94,54 @@ private:
     enum columnOrder { entryIdColumn = 0, nameColumn };
 };
 
-MapiFolder::MapiFolder() 
+MapiFolder::MapiFolder()
+    :_valid(false),
+     _folder(0),
+     _subFolders(0)
 {
-    _isValid = false;
 }
 
 void MapiFolder::findSubFolders()
 {
     LPMAPITABLE subFolders(0);
 
-    _isValid = false;
     if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK))
         return;
 
     // Order of properties must be consistent with columnOrder enum.
     const int nCols(5);
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
-    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK) {
+    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
         _subFolders = subFolders;
-        _isValid = true;
-    }
 }
 
 MapiFolder::MapiFolder(LPMAPIFOLDER folder, const QString &name)
+    :_valid(true),
+     _folder(folder),
+     _name(name),
+     _subFolders(0)
 {
-    _isValid = false;
-    _folder = folder;
-    _name = name;
+    if (!folder)
+        _valid = false;
     findSubFolders();
+}
+
+MapiFolder::~MapiFolder()
+{
+    if (_valid)
+        qDebug() << "XXX Releasing" << _name;
+    if (_subFolders)
+        _subFolders->Release();
+    _subFolders = 0;
+    if (_folder)
+        _folder->Release();
+    _folder = 0;
+    _valid = false;
 }
 
 MapiFolderPtr MapiFolder::nextSubFolder()
 {
-    if (!_isValid || !_folder || !_subFolders)
+    if (!_valid || !_folder || !_subFolders)
         return MapiFolder::null();
 
     DWORD objectType;
@@ -143,12 +156,14 @@ MapiFolderPtr MapiFolder::nextSubFolder()
             LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryId->Value.bin.lpb));
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
-                // TODO: Make a copy of entry id, record key, message count, and hasSubFolers property values.
+                // TODO: Make a copy of entry id, record key, message count, and hasSubFolders property values.
             }
         }
         FreeProws(rows);
     }
     MAPIFreeBuffer(rows);
+    if (!subFolder)
+        return MapiFolder::null();
     return MapiFolderPtr(new MapiFolder(subFolder, name));
 }
 
@@ -158,7 +173,7 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
     Q_UNUSED(sortKey)
     Q_UNUSED(offset)
 
-    if (!_isValid)
+    if (!_valid || !_folder)
         return QMessageIdList();
 
     QMessageIdList result;
@@ -177,7 +192,8 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
     uint workingLimit(limit);
 
     while (messagesTable->QueryRows(1, 0, &rows) == S_OK) {
-        if (rows->cRows == 1) {
+        ULONG cRows(rows->cRows);
+        if (cRows == 1) {
             if (limit)
                 --workingLimit;
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
@@ -217,26 +233,13 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
         FreeProws(rows);
         if (limit && !workingLimit)
             break;
-        if (rows->cRows != 1)
+        if (cRows != 1)
             break;
     }
     MAPIFreeBuffer(rows);
 
     return result;
 //    return QMessageIdList(); // gets limit messages in each folder TODO remove this line
-}
-
-void MapiFolder::release()
-{
-    if (!_isValid)
-        return;
-    qDebug() << "Releasing" << _name;
-    if (_subFolders)
-        _subFolders->Release();
-    _subFolders = 0;
-    if (_folder)
-        _folder->Release();
-    _folder = 0;
 }
 
 class MapiStore {
@@ -252,32 +255,41 @@ public:
     static MapiStorePtr null() { return MapiStorePtr(new MapiStore()); }
 
 private:
-    void release();
-
-    bool _isValid;
+    bool _valid;
     LPMDB _store;
 };
 
 MapiStore::MapiStore()
-    : _isValid(false)
+    :_valid(false),
+     _store(0)
 {
 }
 
 MapiStore::MapiStore(LPMDB store)
-    :_isValid(true),
+    :_valid(true),
      _store(store)
 {
 }
 
+MapiStore::~MapiStore()
+{
+    if (_valid)
+        qDebug() << "XXX Releasing MAPI Store";
+    if (_store)
+        _store->Release();
+    _store = 0;
+    _valid = false;
+};
+
 bool MapiStore::isValid()
 {
-    return _isValid;
+    return _valid;
 }
 
 MapiFolderPtr MapiStore::rootFolder()
 {
     MapiFolderPtr result(MapiFolder::null());
-    if (!_isValid)
+    if (!_valid || !_store)
         return result;
 
     SPropValue *rgProps(0);
@@ -321,11 +333,7 @@ MapiStorePtr MapiStore::defaultStore(IMAPISession *mapiSession)
     }
 
     // TODO: Consider handling MAPI_E_BUSY by calling IMAPITable::WaitForCompletion
-    while (true) {
-        if (mapiMessageStoresTable->QueryRows(1, 0, &rows) != S_OK) {
-            MAPIFreeBuffer(rows);
-            break;
-        }
+    while (mapiMessageStoresTable->QueryRows(1, 0, &rows) == S_OK) {
         if (rows->cRows != 1) {
             FreeProws(rows);
             break;
@@ -353,23 +361,12 @@ MapiStorePtr MapiStore::defaultStore(IMAPISession *mapiSession)
             FreeProws(rows);
             break;
         }
+        FreeProws(rows);
     }
+    MAPIFreeBuffer(rows);
     mapiMessageStoresTable->Release();
     return result;
 }
-
-void MapiStore::release()
-{
-    qDebug() << "Releasing MAPI Store";
-    if (_isValid)
-        _store->Release();
-    _isValid = false;
-}
-
-MapiStore::~MapiStore()
-{
-    release();
-};
 
 class QMessageStorePrivatePlatform
 {
@@ -496,7 +493,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 
     folders.append(mapiStore->rootFolder());
     path.append(folders.back()->name());
-    while (!folders.isEmpty()) {
+    while (!folders.isEmpty() && (!limit || workingLimit)) {
         if (!folders.back()->isValid()) {
             folders.pop_back();
             path.pop_back();
@@ -517,6 +514,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
             path.pop_back();
         }
     }
+    folders.clear();
 	d_ptr->p_ptr->logout();
 
     return result.mid(offset); // stub
