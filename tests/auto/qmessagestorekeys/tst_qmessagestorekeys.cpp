@@ -68,6 +68,9 @@ private slots:
     void testAccountFilterKey_data();
     void testAccountFilterKey();
 
+    void testAccountSortKey_data();
+    void testAccountSortKey();
+
 private:
     QMessageAccountIdList accountIds;
     QMessageFolderIdList folderIds;
@@ -76,6 +79,7 @@ private:
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
 Q_DECLARE_METATYPE(QMessageAccountFilterKey)
+Q_DECLARE_METATYPE(QMessageAccountSortKey)
 
 QDebug &operator<<(QDebug &dbg, const QMessageAccountId &id)
 {
@@ -515,6 +519,39 @@ void tst_QMessageStoreKeys::testAccountFilterKey()
             qDebug() << "y:" << y;
         }
         QCOMPARE(x, y);
+    }
+    */
+}
+
+void tst_QMessageStoreKeys::testAccountSortKey_data()
+{
+    QTest::addColumn<QMessageAccountSortKey>("sortKey");
+    QTest::addColumn<QMessageAccountIdList>("ids");
+
+    QTest::newRow("name ascending")
+        << QMessageAccountSortKey::name(Qt::AscendingOrder)
+        << ( QMessageAccountIdList() << accountIds[2] << accountIds[1] << accountIds[0] );
+
+    QTest::newRow("name descending")
+        << QMessageAccountSortKey::name(Qt::DescendingOrder)
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] << accountIds[2] );
+}
+
+void tst_QMessageStoreKeys::testAccountSortKey()
+{
+    QFETCH(QMessageAccountSortKey, sortKey);
+    QFETCH(QMessageAccountIdList, ids);
+
+    QCOMPARE(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey(), sortKey), ids);
+
+    /*
+    {
+        QMessageAccountIdList x(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey(), sortKey));
+        if (x != ids) {
+            qDebug() << "x:" << x;
+            qDebug() << "y:" << ids;
+        }
+        QCOMPARE(x, ids);
     }
     */
 }
