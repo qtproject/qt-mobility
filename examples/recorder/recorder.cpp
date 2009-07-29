@@ -38,6 +38,7 @@
 #include <qabstractmediaservice.h>
 #include <qmediacapture.h>
 #include <qaudiodeviceendpoint.h>
+#include <qmediawidgetendpoint.h>
 #include <qaudioencodecontrol.h>
 #include <qmediaformatcontrol.h>
 
@@ -99,6 +100,15 @@ Recorder::Recorder(QWidget *parent) :
     } else {
         ui->containerFormatBox->setEnabled(false);
     }
+
+    QWidget *videoWidget = audioCapture->service()->createEndpoint<QMediaWidgetEndpoint *>();
+
+    if (videoWidget) {
+        qDebug() << "service supports video widgets, nice";
+        audioCapture->service()->setVideoOutput(videoWidget);
+    }
+
+    videoWidget->show();
 
 }
 

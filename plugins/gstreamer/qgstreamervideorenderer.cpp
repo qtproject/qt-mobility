@@ -11,8 +11,6 @@
 QGstreamerVideoRenderer::QGstreamerVideoRenderer(QObject *parent)
     :QVideoRendererEndpoint(parent),m_videoSink(0)
 {
-
-
 }
 
 QGstreamerVideoRenderer::~QGstreamerVideoRenderer()

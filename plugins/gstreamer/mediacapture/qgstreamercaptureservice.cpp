@@ -6,7 +6,10 @@
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
+#include "qgstreamervideowidget.h"
+#include "qgstreamervideorenderer.h"
 #include "qgstreamerbushelper.h"
+
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
     :QAbstractMediaService(parent)
@@ -18,7 +21,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     }
 
     if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0")) {
-        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
+        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);//change to audio only later
     }
 
     if (QLatin1String(interface) == QLatin1String("com.nokia.qt.CameraCapture/1.0")) {
@@ -38,6 +41,13 @@ QList<QByteArray> QGstreamerCaptureService::supportedEndpointInterfaces(
     if (direction == QMediaEndpointInterface::Input)
         res << QByteArray(QAudioDeviceEndpoint_iid);
 
+    if (direction == QMediaEndpointInterface::Output) {
+        res << QMediaWidgetEndpoint_iid;
+#ifndef QT_NO_VIDEOSURFACE
+        res << QVideoRendererEndpoint_iid;
+#endif
+    }
+
     return res;
 }
 
@@ -46,6 +56,17 @@ QObject *QGstreamerCaptureService::createEndpoint(const char *interface)
     if (qstrcmp(interface, QAudioDeviceEndpoint_iid) == 0) {
         return new QAlsaAudioDeviceEndpoint(this);
     }
+
+    if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
+        return new QGstreamerVideoWidget;
+    }
+
+#ifndef QT_NO_VIDEOSURFACE
+    if (qstrcmp(interface,QVideoRendererEndpoint_iid) == 0) {
+        return new QGstreamerVideoRenderer;
+    }
+#endif
+
 
     return 0;
 }
@@ -64,6 +85,55 @@ void QGstreamerCaptureService::setAudioInput(QObject *input)
 
     }
     QAbstractMediaService::setAudioInput(endPoint);
+}
+
+class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
+{
+public:
+    QGstreamerVideoRendererWrapper(QGstreamerVideoRendererInterface *videoRenderer)
+        :m_videoRenderer(videoRenderer)
+    {
+        m_element = videoRenderer->videoSink();
+    }
+
+    virtual ~QGstreamerVideoRendererWrapper()
+    {
+        gst_object_unref(GST_OBJECT(m_element));
+    }
+
+    GstElement *buildElement()
+    {
+        m_videoRenderer->precessNewStream();
+
+        gst_object_ref(GST_OBJECT(m_element));
+        return m_element;
+    }
+
+    void prepareWinId()
+    {
+        m_videoRenderer->precessNewStream();
+    }
+
+private:
+    QGstreamerVideoRendererInterface *m_videoRenderer;
+    GstElement *m_element;
+};
+
+void QGstreamerCaptureService::setVideoOutput(QObject *output)
+{
+    QGstreamerVideoWidget *videoWidget = qobject_cast<QGstreamerVideoWidget*>(output);
+    if (videoWidget) {
+        m_captureSession->setVideoPreview(new QGstreamerVideoRendererWrapper(videoWidget));
+    }
+
+#ifndef QT_NO_VIDEOSURFACE
+    QGstreamerVideoRenderer *videoRenderer = qobject_cast<QGstreamerVideoRenderer*>(output);
+    if (videoRenderer) {
+        m_captureSession->setVideoPreview(new QGstreamerVideoRendererWrapper(videoRenderer));
+    }
+#endif
+
+    QAbstractMediaService::setVideoOutput(output);
 }
 
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const

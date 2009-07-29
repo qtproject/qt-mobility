@@ -53,6 +53,7 @@ class QGstreamerElementFactory
 {
 public:
     virtual GstElement *buildElement() = 0;
+    virtual void prepareWinId() {}
 };
 
 class QGstreamerCaptureSession : public QObject
@@ -131,10 +132,12 @@ private:
 
     GstElement *m_audioSrc;
     GstElement *m_audioTee;
+    GstElement *m_audioPreviewQueue;
     GstElement *m_audioPreview;
 
     GstElement *m_videoSrc;
     GstElement *m_videoTee;
+    GstElement *m_videoPreviewQueue;
     GstElement *m_videoPreview;
 
     GstElement *m_encodeBin;

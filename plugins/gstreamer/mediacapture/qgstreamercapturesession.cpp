@@ -60,9 +60,11 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoPreviewFactory(0),
      m_audioSrc(0),
      m_audioTee(0),
+     m_audioPreviewQueue(0),
      m_audioPreview(0),
      m_videoSrc(0),
      m_videoTee(0),
+     m_videoPreviewQueue(0),
      m_videoPreview(0),
      m_encodeBin(0)
 {
@@ -192,8 +194,8 @@ GstElement *QGstreamerCaptureSession::buildVideoSrc()
     if (m_videoInputFactory) {
         videoSrc = m_videoInputFactory->buildElement();
     } else {
-        //videoSrc = gst_element_factory_make("videotestsrc", "video_test_src");
-        videoSrc = gst_element_factory_make("v4l2src", "video_test_src");
+        videoSrc = gst_element_factory_make("videotestsrc", "video_test_src");
+        //videoSrc = gst_element_factory_make("v4l2src", "video_test_src");
     }
 
     return videoSrc;
@@ -232,9 +234,11 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 {
     REMOVE_ELEMENT(m_audioSrc);
     REMOVE_ELEMENT(m_audioPreview);
+    REMOVE_ELEMENT(m_audioPreviewQueue);
     REMOVE_ELEMENT(m_audioTee);
     REMOVE_ELEMENT(m_videoSrc);
     REMOVE_ELEMENT(m_videoPreview);
+    REMOVE_ELEMENT(m_videoPreviewQueue);
     REMOVE_ELEMENT(m_videoTee);
     REMOVE_ELEMENT(m_encodeBin);
 
@@ -286,10 +290,12 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 m_audioSrc = buildAudioSrc();
                 m_audioPreview = buildAudioPreview();
                 m_audioTee = gst_element_factory_make("tee", NULL);
+                m_audioPreviewQueue = gst_element_factory_make("queue", NULL);
                 gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
-                                 m_audioPreview, NULL);
+                                 m_audioPreviewQueue, m_audioPreview, NULL);
                 ok &= gst_element_link(m_audioSrc, m_audioTee);
-                ok &= gst_element_link(m_audioTee, m_audioPreview);
+                ok &= gst_element_link(m_audioTee, m_audioPreviewQueue);
+                ok &= gst_element_link(m_audioPreviewQueue, m_audioPreview);
                 ok &= gst_element_link(m_audioTee, m_encodeBin);
             }
 
@@ -297,10 +303,12 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 m_videoSrc = buildVideoSrc();
                 m_videoPreview = buildVideoPreview();
                 m_videoTee = gst_element_factory_make("tee", NULL);
+                m_videoPreviewQueue = gst_element_factory_make("queue", NULL);
                 gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoTee,
-                                 m_videoPreview, NULL);
+                                 m_videoPreviewQueue, m_videoPreview, NULL);
                 ok &= gst_element_link(m_videoSrc, m_videoTee);
-                ok &= gst_element_link(m_videoTee, m_videoPreview);
+                ok &= gst_element_link(m_videoTee, m_videoPreviewQueue);
+                ok &= gst_element_link(m_videoPreviewQueue, m_videoPreview);
                 ok &= gst_element_link(m_videoTee, m_encodeBin);
             }
 
@@ -444,6 +452,16 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             emit error(int(QMediaCapture::ResourceError),QString::fromUtf8(err->message));
             g_error_free (err);
             g_free (debug);
+        }
+
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
+            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
+        {
+            if (m_audioPreviewFactory)
+                m_audioPreviewFactory->prepareWinId();
+
+            if (m_videoPreviewFactory)
+                m_videoPreviewFactory->prepareWinId();
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_encodeBin)) {

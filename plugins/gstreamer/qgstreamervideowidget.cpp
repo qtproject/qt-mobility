@@ -41,6 +41,8 @@ QGstreamerVideoWidget::QGstreamerVideoWidget(QWidget *parent)
 
 QGstreamerVideoWidget::~QGstreamerVideoWidget()
 {
+    if (m_videoSink)
+        gst_object_unref(GST_OBJECT(m_videoSink));
 }
 
 GstElement *QGstreamerVideoWidget::videoSink()
@@ -74,7 +76,7 @@ void QGstreamerVideoWidget::setOverlay()
         QApplication::syncX();
         gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY(m_videoSink) ,  windowId );
     }
-    windowExposed();    
+    windowExposed();
 }
 
 void QGstreamerVideoWidget::windowExposed()

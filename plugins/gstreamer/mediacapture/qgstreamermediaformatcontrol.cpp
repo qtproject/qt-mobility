@@ -39,7 +39,7 @@ QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
     :QMediaFormatControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "oggmux" << "matroskamux" << "qtmux" << "mp4mux" << "avimux" << "gppmux";
+    formatCandidates << "matroskamux" << "oggmux" << "qtmux" << "mp4mux" << "avimux" << "gppmux";
     formatCandidates << "flvmux" << "wavenc" << "ffmux_amr" << "ffmux_asf" << "ffmux_dv" << "ffmux_gif";
     formatCandidates << "ffmux_mov" << "ffmux_mp4" << "ffmux_mpeg" << "ffmux_vob" << "ffmux_mpegts" << "ffmux_3g2" << "ffmux_3gp";
 

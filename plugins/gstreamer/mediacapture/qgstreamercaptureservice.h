@@ -20,6 +20,7 @@ public:
             QMediaEndpointInterface::Direction direction) const;
 
     void setAudioInput(QObject *input);
+    void setVideoOutput(QObject *output);
 
     QObject *createEndpoint(const char *interface);
 
