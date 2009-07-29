@@ -173,28 +173,49 @@ QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &
 
 QMailMessage::MessageType convert(QMessage::Type t)
 {
-    switch (t) {
-    case QMessage::Mms: return QMailMessage::Mms;
-    case QMessage::Sms: return QMailMessage::Sms;
-    case QMessage::Email: return QMailMessage::Email;
-    case QMessage::Xmpp: return QMailMessage::Instant;
-    default: break;
+    QMailMessage::MessageType result(QMailMessage::None);
+
+    // This could be a single value or a mask
+    if (t & QMessage::Mms) {
+        result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Mms);
+    }
+    if (t & QMessage::Sms) {
+        result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Sms);
+    }
+    if (t & QMessage::Email) {
+        result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Email);
+    }
+    if (t & QMessage::Xmpp) {
+        result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Instant);
     }
 
-    return QMailMessage::None;
+    return result;
 }
 
 QMessage::Type convert(QMailMessage::MessageType t)
 {
-    switch (t) {
-    case QMailMessage::Mms: return QMessage::Mms;
-    case QMailMessage::Sms: return QMessage::Sms;
-    case QMailMessage::Email: return QMessage::Email;
-    case QMailMessage::Instant: return QMessage::Xmpp;
-    default: break;
+    QMessage::Type result(QMessage::None);
+
+    // This could be a single value or a mask
+    if (t & QMailMessage::Mms) {
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Mms));
+    }
+    if (t & QMailMessage::Sms) {
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Sms));
+    }
+    if (t & QMailMessage::Email) {
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Email));
+    }
+    if (t & QMailMessage::Instant) {
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Xmpp));
     }
 
-    return QMessage::None;
+    return result;
+}
+
+QMailMessage::MessageType convert(QMessage::TypeFlags v)
+{
+    return convert(static_cast<QMessage::Type>(static_cast<uint>(v)));
 }
 
 QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)

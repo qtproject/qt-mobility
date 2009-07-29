@@ -83,6 +83,8 @@ QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &
 QMailMessage::MessageType convert(QMessage::Type t);
 QMessage::Type convert(QMailMessage::MessageType t);
 
+QMailMessage::MessageType convert(QMessage::TypeFlags v);
+
 QMessage::StatusFlags convert(quint64 v);
 quint64 convert(QMessage::StatusFlags v);
 
