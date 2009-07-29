@@ -202,7 +202,8 @@ void RegistryLayer::shutdown()
 
 QUuid RegistryLayer::id()
 {
-    return QUuid();
+    return QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2,
+                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9);
 }
 
 unsigned int RegistryLayer::order()
