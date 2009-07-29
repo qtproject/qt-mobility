@@ -639,11 +639,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     ULONG count;
     LPSPropValue properties;
     if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-        result.setStatus((properties[flagsColumn].Value.ul & MSGFLAG_READ) ? QFlags<QMessage::Status>(QMessage::Read) : 0);
+        result.d_ptr->_status = ((properties[flagsColumn].Value.ul & MSGFLAG_READ) ? QFlags<QMessage::Status>(QMessage::Read) : 0);
         QString sender(stringFromLpctstr(properties[senderColumn].Value.LPSZ));
-        result.setFrom(QMessageAddress(sender, QMessageAddress::Email));
-        result.setSubject(stringFromLpctstr(properties[subjectColumn].Value.LPSZ));
-        qDebug() << "sender" << sender << "subject" << result.subject();
+        result.d_ptr->_from = QMessageAddress(sender, QMessageAddress::Email);
+        result.d_ptr->_subject = stringFromLpctstr(properties[subjectColumn].Value.LPSZ);
+        qDebug() << "sender" << result.from().recipient() << "subject" << result.subject(); // TODO remove this
     }
     message->Release();
     return result;
