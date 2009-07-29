@@ -77,6 +77,20 @@ QMailMessageKey convert(const QMessageFilterKey &key)
 
 }
 
+namespace {
+
+// QMF stores dates in localtime
+QDateTime adjusted(const QDateTime &dt)
+{
+    if (dt.timeSpec() == Qt::LocalTime ) {
+        return dt;
+    }
+
+    return dt.toLocalTime();
+}
+
+}
+
 void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
 {
     d_ptr->_options |= options;
@@ -230,28 +244,28 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::timeStamp(value, convert(cmp));
+    result.d_ptr->_key = QMailMessageKey::timeStamp(adjusted(value), convert(cmp));
     return result;
 }
 
 QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::timeStamp(value, convert(cmp));
+    result.d_ptr->_key = QMailMessageKey::timeStamp(adjusted(value), convert(cmp));
     return result;
 }
 
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(value, convert(cmp));
+    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(adjusted(value), convert(cmp));
     return result;
 }
 
 QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(value, convert(cmp));
+    result.d_ptr->_key = QMailMessageKey::receptionTimeStamp(adjusted(value), convert(cmp));
     return result;
 }
 
