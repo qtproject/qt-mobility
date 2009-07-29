@@ -128,7 +128,9 @@ void tst_QMessageStoreKeys::initTestCase()
     accountParams << Params()("name", "Work")
                              ("fromAddress", "Important.Person@example.com")
                   << Params()("name", "Personal")
-                             ("fromAddress", "superstar2000@example.net");
+                             ("fromAddress", "superstar2000@example.net")
+                  << Params()("name", "Alter Ego")
+                             ("fromAddress", "UltraMegaLightningBabe@superhero.test");
 
     foreach (const Support::Parameters &params, accountParams) {
         accountIds.append(Support::addAccount(params));
@@ -166,12 +168,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("id equality 1")
         << QMessageAccountFilterKey::id(accountIds[0], QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("id equality 2")
         << QMessageAccountFilterKey::id(accountIds[1], QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[1] )
-        << ( QMessageAccountIdList() << accountIds[0] );
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
     QTest::newRow("id equality invalid")
         << QMessageAccountFilterKey::id(QMessageAccountId(), QMessageDataComparator::Equal) 
@@ -180,12 +182,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("id inequality 1")
         << QMessageAccountFilterKey::id(accountIds[0], QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("id inequality 2")
         << QMessageAccountFilterKey::id(accountIds[1], QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
     QTest::newRow("id inequality invalid")
@@ -196,17 +198,17 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("id list inclusion 1")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[0], QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("id list inclusion 2")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[1], QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[1] )
-        << ( QMessageAccountIdList() << accountIds[0] );
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
     QTest::newRow("id list inclusion 3")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[0] << accountIds[1], QMessageDataComparator::Includes) 
-        << accountIds
-        << QMessageAccountIdList();
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[2] );
 
     QTest::newRow("id list inclusion empty")
         << QMessageAccountFilterKey::id(QMessageAccountIdList(), QMessageDataComparator::Includes) 
@@ -215,18 +217,18 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("id list exclusion 1")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[0], QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("id list exclusion 2")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[1], QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
     QTest::newRow("id list exclusion 3")
         << QMessageAccountFilterKey::id(QMessageAccountIdList() << accountIds[0] << accountIds[1], QMessageDataComparator::Excludes) 
-        << QMessageAccountIdList()
-        << accountIds;
+        << ( QMessageAccountIdList() << accountIds[2] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] );
 
     QTest::newRow("id list exclusion empty")
         << QMessageAccountFilterKey::id(QMessageAccountIdList(), QMessageDataComparator::Excludes) 
@@ -236,12 +238,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("id filter inclusion 1")
         << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work"), QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("id filter inclusion 2")
         << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal"), QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[1] )
-        << ( QMessageAccountIdList() << accountIds[0] );
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
     QTest::newRow("id filter inclusion 3")
         << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("o", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
@@ -260,12 +262,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("id filter exclusion 1")
         << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work"), QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("id filter exclusion 2")
         << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal"), QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
     QTest::newRow("id filter exclusion 3")
@@ -286,12 +288,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("name equality 1")
         << QMessageAccountFilterKey::name("Work", QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("name equality 2")
         << QMessageAccountFilterKey::name("Personal", QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[1] )
-        << ( QMessageAccountIdList() << accountIds[0] );
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
     QTest::newRow("name equality non-matching")
         << QMessageAccountFilterKey::name("Nonesuch", QMessageDataComparator::Equal) 
@@ -310,12 +312,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("name inequality 1")
         << QMessageAccountFilterKey::name("Work", QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("name inequality 2")
         << QMessageAccountFilterKey::name("Personal", QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
     QTest::newRow("name inequality non-matching")
@@ -336,7 +338,7 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("name inclusion 1")
         << QMessageAccountFilterKey::name("ork", QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("name inclusion 2")
         << QMessageAccountFilterKey::name("o", QMessageDataComparator::Includes) 
@@ -360,7 +362,7 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("name exclusion 1")
         << QMessageAccountFilterKey::name("ork", QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("name exclusion 2")
@@ -386,12 +388,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("fromAddress equality 1")
         << QMessageAccountFilterKey::fromAddress("Important.Person@example.com", QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("fromAddress equality 2")
         << QMessageAccountFilterKey::fromAddress("superstar2000@example.net", QMessageDataComparator::Equal) 
         << ( QMessageAccountIdList() << accountIds[1] )
-        << ( QMessageAccountIdList() << accountIds[0] );
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
     QTest::newRow("fromAddress equality non-matching")
         << QMessageAccountFilterKey::fromAddress("Nonesuch", QMessageDataComparator::Equal) 
@@ -410,12 +412,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("fromAddress inequality 1")
         << QMessageAccountFilterKey::fromAddress("Important.Person@example.com", QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("fromAddress inequality 2")
         << QMessageAccountFilterKey::fromAddress("superstar2000@example.net", QMessageDataComparator::NotEqual) 
-        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
     QTest::newRow("fromAddress inequality non-matching")
@@ -436,12 +438,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
     QTest::newRow("fromAddress inclusion 1")
         << QMessageAccountFilterKey::fromAddress("Import", QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
-        << ( QMessageAccountIdList() << accountIds[1] );
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("fromAddress inclusion 2")
         << QMessageAccountFilterKey::fromAddress("@example.", QMessageDataComparator::Includes) 
-        << accountIds
-        << QMessageAccountIdList();
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[2] );
 
     QTest::newRow("fromAddress inclusion non-matching")
         << QMessageAccountFilterKey::fromAddress("Nonesuch", QMessageDataComparator::Includes) 
@@ -460,13 +462,13 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
 
     QTest::newRow("fromAddress exclusion 1")
         << QMessageAccountFilterKey::fromAddress("Import", QMessageDataComparator::Excludes) 
-        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("fromAddress exclusion 2")
         << QMessageAccountFilterKey::fromAddress("@example.", QMessageDataComparator::Excludes) 
-        << QMessageAccountIdList()
-        << accountIds;
+        << ( QMessageAccountIdList() << accountIds[2] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] );
 
     QTest::newRow("fromAddress exclusion non-matching")
         << QMessageAccountFilterKey::fromAddress("Nonesuch", QMessageDataComparator::Excludes) 
