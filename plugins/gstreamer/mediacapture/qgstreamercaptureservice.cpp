@@ -16,7 +16,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
         gst_init(NULL, NULL);
     }
 
-    m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
+    m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()

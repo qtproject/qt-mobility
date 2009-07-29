@@ -144,11 +144,18 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     GstBin *encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
     Q_ASSERT(encoderBin);
 
-    GstElement *capsfilter = gst_element_factory_make("capsfilter-video", NULL);
+    GstElement *capsfilter = gst_element_factory_make("capsfilter", "capsfilter-video");
     gst_bin_add(encoderBin, capsfilter);
+
+    GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
+    gst_bin_add(encoderBin, colorspace);
+
+    qDebug() << "create encoder for video codec" << m_codec;
 
     GstElement *encoderElement = gst_element_factory_make(m_codec.toAscii(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
+
+    gst_element_link_many(capsfilter, colorspace, encoderElement, NULL);
 
     // add ghostpads
     GstPad *pad = gst_element_get_static_pad(capsfilter, "sink");

@@ -82,7 +82,6 @@ void QGstreamerCaptureControl::updateState()
 
 qint64 QGstreamerCaptureControl::position() const
 {
-    qDebug() << "position asked" <<m_session->position();
     return m_session->position();
 }
 

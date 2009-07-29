@@ -48,6 +48,12 @@ class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
 class QGstreamerCaptureControl;
 
+class QGstreamerElementFactory
+{
+public:
+    virtual GstElement *buildElement() = 0;
+};
+
 class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
@@ -56,7 +62,7 @@ public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
 
-    QGstreamerCaptureSession( CaptureMode captureMode,  QObject *parent);
+    QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
     QMediaSink sink() const;
@@ -65,6 +71,12 @@ public:
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerCaptureControl *captureControl() const { return m_captureControl; }
+
+    void setAudioInput(QGstreamerElementFactory *audioInput);
+    void setAudioPreview(QGstreamerElementFactory *audioPreview);
+
+    void setVideoInput(QGstreamerElementFactory *videoInput);
+    void setVideoPreview(QGstreamerElementFactory *videoPreview);
 
     State state() const;
     qint64 position() const;
@@ -87,8 +99,10 @@ private:
     enum PipelineMode { EmptyPipeline, PreviewPipeline, RecordingPipeline, PreviewAndRecordingPipeline };
 
     GstElement *buildEncodeBin();
-    GstElement *buildAudioSrcBin();
-    GstElement *buildAudioPreviewBin();
+    GstElement *buildAudioSrc();
+    GstElement *buildAudioPreview();
+    GstElement *buildVideoSrc();
+    GstElement *buildVideoPreview();
 
     void waitForStopped();
     void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
@@ -98,6 +112,11 @@ private:
     State m_state;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
+
+    QGstreamerElementFactory *m_audioInputFactory;
+    QGstreamerElementFactory *m_audioPreviewFactory;
+    QGstreamerElementFactory *m_videoInputFactory;
+    QGstreamerElementFactory *m_videoPreviewFactory;
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
@@ -110,6 +129,10 @@ private:
     GstElement *m_audioSrc;
     GstElement *m_audioTee;
     GstElement *m_audioPreview;
+
+    GstElement *m_videoSrc;
+    GstElement *m_videoTee;
+    GstElement *m_videoPreview;
 
     GstElement *m_encodeBin;
 

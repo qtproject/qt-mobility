@@ -7,7 +7,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncodeControl(parent)
 {
     QList<QByteArray> codecCandidates;
-    codecCandidates << "speexenc" << "lame" << "vorbisenc" << "gsmenc";
+    codecCandidates << "lame" << "vorbisenc" << "speexenc" << "gsmenc";
 
     m_codecOptions["vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
     m_codecOptions["lame"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
