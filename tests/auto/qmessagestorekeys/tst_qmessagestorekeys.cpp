@@ -74,6 +74,9 @@ private slots:
     void testFolderFilterKey_data();
     void testFolderFilterKey();
 
+    void testFolderSortKey_data();
+    void testFolderSortKey();
+
 private:
     QMessageFolderIdList standardFolderIds;
 
@@ -1190,6 +1193,49 @@ void tst_QMessageStoreKeys::testFolderFilterKey()
             qDebug() << "y:" << y;
         }
         QCOMPARE(x, y);
+    }
+    */
+}
+
+void tst_QMessageStoreKeys::testFolderSortKey_data()
+{
+    QTest::addColumn<QMessageFolderSortKey>("sortKey");
+    QTest::addColumn<QMessageFolderIdList>("ids");
+
+    QTest::newRow("path ascending")
+        << QMessageFolderSortKey::path(Qt::AscendingOrder)
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
+
+    QTest::newRow("path descending")
+        << QMessageFolderSortKey::path(Qt::DescendingOrder)
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[3] << folderIds[2] << folderIds[1] );
+
+    QTest::newRow("displayName ascending")
+        << QMessageFolderSortKey::displayName(Qt::AscendingOrder)
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[0] << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("displayName descending")
+        << QMessageFolderSortKey::displayName(Qt::DescendingOrder)
+        << ( QMessageFolderIdList() << folderIds[3] << folderIds[2] << folderIds[0] << folderIds[1] );
+}
+
+void tst_QMessageStoreKeys::testFolderSortKey()
+{
+    QFETCH(QMessageFolderSortKey, sortKey);
+    QFETCH(QMessageFolderIdList, ids);
+
+    // Filter out the standard folders
+    QMessageFolderFilterKey key(QMessageFolderFilterKey::parentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual));
+    QCOMPARE(QMessageStore::instance()->queryFolders(key, sortKey), ids);
+
+    /*
+    {
+        QMessageFolderIdList x(QMessageStore::instance()->queryFolders(key, sortKey));
+        if (x != ids) {
+            qDebug() << "x:" << x;
+            qDebug() << "y:" << ids;
+        }
+        QCOMPARE(x, ids);
     }
     */
 }
