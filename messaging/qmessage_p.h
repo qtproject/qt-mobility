@@ -42,13 +42,17 @@ public:
     {
     }
 
-    void setId(const QMessageId &id);
-    void setDataModified(bool modified);
-    void setParentAccountId(const QMessageAccountId &accountId);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-    void setParentFolderId(const QMessageFolderId &folderId);
-#endif
-    void setSize(uint size);
-
     QMessage *q_ptr;
+
+    bool _modified;
+    QMessageId _id;
+    uint _size;
+    QMessageAccountId _parentAccountId;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    QMessageFolderId _parentFolderId;
+#endif
+    QMessage::Type _type;
+    QMessageAddress _from;
+    QMessage::StatusFlags _status;
+    QString _subject;
 };
