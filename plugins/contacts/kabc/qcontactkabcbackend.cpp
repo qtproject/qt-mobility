@@ -386,56 +386,6 @@ bool QContactKabcEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueI
     return true;
 }
 
-QList<QContactManager::Error> QContactKabcEngine::saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> ret;
-    QContactManager::Error functionError = QContactManager::NoError;
-
-    for (int i = 0; i < contacts->count(); i++) {
-        QContact current = contacts->takeAt(i);
-
-        // perform a save operation as part of the batch operation.
-        if (!saveContact(&current, contactsAdded, contactsChanged, groupsChanged, error)) {
-            functionError = error;
-            ret.append(functionError);
-            current.setId(0);
-        } else {
-            // this contact was saved successfully.
-            ret.append(QContactManager::NoError);
-        }
-
-        contacts->insert(i, current);
-    }
-
-    error = functionError; // set the last real error for the batch operation.
-
-    // return the list of errors.
-    return ret;
-}
-
-QList<QContactManager::Error> QContactKabcEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> ret;
-    QContactManager::Error functionError = QContactManager::NoError;
-
-    for (int i = 0; i < contactIds->count(); i++) {
-        QUniqueId current = contactIds->at(i);
-        // remove the contact as part of a batch operation
-        if (!removeContact(current, contactsChanged, groupsChanged, error)) {
-            functionError = error;
-            ret.append(functionError);
-        } else {
-            // successfully removed.
-            ret.append(QContactManager::NoError);
-        }
-
-        contactIds->insert(i, current);
-    }
-
-    error = functionError;
-    return ret;
-}
-
 /*
 QList<QUniqueId> QContactKabcEngine::groups(QContactManager::Error& error) const
 {
