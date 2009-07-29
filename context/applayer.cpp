@@ -1681,6 +1681,7 @@ public:
     QSet<QByteArray> children(Handle);
 
     /* QValueSpaceItem functions */
+    bool supportsRequests() { return true; }
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());

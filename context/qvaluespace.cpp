@@ -213,6 +213,13 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
+    \fn bool QAbstractValueSpaceLayer::supportsRequests()
+
+    Returns true if the layer supports sending requests via the requestSetValue() and
+    requestRemoveValue() functions; otherwise returns false.
+*/
+
+/*!
     \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QVariant &value)
 
     Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
@@ -851,12 +858,15 @@ QString QValueSpaceItem::itemName() const
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
   
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemRemove()
  */
-void QValueSpaceItem::remove()
+bool QValueSpaceItem::remove()
 {
     VS_CALL_ASSERT;
-    remove(QByteArray());
+    return remove(QByteArray());
 }
 
 /*!
@@ -868,11 +878,26 @@ void QValueSpaceItem::remove()
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
   
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemRemove()
  */
-void QValueSpaceItem::remove(const QByteArray &subPath)
+bool QValueSpaceItem::remove(const QByteArray &subPath)
 {
     VS_CALL_ASSERT;
+
+    if (d->type == QValueSpaceItemPrivate::Data) {
+        bool supportsRequests = false;
+
+        QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
+        for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
+            supportsRequests |=  md->readers[ii - 1].first->supportsRequests();
+
+        if (!supportsRequests)
+            return false;
+    }
+
     if(QValueSpaceItemPrivate::Data == d->type) {
         QValueSpaceItemPrivateWrite * write = new QValueSpaceItemPrivateWrite();
         write->data = static_cast<QValueSpaceItemPrivateData *>(d);
@@ -882,6 +907,8 @@ void QValueSpaceItem::remove(const QByteArray &subPath)
         static_cast<QValueSpaceItemPrivateWrite *>(d);
 
     write->ops.append(QValueSpaceItemPrivateWrite::Op(subPath));
+
+    return true;
 }
 
 /*!
@@ -893,12 +920,15 @@ void QValueSpaceItem::remove(const QByteArray &subPath)
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
   
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemRemove()
  */
-void QValueSpaceItem::remove(const char *subPath)
+bool QValueSpaceItem::remove(const char *subPath)
 {
     VS_CALL_ASSERT;
-    remove(QByteArray(subPath));
+    return remove(QByteArray(subPath));
 }
 
 /*!
@@ -910,12 +940,15 @@ void QValueSpaceItem::remove(const char *subPath)
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
   
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemRemove()
  */
-void QValueSpaceItem::remove(const QString &subPath)
+bool QValueSpaceItem::remove(const QString &subPath)
 {
     VS_CALL_ASSERT;
-    remove(subPath.toUtf8());
+    return remove(subPath.toUtf8());
 }
 
 /*!
@@ -925,12 +958,15 @@ void QValueSpaceItem::remove(const QString &subPath)
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
 
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemSetValue()
   */
-void QValueSpaceItem::setValue(const QVariant &value)
+bool QValueSpaceItem::setValue(const QVariant &value)
 {
     VS_CALL_ASSERT;
-    setValue(QByteArray(), value);
+    return setValue(QByteArray(), value);
 }
 
 /*!
@@ -943,12 +979,27 @@ void QValueSpaceItem::setValue(const QVariant &value)
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
 
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemSetValue()
   */
-void QValueSpaceItem::setValue(const QByteArray &subPath,
+bool QValueSpaceItem::setValue(const QByteArray &subPath,
                                const QVariant &value)
 {
     VS_CALL_ASSERT;
+
+    if (d->type == QValueSpaceItemPrivate::Data) {
+        bool supportsRequests = false;
+
+        QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
+        for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
+            supportsRequests |=  md->readers[ii - 1].first->supportsRequests();
+
+        if (!supportsRequests)
+            return false;
+    }
+
     if(QValueSpaceItemPrivate::Data == d->type) {
         QValueSpaceItemPrivateWrite * write = new QValueSpaceItemPrivateWrite();
         write->data = static_cast<QValueSpaceItemPrivateData *>(d);
@@ -959,6 +1010,8 @@ void QValueSpaceItem::setValue(const QByteArray &subPath,
 
 
     write->ops.append(QValueSpaceItemPrivateWrite::Op(subPath, value));
+
+    return true;
 }
 
 /*!
@@ -971,13 +1024,16 @@ void QValueSpaceItem::setValue(const QByteArray &subPath,
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
 
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemSetValue()
   */
-void QValueSpaceItem::setValue(const char * subPath,
+bool QValueSpaceItem::setValue(const char * subPath,
                                const QVariant &value)
 {
     VS_CALL_ASSERT;
-    setValue(QByteArray(subPath), value);
+    return setValue(QByteArray(subPath), value);
 }
 
 /*!
@@ -990,13 +1046,16 @@ void QValueSpaceItem::setValue(const char * subPath,
   \i {Note:} This call asynchronously \i asks the current provider of the object to 
   change the value.  To explicitly make a change use QValueSpaceObject.
 
+  Returns false if none of the available value space layers support sending requests; otherwise
+  returns true.
+
   \sa QValueSpaceObject::itemSetValue()
   */
-void QValueSpaceItem::setValue(const QString & subPath,
+bool QValueSpaceItem::setValue(const QString & subPath,
                                const QVariant &value)
 {
     VS_CALL_ASSERT;
-    setValue(subPath.toUtf8(), value);
+    return setValue(subPath.toUtf8(), value);
 }
 
 /*!

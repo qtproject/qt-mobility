@@ -73,6 +73,7 @@ public:
     virtual QSet<QByteArray> children(Handle handle) = 0;
 
     /* QValueSpaceItem functions */
+    virtual bool supportsRequests() = 0;
     virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
     virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
     virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0;
@@ -138,16 +139,16 @@ public:
 
     QList<QString> subPaths() const;
 
-    void remove();
-    void remove(const QByteArray &subPath);
-    void remove(const char *subPath);
-    void remove(const QString &subPath);
-    void setValue(const QVariant &value);
-    void setValue(const QByteArray & subPath,
+    bool remove();
+    bool remove(const QByteArray &subPath);
+    bool remove(const char *subPath);
+    bool remove(const QString &subPath);
+    bool setValue(const QVariant &value);
+    bool setValue(const QByteArray & subPath,
                   const QVariant &value);
-    void setValue(const char * subPath,
+    bool setValue(const char * subPath,
                   const QVariant &value);
-    void setValue(const QString & subPath,
+    bool setValue(const QString & subPath,
                   const QVariant &value);
     bool sync();
 
