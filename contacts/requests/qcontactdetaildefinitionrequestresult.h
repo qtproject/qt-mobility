@@ -54,8 +54,6 @@ public:
     QStringList definitionNames() const;
     QList<QContactDetailDefinition> definitions() const;
 
-    void updateRequest(QContactDetailDefinitionRequest* request, QContactAbstractRequest::Status status);
-
 private:
     QSharedDataPointer<QContactDetailDefinitionRequestResultData> d;
 };

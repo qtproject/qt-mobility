@@ -97,7 +97,7 @@ public:
     virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
     /* Asynchronous Request Handling */
-    virtual void asynchronousRequestDestroyed(const QContactAbstractRequest* req);
+    virtual void asynchronousRequestDestroyed(QContactAbstractRequest* req);
     virtual bool asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs);
     virtual bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
     virtual void cancelAsynchronousRequest(QContactAbstractRequest* req);

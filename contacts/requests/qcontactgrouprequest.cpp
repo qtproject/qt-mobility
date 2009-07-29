@@ -43,9 +43,13 @@ QContactGroupRequest::QContactGroupRequest()
 
 QContactGroupRequest::~QContactGroupRequest()
 {
+    // tell the engine that we're being destroyed, then remove ourselves from the
+    // result's list of applicable requests (if the engine doesn't do this for us).
     QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
     if (engine)
         engine->asynchronousRequestDestroyed(this);
+    if (d->m_result)
+        d->m_result->removeRequest(this);
     delete d;
 }
 

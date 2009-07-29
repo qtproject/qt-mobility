@@ -55,6 +55,14 @@ public:
     void setAppendOnly(bool appendOnly);
     bool appendOnly() const;
 
+    // the requests for which this result is applicable
+    QList<QContactAbstractRequest*> requests() const;
+    void addRequest(QContactAbstractRequest* request);
+    bool removeRequest(QContactAbstractRequest* request);
+
+    // update the given request to the given status
+    void updateRequest(QContactAbstractRequest* request, QContactAbstractRequest::Status status);
+
 private:
     Q_DISABLE_COPY(QContactAbstractRequestResult);
     QSharedDataPointer<QContactAbstractRequestResultData> d;

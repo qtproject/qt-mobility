@@ -404,8 +404,12 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 void QContactMemoryEngine::asynchronousRequestDestroyed(QContactAbstractRequest* req)
 {
     // delete the result associated with the request and remove it from the map.
+    // note that a "real implementation" that does result sharing amongst requests
+    // would simply call removeRequest on the result, and then, iff the count
+    // of requests for which the result is valid is zero, delete the result.
     if (d->m_asynchronousRequests.contains(req)) {
-        delete (d->m_asynchronousRequests.take(req));
+        QContactAbstractRequestResult* carr = d->m_asynchronousRequests.take(req);
+        delete carr;
     }
 }
 
@@ -489,30 +493,24 @@ void QContactMemoryEngine::startAsynchronousRequest(QContactAbstractRequest* req
     if (req->status() == QContactAbstractRequest::Pending || req->status() == QContactAbstractRequest::Cancelling)
         return;
 
-    // we can start the request.
+    // we can start the request.  First, create a result of the correct type.
     QContactAbstractRequestResult *requestResult;
     switch (req->type()) {
         case QContactAbstractRequest::Contact:
         {
             requestResult = new QContactRequestResult;
-            QContactRequest *creq = static_cast<QContactRequest*>(req);
-            static_cast<QContactRequestResult*>(requestResult)->updateRequest(creq, QContactAbstractRequest::Pending);
         }
         break;
 
         case QContactAbstractRequest::DetailDefinition:
         {
             requestResult = new QContactDetailDefinitionRequestResult;
-            QContactDetailDefinitionRequest *dreq = static_cast<QContactDetailDefinitionRequest*>(req);
-            static_cast<QContactDetailDefinitionRequestResult*>(requestResult)->updateRequest(dreq, QContactAbstractRequest::Pending);
         }
         break;
 
         case QContactAbstractRequest::Group:
         {
             requestResult = new QContactGroupRequestResult;
-            QContactGroupRequest *greq = static_cast<QContactGroupRequest*>(req);
-            static_cast<QContactGroupRequestResult*>(requestResult)->updateRequest(greq, QContactAbstractRequest::Pending);
         }
         break;
 
@@ -520,10 +518,13 @@ void QContactMemoryEngine::startAsynchronousRequest(QContactAbstractRequest* req
         return;
     }
 
+    // add the request to this result's list of requests, and update the request.
+    requestResult->addRequest(req);
+    requestResult->updateRequest(req, QContactAbstractRequest::Pending);
+
     // clean up memory in use from previous operation
-    if (d->m_asynchronousRequests.contains(req)) {
+    if (d->m_asynchronousRequests.contains(req))
         delete d->m_asynchronousRequests.value(req);
-    }
 
     // and start the new operation
     d->m_asynchronousRequests.insert(req, requestResult);
@@ -682,7 +683,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                     asynchronousError = QContactManager::DoesNotExistError;
                     if (gr->selectionType() == QContactGroupRequest::SelectByIds) {
                         translatedRequest = gr->idSelection();
-                    } else if (gr->selectionType() == QContactRequest::SelectAll) {
+                    } else if (gr->selectionType() == QContactGroupRequest::SelectAll) {
                         translatedRequest = groups(asynchronousError);
                     } else {
                         // invalid selection type...

@@ -104,7 +104,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRequest);
-    friend class QContactDetailDefinitionRequestResult;
+    friend class QContactAbstractRequestResult;
     Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
     QContactDetailDefinitionRequestData* d;
 };

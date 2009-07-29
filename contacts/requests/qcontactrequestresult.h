@@ -51,8 +51,6 @@ public:
     QList<QUniqueId> contactIds() const;
     QList<QContact> contacts() const;
 
-    void updateRequest(QContactRequest* request, QContactAbstractRequest::Status status);
-
 private:
     QSharedDataPointer<QContactRequestResultData> d;
 };

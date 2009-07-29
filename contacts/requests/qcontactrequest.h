@@ -36,6 +36,7 @@
 #define QCONTACTREQUEST_H
 
 #include "qcontactabstractrequest.h"
+#include "qcontactabstractrequestresult.h"
 
 #include "qcontactsortorder.h"
 #include "qcontactfilter.h"
@@ -115,7 +116,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QContactRequest);
-    friend class QContactRequestResult;
+    friend class QContactAbstractRequestResult;
     Q_PRIVATE_SLOT(d, void _q_statusUpdate(QContactAbstractRequest::Status, QContactManager::Error));
     QContactRequestData* d;
 };

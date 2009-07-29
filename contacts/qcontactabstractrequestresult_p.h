@@ -50,6 +50,7 @@
 
 #include <QSharedData>
 #include <QList>
+#include <QSet>
 
 class QContactAbstractRequestResultData : public QSharedData
 {
@@ -65,7 +66,8 @@ public:
         : QSharedData(other),
         m_error(other.m_error),
         m_errors(other.m_errors),
-        m_appendOnly(other.m_appendOnly)
+        m_appendOnly(other.m_appendOnly),
+        m_requests(other.m_requests)
     {
     }
 
@@ -74,6 +76,8 @@ public:
     QContactManager::Error m_error;
     QList<QContactManager::Error> m_errors;
     bool m_appendOnly;
+
+    QSet<QContactAbstractRequest*> m_requests;
 };
 
 #endif

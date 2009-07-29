@@ -79,11 +79,3 @@ QList<QContact> QContactRequestResult::contacts() const
 {
     return d->m_contacts;
 }
-
-/*! Sets the result of the given \a request to be this result and updates the status of the \a request to \a status, before emitting the progress signal */
-void QContactRequestResult::updateRequest(QContactRequest* request, QContactAbstractRequest::Status status)
-{
-    request->d->m_status = status;
-    request->d->m_result = this;
-    emit request->progress(request, (status == QContactAbstractRequest::Finished || status == QContactAbstractRequest::Cancelled), appendOnly());
-}

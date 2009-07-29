@@ -79,11 +79,3 @@ QList<QContactDetailDefinition> QContactDetailDefinitionRequestResult::definitio
 {
     return d->m_definitions;
 }
-
-/*! Sets the result of the given \a request to be this result and updates the status of the \a request to \a status, before emitting the progress signal */
-void QContactDetailDefinitionRequestResult::updateRequest(QContactDetailDefinitionRequest* request, QContactAbstractRequest::Status status)
-{
-    request->d->m_status = status;
-    request->d->m_result = this;
-    emit request->progress(request, (status == QContactAbstractRequest::Finished || status == QContactAbstractRequest::Cancelled), appendOnly());
-}

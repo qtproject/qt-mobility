@@ -51,8 +51,6 @@ public:
     QList<QUniqueId> groupIds() const;
     QList<QContactGroup> groups() const;
 
-    void updateRequest(QContactGroupRequest* request, QContactAbstractRequest::Status status);
-
 private:
     QSharedDataPointer<QContactGroupRequestResultData> d;
 };
