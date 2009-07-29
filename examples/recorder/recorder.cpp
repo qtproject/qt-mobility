@@ -39,6 +39,7 @@
 #include <qmediacapture.h>
 #include <qaudiodeviceendpoint.h>
 #include <qaudioencodecontrol.h>
+#include <qmediaformatcontrol.h>
 
 #ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudioformat.h>
@@ -72,8 +73,6 @@ Recorder::Recorder(QWidget *parent) :
             audioCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
 
     if (encodeControl) {
-        //encodeControl->setAudioCodec("lame");
-
         foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
             QString description = encodeControl->codecDescription(codecName);
             ui->audioCodecBox->addItem(codecName+": "+description);
@@ -86,6 +85,21 @@ Recorder::Recorder(QWidget *parent) :
         ui->audioCodecBox->setEnabled(false);
         ui->qualitySlider->setEnabled(false);
     }
+
+    formatControl = qobject_cast<QMediaFormatControl*>(
+            audioCapture->service()->control("com.nokia.qt.MediaFormatControl"));
+
+    if (formatControl) {
+        foreach(const QString &formatName, formatControl->supportedFormats()) {
+            QString description = formatControl->formatDescription(formatName);
+            ui->containerFormatBox->addItem(formatName+": "+description);
+            if (formatName == formatControl->format())
+                ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
+        }
+    } else {
+        ui->containerFormatBox->setEnabled(false);
+    }
+
 }
 
 Recorder::~Recorder()
@@ -125,6 +139,12 @@ void Recorder::setQuality(int value)
 {
     if (encodeControl)
         encodeControl->setQuality(value);
+}
+
+void Recorder::setContainerFormat(int idx)
+{
+    if (formatControl)
+        formatControl->setFormat(formatControl->supportedFormats()[idx]);
 }
 
 void Recorder::record()
