@@ -64,7 +64,7 @@ QMessageAccountId addAccount(const Parameters &params)
         account.setMessageType(QMailMessage::Email);
 
         if (!fromAddress.isEmpty()) {
-            account.setFromAddress(QMailAddress(fromAddress));
+            account.setFromAddress(QMailAddress(QString(), fromAddress));
         }
 
         // Ensure that we initialise to the current version for file storage

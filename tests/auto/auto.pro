@@ -6,5 +6,6 @@ CONFIG += ordered
 SUBDIRS += \
     support \
     qmessagestore \
+    qmessagestorekeys \
     qmessage
 
