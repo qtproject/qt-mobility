@@ -38,26 +38,85 @@ class QMessageContentContainerIdPrivate
 {
 public:
     QMailMessagePart::Location _location;
+    bool _body;
+
+    QMessageContentContainerIdPrivate() : _body(false) {}
+    
+    static QMessageContentContainerId convert(const QMailMessagePart::Location &location);
+    static QMailMessagePart::Location convert(const QMessageContentContainerId &id);
+
+    static QMessageContentContainerId bodyId(const QMailMessageId &id);
 };
 
+QMessageContentContainerId QMessageContentContainerIdPrivate::convert(const QMailMessagePart::Location &location)
+{
+    QMessageContentContainerId result;
+    result.d_ptr->_location = location;
+    return result;
+}
+
+QMailMessagePart::Location QMessageContentContainerIdPrivate::convert(const QMessageContentContainerId &id)
+{
+    return id.d_ptr->_location;
+}
+
+QMessageContentContainerId QMessageContentContainerIdPrivate::bodyId(const QMailMessageId &id)
+{
+    QMessageContentContainerId result;
+    result.d_ptr->_body = true;
+
+    if (id.isValid()) {
+        result.d_ptr->_location.setContainingMessageId(id);
+    }
+
+    return result;
+}
+
+namespace QmfHelpers {
+
+QMessageContentContainerId convert(const QMailMessagePart::Location &location)
+{
+    return QMessageContentContainerIdPrivate::convert(location);
+}
+
+QMailMessagePart::Location convert(const QMessageContentContainerId &id)
+{
+    return QMessageContentContainerIdPrivate::convert(id);
+}
+
+QMessageContentContainerId bodyId(const QMailMessageId &id)
+{
+    return QMessageContentContainerIdPrivate::bodyId(id);
+}
+
+}
+
 QMessageContentContainerId::QMessageContentContainerId()
-    : d_ptr(0)
+    : d_ptr(new QMessageContentContainerIdPrivate)
 {
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
-    : d_ptr(0)
+    : d_ptr(new QMessageContentContainerIdPrivate)
 {
     this->operator=(other);
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
-    : d_ptr(0)
+    : d_ptr(new QMessageContentContainerIdPrivate)
 {
-    QMailMessagePart::Location loc(id);
-    if (loc.isValid(true) || loc.containingMessageId().isValid()) {
-        d_ptr = new QMessageContentContainerIdPrivate;
-        d_ptr->_location = loc;
+    QString input(id);
+
+    if (input.startsWith("body:")) {
+        d_ptr->_body = true;
+        input = input.mid(5);
+    }
+
+    if (!input.isEmpty()) {
+        QMailMessagePart::Location loc(input);
+        if (loc.isValid(true) || loc.containingMessageId().isValid()) {
+            d_ptr->_location = loc;
+        }
     }
 }
 
@@ -69,7 +128,7 @@ QMessageContentContainerId::~QMessageContentContainerId()
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
     if (isValid()) {
-        return (other.isValid() ? (d_ptr->_location.toString(true) == other.d_ptr->_location.toString(true)) : false);
+        return (other.isValid() && (toString() == other.toString()));
     } else {
         return !other.isValid();
     }
@@ -79,12 +138,11 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 {
     if (&other != this) {
         if (other.isValid()) {
-            if (!d_ptr) {
-                d_ptr = new QMessageContentContainerIdPrivate;
-            }
             d_ptr->_location = other.d_ptr->_location;
+            d_ptr->_body = other.d_ptr->_body;
         } else {
-            delete d_ptr;
+            d_ptr->_location = QMailMessagePart::Location();
+            d_ptr->_body = false;
         }
     }
 
@@ -93,12 +151,17 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 
 QString QMessageContentContainerId::toString() const
 {
-    return (isValid() ? d_ptr->_location.toString(true) : QString());
+    QString location(d_ptr->_location.toString(true));
+    if (d_ptr->_body) {
+        location.prepend("body:");
+    }
+
+    return location;
 }
 
 bool QMessageContentContainerId::isValid() const
 {
-    // Either we have a valid part indicator, or invalid with a valid message ID (indicating the message body)
-    return (d_ptr && (d_ptr->_location.isValid(true) || d_ptr->_location.containingMessageId().isValid()));
+    // Either we have a valid part locator, or we indicate a message body
+    return (d_ptr->_body || d_ptr->_location.isValid(true));
 }
 

@@ -72,4 +72,10 @@ bool QMessageFolderId::isValid() const
 {
     return false; // stub
 }
+
+uint qHash(const QMessageFolderId &id)
+{
+    return 0; // stub
+}
+
 #endif

@@ -75,15 +75,13 @@ QMailFolderId convert(const QMessageFolderId &id)
     return QMailFolderId(id.toString().toULongLong());
 }
 
-QMessageContentContainerId convert(const QMailMessagePart::Location &location)
-{
-    return QMessageContentContainerId(location.toString(true));
-}
+/* in qmessagecontentcontainerid_qmf.cpp
+QMessageContentContainerId convert(const QMailMessagePart::Location &location);
 
-QMailMessagePart::Location convert(const QMessageContentContainerId &id)
-{
-    return QMailMessagePart::Location(id.toString());
-}
+QMailMessagePart::Location convert(const QMessageContentContainerId &id);
+
+QMessageContentContainerId bodyId(const QMailMessageId &id);
+*/
 
 QMessageIdList convert(const QList<QMailMessageId> &ids)
 {

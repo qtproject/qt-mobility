@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
+#include "qmfhelpers_p.h"
 
 #include <qmailid.h>
 
@@ -100,6 +101,11 @@ QString QMessageFolderId::toString() const
 bool QMessageFolderId::isValid() const
 {
     return (d_ptr && d_ptr->_id.isValid());
+}
+
+uint qHash(const QMessageFolderId &id)
+{
+    return qHash(QmfHelpers::convert(id));
 }
 
 #endif

@@ -113,3 +113,9 @@
     Qt-style synonym for QList<QMessageAccountId>
 */
 
+/*! 
+    \fn uint qHash(const QMessageAccountId&);
+
+    \internal
+*/
+    
