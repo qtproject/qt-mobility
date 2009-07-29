@@ -71,7 +71,12 @@ private slots:
     void testAccountSortKey_data();
     void testAccountSortKey();
 
+    void testFolderFilterKey_data();
+    void testFolderFilterKey();
+
 private:
+    QMessageFolderIdList standardFolderIds;
+
     QMessageAccountIdList accountIds;
     QMessageFolderIdList folderIds;
     QMessageIdList messageIds;
@@ -81,7 +86,16 @@ Q_DECLARE_METATYPE(QMessageAccountIdList)
 Q_DECLARE_METATYPE(QMessageAccountFilterKey)
 Q_DECLARE_METATYPE(QMessageAccountSortKey)
 
+Q_DECLARE_METATYPE(QMessageFolderIdList)
+Q_DECLARE_METATYPE(QMessageFolderFilterKey)
+Q_DECLARE_METATYPE(QMessageFolderSortKey)
+
 QDebug &operator<<(QDebug &dbg, const QMessageAccountId &id)
+{
+    return dbg << id.toString();
+}
+
+QDebug &operator<<(QDebug &dbg, const QMessageFolderId &id)
 {
     return dbg << id.toString();
 }
@@ -125,6 +139,8 @@ void tst_QMessageStoreKeys::initTestCase()
 {
     Support::clearMessageStore();
 
+    standardFolderIds = QMessageStore::instance()->queryFolders();
+
     QList<Support::Parameters> accountParams;
     QList<Support::Parameters> folderParams;
     QList<Support::Parameters> messageParams;
@@ -135,6 +151,23 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("fromAddress", "superstar2000@example.net")
                   << Params()("name", "Alter Ego")
                              ("fromAddress", "UltraMegaLightningBabe@superhero.test");
+
+    folderParams << Params()("parentAccountName", "Personal")
+                            ("path", "[Root]")
+                            ("displayName", "My messages")
+                            ("parentFolderPath", "")
+                 << Params()("parentAccountName", "Work")
+                            ("path", "/Inbox")
+                            ("displayName", "Inbox")
+                            ("parentFolderPath", "")
+                 << Params()("parentAccountName", "Work")
+                            ("path", "/Inbox/X-Announce")
+                            ("displayName", "X-Announce")
+                            ("parentFolderPath", "/Inbox")
+                 << Params()("parentAccountName", "Work")
+                            ("path", "/Inbox/X-Announce/X-Archived")
+                            ("displayName", "X-Archived")
+                            ("parentFolderPath", "/Inbox/X-Announce");
 
     foreach (const Support::Parameters &params, accountParams) {
         accountIds.append(Support::addAccount(params));
@@ -240,12 +273,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
         << QMessageAccountIdList();
 
     QTest::newRow("id filter inclusion 1")
-        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work"), QMessageDataComparator::Includes) 
+        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QTest::newRow("id filter inclusion 2")
-        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal"), QMessageDataComparator::Includes) 
+        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[1] )
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
 
@@ -265,12 +298,12 @@ void tst_QMessageStoreKeys::testAccountFilterKey_data()
         << accountIds;
 
     QTest::newRow("id filter exclusion 1")
-        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work"), QMessageDataComparator::Excludes) 
+        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Work", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[0] );
 
     QTest::newRow("id filter exclusion 2")
-        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal"), QMessageDataComparator::Excludes) 
+        << QMessageAccountFilterKey::id(QMessageAccountFilterKey::name("Personal", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
@@ -552,6 +585,611 @@ void tst_QMessageStoreKeys::testAccountSortKey()
             qDebug() << "y:" << ids;
         }
         QCOMPARE(x, ids);
+    }
+    */
+}
+
+void tst_QMessageStoreKeys::testFolderFilterKey_data()
+{
+    QTest::addColumn<QMessageFolderFilterKey>("key");
+    QTest::addColumn<QMessageFolderIdList>("ids");
+    QTest::addColumn<QMessageFolderIdList>("negatedIds");
+
+    QTest::newRow("empty key")
+        << QMessageFolderFilterKey() 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("id equality 1")
+        << QMessageFolderFilterKey::id(folderIds[0], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id equality 2")
+        << QMessageFolderFilterKey::id(folderIds[1], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[1] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id equality invalid")
+        << QMessageFolderFilterKey::id(QMessageFolderId(), QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("id inequality 1")
+        << QMessageFolderFilterKey::id(folderIds[0], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("id inequality 2")
+        << QMessageFolderFilterKey::id(folderIds[1], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[1] );
+
+    QTest::newRow("id inequality invalid")
+        << QMessageFolderFilterKey::id(QMessageFolderId(), QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("id list inclusion 1")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[0], QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id list inclusion 2")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[1], QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[1] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id list inclusion 3")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[0] << folderIds[1], QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] )
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id list inclusion empty")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList(), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("id list exclusion 1")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[0], QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("id list exclusion 2")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[1], QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[1] );
+
+    QTest::newRow("id list exclusion 3")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList() << folderIds[0] << folderIds[1], QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+
+    QTest::newRow("id list exclusion empty")
+        << QMessageFolderFilterKey::id(QMessageFolderIdList(), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("id filter inclusion 1")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id filter inclusion 2")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("id filter inclusion 3")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("id filter inclusion empty")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey(), QMessageDataComparator::Includes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("id filter inclusion non-matching")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("id filter exclusion 1")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("id filter exclusion 2")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] );
+
+    QTest::newRow("id filter exclusion 3")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("id filter exclusion empty")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey(), QMessageDataComparator::Excludes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("id filter exclusion non-matching")
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path equality 1")
+        << QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("path equality 2")
+        << QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("path equality non-matching")
+        << QMessageFolderFilterKey::path("Nonesuch", QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("path equality empty")
+        << QMessageFolderFilterKey::path(QString(), QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("path equality zero-length")
+        << QMessageFolderFilterKey::path("", QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("path inequality 1")
+        << QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("path inequality 2")
+        << QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] );
+
+    QTest::newRow("path inequality non-matching")
+        << QMessageFolderFilterKey::path("Nonesuch", QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path inequality empty")
+        << QMessageFolderFilterKey::path(QString(), QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path inequality zero-length")
+        << QMessageFolderFilterKey::path("", QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path inclusion 1")
+        << QMessageFolderFilterKey::path("oot", QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("path inclusion 2")
+        << QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("path inclusion non-matching")
+        << QMessageFolderFilterKey::path("Nonesuch", QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("path inclusion empty")
+        << QMessageFolderFilterKey::path(QString(), QMessageDataComparator::Includes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path inclusion zero-length")
+        << QMessageFolderFilterKey::path("", QMessageDataComparator::Includes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path exclusion 1")
+        << QMessageFolderFilterKey::path("oot", QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("path exclusion 2")
+        << QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("path exclusion non-matching")
+        << QMessageFolderFilterKey::path("Nonesuch", QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("path exclusion empty")
+        << QMessageFolderFilterKey::path(QString(), QMessageDataComparator::Excludes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("path exclusion zero-length")
+        << QMessageFolderFilterKey::path("", QMessageDataComparator::Excludes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName equality 1")
+        << QMessageFolderFilterKey::displayName("My messages", QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("displayName equality 2")
+        << QMessageFolderFilterKey::displayName("X-Announce", QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("displayName equality non-matching")
+        << QMessageFolderFilterKey::displayName("Nonesuch", QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName equality empty")
+        << QMessageFolderFilterKey::displayName(QString(), QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName equality zero-length")
+        << QMessageFolderFilterKey::displayName("", QMessageDataComparator::Equal) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName inequality 1")
+        << QMessageFolderFilterKey::displayName("My messages", QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("displayName inequality 2")
+        << QMessageFolderFilterKey::displayName("X-Announce", QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] );
+
+    QTest::newRow("displayName inequality non-matching")
+        << QMessageFolderFilterKey::displayName("Nonesuch", QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName inequality empty")
+        << QMessageFolderFilterKey::displayName(QString(), QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName inequality zero-length")
+        << QMessageFolderFilterKey::displayName("", QMessageDataComparator::NotEqual) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName inclusion 1")
+        << QMessageFolderFilterKey::displayName("message", QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("displayName inclusion 2")
+        << QMessageFolderFilterKey::displayName("X-A", QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("displayName inclusion non-matching")
+        << QMessageFolderFilterKey::displayName("Nonesuch", QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName inclusion empty")
+        << QMessageFolderFilterKey::displayName(QString(), QMessageDataComparator::Includes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName inclusion zero-length")
+        << QMessageFolderFilterKey::displayName("", QMessageDataComparator::Includes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName exclusion 1")
+        << QMessageFolderFilterKey::displayName("messages", QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("displayName exclusion 2")
+        << QMessageFolderFilterKey::displayName("X-A", QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("displayName exclusion non-matching")
+        << QMessageFolderFilterKey::displayName("Nonesuch", QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("displayName exclusion empty")
+        << QMessageFolderFilterKey::displayName(QString(), QMessageDataComparator::Excludes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("displayName exclusion zero-length")
+        << QMessageFolderFilterKey::displayName("", QMessageDataComparator::Excludes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("parentAccountId equality 1")
+        << QMessageFolderFilterKey::parentAccountId(accountIds[0], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] ) + standardFolderIds;
+
+    QTest::newRow("parentAccountId equality 2")
+        << QMessageFolderFilterKey::parentAccountId(accountIds[1], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("parentAccountId equality invalid")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountId(), QMessageDataComparator::Equal) 
+        << standardFolderIds
+        << folderIds;
+
+    QTest::newRow("parentAccountId inequality 1")
+        << QMessageFolderFilterKey::parentAccountId(accountIds[0], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("parentAccountId inequality 2")
+        << QMessageFolderFilterKey::parentAccountId(accountIds[1], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("parentAccountId inequality invalid")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual) 
+        << folderIds
+        << standardFolderIds;
+
+    QTest::newRow("parentAccountId filter inclusion 1")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("Personal", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[0] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("parentAccountId filter inclusion 2")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("Work", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] ) + standardFolderIds;
+
+    QTest::newRow("parentAccountId filter inclusion 3")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("o", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << folderIds
+        << standardFolderIds;
+
+    QTest::newRow("parentAccountId filter inclusion empty")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey(), QMessageDataComparator::Includes) 
+        << folderIds 
+        << standardFolderIds;
+
+    QTest::newRow("parentAccountId filter inclusion non-matching")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("NoneSuch"), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("parentAccountId filter exclusion 1")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("Personal", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[0] );
+
+    QTest::newRow("parentAccountId filter exclusion 2")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("Work", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("parentAccountId filter exclusion 3")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("o", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << standardFolderIds
+        << folderIds;
+
+    QTest::newRow("parentAccountId filter exclusion empty")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey(), QMessageDataComparator::Excludes) 
+        << standardFolderIds
+        << folderIds;
+
+    QTest::newRow("parentAccountId filter exclusion non-matching")
+        << QMessageFolderFilterKey::parentAccountId(QMessageAccountFilterKey::name("NoneSuch"), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("parentFolderId equality 1")
+        << QMessageFolderFilterKey::parentFolderId(folderIds[1], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId equality 2")
+        << QMessageFolderFilterKey::parentFolderId(folderIds[2], QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId equality invalid")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderId(), QMessageDataComparator::Equal) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("parentFolderId inequality 1")
+        << QMessageFolderFilterKey::parentFolderId(folderIds[1], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] );
+
+    QTest::newRow("parentFolderId inequality 2")
+        << QMessageFolderFilterKey::parentFolderId(folderIds[2], QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[3] );
+
+    QTest::newRow("parentFolderId inequality invalid")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderId(), QMessageDataComparator::NotEqual) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter inclusion 1")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter inclusion 2")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter inclusion 3")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter inclusion empty")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey(), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter inclusion non-matching")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("parentFolderId filter exclusion 1")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[3] );
+
+    QTest::newRow("parentFolderId filter exclusion 2")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] );
+
+    QTest::newRow("parentFolderId filter exclusion 3")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("parentFolderId filter exclusion empty")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey(), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("parentFolderId filter exclusion non-matching")
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("ancestorFolderIds list inclusion 1")
+        << QMessageFolderFilterKey::ancestorFolderIds(folderIds[2], QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds list inclusion 2")
+        << QMessageFolderFilterKey::ancestorFolderIds(folderIds[1], QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds list inclusion invalid")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderId(), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds list exclusion 1")
+        << QMessageFolderFilterKey::ancestorFolderIds(folderIds[2], QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds list exclusion 2")
+        << QMessageFolderFilterKey::ancestorFolderIds(folderIds[1], QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds list exclusion invalid")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderId(), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+
+    QTest::newRow("ancestorFolderIds filter inclusion 1")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds filter inclusion 2")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds filter inclusion 3")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds filter inclusion empty")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey(), QMessageDataComparator::Includes) 
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds filter inclusion non-matching")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Includes) 
+        << QMessageFolderIdList()
+        << folderIds + standardFolderIds;
+
+    QTest::newRow("ancestorFolderIds filter exclusion 1")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds filter exclusion 2")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds filter exclusion 3")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds filter exclusion empty")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey(), QMessageDataComparator::Excludes) 
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+
+    QTest::newRow("ancestorFolderIds filter exclusion non-matching")
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Excludes) 
+        << folderIds + standardFolderIds
+        << QMessageFolderIdList();
+}
+
+void tst_QMessageStoreKeys::testFolderFilterKey()
+{
+    QFETCH(QMessageFolderFilterKey, key);
+    QFETCH(QMessageFolderIdList, ids);
+    QFETCH(QMessageFolderIdList, negatedIds);
+
+    // Order is irrelevant for filtering
+    QCOMPARE(QMessageStore::instance()->queryFolders(key).toSet(), ids.toSet());
+    QCOMPARE(QMessageStore::instance()->queryFolders(~key).toSet(), negatedIds.toSet());
+
+    /*
+    {
+        QSet<QMessageFolderId> x(QMessageStore::instance()->queryFolders(key).toSet());
+        QSet<QMessageFolderId> y(ids.toSet());
+        if (x != y) {
+            qDebug() << "x:" << x;
+            qDebug() << "y:" << y;
+        }
+        QCOMPARE(x, y);
+    }
+
+    {
+        QSet<QMessageFolderId> x(QMessageStore::instance()->queryFolders(~key).toSet());
+        QSet<QMessageFolderId> y(negatedIds.toSet());
+        if (x != y) {
+            qDebug() << "x:" << x;
+            qDebug() << "y:" << y;
+        }
+        QCOMPARE(x, y);
     }
     */
 }
