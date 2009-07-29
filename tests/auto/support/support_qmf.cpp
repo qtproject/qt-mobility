@@ -130,15 +130,19 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
     QString to(params["to"]);
     QString from(params["from"]);
     QString date(params["date"]);
+    QString receivedDate(params["receivedDate"]);
     QString subject(params["subject"]);
     QString text(params["text"]);
-    QString parentAccountName(params["parentAccountName"]);
-    QString parentFolderPath(params["parentFolderPath"]);
+    QString priority(params["priority"]);
+    QString size(params["size"]);
+    QString type(params["type"]);
 
-    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() && !text.isEmpty() && 
+    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
         QMailAccountIdList accountIds(QMailStore::instance()->queryAccounts(QMailAccountKey::name(parentAccountName)));
@@ -152,15 +156,51 @@ QMessageId addMessage(const Parameters &params)
                 message.setParentAccountId(accountIds.first());
                 message.setParentFolderId(folderIds.first());
 
-                message.setMessageType(QMailMessage::Email);
-                message.setTo(QMailAddress(to));
+                message.setTo(QMailAddress::fromStringList(to));
                 message.setFrom(QMailAddress(from));
-                message.setDate(QMailTimeStamp(QDateTime::fromString(date, Qt::ISODate)));
                 message.setSubject(subject);
 
-                QMailMessageContentType ct("text/plain; charset=UTF-8");
-                message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
-                message.setStatus(QMailMessage::ContentAvailable, true);
+                QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
+                dt.setTimeSpec(Qt::UTC);
+                message.setDate(QMailTimeStamp(dt));
+
+                if (type.isEmpty()) {
+                    message.setMessageType(QMailMessage::Email);
+                } else {
+                    if (type.toLower() == "mms") {
+                        message.setMessageType(QMailMessage::Mms);
+                    } else if (type.toLower() == "sms") {
+                        message.setMessageType(QMailMessage::Sms);
+                    } else if (type.toLower() == "xmpp") {
+                        message.setMessageType(QMailMessage::Instant);
+                    } else {
+                        message.setMessageType(QMailMessage::Email);
+                    }
+                }
+
+                if (!receivedDate.isEmpty()) {
+                    QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                    dt.setTimeSpec(Qt::UTC);
+                    message.setReceivedDate(QMailTimeStamp(dt));
+                }
+
+                if (!priority.isEmpty()) {
+                    if (priority.toLower() == "high") {
+                        message.setStatus(QmfHelpers::highPriorityMask(), true);
+                    } else if (priority.toLower() == "low") {
+                        message.setStatus(QmfHelpers::lowPriorityMask(), true);
+                    }
+                }
+
+                if (!size.isEmpty()) {
+                    message.setSize(size.toUInt());
+                }
+
+                if (!text.isEmpty()) {
+                    QMailMessageContentType ct("text/plain; charset=UTF-8");
+                    message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
+                    message.setStatus(QMailMessage::ContentAvailable, true);
+                }
 
                 if (!QMailStore::instance()->addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
@@ -171,8 +211,10 @@ QMessageId addMessage(const Parameters &params)
                 qWarning() << "Unable to locate parent folder:" << parentFolderPath;
             }
         } else {
-            qWarning() << "Necessary information missing";
+            qWarning() << "Unable to locate parent account:" << parentAccountName;
         }
+    } else {
+        qWarning() << "Necessary information missing";
     }
 
     return QMessageId();
