@@ -213,10 +213,10 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn bool requestSetValue(Handle handle, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QVariant &value)
 
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the value
-    provider to set the value of the path specified by \a handle to \a value.
+    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
+    the value space item identified by \a handle to set it to \a value.
 
     Returns true if the request was successfully sent; otherwise returns false.
 
@@ -224,25 +224,25 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
 
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the value
-    provider to set the value of the \a subPath under \a handle to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn bool requestRemoveValue(Handle handle, const QByteArray &subPath)
-
-    Process a client side QValueSpaceItem::remove() call by sending a request to the value provider
-    to remove the value of the \a subPath under \a handle.
+    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
+    the value space item identified by \a handle and \a subPath to set the value to \a value.
 
     Returns true if the request was successfully sent; otherwise returns false.
 */
 
 /*!
-    \fn bool syncRequests()
+    \fn bool QAbstractValueSpaceLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
+
+    Process a client side QValueSpaceItem::remove() call by sending a request to the provider of
+    the value space item identified by \a handle and \a subPath to remove the item.
+
+    Returns true if the request was successfully sent; otherwise returns false.
+*/
+
+/*!
+    \fn bool QAbstractValueSpaceLayer::syncRequests()
 
     Commit any pending request made through call to requestSetValue() and requestRemoveValue().
 
@@ -250,25 +250,26 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
 
     Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
-    \a subPath under \a handle to \a value.
+    \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
+    \a creator.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
 
-    Process calls to QValueSpaceObject::removeAttribute() by removing the value specified by the
-    \a subPath under \a handle.
+    Process calls to QValueSpaceObject::removeAttribute() by removing the value space item
+    identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn bool removeSubTree(QValueSpaceObject *creator, Handle handle)
+    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
 
     Process calls to QValueSpaceObject::~QValueSpaceObject() by removing the entire sub tree
     created by \a creator under \a handle.
@@ -277,7 +278,7 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn void addWatch(QValueSpaceObject *creator, Handle handle)
+    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceObject *creator, Handle handle)
 
     Registers \a creator for change notifications to values under \a handle.
 
@@ -285,7 +286,7 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn void removeWatches(QValueSpaceObject *creator, Handle parent)
+    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
 
     Removes all registered change notifications for \a creator under \a parent.
 
@@ -293,19 +294,19 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
-    \fn void sync()
+    \fn void QAbstractValueSpaceLayer::sync()
 
     Flushes all pending changes made by calls to setValue(), removeValue() and removeSubTree().
 */
 
 /*!
-    \fn void emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
+    \fn void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
 
     Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
 */
 
 /*!
-    \fn void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
+    \fn void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
 
     Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
 */

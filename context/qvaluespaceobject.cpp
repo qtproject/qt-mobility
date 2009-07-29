@@ -120,30 +120,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn virtual bool requestSetValue(Handle handle, const QVariant &data) = 0
+    \fn void QValueSpaceObject::itemRemove(const QByteArray &attribute)
 
-    Sends a request to the provider of the value space item identified by \a handle to set it to
-    \a data.
-
-    Returns true if the request is successfully sent; otherwise returns false.
+    Signal that is emitted when a request to remove \a attribute is received.
 */
 
 /*!
-    \fn virtual bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data) = 0
+    \fn void QValueSpaceObject::itemSetValue(const QByteArray &attribute, const QVariant &value)
 
-    Sends a request to the provider of the value space item identified by \a handle and \a path
-    to set it to \a data.
-
-    Returns true if the request is successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0
-
-    Sends a request to the provider of the value space item identified by \a handle and \a path
-    to remove the item.
-
-    Returns true if the request is successfully sent; otherwise returns false.
+    Signal that is emitted when a request to set \a attribute to \a value is received.
 */
 
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
@@ -365,6 +350,18 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
     d->layer->removeValue(this, d->handle, attribute);
 }
 
+/*!
+    Registers this QValueSpaceObject for notifications when request to set or remove value space
+    items under objectPath() are received by the underlying QAbstractValueSpaceLayer.
+
+    Generally you do not need to call this function as it is automatically called when
+    connections are made to this classes signals.  \a member is the signal that has been connected.
+
+    If you reimplement this virtual function it is important that you call this implementation from
+    your implementation.
+
+    \sa itemRemove(), itemSetValue()
+*/
 void QValueSpaceObject::connectNotify(const char *member)
 {
     VS_CALL_ASSERT;
