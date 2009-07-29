@@ -7,7 +7,7 @@
 #include "qgstreamervideoencode.h"
 #include "qgstreamerbushelper.h"
 
-QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
+QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
     :QAbstractMediaService(parent)
 {
     static bool initialized = false;
@@ -16,7 +16,13 @@ QGstreamerCaptureService::QGstreamerCaptureService(QObject *parent)
         gst_init(NULL, NULL);
     }
 
-    m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
+    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0")) {
+        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
+    }
+
+    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.CameraCapture/1.0")) {
+        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
+    }
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()

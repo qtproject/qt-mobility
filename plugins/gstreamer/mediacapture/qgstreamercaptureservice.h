@@ -13,7 +13,7 @@ class QGstreamerCaptureService : public QAbstractMediaService
 {
 Q_OBJECT
 public:
-    QGstreamerCaptureService(QObject *parent = 0);
+    QGstreamerCaptureService(const char *interface, QObject *parent = 0);
     virtual ~QGstreamerCaptureService();
 
     QList<QByteArray> supportedEndpointInterfaces(
