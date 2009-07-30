@@ -86,6 +86,8 @@ QMessage::Type convert(QMailMessage::MessageType t);
 QMailMessage::MessageType convert(QMessage::TypeFlags v);
 
 QMessage::StatusFlags convert(quint64 v);
+quint64 convert(QMessage::Status v);
+
 quint64 convert(QMessage::StatusFlags v);
 
 QMailStore::ErrorCode convert(QMessageStore::ErrorCode v);

@@ -141,6 +141,8 @@ QMessageId addMessage(const Parameters &params)
     QString priority(params["priority"]);
     QString size(params["size"]);
     QString type(params["type"]);
+    QString read(params["status-read"]);
+    QString hasAttachments(params["status-hasAttachments"]);
 
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
@@ -200,6 +202,14 @@ QMessageId addMessage(const Parameters &params)
                     QMailMessageContentType ct("text/plain; charset=UTF-8");
                     message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
                     message.setStatus(QMailMessage::ContentAvailable, true);
+                }
+
+                if (read.toLower() == "true") {
+                    message.setStatus(QMailMessage::Read, true);
+                }
+
+                if (hasAttachments.toLower() == "true") {
+                    message.setStatus(QMailMessage::HasAttachments, true);
                 }
 
                 if (!QMailStore::instance()->addMessage(&message)) {

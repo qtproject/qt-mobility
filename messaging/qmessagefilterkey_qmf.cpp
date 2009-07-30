@@ -272,14 +272,22 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::status(convert(value), convert(cmp));
+    result.d_ptr->_key = QMailMessageKey::status(convert(value), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes));
     return result;
 }
 
 QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
 {
+    QMailMessageKey key;
+
+    // This should be interpreted as specifying a match or otherwise on each of the flags set in the mask
+    if (mask & QMessage::Read) key &= QMailMessageKey::status(QMailMessage::Read, convert(cmp));
+    if (mask & QMessage::HasAttachments) key &= QMailMessageKey::status(QMailMessage::HasAttachments, convert(cmp));
+    if (mask & QMessage::Incoming) key &= QMailMessageKey::status(QMailMessage::Incoming, convert(cmp));
+    if (mask & QMessage::Removed) key &= QMailMessageKey::status(QMailMessage::Removed, convert(cmp));
+
     QMessageFilterKey result;
-    result.d_ptr->_key = QMailMessageKey::status(convert(mask), convert(cmp));
+    result.d_ptr->_key = (key.isEmpty() ? QMailMessageKey::nonMatchingKey() : key);
     return result;
 }
 

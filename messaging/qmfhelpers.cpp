@@ -286,7 +286,7 @@ QMessage::StatusFlags convert(quint64 v)
     return result;
 }
 
-quint64 convert(QMessage::StatusFlags v)
+quint64 convert(QMessage::Status v)
 {
     quint64 result(0);
 
@@ -304,6 +304,11 @@ quint64 convert(QMessage::StatusFlags v)
     }
 
     return result;
+}
+
+quint64 convert(QMessage::StatusFlags v)
+{
+    return convert(static_cast<QMessage::Status>(static_cast<uint>(v)));
 }
 
 QMessageAddress convert(const QMailAddress &address)

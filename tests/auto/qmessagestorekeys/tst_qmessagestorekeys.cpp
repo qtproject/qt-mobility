@@ -194,6 +194,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("receivedDate", "2000-01-01T12:01:00Z")
                              ("priority", "")
                              ("size", "160")
+                             ("status-read", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox")
                              ("type", "email")
@@ -204,6 +205,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("receivedDate", "2000-01-01T20:00:00Z")
                              ("priority", "High")
                              ("size", "10240")
+                             ("status-hasAttachments", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox")
                              ("type", "email")
@@ -214,6 +216,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("receivedDate", "2000-01-01T13:05:00Z")
                              ("priority", "High")
                              ("size", "20480")
+                             ("status-hasAttachments", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox/X-Announce")
                              ("type", "email")
@@ -224,6 +227,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("receivedDate", "2000-01-01T13:00:01Z")
                              ("priority", "")
                              ("size", "1056")
+                             ("status-read", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox/X-Announce/X-Archived")
                              ("type", "email")
@@ -233,7 +237,9 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("date", "1999-04-01T10:30:00Z")
                              ("receivedDate", "1999-04-01T10:31:00Z")
                              ("priority", "Low")
-                             ("size", "4096");
+                             ("size", "4096")
+                             ("status-read", "true")
+                             ("status-hasAttachments", "true");
 
     foreach (const Support::Parameters &params, accountParams) {
         accountIds.append(Support::addAccount(params));
@@ -1876,10 +1882,75 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] );
 
-    /*
-    static QMessageFilterKey status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    */
+    QTest::newRow("status equality 1")
+        << QMessageFilterKey::status(QMessage::Read, QMessageDataComparator::Equal) 
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] );
+
+    QTest::newRow("status equality 2")
+        << QMessageFilterKey::status(QMessage::HasAttachments, QMessageDataComparator::Equal) 
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] );
+
+    QTest::newRow("status equality 3")
+        << QMessageFilterKey::status(QMessage::Removed, QMessageDataComparator::Equal) 
+        << QMessageIdList()
+        << messageIds;
+
+    QTest::newRow("status inequality 1")
+        << QMessageFilterKey::status(QMessage::Read, QMessageDataComparator::NotEqual) 
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("status inequality 2")
+        << QMessageFilterKey::status(QMessage::HasAttachments, QMessageDataComparator::NotEqual) 
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] );
+
+    QTest::newRow("status inequality 3")
+        << QMessageFilterKey::status(QMessage::Removed, QMessageDataComparator::NotEqual) 
+        << messageIds
+        << QMessageIdList();
+
+    QTest::newRow("status mask inclusion 1")
+        << QMessageFilterKey::status(QMessage::Read, QMessageDataComparator::Includes) 
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] );
+
+    QTest::newRow("status mask inclusion 2")
+        << QMessageFilterKey::status(QMessage::Read | QMessage::HasAttachments, QMessageDataComparator::Includes) 
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] );
+
+    QTest::newRow("status mask inclusion 3")
+        << QMessageFilterKey::status(QMessage::Read | QMessage::Removed, QMessageDataComparator::Includes) 
+        << QMessageIdList()
+        << messageIds;
+
+    QTest::newRow("status mask inclusion empty")
+        << QMessageFilterKey::status(static_cast<QMessage::StatusFlags>(0), QMessageDataComparator::Includes) 
+        << QMessageIdList()
+        << messageIds;
+
+    QTest::newRow("status mask exclusion 1")
+        << QMessageFilterKey::status(QMessage::Read, QMessageDataComparator::Excludes) 
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("status mask exclusion 2")
+        << QMessageFilterKey::status(QMessage::Read | QMessage::HasAttachments, QMessageDataComparator::Excludes) 
+        << QMessageIdList()
+        << messageIds;
+
+    QTest::newRow("status mask exclusion 3")
+        << QMessageFilterKey::status(QMessage::Read | QMessage::Removed, QMessageDataComparator::Excludes) 
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("status mask exclusion empty")
+        << QMessageFilterKey::status(static_cast<QMessage::StatusFlags>(0), QMessageDataComparator::Excludes) 
+        << QMessageIdList()
+        << messageIds;
 
     QTest::newRow("priority equality 1")
         << QMessageFilterKey::priority(QMessage::High, QMessageDataComparator::Equal) 
