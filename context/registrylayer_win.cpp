@@ -124,6 +124,7 @@ private:
     }
 
     QMap<RegistryHandle *, HKEY> hKeys;
+    QMultiMap<RegistryHandle *, RegistryHandle *> notifyProxies;
     QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
 
     QMap<QValueSpaceObject *, QList<QByteArray> > creators;
@@ -421,8 +422,24 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
     if (properties & QAbstractValueSpaceLayer::Publish) {
         // Enable change notification for handle
         openRegistryKey(rh);
-        if (!hKeys.contains(rh))
-            return;
+        if (!hKeys.contains(rh)) {
+            // The key does not exist. Temporarily use the parent key as a proxy.
+            QByteArray path = rh->path;
+            while (!path.isEmpty()) {
+                rh = registryHandle(item(InvalidHandle, path));
+                openRegistryKey(rh);
+                if (hKeys.contains(rh)) {
+                    notifyProxies.insert(rh, registryHandle(handle));
+                    break;
+                }
+                removeHandle(Handle(rh));
+
+                int index = path.lastIndexOf('/');
+                path.truncate(index);
+            }
+            if (path.isEmpty())
+                return;
+        }
 
         HKEY key = hKeys.value(rh);
 
@@ -435,8 +452,7 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
             return;
         }
 
-        DWORD filter = REG_NOTIFY_CHANGE_LAST_SET;
-        // REG_NOTIFY_CHANGE_NAME REG_NOTIFY_CHANGE_ATTRIBUTES REG_NOTIFY_CHANGE_LAST_SET
+        DWORD filter = REG_NOTIFY_CHANGE_NAME | REG_NOTIFY_CHANGE_ATTRIBUTES | REG_NOTIFY_CHANGE_LAST_SET;
         long result = RegNotifyChangeKeyValue(key, true, filter, event, true);
 
         if (result != ERROR_SUCCESS) {
@@ -744,11 +760,29 @@ void RegistryLayer::sync()
 void RegistryLayer::emitHandleChanged(HKEY key)
 {
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
-    if (changedHandles.isEmpty())
+    if (changedHandles.isEmpty()) {
+        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+        UnregisterWait(wait.second);
+        CloseHandle(wait.first);
         return;
+    }
 
-    while (!changedHandles.isEmpty())
-        emit handleChanged(Handle(changedHandles.takeFirst()));
+    while (!changedHandles.isEmpty()) {
+        RegistryHandle *handle = changedHandles.takeFirst();
+        emit handleChanged(Handle(handle));
+
+        // Emit signal for handles that this handle is proxying for.
+        foreach (RegistryHandle *proxied, notifyProxies.values(handle)) {
+            openRegistryKey(proxied);
+            if (hKeys.contains(proxied)) {
+                notifyProxies.remove(handle, proxied);
+                removeHandle(Handle(handle));
+                setProperty(Handle(proxied), Publish);
+
+                emit handleChanged(Handle(proxied));
+            }
+        }
+    }
 
     QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
