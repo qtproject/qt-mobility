@@ -1,12 +1,12 @@
 TEMPLATE = app
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
+include (../../common.pri)
 
-LIBS += -L$$OUT_PWD/../../lib -lQtMedia
+LIBS += -lQtMedia
 
-QMAKE_RPATHDIR += $$OUT_PWD/../../lib
+QMAKE_RPATHDIR += $$DESTDIR
 
-DESTDIR = ../../bin
 
 HEADERS = \
     player.h \
