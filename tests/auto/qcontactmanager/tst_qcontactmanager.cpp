@@ -1664,7 +1664,10 @@ void tst_QContactManager::signalEmission()
 
     // If this is the memory engine, we skip some
     // cross manager notification tests (anonymous ids)
-    bool skipCross = engine == "memory" && params["id"].isEmpty();
+    bool skipCross = (engine == "memory" && params["id"].isEmpty());
+
+    // Also, kabc does not support cross notifications at this time
+    // but we QEXPECT_FAIL those since it's transitory
 
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
@@ -1724,12 +1727,13 @@ void tst_QContactManager::signalEmission()
     nc3.setFirst("Garry");
     c2.saveDetail(&nc2);
     c3.saveDetail(&nc3);
-    m1->saveContact(&c);
+    QVERIFY(m1->saveContact(&c));
     addSigCount += 1;
-    m1->saveContact(&c2);
+    QVERIFY(m1->saveContact(&c2));
     addSigCount += 1;
-    m1->saveContact(&c3);
+    QVERIFY(m1->saveContact(&c3));
     addSigCount += 1;
+    QCOMPARE(spyCM.count(), modSigCount);
     QCOMPARE(spyCA.count(), addSigCount);
 
     // verify multiple modifies works as advertised
@@ -1825,9 +1829,12 @@ void tst_QContactManager::signalEmission()
         ncs.setPrefix("Test2");
         c.saveDetail(&ncs);
         m2->saveContact(&c);
+        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCA.count(), 1); // check that we received the update signals.
+        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCM.count(), 1); // check that we received the update signals.
         m2->removeContact(c.id());
+        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCR.count(), 1); // check that we received the remove signal.
     }
 
