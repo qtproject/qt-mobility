@@ -103,7 +103,7 @@ public:
         m_outDevice->write(tst_qnmeapositioninfosource_createRmcSentence(dt).toAscii());
     }
 
-    void feedNmeaData(const QByteArray &bytes)
+    void feedBytes(const QByteArray &bytes)
     {
         m_outDevice->write(bytes);
     }
@@ -221,7 +221,7 @@ private slots:
         }
     }
 
-    void startUpdates_withBufferedData_data()
+    void testWithBufferedData_data()
     {
         QTest::addColumn<QList<QDateTime> >("dateTimes");
         QTest::addColumn<UpdateTriggerMethod>("trigger");
@@ -254,7 +254,7 @@ private slots:
         QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
         proxy->source()->startUpdates();
 
-        proxy->feedNmeaData(bytes);
+        proxy->feedBytes(bytes);
         QTRY_COMPARE(spy.count(), dateTimes.count());
 
         for (int i=0; i<spy.count(); i++)
@@ -305,7 +305,7 @@ private slots:
         QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
         proxy->source()->requestUpdate();
 
-        proxy->feedNmeaData(bytes);
+        proxy->feedBytes(bytes);
         QTRY_COMPARE(spy.count(), 1);
         QCOMPARE(spy[0][0].value<QGeoPositionInfo>().dateTime(), dateTimes[0]);
     }
@@ -313,6 +313,48 @@ private slots:
     void requestUpdate_waitForValidDateTime_data()
     {
         startUpdates_waitForValidDateTime_data();
+    }
+
+    void testWithBadNmea()
+    {
+        QFETCH(QByteArray, bytes);
+        QFETCH(QList<QDateTime>, dateTimes);
+        QFETCH(UpdateTriggerMethod, trigger);
+
+        QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
+        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+        QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+        if (trigger == StartUpdatesMethod)
+            proxy->source()->startUpdates();
+        else
+            proxy->source()->requestUpdate();
+
+        proxy->feedBytes(bytes);
+        QTRY_COMPARE(spy.count(), dateTimes.count());
+        for (int i=0; i<dateTimes.count(); i++)
+            QCOMPARE(spy[i][0].value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
+    }
+
+    void testWithBadNmea_data()
+    {
+        QTest::addColumn<QByteArray>("bytes");
+        QTest::addColumn<QList<QDateTime> >("dateTimes");
+        QTest::addColumn<UpdateTriggerMethod>("trigger");
+
+        QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
+        QByteArray bad = tst_qnmeapositioninfosource_createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
+        bad = bad.mid(bad.length()/2);
+        QDateTime lastDateTime = firstDateTime.addSecs(2);
+
+        QByteArray bytes;
+        bytes += tst_qnmeapositioninfosource_createRmcSentence(firstDateTime).toLatin1();
+        bytes += bad;
+        bytes += tst_qnmeapositioninfosource_createRmcSentence(lastDateTime).toLatin1();
+        QTest::newRow("requestUpdate(), bad second sentence") << bytes
+                << (QList<QDateTime>() << firstDateTime) << RequestUpdatesMethod;
+        QTest::newRow("startUpdates(), bad second sentence") << bytes
+                << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
     }
 };
 
