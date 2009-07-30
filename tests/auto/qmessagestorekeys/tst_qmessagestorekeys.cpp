@@ -616,28 +616,6 @@ void tst_QMessageStoreKeys::testAccountFilterKey()
     // Order is irrelevant for filtering
     QCOMPARE(QMessageStore::instance()->queryAccounts(key).toSet(), ids.toSet());
     QCOMPARE(QMessageStore::instance()->queryAccounts(~key).toSet(), negatedIds.toSet());
-
-    /*
-    {
-        QSet<QMessageAccountId> x(QMessageStore::instance()->queryAccounts(key).toSet());
-        QSet<QMessageAccountId> y(ids.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-
-    {
-        QSet<QMessageAccountId> x(QMessageStore::instance()->queryAccounts(~key).toSet());
-        QSet<QMessageAccountId> y(negatedIds.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-    */
 }
 
 void tst_QMessageStoreKeys::testAccountSortKey_data()
@@ -660,17 +638,6 @@ void tst_QMessageStoreKeys::testAccountSortKey()
     QFETCH(QMessageAccountIdList, ids);
 
     QCOMPARE(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey(), sortKey), ids);
-
-    /*
-    {
-        QMessageAccountIdList x(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey(), sortKey));
-        if (x != ids) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << ids;
-        }
-        QCOMPARE(x, ids);
-    }
-    */
 }
 
 void tst_QMessageStoreKeys::testFolderFilterKey_data()
@@ -1254,28 +1221,6 @@ void tst_QMessageStoreKeys::testFolderFilterKey()
     // Order is irrelevant for filtering
     QCOMPARE(QMessageStore::instance()->queryFolders(key).toSet(), ids.toSet());
     QCOMPARE(QMessageStore::instance()->queryFolders(~key).toSet(), negatedIds.toSet());
-
-    /*
-    {
-        QSet<QMessageFolderId> x(QMessageStore::instance()->queryFolders(key).toSet());
-        QSet<QMessageFolderId> y(ids.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-
-    {
-        QSet<QMessageFolderId> x(QMessageStore::instance()->queryFolders(~key).toSet());
-        QSet<QMessageFolderId> y(negatedIds.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-    */
 }
 
 void tst_QMessageStoreKeys::testFolderSortKey_data()
@@ -1308,17 +1253,6 @@ void tst_QMessageStoreKeys::testFolderSortKey()
     // Filter out the standard folders
     QMessageFolderFilterKey key(QMessageFolderFilterKey::parentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual));
     QCOMPARE(QMessageStore::instance()->queryFolders(key, sortKey), ids);
-
-    /*
-    {
-        QMessageFolderIdList x(QMessageStore::instance()->queryFolders(key, sortKey));
-        if (x != ids) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << ids;
-        }
-        QCOMPARE(x, ids);
-    }
-    */
 }
 
 void tst_QMessageStoreKeys::testMessageFilterKey_data()
@@ -2408,28 +2342,6 @@ void tst_QMessageStoreKeys::testMessageFilterKey()
     // Order is irrelevant for filtering
     QCOMPARE(QMessageStore::instance()->queryMessages(key).toSet(), ids.toSet());
     QCOMPARE(QMessageStore::instance()->queryMessages(~key).toSet(), negatedIds.toSet());
-
-    /*
-    {
-        QSet<QMessageId> x(QMessageStore::instance()->queryMessages(key).toSet());
-        QSet<QMessageId> y(ids.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-
-    {
-        QSet<QMessageId> x(QMessageStore::instance()->queryMessages(~key).toSet());
-        QSet<QMessageId> y(negatedIds.toSet());
-        if (x != y) {
-            qDebug() << "x:" << x;
-            qDebug() << "y:" << y;
-        }
-        QCOMPARE(x, y);
-    }
-    */
 }
 
 void tst_QMessageStoreKeys::testMessageSortKey_data()
@@ -2646,5 +2558,4 @@ void tst_QMessageStoreKeys::testMessageSortKey()
         QVERIFY(match);
     }
 }
-
 
