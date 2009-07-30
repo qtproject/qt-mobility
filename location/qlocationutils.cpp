@@ -181,7 +181,8 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
 
 static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
-    *hasFix = false;
+    if (hasFix)
+        *hasFix = false;
 
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -202,7 +203,8 @@ static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo 
 
 static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
-    *hasFix = false;
+    if (hasFix)
+        *hasFix = false;
 
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -226,10 +228,11 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
 
 bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
 {
-    if (!info || !hasFix)
+    if (!info)
         return false;
 
-    *hasFix = false;
+    if (hasFix)
+        *hasFix = false;
     if (size < 6 || data[0] != '$' || !hasValidNmeaChecksum(data, size))
         return false;
 
