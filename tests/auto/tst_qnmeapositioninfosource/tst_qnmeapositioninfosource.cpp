@@ -122,7 +122,8 @@ public:
         : m_server(new QTcpServer(this)),
           m_mode(mode)
     {
-        m_server->listen(QHostAddress::LocalHost);
+        bool b = m_server->listen(QHostAddress::LocalHost);
+        Q_ASSERT(b);
     }
 
     QGeoPositionInfoSourceProxy *createProxy()
@@ -130,7 +131,7 @@ public:
         QTcpSocket *client = new QTcpSocket;
         client->connectToHost(m_server->serverAddress(), m_server->serverPort());
         qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
-        bool b = m_server->waitForNewConnection();
+        bool b = m_server->waitForNewConnection(5000);
         Q_ASSERT(b);
         b = client->waitForConnected();
         Q_ASSERT(b);
@@ -395,7 +396,7 @@ class tst_QNmeaPositionInfoSource_SubclassTest_RealTimeMode : public QGeoPositio
     Q_OBJECT
 public:
     tst_QNmeaPositionInfoSource_SubclassTest_RealTimeMode(QObject *parent = 0)
-        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::RealTimeMode))
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::RealTimeMode), parent)
     {
     }
 
@@ -410,7 +411,7 @@ class tst_QNmeaPositionInfoSource_SubclassTest_SimulationMode : public QGeoPosit
     Q_OBJECT
 public:
     tst_QNmeaPositionInfoSource_SubclassTest_SimulationMode(QObject *parent = 0)
-        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode))
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode), parent)
     {
     }
 
@@ -428,7 +429,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     int r;
-/*
+
     tst_QNmeaPositionInfoSource_RealTimeMode realTime;
     r = QTest::qExec(&realTime, argc, argv);
     if (r < 0)
@@ -448,7 +449,7 @@ int main(int argc, char *argv[])
     r = QTest::qExec(&simSubclassTest, argc, argv);
     if (r < 0)
         return r;
-*/
+
     return 0;
 }
 
