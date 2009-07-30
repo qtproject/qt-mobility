@@ -581,7 +581,6 @@ bool QContactKabcEngine::removeDetailDefinition(const QContactDetailDefinition& 
 bool QContactKabcEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Groups:
         case QContactManagerInfo::Batch:
         case QContactManagerInfo::ActionPreferences:
         case QContactManagerInfo::ReadOnlyDetails:
