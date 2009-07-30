@@ -112,6 +112,7 @@
 <p>Sets the source to emit updates every <i>msec</i> milliseconds. If <i>msec</i> is 0, interval-based updates are disabled and the source provides updates whenever they are available.</p>
 <p>If <i>msec</i> is not 0 and is less than the value returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</a>(), the interval will be set to the minimum interval.</p>
 <p>Note that implementations may not provide updates at the exact interval specified. For example, a given millisecond interval value may be rounded to the nearest second if the implementation does not support intervals specified to millisecond precision.</p>
+<p>If an implementation cannot provide an update at a particular interval, it will provide the next update as soon as it becomes available.</p>
 <p><b>Note:</b> When reimplementing this method, subclasses must call the base method implementation to ensure <a href="qgeopositioninfosource.html#updateInterval">updateInterval</a>() returns the correct value.</p>
 <p>See also <a href="qgeopositioninfosource.html#updateInterval">updateInterval</a>().</p>
 <h3 class="fn"><a name="startUpdates"></a>void QGeoPositionInfoSource::startUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>

@@ -50,14 +50,14 @@
         <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::GroundSpeed</keyword>
         <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::MagneticVariation</keyword>
         <keyword ref="qgeopositioninfo.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeopositioninfo.html#dateTime">dateTime</keyword>
         <keyword ref="qgeopositioninfo.html#hasProperty">hasProperty</keyword>
         <keyword ref="qgeopositioninfo.html#isValid">isValid</keyword>
         <keyword ref="qgeopositioninfo.html#property">property</keyword>
         <keyword ref="qgeopositioninfo.html#removeProperty">removeProperty</keyword>
         <keyword ref="qgeopositioninfo.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qgeopositioninfo.html#setDateTime">setDateTime</keyword>
         <keyword ref="qgeopositioninfo.html#setProperty">setProperty</keyword>
-        <keyword ref="qgeopositioninfo.html#setUpdateTime">setUpdateTime</keyword>
-        <keyword ref="qgeopositioninfo.html#updateTime">updateTime</keyword>
         <keyword ref="qgeopositioninfo.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qgeopositioninfo.html#operator-eq">operator=</keyword>
         <keyword ref="qgeopositioninfo.html#operator-eq-eq">operator==</keyword>
@@ -90,9 +90,8 @@
         <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</keyword>
         <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::SimulationMode</keyword>
         <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::RealTimeMode</keyword>
-        <keyword ref="qnmeapositioninfosource.html#newDataAvailable">newDataAvailable</keyword>
-        <keyword ref="qnmeapositioninfosource.html#setSourceDevice">setSourceDevice</keyword>
-        <keyword ref="qnmeapositioninfosource.html#sourceDevice">sourceDevice</keyword>
+        <keyword ref="qnmeapositioninfosource.html#device">device</keyword>
+        <keyword ref="qnmeapositioninfosource.html#setDevice">setDevice</keyword>
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>

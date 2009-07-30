@@ -81,8 +81,12 @@
 <p>Constructs a coordinate. The coordinate will be invalid until <a href="qgeocoordinate.html#setLatitude">setLatitude</a>() and <a href="qgeocoordinate.html#setLongitude">setLongitude</a>() have been called.</p>
 <h3 class="fn"><a name="QGeoCoordinate-2"></a>QGeoCoordinate::QGeoCoordinate ( double <i>latitude</i>, double <i>longitude</i> )</h3>
 <p>Constructs a coordinate with the given <i>latitude</i> and <i>longitude</i>.</p>
+<p>If the latitude is not between -90 to 90 inclusive, or the longitude is not between -180 to 180 inclusive, none of the values are set and the <a href="qgeocoordinate.html#type">type</a>() will be <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
+<p>See also <a href="qgeocoordinate.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QGeoCoordinate-3"></a>QGeoCoordinate::QGeoCoordinate ( double <i>latitude</i>, double <i>longitude</i>, double <i>altitude</i> )</h3>
 <p>Constructs a coordinate with the given <i>latitude</i>, <i>longitude</i> and <i>altitude</i>.</p>
+<p>If the latitude is not between -90 to 90 inclusive, or the longitude is not between -180 to 180 inclusive, none of the values are set and the <a href="qgeocoordinate.html#type">type</a>() will be <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
+<p>See also <a href="qgeocoordinate.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QGeoCoordinate-4"></a>QGeoCoordinate::QGeoCoordinate ( const QGeoCoordinate &amp; <i>other</i> )</h3>
 <p>Constructs a coordinate from the contents of <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QGeoCoordinate"></a>QGeoCoordinate::~QGeoCoordinate ()</h3>
@@ -122,16 +126,18 @@
 <p>See also <a href="qgeocoordinate.html#longitude">longitude</a>().</p>
 <h3 class="fn"><a name="toString"></a>QString QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
 <p>Returns this coordinate as a string in the specified <i>format</i>.</p>
-<p>For example, if this coordinate latitude-longitude coordinates of (-27.46758°, 153.027892°), these are the strings that are returned depending on <i>format</i>:</p>
+<p>For example, if this coordinate has a latitude of -27.46758, a longitude of 153.027892 and an altitude of 28.1, these are the strings returned depending on <i>format</i>:</p>
 <p><table align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th><i>format</i> value</th><th>Returned string</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DecimalDegrees</a></td><td>-27.46758°, 153.02789°</td></tr>
-<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DecimalDegreesWithHemisphere</a></td><td>27.46758° S, 153.02789° E</td></tr>
-<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutes</a></td><td>-27° 28.054', 153° 1.673'</td></tr>
-<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesWithHemisphere</a></td><td>27° 28.054 S', 153° 1.673' E</td></tr>
-<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesSeconds</a></td><td>-27° 28' 3.2&quot;, 153° 1' 40.4&quot;</td></tr>
-<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesSecondsWithHemisphere</a></td><td>27° 28' 3.2&quot; S, 153° 1' 40.4&quot; E</td></tr>
+<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DecimalDegrees</a></td><td>-27.46758°, 153.02789°, 28.1m</td></tr>
+<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DecimalDegreesWithHemisphere</a></td><td>27.46758° S, 153.02789° E, 28.1m</td></tr>
+<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutes</a></td><td>-27° 28.054', 153° 1.673', 28.1m</td></tr>
+<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesWithHemisphere</a></td><td>27° 28.054 S', 153° 1.673' E, 28.1m</td></tr>
+<tr valign="top" class="odd"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesSeconds</a></td><td>-27° 28' 3.2&quot;, 153° 1' 40.4&quot;, 28.1m</td></tr>
+<tr valign="top" class="even"><td><a href="qgeocoordinate.html#CoordinateFormat-enum">DegreesMinutesSecondsWithHemisphere</a></td><td>27° 28' 3.2&quot; S, 153° 1' 40.4&quot; E, 28.1m</td></tr>
 </table></p>
+<p>The altitude field is omitted if no altitude is set.</p>
+<p>If the coordinate is invalid, an empty string is returned.</p>
 <h3 class="fn"><a name="type"></a><a href="qgeocoordinate.html#CoordinateType-enum">CoordinateType</a> QGeoCoordinate::type () const</h3>
 <p>Returns the type of this coordinate.</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QGeoCoordinate::operator!= ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>

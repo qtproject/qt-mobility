@@ -28,23 +28,16 @@
 <ul>
 <li><div class="fn"/><b><a href="qnmeapositioninfosource.html#QNmeaPositionInfoSource">QNmeaPositionInfoSource</a></b> ( UpdateMode <i>updateMode</i>, QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"/><b><a href="qnmeapositioninfosource.html#dtor.QNmeaPositionInfoSource">~QNmeaPositionInfoSource</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qnmeapositioninfosource.html#setSourceDevice">setSourceDevice</a></b> ( QIODevice * <i>device</i> )</li>
-<li><div class="fn"/>QIODevice * <b><a href="qnmeapositioninfosource.html#sourceDevice">sourceDevice</a></b> () const</li>
+<li><div class="fn"/>QIODevice * <b><a href="qnmeapositioninfosource.html#device">device</a></b> () const</li>
+<li><div class="fn"/>void <b><a href="qnmeapositioninfosource.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</li>
 <li><div class="fn"/>UpdateMode <b><a href="qnmeapositioninfosource.html#updateMode">updateMode</a></b> () const</li>
 </ul>
 <ul>
 <li><div class="fn"/>7 public functions inherited from <a href="qgeopositioninfosource.html#public-functions">QGeoPositionInfoSource</a></li>
 </ul>
-<a name="public-slots"></a>
-<h3>Public Slots</h3>
-<ul>
-<li><div class="fn"/>void <b><a href="qnmeapositioninfosource.html#newDataAvailable">newDataAvailable</a></b> ()</li>
-</ul>
-<ul>
-<li><div class="fn"/>3 public slots inherited from <a href="qgeopositioninfosource.html#public-slots">QGeoPositionInfoSource</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"/>3 public slots inherited from <a href="qgeopositioninfosource.html#public-slots">QGeoPositionInfoSource</a></li>
 <li><div class="fn"/>2 signals inherited from <a href="qgeopositioninfosource.html#signals">QGeoPositionInfoSource</a></li>
 <li><div class="fn"/>1 static public member inherited from <a href="qgeopositioninfosource.html#static-public-members">QGeoPositionInfoSource</a></li>
 </ul>
@@ -54,7 +47,7 @@
 <p>The QNmeaPositionInfoSource class provides positional information using a NMEA data source.</p>
 <p>NMEA is a commonly used protocol for the specification of one's global position at a certain point in time. The QNmeaPositionInfoSource class reads NMEA data and uses it to provide positional data in the form of <a href="qgeopositioninfo.html">QGeoPositionInfo</a> objects.</p>
 <p>A QNmeaPositionInfoSource instance operates in either <a href="qnmeapositioninfosource.html#UpdateMode-enum">RealTimeMode</a> or <a href="qnmeapositioninfosource.html#UpdateMode-enum">SimulationMode</a>. These modes allow NMEA data to be read from either a live source of positional data, or replayed for simulation purposes from previously recorded NMEA data.</p>
-<p>Use setUpdateMode() to define the update mode, and <a href="qnmeapositioninfosource.html#setSourceDevice">setSourceDevice</a>() to set the source of NMEA data.</p>
+<p>Use setUpdateMode() to define the update mode, and <a href="qnmeapositioninfosource.html#setDevice">setDevice</a>() to set the source of NMEA data.</p>
 <p>Use <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() to receive regular position updates through the updated() signal, and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>() to stop these updates. If you only require updates occasionally, you can call <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>() as required, instead of <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>().</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -71,18 +64,14 @@
 <p>Constructs a <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> instance with the given <i>parent</i> and <i>updateMode</i>.</p>
 <h3 class="fn"><a name="dtor.QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::~QNmeaPositionInfoSource ()</h3>
 <p>Destroys the position source.</p>
-<h3 class="fn"><a name="newDataAvailable"></a>void QNmeaPositionInfoSource::newDataAvailable ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Notifies the object that new data is available for reading from the source device.</p>
-<p>Usually you do not need to call this function. It is only necessary if the source device does not emit QIODevice::readyRead().</p>
-<p>See also <a href="qnmeapositioninfosource.html#setSourceDevice">setSourceDevice</a>() and QSocketNotifier.</p>
-<h3 class="fn"><a name="setSourceDevice"></a>void QNmeaPositionInfoSource::setSourceDevice ( QIODevice * <i>device</i> )</h3>
+<h3 class="fn"><a name="device"></a>QIODevice * QNmeaPositionInfoSource::device () const</h3>
+<p>Returns the NMEA data source.</p>
+<p>See also <a href="qnmeapositioninfosource.html#setDevice">setDevice</a>().</p>
+<h3 class="fn"><a name="setDevice"></a>void QNmeaPositionInfoSource::setDevice ( QIODevice * <i>device</i> )</h3>
 <p>Sets the NMEA data source to <i>device</i>. If the device is not open, it will be opened in QIODevice::ReadOnly mode.</p>
 <p>The source device can only be set once and must be set before calling <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>().</p>
-<p><b>Note:</b> If <i>device</i> does not emit QIODevice::readyRead() &#x2014; for example, if it is a QFile object &#x2014; you must call <a href="qnmeapositioninfosource.html#newDataAvailable">newDataAvailable</a>() when data is available for reading.</p>
-<p>See also <a href="qnmeapositioninfosource.html#sourceDevice">sourceDevice</a>().</p>
-<h3 class="fn"><a name="sourceDevice"></a>QIODevice * QNmeaPositionInfoSource::sourceDevice () const</h3>
-<p>Returns the NMEA data source.</p>
-<p>See also <a href="qnmeapositioninfosource.html#setSourceDevice">setSourceDevice</a>().</p>
+<p><b>Note:</b> The <i>device</i> must emit QIODevice::readyRead() for the source to be notified when data is available for reading.</p>
+<p>See also <a href="qnmeapositioninfosource.html#device">device</a>().</p>
 <h3 class="fn"><a name="updateMode"></a><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> QNmeaPositionInfoSource::updateMode () const</h3>
 <p>Returns the update mode. The default mode is QNmeaPositionInfoSource::InvalidMode.</p>
 <p /><address><hr /><div align="center">

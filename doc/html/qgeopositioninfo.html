@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoPositionInfo Class Reference</h1>
-<p>The QGeoPositionInfo class contains information gathered on one's global position, direction and velocity at a particular point in time. <a href="#details">More...</a></p>
+<p>The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoPositionInfo&gt;</pre><ul>
 <li><a href="qgeopositioninfo-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -26,18 +26,18 @@
 <h3>Public Functions</h3>
 <ul>
 <li><div class="fn"/><b><a href="qgeopositioninfo.html#QGeoPositionInfo">QGeoPositionInfo</a></b> ()</li>
-<li><div class="fn"/><b><a href="qgeopositioninfo.html#QGeoPositionInfo-2">QGeoPositionInfo</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QDateTime &amp; <i>updateTime</i> )</li>
+<li><div class="fn"/><b><a href="qgeopositioninfo.html#QGeoPositionInfo-2">QGeoPositionInfo</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QDateTime &amp; <i>dateTime</i> )</li>
 <li><div class="fn"/><b><a href="qgeopositioninfo.html#QGeoPositionInfo-3">QGeoPositionInfo</a></b> ( const QGeoPositionInfo &amp; <i>other</i> )</li>
 <li><div class="fn"/><b><a href="qgeopositioninfo.html#dtor.QGeoPositionInfo">~QGeoPositionInfo</a></b> ()</li>
 <li><div class="fn"/>QGeoCoordinate <b><a href="qgeopositioninfo.html#coordinate">coordinate</a></b> () const</li>
+<li><div class="fn"/>QDateTime <b><a href="qgeopositioninfo.html#dateTime">dateTime</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qgeopositioninfo.html#hasProperty">hasProperty</a></b> ( Property <i>property</i> ) const</li>
 <li><div class="fn"/>bool <b><a href="qgeopositioninfo.html#isValid">isValid</a></b> () const</li>
 <li><div class="fn"/>qreal <b><a href="qgeopositioninfo.html#property">property</a></b> ( Property <i>property</i> ) const</li>
 <li><div class="fn"/>void <b><a href="qgeopositioninfo.html#removeProperty">removeProperty</a></b> ( Property <i>property</i> )</li>
 <li><div class="fn"/>void <b><a href="qgeopositioninfo.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</li>
+<li><div class="fn"/>void <b><a href="qgeopositioninfo.html#setDateTime">setDateTime</a></b> ( const QDateTime &amp; <i>dateTime</i> )</li>
 <li><div class="fn"/>void <b><a href="qgeopositioninfo.html#setProperty">setProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</li>
-<li><div class="fn"/>void <b><a href="qgeopositioninfo.html#setUpdateTime">setUpdateTime</a></b> ( const QDateTime &amp; <i>updateTime</i> )</li>
-<li><div class="fn"/>QDateTime <b><a href="qgeopositioninfo.html#updateTime">updateTime</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qgeopositioninfo.html#operator-not-eq">operator!=</a></b> ( const QGeoPositionInfo &amp; <i>other</i> ) const</li>
 <li><div class="fn"/>QGeoPositionInfo &amp; <b><a href="qgeopositioninfo.html#operator-eq">operator=</a></b> ( const QGeoPositionInfo &amp; <i>other</i> )</li>
 <li><div class="fn"/>bool <b><a href="qgeopositioninfo.html#operator-eq-eq">operator==</a></b> ( const QGeoPositionInfo &amp; <i>other</i> ) const</li>
@@ -45,13 +45,13 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGeoPositionInfo class contains information gathered on one's global position, direction and velocity at a particular point in time.</p>
+<p>The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.</p>
 <p>A QGeoPositionInfo contains, at a minimum, a geographical coordinate and a timestamp. It may also have heading and speed measurements as well as estimates of the accuracy of the provided data.</p>
 <p>See also <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Property-enum"></a>enum QGeoPositionInfo::Property</h3>
-<p>Defines the properties for a position update.</p>
+<p>Defines the properties for positional information.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QGeoPositionInfo::Heading</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The bearing to true north, in degrees.</td></tr>
@@ -64,22 +64,26 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QGeoPositionInfo"></a>QGeoPositionInfo::QGeoPositionInfo ()</h3>
-<p>Creates a null update.</p>
+<p>Creates an invalid <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
 <p>See also <a href="qgeopositioninfo.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const QDateTime &amp; <i>updateTime</i> )</h3>
-<p>Creates an update with the given <i>coordinate</i> and <i>updateTime</i>.</p>
+<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const QDateTime &amp; <i>dateTime</i> )</h3>
+<p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> for the given <i>coordinate</i> and <i>dateTime</i>.</p>
 <h3 class="fn"><a name="QGeoPositionInfo-3"></a>QGeoPositionInfo::QGeoPositionInfo ( const QGeoPositionInfo &amp; <i>other</i> )</h3>
-<p>Creates an update with the values of <i>other</i>.</p>
+<p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> with the values of <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QGeoPositionInfo"></a>QGeoPositionInfo::~QGeoPositionInfo ()</h3>
-<p>Destroys an update.</p>
+<p>Destroys a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
 <h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoPositionInfo::coordinate () const</h3>
-<p>Returns the coordinate for this update.</p>
+<p>Returns the coordinate for this position.</p>
 <p>Returns an invalid coordinate if no coordinate has been set.</p>
 <p>See also <a href="qgeopositioninfo.html#setCoordinate">setCoordinate</a>().</p>
+<h3 class="fn"><a name="dateTime"></a>QDateTime QGeoPositionInfo::dateTime () const</h3>
+<p>Returns the date and time at which this position was reported, in UTC time.</p>
+<p>Returns an invalid QDateTime if no date/time value has been set.</p>
+<p>See also <a href="qgeopositioninfo.html#setDateTime">setDateTime</a>().</p>
 <h3 class="fn"><a name="hasProperty"></a>bool QGeoPositionInfo::hasProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
-<p>Returns true if the specified <i>property</i> is present in this update.</p>
+<p>Returns true if the specified <i>property</i> is present for this <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
 <h3 class="fn"><a name="isValid"></a>bool QGeoPositionInfo::isValid () const</h3>
-<p>Returns true if the update's <a href="qgeopositioninfo.html#updateTime">updateTime</a>() and <a href="qgeopositioninfo.html#coordinate">coordinate</a>() values are both valid.</p>
+<p>Returns true if the <a href="qgeopositioninfo.html#dateTime">dateTime</a>() and <a href="qgeopositioninfo.html#coordinate">coordinate</a>() values are both valid.</p>
 <p>See also <a href="qgeocoordinate.html#isValid">QGeoCoordinate::isValid</a>() and QDateTime::isValid().</p>
 <h3 class="fn"><a name="property"></a>qreal QGeoPositionInfo::property ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns the value of the specified <i>property</i> as a qreal value.</p>
@@ -88,25 +92,21 @@
 <h3 class="fn"><a name="removeProperty"></a>void QGeoPositionInfo::removeProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> )</h3>
 <p>Removes the specified <i>property</i> and its value.</p>
 <h3 class="fn"><a name="setCoordinate"></a>void QGeoPositionInfo::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
-<p>Sets the coordinate for this update to <i>coordinate</i>.</p>
+<p>Sets the coordinate for this position to <i>coordinate</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#coordinate">coordinate</a>().</p>
+<h3 class="fn"><a name="setDateTime"></a>void QGeoPositionInfo::setDateTime ( const QDateTime &amp; <i>dateTime</i> )</h3>
+<p>Sets the date and time at which this position was reported to <i>dateTime</i>.</p>
+<p>The <i>dateTime</i> must be in UTC time.</p>
+<p>See also <a href="qgeopositioninfo.html#dateTime">dateTime</a>().</p>
 <h3 class="fn"><a name="setProperty"></a>void QGeoPositionInfo::setProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i>, qreal <i>value</i> )</h3>
 <p>Sets the value for <i>property</i> to <i>value</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#property">property</a>().</p>
-<h3 class="fn"><a name="setUpdateTime"></a>void QGeoPositionInfo::setUpdateTime ( const QDateTime &amp; <i>updateTime</i> )</h3>
-<p>Sets the date and time at which this update was received to <i>updateTime</i>.</p>
-<p>The <i>updateTime</i> must be in UTC time.</p>
-<p>See also <a href="qgeopositioninfo.html#updateTime">updateTime</a>().</p>
-<h3 class="fn"><a name="updateTime"></a>QDateTime QGeoPositionInfo::updateTime () const</h3>
-<p>Returns the date and time at which this update was received, in UTC time.</p>
-<p>Returns an invalid QDateTime if no date/time value has been set.</p>
-<p>See also <a href="qgeopositioninfo.html#setUpdateTime">setUpdateTime</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QGeoPositionInfo::operator!= ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3>
-<p>Returns true if any of this update's values are not the same as those of <i>other</i>.</p>
+<p>Returns true if any of this object's values are not the same as those of <i>other</i>.</p>
 <h3 class="fn"><a name="operator-eq"></a>QGeoPositionInfo &amp; QGeoPositionInfo::operator= ( const QGeoPositionInfo &amp; <i>other</i> )</h3>
-<p>Assigns the values from <i>other</i> to this update.</p>
+<p>Assigns the values from <i>other</i> to this <a href="qgeopositioninfo.html">QGeoPositionInfo</a>.</p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoPositionInfo::operator== ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3>
-<p>Returns true if all of this update's values are the same as those of <i>other</i>.</p>
+<p>Returns true if all of this object's values are the same as those of <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
