@@ -365,9 +365,9 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
 /*!
     Returns this coordinate as a string in the specified \a format.
 
-    For example, if this coordinate latitude-longitude coordinates of
-    (-27.46758\unicode{0xB0}, 153.027892\unicode{0xB0}), these are the
-    strings that are returned depending on \a format:
+    For example, if this coordinate has a latitude of -27.46758, a longitude
+    of 153.027892 and an altitude of 28.1, these are the strings
+    returned depending on \a format:
 
     \table
     \header
@@ -375,25 +375,27 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
         \o Returned string
     \row
         \o \l DecimalDegrees
-        \o -27.46758\unicode{0xB0}, 153.02789\unicode{0xB0}
+        \o -27.46758\unicode{0xB0}, 153.02789\unicode{0xB0}, 28.1m
     \row
         \o \l DecimalDegreesWithHemisphere
-        \o 27.46758\unicode{0xB0} S, 153.02789\unicode{0xB0} E
+        \o 27.46758\unicode{0xB0} S, 153.02789\unicode{0xB0} E, 28.1m
     \row
         \o \l DegreesMinutes
-        \o -27\unicode{0xB0} 28.054', 153\unicode{0xB0} 1.673'
+        \o -27\unicode{0xB0} 28.054', 153\unicode{0xB0} 1.673', 28.1m
     \row
         \o \l DegreesMinutesWithHemisphere
-        \o 27\unicode{0xB0} 28.054 S', 153\unicode{0xB0} 1.673' E
+        \o 27\unicode{0xB0} 28.054 S', 153\unicode{0xB0} 1.673' E, 28.1m
     \row
         \o \l DegreesMinutesSeconds
-        \o -27\unicode{0xB0} 28' 3.2", 153\unicode{0xB0} 1' 40.4"
+        \o -27\unicode{0xB0} 28' 3.2", 153\unicode{0xB0} 1' 40.4", 28.1m
     \row
         \o \l DegreesMinutesSecondsWithHemisphere
-        \o 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E
+        \o 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E, 28.1m
     \endtable
 
-    If the coordinate is valid, an empty string is returned.
+    The altitude field is omitted if no altitude is set.
+
+    If the coordinate is invalid, an empty string is returned.
 */
 QString QGeoCoordinate::toString(CoordinateFormat format) const
 {
@@ -480,7 +482,9 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         }
     }
 
-    return QString("%1, %2").arg(latStr, longStr);
+    if (qIsNaN(d->alt))
+        return QString("%1, %2").arg(latStr, longStr);
+    return QString("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
