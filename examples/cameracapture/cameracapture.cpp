@@ -40,6 +40,7 @@
 #include <qaudiodeviceendpoint.h>
 #include <qmediawidgetendpoint.h>
 #include <qaudioencodecontrol.h>
+#include <qvideoencodecontrol.h>
 #include <qmediaformatcontrol.h>
 #include <qcamera.h>
 
@@ -68,26 +69,43 @@ CameraCapture::CameraCapture(QWidget *parent) :
         mediaCapture->service()->setAudioInput(audioDevice);
         audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
         for (int i=0; i<audioDevice->deviceCount(); i++) {
-             ui->inputDeviceBox->addItem(audioDevice->description(i));
+             ui->audioInputDeviceBox->addItem(audioDevice->description(i));
         }
     } else
-        ui->inputDeviceBox->setEnabled(false);
+        ui->audioInputDeviceBox->setEnabled(false);
 
-    encodeControl = qobject_cast<QAudioEncodeControl*>(
+    audioEncodeControl = qobject_cast<QAudioEncodeControl*>(
             mediaCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
 
-    if (encodeControl) {
-        foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
-            QString description = encodeControl->codecDescription(codecName);
+    if (audioEncodeControl) {
+        foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
+            QString description = audioEncodeControl->codecDescription(codecName);
             ui->audioCodecBox->addItem(codecName+": "+description);
-            if (codecName == encodeControl->audioCodec())
+            if (codecName == audioEncodeControl->audioCodec())
                 ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
         }
 
-        ui->qualitySlider->setValue(qRound(encodeControl->quality()));
+        ui->audioQualitySlider->setValue(qRound(audioEncodeControl->quality()));
     } else {
         ui->audioCodecBox->setEnabled(false);
-        ui->qualitySlider->setEnabled(false);
+        ui->audioQualitySlider->setEnabled(false);
+    }
+
+    videoEncodeControl = qobject_cast<QVideoEncodeControl*>(
+            mediaCapture->service()->control("com.nokia.qt.VideoEncodeControl"));
+
+    if (videoEncodeControl) {
+        foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
+            QString description = videoEncodeControl->videoCodecDescription(codecName);
+            ui->videoCodecBox->addItem(codecName+": "+description);
+            if (codecName == videoEncodeControl->videoCodec())
+                ui->videoCodecBox->setCurrentIndex(ui->videoCodecBox->count()-1);
+        }
+
+        ui->videoQualitySlider->setValue(qRound(videoEncodeControl->quality()));
+    } else {
+        ui->videoCodecBox->setEnabled(false);
+        ui->videoQualitySlider->setEnabled(false);
     }
 
     formatControl = qobject_cast<QMediaFormatControl*>(
@@ -111,8 +129,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
         mediaCapture->service()->setVideoOutput(videoWidget);
     }
 
-    camera->start();
-
     videoWidget->show();
 }
 
@@ -126,17 +142,21 @@ void CameraCapture::updateRecordTime()
     ui->statusbar->showMessage(str);
 }
 
-void CameraCapture::setInputDevice(int idx)
+void CameraCapture::setAudioInputDevice(int idx)
 {
-    if (audioDevice)
-        audioDevice->setSelectedDevice(idx);
+    audioDevice->setSelectedDevice(idx);
+}
+
+void CameraCapture::setCameraDevice(int idx)
+{
+    Q_UNUSED(idx);
 }
 
 void CameraCapture::setAudioCodec(int idx)
 {
-    if (encodeControl) {
-        QString codecName = encodeControl->supportedAudioCodecs()[idx];
-        encodeControl->setAudioCodec(codecName);
+    if (audioEncodeControl) {
+        QString codecName = audioEncodeControl->supportedAudioCodecs()[idx];
+        audioEncodeControl->setAudioCodec(codecName);
 
         QAudioFormat audioFormat;
         //speex works better with 32kHz sample rate
@@ -144,15 +164,25 @@ void CameraCapture::setAudioCodec(int idx)
             audioFormat.setFrequency(32000);
         }
 
-        encodeControl->setFormat(audioFormat);
+        audioEncodeControl->setFormat(audioFormat);
 
     }
 }
 
-void CameraCapture::setQuality(int value)
+void CameraCapture::setVideoCodec(int idx)
 {
-    if (encodeControl)
-        encodeControl->setQuality(value);
+    QString codecName = videoEncodeControl->supportedVideoCodecs()[idx];
+    videoEncodeControl->setVideoCodec(codecName);
+}
+
+void CameraCapture::setAudioQuality(int value)
+{
+    audioEncodeControl->setQuality(value);
+}
+
+void CameraCapture::setVideoQuality(int value)
+{
+    videoEncodeControl->setQuality(value);
 }
 
 void CameraCapture::setContainerFormat(int idx)
@@ -178,6 +208,14 @@ void CameraCapture::stop()
 {
     if (mediaCapture)
         mediaCapture->stop();
+}
+
+void CameraCapture::enablePreview(bool enabled)
+{
+    if (enabled)
+        camera->start();
+    else
+        camera->stop();
 }
 
 void CameraCapture::displayErrorMessage()

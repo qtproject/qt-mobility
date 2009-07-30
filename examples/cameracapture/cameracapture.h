@@ -45,6 +45,7 @@ class QMediaCapture;
 class QCamera;
 class QAudioDeviceEndpoint;
 class QAudioEncodeControl;
+class QVideoEncodeControl;
 class QMediaFormatControl;
 
 class CameraCapture : public QMainWindow
@@ -60,12 +61,17 @@ private slots:
     void pause();
     void stop();
 
-    void setInputDevice(int idx);
+    void setAudioInputDevice(int idx);
+    void setCameraDevice(int idx);
     void setAudioCodec(int idx);
+    void setVideoCodec(int idx);
     void setContainerFormat(int idx);
-    void setQuality(int value);
+    void setAudioQuality(int value);
+    void setVideoQuality(int value);
 
     void displayErrorMessage();
+
+    void enablePreview(bool);
 
 private:
     Ui::CameraCapture *ui;
@@ -73,7 +79,8 @@ private:
     QMediaCapture* mediaCapture;
     QCamera *camera;
     QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *encodeControl;
+    QAudioEncodeControl *audioEncodeControl;
+    QVideoEncodeControl *videoEncodeControl;
     QMediaFormatControl *formatControl;
 };
 
