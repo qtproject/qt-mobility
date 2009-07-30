@@ -79,7 +79,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_captureControl = new QGstreamerCaptureControl(this);
     m_mediaFormatControl = new QGstreamerMediaFormatControl(this);
 
-    setState(PreviewState);
+    setState(StoppedState);
 }
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
@@ -93,7 +93,6 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
     GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->format().toAscii(), "muxer");
-    //GstElement *muxer = gst_element_factory_make("oggmux", "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
     QUrl url = m_sink.dataLocation().toUrl();
@@ -161,28 +160,26 @@ GstElement *QGstreamerCaptureSession::buildAudioPreview()
     if (m_audioPreviewFactory) {
         previewElement = m_audioPreviewFactory->buildElement();
     } else {
+
+
+#if 1
+        previewElement = gst_element_factory_make("fakesink", "audio-preview");
+#else
         GstElement *bin = gst_bin_new("audio-preview-bin");
-        GstElement *audioQueue = gst_element_factory_make("queue", "audio-preview-queue");
-
-        /*
-        GstElement *preview = gst_element_factory_make("fakesink", "audio-preview");
-        gst_bin_add_many(GST_BIN(bin), audioQueue, preview,  NULL);
-        gst_element_link(audioQueue,preview);
-        */
-
         GstElement *visual = gst_element_factory_make("libvisual_lv_scope", "audio-preview");
         GstElement *sink = gst_element_factory_make("ximagesink", NULL);
-        gst_bin_add_many(GST_BIN(bin), audioQueue, visual, sink,  NULL);
-        gst_element_link_many(audioQueue,visual,sink, NULL);
+        gst_bin_add_many(GST_BIN(bin), visual, sink,  NULL);
+        gst_element_link_many(visual,sink, NULL);
 
 
         // add ghostpads
-        GstPad *pad = gst_element_get_static_pad(audioQueue, "sink");
+        GstPad *pad = gst_element_get_static_pad(visual, "sink");
         Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("audiosink", pad));
         gst_object_unref(GST_OBJECT(pad));
 
         previewElement = bin;
+#endif
     }
 
     return previewElement;
@@ -208,21 +205,23 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
     if (m_videoPreviewFactory) {
         previewElement = m_videoPreviewFactory->buildElement();
     } else {
+#if 1
+        previewElement = gst_element_factory_make("fakesink", "video-preview");
+#else
         GstElement *bin = gst_bin_new("video-preview-bin");
-        GstElement *videoQueue = gst_element_factory_make("queue", "video-preview-queue");
         GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-preview");
         GstElement *preview = gst_element_factory_make("ximagesink", "video-preview");
-        gst_bin_add_many(GST_BIN(bin), videoQueue, colorspace, preview,  NULL);
-        gst_element_link(videoQueue,colorspace);
+        gst_bin_add_many(GST_BIN(bin), colorspace, preview,  NULL);
         gst_element_link(colorspace,preview);
 
         // add ghostpads
-        GstPad *pad = gst_element_get_static_pad(videoQueue, "sink");
+        GstPad *pad = gst_element_get_static_pad(colorspace, "sink");
         Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("videosink", pad));
         gst_object_unref(GST_OBJECT(pad));
 
         previewElement = bin;
+#endif
     }
 
     return previewElement;
@@ -364,6 +363,10 @@ void QGstreamerCaptureSession::setVideoInput(QGstreamerElementFactory *videoInpu
 void QGstreamerCaptureSession::setVideoPreview(QGstreamerElementFactory *videoPreview)
 {
     m_videoPreviewFactory = videoPreview;
+
+    //maybe this should be initialized by another control, like camera, or "all the capture device control"
+    if (state() == StoppedState)
+        setState(PreviewState);
 }
 
 QGstreamerCaptureSession::State QGstreamerCaptureSession::state() const
@@ -405,6 +408,7 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
     if (newMode != m_pipelineMode) {
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
 
+        //TODO: get rid of this, process async.
         waitForStopped();
         rebuildGraph(newMode);
     }
