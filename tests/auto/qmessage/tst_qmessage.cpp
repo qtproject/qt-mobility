@@ -87,24 +87,7 @@ tst_QMessage::~tst_QMessage()
 
 void tst_QMessage::initTestCase()
 {
-qDebug() << "initTestCase()";
     Support::clearMessageStore();
-
-    /*
-    {
-        Support::Parameters p;
-        p.insert("name", testAccountName);
-        testAccountId = Support::addAccount(p);
-    }
-    QVERIFY(testAccountId.isValid());
-
-    {
-        Support::Parameters p;
-        p.insert("path", "INBOX");
-        testFolderId = Support::addFolder(p);
-    }
-    QVERIFY(testFolderId.isValid());
-    */
 }
 
 void tst_QMessage::cleanup()
@@ -122,17 +105,20 @@ void tst_QMessage::testFromTransmissionFormat_data()
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
+    QTest::addColumn<int>("parts");
     QTest::addColumn<QByteArray>("type");
     QTest::addColumn<QByteArray>("subtype");
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QString>("text");
 
+    // A simple message
     QTest::newRow("1") 
         << "1.txt"
         << "bbb@zzz.test"
         << "bbb@ddd.example (John X. Doe)"
-        << "2001-05-04T18:05:44Z"
+        << "2001-05-04T18:05:44Z" // Convert the time in the message to UTC
         << "This is a test message"
+        << 0
         << QByteArray("text")
         << QByteArray("plain")
         << QByteArray("us-ascii")
@@ -144,20 +130,42 @@ Do you like this message?\n\
 \n\
 -Me\n\
 ";
+
+    // A multipart message
+    QTest::newRow("2") 
+        << "2.txt"
+        << "barry@python.test"
+        << "barry@python.test (Barry A. Krakow)"
+        << "2001-09-11T04:05:05Z"
+        << "a simple multipart"
+        << 2
+        << QByteArray("multipart")
+        << QByteArray("mixed")
+        << QByteArray()
+        << QString();
+
+    // A nested multipart message
+    QTest::newRow("3") 
+        << "3.txt"
+        << "Dingus Lovers <cravindogs@cravindogs.test>"
+        << "Barry <barry@example.com>"
+        << "2001-04-20T23:35:02Z"
+        << "Here is your dingus fish"
+        << 2
+        << QByteArray("multipart")
+        << QByteArray("mixed")
+        << QByteArray()
+        << QString();
 }
 
 void tst_QMessage::testFromTransmissionFormat()
 {
-    /*
-    QMessageAccount testAccount(testAccountId);
-    QMessageFolder testFolder(testFolderId);
-    */
-
     QFETCH(QString, fileName);
     QFETCH(QString, to);
     QFETCH(QString, from);
     QFETCH(QString, date);
     QFETCH(QString, subject);
+    QFETCH(int, parts);
     QFETCH(QByteArray, type);
     QFETCH(QByteArray, subtype);
     QFETCH(QByteArray, charset);
@@ -168,20 +176,25 @@ void tst_QMessage::testFromTransmissionFormat()
 
     QCOMPARE(message.to().first().recipient(), to);
     QCOMPARE(message.from().recipient(), from);
-    QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
+    QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate).toLocalTime());
     QCOMPARE(message.subject(), subject);
 
-    QMessageContentContainerId bodyId(message.body());
-    QVERIFY(bodyId.isValid());
+    QCOMPARE(message.contentIds().count(), parts);
 
-    QMessageContentContainer body(message.container(bodyId));
-    // Note: this is not true, which is somewhat counter-intuitive:
-    //QVERIFY(body.containerId().isValid());
+    QCOMPARE(message.contentType().toLower(), type);
+    QCOMPARE(message.contentSubType().toLower(), subtype);
+    QCOMPARE(message.contentCharset().toLower(), charset);
 
-    QCOMPARE(body.contentType().toLower(), type);
-    QCOMPARE(body.contentSubType().toLower(), subtype);
-    QCOMPARE(body.contentCharset().toLower(), charset);
-    QCOMPARE(body.contentAvailable(), true);
-    QCOMPARE(body.decodedTextContent(), text);
+    if (!text.isEmpty()) {
+        QMessageContentContainerId bodyId(message.body());
+        QVERIFY(bodyId.isValid());
+
+        QMessageContentContainer body(message.container(bodyId));
+        QCOMPARE(body.contentType().toLower(), type);
+        QCOMPARE(body.contentSubType().toLower(), subtype);
+        QCOMPARE(body.contentCharset().toLower(), charset);
+        QCOMPARE(body.contentAvailable(), true);
+        QCOMPARE(body.decodedTextContent(), text);
+    }
 }
 
