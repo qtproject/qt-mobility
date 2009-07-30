@@ -305,8 +305,8 @@ bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contact
 
     KABC::Ticket *ticket = d->ab->requestSaveTicket();
     KABC::Addressee converted = convertContact(*contact);
-    if (contact->id() == 0) {
-        // new contact
+    if (!d->m_QUniqueIdToKabcUid.contains(contact->id())) {
+        // new contact (or previously saved and removed)
         d->m_lastUsedId += 1;
         contact->setId(d->m_lastUsedId);
         converted.insertCustom("com.nokia.mobility.contacts.KAbcBackend", "id", QString::number(d->m_lastUsedId));
@@ -529,8 +529,11 @@ QContactDetailDefinition QContactKabcEngine::detailDefinition(const QString& def
 
 bool QContactKabcEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
 {
+    if (!validateDefinition(def, error)) {
+        return false;
+    }
     if (!d->m_definitions.key(def, "").isEmpty())
-        removeDetailDefinition(def, error);
+        removeDetailDefinition(def.id(), error);
     d->m_definitions.insert(def.id(), def);
 
     // we need to persist definitions.
@@ -562,15 +565,20 @@ bool QContactKabcEngine::saveDetailDefinition(const QContactDetailDefinition& de
     return true;
 }
 
-bool QContactKabcEngine::removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
+bool QContactKabcEngine::removeDetailDefinition(const QString& definitionId, QContactManager::Error& error)
 {
+    if (definitionId.isEmpty()) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     error = QContactManager::DoesNotExistError;
-    bool success = (d->m_definitions.remove(def.id()));
+    bool success = (d->m_definitions.remove(definitionId));
 
     if (success) {
         // we need to persist the removal.
         QSettings definitions(d->m_settingsFile, QSettings::IniFormat);
-        definitions.remove(def.id());
+        definitions.remove(definitionId);
         error = QContactManager::NoError;
     }
 
@@ -959,8 +967,17 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
     nameSynthesis.saveDetail(&name); // temporary
     QContactManager::Error error;
 
-    if (!a.formattedName().isEmpty() && synthesiseDisplayLabel(nameSynthesis, error) != a.formattedName())
+    QString synthName = synthesiseDisplayLabel(nameSynthesis, error);
+    if (!a.formattedName().isEmpty() && synthName != a.formattedName())
         retn.setDisplayLabel(a.formattedName());
+    else {
+        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
+        if (dl.label().isEmpty()) {
+            dl.setLabel(synthName);
+            dl.setSynthesised(true);
+            retn.saveDetail(&dl);
+        }
+    }
 
     QString dupKey = findDuplicate(name, customDetails);
     if (!dupKey.isEmpty()) {
