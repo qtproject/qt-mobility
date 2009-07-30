@@ -282,7 +282,7 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
     return retn;
 }
 
-// trampoline to engine for asynchronous requests
+// trampoline for private classes
 QContactManagerEngine* QContactManagerData::engine(const QContactManager* manager)
 {
     if (manager)

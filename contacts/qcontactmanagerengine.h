@@ -47,11 +47,7 @@
 #include "qcontactgroup.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerinfo.h"
-#include "qcontactabstractrequest.h"
 
-class QContactRequest;
-class QContactDetailDefinitionRequest;
-class QContactGroupRequest;
 class QContactFilter;
 class QContactSortOrder;
 
@@ -95,13 +91,6 @@ public:
     virtual QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
     virtual bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
-
-    /* Asynchronous Request Handling */
-    virtual void asynchronousRequestDestroyed(QContactAbstractRequest* req);
-    virtual bool asynchronousRequestWaitForFinished(QContactAbstractRequest* req, int msecs);
-    virtual bool asynchronousRequestWaitForProgress(QContactAbstractRequest* req, int msecs);
-    virtual void cancelAsynchronousRequest(QContactAbstractRequest* req);
-    virtual void startAsynchronousRequest(QContactAbstractRequest* req, QContactAbstractRequest::Operation operation);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

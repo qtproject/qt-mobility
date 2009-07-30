@@ -11,14 +11,10 @@ include(../common.pri)
 include(details/details.pri)
 include(engines/engines.pri)
 include(filters/filters.pri)
-include(requests/requests.pri)
 
 # Input
 HEADERS += qcontact.h \
     qcontact_p.h \
-    qcontactabstractrequest.h \
-    qcontactabstractrequestresult.h \
-    qcontactabstractrequestresult_p.h \
     qcontactaction.h \
     qcontactactionfactory.h \
     qcontactdetail.h \
@@ -41,7 +37,6 @@ HEADERS += qcontact.h \
     qtcontacts.h
 
 SOURCES += qcontact.cpp \
-    qcontactabstractrequestresult.cpp \
     qcontactaction.cpp \
     qcontactactionfactory.cpp \
     qcontactdetail.cpp \

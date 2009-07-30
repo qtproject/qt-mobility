@@ -49,9 +49,6 @@
 #include "qcontactdetails.h"                    // leaf detail classes
 #include "qcontactfilter.h"                     // contact filter
 #include "qcontactfilters.h"                    // leaf filter classes
-#include "qcontactabstractrequest.h"            // asynchronous request
-#include "qcontactabstractrequestresult.h"      // asynchronous request result
-#include "qcontactrequests.h"                   // leaf request classes
 #include "qcontactsortorder.h"                  // contact sorting
 #include "qcontactaction.h"                     // actions
 #include "qcontactactionfactory.h"              // action factory
