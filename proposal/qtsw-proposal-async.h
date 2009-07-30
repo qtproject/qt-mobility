@@ -1429,27 +1429,148 @@ void QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req)
 //---- now the update request trampoline in base class: performs switch, depending on type updates member variable.
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result)
 {
+    switch (req->type()) {
+        case ContactFetch:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            r->d->m_ids = result;
+        }
+        break;
 
+        case ContactIdFetch:
+        {
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            r->d->m_ids = result;
+        }
+        break;
+
+        case ContactRemove:
+        {
+            ContactRemoveRequest* r = static_cast<ContactRemoveRequest*>(req);
+            r->d->m_ids = result;
+        }
+        break;
+
+        case GroupFetch:
+        {
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            r->d->m_ids = result;
+        }
+        break;
+
+        case GroupRemove:
+        {
+            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
+            r->d->m_ids = result;
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of ids to update...
+            return;
+        }
+    }
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result)
 {
+    switch (req->type()) {
+        case ContactFetch:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            r->d->m_contacts = result;
+        }
+        break;
 
+        case ContactSave:
+        {
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            r->d->m_contacts = result;
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of contacts to update...
+            return;
+        }
+    }
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result)
 {
+    switch (req->type()) {
+        case GroupFetch:
+        {
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            r->d->m_groups = result;
+        }
+        break;
 
+        case GroupSave:
+        {
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
+            r->d->m_groups = result;
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of groups to update...
+            return;
+        }
+    }
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result)
 {
+    switch (req->type()) {
+        case DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            r->d->m_names = result;
+        }
+        break;
 
+        case DetailDefinitionRemove:
+        {
+            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
+            r->d->m_names = result;
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of definition names to update...
+            return;
+        }
+    }
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result)
 {
+    switch (req->type()) {
+        case DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            r->d->m_definitions = result;
+        }
+        break;
 
+        case DetailDefinitionSave:
+        {
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+            r->d->m_definitions = result;
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of definitions to update...
+            return;
+        }
+    }
 }
 
 
