@@ -41,7 +41,9 @@ typedef QByteArray MapiEntryId;
 class QMessageIdPrivate
 {
 public:
-    MapiRecordKey _recordKey;
+    MapiRecordKey _messageRecordKey;
+    MapiRecordKey _folderRecordKey;
+    MapiRecordKey _storeRecordKey;
     MapiEntryId _entryId;
     //TODO folder record key, store record key
     //TODO Move this declaration into qmessageid_p.h with windows guards
@@ -63,10 +65,12 @@ QMessageId::QMessageId(const QString& id)
     : d_ptr(new QMessageIdPrivate)
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
-    idStream >> d_ptr->_recordKey;
+    idStream >> d_ptr->_messageRecordKey;
+    idStream >> d_ptr->_folderRecordKey;
+    idStream >> d_ptr->_storeRecordKey;
     if (!idStream.atEnd())
         idStream >> d_ptr->_entryId;
-    // TODO Consider deleting d_ptr if _recordKey.count() != 16 as sanity check.
+    // TODO Consider deleting d_ptr if _messageRecordKey.count() != 16 as sanity check.
 }
 
 QMessageId::~QMessageId()
@@ -77,7 +81,14 @@ QMessageId::~QMessageId()
 bool QMessageId::operator==(const QMessageId& other) const
 {
     if (isValid()) {
-        return (other.isValid() ? (d_ptr->_recordKey == other.d_ptr->_recordKey) : false);
+        if (other.isValid()) {
+            bool result(true);
+            result &= (d_ptr->_messageRecordKey == other.d_ptr->_messageRecordKey);
+            result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
+            result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
+            return result;
+        }
+        return false;
     } else {
         return !other.isValid();
     }
@@ -90,7 +101,9 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
             if (!d_ptr) {
                 d_ptr = new QMessageIdPrivate;
             }
-            d_ptr->_recordKey = other.d_ptr->_recordKey;
+            d_ptr->_messageRecordKey = other.d_ptr->_messageRecordKey;
+            d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
+            d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
             d_ptr->_entryId = other.d_ptr->_entryId;
         } else {
             delete d_ptr;
@@ -107,14 +120,17 @@ QString QMessageId::toString() const
         return QString();
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-    encodedIdStream << d_ptr->_recordKey;
-    encodedIdStream << d_ptr->_entryId;
+    encodedIdStream << d_ptr->_messageRecordKey;
+    encodedIdStream << d_ptr->_folderRecordKey;
+    encodedIdStream << d_ptr->_storeRecordKey;
+    if (d_ptr->_entryId.count())
+        encodedIdStream << d_ptr->_entryId;
     return encodedId.toBase64();
 }
 
 bool QMessageId::isValid() const
 {
-    return (d_ptr && !d_ptr->_recordKey.isEmpty()); //TODO again _recordKey should be 16 bytes
+    return (d_ptr && !d_ptr->_messageRecordKey.isEmpty()); //TODO again _messageRecordKey should be 16 bytes
 }
 
 uint qHash(const QMessageId &id)
