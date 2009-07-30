@@ -136,7 +136,7 @@ QT_BEGIN_NAMESPACE
 class QValueSpaceObjectPrivate
 {
 public:
-    QValueSpaceObjectPrivate(const QByteArray &objectPath);
+    QValueSpaceObjectPrivate(const QUuid &uuid, const QByteArray &objectPath);
 
     QByteArray path;
 
@@ -147,7 +147,7 @@ public:
     bool hasWatch;
 };
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath)
+QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QUuid &uuid, const QByteArray &objectPath)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle),
     hasSet(false), hasWatch(false)
 {
@@ -161,14 +161,24 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath)
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
-    for (int ii = 0; ii < layers.count(); ++ii) {
-        QAbstractValueSpaceLayer::Handle h =
-            layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+    if (uuid.isNull()) {
+        for (int ii = 0; ii < layers.count(); ++ii) {
+            QAbstractValueSpaceLayer::Handle h =
+                layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 
-        if (h != QAbstractValueSpaceLayer::InvalidHandle) {
-            layer = layers.at(ii);
-            handle = h;
-            break;
+            if (h != QAbstractValueSpaceLayer::InvalidHandle) {
+                layer = layers.at(ii);
+                handle = h;
+                break;
+            }
+        }
+    } else {
+        for (int ii = 0; ii < layers.count(); ++ii) {
+            if (layers.at(ii)->id() == uuid) {
+                layer = layers.at(ii);
+                handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+                break;
+            }
         }
     }
 }
@@ -176,11 +186,12 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath)
 /*!
     \overload
 
-    Construct a Value Space object rooted at \a objectPath with the specified \a parent.  This
-    constructor is equivalent to \c {QValueSpaceObject(QByteArray(objectPath), parent)}.
+    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
+    specified \a parent.  This constructor is equivalent to
+    \c {QValueSpaceObject(QByteArray(objectPath), layer, parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const char *objectPath, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(objectPath))
+QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
 {
     VS_CALL_ASSERT;
     QValueSpace::initValuespace();
@@ -189,21 +200,25 @@ QValueSpaceObject::QValueSpaceObject(const char *objectPath, QObject *parent)
 /*!
     \overload
 
-    Construct a Value Space object rooted at \a objectPath with the specified \a parent.  This
-    constructor is equivalent to \c {QValueSpaceObject(objectPath.toUtf8(), parent)}.
+    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
+    specified \a parent.  This constructor is equivalent to
+    \c {QValueSpaceObject(objectPath.toUtf8(), parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const QString &objectPath, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(objectPath.toUtf8()))
+QValueSpaceObject::QValueSpaceObject(const QString &objectPath, const QUuid &layer, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath.toUtf8()))
 {
     VS_CALL_ASSERT;
     QValueSpace::initValuespace();
 }
 
 /*!
-    Construct a Value Space object rooted at \a objectPath with the specified \a parent.
+    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
+    specified \a parent.
+
+    If \a layer is null then the layer is automatically chosen based on \a objectPath.
 */
-QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(objectPath))
+QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, const QUuid &layer, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
 {
     VS_CALL_ASSERT;
     QValueSpace::initValuespace();
@@ -236,6 +251,15 @@ QString QValueSpaceObject::objectPath() const
 {
     VS_CALL_ASSERT;
     return QString::fromUtf8(d->path);
+}
+
+/*!
+    Returns true if this object is valid.  An object is valid if its associated
+    QAbstractValueSpaceLayer is available.
+*/
+bool QValueSpaceObject::isValid() const
+{
+    return (d->layer && d->handle != QAbstractValueSpaceLayer::InvalidHandle);
 }
 
 /*!
@@ -297,7 +321,7 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
 {
     VS_CALL_ASSERT;
 
-    if (!d->layer || d->handle == QAbstractValueSpaceLayer::InvalidHandle)
+    if (!isValid())
         return;
 
     d->hasSet = true;
@@ -347,6 +371,10 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
 void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
 {
     VS_CALL_ASSERT;
+
+    if (!isValid())
+        return;
+
     d->layer->removeValue(this, d->handle, attribute);
 }
 

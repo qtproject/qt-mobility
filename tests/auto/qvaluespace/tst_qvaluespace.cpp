@@ -33,6 +33,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespaceobject.h>
+#include <qvaluespacemanager_p.h>
 
 #include <QtTest/QtTest>
 #include <QtCore>
@@ -66,10 +67,11 @@ Q_SIGNALS:
 };
 
 
-
+Q_DECLARE_METATYPE(QAbstractValueSpaceLayer*)
 Q_DECLARE_METATYPE(QValueSpaceItem*)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QList<QString>)
+Q_DECLARE_METATYPE(QUuid)
 
 class tst_QValueSpaceItem: public QObject
 {
@@ -96,6 +98,8 @@ private slots:
     void setValue();
     void ipcSetValue();
     void removeValue();
+    void layerSelection_data();
+    void layerSelection();
 };
 
 void tst_QValueSpaceItem::initTestCase()
@@ -1054,6 +1058,72 @@ void tst_QValueSpaceItem::ipcSetValue()
     while(!objects.isEmpty())
         delete objects.takeFirst();
 #endif
+}
+
+void tst_QValueSpaceItem::layerSelection_data()
+{
+    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+    QTest::addColumn<QUuid>("uuid");
+    QTest::addColumn<bool>("valid");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    // add all known layers
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        QTest::newRow(layer->name().toLocal8Bit().constData()) << layer << layer->id() << true;
+    }
+
+    // auto selection
+    QTest::newRow("{00000000-0000-0000-0000-000000000000}")
+        << reinterpret_cast<QAbstractValueSpaceLayer *>(0)
+        << QUuid() << !layers.isEmpty();
+
+    // unknown uuid
+    QTest::newRow("{9fa51477-7730-48e0-aee1-3eeb5f0c0c5b}")
+        << reinterpret_cast<QAbstractValueSpaceLayer *>(0)
+        << QUuid("{9fa51477-7730-48e0-aee1-3eeb5f0c0c5b}") << false;
+}
+
+void tst_QValueSpaceItem::layerSelection()
+{
+    QFETCH(QAbstractValueSpaceLayer *, layer);
+    QFETCH(QUuid, uuid);
+    QFETCH(bool, valid);
+
+    const QByteArray path("/layerSelection");
+    const QByteArray attribute("/value");
+
+    QValueSpaceObject object(path, uuid);
+    QCOMPARE(object.isValid(), valid);
+
+    object.setAttribute(attribute, 100);
+    object.sync();
+
+    if (layer) {
+        QAbstractValueSpaceLayer::Handle handle =
+            layer->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+
+        QVariant data;
+        QVERIFY(layer->value(handle, attribute, &data));
+        QCOMPARE(data.toInt(), 100);
+
+        layer->removeHandle(handle);
+    }
+
+    object.removeAttribute("value");
+    object.sync();
+
+    if (layer) {
+        QAbstractValueSpaceLayer::Handle handle =
+            layer->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+
+        QVariant data;
+        QVERIFY(!layer->value(handle, attribute, &data));
+
+        layer->removeHandle(handle);
+    }
 }
 
 QTEST_MAIN(tst_QValueSpaceItem)

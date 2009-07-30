@@ -51,7 +51,7 @@ public:
         : QObject(0), index(0)
     {
         if (function == 0) {
-            object = new QValueSpaceObject("/usr/lackey/subdir", this);
+            object = new QValueSpaceObject("/usr/lackey/subdir", QUuid(), this);
             connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
                     this, SLOT(itemSetValue(QByteArray,QVariant)));
             object->setObjectName("original_lackey");

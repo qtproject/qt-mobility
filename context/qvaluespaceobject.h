@@ -37,6 +37,7 @@
 #include "qcontextglobal.h"
 
 #include <QObject>
+#include <QUuid>
 
 QT_BEGIN_HEADER
 
@@ -50,12 +51,14 @@ class Q_CFW_EXPORT QValueSpaceObject : public QObject
     Q_OBJECT
 
 public:
-    explicit QValueSpaceObject(const char *objectPath, QObject *parent = 0);
-    explicit QValueSpaceObject(const QString &objectPath, QObject *parent = 0);
-    explicit QValueSpaceObject(const QByteArray &objectPath, QObject *parent = 0);
+    explicit QValueSpaceObject(const char *objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
+    explicit QValueSpaceObject(const QString &objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
+    explicit QValueSpaceObject(const QByteArray &objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
     ~QValueSpaceObject();
 
     QString objectPath() const;
+    bool isValid() const;
+
     static void sync();
 
 signals:

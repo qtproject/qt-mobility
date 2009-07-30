@@ -105,7 +105,7 @@ private:
     };
 
     void openRegistryKey(RegistryHandle *handle);
-    void createRegistryKey(RegistryHandle *handle);
+    bool createRegistryKey(RegistryHandle *handle);
     bool removeRegistryValue(RegistryHandle *handle, const QByteArray &path);
     void closeRegistryKey(RegistryHandle *handle);
 
@@ -391,7 +391,9 @@ QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QByteA
         if (!rh)
             return InvalidHandle;
 
-        if (rh->path.endsWith('/') && path.startsWith('/'))
+        if (path == "/") {
+            fullPath = rh->path;
+        } else if (rh->path.endsWith('/') && path.startsWith('/'))
             fullPath = rh->path + path.mid(1);
         else if (!rh->path.endsWith('/') && !path.startsWith('/'))
             fullPath = rh->path + '/' + path;
@@ -620,11 +622,17 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
         value = QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
         path.truncate(index);
 
+        if (path.isEmpty())
+            path.append('/');
+
         rh = registryHandle(item(Handle(rh), path));
         createdHandle = true;
     }
 
-    createRegistryKey(rh);
+    if (createRegistryKey(rh)) {
+        if (!creators[creator].contains(rh->path))
+            creators[creator].append(rh->path);
+    }
     if (!hKeys.contains(rh)) {
         if (createdHandle)
             removeHandle(Handle(rh));
@@ -825,23 +833,28 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
     }
 }
 
-void RegistryLayer::createRegistryKey(RegistryHandle *handle)
+bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
 {
     // Check if HKEY for this handle already exists.
     if (hKeys.contains(handle))
-        return;
+        return false;
 
     const QString fullPath =
         qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + handle->path);
 
     // Attempt to open registry key path
     HKEY key;
+    DWORD disposition;
     long result = RegCreateKeyEx(HKEY_CURRENT_USER, fullPath.utf16(),
                                  0, 0, REG_OPTION_VOLATILE,
-                                 KEY_ALL_ACCESS, 0, &key, 0);
+                                 KEY_ALL_ACCESS, 0, &key, &disposition);
 
-    if (result == ERROR_SUCCESS)
+    if (result == ERROR_SUCCESS) {
+        qDebug() << "monitoring changes on" << handle->path;
         hKeys.insert(handle, key);
+    }
+
+    return disposition == REG_CREATED_NEW_KEY;
 }
 
 bool RegistryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
@@ -886,10 +899,10 @@ bool RegistryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const
     if (!creators[creator].contains(fullPath))
         return false;
 
-   removeRegistryValue(0, fullPath);
-   creators[creator].removeOne(fullPath);
+    removeRegistryValue(0, fullPath);
+    creators[creator].removeOne(fullPath);
 
-   return true;
+    return true;
 }
 
 void RegistryLayer::addWatch(QValueSpaceObject *creator, Handle handle)
