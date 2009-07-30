@@ -4,11 +4,13 @@ HEADERS += $$PWD/qgstreamercaptureservice.h \
     $$PWD/qgstreameraudioencode.h \
     $$PWD/qgstreamervideoencode.h \
     $$PWD/qgstreamercapturecontrol.h \
-    $$PWD/qgstreamermediaformatcontrol.h
+    $$PWD/qgstreamermediaformatcontrol.h \
+    $$PWD/qgstreamercameracontrol.h
 
 SOURCES += $$PWD/qgstreamercaptureservice.cpp \
     $$PWD/qgstreamercapturesession.cpp \
     $$PWD/qgstreameraudioencode.cpp \
     $$PWD/qgstreamervideoencode.cpp \
     $$PWD/qgstreamercapturecontrol.cpp \
-    $$PWD/qgstreamermediaformatcontrol.cpp
+    $$PWD/qgstreamermediaformatcontrol.cpp \
+    $$PWD/qgstreamercameracontrol.cpp

@@ -84,6 +84,8 @@ public:
     State state() const;
     qint64 position() const;
 
+    bool isPreviewEnabled() const { return m_previewEnabled; }
+
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void positionChanged(qint64 position);
@@ -94,6 +96,7 @@ public slots:
     void setCaptureDevice(const QString &deviceName);
 
     void dumpGraph(const QString &fileName);
+    void enablePreview(bool enabled);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -115,6 +118,7 @@ private:
     State m_state;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
+    bool m_previewEnabled;
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;

@@ -53,7 +53,7 @@
 class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    QCameraService* service;
+    QAbstractMediaService* service;
     QCameraControl* control;
 };
 
@@ -61,7 +61,7 @@ public:
     Construct a QCamera from \a service with \a parent.
 */
 
-QCamera::QCamera(QCameraService *service, QObject *parent)
+QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     : QAbstractMediaObject(*new QCameraPrivate, parent)
 {
     Q_D(QCamera);
@@ -84,6 +84,23 @@ QCamera::QCamera(QCameraService *service, QObject *parent)
 QCamera::~QCamera()
 {
 }
+
+void QCamera::start()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->start();
+}
+
+void QCamera::stop()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->stop();
+}
+
 #ifdef VIDEOSERVICES
 
 QList<QByteArray> QCamera::deviceList()
@@ -136,21 +153,6 @@ void QCamera::setFormat(const QVideoFormat &format)
         d->control->setFormat(format);
 }
 
-void QCamera::start()
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->start();
-}
-
-void QCamera::stop()
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->stop();
-}
 
 /*!
     Returns the current framerate
@@ -515,12 +517,12 @@ QAbstractMediaService *QCamera::service() const
     return d_func()->service;
 }
 
-QCameraService* createCameraService(QMediaServiceProvider *provider)
+QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 {
     QObject *object = provider ? provider->createObject("com.nokia.qt.Camera/1.0") : 0;
 
     if (object) {
-        QCameraService *service = qobject_cast<QCameraService *>(object);
+        QAbstractMediaService *service = qobject_cast<QAbstractMediaService *>(object);
 
         if (service)
             return service;

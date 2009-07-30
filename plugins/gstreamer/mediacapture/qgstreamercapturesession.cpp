@@ -363,10 +363,6 @@ void QGstreamerCaptureSession::setVideoInput(QGstreamerElementFactory *videoInpu
 void QGstreamerCaptureSession::setVideoPreview(QGstreamerElementFactory *videoPreview)
 {
     m_videoPreviewFactory = videoPreview;
-
-    //maybe this should be initialized by another control, like camera, or "all the capture device control"
-    if (state() == StoppedState)
-        setState(PreviewState);
 }
 
 QGstreamerCaptureSession::State QGstreamerCaptureSession::state() const
@@ -442,6 +438,18 @@ qint64 QGstreamerCaptureSession::position() const
 void QGstreamerCaptureSession::setCaptureDevice(const QString &deviceName)
 {
     m_captureDevice = deviceName;
+}
+
+void QGstreamerCaptureSession::enablePreview(bool enabled)
+{
+    m_previewEnabled = enabled;
+    if (enabled) {
+        if (state() == StoppedState)
+            setState(PreviewState);
+    } else {
+        if (state() == PreviewState)
+            setState(StoppedState);
+    }
 }
 
 void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)

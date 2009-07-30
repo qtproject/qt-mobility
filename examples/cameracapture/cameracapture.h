@@ -32,50 +32,49 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include "qgstreamerserviceplugin.h"
-#include "qgstreamerplayerservice.h"
-#include "qgstreamercaptureservice.h"
+namespace Ui {
+    class CameraCapture;
+}
 
-#include <qmediaserviceprovider.h>
+#include <QMainWindow>
 
+class QMediaCapture;
+class QCamera;
+class QAudioDeviceEndpoint;
+class QAudioEncodeControl;
+class QMediaFormatControl;
 
-class QGstreamerProvider : public QMediaServiceProvider
+class CameraCapture : public QMainWindow
 {
     Q_OBJECT
 public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
-            return new QGstreamerPlayerService;
+    CameraCapture(QWidget *parent = 0);
+    ~CameraCapture();
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
-            return new QGstreamerCaptureService(interface);
+private slots:
+    void updateRecordTime();
+    void record();
+    void pause();
+    void stop();
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
-            return new QGstreamerCaptureService(interface);
+    void setInputDevice(int idx);
+    void setAudioCodec(int idx);
+    void setContainerFormat(int idx);
+    void setQuality(int value);
 
-        return 0;
-    }
+    void displayErrorMessage();
+
+private:
+    Ui::CameraCapture *ui;
+
+    QMediaCapture* mediaCapture;
+    QCamera *camera;
+    QAudioDeviceEndpoint *audioDevice;
+    QAudioEncodeControl *encodeControl;
+    QMediaFormatControl *formatControl;
 };
 
-QStringList QGstreamerServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiocapture") << QLatin1String("camera");
-}
-
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiocapture") || key == QLatin1String("camera"))
-        return new QGstreamerProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-
-#include "qgstreamerserviceplugin.moc"
-
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
-
+#endif

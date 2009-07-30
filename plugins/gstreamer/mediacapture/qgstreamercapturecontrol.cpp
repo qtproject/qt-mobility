@@ -100,5 +100,5 @@ void QGstreamerCaptureControl::pause()
 
 void QGstreamerCaptureControl::stop()
 {
-    m_session->setState(QGstreamerCaptureSession::PreviewState);
+    m_session->setState(m_session->isPreviewEnabled() ? QGstreamerCaptureSession::PreviewState : QGstreamerCaptureSession::StoppedState);
 }
