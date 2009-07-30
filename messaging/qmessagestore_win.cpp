@@ -55,8 +55,10 @@ typedef QByteArray MapiEntryId;
 
 class MapiFolder;
 class MapiStore;
+class MapiSession;
 typedef QSharedPointer<MapiFolder> MapiFolderPtr;
 typedef QSharedPointer<MapiStore> MapiStorePtr;
+typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 static QString stringFromLpctstr(LPCTSTR lpszValue)
 {
@@ -251,7 +253,6 @@ public:
     bool isValid();
     MapiFolderPtr rootFolder();
 
-    static MapiStorePtr defaultStore(IMAPISession *mapiSession);
     static MapiStorePtr null() { return MapiStorePtr(new MapiStore()); }
 
 private:
@@ -306,8 +307,11 @@ MapiFolderPtr MapiStore::rootFolder()
     ULONG cbEntryId(rgProps[0].Value.bin.cb);
     LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rgProps[0].Value.bin.lpb));
 
-//XXX NO_CACHE    if (mapiStore->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, mapiFolderPtr) != S_OK)
+#if 0 // NO_MAPI_CACHING
+    if (_store->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK)
+#else
     if (_store->OpenEntry(cbEntryId, lpEntryId, 0, 0, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK)
+#endif
         mapiFolder = 0;
 
     MAPIFreeBuffer(rgProps);
@@ -316,16 +320,83 @@ MapiFolderPtr MapiStore::rootFolder()
     return result;
 }
 
-MapiStorePtr MapiStore::defaultStore(IMAPISession *mapiSession)
+class MapiSession {
+public:
+    MapiSession();
+    MapiSession(bool mapiInitialized);
+    ~MapiSession();
+
+    bool isValid();
+
+    HRESULT openEntry(MapiEntryId entryId, LPMESSAGE *message);
+    MapiStorePtr defaultStore();
+    static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }
+
+private:
+    bool _valid;
+    IMAPISession* _mapiSession;
+};
+
+MapiSession::MapiSession()
+    :_valid(false),
+     _mapiSession(0)
 {
+}
+
+MapiSession::MapiSession(bool mapiInitialized)
+    :_valid(mapiInitialized),
+     _mapiSession(0)
+{
+    if (!_valid)
+        return;
+
+    // Attempt to start a MAPI session on the default profile
+    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession) != S_OK) {
+        qWarning() << "Failed to login to MAPI session";
+        _valid = false;
+        _mapiSession = 0;
+    }
+}
+
+MapiSession::~MapiSession()
+{
+    if (_valid)
+        qDebug() << "XXX Logging out of mapi session";
+    if (_mapiSession)
+        _mapiSession->Release();
+    _mapiSession = 0;
+    _valid = false;
+};
+
+bool MapiSession::isValid()
+{
+    return _valid;
+}
+
+HRESULT MapiSession::openEntry(MapiEntryId entryId, LPMESSAGE *message)
+{
+    if (!_valid || !_mapiSession) {
+        Q_ASSERT(_valid && _mapiSession);
+        return 0;
+    }
+
+    ULONG FAR ulObjectType;
+    return _mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, reinterpret_cast<LPUNKNOWN*>(message));
+}
+
+MapiStorePtr MapiSession::defaultStore()
+{
+    MapiStorePtr result(MapiStore::null());
+    if (!_valid || !_mapiSession)
+        return result;
+
     IMAPITable *mapiMessageStoresTable(0);
     const int nCols(4);
     enum { defaultStoreColumn = 0, nameColumn, entryIdColumn, recordKeyColumn };
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_DISPLAY_NAME, PR_ENTRYID, PR_RECORD_KEY}};
     LPSRowSet rows(0);
-    MapiStorePtr result(MapiStore::null());
 
-    if (mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK)
+    if (_mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK)
         return result;
     if (mapiMessageStoresTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
         mapiMessageStoresTable->Release();
@@ -356,7 +427,7 @@ MapiStorePtr MapiStore::defaultStore(IMAPISession *mapiSession)
             qDebug() << "pre  copy key" << storeRecordKeyA.toHex();
             qDebug() << "post copy key" << storeRecordKeyB.toHex();
             /**** XXX Test copy end ****/
-            if (mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK)
+            if (_mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK)
                 result = MapiStorePtr(new MapiStore(mapiStore));
             FreeProws(rows);
             break;
@@ -374,22 +445,17 @@ public:
     QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q);
     ~QMessageStorePrivatePlatform();
 
-    bool login();
-    void logout();
-
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
 
     bool _mapiInitialized;
-    IMAPISession* _mapiSession;
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
      q_ptr(q)
 {
-    _mapiSession = 0;
     _mapiInitialized = false;
     lastError = QMessageStore::NoError;
 #ifndef QT_NO_THREAD
@@ -402,31 +468,15 @@ QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate 
     if (MAPIInitialize(0) == S_OK)
         _mapiInitialized = true;
 #endif
-    if (!_mapiInitialized)
+    if (!_mapiInitialized) {
+        qWarning() << "Failed to initialize MAPI";
         lastError = QMessageStore::ContentInaccessible;
+    }
 }
 
 QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
 {
-    logout();
     MAPIUninitialize();
-}
-
-bool QMessageStorePrivatePlatform::login()
-{
-    // Attempt to start a MAPI session on the default profile
-    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession) != S_OK) {
-        lastError = QMessageStore::ContentInaccessible;
-        return false;
-    }
-    return true;
-}
-
-void QMessageStorePrivatePlatform::logout()
-{
-    if (_mapiSession)
-        _mapiSession->Release();
-    _mapiSession = 0;
 }
 
 QMessageStorePrivate::QMessageStorePrivate()
@@ -475,22 +525,21 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 {
     Q_UNUSED(key)
     Q_UNUSED(sortKey)
-    uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
     QMessageIdList result;
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore());
+    if (!mapiStore->isValid())
+        return result;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+    uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
     QStringList path;
     QList<MapiFolderPtr> folders; // depth first search;
-
-    if(!d_ptr->p_ptr->_mapiInitialized || !d_ptr->p_ptr->login()) {
-		qWarning() << "Failed to initialize MAPI";
-    	d_ptr->p_ptr->logout();
-        return QMessageIdList();
-	}
-
-    MapiStorePtr mapiStore(MapiStore::defaultStore(d_ptr->p_ptr->_mapiSession));
-    if (!mapiStore->isValid()) {
-		qWarning() << "Failed to open default MAPI store";
-        return QMessageIdList();
-    }
 
     folders.append(mapiStore->rootFolder());
     path.append(folders.back()->name());
@@ -516,7 +565,6 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
         }
     }
     folders.clear();
-	d_ptr->p_ptr->logout();
 
     return result.mid(offset); // stub
 }
@@ -601,21 +649,20 @@ bool QMessageStore::updateMessage(QMessage *m)
 QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
-    if(!d_ptr->p_ptr->_mapiInitialized || !d_ptr->p_ptr->login()) {
-		qWarning() << "Failed to initialize MAPI";
-        return result;
-	}
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
 
-    MapiStorePtr mapiStore(MapiStore::defaultStore(d_ptr->p_ptr->_mapiSession));
-    if (!mapiStore->isValid()) {
-		qWarning() << "Failed to open default MAPI store";
-    	d_ptr->p_ptr->logout();
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
         return result;
-    }
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore());
+    if (!mapiStore->isValid())
+        return result;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
     /* Begin debug code */
-    QByteArray recordKey;
-    QByteArray entryId;
+    MapiRecordKey recordKey;
+    MapiEntryId entryId;
     qDebug() << "id to string" << id.toString();
 
     QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
@@ -629,9 +676,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     /* end debug code */
 
     LPMESSAGE message;
-    ULONG FAR ulObjectType;
     result.d_ptr->_id = id;
-    d_ptr->p_ptr->_mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, reinterpret_cast<LPUNKNOWN*>(&message));
+    if (mapiSession->openEntry(entryId, &message) != S_OK) {
+        d_ptr->p_ptr->lastError = InvalidId;
+        return result;
+    }
 
     const int nCols(4);
     enum { recordKeyColumn = 0, flagsColumn, senderColumn, subjectColumn };
@@ -644,6 +693,8 @@ QMessage QMessageStore::message(const QMessageId& id) const
         result.d_ptr->_from = QMessageAddress(sender, QMessageAddress::Email);
         result.d_ptr->_subject = stringFromLpctstr(properties[subjectColumn].Value.LPSZ);
         qDebug() << "sender" << result.from().recipient() << "subject" << result.subject(); // TODO remove this
+    } else {
+        d_ptr->p_ptr->lastError = InvalidId;
     }
     message->Release();
     return result;
