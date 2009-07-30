@@ -48,7 +48,7 @@ typedef QByteArray MapiEntryId;
 // TODO Open message given it's entry id, needs minimal QMessage implementation first (constructor, destructor, copy constructor, assigment)
 // TODO Find a message's entryid given its record key, store record key, and parent record key, with or without using cached folder map.
 // TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
-// TODO ref counted mapi store with auto logging in/out
+// TODO auto logging in/out, login)= shoul return a ref counted object, that logs out in the destructor.
 // TODO typedef QSharedPointer<MapiFolder> MailFolderPtr class for ref counting com objects, 
 //   giving MapiFolders a parent store object, store objects a parent session,
 //   and automatically releasing all store and folder objects when logging out of the session.
@@ -60,7 +60,7 @@ typedef QSharedPointer<MapiStore> MapiStorePtr;
 
 static QString stringFromLpctstr(LPCTSTR lpszValue)
 {
-    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1))
+    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
         return QString::null;
     if (lpszValue)
         return QString::fromWCharArray(lpszValue);
@@ -482,6 +482,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
 
     if(!d_ptr->p_ptr->_mapiInitialized || !d_ptr->p_ptr->login()) {
 		qWarning() << "Failed to initialize MAPI";
+    	d_ptr->p_ptr->logout();
         return QMessageIdList();
 	}
 
@@ -600,6 +601,18 @@ bool QMessageStore::updateMessage(QMessage *m)
 QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
+    if(!d_ptr->p_ptr->_mapiInitialized || !d_ptr->p_ptr->login()) {
+		qWarning() << "Failed to initialize MAPI";
+        return result;
+	}
+
+    MapiStorePtr mapiStore(MapiStore::defaultStore(d_ptr->p_ptr->_mapiSession));
+    if (!mapiStore->isValid()) {
+		qWarning() << "Failed to open default MAPI store";
+    	d_ptr->p_ptr->logout();
+        return result;
+    }
+
     /* Begin debug code */
     QByteArray recordKey;
     QByteArray entryId;
@@ -615,7 +628,24 @@ QMessage QMessageStore::message(const QMessageId& id) const
     //TODO fall back recordKey if entryId is invalid.
     /* end debug code */
 
-//    result.d_ptr->setId(id); TODO need to implement QMessage copy constructor etc
+    LPMESSAGE message;
+    ULONG FAR ulObjectType;
+    result.d_ptr->_id = id;
+    d_ptr->p_ptr->_mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, reinterpret_cast<LPUNKNOWN*>(&message));
+
+    const int nCols(4);
+    enum { recordKeyColumn = 0, flagsColumn, senderColumn, subjectColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
+    ULONG count;
+    LPSPropValue properties;
+    if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
+        result.d_ptr->_status = ((properties[flagsColumn].Value.ul & MSGFLAG_READ) ? QFlags<QMessage::Status>(QMessage::Read) : 0);
+        QString sender(stringFromLpctstr(properties[senderColumn].Value.LPSZ));
+        result.d_ptr->_from = QMessageAddress(sender, QMessageAddress::Email);
+        result.d_ptr->_subject = stringFromLpctstr(properties[subjectColumn].Value.LPSZ);
+        qDebug() << "sender" << result.from().recipient() << "subject" << result.subject(); // TODO remove this
+    }
+    message->Release();
     return result;
 }
 
