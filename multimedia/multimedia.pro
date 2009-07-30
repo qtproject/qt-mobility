@@ -5,8 +5,11 @@ TEMPLATE = lib
 # DEFINES += VIDEOSERVICES
 # distinct from QtMultimedia
 TARGET = QtMedia
-DESTDIR = $$OUT_PWD/../lib
-DLLDESTDIR = $$OUT_PWD/../bin
+
+include (../common.pri)
+
+DLLDESTDIR = $$DESTDIR
+
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 HEADERS = qabstractmediacontrol.h \

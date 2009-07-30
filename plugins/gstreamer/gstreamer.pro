@@ -1,7 +1,9 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = gstengine
-DESTDIR = $$OUT_PWD/../../lib/mediaservice
+include (../../common.pri)
+DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/lib/mediaservice
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \
