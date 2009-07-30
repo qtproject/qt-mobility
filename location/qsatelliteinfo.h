@@ -73,7 +73,7 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);;
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
 #endif
     QSatelliteInfoPrivate *d;
 };
