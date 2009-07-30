@@ -1427,41 +1427,41 @@ void QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req)
 }
 
 //---- now the update request trampoline in base class: performs switch, depending on type updates member variable.
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     switch (req->type()) {
         case ContactFetch:
         {
-            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            r->d->m_ids = result;
+            QContactFetchRequestData* rd = static_cast<QContactFetchRequestData*>(req->d);
+            rd->m_ids = result;
         }
         break;
 
         case ContactIdFetch:
         {
-            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
-            r->d->m_ids = result;
+            QContactIdFetchRequestData* rd = static_cast<QContactIdFetchRequestData*>(req->d);
+            rd->m_ids = result;
         }
         break;
 
         case ContactRemove:
         {
-            ContactRemoveRequest* r = static_cast<ContactRemoveRequest*>(req);
-            r->d->m_ids = result;
+            ContactRemoveRequestData* rd = static_cast<ContactRemoveRequestData*>(req->d);
+            rd->m_ids = result;
         }
         break;
 
         case GroupFetch:
         {
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            r->d->m_ids = result;
+            QContactGroupFetchRequestData* rd = static_cast<QContactGroupFetchRequestData*>(req->d);
+            rd->m_ids = result;
         }
         break;
 
         case GroupRemove:
         {
-            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
-            r->d->m_ids = result;
+            QContactGroupRemoveRequestData* rd = static_cast<QContactGroupRemoveRequestData*>(req->d);
+            rd->m_ids = result;
         }
         break;
 
@@ -1471,22 +1471,26 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
+
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
 }
 
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     switch (req->type()) {
         case ContactFetch:
         {
-            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            r->d->m_contacts = result;
+            QContactFetchRequestData* rd = static_cast<QContactFetchRequestData*>(req->d);
+            rd->m_contacts = result;
         }
         break;
 
         case ContactSave:
         {
-            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
-            r->d->m_contacts = result;
+            QContactSaveRequestData* rd = static_cast<QContactSaveRequestData*>(req->d);
+            rd->m_contacts = result;
         }
         break;
 
@@ -1496,22 +1500,26 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
+
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
 }
 
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     switch (req->type()) {
         case GroupFetch:
         {
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            r->d->m_groups = result;
+            QContactGroupFetchRequestData* rd = static_cast<QContactGroupFetchRequestData*>(req->d);
+            rd->m_groups = result;
         }
         break;
 
         case GroupSave:
         {
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
-            r->d->m_groups = result;
+            QContactGroupSaveRequestData* rd = static_cast<QContactGroupSaveRequestData*>(req->d);
+            rd->m_groups = result;
         }
         break;
 
@@ -1521,22 +1529,26 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
+
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
 }
 
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     switch (req->type()) {
         case DetailDefinitionFetch:
         {
-            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            r->d->m_names = result;
+            QContactDetailDefinitionFetchRequestData* rd = static_cast<QContactDetailDefinitionFetchRequestData*>(req->d);
+            rd->m_names = result;
         }
         break;
 
         case DetailDefinitionRemove:
         {
-            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
-            r->d->m_names = result;
+            QContactDetailDefinitionRemoveRequestData* r = static_cast<QContactDetailDefinitionRemoveRequestData*>(req->d);
+            rd->m_names = result;
         }
         break;
 
@@ -1546,22 +1558,26 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QS
             return;
         }
     }
+
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
 }
 
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     switch (req->type()) {
         case DetailDefinitionFetch:
         {
-            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            r->d->m_definitions = result;
+            QContactDetailDefinitionFetchRequestData* rd = static_cast<QContactDetailDefinitionFetchRequestData*>(req->d);
+            rd->m_definitions = result;
         }
         break;
 
         case DetailDefinitionSave:
         {
-            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
-            r->d->m_definitions = result;
+            QContactDetailDefinitionSaveRequestData* rd = static_cast<QContactDetailDefinitionSaveRequestData*>(req->d);
+            rd->m_definitions = result;
         }
         break;
 
@@ -1571,6 +1587,10 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
+
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
 }
 
 
