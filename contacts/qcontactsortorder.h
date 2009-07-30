@@ -38,6 +38,7 @@
 
 #include <QString>
 #include <QSharedData>
+#include <QList>
 
 class QContactSortOrderPrivate;
 class QTCONTACTS_EXPORT QContactSortOrder
@@ -71,6 +72,9 @@ public:
 
     bool operator==(const QContactSortOrder& other) const;
     bool operator!=(const QContactSortOrder& other) const {return !operator==(other);}
+
+    /* Convenience cast */
+    operator QList<QContactSortOrder>() const {return QList<QContactSortOrder>() << *this;}
 
 private:
     QSharedDataPointer<QContactSortOrderPrivate> d;
