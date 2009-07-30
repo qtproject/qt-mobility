@@ -80,6 +80,9 @@ private slots:
     void testMessageFilterKey_data();
     void testMessageFilterKey();
 
+    void testMessageSortKey_data();
+    void testMessageSortKey();
+
 private:
     QMessageFolderIdList standardFolderIds;
 
@@ -99,6 +102,9 @@ Q_DECLARE_METATYPE(QMessageFolderSortKey)
 Q_DECLARE_METATYPE(QMessageIdList)
 Q_DECLARE_METATYPE(QMessageFilterKey)
 Q_DECLARE_METATYPE(QMessageSortKey)
+
+typedef QList<QMessageIdList> MessageListList;
+Q_DECLARE_METATYPE(MessageListList)
 
 QDebug &operator<<(QDebug &dbg, const QMessageAccountId &id)
 {
@@ -2424,6 +2430,221 @@ void tst_QMessageStoreKeys::testMessageFilterKey()
         QCOMPARE(x, y);
     }
     */
+}
+
+void tst_QMessageStoreKeys::testMessageSortKey_data()
+{
+    QTest::addColumn<QMessageSortKey>("sortKey");
+    QTest::addColumn<MessageListList>("ids");
+
+    QTest::newRow("type ascending")
+        << QMessageSortKey::type(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] ) );
+
+    QTest::newRow("type descending")
+        << QMessageSortKey::type(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+
+    QTest::newRow("sender ascending")
+        << QMessageSortKey::sender(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] ) );
+
+    QTest::newRow("sender descending")
+        << QMessageSortKey::sender(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] << messageIds[4] ) );
+
+    QTest::newRow("recipients ascending")
+        << QMessageSortKey::recipients(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] << messageIds[4] ) );
+
+    QTest::newRow("recipients descending")
+        << QMessageSortKey::recipients(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[3] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
+
+    QTest::newRow("subject ascending")
+        << QMessageSortKey::subject(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[3] ) );
+
+    QTest::newRow("subject descending")
+        << QMessageSortKey::subject(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("timeStamp ascending")
+        << QMessageSortKey::timeStamp(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] << messageIds[3] ) );
+
+    QTest::newRow("timeStamp descending")
+        << QMessageSortKey::timeStamp(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("receptionTimeStamp ascending")
+        << QMessageSortKey::receptionTimeStamp(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] ) );
+
+    QTest::newRow("receptionTimeStamp descending")
+        << QMessageSortKey::receptionTimeStamp(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("priority ascending")
+        << QMessageSortKey::priority(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
+
+    QTest::newRow("priority descending")
+        << QMessageSortKey::priority(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("size ascending")
+        << QMessageSortKey::size(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] ) );
+
+    QTest::newRow("size descending")
+        << QMessageSortKey::size(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+
+    QTest::newRow("type ascending, priority ascending, size ascending")
+        << QMessageSortKey::type(Qt::AscendingOrder) + QMessageSortKey::priority(Qt::AscendingOrder) + QMessageSortKey::size(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] ) );
+
+    QTest::newRow("type ascending, priority ascending, size descending")
+        << QMessageSortKey::type(Qt::AscendingOrder) + QMessageSortKey::priority(Qt::AscendingOrder) + QMessageSortKey::size(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] ) );
+
+    QTest::newRow("type ascending, priority descending, size ascending")
+        << QMessageSortKey::type(Qt::AscendingOrder) + QMessageSortKey::priority(Qt::DescendingOrder) + QMessageSortKey::size(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("type ascending, priority descending, size descending")
+        << QMessageSortKey::type(Qt::AscendingOrder) + QMessageSortKey::priority(Qt::DescendingOrder) + QMessageSortKey::size(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+
+    QTest::newRow("type descending, priority ascending, size ascending")
+        << QMessageSortKey::type(Qt::DescendingOrder) + QMessageSortKey::priority(Qt::AscendingOrder) + QMessageSortKey::size(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+
+    QTest::newRow("type descending, priority ascending, size descending")
+        << QMessageSortKey::type(Qt::DescendingOrder) + QMessageSortKey::priority(Qt::AscendingOrder) + QMessageSortKey::size(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+
+    QTest::newRow("type descending, priority descending, size ascending")
+        << QMessageSortKey::type(Qt::DescendingOrder) + QMessageSortKey::priority(Qt::DescendingOrder) + QMessageSortKey::size(Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+
+    QTest::newRow("type descending, priority descending, size descending")
+        << QMessageSortKey::type(Qt::DescendingOrder) + QMessageSortKey::priority(Qt::DescendingOrder) + QMessageSortKey::size(Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] ) );
+}
+
+
+void tst_QMessageStoreKeys::testMessageSortKey()
+{
+    QFETCH(QMessageSortKey, sortKey);
+    QFETCH(MessageListList, ids);
+
+    QMessageIdList x(QMessageStore::instance()->queryMessages(QMessageFilterKey(), sortKey));
+    QMessageIdList::const_iterator xit = x.begin();
+
+    MessageListList::const_iterator iit = ids.begin();
+
+    bool match(true);
+    for (int groupCount = 0; xit != x.end(); ++xit) {
+        if (iit == ids.end()) {
+            match = false;
+            break;
+        } else {
+            if ((*iit).contains(*xit)) {
+                ++groupCount;
+                if (groupCount == (*iit).count()) {
+                    // We have matched all members of this group
+                    ++iit;
+                    groupCount = 0;
+                }
+            } else {
+                match = false;
+                break;
+            }
+        }
+    }
+    if (!match) {
+        qDebug() << "x:" << x;
+        qDebug() << "y:" << ids;
+        QVERIFY(match);
+    }
 }
 
 
