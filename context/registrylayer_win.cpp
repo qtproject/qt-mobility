@@ -524,8 +524,12 @@ static LONG qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
 {
     HKEY key;
     long result = RegOpenKeyEx(hKey, lpSubKey, 0, KEY_ALL_ACCESS, &key);
-    if (result != ERROR_SUCCESS)
-        return result;
+    if (result != ERROR_SUCCESS) {
+        if (result == ERROR_FILE_NOT_FOUND)
+            return ERROR_SUCCESS;
+        else
+            return result;
+    }
 
     do {
         TCHAR subKey[MAX_KEY_LENGTH];
