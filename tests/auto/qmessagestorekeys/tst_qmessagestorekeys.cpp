@@ -195,6 +195,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "")
                              ("size", "160")
                              ("status-read", "true")
+                             ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox")
                              ("type", "email")
@@ -206,6 +207,8 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "10240")
                              ("status-hasAttachments", "true")
+                             ("custom-spam", "filter:no")
+                             ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox")
                              ("type", "email")
@@ -217,6 +220,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "20480")
                              ("status-hasAttachments", "true")
+                             ("custom-spam", "filter:no")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox/X-Announce")
                              ("type", "email")
@@ -228,6 +232,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "")
                              ("size", "1056")
                              ("status-read", "true")
+                             ("custom-spam", "filter:maybe")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "/Inbox/X-Announce/X-Archived")
                              ("type", "email")
@@ -239,7 +244,8 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "Low")
                              ("size", "4096")
                              ("status-read", "true")
-                             ("status-hasAttachments", "true");
+                             ("status-hasAttachments", "true")
+                             ("custom-spam", "filter:yes");
 
     foreach (const Support::Parameters &params, accountParams) {
         accountIds.append(Support::addAccount(params));
@@ -2044,10 +2050,107 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
 
-    /*
-    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    */
+    // Note: custom field negations do not work as expected!
+    QTest::newRow("customField equality 1")
+        << QMessageFilterKey::customField("flagged", "true", QMessageDataComparator::Equal)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] )
+        //<< ( QMessageIdList() << messageIds[2] << messageIds[3] << messageIds[4] );
+        << QMessageIdList();
+
+    QTest::newRow("customField equality 2")
+        << QMessageFilterKey::customField("spam", "filter:yes", QMessageDataComparator::Equal)
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] );
+
+    QTest::newRow("customField equality empty")
+        << QMessageFilterKey::customField("spam", "", QMessageDataComparator::Equal)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("customField equality non-matching key")
+        << QMessageFilterKey::customField("hello", "world", QMessageDataComparator::Equal)
+        << QMessageIdList()
+        << QMessageIdList();
+
+    QTest::newRow("customField equality non-matching value")
+        << QMessageFilterKey::customField("spam", "spam spam spam", QMessageDataComparator::Equal)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("customField inequality 1")
+        << QMessageFilterKey::customField("flagged", "true", QMessageDataComparator::NotEqual)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] );
+
+    QTest::newRow("customField inequality 2")
+        << QMessageFilterKey::customField("spam", "filter:yes", QMessageDataComparator::NotEqual)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[4] );
+
+    QTest::newRow("customField inequality empty")
+        << QMessageFilterKey::customField("spam", "", QMessageDataComparator::NotEqual)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList();
+
+    QTest::newRow("customField inequality non-matching key")
+        << QMessageFilterKey::customField("hello", "world", QMessageDataComparator::NotEqual)
+        << QMessageIdList()
+        << QMessageIdList();
+
+    QTest::newRow("customField inequality non-matching value")
+        << QMessageFilterKey::customField("spam", "spam spam spam", QMessageDataComparator::NotEqual)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList();
+
+    QTest::newRow("customField inclusion 1")
+        << QMessageFilterKey::customField("flagged", "ru", QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] )
+        << QMessageIdList();
+
+    QTest::newRow("customField inclusion 2")
+        << QMessageFilterKey::customField("spam", "filter", QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList();
+
+    QTest::newRow("customField inclusion empty")
+        << QMessageFilterKey::customField("spam", "", QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList();
+
+    QTest::newRow("customField inclusion non-matching key")
+        << QMessageFilterKey::customField("hello", "world", QMessageDataComparator::Includes)
+        << QMessageIdList()
+        << QMessageIdList();
+
+    QTest::newRow("customField inclusion non-matching value")
+        << QMessageFilterKey::customField("spam", "spam spam spam", QMessageDataComparator::Includes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("customField exclusion 1")
+        << QMessageFilterKey::customField("flagged", "ru", QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] );
+
+    QTest::newRow("customField exclusion 2")
+        << QMessageFilterKey::customField("spam", "filter", QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("customField exclusion empty")
+        << QMessageFilterKey::customField("spam", "", QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("customField exclusion non-matching key")
+        << QMessageFilterKey::customField("hello", "world", QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << QMessageIdList();
+
+    QTest::newRow("customField exclusion non-matching value")
+        << QMessageFilterKey::customField("spam", "spam spam spam", QMessageDataComparator::Excludes)
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList();
 
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilterKey::parentAccountId(accountIds[0], QMessageDataComparator::Equal) 
