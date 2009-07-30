@@ -163,10 +163,8 @@ RegistryLayer::~RegistryLayer()
 
         RegistryHandle *handle = i.value();
 
-        if (handle->valueHandle) {
-            qDebug() << "removing value" << handle->path;
+        if (handle->valueHandle)
             removeHandle(Handle(handle));
-        }
     }
 
     i.toFront();
@@ -849,10 +847,8 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
                                  0, 0, REG_OPTION_VOLATILE,
                                  KEY_ALL_ACCESS, 0, &key, &disposition);
 
-    if (result == ERROR_SUCCESS) {
-        qDebug() << "monitoring changes on" << handle->path;
+    if (result == ERROR_SUCCESS)
         hKeys.insert(handle, key);
-    }
 
     return disposition == REG_CREATED_NEW_KEY;
 }
