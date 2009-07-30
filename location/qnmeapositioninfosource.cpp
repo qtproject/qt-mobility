@@ -328,8 +328,10 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
     }
 
     bool initialized = initialize();
-    if (!initialized)
+    if (!initialized) {
+        emit m_source->requestTimeout();
         return;
+    }
 
     m_requestTimer->start(msec);
 
@@ -357,8 +359,7 @@ void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, b
             update->setDateTime(QDateTime(m_currentDate, time, Qt::UTC));
     }
 
-    if (hasFix && update->dateTime().isValid()
-            && update->coordinate().type() != QGeoCoordinate::InvalidCoordinate) {
+    if (hasFix && update->isValid()) {
         if (m_requestTimer && m_requestTimer->isActive()) {
             m_requestTimer->stop();
             emitUpdated(*update);
