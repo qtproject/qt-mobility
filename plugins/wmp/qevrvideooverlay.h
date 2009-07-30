@@ -32,33 +32,33 @@
 **
 ****************************************************************************/
 
-#include "qwmpplaceholderwidget.h"
+#ifndef QEVRVIDEOOVERLAY_H
+#define QEVRVIDEOOVERLAY_H
 
-QWmpPlaceholderWidget::QWmpPlaceholderWidget(QWidget *parent)
-    : QMediaWidgetEndpoint(parent)
+#include "qvideooverlayendpoint.h"
+
+#include <evr.h>
+
+class QEvrVideoOverlay : public QVideoOverlayEndpoint
 {
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_OpaquePaintEvent);
-}
+    Q_OBJECT
+public:
+    QEvrVideoOverlay(QObject *parent = 0);
+    ~QEvrVideoOverlay();
 
-QWmpPlaceholderWidget::~QWmpPlaceholderWidget()
-{
-}
+    void setEnabled(bool enabled);
+    void setWinId(WId id);
+    void setDisplayRect(const QRect &rect);
+    void setFullscreen(bool fullscreen);
 
-void QWmpPlaceholderWidget::setFullscreen(bool fullscreen)
-{
-    Q_UNUSED(fullscreen);
-}
+    QSize sizeHint() const;
+    void setSizeHint(const QSize &size);
 
+    void setDisplayControl(IMFVideoDisplayControl *control);
 
-QSize QWmpPlaceholderWidget::sizeHint() const
-{
-    return m_sizeHint.isValid() ? m_sizeHint : QMediaWidgetEndpoint::sizeHint();
-}
+private:
+    QSize m_sizeHint;
+    IMFVideoDisplayControl *m_displayControl;
+};
 
-void QWmpPlaceholderWidget::setSizeHint(const QSize &size)
-{
-    m_sizeHint = size;
-
-    updateGeometry();
-}
+#endif
