@@ -165,15 +165,6 @@ void QContactManagerData::loadFactories()
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
 
-        /* XXX a bit of a hack */
-#if defined(Q_OS_UNIX)
-        if (qgetenv("LD_LIBRARY_PATH").size() > 0)
-            paths << QString::fromLocal8Bit(qgetenv("LD_LIBRARY_PATH"));
-#elif defined(Q_OS_WIN)
-        if (qgetenv("PATH").size() > 0)
-            paths << QString::fromLocal8Bit(qgetenv("PATH")).split(QLatin1Char(';'));
-#endif
-
         /* Code from docs.. */
         for (int i=0; i < paths.count(); i++) {
             QDir pluginsDir(paths.at(i));
