@@ -2183,7 +2183,6 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] );
 
-    // TODO: Is this wrong?
     QTest::newRow("ancestorFolderIds filter inclusion empty")
         << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey(), QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
@@ -2209,7 +2208,6 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[3] << messageIds[4] );
 
-    // TODO: Is this wrong?
     QTest::newRow("ancestorFolderIds filter exclusion empty")
         << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey(), QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] )
