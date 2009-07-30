@@ -36,11 +36,6 @@ QMessageContentContainer::QMessageContentContainer()
 {
 }
 
-QMessageContentContainer::QMessageContentContainer(QMessage *derived)
-{
-    Q_UNUSED(derived)
-}
-
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
 {
     Q_UNUSED(other)
@@ -270,4 +265,10 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
     Q_UNUSED(content);
     return QMessageContentContainerId(); // stub
 }
+
+void QMessageContentContainer::setDerivedMessage(QMessage *derived)
+{
+    Q_UNUSED(derived)
+}
 #endif
+

@@ -183,30 +183,31 @@ struct AttachmentLocator
 }
 
 QMessage::QMessage()
-    : QMessageContentContainer(this),
-      d_ptr(new QMessagePrivate)
+    : d_ptr(new QMessagePrivate)
 {
+    setDerivedMessage(this);
 }
 
 QMessage::QMessage(const QMessageId& id)
-    : QMessageContentContainer(this),
-      d_ptr(new QMessagePrivate)
+    : d_ptr(new QMessagePrivate)
 {
     *this = QMessageStore::instance()->message(id);
+    setDerivedMessage(this);
 }
 
 QMessage::QMessage(const QMessage &other)
-    : QMessageContentContainer(this),
-      d_ptr(new QMessagePrivate)
+    : d_ptr(new QMessagePrivate)
 {
     this->operator=(other);
+    setDerivedMessage(this);
 }
 
 const QMessage& QMessage::operator=(const QMessage& other)
 {
     if (&other != this) {
-        d_ptr->_message = other.d_ptr->_message;
         QMessageContentContainer::operator=(other);
+        d_ptr->_message = other.d_ptr->_message;
+        setDerivedMessage(this);
     }
 
     return *this;

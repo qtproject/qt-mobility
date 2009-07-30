@@ -59,12 +59,6 @@ public:
     {
     }
 
-    QMessageContentContainerPrivate(QMessage *derived) 
-        : _message(derived),
-          _container(convert(_message))
-    {
-    }
-
     QMailMessageContentType contentType() const 
     {
         QMailMessageContentType ct;
@@ -181,11 +175,6 @@ QMessageContentContainer::QMessageContentContainer()
 {
 }
 
-QMessageContentContainer::QMessageContentContainer(QMessage *derived)
-    : d_ptr(new QMessageContentContainerPrivate(derived))
-{
-}
-
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
     : d_ptr(new QMessageContentContainerPrivate)
 {
@@ -199,6 +188,7 @@ const QMessageContentContainer& QMessageContentContainer::operator=(const QMessa
             d_ptr->_part = other.d_ptr->_part;
             d_ptr->_container = &d_ptr->_part;
         } else {
+            d_ptr->_message = other.d_ptr->_message;
             d_ptr->_part = QMailMessagePart();
             d_ptr->_container = convert(d_ptr->_message);
         }
@@ -570,4 +560,12 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
 
     return convert(d_ptr->_container->partAt(0).location());
 }
+
+void QMessageContentContainer::setDerivedMessage(QMessage *derived)
+{
+    d_ptr->_message = derived;
+    d_ptr->_part = QMailMessagePart();
+    d_ptr->_container = convert(d_ptr->_message);
+}
+
 #endif

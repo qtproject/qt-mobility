@@ -42,7 +42,8 @@
 class QMessage;
 class QMessageContentContainerPrivate;
 
-class Q_MESSAGING_EXPORT QMessageContentContainer {
+class Q_MESSAGING_EXPORT QMessageContentContainer
+{
     Q_DECLARE_PRIVATE(QMessageContentContainer)
 
 public:
@@ -105,7 +106,7 @@ private:
     friend class QMessage;
     friend class QMessageStore;
 
-    QMessageContentContainer(QMessage *derived);
+    void setDerivedMessage(QMessage *derived);
 
     QMessageContentContainerPrivate *d_ptr;
 };
