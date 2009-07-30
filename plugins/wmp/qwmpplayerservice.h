@@ -44,10 +44,11 @@ class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
 
+class QEvrVideoOverlay;
 class QWmpMetaData;
-class QWmpPlaceholderWidget;
 class QWmpPlayerControl;
 class QWmpPlaylist;
+class QWmpVideoOverlay;
 
 class QWmpPlayerService
     : public QMediaPlayerService
@@ -79,8 +80,6 @@ public:
             QMediaEndpointInterface::Direction direction) const;
 
     QObject *createEndpoint(const char *iid);
-
-    bool eventFilter(QObject *object, QEvent *event);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -153,17 +152,16 @@ private:
     const EmbedMode m_embedMode;
     IWMPPlayer4 *m_player;
     IOleObject *m_oleObject;
-    IOleInPlaceObject *m_inPlaceObject;
     QWmpEvents *m_events;
-    QWmpPlaceholderWidget *m_placeholderWidget;
+    QWmpVideoOverlay *m_oleVideoOverlay;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
 
 #ifdef QWMP_EVR
     typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
 
+    QEvrVideoOverlay *m_evrVideoOverlay;
     IMFVideoPresenter *m_presenter;
-    IMFVideoDisplayControl *m_displayControl;
     HINSTANCE m_evrHwnd;
     PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
 #endif
