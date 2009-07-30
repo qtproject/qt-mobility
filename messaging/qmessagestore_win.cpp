@@ -49,6 +49,7 @@ typedef QByteArray MapiEntryId;
 // TODO Open message with a stale entry id
 // TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
 // TODO Consider moving MAPI wrapper classes and above typeders, into a seperate file,
+// TODO review error handling make sure lastError is being updated appropriately
 
 class MapiFolder;
 class MapiStore;
@@ -209,7 +210,7 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             QString sender = stringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);
             QString subject = stringFromLpctstr(rows->aRow[0].lpProps[subjectColumn].Value.LPSZ);
             qDebug() << ((!read) ? '*' : ' ') << sender.leftJustified(25, ' ', true) << subject.leftJustified(46, ' ' , true); //XXX
-            */ End test code */
+            /* End test code */
 
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             QByteArray recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
