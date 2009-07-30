@@ -577,15 +577,21 @@ bool QContactKabcEngine::removeDetailDefinition(const QContactDetailDefinition& 
     return success;
 }
 
-/*!
- * Returns a list of definition identifiers which are natively (fast) filterable
- * on the default backend store managed by the manager from which the capabilities object was accessed
- */
-QStringList QContactKabcEngine::fastFilterableDefinitions() const
+/*! \reimp */
+bool QContactKabcEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    QStringList fastlist;
-    fastlist << "Name::First" << "Name::Last" << "PhoneNumber::PhoneNumber" << "EmailAddress::EmailAddress";
-    return fastlist;
+    switch (feature) {
+        case QContactManagerInfo::Groups:
+        case QContactManagerInfo::Batch:
+        case QContactManagerInfo::ActionPreferences:
+        case QContactManagerInfo::ReadOnlyDetails:
+        case QContactManagerInfo::CreateOnlyDetails:
+        case QContactManagerInfo::MutableDefinitions:
+        case QContactManagerInfo::Synchronous:
+            return true;
+        default:
+            return false;
+    }
 }
 
 /*!
