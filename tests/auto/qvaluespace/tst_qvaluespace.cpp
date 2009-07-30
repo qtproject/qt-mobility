@@ -42,6 +42,8 @@
 #include "qvaluespace.h"
 #include <QVariant>
 
+#define ERROR_SETVALUE_NOT_SUPPORTED 1
+
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
         if ((a) == (e)) break;                  \
@@ -1010,7 +1012,13 @@ void tst_QValueSpaceItem::ipcSetValue()
     process.start("vsiTestLackey", QStringList() << "-ipcSetValue");
     QVERIFY(process.waitForStarted());
 
-    QTest::qWait(5000); 
+    process.waitForFinished(5000);
+
+    if (process.state() == QProcess::NotRunning &&
+        process.exitCode() == ERROR_SETVALUE_NOT_SUPPORTED) {
+        QSKIP("setValue not supported by underlying layer", SkipSingle);
+    }
+
     //QTRY_COMPARE(changeSpy.count(), 3);
     QTRY_COMPARE(spies.at(0)->count(), 3);
     QTRY_COMPARE(spies.at(1)->count(), 5);
