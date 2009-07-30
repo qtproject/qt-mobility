@@ -181,7 +181,7 @@ private slots:
         QCOMPARE(source.parent(), &o);
     }
 
-    void startUpdates_withBufferedData()
+    void testWithBufferedData()
     {
         // In SimulationMode, data stored in the QIODevice is read when
         // startUpdates() or requestUpdate() is called.
