@@ -32,50 +32,30 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
-#include "qgstreamerserviceplugin.h"
-#include "qgstreamerplayerservice.h"
-#include "qgstreamercaptureservice.h"
+#include "qgstreamercameracontrol.h"
 
-#include <qmediaserviceprovider.h>
-
-
-class QGstreamerProvider : public QMediaServiceProvider
+QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
+    :QCameraControl(session), m_session(session)
 {
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
-            return new QGstreamerPlayerService;
-
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
-            return new QGstreamerCaptureService(interface);
-
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
-            return new QGstreamerCaptureService(interface);
-
-        return 0;
-    }
-};
-
-QStringList QGstreamerServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiocapture") << QLatin1String("camera");
 }
 
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
+QGstreamerCameraControl::~QGstreamerCameraControl()
 {
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiocapture") || key == QLatin1String("camera"))
-        return new QGstreamerProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
 }
 
-#include "qgstreamerserviceplugin.moc"
+GstElement *QGstreamerCameraControl::buildElement()
+{
+    //TODO: add caps filter with desired camera settings, like resolution, framerate, etc
+    return gst_element_factory_make("v4l2src", "camera_source");
+}
 
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
+void QGstreamerCameraControl::start()
+{
+    m_session->enablePreview(true);
+}
 
+void QGstreamerCameraControl::stop()
+{
+    m_session->enablePreview(false);
+}

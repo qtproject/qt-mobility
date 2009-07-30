@@ -9,6 +9,7 @@
 #include "qgstreamervideowidget.h"
 #include "qgstreamervideorenderer.h"
 #include "qgstreamerbushelper.h"
+#include "qgstreamercameracontrol.h"
 
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
@@ -21,11 +22,14 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     }
 
     if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0")) {
-        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);//change to audio only later
+        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
+        m_cameraControl = 0;
     }
 
-    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.CameraCapture/1.0")) {
+    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0")) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
+        m_cameraControl = new QGstreamerCameraControl(m_captureSession);
+        m_captureSession->setVideoInput(m_cameraControl);
     }
 }
 
@@ -149,6 +153,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 
     if (qstrcmp(name,"com.nokia.qt.MediaFormatControl") == 0)
         return m_captureSession->mediaFormatControl();
+
+    if (qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
+        return m_cameraControl;
 
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <gst/gst.h>
 
 class QGstreamerCaptureSession;
+class QGstreamerCameraControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 
@@ -30,6 +31,7 @@ private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
+    QGstreamerCameraControl *m_cameraControl;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H

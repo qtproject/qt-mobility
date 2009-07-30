@@ -32,50 +32,31 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
-#include "qgstreamerserviceplugin.h"
-#include "qgstreamerplayerservice.h"
-#include "qgstreamercaptureservice.h"
+#ifndef QGSTREAMERCAMERACONTROL_H
+#define QGSTREAMERCAMERACONTROL_H
 
-#include <qmediaserviceprovider.h>
+#include "qcameracontrol.h"
+#include "qgstreamercapturesession.h"
 
-
-class QGstreamerProvider : public QMediaServiceProvider
+class QGstreamerCameraControl : public QCameraControl, public QGstreamerElementFactory
 {
-    Q_OBJECT
 public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
-            return new QGstreamerPlayerService;
+    QGstreamerCameraControl( QGstreamerCaptureSession *session );
+    virtual ~QGstreamerCameraControl();
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
-            return new QGstreamerCaptureService(interface);
+    bool isValid() const { return true; }
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
-            return new QGstreamerCaptureService(interface);
+    GstElement *buildElement();
 
-        return 0;
-    }
+    void start();
+    void stop();
+
+signals:
+
+
+private:
+    QGstreamerCaptureSession *m_session;
 };
 
-QStringList QGstreamerServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiocapture") << QLatin1String("camera");
-}
-
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiocapture") || key == QLatin1String("camera"))
-        return new QGstreamerProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-
-#include "qgstreamerserviceplugin.moc"
-
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
-
+#endif // QGSTREAMERCAMERACONTROL_H
