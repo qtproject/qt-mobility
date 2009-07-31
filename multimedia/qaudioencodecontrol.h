@@ -46,9 +46,9 @@ class Q_MEDIA_EXPORT QAudioFormat
 public:
     QAudioFormat();
 
-    void QAudioFormat::setFrequency(int frequency);
-    void QAudioFormat::setChannels(int channels);
-    void QAudioFormat::setSampleSize(int sampleSize);
+    void setFrequency(int frequency);
+    void setChannels(int channels);
+    void setSampleSize(int sampleSize);
 
 private:
     bool m_null;
