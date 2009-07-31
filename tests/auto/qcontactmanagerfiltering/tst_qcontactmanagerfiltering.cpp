@@ -1568,6 +1568,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::addColumn<QString>("expected");
 
 
+    QString es;
+
     QString firstname = QContactName::FieldFirst;
     QString lastname = QContactName::FieldLast;
     QString namedef = QContactName::DefinitionName;
@@ -1593,6 +1595,10 @@ void tst_QContactManagerFiltering::multiSorting_data()
                        << false << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "abcdefg";
 
+    QTest::newRow("5b") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << true << es << es << (int)(Qt::AscendingOrder)
+                       << "abcdefg";
+
     QTest::newRow("6") << false << namedef << firstname << (int)(Qt::AscendingOrder)
                        << true << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "bacdefg";
@@ -1605,6 +1611,10 @@ void tst_QContactManagerFiltering::multiSorting_data()
                        << false << urldef << urlfield << (int)(Qt::DescendingOrder)
                        << "gfedcba";
 
+    QTest::newRow("8b") << true << urldef << urlfield << (int)(Qt::AscendingOrder)
+                       << false << es << es << (int)(Qt::DescendingOrder)
+                       << "gfedcba";
+
     QTest::newRow("9") << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
                        << true << namedef << lastname << (int)(Qt::DescendingOrder)
                        << "abgfedc";
@@ -1612,6 +1622,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::newRow("10") << true << namedef << firstname << (int)(Qt::AscendingOrder)
                         << true << namedef << firstname << (int)(Qt::DescendingOrder)
                         << "abcdefg";
+
+
 }
 
 void tst_QContactManagerFiltering::multiSorting()
