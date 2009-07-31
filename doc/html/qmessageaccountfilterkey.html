@@ -24,7 +24,7 @@
 <li><div class="fn"></div><b><a href="qmessageaccountfilterkey.html#QMessageAccountFilterKey">QMessageAccountFilterKey</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessageaccountfilterkey.html#QMessageAccountFilterKey-2">QMessageAccountFilterKey</a></b> ( const QMessageAccountFilterKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessageaccountfilterkey.html#isEmpty">isEmpty</a></b> () const</li>
-<li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessageaccountfilterkey.html#options">options</a></b> ()</li>
+<li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessageaccountfilterkey.html#options">options</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessageaccountfilterkey.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</li>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#operator-and">operator&amp;</a></b> ( const QMessageAccountFilterKey &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>const QMessageAccountFilterKey &amp; <b><a href="qmessageaccountfilterkey.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageAccountFilterKey &amp; <i>other</i> )</li>
@@ -39,8 +39,8 @@
 <ul>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#fromAddress">fromAddress</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#fromAddress-2">fromAddress</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
-<li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#id">id</a></b> ( const QMessageId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
-<li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#id-2">id</a></b> ( const QMessageIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
+<li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#id">id</a></b> ( const QMessageAccountId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
+<li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#id-2">id</a></b> ( const QMessageAccountIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#id-3">id</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#name">name</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageAccountFilterKey <b><a href="qmessageaccountfilterkey.html#name-2">name</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
@@ -67,10 +67,10 @@
 <h3 class="fn"><a name="fromAddress-2"></a>QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching accounts whose from address matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#fromAddress">QMessageAccount::fromAddress</a>().</p>
-<h3 class="fn"><a name="id"></a>QMessageAccountFilterKey QMessageAccountFilterKey::id ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="id"></a>QMessageAccountFilterKey QMessageAccountFilterKey::id ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching accounts whose identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#id">QMessageAccount::id</a>().</p>
-<h3 class="fn"><a name="id-2"></a>QMessageAccountFilterKey QMessageAccountFilterKey::id ( const QMessageIdList &amp; <i>ids</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="id-2"></a>QMessageAccountFilterKey QMessageAccountFilterKey::id ( const QMessageAccountIdList &amp; <i>ids</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching accounts whose identifier is a member of <i>ids</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#id">QMessageAccount::id</a>().</p>
 <h3 class="fn"><a name="id-3"></a>QMessageAccountFilterKey QMessageAccountFilterKey::id ( const QMessageAccountFilterKey &amp; <i>key</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -87,7 +87,7 @@
 <h3 class="fn"><a name="name-2"></a>QMessageAccountFilterKey QMessageAccountFilterKey::name ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching accounts whose name matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#name">QMessageAccount::name</a>().</p>
-<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageAccountFilterKey::options ()</h3>
+<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageAccountFilterKey::options () const</h3>
 <p>Return the options for the search key.</p>
 <p>Default is no options set.</p>
 <p>See also <a href="qmessageaccountfilterkey.html#setOptions">setOptions</a>().</p>

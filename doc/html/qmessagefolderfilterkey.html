@@ -24,7 +24,7 @@
 <li><div class="fn"></div><b><a href="qmessagefolderfilterkey.html#QMessageFolderFilterKey">QMessageFolderFilterKey</a></b> ()</li>
 <li><div class="fn"></div><b><a href="qmessagefolderfilterkey.html#QMessageFolderFilterKey-2">QMessageFolderFilterKey</a></b> ( const QMessageFolderFilterKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessagefolderfilterkey.html#isEmpty">isEmpty</a></b> () const</li>
-<li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessagefolderfilterkey.html#options">options</a></b> ()</li>
+<li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessagefolderfilterkey.html#options">options</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessagefolderfilterkey.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#operator-and">operator&amp;</a></b> ( const QMessageFolderFilterKey &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>const QMessageFolderFilterKey &amp; <b><a href="qmessagefolderfilterkey.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageFolderFilterKey &amp; <i>other</i> )</li>
@@ -41,8 +41,8 @@
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#ancestorFolderIds-2">ancestorFolderIds</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#displayName">displayName</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#displayName-2">displayName</a></b> ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
-<li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#id">id</a></b> ( const QMessageId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
-<li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#id-2">id</a></b> ( const QMessageIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
+<li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#id">id</a></b> ( const QMessageFolderId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
+<li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#id-2">id</a></b> ( const QMessageFolderIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#id-3">id</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#parentAccountId">parentAccountId</a></b> ( const QMessageAccountId &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#parentAccountId-2">parentAccountId</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</li>
@@ -79,10 +79,10 @@
 <h3 class="fn"><a name="displayName-2"></a>QMessageFolderFilterKey QMessageFolderFilterKey::displayName ( const QString &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching folders whose display name matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#displayName">QMessageFolder::displayName</a>().</p>
-<h3 class="fn"><a name="id"></a>QMessageFolderFilterKey QMessageFolderFilterKey::id ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="id"></a>QMessageFolderFilterKey QMessageFolderFilterKey::id ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching folders whose identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
-<h3 class="fn"><a name="id-2"></a>QMessageFolderFilterKey QMessageFolderFilterKey::id ( const QMessageIdList &amp; <i>ids</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="id-2"></a>QMessageFolderFilterKey QMessageFolderFilterKey::id ( const QMessageFolderIdList &amp; <i>ids</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key matching folders whose identifier is a member of <i>ids</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
 <h3 class="fn"><a name="id-3"></a>QMessageFolderFilterKey QMessageFolderFilterKey::id ( const QMessageFolderFilterKey &amp; <i>key</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -93,7 +93,7 @@
 <p>An empty key matches all folders.</p>
 <p>The result of combining an empty key with a non-empty key is the original non-empty key. This is true regardless of whether the combination is formed by an AND or an OR operation.</p>
 <p>The result of combining two empty keys is an empty key.</p>
-<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageFolderFilterKey::options ()</h3>
+<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageFolderFilterKey::options () const</h3>
 <p>Return the options for the search key.</p>
 <p>Default is no options set.</p>
 <p>See also <a href="qmessagefolderfilterkey.html#setOptions">setOptions</a>().</p>
