@@ -19,7 +19,7 @@ public:
 
     enum Status {
         Inactive = 0,   // operation not yet started
-        Pending,        // operation started, not yet finished
+        Active,         // operation started, not yet finished
         Cancelling,     // operation started then cancelled, not yet finished
         Cancelled,      // operation is finished due to cancellation
         Finished        // operation successfully completed
@@ -1390,50 +1390,243 @@ bool QContactDetailDefinitionRemoveRequest::waitForProgress(int msecs = 0)
 //------------------------------------------------new manager engine signature required:
 void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 {
-    switch (req->type()) {
-        case ContactFetch:
-        {
-            // delete my internal datastructure which is mapped to this request
-        }
-        break;
-
-        case ContactIdFetch:
-        case ContactSave:
-        case ContactRemove:
-        //...
-        default:
-        break;
-    }
+    d->m_asynchronousOperations.removeOne(req);
 }
 
 void QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    // add req to the operation queue, or whatever.
+    d->m_asynchronousOperations.enqueue(req);
+    updateRequestStatus(req, QContactManager::NoError, QContactAbstractRequest::Active);
+    QTimer::singleShot((qrand()*900) + 100, this, SLOT(performAsynchronousOperation()));
 }
 
 void QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    // remove req from the operation queue, or whatever.
+    updateRequestStatus(req, QContactManager::NoError, QContactAbstractRequest::Cancelling);
 }
 
 void QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req)
 {
+    if (!d->m_asynchronousOperations.removeOne(req))
+        return; // didn't exist.
 
+    // replace at head of queue
+    d->m_asynchronousOperations.insert(0, req);
+
+    // and perform the operation.
+    performAsynchronousOperation();
 }
 
 void QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req)
 {
+    // in our implementation, we always complete any operation we start.
+    // so, waitForRequestFinished is equivalent to waitForRequestProgress.
+    waitForRequestProgress(req);
+}
 
+/*!
+ * This slot is called some time after an asynchronous request is started.
+ * It performs the required operation, sets the result and returns.
+ */
+void QContactMemoryEngine::performAsynchronousOperation()
+{
+    QContactAbstractRequest *currentRequest;
+
+    // take the first pending request and finish it
+    if (d->m_asynchronousOperations.isEmpty())
+        return;
+    currentRequest = d->m_asynchronousOperations.dequeue();
+
+    QSet<QUniqueId> removedContacts;
+    QSet<QUniqueId> changedContacts;
+    QSet<QUniqueId> addedContacts;
+    QSet<QUniqueId> removedGroups;
+    QSet<QUniqueId> changedGroups;
+    QSet<QUniqueId> addedGroups;
+
+    switch (req->type()) {
+        case ContactFetch:
+        {
+
+        }
+        break;
+
+        case ContactIdFetch:
+        {
+
+        }
+        break;
+
+        case ContactSave:
+        {
+
+        }
+        break;
+
+        case ContactRemove:
+        {
+
+        }
+        break;
+
+        case GroupFetch:
+        {
+
+        }
+        break;
+
+        case GroupSave:
+        {
+
+        }
+        break;
+
+        case GroupRemove:
+        {
+
+        }
+        break;
+
+        case DetailDefinitionFetch:
+        {
+
+        }
+        break;
+
+        case DetailDefinitionSave:
+        {
+
+        }
+        break;
+
+        case DetailDefinitionRemove:
+        {
+
+        }
+        break;
+
+        default: // unknown request type.
+        break;
+    }
+
+    // now emit any signals we have to emit
+    QList<QUniqueId> currEmit = removedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsRemoved(currEmit);
+    currEmit = changedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsChanged(currEmit);
+    currEmit = addedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsAdded(currEmit);
+    currEmit = removedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsRemoved(currEmit);
+    currEmit = changedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsChanged(currEmit);
+    currEmit = addedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsAdded(currEmit);
 }
 
 //---- now the update request trampoline in base class: performs switch, depending on type updates member variable.
+void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QContactAbstractRequest::Status status)
+{
+    // convenience function that simply sets the operation error and status
+    req->d->m_error = error;
+    req->d->m_status = status;
+
+    switch (req->type()) {
+        case ContactFetch:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case ContactIdFetch:
+        {
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case ContactSave:
+        {
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case ContactRemove:
+        {
+            QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case GroupFetch:
+        {
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case GroupSave:
+        {
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case GroupRemove:
+        {
+            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case DetailDefinitionSave:
+        {
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case DetailDefinitionRemove:
+        {
+            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        default: // unknown request type.
+        break;
+    }
+}
+
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
+    // update the type-generic information
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
+
     switch (req->type()) {
         case ContactFetch:
         {
             QContactFetchRequestData* rd = static_cast<QContactFetchRequestData*>(req->d);
             rd->m_ids = result;
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1441,6 +1634,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactIdFetchRequestData* rd = static_cast<QContactIdFetchRequestData*>(req->d);
             rd->m_ids = result;
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1448,6 +1643,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             ContactRemoveRequestData* rd = static_cast<ContactRemoveRequestData*>(req->d);
             rd->m_ids = result;
+            QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1455,6 +1652,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactGroupFetchRequestData* rd = static_cast<QContactGroupFetchRequestData*>(req->d);
             rd->m_ids = result;
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1462,6 +1661,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactGroupRemoveRequestData* rd = static_cast<QContactGroupRemoveRequestData*>(req->d);
             rd->m_ids = result;
+            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1471,19 +1672,22 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
-
-    req->d->m_error = error;
-    req->d->m_errors = errors;
-    req->d->m_status = status;
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
+    // update the type-generic information
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
+
     switch (req->type()) {
         case ContactFetch:
         {
             QContactFetchRequestData* rd = static_cast<QContactFetchRequestData*>(req->d);
             rd->m_contacts = result;
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1491,6 +1695,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactSaveRequestData* rd = static_cast<QContactSaveRequestData*>(req->d);
             rd->m_contacts = result;
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1500,19 +1706,22 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
-
-    req->d->m_error = error;
-    req->d->m_errors = errors;
-    req->d->m_status = status;
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
+    // update the type-generic information
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
+
     switch (req->type()) {
         case GroupFetch:
         {
             QContactGroupFetchRequestData* rd = static_cast<QContactGroupFetchRequestData*>(req->d);
             rd->m_groups = result;
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1520,6 +1729,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactGroupSaveRequestData* rd = static_cast<QContactGroupSaveRequestData*>(req->d);
             rd->m_groups = result;
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1529,19 +1740,22 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
-
-    req->d->m_error = error;
-    req->d->m_errors = errors;
-    req->d->m_status = status;
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
+    // update the type-generic information
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
+
     switch (req->type()) {
         case DetailDefinitionFetch:
         {
             QContactDetailDefinitionFetchRequestData* rd = static_cast<QContactDetailDefinitionFetchRequestData*>(req->d);
             rd->m_names = result;
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1549,6 +1763,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QS
         {
             QContactDetailDefinitionRemoveRequestData* r = static_cast<QContactDetailDefinitionRemoveRequestData*>(req->d);
             rd->m_names = result;
+            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1558,19 +1774,22 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QS
             return;
         }
     }
-
-    req->d->m_error = error;
-    req->d->m_errors = errors;
-    req->d->m_status = status;
 }
 
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
+    // update the type-generic information
+    req->d->m_error = error;
+    req->d->m_errors = errors;
+    req->d->m_status = status;
+
     switch (req->type()) {
         case DetailDefinitionFetch:
         {
             QContactDetailDefinitionFetchRequestData* rd = static_cast<QContactDetailDefinitionFetchRequestData*>(req->d);
             rd->m_definitions = result;
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 
@@ -1578,6 +1797,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             QContactDetailDefinitionSaveRequestData* rd = static_cast<QContactDetailDefinitionSaveRequestData*>(req->d);
             rd->m_definitions = result;
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+            emit r->progress(r);
         }
         break;
 
@@ -1587,10 +1808,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return;
         }
     }
-
-    req->d->m_error = error;
-    req->d->m_errors = errors;
-    req->d->m_status = status;
 }
 
 
