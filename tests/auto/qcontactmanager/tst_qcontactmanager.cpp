@@ -1014,7 +1014,7 @@ void tst_QContactManager::invalidManager()
 
 
     /* filters */
-    QContactFilter f; // invalid
+    QContactFilter f; // matches everything
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
     QVERIFY(manager.contacts(QContactFilter()).count() == 0);
@@ -1025,6 +1025,9 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
     QVERIFY(manager.contacts(df || df).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
+
+    QVERIFY(manager.information()->filterSupported(f) == false);
+    QVERIFY(manager.information()->filterSupported(df) == false);
 
     QList<QContact> list;
     list << foo;
@@ -2125,7 +2128,7 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
         /* Check that our new definition doesn't already exist */
-        QVERIFY(cm->detailDefinition(newDef.id()).id().isEmpty());
+        QVERIFY(cm->detailDefinition(newDef.id()).isEmpty());
         QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
         QVERIFY(cm->removeDetailDefinition(newDef.id()) == false);
