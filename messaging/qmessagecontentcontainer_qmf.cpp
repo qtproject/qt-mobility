@@ -101,6 +101,10 @@ public:
             _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
         } else if (!_filename.isEmpty()) {
             _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        } else {
+            if (contentType().type() == "multipart") {
+                _container->setMultipartType(QMailMessagePartContainer::multipartTypeForName(_subType));
+            }
         }
     }
 };
@@ -423,9 +427,9 @@ void QMessageContentContainer::replaceContent(const QMessageContentContainerId &
 {
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
 
         if (locator._part) {
             content.applyPendingChanges();
@@ -465,9 +469,9 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
 
         if (locator._part) {
             container.d_ptr->_part = *locator._part;
@@ -490,9 +494,9 @@ bool QMessageContentContainer::contains(const QMessageContentContainerId &id) co
 {
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
         return (locator._part != 0);
     } else {
         return (location.containingMessageId() == convert(d_ptr->_message)->id());

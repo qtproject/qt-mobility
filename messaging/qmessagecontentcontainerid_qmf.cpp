@@ -137,13 +137,8 @@ bool QMessageContentContainerId::operator==(const QMessageContentContainerId& ot
 QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
 {
     if (&other != this) {
-        if (other.isValid()) {
-            d_ptr->_location = other.d_ptr->_location;
-            d_ptr->_body = other.d_ptr->_body;
-        } else {
-            d_ptr->_location = QMailMessagePart::Location();
-            d_ptr->_body = false;
-        }
+        d_ptr->_location = other.d_ptr->_location;
+        d_ptr->_body = other.d_ptr->_body;
     }
 
     return *this;
