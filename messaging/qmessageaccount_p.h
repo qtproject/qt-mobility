@@ -43,4 +43,8 @@ public:
     }
 
     QMessageAccount *q_ptr;
+
+    QMessageAccountId _id;
+    QString _name;
+    QMessage::TypeFlags _types;
 };
