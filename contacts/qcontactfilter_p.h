@@ -59,6 +59,7 @@
 
 #define Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(Class, Type) \
     QContactFilterPrivate* clone() const { return new Class##Private(*this); } \
+    virtual QContactFilter::FilterType type() const {return Type;} \
     static void copyIfPossible(QSharedDataPointer<QContactFilterPrivate>& d_ptr, const QContactFilter& other) \
     { \
         if (other.type() == Type) \
@@ -70,15 +71,13 @@
 class QContactFilterPrivate : public QSharedData
 {
 public:
-    QContactFilterPrivate(QContactFilter::FilterType type)
-        : m_type(type)
+    QContactFilterPrivate()
     {
     }
 
-    QContactFilter::FilterType m_type;
-
     virtual bool compare(const QContactFilterPrivate* other) const = 0;
     virtual QContactFilterPrivate* clone() const = 0;
+    virtual QContactFilter::FilterType type() const = 0;
 
     /* Helper functions for C++ protection rules */
     static const QSharedDataPointer<QContactFilterPrivate>& extract_d(const QContactFilter& other) {return other.d_ptr;}

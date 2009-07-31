@@ -66,6 +66,8 @@ private slots:
     void changeLogFilter();
     void actionFilter();
     void groupMembershipFilter();
+    void boringFilters();
+    void idListFilter();
 
     void sortObject(); // should perhaps be in a different test :)
 };
@@ -85,13 +87,6 @@ void tst_QContactFilter::init()
 void tst_QContactFilter::cleanup()
 {
 }
-
-/* The bad filter doesn't set the d_ptr, since it can't */
-class BadFilter : public QContactFilter
-{
-public:
-    BadFilter() {}
-};
 
 void tst_QContactFilter::classHierarchy()
 {
@@ -133,18 +128,33 @@ void tst_QContactFilter::classHierarchy()
     QVERIFY(drf2.maxValue() == 20);
     QVERIFY(drf2.minValue() == 1);
 
-    /* Try creating a bad filter and making sure we don't break */
-    BadFilter bad, bad2;
+    /* Try creating a default filter and making sure we don't break */
+    QContactFilter deff, deff2;
 
-    QVERIFY(bad.type() == QContactFilter::Invalid);
-    QVERIFY(bad == bad2);
-    QVERIFY(bad != drf2);
-    QVERIFY(drf2 != bad);
+    QVERIFY(deff.type() == QContactFilter::Default);
+    QVERIFY(deff == deff);
+    QVERIFY(deff == deff2);
+    QVERIFY(deff != drf2);
+    QVERIFY(drf2 != deff);
 
-    QContactFilter fbad = bad;
-    QVERIFY(fbad.type() == QContactFilter::Invalid);
-    QVERIFY(fbad == bad);
-    QVERIFY(fbad == bad2);
+    QContactFilter fdeff = deff;
+    QVERIFY(fdeff.type() == QContactFilter::Default);
+    QVERIFY(fdeff == deff);
+    QVERIFY(fdeff == deff2);
+
+    /* Now some "invalid" filters */
+    QContactInvalidFilter iff, iff2;
+
+    QVERIFY(iff.type() == QContactFilter::Invalid);
+    QVERIFY(iff == iff);
+    QVERIFY(iff == iff2);
+    QVERIFY(iff != drf2);
+    QVERIFY(drf2 != iff);
+
+    QContactFilter fiff = iff;
+    QVERIFY(fiff.type() == QContactFilter::Invalid);
+    QVERIFY(fiff == iff);
+    QVERIFY(fiff == iff2);
 
     /* Now test some "cross casting" */
 
@@ -572,6 +582,9 @@ void tst_QContactFilter::detailRangeFilter()
     QContactDetailRangeFilter rf2 = f;
     QVERIFY(rf2 == rf);
 
+    rf2 = rf;
+    QVERIFY(rf2 == f);
+
     /* Self assignment should do nothing */
     rf2 = rf2;
     QVERIFY(rf2 == rf);
@@ -767,6 +780,81 @@ void tst_QContactFilter::sortObject()
     QVERIFY(another == other);
     QVERIFY(!(other != another));
 }
+
+void tst_QContactFilter::boringFilters()
+{
+    QContactFilter all;
+    QVERIFY(all.type() == QContactFilter::Default);
+
+    QContactInvalidFilter invalid;
+    QVERIFY(invalid.type() == QContactFilter::Invalid);
+
+    QVERIFY(all != invalid);
+    QVERIFY(!(all == invalid));
+
+    /* Test op= */
+    QContactFilter f = all;
+    QVERIFY(f == all);
+
+    QContactFilter f2;
+    f2 = f;
+    QVERIFY(f2 == all);
+
+    /* Self assignment should do nothing */
+    f2 = f2;
+    QVERIFY(f2 == all);
+
+    /* InvalidFilter, op= */
+    QContactInvalidFilter inv2 = invalid;
+    QVERIFY(inv2 == invalid);
+
+    QContactInvalidFilter inv3;
+    inv3 = inv2;
+    QVERIFY(inv3 == invalid);
+
+    inv3 = inv3;
+    QVERIFY(inv3 == invalid);
+
+    inv3 = all;
+    QVERIFY(inv3 == invalid); // won't be all
+}
+
+void tst_QContactFilter::idListFilter()
+{
+    QContactIdListFilter idf;
+
+    QVERIFY(idf.type() == QContactFilter::IdList);
+
+    QVERIFY(idf.ids().count() == 0);
+
+    QList<QUniqueId> ids;
+    ids << 5 << 6 << 17;
+
+    idf.setIds(ids);
+    QVERIFY(idf.ids() == ids);
+
+    idf.setIds(QList<QUniqueId>());
+    QVERIFY(idf.ids().count() == 0);
+
+    /* Test op= */
+    idf.setIds(ids);
+    QContactFilter f = idf;
+    QVERIFY(f == idf);
+
+    QContactIdListFilter idf2 = f;
+    QVERIFY(idf2 == idf);
+    QVERIFY(idf2.ids() == ids);
+
+    idf2 = idf;
+    QVERIFY(idf2 == f);
+
+    /* Self assignment should do nothing */
+    idf2 = idf2;
+    QVERIFY(idf2 == idf);
+}
+
+
+
 
 QTEST_MAIN(tst_QContactFilter)
 #include "tst_qcontactfilter.moc"

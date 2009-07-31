@@ -31,34 +31,43 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_H
-#define QCONTACTDETAILFILTER_H
+#include "qcontactinvalidfilter.h"
+#include "qcontactfilter_p.h"
 
-#include "qcontactfilter.h"
-
-class QContactDetailFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
+class QContactInvalidFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactDetailFilter();
-    QContactDetailFilter(const QContactFilter& other);
+    QContactInvalidFilterPrivate()
+       : QContactFilterPrivate()
+    {
+    }
 
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
+    bool compare(const QContactFilterPrivate*) const
+    {
+        return true; // all invalid filters are alike
+    }
 
-    /* Filter Criterion */
-    void setValue(const QVariant& value);
+    /* There is no way this can be called - d is never detached */
+    QContactFilterPrivate* clone() const
+    {
+        return new QContactInvalidFilterPrivate();
+    }
 
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
+    QContactFilter::FilterType type() const
+    {
+        return QContactFilter::Invalid;
+    }
 
-    QVariant value() const;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+    QList<QContactFilter> m_filters;
 };
 
-#endif
+QContactInvalidFilter::QContactInvalidFilter()
+    : QContactFilter(new QContactInvalidFilterPrivate)
+{
+}
+
+// Initializing a QCIF from anything is the same as just constructing a QCIF
+QContactInvalidFilter::QContactInvalidFilter(const QContactFilter&)
+    : QContactFilter(new QContactInvalidFilterPrivate)
+{
+}

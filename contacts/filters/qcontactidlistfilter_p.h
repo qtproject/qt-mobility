@@ -31,34 +31,51 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_H
-#define QCONTACTDETAILFILTER_H
+#ifndef QCONTACTDETAILFILTER_P_H
+#define QCONTACTDETAILFILTER_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qcontactfilter_p.h"
 #include "qcontactfilter.h"
 
-class QContactDetailFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
+#include <QString>
+#include <QVariant>
+
+class QContactIdListFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactDetailFilter();
-    QContactDetailFilter(const QContactFilter& other);
+    QContactIdListFilterPrivate()
+        : QContactFilterPrivate()
+    {
+    }
 
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
+    QContactIdListFilterPrivate(const QContactIdListFilterPrivate& other)
+        : QContactFilterPrivate(other),
+        m_ids(other.m_ids)
+    {
+    }
 
-    /* Filter Criterion */
-    void setValue(const QVariant& value);
+    virtual bool compare(const QContactFilterPrivate* other) const
+    {
+        const QContactIdListFilterPrivate *od = static_cast<const QContactIdListFilterPrivate*>(other);
+        if (m_ids != od->m_ids)
+            return false;
+        return true;
+    }
 
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdList)
 
-    QVariant value() const;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+    QList<QUniqueId> m_ids;
 };
 
 #endif

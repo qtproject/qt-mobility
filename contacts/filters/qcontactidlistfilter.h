@@ -31,34 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_H
-#define QCONTACTDETAILFILTER_H
+#ifndef QCONTACTIDLISTFILTER_H
+#define QCONTACTIDLISTFILTER_H
 
 #include "qcontactfilter.h"
 
-class QContactDetailFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
+class QContactIdListFilterPrivate;
+class QTCONTACTS_EXPORT QContactIdListFilter : public QContactFilter
 {
 public:
-    QContactDetailFilter();
-    QContactDetailFilter(const QContactFilter& other);
+    QContactIdListFilter();
+    QContactIdListFilter(const QContactFilter& other);
 
     /* Mutators */
-    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
-
-    /* Filter Criterion */
-    void setValue(const QVariant& value);
+    void setIds(const QList<QUniqueId>& ids);
 
     /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
-
-    QVariant value() const;
+    QList<QUniqueId> ids() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter);
 };
 
 #endif

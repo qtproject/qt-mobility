@@ -65,7 +65,9 @@ public:
         Action,
         GroupMembership,
         Intersection,
-        Union
+        Union,
+        Default,
+        IdList
     };
 
     FilterType type() const;

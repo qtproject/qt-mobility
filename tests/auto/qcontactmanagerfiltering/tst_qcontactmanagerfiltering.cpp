@@ -91,6 +91,9 @@ private slots:
     void changelogFiltering();
     void changelogFiltering_data();
 
+    void idListFiltering();
+    void idListFiltering_data();
+
     void sorting(); // XXX should take all managers
     void sorting_data();
 
@@ -98,6 +101,7 @@ private slots:
     void multiSorting_data();
 
     void invalidFiltering();
+    void allFiltering();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
@@ -1564,6 +1568,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::addColumn<QString>("expected");
 
 
+    QString es;
+
     QString firstname = QContactName::FieldFirst;
     QString lastname = QContactName::FieldLast;
     QString namedef = QContactName::DefinitionName;
@@ -1589,6 +1595,10 @@ void tst_QContactManagerFiltering::multiSorting_data()
                        << false << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "abcdefg";
 
+    QTest::newRow("5b") << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                       << true << es << es << (int)(Qt::AscendingOrder)
+                       << "abcdefg";
+
     QTest::newRow("6") << false << namedef << firstname << (int)(Qt::AscendingOrder)
                        << true << namedef << lastname << (int)(Qt::AscendingOrder)
                        << "bacdefg";
@@ -1601,6 +1611,10 @@ void tst_QContactManagerFiltering::multiSorting_data()
                        << false << urldef << urlfield << (int)(Qt::DescendingOrder)
                        << "gfedcba";
 
+    QTest::newRow("8b") << true << urldef << urlfield << (int)(Qt::AscendingOrder)
+                       << false << es << es << (int)(Qt::DescendingOrder)
+                       << "gfedcba";
+
     QTest::newRow("9") << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
                        << true << namedef << lastname << (int)(Qt::DescendingOrder)
                        << "abgfedc";
@@ -1608,6 +1622,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::newRow("10") << true << namedef << firstname << (int)(Qt::AscendingOrder)
                         << true << namedef << firstname << (int)(Qt::DescendingOrder)
                         << "abcdefg";
+
+
 }
 
 void tst_QContactManagerFiltering::multiSorting()
@@ -1801,6 +1817,69 @@ void tst_QContactManagerFiltering::actionFiltering()
     delete cm;
 }
 
+void tst_QContactManagerFiltering::idListFiltering_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<QString>("expected");
+
+    QString es;
+    QTest::newRow("empty") << es << es;
+    QTest::newRow("a") << "a" << "a";
+    QTest::newRow("ab") << "ab" << "ab";
+    QTest::newRow("aa") << "aa" << "a";
+    QTest::newRow("ba") << "ba" << "ab";
+    QTest::newRow("abcd") << "abcd" << "abcd";
+    QTest::newRow("abcdefg") << "abcdefg" << "abcd";
+}
+
+void tst_QContactManagerFiltering::idListFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QFETCH(QString, input);
+    QFETCH(QString, expected);
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    // 3 extra ids that (hopefully) won't exist
+    QUniqueId e = 0x54555657;
+    QUniqueId f = 0x96969696;
+    QUniqueId g = 0x44335566;
+
+    /* Convert the input to a list of ids */
+    foreach(QChar c, input) {
+        if (c == 'a')
+            ids << contacts.at(0);
+        else if (c == 'b')
+            ids << contacts.at(1);
+        else if (c == 'c')
+            ids << contacts.at(2);
+        else if (c == 'd')
+            ids << contacts.at(3);
+        else if (c == 'e')
+            ids << e;
+        else if (c == 'f')
+            ids << f;
+        else if (c == 'g')
+            ids << g;
+    }
+
+    /* And do the search */
+    QContactIdListFilter idf;
+    idf.setIds(ids);
+
+    // now reuse ids
+    ids = cm->contacts(idf);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete cm;
+}
+
 void tst_QContactManagerFiltering::invalidFiltering()
 {
     QContactManager* cm = new QContactManager("memory");
@@ -1810,7 +1889,7 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     QVERIFY(contacts.count() == 4);
 
-    QContactFilter f; // invalid
+    QContactInvalidFilter f; // invalid
 
     ids = cm->contacts(f);
 
@@ -1822,6 +1901,31 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     ids = cm->contacts(f && f);
     QVERIFY(ids.count() == 0);
+
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::allFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    QContactFilter f; // default = permissive
+
+    ids = cm->contacts(f);
+
+    QVERIFY(ids.count() == 4);
+
+    // Try unions/intersections of defaults
+    ids = cm->contacts(f || f);
+    QVERIFY(ids.count() == 4);
+
+    ids = cm->contacts(f && f);
+    QVERIFY(ids.count() == 4);
 
     delete cm;
 }
@@ -2333,7 +2437,7 @@ public:
             df.setValue(true);
             return df;
         } else {
-            return QContactFilter();
+            return QContactInvalidFilter();
         }
     }
     bool supportsDetail(const QContactDetail& detail) const
@@ -2453,7 +2557,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af || QContactFilter() || af;
+        return af || QContactInvalidFilter() || af;
     }
 };
 

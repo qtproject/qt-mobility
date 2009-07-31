@@ -52,5 +52,7 @@
 #include "qcontactgroupmembershipfilter.h"
 #include "qcontactintersectionfilter.h"
 #include "qcontactunionfilter.h"
+#include "qcontactidlistfilter.h"
+#include "qcontactinvalidfilter.h"
 
 #endif

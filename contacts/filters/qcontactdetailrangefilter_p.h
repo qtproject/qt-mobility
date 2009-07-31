@@ -58,20 +58,20 @@ class QContactDetailRangeFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactDetailRangeFilterPrivate()
-        : QContactFilterPrivate(QContactFilter::ContactDetailRange)
-        , m_flags(0)
-        , m_rangeflags(0)
+        : QContactFilterPrivate(),
+        m_flags(0),
+        m_rangeflags(0)
     {
     }
 
     QContactDetailRangeFilterPrivate(const QContactDetailRangeFilterPrivate& other)
-        : QContactFilterPrivate(other)
-        , m_defId(other.m_defId)
-        , m_fieldId(other.m_fieldId)
-        , m_minValue(other.m_minValue)
-        , m_maxValue(other.m_maxValue)
-        , m_flags(other.m_flags)
-        , m_rangeflags(other.m_rangeflags)
+        : QContactFilterPrivate(other),
+        m_defId(other.m_defId),
+        m_fieldId(other.m_fieldId),
+        m_minValue(other.m_minValue),
+        m_maxValue(other.m_maxValue),
+        m_flags(other.m_flags),
+        m_rangeflags(other.m_rangeflags)
     {
     }
 

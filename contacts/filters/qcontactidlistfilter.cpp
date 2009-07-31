@@ -31,34 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_H
-#define QCONTACTDETAILFILTER_H
+#include "qcontactidlistfilter.h"
+#include "qcontactidlistfilter_p.h"
+#include "qcontactfilter_p.h"
+#include "qcontactmanager.h"
 
-#include "qcontactfilter.h"
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIdListFilter);
 
-class QContactDetailFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
+QContactIdListFilter::QContactIdListFilter()
+    : QContactFilter(new QContactIdListFilterPrivate)
 {
-public:
-    QContactDetailFilter();
-    QContactDetailFilter(const QContactFilter& other);
+}
 
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
+void QContactIdListFilter::setIds(const QList<QUniqueId>& ids)
+{
+    Q_D(QContactIdListFilter);
+    d->m_ids = ids;
+}
 
-    /* Filter Criterion */
-    void setValue(const QVariant& value);
-
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
-
-    QVariant value() const;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
-};
-
-#endif
+QList<QUniqueId> QContactIdListFilter::ids() const
+{
+    Q_D(const QContactIdListFilter);
+    return d->m_ids;
+}

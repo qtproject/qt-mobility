@@ -53,6 +53,7 @@ private slots:
     void testCtor();
     void testGetSet();
     void testEquality();
+    void testEmpty();
 };
 
 tst_QContactDetailDefinition::tst_QContactDetailDefinition()
@@ -77,6 +78,7 @@ void tst_QContactDetailDefinition::testCtor()
     QContactDetailDefinition def;
 
     /* Check the ctor sets sane things */
+    QVERIFY(def.isEmpty());
     QVERIFY(def.id().isEmpty());
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::Any);
     QVERIFY(def.fields().isEmpty());
@@ -154,6 +156,34 @@ void tst_QContactDetailDefinition::testGetSet()
 
     /* Type map */
 
+}
+
+void tst_QContactDetailDefinition::testEmpty()
+{
+    QContactDetailDefinition def;
+
+    QVERIFY(def.isEmpty());
+
+    def.setId("Name");
+    QVERIFY(!def.isEmpty());
+    def.setId(QString());
+    QVERIFY(def.isEmpty());
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    f.dataType = QVariant::String;
+    fields.insert("Field", f);
+    def.setFields(fields);
+    QVERIFY(!def.isEmpty());
+
+    def.setId("Name");
+    QVERIFY(!def.isEmpty());
+
+    fields.clear();
+    def.setFields(fields);
+    QVERIFY(!def.isEmpty());
+
+    def.setId(QString());
+    QVERIFY(def.isEmpty());
 }
 
 void tst_QContactDetailDefinition::testEquality()

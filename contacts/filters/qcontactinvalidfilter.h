@@ -31,34 +31,17 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_H
-#define QCONTACTDETAILFILTER_H
+#ifndef QCONTACTINVALIDFILTER_H
+#define QCONTACTINVALIDFILTER_H
 
 #include "qcontactfilter.h"
 
-class QContactDetailFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailFilter : public QContactFilter
+class QContactInvalidFilterPrivate;
+class QTCONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
 {
 public:
-    QContactDetailFilter();
-    QContactDetailFilter(const QContactFilter& other);
-
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
-
-    /* Filter Criterion */
-    void setValue(const QVariant& value);
-
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
-
-    QVariant value() const;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+    QContactInvalidFilter();
+    QContactInvalidFilter(const QContactFilter& other);
 };
 
 #endif
