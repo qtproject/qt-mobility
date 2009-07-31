@@ -8,6 +8,8 @@ PLUGIN_SUBDIR = mediaservice
 
 include (../../common.pri)
 
+LIBS += -lQtMedia
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \

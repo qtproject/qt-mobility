@@ -43,7 +43,7 @@
 class QByteArray;
 class QStringList;
 
-class QVideoEncodeControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoEncodeControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:    

@@ -38,7 +38,7 @@
 
 #include "qabstractmediacontrol.h"
 
-class QMediaFormatControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaFormatControl : public QAbstractMediaControl
 {
 Q_OBJECT
 public:

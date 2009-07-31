@@ -8,7 +8,7 @@ include(../../common.pri)
 
 DEFINES += QWMP_EVR
 
-LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
+LIBS += -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 

@@ -8,7 +8,7 @@ PLUGIN_SUBDIR = mediaservice
 include (../../common.pri)
 
 INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
-LIBS += -framework QTKit -framework QuickTime
+LIBS += -lQtMedia -framework QTKit -framework QuickTime
 
 
 HEADERS = \

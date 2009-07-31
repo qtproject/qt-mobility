@@ -52,11 +52,11 @@
 class QCameraService;
 class QCameraControl;
 
-extern QAbstractMediaService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
+extern Q_MEDIA_EXPORT QAbstractMediaService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
 
 class QCameraPrivate;
 
-class QCamera : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 {
     Q_OBJECT
 #ifdef VIDEOSERVICES
