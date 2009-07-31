@@ -42,9 +42,6 @@ class QTCONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
 public:
     QContactInvalidFilter();
     QContactInvalidFilter(const QContactFilter& other);
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactInvalidFilter);
 };
 
 #endif

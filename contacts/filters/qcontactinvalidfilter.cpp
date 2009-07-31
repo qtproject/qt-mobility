@@ -42,24 +42,32 @@ public:
     {
     }
 
-    QContactInvalidFilterPrivate(const QContactInvalidFilterPrivate& other)
-       : QContactFilterPrivate(other)
-    {
-    }
-
-    virtual bool compare(const QContactFilterPrivate*) const
+    bool compare(const QContactFilterPrivate*) const
     {
         return true; // all invalid filters are alike
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactInvalidFilter, QContactFilter::Invalid)
+    /* There is no way this can be called - d is never detached */
+    QContactFilterPrivate* clone() const
+    {
+        return new QContactInvalidFilterPrivate();
+    }
+
+    QContactFilter::FilterType type() const
+    {
+        return QContactFilter::Invalid;
+    }
 
     QList<QContactFilter> m_filters;
 };
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactInvalidFilter);
-
 QContactInvalidFilter::QContactInvalidFilter()
+    : QContactFilter(new QContactInvalidFilterPrivate)
+{
+}
+
+// Initializing a QCIF from anything is the same as just constructing a QCIF
+QContactInvalidFilter::QContactInvalidFilter(const QContactFilter&)
     : QContactFilter(new QContactInvalidFilterPrivate)
 {
 }

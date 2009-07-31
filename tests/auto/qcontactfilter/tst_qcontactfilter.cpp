@@ -814,6 +814,9 @@ void tst_QContactFilter::boringFilters()
 
     inv3 = inv3;
     QVERIFY(inv3 == invalid);
+
+    inv3 = all;
+    QVERIFY(inv3 == invalid); // won't be all
 }
 
 void tst_QContactFilter::idListFilter()
