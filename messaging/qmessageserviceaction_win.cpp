@@ -52,7 +52,7 @@ void QMessageServiceAction::compose(const QMessage &message)
     Q_UNUSED(message)
 }
 
-void QMessageServiceAction::retrieve(const QMessageId& id)
+void QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id)
 }

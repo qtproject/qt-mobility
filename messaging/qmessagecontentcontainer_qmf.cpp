@@ -59,13 +59,36 @@ public:
     {
     }
 
+    void setDerivedMessage(QMessage *derived)
+    {
+        _message = derived;
+        _part = QMailMessagePart();
+        _container = convert(_message);
+    }
+
+    void clearContents()
+    {
+        _type = QByteArray("text");
+        _subType = QByteArray("plain");
+        _charset = QByteArray();
+        _name = QByteArray();
+        _content = QByteArray();
+        _textContent = QString();
+        _filename = QString();
+    }
+
     QMailMessageContentType contentType() const 
     {
         QMailMessageContentType ct;
         ct.setType(_type);
         ct.setSubType(_subType);
-        ct.setName(_name);
-        ct.setCharset(_charset);
+
+        if (!_name.isEmpty()) {
+            ct.setName(_name);
+        }
+        if (!_charset.isEmpty()) {
+            ct.setCharset(_charset);
+        }
 
         return ct;
     }
@@ -78,6 +101,10 @@ public:
             _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
         } else if (!_filename.isEmpty()) {
             _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        } else {
+            if (contentType().type() == "multipart") {
+                _container->setMultipartType(QMailMessagePartContainer::multipartTypeForName(_subType));
+            }
         }
     }
 };
@@ -286,12 +313,12 @@ bool QMessageContentContainer::contentAvailable() const
     if (!d_ptr->_content.isEmpty()) {
         return true;
     }
-    return d_ptr->_container->contentAvailable();
+    return (d_ptr->_container->partCount() > 0) || d_ptr->_container->contentAvailable();
 }
 
 uint QMessageContentContainer::size() const
 {
-    d_ptr->applyPendingChanges();
+    applyPendingChanges();
 
     SizeAccumulator accumulator;
     d_ptr->_container->foreachPart<SizeAccumulator&>(accumulator);
@@ -301,13 +328,13 @@ uint QMessageContentContainer::size() const
 
 QString QMessageContentContainer::decodedTextContent() const
 {
-    d_ptr->applyPendingChanges();
+    applyPendingChanges();
     return d_ptr->_container->body().data();
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
 {
-    d_ptr->applyPendingChanges();
+    applyPendingChanges();
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
@@ -319,7 +346,7 @@ QString QMessageContentContainer::decodedContentFileName() const
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    d_ptr->applyPendingChanges();
+    applyPendingChanges();
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);
     }
@@ -328,11 +355,7 @@ void QMessageContentContainer::writeContentTo(QDataStream& out) const
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::clearContents()
 {
-    delete d_ptr;
-
-    d_ptr = new QMessageContentContainerPrivate;
-    d_ptr->_type = QByteArray("text");
-    d_ptr->_subType = QByteArray("plain");
+    d_ptr->clearContents();
 }
 
 void QMessageContentContainer::setContent(const QString &text)
@@ -394,7 +417,7 @@ QMessageContentContainerId QMessageContentContainer::appendContent(const QMessag
         setContentSubType(QByteArray("mixed"));
     }
 
-    content.d_ptr->applyPendingChanges();
+    content.applyPendingChanges();
     d_ptr->_container->appendPart(content.d_ptr->_part);
 
     return convert(d_ptr->_container->partAt(d_ptr->_container->partCount() - 1).location());
@@ -404,18 +427,18 @@ void QMessageContentContainer::replaceContent(const QMessageContentContainerId &
 {
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
 
         if (locator._part) {
-            content.d_ptr->applyPendingChanges();
+            content.applyPendingChanges();
             *locator._part = content.d_ptr->_part;
         }
     } else {
         if (location.containingMessageId() == convert(d_ptr->_message)->id()) {
             // Replace the body with the replacement content
-            content.d_ptr->applyPendingChanges();
+            content.applyPendingChanges();
 
             QMailMessageContentType ct;
             ct.setType(content.contentType());
@@ -446,9 +469,9 @@ QMessageContentContainer QMessageContentContainer::container(const QMessageConte
 
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
 
         if (locator._part) {
             container.d_ptr->_part = *locator._part;
@@ -471,9 +494,9 @@ bool QMessageContentContainer::contains(const QMessageContentContainerId &id) co
 {
     QMailMessagePart::Location location(convert(id));
 
-    if (location.isValid()) {
+    if (location.isValid(false)) {
         PartLocator locator(location);
-        d_ptr->_part.foreachPart<PartLocator&>(locator);
+        d_ptr->_container->foreachPart<PartLocator&>(locator);
         return (locator._part != 0);
     } else {
         return (location.containingMessageId() == convert(d_ptr->_message)->id());
@@ -555,7 +578,7 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
         setContentSubType(QByteArray("mixed"));
     }
 
-    content.d_ptr->applyPendingChanges();
+    content.applyPendingChanges();
     d_ptr->_container->prependPart(content.d_ptr->_part);
 
     return convert(d_ptr->_container->partAt(0).location());
@@ -563,9 +586,12 @@ QMessageContentContainerId QMessageContentContainer::prependContent(const QMessa
 
 void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
-    d_ptr->_message = derived;
-    d_ptr->_part = QMailMessagePart();
-    d_ptr->_container = convert(d_ptr->_message);
+    d_ptr->setDerivedMessage(derived);
+}
+
+void QMessageContentContainer::applyPendingChanges() const
+{
+    d_ptr->applyPendingChanges();
 }
 
 #endif

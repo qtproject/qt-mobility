@@ -109,12 +109,13 @@
 */
 
 /*!
-    \fn QMessageServiceAction::retrieve(const QMessageId& id)
+    \fn QMessageServiceAction::retrieveHeader(const QMessageId& id)
   
     Retrieve meta data of the message identified by \a id.  
 
     The meta data (including flags, from, to, subject, and date fields where applicable) of 
-    the message identified by \a id should be retrieved.
+    the message identified by \a id should be retrieved.  If only the message envelope
+    information is present, any other accessible header information should be retrieved.
     
     If the message can not be found on the originating server it will be marked as removed.
 

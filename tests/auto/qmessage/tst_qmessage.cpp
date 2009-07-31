@@ -68,6 +68,10 @@ private slots:
     void testFromTransmissionFormat_data();
     void testFromTransmissionFormat();
 
+    void testToTransmissionFormat_simple();
+
+    void testToTransmissionFormat_multipart();
+
 private:
     QMessageAccountId testAccountId;
     QMessageFolderId testFolderId;
@@ -196,5 +200,226 @@ void tst_QMessage::testFromTransmissionFormat()
         QCOMPARE(body.contentAvailable(), true);
         QCOMPARE(body.decodedTextContent(), text);
     }
+}
+
+void tst_QMessage::testToTransmissionFormat_simple()
+{
+    const QString from("Alice <alice@example.com>");
+    const QString to("Bob <bob@example.com>");
+    const QString cc("Charlie <charlie@example.com>");
+    const QString bcc("Dave <dave@example.com>");
+    const QDateTime date(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate)); // Strip unrepresentable elements
+    const QString subject("This is a simple message");
+    const QByteArray contentType("text");
+    const QByteArray contentSubType("plain");
+    const QByteArray contentCharset("UTF-8");
+    const QString contentText(QString("This is the happy face:").append(QChar(0x263a)));
+
+    QMessage m1;
+
+    m1.setType(QMessage::Email);
+    m1.setFrom(QMessageAddress(from, QMessageAddress::Email));
+    m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
+    m1.setCc(QMessageAddressList() << QMessageAddress(cc, QMessageAddress::Email));
+    m1.setBcc(QMessageAddressList() << QMessageAddress(bcc, QMessageAddress::Email));
+    m1.setSubject(subject);
+    m1.setDate(date);
+
+    m1.setContentType(contentType);
+    m1.setContentSubType(contentSubType);
+    m1.setContentCharset(contentCharset);
+    m1.setContent(contentText);
+
+    QByteArray serialized(m1.toTransmissionFormat());
+
+    QCOMPARE(m1.from().recipient(), from);
+    QCOMPARE(m1.to().first().recipient(), to);
+    QCOMPARE(m1.cc().first().recipient(), cc);
+    QCOMPARE(m1.bcc().first().recipient(), bcc);
+    QCOMPARE(m1.subject(), subject);
+    QCOMPARE(m1.date(), date);
+
+    QCOMPARE(m1.contentType().toLower(), contentType.toLower());
+    QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
+    QCOMPARE(m1.contentCharset().toLower(), contentCharset.toLower());
+    QCOMPARE(m1.decodedTextContent(), contentText);
+
+    QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
+
+    QCOMPARE(m2.from().recipient(), from);
+    QCOMPARE(m2.to().first().recipient(), to);
+    QCOMPARE(m2.cc().first().recipient(), cc);
+    QCOMPARE(m2.bcc().count(), 0);
+    QCOMPARE(m2.date(), date);
+
+    QCOMPARE(m2.contentType().toLower(), contentType.toLower());
+    QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
+    QCOMPARE(m2.contentCharset().toLower(), contentCharset.toLower());
+    QCOMPARE(m2.decodedTextContent(), contentText);
+}
+
+void tst_QMessage::testToTransmissionFormat_multipart()
+{
+    const QString from("Alice <alice@example.com>");
+    const QString to("Bob <bob@example.com>");
+    const QString subject("This is a multipart message");
+    const QByteArray contentType("multipart");
+    const QByteArray contentSubType("mixed");
+
+    const QByteArray p1ContentType("text");
+    const QByteArray p1ContentSubType("plain");
+    const QByteArray p1ContentCharset("UTF-8");
+    const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
+
+    const QByteArray p2ContentType("multipart");
+    const QByteArray p2ContentSubType("related");
+
+    const QByteArray p3ContentType("text");
+    const QByteArray p3ContentSubType("plain");
+    const QByteArray p3ContentCharset("us-ascii");
+    const QByteArray p3ContentData("This is a\ntext message\n");
+
+    const QByteArray p4ContentType("application");
+    const QByteArray p4ContentSubType("octet-stream");
+    const QByteArray p4ContentData(10, 0xff);
+
+    QMessage m1;
+
+    m1.setType(QMessage::Email);
+    m1.setFrom(QMessageAddress(from, QMessageAddress::Email));
+    m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
+    m1.setSubject(subject);
+
+    m1.setContentType(contentType);
+    m1.setContentSubType(contentSubType);
+
+    {
+        QMessageContentContainer p1;
+
+        p1.setContentType(p1ContentType);
+        p1.setContentSubType(p1ContentSubType);
+        p1.setContentCharset(p1ContentCharset);
+        p1.setContent(p1ContentText);
+
+        m1.appendContent(p1);
+
+        QMessageContentContainer p2;
+
+        p2.setContentType(p2ContentType);
+        p2.setContentSubType(p2ContentSubType);
+
+        QMessageContentContainer p3;
+
+        p3.setContentType(p3ContentType);
+        p3.setContentSubType(p3ContentSubType);
+        p3.setContentCharset(p3ContentCharset);
+        p3.setContent(p3ContentData);
+
+        p2.appendContent(p3);
+
+        QMessageContentContainer p4;
+
+        p4.setContentType(p4ContentType);
+        p4.setContentSubType(p4ContentSubType);
+        p4.setContent(p4ContentData);
+
+        p2.appendContent(p4);
+
+        m1.appendContent(p2);
+    }
+
+    QByteArray serialized(m1.toTransmissionFormat());
+
+    QCOMPARE(m1.from().recipient(), from);
+    QCOMPARE(m1.to().first().recipient(), to);
+    QCOMPARE(m1.subject(), subject);
+
+    QCOMPARE(m1.contentType().toLower(), contentType.toLower());
+    QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
+    QCOMPARE(m1.contentAvailable(), true);
+    QCOMPARE(m1.contentIds().count(), 2);
+
+    QMessageContentContainerIdList ids(m1.contentIds());
+
+    QMessageContentContainer p1(m1.container(ids.at(0)));
+
+    QCOMPARE(p1.contentType().toLower(), p1ContentType.toLower());
+    QCOMPARE(p1.contentSubType().toLower(), p1ContentSubType.toLower());
+    QCOMPARE(p1.contentCharset().toLower(), p1ContentCharset.toLower());
+    QCOMPARE(p1.contentAvailable(), true);
+    QCOMPARE(p1.contentIds().count(), 0);
+    QCOMPARE(p1.decodedTextContent(), p1ContentText);
+
+    QMessageContentContainer p2(m1.container(ids.at(1)));
+
+    QCOMPARE(p2.contentType().toLower(), p2ContentType.toLower());
+    QCOMPARE(p2.contentSubType().toLower(), p2ContentSubType.toLower());
+    QCOMPARE(p2.contentAvailable(), true);
+    QCOMPARE(p2.contentIds().count(), 2);
+
+    ids = p2.contentIds();
+
+    QMessageContentContainer p3(p2.container(ids.at(0)));
+
+    QCOMPARE(p3.contentType().toLower(), p3ContentType.toLower());
+    QCOMPARE(p3.contentSubType().toLower(), p3ContentSubType.toLower());
+    QCOMPARE(p3.contentAvailable(), true);
+    QCOMPARE(p3.contentIds().count(), 0);
+    QCOMPARE(p3.decodedContent(), p3ContentData);
+
+    QMessageContentContainer p4(p2.container(ids.at(1)));
+
+    QCOMPARE(p4.contentType().toLower(), p4ContentType.toLower());
+    QCOMPARE(p4.contentSubType().toLower(), p4ContentSubType.toLower());
+    QCOMPARE(p4.contentAvailable(), true);
+    QCOMPARE(p4.contentIds().count(), 0);
+    QCOMPARE(p4.decodedContent(), p4ContentData);
+
+    QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
+
+    QCOMPARE(m2.from().recipient(), from);
+    QCOMPARE(m2.to().first().recipient(), to);
+    QCOMPARE(m2.subject(), subject);
+
+    QCOMPARE(m2.contentType().toLower(), contentType.toLower());
+    QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
+    QCOMPARE(m2.contentAvailable(), true);
+    QCOMPARE(m2.contentIds().count(), 2);
+
+    ids = m2.contentIds();
+
+    QMessageContentContainer p5(m2.container(ids.at(0)));
+
+    QCOMPARE(p5.contentType().toLower(), p1ContentType.toLower());
+    QCOMPARE(p5.contentSubType().toLower(), p1ContentSubType.toLower());
+    QCOMPARE(p5.contentCharset().toLower(), p1ContentCharset.toLower());
+    QCOMPARE(p5.contentAvailable(), true);
+    QCOMPARE(p5.contentIds().count(), 0);
+    QCOMPARE(p5.decodedTextContent(), p1ContentText);
+
+    QMessageContentContainer p6(m2.container(ids.at(1)));
+
+    QCOMPARE(p6.contentType().toLower(), p2ContentType.toLower());
+    QCOMPARE(p6.contentSubType().toLower(), p2ContentSubType.toLower());
+    QCOMPARE(p6.contentAvailable(), true);
+    QCOMPARE(p6.contentIds().count(), 2);
+
+    ids = p6.contentIds();
+
+    QMessageContentContainer p7(p6.container(ids.at(0)));
+
+    QCOMPARE(p7.contentType().toLower(), p3ContentType.toLower());
+    QCOMPARE(p7.contentSubType().toLower(), p3ContentSubType.toLower());
+    QCOMPARE(p7.contentAvailable(), true);
+    QCOMPARE(p7.contentIds().count(), 0);
+    QCOMPARE(p7.decodedContent(), p3ContentData);
+
+    QMessageContentContainer p8(p6.container(ids.at(1)));
+
+    QCOMPARE(p8.contentType().toLower(), p4ContentType.toLower());
+    QCOMPARE(p8.contentSubType().toLower(), p4ContentSubType.toLower());
+    QCOMPARE(p8.contentAvailable(), true);
+    QCOMPARE(p8.contentIds().count(), 0);
+    QCOMPARE(p8.decodedContent(), p4ContentData);
 }
 
