@@ -65,7 +65,7 @@ static QString stringFromLpctstr(LPCTSTR lpszValue)
     if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
         return QString::null;
     if (lpszValue)
-        return QString::fromWCharArray(lpszValue);
+        return QString::fromUtf16(lpszValue);
     return QString::null;
 }
 
@@ -208,8 +208,6 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             if (limit)
                 --workingLimit;
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            ULONG cbEntryId(entryIdProp->Value.bin.cb);
-            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryIdProp->Value.bin.lpb));
             /* Begin test code TODO remove */
             bool read(rows->aRow[0].lpProps[flagsColumn].Value.ul & MSGFLAG_READ);
             QString sender = stringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);

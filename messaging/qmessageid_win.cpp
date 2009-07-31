@@ -45,9 +45,6 @@ public:
     MapiRecordKey _folderRecordKey;
     MapiRecordKey _storeRecordKey;
     MapiEntryId _entryId;
-    //TODO folder record key, store record key
-    //TODO Move this declaration into qmessageid_p.h with windows guards
-    //TODO Add a QMessaeIdPrivate* QMessageIdPrivate::d_ptr(QMessageId *q_ptr) method to get the d_ptr for a QMessageId, to help with efficiency concerns.
 };
 
 QMessageId::QMessageId()
@@ -70,7 +67,6 @@ QMessageId::QMessageId(const QString& id)
     idStream >> d_ptr->_storeRecordKey;
     if (!idStream.atEnd())
         idStream >> d_ptr->_entryId;
-    // TODO Consider deleting d_ptr if _messageRecordKey.count() != 16 as sanity check.
 }
 
 QMessageId::~QMessageId()
@@ -130,11 +126,12 @@ QString QMessageId::toString() const
 
 bool QMessageId::isValid() const
 {
-    return (d_ptr && !d_ptr->_messageRecordKey.isEmpty()); //TODO again _messageRecordKey should be 16 bytes
+    return (d_ptr && !d_ptr->_messageRecordKey.isEmpty() && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
 }
 
 uint qHash(const QMessageId &id)
 {
+    Q_UNUSED(id)
     return 0; // stub
 }
 

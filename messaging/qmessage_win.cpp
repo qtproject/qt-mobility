@@ -116,7 +116,7 @@ QMessageAccountId QMessage::parentAccountId() const
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
-    return d_ptr->parentFolderId();
+    return d_ptr->_parentFolderId;
 }
 #endif
 

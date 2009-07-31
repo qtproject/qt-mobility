@@ -31,49 +31,88 @@
 **
 ****************************************************************************/
 #include "qmessageaccountid.h"
+#include <QByteArray>
+#include <QDataStream>
+#include <MAPIUtil.h>
+
+typedef QByteArray MapiRecordKey;
+
+class QMessageAccountIdPrivate
+{
+public:
+    MapiRecordKey _storeRecordKey;
+};
 
 QMessageAccountId::QMessageAccountId()
+    : d_ptr(0)
 {
 }
 
 QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
+    : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageAccountId::QMessageAccountId(const QString& id)
+    : d_ptr(new QMessageAccountIdPrivate)
 {
-    Q_UNUSED(id)
+    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+    idStream >> d_ptr->_storeRecordKey;
 }
 
 QMessageAccountId::~QMessageAccountId()
 {
+    delete d_ptr;
 }
 
 bool QMessageAccountId::operator==(const QMessageAccountId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        if (other.isValid()) {
+            return (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
+        }
+        return false;
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageAccountIdPrivate;
+            }
+            d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
+        } else {
+            delete d_ptr;
+            d_ptr = 0;
+        }
+    }
+
+    return *this;
 }
 
 QString QMessageAccountId::toString() const
 {
-    return QString::null; // stub
+    if (!isValid())
+        return QString();
+    QByteArray encodedId;
+    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+    encodedIdStream << d_ptr->_storeRecordKey;
+    return encodedId.toBase64();
 }
 
 bool QMessageAccountId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && !d_ptr->_storeRecordKey.isEmpty());
 }
 
 uint qHash(const QMessageAccountId &id)
 {
+    Q_UNUSED(id)
     return 0; // stub
 }
 
