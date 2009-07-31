@@ -68,8 +68,7 @@ public:
             m_error(other.m_error),
             m_id(other.m_id),
             m_members(other.m_members),
-            m_name(other.m_name),
-            m_details(other.m_details)
+            m_name(other.m_name)
     {
     }
 
@@ -79,7 +78,6 @@ public:
     QUniqueId m_id;
     QList<QUniqueId> m_members;
     QString m_name;
-    QList<QContactDetail> m_details;
 };
 
 #endif

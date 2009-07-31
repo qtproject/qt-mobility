@@ -64,6 +64,8 @@ public:
     QUniqueId id() const;
     bool setId(const QUniqueId& id);
 
+    bool isEmpty() const;
+
     QString name() const;
     bool setName(const QString& groupName);
 

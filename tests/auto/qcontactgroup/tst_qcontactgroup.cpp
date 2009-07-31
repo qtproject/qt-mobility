@@ -54,6 +54,7 @@ private slots:
     void name();
     void members();
     void id();
+    void empty();
 };
 
 tst_QContactGroup::tst_QContactGroup()
@@ -160,6 +161,40 @@ void tst_QContactGroup::id()
     QCOMPARE(g.id(), QUniqueId(1));
     g.setId(QUniqueId(2));
     QCOMPARE(g.id(), QUniqueId(2));
+}
+
+void tst_QContactGroup::empty()
+{
+    QContactGroup g;
+    QVERIFY(g.isEmpty());
+
+    g.setName("Name");
+    QVERIFY(!g.isEmpty());
+
+    g.setName(QString());
+    QVERIFY(g.isEmpty());
+
+    g.setId(243234);
+    QVERIFY(!g.isEmpty());
+
+    g.setId(0);
+    QVERIFY(g.isEmpty());
+
+    g.addMember(123);
+    QVERIFY(!g.isEmpty());
+
+    g.removeMember(123);
+    QVERIFY(g.isEmpty());
+
+    g.setId(1123);
+    g.addMember(123);
+    QVERIFY(!g.isEmpty());
+
+    g.removeMember(123);
+    QVERIFY(!g.isEmpty());
+
+    g.setId(0);
+    QVERIFY(g.isEmpty());
 }
 
 QTEST_MAIN(tst_QContactGroup)
