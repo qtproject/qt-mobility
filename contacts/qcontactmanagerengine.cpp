@@ -722,11 +722,11 @@ bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactMa
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removed, QSet<QUniqueId>& changed, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
-    Q_UNUSED(removed);
-    Q_UNUSED(changed);
+    Q_UNUSED(removedContacts);
+    Q_UNUSED(changedGroups);
     error = QContactManager::NotSupportedError;
     return false;
 }
