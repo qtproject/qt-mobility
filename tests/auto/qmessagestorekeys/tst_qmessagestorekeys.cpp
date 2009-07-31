@@ -2552,10 +2552,7 @@ void tst_QMessageStoreKeys::testMessageSortKey()
             }
         }
     }
-    if (!match) {
-        qDebug() << "x:" << x;
-        qDebug() << "y:" << ids;
-        QVERIFY(match);
-    }
+    QVERIFY(match);
+    QVERIFY(iit == ids.end());
 }
 
