@@ -44,6 +44,11 @@ public:
     }
 
     QMessageFolder *q_ptr;
+
+    QMessageFolderId _id;
+    QMessageAccountId _parentAccountId;
+    QMessageFolderId _parentFolderId;
+    QString _displayName;
+    QString _path;
 };
 #endif
-
