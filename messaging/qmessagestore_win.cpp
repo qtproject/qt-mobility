@@ -299,6 +299,7 @@ public:
     bool isValid();
     MapiFolderPtr rootFolder();
     MapiFolderPtr findFolder(const MapiRecordKey &key);
+    QMessageFolderIdList folderIds();
 
     static MapiStorePtr null() { return MapiStorePtr(new MapiStore()); }
 
@@ -374,8 +375,6 @@ MapiFolderPtr MapiStore::findFolder(const MapiRecordKey &key)
 {
     QList<MapiFolderPtr> folders;
     folders.append(rootFolder());
-    if (folders.back()->recordKey() == key)
-        return folders.back(); // Unreachable if root folder can't directly contain messages.
 
     while (!folders.isEmpty()) {
         MapiFolderPtr subFolder(folders.back()->nextSubFolder());
@@ -398,6 +397,34 @@ MapiFolderPtr MapiStore::findFolder(const MapiRecordKey &key)
     return MapiFolder::null();
 }
 
+QMessageFolderIdList MapiStore::folderIds()
+{
+    QMessageFolderIdList folderIds;
+    QList<MapiFolderPtr> folders;
+    folders.append(rootFolder());
+    // No valid reason to list the root folder.
+
+    while (!folders.isEmpty()) {
+        MapiFolderPtr subFolder(folders.back()->nextSubFolder());
+        if (subFolder->isValid()) {
+            QByteArray encodedId;
+            QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+            encodedIdStream << subFolder->recordKey();
+            encodedIdStream << _key;
+            folderIds.append(QMessageFolderId(encodedId.toBase64()));
+            folders.append(subFolder);
+            /* Begin debug TODO remove */
+            QStringList path;
+            for (int i = 0; i < folders.count(); path.append(folders[i]->name()), ++i);
+            qDebug() << "pushing" << path.join("/");
+            /* End debug */
+        } else {
+            folders.pop_back();
+        }
+    }
+
+    return folderIds;
+}
 
 class MapiSession {
 public:
@@ -668,9 +695,19 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
 {
     Q_UNUSED(key)
     Q_UNUSED(sortKey)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
+    QMessageFolderIdList result;
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore());
+    if (!mapiStore->isValid())
+        return result;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+    return mapiStore->folderIds().mid(offset, limit);
 }
 #endif
 
