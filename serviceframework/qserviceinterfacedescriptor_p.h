@@ -45,6 +45,8 @@
 // We mean it.
 //
 
+#include "qserviceinterfacedescriptor.h"
+
 #include <QString>
 #include <QHash>
 
@@ -87,6 +89,11 @@ public:
     }
 
     static QServiceInterfaceDescriptorPrivate *getPrivate(QServiceInterfaceDescriptor *descriptor)
+    {
+        return descriptor->d;
+    }
+
+    static const QServiceInterfaceDescriptorPrivate *getPrivate(const QServiceInterfaceDescriptor *descriptor)
     {
         return descriptor->d;
     }
