@@ -1012,7 +1012,7 @@ void tst_QValueSpaceItem::ipcSetValue()
     process.start("vsiTestLackey", QStringList() << "-ipcSetValue");
     QVERIFY(process.waitForStarted());
 
-    process.waitForFinished(5000);
+    QTest::qWait(5000);
 
     if (process.state() == QProcess::NotRunning &&
         process.exitCode() == ERROR_SETVALUE_NOT_SUPPORTED) {

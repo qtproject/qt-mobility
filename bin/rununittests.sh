@@ -7,7 +7,8 @@ shell_path=`dirname $shell`;
 
 SAVED_PWD=$PWD;
 cd $shell_path/../build/tests/Debug/bin
-LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
+export PATH=.
 ./tst_qvaluespace
 ./tst_qvaluespace_oop
 
