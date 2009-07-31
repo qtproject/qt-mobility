@@ -58,6 +58,8 @@ public:
     static QMessageAccountId defaultAccount(QMessage::Type type);
 
 private:
+    friend class QMessageStore;
+
     QMessageAccountPrivate *d_ptr;
 };
 #endif

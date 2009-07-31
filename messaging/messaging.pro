@@ -28,6 +28,8 @@ HEADERS += qmessageglobal.h \
            qmessage.h \
            qmessagefolder_p.h \ 
            qmessagefolder.h \
+           qmessageaccount_p.h \
+           qmessageaccount.h \
            qmessageaccountfilterkey.h \
            qmessageaccountfilterkey_p.h \
            qmessageaccountsortkey.h \
@@ -53,6 +55,7 @@ SOURCES += qmessageid.cpp \
            qmessageaddress.cpp \
            qmessage.cpp \
            qmessagefolder.cpp \
+           qmessageaccount.cpp \
            qmessageaccountfilterkey.cpp \
            qmessageaccountsortkey.cpp \
            qmessagefolderfilterkey.cpp \
