@@ -1,4 +1,7 @@
-load(qttest_p4)
+TARGET = tst_qmediametadata
+
+CONFIG += testcase
+
 SOURCES += tst_qmediametadata.cpp
 
 include (../../../common.pri)

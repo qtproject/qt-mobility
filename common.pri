@@ -24,8 +24,17 @@ CONFIG(debug, debug|release) {
 }
 
 # Figure out the root of where stuff should go (this could be done via configure)
-OUTPUT_DIR = $$PWD
-SOURCE_DIR = $$PWD
+example|plugin {
+    OUTPUT_DIR = $$OUT_PWD/../..
+    SOURCE_DIR = $$PWD/../..
+} else: testcase {
+    OUTPUT_DIR = $$OUT_PWD/../../..
+    SOURCE_DIR = $$PWD/../../..
+} else {
+    OUTPUT_DIR = $$OUT_PWD/..
+    SOURCE_DIR = $$PWD/..
+}
+
 
 #test whether we have a unit test
 !testcase {
@@ -46,7 +55,6 @@ SOURCE_DIR = $$PWD
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
 }
 
-
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
 
@@ -56,3 +64,5 @@ INCLUDEPATH += . $$SOURCE_DIR
 symbian {
 	INCLUDEPATH += $$MOC_DIR
 }
+
+plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR

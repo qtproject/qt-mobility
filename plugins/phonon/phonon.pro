@@ -3,10 +3,11 @@ TEMPLATE = lib
 CONFIG += plugin
 QT += phonon
 TARGET = phononengine
+
+PLUGIN_SUBDIR = mediaservice
+
 include (../../common.pri)
 
-LIBS += -lQtMedia
-DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/lib/mediaservice
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \

@@ -2,12 +2,13 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = qwmp
 
+PLUGIN_SUBDIR = mediaservice
+
+include(../../common.pri)
+
 DEFINES += QWMP_EVR
 
-DESTDIR = $$OUT_PWD/../../lib
-DLLDESTDIR = $$OUT_PWD/../../bin/mediaservice
-
-LIBS += -L$$OUT_PWD/../../lib -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
+LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
