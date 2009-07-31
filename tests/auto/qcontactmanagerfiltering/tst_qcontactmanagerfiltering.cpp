@@ -91,6 +91,9 @@ private slots:
     void changelogFiltering();
     void changelogFiltering_data();
 
+    void idListFiltering();
+    void idListFiltering_data();
+
     void sorting(); // XXX should take all managers
     void sorting_data();
 
@@ -1795,6 +1798,69 @@ void tst_QContactManagerFiltering::actionFiltering()
     af.setVendor(vendorName, version);
 
     ids = cm->contacts(af);
+
+    QString output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
+
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::idListFiltering_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<QString>("expected");
+
+    QString es;
+    QTest::newRow("empty") << es << es;
+    QTest::newRow("a") << "a" << "a";
+    QTest::newRow("ab") << "ab" << "ab";
+    QTest::newRow("aa") << "aa" << "a";
+    QTest::newRow("ba") << "ba" << "ab";
+    QTest::newRow("abcd") << "abcd" << "abcd";
+    QTest::newRow("abcdefg") << "abcdefg" << "abcd";
+}
+
+void tst_QContactManagerFiltering::idListFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QFETCH(QString, input);
+    QFETCH(QString, expected);
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    // 3 extra ids that (hopefully) won't exist
+    QUniqueId e = 0x54555657;
+    QUniqueId f = 0x96969696;
+    QUniqueId g = 0x44335566;
+
+    /* Convert the input to a list of ids */
+    foreach(QChar c, input) {
+        if (c == 'a')
+            ids << contacts.at(0);
+        else if (c == 'b')
+            ids << contacts.at(1);
+        else if (c == 'c')
+            ids << contacts.at(2);
+        else if (c == 'd')
+            ids << contacts.at(3);
+        else if (c == 'e')
+            ids << e;
+        else if (c == 'f')
+            ids << f;
+        else if (c == 'g')
+            ids << g;
+    }
+
+    /* And do the search */
+    QContactIdListFilter idf;
+    idf.setIds(ids);
+
+    // now reuse ids
+    ids = cm->contacts(idf);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
