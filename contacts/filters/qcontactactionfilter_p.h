@@ -55,16 +55,17 @@ class QContactActionFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactActionFilterPrivate()
-        : QContactFilterPrivate(QContactFilter::Action), m_vendorVersion(-1)
+        : QContactFilterPrivate(),
+        m_vendorVersion(-1)
     {
     }
 
     QContactActionFilterPrivate(const QContactActionFilterPrivate& other)
-        : QContactFilterPrivate(other)
-        , m_action(other.m_action)
-        , m_value(other.m_value)
-        , m_vendorName(other.m_vendorName)
-        , m_vendorVersion(other.m_vendorVersion)
+        : QContactFilterPrivate(other),
+        m_action(other.m_action),
+        m_value(other.m_value),
+        m_vendorName(other.m_vendorName),
+        m_vendorVersion(other.m_vendorVersion)
     {
     }
 

@@ -69,7 +69,9 @@ QContactFilter::~QContactFilter()
 
 QContactFilter::FilterType QContactFilter::type() const
 {
-    return d_ptr ? d_ptr->m_type : QContactFilter::Invalid;
+    if (!d_ptr)
+        return QContactFilter::Invalid;
+    return d_ptr->type();
 }
 
 bool QContactFilter::operator==(const QContactFilter& other) const

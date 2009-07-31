@@ -54,7 +54,7 @@ class QContactChangeLogFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactChangeLogFilterPrivate(QContactChangeLogFilter::ChangeType type = QContactChangeLogFilter::Added)
-        : QContactFilterPrivate(QContactFilter::ChangeLog)
+        : QContactFilterPrivate()
         , m_changeType(type)
     {
 

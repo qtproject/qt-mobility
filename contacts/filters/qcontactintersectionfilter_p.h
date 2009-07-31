@@ -54,7 +54,7 @@ class QContactIntersectionFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactIntersectionFilterPrivate()
-       : QContactFilterPrivate(QContactFilter::Intersection)
+       : QContactFilterPrivate()
     {
 
     }

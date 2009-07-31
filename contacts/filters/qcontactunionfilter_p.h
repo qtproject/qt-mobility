@@ -54,7 +54,7 @@ class QContactUnionFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactUnionFilterPrivate()
-       : QContactFilterPrivate(QContactFilter::Union)
+       : QContactFilterPrivate()
     {
 
     }

@@ -55,17 +55,17 @@ class QContactDetailFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactDetailFilterPrivate()
-        : QContactFilterPrivate(QContactFilter::ContactDetail)
-        , m_flags(0)
+        : QContactFilterPrivate(),
+        m_flags(0)
     {
     }
 
     QContactDetailFilterPrivate(const QContactDetailFilterPrivate& other)
-        : QContactFilterPrivate(other)
-        , m_defId(other.m_defId)
-        , m_fieldId(other.m_fieldId)
-        , m_exactValue(other.m_exactValue)
-        , m_flags(other.m_flags)
+        : QContactFilterPrivate(other),
+        m_defId(other.m_defId),
+        m_fieldId(other.m_fieldId),
+        m_exactValue(other.m_exactValue),
+        m_flags(other.m_flags)
     {
     }
 

@@ -53,7 +53,7 @@ class QContactGroupMembershipFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactGroupMembershipFilterPrivate()
-        : QContactFilterPrivate(QContactFilter::GroupMembership)
+        : QContactFilterPrivate()
         , m_id(0)
     {
 
