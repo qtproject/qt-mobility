@@ -39,11 +39,10 @@
 #include <QFxView>
 #include <QtCore>
 #include <qml.h>
+#include <qmlcontext.h>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
 #include "sfwexample.h"
-
-//QML_DECLARE_TYPE(
 
 void usage()
 {
@@ -76,6 +75,9 @@ int main(int argc, char** argv)
     ServiceRegister registration;
     QFxView canvas;
     canvas.setUrl(url);
+    QmlContext* ctxt = canvas.rootContext();
+    ctxt->addDefaultObject(&registration);
+
     canvas.execute();
     canvas.show();
     return app.exec();

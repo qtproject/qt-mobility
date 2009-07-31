@@ -34,6 +34,7 @@
 #include <QtCore>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
+#include <qml.h>
 
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor);
@@ -48,32 +49,51 @@ public:
     Q_PROPERTY(bool isValid READ isValid);
     bool isValid() const;
 
+    Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
+    QString serviceName() const;
+
+    Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
+    QString interfaceName() const;
+
+    void setNativeDescriptor(const QServiceInterfaceDescriptor& desc)
+
     Q_PROPERTY(QVariant descriptor READ descriptor WRITE setDescriptor NOTIFY descriptorChanged);
     QVariant descriptor() const;
-
     void setDescriptor(QVariant& newDescriptor);
 
-    Q_INVOKABLE QObject* serviceObject();
+    Q_PROPERTY(QString version READ version NOTIFY versionChanged);
+    QString version() const;
 
-    Q_INVOKABLE void print() const;
+
+    Q_INVOKABLE QObject* serviceObject();
 signals:
     void descriptorChanged();
+    void nameChanged();
+    void versionChanged();
 
 private:
     QServiceInterfaceDescriptor m_descriptor;
     QObject* serviceInstance;
 };
 
-class ServiceRegister {
+QML_DECLARE_TYPE(ServiceWrapper);
+
+class ServiceRegister : public QObject{
+    Q_OBJECT
 public:
     ServiceRegister();
     ~ServiceRegister();
     
+    Q_PROPERTY(QList<ServiceWrapper *> *services READ services CONSTANT);
+    QList<ServiceWrapper *> *services() { return &m_services; }
+
     void registerExampleServices();
 
     void unregisterExampleServices();
 private:
     QServiceManager* serviceManager;
+    QList<ServiceWrapper *> m_services;
 };
+
 
 

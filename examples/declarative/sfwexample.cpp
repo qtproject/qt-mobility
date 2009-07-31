@@ -33,6 +33,8 @@
 
 #include "sfwexample.h"
 
+QML_DEFINE_TYPE(0,0,0,0,Service,ServiceWrapper);
+
 ServiceWrapper::ServiceWrapper() : serviceInstance(0)
 {
 }
@@ -48,24 +50,61 @@ bool ServiceWrapper::isValid() const
     return m_descriptor.isValid(); 
 }
 
+QString ServiceWrapper::interfaceName() const
+{
+    if (isValid())
+        return m_descriptor.interfaceName();
+    else
+        return "No Interface";
+}
+
+QString ServiceWrapper::serviceName() const
+{
+
+    QString output("No Service");
+    if (isValid()) {
+        return m_descriptor.serviceName();
+        /*output = "%1 %2 %3"; 
+        output = output.arg(m_descriptor.serviceName()).arg(m_descriptor.interfaceName());
+        output = output.arg(QString::number(m_descriptor.majorVersion())+"."+QString::number(m_descriptor.minorVersion()));*/
+    }
+    //qDebug() << output;
+    return output;
+}
+
+QString ServiceWrapper::version() const
+{
+    if (isValid())
+        return QString(QString::number(m_descriptor.majorVersion())+"."+QString::number(m_descriptor.minorVersion()));
+    else
+        return QString("0.0");
+}
+
 QVariant ServiceWrapper::descriptor() const 
 { 
     return qVariantFromValue(m_descriptor); 
 }
 
-void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
+void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor& d)
 {
-    QServiceInterfaceDescriptor d = newDescriptor.value<QServiceInterfaceDescriptor>();
-
     if (d == m_descriptor)
         return;
     
     m_descriptor = d;
+    emit descriptorChanged();
+    emit nameChanged();
+    emit versionChanged();
     if (serviceInstance)
         delete serviceInstance;
 
     serviceInstance = 0;
 }
+void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
+{
+    QServiceInterfaceDescriptor d = newDescriptor.value<QServiceInterfaceDescriptor>();
+    setNativeDescriptor(d);
+}
+
 
 QObject* ServiceWrapper::serviceObject()
 { 
@@ -83,22 +122,20 @@ QObject* ServiceWrapper::serviceObject()
 }
 
 
-void ServiceWrapper::print() const
-{
-    QString output("Invalid");
-    if (isValid()) {
-        output = "%1 %2 %3"; 
-        output.arg(m_descriptor.serviceName()).arg(m_descriptor.interfaceName());
-        output.arg(m_descriptor.majorVersion()+"."+m_descriptor.minorVersion());
-    }
-
-    qDebug() << output;
-}
-
 
 ServiceRegister::ServiceRegister() {
+    
     serviceManager = new QServiceManager();
     registerExampleServices();
+
+    ServiceWrapper *service;
+    QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces();
+    for (int i = 0; i<allImpl.count(); i++) {
+        service = new ServiceWrapper();
+        service->setNativeDescriptor(allImpl.at(i));
+        //m_services.append(service);
+        m_services.append(service);
+    }
 }
 
 ServiceRegister::~ServiceRegister() {
