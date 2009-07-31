@@ -313,7 +313,7 @@ bool QMessageContentContainer::contentAvailable() const
     if (!d_ptr->_content.isEmpty()) {
         return true;
     }
-    return d_ptr->_container->contentAvailable();
+    return (d_ptr->_container->partCount() > 0) || d_ptr->_container->contentAvailable();
 }
 
 uint QMessageContentContainer::size() const
