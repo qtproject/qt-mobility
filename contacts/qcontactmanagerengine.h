@@ -47,6 +47,7 @@
 #include "qcontactgroup.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerinfo.h"
+#include "qcontactabstractrequest.h"
 
 class QContactFilter;
 class QContactSortOrder;
@@ -91,6 +92,19 @@ public:
     virtual QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
     virtual bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
+
+    /* Asynchronous Request Support */
+    virtual void requestDestroyed(QContactAbstractRequest* req);
+    virtual bool startRequest(QContactAbstractRequest* req);
+    virtual bool cancelRequest(QContactAbstractRequest* req);
+    virtual bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+    void updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    void updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    void updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    void updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

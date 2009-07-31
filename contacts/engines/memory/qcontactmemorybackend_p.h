@@ -60,7 +60,9 @@
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactdetaildefinition.h"
+#include "qcontactabstractrequest.h"
 
+class QContactAbstractRequest;
 class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
 {
@@ -95,6 +97,8 @@ public:
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
     QUniqueId m_nextContactId;
     QUniqueId m_nextGroupId;
+
+    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
@@ -124,6 +128,13 @@ public:
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
+    /* Asynchronous Request Support */
+    void requestDestroyed(QContactAbstractRequest* req);
+    bool startRequest(QContactAbstractRequest* req);
+    bool cancelRequest(QContactAbstractRequest* req);
+    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     virtual bool filterSupported(const QContactFilter& filter) const;
@@ -131,6 +142,9 @@ public:
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);
+
+private slots:
+    void performAsynchronousOperation();
 
 private:
     QContactMemoryEngineData* d;

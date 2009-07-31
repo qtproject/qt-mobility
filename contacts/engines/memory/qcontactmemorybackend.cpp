@@ -38,6 +38,8 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
+#include "qcontactabstractrequest.h"
+#include "qcontactrequests.h"
 
 #include "qcontactmemorybackend_p.h"
 
@@ -392,6 +394,362 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
     else
         error = QContactManager::DoesNotExistError;
     return success;
+}
+
+/*! \reimp */
+void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    d->m_asynchronousOperations.removeOne(req);
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
+{
+    if (req->status() != QContactAbstractRequest::Inactive
+        && req->status() != QContactAbstractRequest::Cancelled
+        && req->status() != QContactAbstractRequest::Finished) {
+        // not in a state able to be started.
+        return false;
+    }
+
+    d->m_asynchronousOperations.enqueue(req);
+    QList<QContactManager::Error> dummy;
+    updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
+    QTimer::singleShot((qrand()*900) + 100, this, SLOT(performAsynchronousOperation()));
+    return true;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
+{
+    if (req->status() != QContactAbstractRequest::Active) {
+        // not in a state able to be cancelled.
+        return false;
+    }
+
+    QList<QContactManager::Error> dummy;
+    updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
+    return true;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
+{
+    Q_UNUSED(msecs);
+
+    if (!d->m_asynchronousOperations.removeOne(req))
+        return false; // didn't exist.
+
+    // replace at head of queue
+    d->m_asynchronousOperations.insert(0, req);
+
+    // and perform the operation.
+    performAsynchronousOperation();
+
+    return true;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
+{
+    // in our implementation, we always complete any operation we start.
+    // so, waitForRequestFinished is equivalent to waitForRequestProgress.
+    return waitForRequestProgress(req, msecs);
+}
+
+/*!
+ * This slot is called some time after an asynchronous request is started.
+ * It performs the required operation, sets the result and returns.
+ */
+void QContactMemoryEngine::performAsynchronousOperation()
+{
+    QContactAbstractRequest *currentRequest;
+
+    // take the first pending request and finish it
+    if (d->m_asynchronousOperations.isEmpty())
+        return;
+    currentRequest = d->m_asynchronousOperations.dequeue();
+
+    // check to see if it is cancelling; if so, cancel it and perform update.
+    if (currentRequest->status() == QContactAbstractRequest::Cancelling) {
+        QList<QContactManager::Error> dummy;
+        updateRequestStatus(currentRequest, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
+        return;
+    }
+
+    QSet<QUniqueId> removedContacts;
+    QSet<QUniqueId> changedContacts;
+    QSet<QUniqueId> addedContacts;
+    QSet<QUniqueId> removedGroups;
+    QSet<QUniqueId> changedGroups;
+    QSet<QUniqueId> addedGroups;
+
+    // Now perform the active request and emit required signals.
+    Q_ASSERT(currentRequest->status() == QContactAbstractRequest::Active);
+    switch (currentRequest->type()) {
+        case QContactAbstractRequest::ContactFetch:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(currentRequest);
+            QContactFilter filter = r->filter();
+            QList<QContactSortOrder> sorting = r->sorting();
+            QStringList defs = r->definitionRestrictions();
+
+            QContactManager::Error operationError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContact> requestedContacts;
+            QList<QUniqueId> requestedContactIds = contacts(filter, sorting, operationError);
+
+            QContactManager::Error tempError;
+            for (int i = 0; i < requestedContactIds.size(); i++) {
+                QContact current = contact(requestedContactIds.at(i), tempError);
+                operationErrors.append(tempError);
+
+                // check for single error; update total operation error if required
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+
+                // apply the required detail definition restrictions
+                if (!defs.isEmpty()) {
+                    QList<QContactDetail> allDetails = current.details();
+                    for (int j = 0; j < allDetails.size(); j++) {
+                        QContactDetail d = allDetails.at(j);
+                        if (!defs.contains(d.definitionName())) {
+                            // this detail is not required.
+                            current.removeDetail(&d);
+                        }
+                    }
+                }
+
+                // add the contact to the result list.
+                requestedContacts.append(current);
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, requestedContacts, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactIdFetch:
+        {
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(currentRequest);
+            QContactFilter filter = r->filter();
+            QList<QContactSortOrder> sorting = r->sorting();
+
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QUniqueId> requestedContactIds = contacts(filter, sorting, operationError);
+
+            updateRequest(currentRequest, requestedContactIds, operationError, QList<QContactManager::Error>(), QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactSave:
+        {
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(currentRequest);
+            QList<QContact> contacts = r->contacts();
+
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors = saveContacts(&contacts, addedContacts, changedContacts, changedGroups, operationError);
+
+            for (int i = 0; i < operationErrors.size(); i++) {
+                if (operationErrors.at(i) != QContactManager::NoError) {
+                    operationError = operationErrors.at(i);
+                    break;
+                }
+            }
+
+            updateRequest(currentRequest, contacts, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactRemove:
+        {
+            // this implementation provides scant information to the user
+            // the operation either succeeds (all contacts matching the filter were removed)
+            // or it fails (one or more contacts matching the filter could not be removed)
+            // if a failure occurred, the request error will be set to the most recent
+            // error that occurred during the remove operation.
+            QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(currentRequest);
+            QContactFilter filter = r->filter();
+
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QUniqueId> contactsToRemove = contacts(filter, QList<QContactSortOrder>(), operationError);
+
+            for (int i = 0; i < contactsToRemove.size(); i++) {
+                QContactManager::Error tempError;
+                removeContact(contactsToRemove.at(i), removedContacts, changedGroups, tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // there are no results, so just update the status with the error.
+            QList<QContactManager::Error> dummy;
+            updateRequestStatus(currentRequest, operationError, dummy, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupFetch:
+        {
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactGroup> requestedGroups;
+            QList<QUniqueId> requestedGroupIds = r->ids();
+
+            QContactManager::Error tempError;
+            for (int i = 0; i < requestedGroupIds.size(); i++) {
+                QContactGroup current = group(requestedGroupIds.at(i), tempError);
+                operationErrors.append(tempError);
+
+                // add the group to the result list.
+                requestedGroups.append(current);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, requestedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupSave:
+        {
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactGroup> groups = r->groups();
+            QList<QContactGroup> savedGroups;
+
+            for (int i = 0; i < groups.size(); i++) {
+                QContactManager::Error tempError;
+                QContactGroup current = groups.at(i);
+                saveGroup(&current, addedGroups, changedGroups, changedContacts, tempError);
+                savedGroups.append(current);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            updateRequest(currentRequest, savedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupRemove:
+        {
+            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(currentRequest);
+            QList<QUniqueId> ids = r->ids();
+
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+
+            for (int i = 0; i < ids.size(); i++) {
+                QContactManager::Error tempError;
+                removeGroup(ids.at(i), removedGroups, changedContacts, tempError);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // there are no results, so just update the status with the error.
+            updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactDetailDefinition> requestedDefinitions;
+            QStringList names = r->names();
+
+            QContactManager::Error tempError;
+            for (int i = 0; i < names.size(); i++) {
+                QContactDetailDefinition current = detailDefinition(names.at(i), tempError);
+                operationErrors.append(tempError);
+                requestedDefinitions.append(current);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, requestedDefinitions, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionSave:
+        {
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactDetailDefinition> definitions = r->definitions();
+            QList<QContactDetailDefinition> savedDefinitions;
+
+            QContactManager::Error tempError;
+            for (int i = 0; i < definitions.size(); i++) {
+                QContactDetailDefinition current = definitions.at(i);
+                saveDetailDefinition(current, tempError);
+                savedDefinitions.append(current);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, savedDefinitions, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionRemove:
+        {
+            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(currentRequest);
+            QStringList names = r->names();
+
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+
+            for (int i = 0; i < names.size(); i++) {
+                QContactManager::Error tempError;
+                removeDetailDefinition(names.at(i), tempError);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // there are no results, so just update the status with the error.
+            updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        default: // unknown request type.
+        break;
+    }
+
+    // now emit any signals we have to emit
+    QList<QUniqueId> currEmit = removedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsRemoved(currEmit);
+    currEmit = changedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsChanged(currEmit);
+    currEmit = addedContacts.toList();
+    if (!currEmit.isEmpty())
+        emit contactsAdded(currEmit);
+    currEmit = removedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsRemoved(currEmit);
+    currEmit = changedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsChanged(currEmit);
+    currEmit = addedGroups.toList();
+    if (!currEmit.isEmpty())
+        emit groupsAdded(currEmit);
 }
 
 /*!

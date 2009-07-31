@@ -37,12 +37,14 @@
 
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetails.h"
-
 #include "qcontactgroup_p.h"
 #include "qcontactsortorder.h"
-
 #include "qcontactfilters.h"
 #include "qcontactaction.h"
+#include "qcontactabstractrequest.h"
+#include "qcontactabstractrequest_p.h"
+#include "qcontactrequests.h"
+#include "qcontactrequests_p.h"
 
 /*!
  * \class QContactManagerEngine
@@ -1379,3 +1381,329 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     // hasn't been inserted yet?  append to the list.
     sorted->append(toAdd);
 }
+
+/*!
+ * Notifies the manager engine that the given request \a req has been destroyed
+ */
+void QContactManagerEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * Asks the manager engine to begin the given request \a req
+ */
+bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * Asks the manager engine to cancel the given request \a req which was
+ * previously started.
+ *
+ * \sa startRequest()
+ */
+bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * Blocks until the manager engine has completed some part (or all) of the given request \a req
+ * which was previously started, or until \a msecs milliseconds have passed.
+ * Returns true if some progress was reported, and false if the request was not in the
+ * \c QContactAbstractRequest::Active state or no progress could be reported.
+ *
+ * \sa startRequest()
+ */
+bool QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * Blocks until the manager engine has completed the given request \a req
+ * which was previously started, or until \a msecs milliseconds have passed.
+ * Returns true if the request was completed, and false if the request was not in the
+ * \c QContactAbstractRequest::Active state or no progress could be reported.
+ *
+ * \sa startRequest()
+ */
+bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
+{
+    Q_UNUSED(req);
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.
+ */
+void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // convenience function that simply sets the operation error and status
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::ContactFetch:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactIdFetch:
+        {
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactSave:
+        {
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactRemove:
+        {
+            QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupFetch:
+        {
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupSave:
+        {
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupRemove:
+        {
+            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionSave:
+        {
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionRemove:
+        {
+            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        default: // unknown request type.
+        break;
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::ContactFetch:
+        {
+            QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
+            rd->m_ids = result;
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactIdFetch:
+        {
+            QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
+            rd->m_ids = result;
+            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupFetch:
+        {
+            QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
+            rd->m_ids = result;
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of ids to update...
+            return;
+        }
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request. If the request is of a type which does not return a list of contacts as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::ContactFetch:
+        {
+            QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
+            rd->m_contacts = result;
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactSave:
+        {
+            QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
+            rd->m_contacts = result;
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of contacts to update...
+            return;
+        }
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of groups as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::GroupFetch:
+        {
+            QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
+            rd->m_groups = result;
+            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::GroupSave:
+        {
+            QContactGroupSaveRequestPrivate* rd = static_cast<QContactGroupSaveRequestPrivate*>(req->d_ptr);
+            rd->m_groups = result;
+            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of groups to update...
+            return;
+        }
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition names as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+            rd->m_names = result;
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of definition names to update...
+            return;
+        }
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+            rd->m_definitions = result;
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionSave:
+        {
+            QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
+            rd->m_definitions = result;
+            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of definitions to update...
+            return;
+        }
+    }
+}
+
+// TODO: at the moment, emitted progress signal always has "false" for appendOnly.  Instead, need to glean this from engine...
