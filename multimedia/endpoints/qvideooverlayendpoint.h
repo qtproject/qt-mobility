@@ -44,6 +44,7 @@ class QVideoOverlayEndpointPrivate;
 class Q_MEDIA_EXPORT QVideoOverlayEndpoint : public QObject, public QMediaEndpointInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaEndpointInterface)
     Q_DECLARE_PRIVATE(QVideoOverlayEndpoint)
 public:
     QVideoOverlayEndpoint(QObject *parent = 0);

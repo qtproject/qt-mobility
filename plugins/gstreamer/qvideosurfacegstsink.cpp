@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QThread>
 
-Q_DECLARE_METATYPE(QVideoFormat)
+Q_DECLARE_METATYPE(QVideoSurfaceFormat)
 
 QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface)
     : m_surface(surface)
@@ -18,7 +18,7 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surfac
 {
 }
 
-bool QVideoSurfaceGstDelegate::start(const QVideoFormat &format, int bytesPerLine)
+bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
 {
     QMutexLocker locker(&m_mutex);
 
@@ -57,7 +57,9 @@ GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
     QMutexLocker locker(&m_mutex);
 
     m_frame = QVideoFrame(
-            new QGstVideoBuffer(buffer), m_format.frameSize(), m_bytesPerLine, m_format.frameType());
+            new QGstVideoBuffer(buffer, m_bytesPerLine),
+            m_format.frameSize(),
+            m_format.pixelFormat());
 
     qint64 startTime = GST_BUFFER_TIMESTAMP(buffer);
 
@@ -127,28 +129,28 @@ void QVideoSurfaceGstDelegate::queuedRender()
 
 struct YuvFormat
 {
-    QVideoFrame::Type type;
+    QVideoFrame::PixelFormat pixelFormat;
     guint32 fourcc;
     int bitsPerPixel;
 };
 
 static const YuvFormat qt_yuvColorLookup[] =
 {
-    { QVideoFrame::Image_YUV420P, GST_MAKE_FOURCC('I','4','2','0'), 8 },
-    { QVideoFrame::Image_YV12,    GST_MAKE_FOURCC('Y','V','1','2'), 8 },
-    { QVideoFrame::Image_UYVY,    GST_MAKE_FOURCC('U','Y','V','Y'), 8 },
-    { QVideoFrame::Image_YUYV,    GST_MAKE_FOURCC('Y','U','Y','V'), 8 },
-    { QVideoFrame::Image_YUYV,    GST_MAKE_FOURCC('Y','U','Y','2'), 8 },
-    { QVideoFrame::Image_NV12,    GST_MAKE_FOURCC('N','V','1','2'), 8 },
-    { QVideoFrame::Image_NV21,    GST_MAKE_FOURCC('N','V','2','1'), 8 }
+    { QVideoFrame::Format_YUV420P, GST_MAKE_FOURCC('I','4','2','0'), 8 },
+    { QVideoFrame::Format_YV12,    GST_MAKE_FOURCC('Y','V','1','2'), 8 },
+    { QVideoFrame::Format_UYVY,    GST_MAKE_FOURCC('U','Y','V','Y'), 8 },
+    { QVideoFrame::Format_YUYV,    GST_MAKE_FOURCC('Y','U','Y','V'), 8 },
+    { QVideoFrame::Format_YUYV,    GST_MAKE_FOURCC('Y','U','Y','2'), 8 },
+    { QVideoFrame::Format_NV12,    GST_MAKE_FOURCC('N','V','1','2'), 8 },
+    { QVideoFrame::Format_NV21,    GST_MAKE_FOURCC('N','V','2','1'), 8 }
 };
 
-static int indexOfYuvColor(QVideoFrame::Type type)
+static int indexOfYuvColor(QVideoFrame::PixelFormat format)
 {
     const int count = sizeof(qt_yuvColorLookup) / sizeof(YuvFormat);
 
     for (int i = 0; i < count; ++i)
-        if (qt_yuvColorLookup[i].type == type)
+        if (qt_yuvColorLookup[i].pixelFormat == format)
             return i;
     return -1;
 }
@@ -165,7 +167,7 @@ static int indexOfYuvColor(guint32 fourcc)
 
 struct RgbFormat
 {
-    QVideoFrame::Type type;
+    QVideoFrame::PixelFormat pixelFormat;
     int bitsPerPixel;
     int depth;
     int endianness;
@@ -177,10 +179,10 @@ struct RgbFormat
 
 static const RgbFormat qt_rgbColorLookup[] =
 {
-    { QVideoFrame::Image_RGB32 , 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x00000000 },
-    { QVideoFrame::Image_RGB32 , 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0x00000000 },
-    { QVideoFrame::Image_ARGB32, 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF },
-    { QVideoFrame::Image_ARGB32, 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000 }
+    { QVideoFrame::Format_RGB32 , 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x00000000 },
+    { QVideoFrame::Format_RGB32 , 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0x00000000 },
+    { QVideoFrame::Format_ARGB32, 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF },
+    { QVideoFrame::Format_ARGB32, 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000 }
 };
 
 static int indexOfRgbColor(
@@ -214,8 +216,8 @@ QVideoSurfaceGstSink *QVideoSurfaceGstSink::createSink(QAbstractVideoSurface *su
     sink->delegate = new QVideoSurfaceGstDelegate(surface);
     sink->supportedCaps = gst_caps_new_empty();
 
-    foreach (QVideoFrame::Type type, surface->supportedTypes()) {
-        int index = indexOfYuvColor(type);
+    foreach (QVideoFrame::PixelFormat format, surface->supportedPixelFormats()) {
+        int index = indexOfYuvColor(format);
 
         if (index != -1) {
             gst_caps_append_structure(sink->supportedCaps, gst_structure_new(
@@ -231,7 +233,7 @@ QVideoSurfaceGstSink *QVideoSurfaceGstSink::createSink(QAbstractVideoSurface *su
         const int count = sizeof(qt_rgbColorLookup) / sizeof(RgbFormat);
 
         for (int i = 0; i < count; ++i) {
-            if (qt_rgbColorLookup[i].type == type) {
+            if (qt_rgbColorLookup[i].pixelFormat == format) {
                 GstStructure *structure = gst_structure_new(
                         "video/x-raw-rgb",
                         "framerate" , GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
@@ -374,7 +376,7 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
         
         //qDebug() << gst_caps_to_string(caps);
 
-        QVideoFrame::Type formatType = QVideoFrame::InvalidType;
+        QVideoFrame::PixelFormat pixelFormat = QVideoFrame::Format_Invalid;
         int bitsPerPixel = 0;
 
         QSize size;
@@ -387,7 +389,7 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
 
             int index = indexOfYuvColor(fourcc);
             if (index != -1) {
-                formatType = qt_yuvColorLookup[index].type;
+                pixelFormat = qt_yuvColorLookup[index].pixelFormat;
                 bitsPerPixel = qt_yuvColorLookup[index].bitsPerPixel;
             }
         } else if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-rgb") == 0) {
@@ -409,11 +411,11 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
             int index = indexOfRgbColor(bitsPerPixel, depth, endianness, red, green, blue, alpha);
 
             if (index != -1)
-                formatType = qt_rgbColorLookup[index].type;
+                pixelFormat = qt_rgbColorLookup[index].pixelFormat;
         }
 
-        if (formatType != QVideoFrame::InvalidType) {
-            QVideoFormat format(size, formatType);
+        if (pixelFormat != QVideoFrame::Format_Invalid) {
+            QVideoSurfaceFormat format(size, pixelFormat);
 
             QPair<int, int> rate;
             gst_structure_get_fraction(structure, "framerate", &rate.first, &rate.second);

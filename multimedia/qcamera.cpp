@@ -137,15 +137,15 @@ QList<QSize> QCamera::supportedResolutions(QVideoFrame::Type fmt)
     }
 }
 
-QVideoFormat QCamera::format() const
+QVideoSurfaceFormat QCamera::format() const
 {
     if(d_func()->control)
         return d_func()->control->format();
 
-    return QVideoFormat();
+    return QVideoSurfaceFormat();
 }
 
-void QCamera::setFormat(const QVideoFormat &format)
+void QCamera::setFormat(const QVideoSurfaceFormat &format)
 {
     Q_D(QCamera);
 

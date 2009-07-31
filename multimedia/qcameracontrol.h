@@ -57,8 +57,8 @@ public:
     virtual QList<QVideoFrame::Type> supportedColorFormats() = 0;
     virtual QList<QSize> supportedResolutions(QVideoFrame::Type fmt) = 0;
 
-    virtual QVideoFormat format() const = 0;
-    virtual void setFormat(const QVideoFormat &format) = 0;
+    virtual QVideoSurfaceFormat format() const = 0;
+    virtual void setFormat(const QVideoSurfaceFormat &format) = 0;
 
     virtual int framerate() const = 0;
     virtual void setFrameRate(int rate) = 0;

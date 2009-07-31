@@ -65,4 +65,6 @@ symbian {
 	INCLUDEPATH += $$MOC_DIR
 }
 
+# contains(QT_CONFIG, multimedia): CONFIG += multimedia
+
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
