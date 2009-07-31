@@ -44,7 +44,9 @@ QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate*
 
 QContactAbstractRequest::~QContactAbstractRequest()
 {
-    // manager->engine->destroyRequest(this) ?
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine)
+        engine->requestDestroyed(this);
 }
 
 bool QContactAbstractRequest::isActive() const
