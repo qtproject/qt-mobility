@@ -208,8 +208,6 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             if (limit)
                 --workingLimit;
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            ULONG cbEntryId(entryIdProp->Value.bin.cb);
-            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryIdProp->Value.bin.lpb));
             /* Begin test code TODO remove */
             bool read(rows->aRow[0].lpProps[flagsColumn].Value.ul & MSGFLAG_READ);
             QString sender = stringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);

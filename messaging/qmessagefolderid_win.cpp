@@ -75,6 +75,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
+    Q_UNUSED(id)
     return 0; // stub
 }
 

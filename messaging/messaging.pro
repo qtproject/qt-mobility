@@ -9,6 +9,7 @@ include(../common.pri)
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MESSAGING_LIB
+DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
 HEADERS += qmessageglobal.h \
            qmessageid.h \
@@ -107,8 +108,6 @@ INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
 # QMF libraries must be located at $QMF_LIBDIR
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
 HEADERS += qmfhelpers_p.h
 
