@@ -160,6 +160,7 @@
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
+    \a options specifies the search optons to use.
     
     \sa lastError(), countMessages()
 */

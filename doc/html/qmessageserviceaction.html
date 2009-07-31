@@ -32,9 +32,9 @@
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ()</li>
 <li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 </ul>
@@ -92,16 +92,16 @@
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
 <h3 class="fn"><a name="lastErrorString"></a>QString QMessageServiceAction::lastErrorString () const</h3>
 <p>Returns a string indicating the last error condition reported by the action if any; otherwise returns a null string.</p>
-<h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
-<p>Retrieve meta data of the message identified by <i>id</i>.</p>
-<p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved.</p>
-<p>If the message can not be found on the originating server it will be marked as removed.</p>
-<p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
-<h3 class="fn"><a name="retrieve-2"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve the container identified by <i>id</i>, the contents of the container should also be retrieved.</p>
 <p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <h3 class="fn"><a name="retrieveBody"></a>void QMessageServiceAction::retrieveBody ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve the body of the message identified by <i>id</i>.</p>
+<p>If the message can not be found on the originating server it will be marked as removed.</p>
+<p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
+<h3 class="fn"><a name="retrieveHeader"></a>void QMessageServiceAction::retrieveHeader ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
+<p>Retrieve meta data of the message identified by <i>id</i>.</p>
+<p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved. If only the message envelope information is present, any other accessible header information should be retrieved.</p>
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
 <h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
