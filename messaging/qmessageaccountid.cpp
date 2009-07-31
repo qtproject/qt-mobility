@@ -85,6 +85,12 @@
     otherwise returns false.
 */
 
+/*! \intenral */
+bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
+{
+    return !operator==(other);
+}
+
 /*!
     \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
 

@@ -49,8 +49,9 @@ public:
     QMessageFolderId(const QString &id);
     ~QMessageFolderId();
 
-    bool operator==(const QMessageFolderId &other) const;
     QMessageFolderId& operator=(const QMessageFolderId &other);
+    bool operator==(const QMessageFolderId &other) const;
+    bool operator!=(const QMessageFolderId &other) const;
 
     QString toString() const;
     bool isValid() const;
