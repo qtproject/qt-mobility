@@ -31,59 +31,51 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTER_H
-#define QCONTACTFILTER_H
+#ifndef QCONTACTDETAILFILTER_P_H
+#define QCONTACTDETAILFILTER_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qcontactfilter_p.h"
+#include "qcontactfilter.h"
+
+#include <QString>
 #include <QVariant>
-#include <QList>
-#include <QDateTime>
-#include <QSharedData>
 
-#include "qtcontactsglobal.h"
-
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
-
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+class QContactIdListFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactFilter();
-    virtual ~QContactFilter();
-    QContactFilter(const QContactFilter& other);
-    QContactFilter& operator=(const QContactFilter& other);
+    QContactIdListFilterPrivate()
+        : QContactFilterPrivate()
+    {
+    }
 
-    enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
-    };
+    QContactIdListFilterPrivate(const QContactIdListFilterPrivate& other)
+        : QContactFilterPrivate(other),
+        m_ids(other.m_ids)
+    {
+    }
 
-    FilterType type() const;
+    virtual bool compare(const QContactFilterPrivate* other) const
+    {
+        const QContactIdListFilterPrivate *od = static_cast<const QContactIdListFilterPrivate*>(other);
+        if (m_ids != od->m_ids)
+            return false;
+        return true;
+    }
 
-    bool operator==(const QContactFilter& other) const;
-    bool operator!=(const QContactFilter& other) const {return !operator==(other);}
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdList)
 
-protected:
-    QContactFilter(QContactFilterPrivate* d);
-
-protected:
-    friend class QContactFilterPrivate;
-    QSharedDataPointer<QContactFilterPrivate> d_ptr;
+    QList<QUniqueId> m_ids;
 };
-
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
 
 #endif

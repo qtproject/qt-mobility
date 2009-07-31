@@ -31,59 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTER_H
-#define QCONTACTFILTER_H
+#include "qcontactidlistfilter.h"
+#include "qcontactidlistfilter_p.h"
+#include "qcontactfilter_p.h"
+#include "qcontactmanager.h"
 
-#include <QVariant>
-#include <QList>
-#include <QDateTime>
-#include <QSharedData>
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIdListFilter);
 
-#include "qtcontactsglobal.h"
-
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
-
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+QContactIdListFilter::QContactIdListFilter()
+    : QContactFilter(new QContactIdListFilterPrivate)
 {
-public:
-    QContactFilter();
-    virtual ~QContactFilter();
-    QContactFilter(const QContactFilter& other);
-    QContactFilter& operator=(const QContactFilter& other);
+}
 
-    enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
-    };
+void QContactIdListFilter::setIds(const QList<QUniqueId>& ids)
+{
+    Q_D(QContactIdListFilter);
+    d->m_ids = ids;
+}
 
-    FilterType type() const;
-
-    bool operator==(const QContactFilter& other) const;
-    bool operator!=(const QContactFilter& other) const {return !operator==(other);}
-
-protected:
-    QContactFilter(QContactFilterPrivate* d);
-
-protected:
-    friend class QContactFilterPrivate;
-    QSharedDataPointer<QContactFilterPrivate> d_ptr;
-};
-
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
-
-#endif
+QList<QUniqueId> QContactIdListFilter::ids() const
+{
+    Q_D(const QContactIdListFilter);
+    return d->m_ids;
+}

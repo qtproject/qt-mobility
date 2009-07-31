@@ -31,59 +31,20 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTER_H
-#define QCONTACTFILTER_H
+#ifndef QCONTACTINVALIDFILTER_H
+#define QCONTACTINVALIDFILTER_H
 
-#include <QVariant>
-#include <QList>
-#include <QDateTime>
-#include <QSharedData>
+#include "qcontactfilter.h"
 
-#include "qtcontactsglobal.h"
-
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
-
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+class QContactInvalidFilterPrivate;
+class QTCONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
 {
 public:
-    QContactFilter();
-    virtual ~QContactFilter();
-    QContactFilter(const QContactFilter& other);
-    QContactFilter& operator=(const QContactFilter& other);
+    QContactInvalidFilter();
+    QContactInvalidFilter(const QContactFilter& other);
 
-    enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
-    };
-
-    FilterType type() const;
-
-    bool operator==(const QContactFilter& other) const;
-    bool operator!=(const QContactFilter& other) const {return !operator==(other);}
-
-protected:
-    QContactFilter(QContactFilterPrivate* d);
-
-protected:
-    friend class QContactFilterPrivate;
-    QSharedDataPointer<QContactFilterPrivate> d_ptr;
+private:
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactInvalidFilter);
 };
-
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
 
 #endif

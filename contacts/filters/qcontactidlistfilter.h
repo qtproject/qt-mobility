@@ -31,59 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTER_H
-#define QCONTACTFILTER_H
+#ifndef QCONTACTIDLISTFILTER_H
+#define QCONTACTIDLISTFILTER_H
 
-#include <QVariant>
-#include <QList>
-#include <QDateTime>
-#include <QSharedData>
+#include "qcontactfilter.h"
 
-#include "qtcontactsglobal.h"
-
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
-
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+class QContactIdListFilterPrivate;
+class QTCONTACTS_EXPORT QContactIdListFilter : public QContactFilter
 {
 public:
-    QContactFilter();
-    virtual ~QContactFilter();
-    QContactFilter(const QContactFilter& other);
-    QContactFilter& operator=(const QContactFilter& other);
+    QContactIdListFilter();
+    QContactIdListFilter(const QContactFilter& other);
 
-    enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
-    };
+    /* Mutators */
+    void setIds(const QList<QUniqueId>& ids);
 
-    FilterType type() const;
+    /* Accessors */
+    QList<QUniqueId> ids() const;
 
-    bool operator==(const QContactFilter& other) const;
-    bool operator!=(const QContactFilter& other) const {return !operator==(other);}
-
-protected:
-    QContactFilter(QContactFilterPrivate* d);
-
-protected:
-    friend class QContactFilterPrivate;
-    QSharedDataPointer<QContactFilterPrivate> d_ptr;
+private:
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter);
 };
-
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
 
 #endif

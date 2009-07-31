@@ -133,18 +133,21 @@ void tst_QContactFilter::classHierarchy()
     QVERIFY(drf2.maxValue() == 20);
     QVERIFY(drf2.minValue() == 1);
 
-    /* Try creating a bad filter and making sure we don't break */
-    BadFilter bad, bad2;
+    /* Try creating a default filter and making sure we don't break */
+    QContactFilter bad, bad2;
 
-    QVERIFY(bad.type() == QContactFilter::Invalid);
+    QVERIFY(bad.type() == QContactFilter::Default);
     QVERIFY(bad == bad2);
     QVERIFY(bad != drf2);
     QVERIFY(drf2 != bad);
 
     QContactFilter fbad = bad;
-    QVERIFY(fbad.type() == QContactFilter::Invalid);
+    QVERIFY(fbad.type() == QContactFilter::Default);
     QVERIFY(fbad == bad);
     QVERIFY(fbad == bad2);
+
+    /* Now some "invalid" filters */
+
 
     /* Now test some "cross casting" */
 

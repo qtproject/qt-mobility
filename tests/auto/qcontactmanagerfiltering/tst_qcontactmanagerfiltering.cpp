@@ -98,6 +98,7 @@ private slots:
     void multiSorting_data();
 
     void invalidFiltering();
+    void allFiltering();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
@@ -1810,7 +1811,7 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     QVERIFY(contacts.count() == 4);
 
-    QContactFilter f; // invalid
+    QContactInvalidFilter f; // invalid
 
     ids = cm->contacts(f);
 
@@ -1822,6 +1823,31 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     ids = cm->contacts(f && f);
     QVERIFY(ids.count() == 0);
+
+    delete cm;
+}
+
+void tst_QContactManagerFiltering::allFiltering()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> ids;
+
+    QVERIFY(contacts.count() == 4);
+
+    QContactFilter f; // default = permissive
+
+    ids = cm->contacts(f);
+
+    QVERIFY(ids.count() == 4);
+
+    // Try unions/intersections of defaults
+    ids = cm->contacts(f || f);
+    QVERIFY(ids.count() == 4);
+
+    ids = cm->contacts(f && f);
+    QVERIFY(ids.count() == 4);
 
     delete cm;
 }
@@ -2333,7 +2359,7 @@ public:
             df.setValue(true);
             return df;
         } else {
-            return QContactFilter();
+            return QContactInvalidFilter();
         }
     }
     bool supportsDetail(const QContactDetail& detail) const
@@ -2453,7 +2479,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af || QContactFilter() || af;
+        return af || QContactInvalidFilter() || af;
     }
 };
 

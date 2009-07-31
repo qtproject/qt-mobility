@@ -31,59 +31,35 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTER_H
-#define QCONTACTFILTER_H
+#include "qcontactinvalidfilter.h"
+#include "qcontactfilter_p.h"
 
-#include <QVariant>
-#include <QList>
-#include <QDateTime>
-#include <QSharedData>
-
-#include "qtcontactsglobal.h"
-
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
-
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+class QContactInvalidFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactFilter();
-    virtual ~QContactFilter();
-    QContactFilter(const QContactFilter& other);
-    QContactFilter& operator=(const QContactFilter& other);
+    QContactInvalidFilterPrivate()
+       : QContactFilterPrivate()
+    {
+    }
 
-    enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
-    };
+    QContactInvalidFilterPrivate(const QContactInvalidFilterPrivate& other)
+       : QContactFilterPrivate(other)
+    {
+    }
 
-    FilterType type() const;
+    virtual bool compare(const QContactFilterPrivate*) const
+    {
+        return true; // all invalid filters are alike
+    }
 
-    bool operator==(const QContactFilter& other) const;
-    bool operator!=(const QContactFilter& other) const {return !operator==(other);}
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactInvalidFilter, QContactFilter::Invalid)
 
-protected:
-    QContactFilter(QContactFilterPrivate* d);
-
-protected:
-    friend class QContactFilterPrivate;
-    QSharedDataPointer<QContactFilterPrivate> d_ptr;
+    QList<QContactFilter> m_filters;
 };
 
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactInvalidFilter);
 
-#endif
+QContactInvalidFilter::QContactInvalidFilter()
+    : QContactFilter(new QContactInvalidFilterPrivate)
+{
+}

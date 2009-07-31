@@ -70,13 +70,13 @@ QContactFilter::~QContactFilter()
 QContactFilter::FilterType QContactFilter::type() const
 {
     if (!d_ptr)
-        return QContactFilter::Invalid;
+        return QContactFilter::Default;
     return d_ptr->type();
 }
 
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
-    /* An invalid filter is only equal to other invalid filters */
+    /* A default filter is only equal to other default filters */
     if (!d_ptr)
         return !other.d_ptr;
 

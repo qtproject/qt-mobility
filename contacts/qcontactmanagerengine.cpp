@@ -178,11 +178,12 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, c
     if (error != QContactManager::NoError)
         return ret;
 
-    if (filter.type() != QContactFilter::Invalid) {
-        for (int j = 0; j < all.count(); j++) {
-            if (testFilter(filter, contact(all.at(j), error)))
-                ret << all.at(j);
-        }
+    if (filter.type() == QContactFilter::Default)
+        return all;
+
+    for (int j = 0; j < all.count(); j++) {
+        if (testFilter(filter, contact(all.at(j), error)))
+            ret << all.at(j);
     }
 
     return ret;
@@ -1039,6 +1040,18 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
     switch(filter.type()) {
         case QContactFilter::Invalid:
             return false;
+
+        case QContactFilter::Default:
+            return true;
+
+        case QContactFilter::IdList:
+            {
+                const QContactIdListFilter idf(filter);
+                if (idf.ids().contains(contact.id()))
+                    return true;
+            }
+            // Fall through to end
+            break;
 
         case QContactFilter::ContactDetail:
             {

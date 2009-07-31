@@ -14,7 +14,10 @@ HEADERS += filters/qcontactactionfilter.h \
     filters/qcontactintersectionfilter.h \
     filters/qcontactintersectionfilter_p.h \
     filters/qcontactunionfilter.h \
-    filters/qcontactunionfilter_p.h
+    filters/qcontactunionfilter_p.h \
+    filters/qcontactinvalidfilter.h \
+    filters/qcontactidlistfilter.h \
+    filters/qcontactidlistfilter_p.h
 
 SOURCES += filters/qcontactactionfilter.cpp \
     filters/qcontactchangelogfilter.cpp \
@@ -22,4 +25,6 @@ SOURCES += filters/qcontactactionfilter.cpp \
     filters/qcontactdetailrangefilter.cpp \
     filters/qcontactgroupmembershipfilter.cpp \
     filters/qcontactintersectionfilter.cpp \
-    filters/qcontactunionfilter.cpp
+    filters/qcontactunionfilter.cpp \
+    filters/qcontactinvalidfilter.cpp \
+    filters/qcontactidlistfilter.cpp
