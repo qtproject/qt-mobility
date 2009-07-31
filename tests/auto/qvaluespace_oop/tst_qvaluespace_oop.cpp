@@ -41,6 +41,8 @@
 #include <QFile>
 #include <QVariant>
 
+#define ERROR_SETVALUE_NOT_SUPPORTED 1
+
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
         if ((a) == (e)) break;                  \
@@ -132,6 +134,7 @@ void tst_QValueSpaceItem_oop::cleanupTestCase()
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     delete root;
+    delete busy;
 #endif
 }
 
@@ -786,7 +789,7 @@ void tst_QValueSpaceItem_oop::ipcTests()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("./vsiTestLackey");
+    process.start("vsiTestLackey_oop");
     QVERIFY(process.waitForStarted());
 
     //lackey sets 100 as part of its startup
@@ -838,57 +841,65 @@ void tst_QValueSpaceItem_oop::setValue()
             rel_listener, SIGNAL(changeValue(QByteArray,QVariant)));
     QSignalSpy rel_spy(rel_listener, SIGNAL(changeValue(QByteArray, QVariant)));
  
-    item.setValue(501);
-    item.sync();
+    QList<QVariant> arguments;
 
-    QTRY_COMPARE(spy.count(), 1);
-    QList<QVariant> arguments = spy.takeFirst();
+    if (item.setValue(501)) {
+        item.sync();
 
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
-    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
-    QCOMPARE(item.value("", 600).toInt(), 500);
+        QTRY_COMPARE(spy.count(), 1);
+        arguments = spy.takeFirst();
+
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(item.value("", 600).toInt(), 500);
+    }
 
     QValueSpaceItem item2("/usr/intern");
     QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
-    item2.setValue("changeRequests/value", 501);
-    item2.sync();
-    QTRY_COMPARE(spy.count(), 1);
 
-    arguments = spy.takeFirst();
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
-    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
-    QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+    if (item2.setValue("changeRequests/value", 501)) {
+        item2.sync();
+        QTRY_COMPARE(spy.count(), 1);
+
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+    }
 
     QValueSpaceItem item3("/");
     QCOMPARE(item3.value("usr/intern/changeRequests/value", 600).toInt(), 500);
-    item3.setValue(QString("usr/intern/changeRequests/value"), 501);
-    item3.sync();
-    QTRY_COMPARE(spy.count(), 1);
 
-    arguments = spy.takeFirst();
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
-    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
-    QCOMPARE(item3.value(QString("usr/intern/changeRequests/value"), 600).toInt(), 500);
+    if (item3.setValue(QString("usr/intern/changeRequests/value"), 501)) {
+        item3.sync();
+        QTRY_COMPARE(spy.count(), 1);
+
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(item3.value(QString("usr/intern/changeRequests/value"), 600).toInt(), 500);
+    }
 
     QValueSpaceItem item4("/usr/intern/changeRequests");
     QCOMPARE(item4.value("value", 600).toInt(), 500);
-    item4.setValue(QByteArray("value"), 501);
-    item4.sync();
-    QTRY_COMPARE(spy.count(), 1);
 
-    arguments = spy.takeFirst();
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
-    QCOMPARE(arguments.at(1).type(),QVariant::UserType);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
-    QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
+    if (item4.setValue(QByteArray("value"), 501)) {
+        item4.sync();
+        QTRY_COMPARE(spy.count(), 1);
 
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
+    }
 
     delete listener;
     delete rel_listener;
@@ -934,10 +945,16 @@ void tst_QValueSpaceItem_oop::ipcSetValue()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("./vsiTestLackey",QStringList()<< "-ipcSetValue" );
+    process.start("vsiTestLackey_oop",QStringList()<< "-ipcSetValue" );
     QVERIFY(process.waitForStarted());
 
-    QTest::qWait(5000); 
+    process.waitForFinished(5000);
+
+    if (process.state() == QProcess::NotRunning &&
+        process.exitCode() == ERROR_SETVALUE_NOT_SUPPORTED) {
+        QSKIP("setValue not supported by underlying layer", SkipSingle);
+    }
+
     //QTRY_COMPARE(changeSpy.count(), 3);
     QTRY_COMPARE(spies.at(0)->count(), 3);
     QTRY_COMPARE(spies.at(1)->count(), 5);
@@ -1022,7 +1039,7 @@ int main(int argc, char** argv)
         ShutdownControl control(&process);
         process.setProcessChannelMode(QProcess::ForwardedChannels);
         args.removeAt(0); //don't pass the binary name
-        process.start("./tst_qvaluespace_oop", args << "-vsClientMode");
+        process.start("tst_qvaluespace_oop", args << "-vsClientMode");
         return app.exec();
     }
 #endif

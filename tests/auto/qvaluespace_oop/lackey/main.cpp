@@ -43,12 +43,14 @@
 
 #define TIMEOUT 700
 
+#define ERROR_SETVALUE_NOT_SUPPORTED 1
+
 class Controller : public QObject
 {
     Q_OBJECT
 public:
     Controller(int function) 
-        : QObject(0), index(0)
+        : QObject(0), index(0), abortCode(0)
     {
         if (function == 0) {
             object = new QValueSpaceObject("/usr/lackey/subdir", QUuid(), this);
@@ -63,8 +65,12 @@ public:
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
         } else {
             item = new QValueSpaceItem("/usr/lackey", this);
-            item->setValue("changeRequests/value", 501);
-            QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
+            if (item->setValue("changeRequests/value", 501)) {
+                QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
+            } else {
+                abortCode = ERROR_SETVALUE_NOT_SUPPORTED;
+                QTimer::singleShot(0, this, SLOT(abort()));
+            }
         }
     }
 
@@ -105,7 +111,6 @@ private slots:
 
     void proceed() {
         switch(index) {
-
             case 0:
                 //qDebug() << "Setting 101";
                 object->setAttribute(QByteArray("value"), 101);
@@ -127,6 +132,10 @@ private slots:
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
     }
 
+    void abort() {
+        qApp->exit(abortCode);
+    }
+
     void itemSetValue(const QByteArray& /*path*/, const QVariant& /*variant*/ )
     {
         //qDebug() << sender()->objectName() << path << variant.toInt();
@@ -142,6 +151,7 @@ private:
     QValueSpaceObject* object;
     QValueSpaceItem *item;
     int index;
+    int abortCode;
 };
 
 int main(int argc, char** argv)
