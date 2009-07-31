@@ -58,12 +58,6 @@ public:
     /* Results */
     QList<QContactDetailDefinition> definitions() const;
 
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
-
 signals:
     void progress(QContactDetailDefinitionSaveRequest* self);
 

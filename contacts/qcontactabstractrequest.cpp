@@ -34,6 +34,7 @@
 #include "qcontactabstractrequest.h"
 #include "qcontactabstractrequest_p.h"
 #include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 
 QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd)
@@ -76,4 +77,56 @@ QContactManager* QContactAbstractRequest::manager() const
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
     d_ptr->m_manager = manager;
+}
+
+bool QContactAbstractRequest::start()
+{
+    if (status() != QContactAbstractRequest::Inactive
+        && status() != QContactAbstractRequest::Cancelled
+        && status() != QContactAbstractRequest::Finished) {
+        return false; // unable to start operation; another operation already in progress.
+    }
+
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine)
+        engine->startRequest(this);
+
+    return true;
+}
+
+bool QContactAbstractRequest::cancel()
+{
+    if (status() != QContactAbstractRequest::Active) {
+        return false; // unable to cancel operation; operation not in progress.
+    }
+
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine)
+        engine->cancelRequest(this);
+
+    return true;
+}
+
+bool QContactAbstractRequest::waitForFinished(int msecs)
+{
+    if (status() != QContactAbstractRequest::Active) {
+        return false; // unable to wait for operation; not in progress.
+    }
+
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine)
+        return engine->waitForRequestFinished(this, msecs);
+    return false;
+}
+
+bool QContactAbstractRequest::waitForProgress(int msecs)
+{
+    if (status() != QContactAbstractRequest::Active) {
+        return false; // unable to wait for operation; not in progress.
+    }
+
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine)
+        return engine->waitForRequestProgress(this, msecs);
+    return false;
 }

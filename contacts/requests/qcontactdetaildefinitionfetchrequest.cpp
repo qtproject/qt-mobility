@@ -62,23 +62,3 @@ QList<QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definition
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;
 }
-
-bool QContactDetailDefinitionFetchRequest::start()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionFetchRequest::cancel()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionFetchRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactDetailDefinitionFetchRequest::waitForProgress(int msecs)
-{
-    return false;
-}

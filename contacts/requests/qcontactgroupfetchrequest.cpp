@@ -62,23 +62,3 @@ QList<QContactGroup> QContactGroupFetchRequest::groups() const
     Q_D(const QContactGroupFetchRequest);
     return d->m_groups;
 }
-
-bool QContactGroupFetchRequest::start()
-{
-    return false;
-}
-
-bool QContactGroupFetchRequest::cancel()
-{
-    return false;
-}
-
-bool QContactGroupFetchRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactGroupFetchRequest::waitForProgress(int msecs)
-{
-    return false;
-}

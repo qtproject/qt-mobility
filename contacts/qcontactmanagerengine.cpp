@@ -1396,6 +1396,7 @@ void QContactManagerEngine::requestDestroyed(QContactAbstractRequest* req)
 bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 {
     Q_UNUSED(req);
+    return false;
 }
 
 /*!
@@ -1407,6 +1408,7 @@ bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 {
     Q_UNUSED(req);
+    return false;
 }
 
 /*!
@@ -1420,6 +1422,8 @@ bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 bool QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
 {
     Q_UNUSED(req);
+    Q_UNUSED(msecs);
+    return false;
 }
 
 /*!
@@ -1433,6 +1437,8 @@ bool QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req,
 bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
 {
     Q_UNUSED(req);
+    Q_UNUSED(msecs);
+    return false;
 }
 
 /*!

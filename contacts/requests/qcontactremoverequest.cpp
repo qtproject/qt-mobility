@@ -56,23 +56,3 @@ QContactFilter QContactRemoveRequest::filter() const
     Q_D(const QContactRemoveRequest);
     return d->m_filter;
 }
-
-bool QContactRemoveRequest::start()
-{
-    return false;
-}
-
-bool QContactRemoveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactRemoveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactRemoveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

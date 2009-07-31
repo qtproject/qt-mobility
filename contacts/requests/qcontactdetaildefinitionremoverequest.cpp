@@ -56,23 +56,3 @@ QStringList QContactDetailDefinitionRemoveRequest::names() const
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_names;
 }
-
-bool QContactDetailDefinitionRemoveRequest::start()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionRemoveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionRemoveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactDetailDefinitionRemoveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

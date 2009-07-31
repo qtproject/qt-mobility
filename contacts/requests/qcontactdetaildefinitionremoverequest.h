@@ -54,12 +54,6 @@ public:
     void setNames(const QStringList& names);
     QStringList names() const;
 
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
-
 signals:
     void progress(QContactDetailDefinitionRemoveRequest* self);
 

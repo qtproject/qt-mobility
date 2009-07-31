@@ -56,23 +56,3 @@ QList<QContact> QContactSaveRequest::contacts() const
     Q_D(const QContactSaveRequest);
     return d->m_contacts;
 }
-
-bool QContactSaveRequest::start()
-{
-    return false;
-}
-
-bool QContactSaveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactSaveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactSaveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

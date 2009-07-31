@@ -57,12 +57,6 @@ public:
     /* Results */
     QList<QContact> contacts() const;
 
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
-
 signals:
     void progress(QContactSaveRequest* self);
 

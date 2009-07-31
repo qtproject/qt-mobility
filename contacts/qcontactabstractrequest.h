@@ -87,12 +87,12 @@ public:
 
 public slots:
     /* Verbs */
-    virtual bool start() = 0;
-    virtual bool cancel() = 0;
+    bool start();
+    bool cancel();
 
     /* waiting for stuff */
-    virtual bool waitForFinished(int msecs = 0) = 0;
-    virtual bool waitForProgress(int msecs = 0) = 0; /* also waits for progress emitted by finished */
+    bool waitForFinished(int msecs = 0);
+    bool waitForProgress(int msecs = 0);
 
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);

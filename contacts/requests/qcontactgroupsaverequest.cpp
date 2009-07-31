@@ -56,23 +56,3 @@ QList<QContactGroup> QContactGroupSaveRequest::groups() const
     Q_D(const QContactGroupSaveRequest);
     return d->m_groups;
 }
-
-bool QContactGroupSaveRequest::start()
-{
-    return false;
-}
-
-bool QContactGroupSaveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactGroupSaveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactGroupSaveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

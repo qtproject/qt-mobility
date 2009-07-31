@@ -92,23 +92,3 @@ QList<QContact> QContactFetchRequest::contacts() const
     Q_D(const QContactFetchRequest);
     return d->m_contacts;
 }
-
-bool QContactFetchRequest::start()
-{
-    return false;
-}
-
-bool QContactFetchRequest::cancel()
-{
-    return false;
-}
-
-bool QContactFetchRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactFetchRequest::waitForProgress(int msecs)
-{
-    return false;
-}

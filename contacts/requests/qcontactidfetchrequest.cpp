@@ -74,24 +74,3 @@ QList<QUniqueId> QContactIdFetchRequest::ids() const
     Q_D(const QContactIdFetchRequest);
     return d->m_ids;
 }
-
-
-bool QContactIdFetchRequest::start()
-{
-    return false;
-}
-
-bool QContactIdFetchRequest::cancel()
-{
-    return false;
-}
-
-bool QContactIdFetchRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactIdFetchRequest::waitForProgress(int msecs)
-{
-    return false;
-}

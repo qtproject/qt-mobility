@@ -56,23 +56,3 @@ QList<QUniqueId> QContactGroupRemoveRequest::ids() const
     Q_D(const QContactGroupRemoveRequest);
     return d->m_ids;
 }
-
-bool QContactGroupRemoveRequest::start()
-{
-    return false;
-}
-
-bool QContactGroupRemoveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactGroupRemoveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactGroupRemoveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

@@ -56,23 +56,3 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
     Q_D(const QContactDetailDefinitionSaveRequest);
     return d->m_definitions;
 }
-
-bool QContactDetailDefinitionSaveRequest::start()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionSaveRequest::cancel()
-{
-    return false;
-}
-
-bool QContactDetailDefinitionSaveRequest::waitForFinished(int msecs)
-{
-    return false;
-}
-
-bool QContactDetailDefinitionSaveRequest::waitForProgress(int msecs)
-{
-    return false;
-}

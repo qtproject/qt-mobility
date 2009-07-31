@@ -54,12 +54,6 @@ public:
     void setIds(const QList<QUniqueId>& ids);
     QList<QUniqueId> ids() const;
 
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
-
 signals:
     void progress(QContactGroupRemoveRequest* self);
 
