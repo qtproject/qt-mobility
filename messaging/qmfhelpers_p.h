@@ -36,12 +36,14 @@
 
 #include "qmessage.h"
 #include "qmessageaccount.h"
-#include "qmessagefolder.h"
-#include "qmessagestore.h"
 #include "qmessagedatacomparator.h"
+#include "qmessagefolder.h"
+#include "qmessageserviceaction.h"
+#include "qmessagestore.h"
 
 #include <qmaildatacomparator.h>
 #include <qmailmessage.h>
+#include <qmailserviceaction.h>
 #include <qmailstore.h>
 
 class QMessageAccountFilterKey;
@@ -96,6 +98,9 @@ QMessageStore::ErrorCode convert(QMailStore::ErrorCode v);
 QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v);
 QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
 
+QMailServiceAction::Activity convert(QMessageServiceAction::Activity v);
+QMessageServiceAction::Activity convert(QMailServiceAction::Activity v);
+
 QMessageAddress convert(const QMailAddress &address);
 QMailAddress convert(const QMessageAddress &address);
 
@@ -137,7 +142,9 @@ QMailFolder convert(const QMessageFolder &folder);
 
 QMessage convert(const QMailMessage &message);
 QMailMessage convert(const QMessage &message);
+
 QMailMessage* convert(QMessage *message);
+const QMailMessage* convert(const QMessage *message);
 
 QMailStore *convert(QMessageStore *store);
 

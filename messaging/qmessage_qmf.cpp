@@ -53,6 +53,7 @@ public:
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
     static QMailMessage *convert(QMessage *message);
+    static const QMailMessage *convert(const QMessage *message);
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
@@ -107,6 +108,11 @@ QMailMessage *QMessagePrivate::convert(QMessage *message)
     return &message->d_ptr->_message;
 }
 
+const QMailMessage *QMessagePrivate::convert(const QMessage *message)
+{
+    return &message->d_ptr->_message;
+}
+
 namespace QmfHelpers {
 
 QMessage convert(const QMailMessage &message)
@@ -120,6 +126,11 @@ QMailMessage convert(const QMessage &message)
 }
 
 QMailMessage *convert(QMessage *message)
+{
+    return QMessagePrivate::convert(message);
+}
+
+const QMailMessage *convert(const QMessage *message)
 {
     return QMessagePrivate::convert(message);
 }

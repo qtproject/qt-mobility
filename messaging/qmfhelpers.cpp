@@ -266,6 +266,32 @@ QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
     return QMessageStore::RemoveLocalCopyOnly;
 }
 
+QMailServiceAction::Activity convert(QMessageServiceAction::Activity v)
+{
+    switch (v) {
+    case QMessageServiceAction::Pending: return QMailServiceAction::Pending;
+    case QMessageServiceAction::InProgress: return QMailServiceAction::InProgress;
+    case QMessageServiceAction::Successful: return QMailServiceAction::Successful;
+    case QMessageServiceAction::Failed: return QMailServiceAction::Failed;
+    default: break;
+    }
+
+    return QMailServiceAction::Pending;
+}
+
+QMessageServiceAction::Activity convert(QMailServiceAction::Activity v)
+{
+    switch (v) {
+    case QMailServiceAction::Pending: return QMessageServiceAction::Pending;
+    case QMailServiceAction::InProgress: return QMessageServiceAction::InProgress;
+    case QMailServiceAction::Successful: return QMessageServiceAction::Successful;
+    case QMailServiceAction::Failed: return QMessageServiceAction::Failed;
+    default: break;
+    }
+
+    return QMessageServiceAction::Pending;
+}
+
 QMessage::StatusFlags convert(quint64 v)
 {
     QMessage::StatusFlags result(0);
@@ -467,6 +493,7 @@ QMailMessage* convert(QMessage *message);
 
 /* in qmessagestore_qmf.cpp
 QMailStore *convert(QMessageStore *store);
+const QMailStore *convert(const QMessageStore *store);
 */
 
 quint64 highPriorityMask()
