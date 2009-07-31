@@ -4,7 +4,10 @@ Rect {
     width: 500
     height: 250
     color: "sienna"
+
     Rect {
+        id: ServiceSelectionBox
+        property variant service: 0
         height: contents.height + 10; width: contents.width
         anchors.top: parent.top; anchors.left: parent.left; anchors.right: screen.left
         anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
@@ -32,7 +35,9 @@ Rect {
                     id: Root
                     MouseRegion {
                         anchors.fill: parent
-                        onClicked: Root.ListView.view.currentIndex = index
+                        onClicked: { Root.ListView.view.currentIndex = index;
+                            service = modelData.serviceObject();
+                        }
                     }
                     pen.color: "black"; pen.width: 1
                     width: parent.width
@@ -61,26 +66,49 @@ Rect {
                 }
             }
             ListView {
+                id: myList
                 model: services
                 height: 100; width: 260
                 opacity: 1
                 anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
                 delegate: Delegate
                 highlight: Highlight
+
                 clip: true
 
             }
         }
     }
+    Timer {
+        id: cleanupTimer
+        interval: 2000; running: false; repeat: false
+        onTriggered: status.text = ""
+    }
     DialScreen {
+        property var service: 0
+        property bool indial : false
         id: screen
         anchors.topMargin: 5; anchors.leftMargin: 5
         anchors.rightMargin: 5;
-        //anchors.left: DialerSelection.right
         anchors.right: parent.right
         anchors.top: parent.top
+        onDial: {
+            indial = true;
+            status.text = "Dialing " + numberToDial +"...";
+        }
+        onHangup: {
+            if (indial == true) {
+                status.text = "Call aborted.";
+                cleanupTimer.running = true;
+            }
+        }
     }
 
-
-
+    Text {
+        anchors.topMargin: 5; anchors.leftMargin: 5
+        anchors.rightMargin: 5;
+        anchors.left: parent.left
+        anchors.top: ServiceSelectionBox.bottom
+        id: status
+    }
 }

@@ -1,7 +1,7 @@
 import Qt 4.6
 Item {
     id: DialScreen
-    signal dial
+    signal dial(string numberToDial)
     signal hangup
     property string dialString
 
@@ -43,20 +43,13 @@ Item {
         anchors.top: dialGrid.top; anchors.left: dialGrid.right
         anchors.leftMargin: 5
         height: { (dialGrid.height / 2) - 2 }
-        width: 50;// radius: 5; //color: "crimson"
+        width: 50;
         hoverColor: "red"; color: "crimson"
-        //pen.width: 3; pen.color: "black"
-        /*Text {
-            text: "Hangup"
-            anchors.centeredIn: parent
-            transformOrigin: "Center"
-            //rotation: 90
-        }*/
+        onClicked:  { DialScreen.dialString = ""; DialScreen.hangup() }
         Image {
             anchors.centeredIn: parent
             source: "hangup.png"
             transformOrigin: "Center"
-            //scale: 1.5
         }
     }
     DialButton {
@@ -66,11 +59,16 @@ Item {
         anchors.leftMargin: 5; anchors.topMargin: 4
         color: "mediumseagreen"
         hoverColor: "lightgreen"
+        onClicked: {
+            if (DialScreen.dialString != "") {
+                DialScreen.dial(dialString);
+                DialScreen.dialString = ""
+            }
+        }
         Image {
             anchors.centeredIn: parent
             source: "call.png"
             transformOrigin: "Center"
-            //scale: 1.5
         }
     }
 }

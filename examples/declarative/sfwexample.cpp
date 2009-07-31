@@ -60,16 +60,10 @@ QString ServiceWrapper::interfaceName() const
 
 QString ServiceWrapper::serviceName() const
 {
-
-    QString output("No Service");
     if (isValid()) {
         return m_descriptor.serviceName();
-        /*output = "%1 %2 %3"; 
-        output = output.arg(m_descriptor.serviceName()).arg(m_descriptor.interfaceName());
-        output = output.arg(QString::number(m_descriptor.majorVersion())+"."+QString::number(m_descriptor.minorVersion()));*/
-    }
-    //qDebug() << output;
-    return output;
+    } else 
+        return "No Service";
 }
 
 QString ServiceWrapper::version() const
@@ -108,6 +102,7 @@ void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
 
 QObject* ServiceWrapper::serviceObject()
 { 
+    qDebug() << "called serviceObject";
     if (serviceInstance) {
         return serviceInstance;
     }
@@ -131,9 +126,9 @@ ServiceRegister::ServiceRegister() {
     ServiceWrapper *service;
     QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces();
     for (int i = 0; i<allImpl.count(); i++) {
+        qDebug() << "adding service" << i;
         service = new ServiceWrapper();
         service->setNativeDescriptor(allImpl.at(i));
-        //m_services.append(service);
         m_services.append(service);
     }
 }
@@ -145,16 +140,19 @@ ServiceRegister::~ServiceRegister() {
 void ServiceRegister::registerExampleServices()
 {
     QStringList exampleXmlFiles;
-    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
+    exampleXmlFiles <<"bluetoothtransferservce.xml" << "filemanagerservice.xml";
+    //exampleXmlFiles <<"voipdialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;            serviceManager->addService(path);
+        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        bool s = serviceManager->addService(path);
+        qDebug() << s << serviceManager->error();;
     }
 }
 
 void ServiceRegister::unregisterExampleServices()
 {
-    serviceManager->removeService("FileManagerService");
-    serviceManager->removeService("BluetoothTransferService");
+    //serviceManager->removeService("FileManagerService");
+    //serviceManager->removeService("BluetoothTransferService");
 }
 
 

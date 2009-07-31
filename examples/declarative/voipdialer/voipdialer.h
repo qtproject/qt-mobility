@@ -31,55 +31,43 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QDebug>
-#include <QFileInfo>
-#include <QString>
-#include <QUrl>
-#include <QFxView>
-#include <QtCore>
-#include <qml.h>
-#include <qmlcontext.h>
-#include <qserviceinterfacedescriptor.h>
-#include <qservicemanager.h>
-#include "sfwexample.h"
+#ifndef VOIPDIALER_H
+#define VOIPDIALER_H
 
-void usage()
+#include <QObject>
+
+class VoipDialer : public QObject
 {
-    qWarning() << "Usage: sfw-kinetic-example file.qml";
-}
+    Q_OBJECT
+    Q_ENUMS(ConnectionState)
+public:
+    BluetoothTransfer(QObject *parent = 0);
+    
+    enum ConnectionState {
+        Disconnected = 0,
+        Connecting,
+        Connected,
+        Engaged
+    };
 
-int main(int argc, char** argv)
-{
-    QApplication app(argc, argv);
+    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
+    ConnectionState state() const;
 
-    QString qmlFile;
-    for (int j = 1; j < argc; j++) {
-        QString arg = argv[j];
-        if (arg.startsWith(QChar('-')))
-            continue;
-        else
-            qmlFile = arg;
-    }
 
-    if (qmlFile.isEmpty()) {
-        usage();
-        return 1;
-    }
+public slots:
+    void dialNumber(const QString& number);
+    void hangup();
 
-    QUrl url(qmlFile);
-    QFileInfo fi(qmlFile);
-    if (fi.exists())
-        url = QUrl::fromLocalFile(fi.absoluteFilePath());
+signals:
+    void stateChanged();
 
-    ServiceRegister registration;
-    QFxView canvas;
-    canvas.setUrl(url);
-    QmlContext* ctxt = canvas.rootContext();
-    ctxt->addDefaultObject(&registration);
+protected:
+    void timerEvent(QTimerEvent* event);
+private:
+    void setNewState();
+    ConnectionState m_state;
+    int timerId;
+};
 
-    canvas.execute();
-    canvas.show();
-    return app.exec();
-    //return 0;
-}
+
+#endif

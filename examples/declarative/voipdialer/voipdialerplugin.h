@@ -31,55 +31,22 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QDebug>
-#include <QFileInfo>
-#include <QString>
-#include <QUrl>
-#include <QFxView>
-#include <QtCore>
-#include <qml.h>
-#include <qmlcontext.h>
-#include <qserviceinterfacedescriptor.h>
-#include <qservicemanager.h>
-#include "sfwexample.h"
+#ifndef VOIPDIALERPLUGIN_H
+#define VOIPDIALERPLUGIN_H
 
-void usage()
+#include <QObject>
+
+#include <qserviceplugininterface.h>
+
+class VoipDialerPlugin : public QObject,
+                                public QServicePluginInterface
 {
-    qWarning() << "Usage: sfw-kinetic-example file.qml";
-}
+    Q_OBJECT
+    Q_INTERFACES(QServicePluginInterface)
+public:
+    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
+                            QServiceContext* context,
+                            QAbstractSecuritySession* session);
+};
 
-int main(int argc, char** argv)
-{
-    QApplication app(argc, argv);
-
-    QString qmlFile;
-    for (int j = 1; j < argc; j++) {
-        QString arg = argv[j];
-        if (arg.startsWith(QChar('-')))
-            continue;
-        else
-            qmlFile = arg;
-    }
-
-    if (qmlFile.isEmpty()) {
-        usage();
-        return 1;
-    }
-
-    QUrl url(qmlFile);
-    QFileInfo fi(qmlFile);
-    if (fi.exists())
-        url = QUrl::fromLocalFile(fi.absoluteFilePath());
-
-    ServiceRegister registration;
-    QFxView canvas;
-    canvas.setUrl(url);
-    QmlContext* ctxt = canvas.rootContext();
-    ctxt->addDefaultObject(&registration);
-
-    canvas.execute();
-    canvas.show();
-    return app.exec();
-    //return 0;
-}
+#endif

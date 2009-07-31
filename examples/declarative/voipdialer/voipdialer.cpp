@@ -31,55 +31,59 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QDebug>
-#include <QFileInfo>
-#include <QString>
-#include <QUrl>
-#include <QFxView>
 #include <QtCore>
-#include <qml.h>
-#include <qmlcontext.h>
-#include <qserviceinterfacedescriptor.h>
-#include <qservicemanager.h>
-#include "sfwexample.h"
 
-void usage()
+#include "voipdialer.h"
+
+VoipDialer::VoipDialer(QObject *parent)
+    : QObject(parent), timerId(0)
 {
-    qWarning() << "Usage: sfw-kinetic-example file.qml";
 }
 
-int main(int argc, char** argv)
+ConnectionState VoipDialer::state() const
 {
-    QApplication app(argc, argv);
+    return m_state;
+}
 
-    QString qmlFile;
-    for (int j = 1; j < argc; j++) {
-        QString arg = argv[j];
-        if (arg.startsWith(QChar('-')))
-            continue;
-        else
-            qmlFile = arg;
+void VoipDialer::dialNumber(const QString& number)
+{
+    if (m_state != Disconnected)
+        return;
+
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000)
+    m_state = Connecting;
+    emit stateChanged()
+}
+
+void VoipDialer::timerEvent(QTimerEvent* event)
+{
+    setNewState();
+}
+
+void VoipDialer::hangup()
+{
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = Disconnected;
+    emit stateChanged();
+}
+
+void VoipDialer::setNewState()
+{
+
+    switch(m_state) {
+        case Disconnected:
+            break;
+        case Connecting:
+            m_state = Connected;
+            emit stateChanged();
+            break;
+        case Connected:
+            break;
+        case Engaged:
+            break;
     }
-
-    if (qmlFile.isEmpty()) {
-        usage();
-        return 1;
-    }
-
-    QUrl url(qmlFile);
-    QFileInfo fi(qmlFile);
-    if (fi.exists())
-        url = QUrl::fromLocalFile(fi.absoluteFilePath());
-
-    ServiceRegister registration;
-    QFxView canvas;
-    canvas.setUrl(url);
-    QmlContext* ctxt = canvas.rootContext();
-    ctxt->addDefaultObject(&registration);
-
-    canvas.execute();
-    canvas.show();
-    return app.exec();
-    //return 0;
 }
