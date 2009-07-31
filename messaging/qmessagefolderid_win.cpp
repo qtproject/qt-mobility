@@ -32,45 +32,90 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
+#include <QByteArray>
+#include <QDataStream>
+#include <MAPIUtil.h>
+
+typedef QByteArray MapiRecordKey;
+
+class QMessageFolderIdPrivate
+{
+public:
+    MapiRecordKey _folderRecordKey;
+    MapiRecordKey _storeRecordKey;
+};
 
 QMessageFolderId::QMessageFolderId()
+    : d_ptr(0)
 {
 }
 
 QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
+    : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageFolderId::QMessageFolderId(const QString& id)
+    : d_ptr(new QMessageFolderIdPrivate)
 {
-    Q_UNUSED(id)
+    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+    idStream >> d_ptr->_folderRecordKey;
+    idStream >> d_ptr->_storeRecordKey;
 }
 
 QMessageFolderId::~QMessageFolderId()
 {
+    delete d_ptr;
 }
 
 bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        if (other.isValid()) {
+            bool result(true);
+            result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
+            result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
+            return result;
+        }
+        return false;
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageFolderIdPrivate;
+            }
+            d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
+            d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
+        } else {
+            delete d_ptr;
+            d_ptr = 0;
+        }
+    }
+
+    return *this;
 }
 
 QString QMessageFolderId::toString() const
 {
-    return QString::null; // stub
+    if (!isValid())
+        return QString();
+    QByteArray encodedId;
+    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+    encodedIdStream << d_ptr->_folderRecordKey;
+    encodedIdStream << d_ptr->_storeRecordKey;
+    return encodedId.toBase64();
 }
 
 bool QMessageFolderId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
 }
 
 uint qHash(const QMessageFolderId &id)
