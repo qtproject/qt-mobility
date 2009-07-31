@@ -196,7 +196,8 @@ QMessage::QMessage(const QMessageId& id)
 }
 
 QMessage::QMessage(const QMessage &other)
-    : d_ptr(new QMessagePrivate)
+    : QMessageContentContainer(),
+      d_ptr(new QMessagePrivate)
 {
     this->operator=(other);
     setDerivedMessage(this);
@@ -242,11 +243,13 @@ QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 
 QByteArray QMessage::toTransmissionFormat() const
 {
+    applyPendingChanges();
     return d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat);
 }
 
 void QMessage::toTransmissionFormat(QDataStream& out) const
 {
+    applyPendingChanges();
     d_ptr->_message.toRfc2822(out, QMailMessage::TransmissionFormat);
 }
 
