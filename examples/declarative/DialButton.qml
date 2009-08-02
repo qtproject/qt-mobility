@@ -15,14 +15,14 @@ Item {
        id: buttonRect
        anchors.fill: parent
        radius: 5
-       pen.width: 3
+       border.width: 3
        color: "steelblue"
-       pen.color: "black"
+       border.color: "black"
        Text {
            id: InnerText
            text: DialButton.text
            font.size: 20
-           anchors.centeredIn: parent
+           anchors.centerIn: parent
        }
    }
    states: [

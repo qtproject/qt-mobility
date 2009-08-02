@@ -12,7 +12,7 @@ Rect {
         anchors.top: parent.top; anchors.left: parent.left; anchors.right: screen.left
         anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
         radius: 5; color: "steelblue"
-        pen.color: "black"; pen.width: 3
+        border.color: "black"; border.width: 3
         gradient: Gradient {
                     GradientStop {position: 0.0; color: "lightsteelblue"}
                     GradientStop {position: 1.0; color: "steelblue"}
@@ -25,7 +25,7 @@ Rect {
             anchors.topMargin: 5; anchors.leftMargin: 5
         }
         Rect {
-            pen.color: "black"; pen.width: 3
+            border.color: "black"; border.width: 3
             width: contents.width; height: contents.height
             anchors.top: label1.bottom; anchors.left: parent.left;
             anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
@@ -39,7 +39,7 @@ Rect {
                             service = modelData.serviceObject();
                         }
                     }
-                    pen.color: "black"; pen.width: 1
+                    border.color: "black"; border.width: 1
                     width: parent.width
                     height: 40
                     opacity: 0.6
@@ -56,7 +56,7 @@ Rect {
                 Rect {
                     color : "lightsteelblue"
                     width: parent.width
-                    pen.color: "black"; pen.width: 2
+                    border.color: "black"; border.width: 2
                     height: 30
                     gradient: Gradient {
                         GradientStop {position: 0.0; color: "steelblue"}

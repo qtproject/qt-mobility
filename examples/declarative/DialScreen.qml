@@ -12,11 +12,11 @@ Item {
         id: dialStringLabel
         height: 20; width: dialGrid.width
         color: "white"; radius: 5
-        pen.width: 3
-        pen.color: "black"
+        border.width: 3
+        border.color: "black"
         anchors.top: parent.top
         anchors.left: parent.left
-        Text { text: DialScreen.dialString; anchors.centeredIn: parent; }
+        Text { text: DialScreen.dialString; anchors.centerIn: parent; }
     }
     GridLayout {
         id: dialGrid
@@ -47,7 +47,7 @@ Item {
         hoverColor: "red"; color: "crimson"
         onClicked:  { DialScreen.dialString = ""; DialScreen.hangup() }
         Image {
-            anchors.centeredIn: parent
+            anchors.centerIn: parent
             source: "hangup.png"
             transformOrigin: "Center"
         }
@@ -66,7 +66,7 @@ Item {
             }
         }
         Image {
-            anchors.centeredIn: parent
+            anchors.centerIn: parent
             source: "call.png"
             transformOrigin: "Center"
         }
