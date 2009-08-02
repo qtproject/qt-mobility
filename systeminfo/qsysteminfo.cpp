@@ -230,6 +230,12 @@ QT_BEGIN_NAMESPACE
     \value DualAvailable           Two SIM cards are available on this device.
     \value Locked                  Device has SIM lock enabled.
 */
+  /*!
+    \class QSystemScreenSaver
+
+    \brief The QSystemScreenSaver class provides access to screen saver and blanking.
+
+  */
 
 
 /*!
@@ -459,22 +465,6 @@ qint32 QSystemDisplayInfo::colorDepth(qint32 screenNumber)
 }
 
 /*!
-    Sets the screensaver on if \a b is true, otherwise off.
-*/
-void QSystemDisplayInfo::setScreenSaverEnabled(bool b)
-{
-    d->setScreenSaverEnabled(b);
-}
-
-/*!
-    Sets the screen blanking on if \a b is true, otherwise off.
-*/
-void QSystemDisplayInfo::setScreenBlankingEnabled(bool b)
-{
-    d->setScreenBlankingEnabled(b);
-}
-
-/*!
     Returns whether the systems screen lock is turned on.
 */
 bool QSystemDisplayInfo::isScreenLockOn()
@@ -643,6 +633,58 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::getCurrentProfile()
     return d->getCurrentProfile();
 }
 
+/////
+ /*!
+   Constructs a QSystemScreenSaver with the given \a parent.
+ */
+QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
+{
+    d = new QSystemScreenSaverPrivate(parent);
+    screenSaverIsEnabled = screenSaverEnabled();
+    screenBlankingIsEnabled = screenBlankingEnabled();
+}
 
+QSystemScreenSaver::~QSystemScreenSaver()
+{
+    //if(screenSaverIsEnabled != screenSaverIsEnabled())
+        setScreenSaverEnabled(screenSaverIsEnabled);
+  //  if(screenBlankingIsEnabled != screenBlankingEnabled)
+        setScreenBlankingEnabled(screenBlankingIsEnabled);
+    delete d;
+}
+
+/*!
+    Temporarily sets the screensaver on to QSystemScreenSaver::ScreenSaverState \a b.
+Will be reverted upon destruction of the QSystemScreenSaver object.
+*/
+bool QSystemScreenSaver::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b)
+{
+    return d->setScreenSaverEnabled(b);
+}
+
+/*!
+    Temporarily sets the screen blanking on to QSystemScreenSaver::ScreenSaverState \a b
+Will be reverted upon destruction of the QSystemScreenSaver object.
+*/
+bool QSystemScreenSaver::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b)
+{
+    return d->setScreenBlankingEnabled(b);
+}
+
+/*!
+   Gets if the screensaver is enabled or not.
+*/
+QSystemScreenSaver::ScreenSaverState QSystemScreenSaver::screenSaverEnabled()
+{
+    return QSystemScreenSaver::UnknownScreenSaverState;
+}
+
+/*!
+   Gets if screen blanking is enabled or not.
+*/
+QSystemScreenSaver::ScreenSaverState QSystemScreenSaver::screenBlankingEnabled()
+{
+    return QSystemScreenSaver::UnknownScreenSaverState;
+}
 
 QT_END_NAMESPACE

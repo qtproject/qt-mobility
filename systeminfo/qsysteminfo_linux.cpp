@@ -262,7 +262,7 @@ bool QSystemInfoPrivate::hasHalDeviceFeature(const QString &param)
     return false;
 }
 
-bool QSystemInfoPrivate::hasHalUsbFeature(quint32 usbClass)
+bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
 {
     QHalInterface halIface;
     QStringList halDevices = halIface.getAllDevices();
@@ -604,29 +604,6 @@ qint32 QSystemDisplayInfoPrivate::displayBrightness()
     }
 #endif
     return -1;
-}
-
-void QSystemDisplayInfoPrivate::setScreenSaverEnabled(bool)
-{
-    QDesktopWidget wid;
-#ifdef Q_WS_X11
- qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
-    Display *dip = QX11Info::display();
- //   XActivateScreenSaver(dip);
- qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
-int timeout;
-int interval;
-int preferBlank;
-int allowExp;
-    XGetScreenSaver(dip, &timeout, &interval, &preferBlank, &allowExp);
-    qWarning() << "XScreensaver" << timeout << interval << preferBlank << allowExp;
-#endif
-
-//    wid.x11Info();
-}
-
-void QSystemDisplayInfoPrivate::setScreenBlankingEnabled(bool)
-{
 }
 
 qint32 QSystemDisplayInfoPrivate::colorDepth(qint32 screen)
@@ -1176,5 +1153,57 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     return false;
 }
+
+//////////////
+///////
+QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
+        : QSystemScreenSaver(parent)
+{
+
+}
+
+bool QSystemScreenSaverPrivate::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState state)
+{
+    Q_UNUSED(state);
+    QDesktopWidget wid;
+#ifdef Q_WS_X11
+    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+    Display *dip = QX11Info::display();
+    //   XActivateScreenSaver(dip);
+    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+    int timeout;
+    int interval;
+    int preferBlank;
+    int allowExp;
+    XGetScreenSaver(dip, &timeout, &interval, &preferBlank, &allowExp);
+    qWarning() << "XScreensaver" << timeout << interval << preferBlank << allowExp;
+#endif
+    /* ~/.kde4/share/config/kscreensaverrc
+    [ScreenSaver]
+    Enabled=
+    Lock=
+    Saver=kblank.desktop
+*/
+    //    wid.x11Info();
+    return false;
+}
+
+bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState state)
+{
+    Q_UNUSED(state);
+    return false;
+}
+
+QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenSaverEnabled()
+{
+    return QSystemScreenSaver::UnknownScreenSaverState;
+}
+
+QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenBlankingEnabled()
+{
+    return QSystemScreenSaver::UnknownScreenSaverState;
+}
+
+
 
 QT_END_NAMESPACE

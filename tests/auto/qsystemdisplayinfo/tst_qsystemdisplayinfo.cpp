@@ -40,8 +40,6 @@ class tst_QSystemDisplayInfo : public QObject
 private slots:
     void tst_displayBrightness();
     void tst_colorDepth();
-    void tst_setScreenSaverEnabled();
-    void tst_setScreenBlankingEnabled();
     void tst_isScreenLockOn();
 
 };
@@ -56,17 +54,6 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
 {
     QSystemDisplayInfo di;
     QVERIFY(di.colorDepth(0) > 0);
-}
-
-void tst_QSystemDisplayInfo::tst_setScreenSaverEnabled()
-{
-    QSystemDisplayInfo di;
-di.setScreenSaverEnabled(true);
-}
-
-void tst_QSystemDisplayInfo::tst_setScreenBlankingEnabled()
-{
-    QSystemDisplayInfo di;
 }
 
 void tst_QSystemDisplayInfo::tst_isScreenLockOn()

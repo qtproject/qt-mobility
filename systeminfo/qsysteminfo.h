@@ -171,8 +171,6 @@ public:
 
     qint32 displayBrightness();
     qint32 colorDepth(qint32 screen);
-    void setScreenSaverEnabled(bool);
-    void setScreenBlankingEnabled(bool);
     bool isScreenLockOn();
 
 private:
@@ -291,6 +289,36 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
+};
+
+
+////////
+class QSystemScreenSaverPrivate;
+class QSystemScreenSaver : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemScreenSaver(QObject *parent = 0);
+    ~QSystemScreenSaver();
+
+    enum ScreenSaverState {
+        UnknownScreenSaverState = 0,
+        ScreenSaverDisabled,
+        ScreenSaverEnabled
+    };
+
+    virtual QSystemScreenSaver::ScreenSaverState screenSaverEnabled();
+    virtual QSystemScreenSaver::ScreenSaverState screenBlankingEnabled();
+
+    bool setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b);
+    bool setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b);
+
+private:
+    QSystemScreenSaver::ScreenSaverState screenSaverIsEnabled;
+    QSystemScreenSaver::ScreenSaverState screenBlankingIsEnabled;
+    QSystemScreenSaverPrivate *d;
 };
 
 QT_END_NAMESPACE

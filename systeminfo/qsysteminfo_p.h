@@ -66,7 +66,7 @@ public:
 private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(quint32 usbClass);
+    bool hasHalUsbFeature(qint32 usbClass);
 #endif
     bool hasSysFeature(const QString &featureStr);
 };
@@ -113,8 +113,6 @@ public:
 // display
     qint32 displayBrightness();
     qint32 colorDepth(qint32 screen);
-    void setScreenSaverEnabled(bool b);
-    void setScreenBlankingEnabled(bool b);
     bool isScreenLockOn();
 };
 
@@ -186,6 +184,20 @@ private:
 };
 //    QSystemInfo::Error error() const;
 
+class QSystemScreenSaverPrivate : public QSystemScreenSaver
+{
+    Q_OBJECT
+
+public:
+
+    QSystemScreenSaverPrivate(QObject *parent = 0);
+
+    QSystemScreenSaver::ScreenSaverState screenSaverEnabled();
+    QSystemScreenSaver::ScreenSaverState screenBlankingEnabled();
+    bool setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState);
+    bool setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState);
+    
+};
 
 QT_END_NAMESPACE
 
