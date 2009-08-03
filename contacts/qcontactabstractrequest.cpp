@@ -111,7 +111,7 @@ bool QContactAbstractRequest::cancel()
 
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
-    if (status() != QContactAbstractRequest::Active) {
+    if (!isActive()) {
         return false; // unable to wait for operation; not in progress.
     }
 
@@ -123,7 +123,7 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
-    if (status() != QContactAbstractRequest::Active) {
+    if (!isActive()) {
         return false; // unable to wait for operation; not in progress.
     }
 
