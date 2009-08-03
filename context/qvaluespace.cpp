@@ -396,6 +396,49 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     QValueSpaceManager::instance()->install(func);
 }
 
+/*!
+    \macro QVALUESPACE_APPLICATION_LAYER
+    \relates QValueSpace
+
+    The UUID of the Application Layer as a QUuid.  The actual UUID value is
+    {d81199c1-6f60-4432-934e-0ce4d37ef252}.
+
+    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
+    space object to publish its values in the Application Layer.
+
+    You can test if the Application Layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.
+*/
+
+/*!
+    \macro QVALUESPACE_REGISTRY_LAYER
+    \relates QValueSpace
+
+    The UUID of the Registry Layer as a QUuid.  The actual UUID value is
+    {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
+
+    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
+    space object to publish its values in the Registry Layer.
+
+    You can test if the Registry Layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.  The Registry Layer is only available on
+    Windows platforms.
+*/
+
+/*!
+    Returns a List of QUuids of the available layers.
+*/
+QList<QUuid> QValueSpace::availableLayers()
+{
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    QList<QUuid> uuids;
+
+    for (int i = 0; i < layers.count(); ++i)
+        uuids.append(layers.at(i)->id());
+
+    return uuids;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // define QValueSpaceItem

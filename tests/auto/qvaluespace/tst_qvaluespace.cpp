@@ -88,6 +88,7 @@ private slots:
     void cleanupTestCase();
     void init();
 
+    void availableLayers();
     void testConstructor();
     void testConstructor_data();
     void testAssignmentOperator();
@@ -142,6 +143,23 @@ void tst_QValueSpaceItem::cleanupTestCase()
 {
     delete root;
     delete busy;
+}
+
+void tst_QValueSpaceItem::availableLayers()
+{
+    QList<QUuid> layers = QValueSpace::availableLayers();
+
+#ifdef Q_OS_UNIX
+    QVERIFY(layers.contains(QVALUESPACE_APPLICATION_LAYER));
+#else
+    QVERIFY(!layers.contains(QVALUESPACE_APPLICATION_LAYER));
+#endif
+
+#ifdef Q_OS_WIN
+    QVERIFY(layers.contains(QVALUESPACE_REGISTRY_LAYER));
+#else
+    QVERIFY(!layers.contains(QVALUESPACE_REGISTRY_LAYER));
+#endif
 }
 
 void tst_QValueSpaceItem::dataVersatility_data()
