@@ -512,11 +512,9 @@ void tst_QMessage::testFrom()
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
 
-    /*
     addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
-    */
 }
 
 void tst_QMessage::testSubject()
@@ -573,12 +571,10 @@ void tst_QMessage::testTo()
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
 
-    /*
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::System));
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
-    */
 }
 
 void tst_QMessage::testCc()
@@ -593,12 +589,10 @@ void tst_QMessage::testCc()
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
 
-    /*
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Phone));
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
-    */
 }
 
 void tst_QMessage::testBcc()
@@ -613,12 +607,10 @@ void tst_QMessage::testBcc()
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
 
-    /*
     addresses = QMessageAddressList();
     addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
-    */
 }
 
 void tst_QMessage::testStatus()
