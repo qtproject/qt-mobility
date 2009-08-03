@@ -14,22 +14,30 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">List of All Members for QMessageServiceAction</h1>
 <p>This is the complete list of members for <a href="qmessageserviceaction.html">QMessageServiceAction</a>, including inherited members.</p>
-<ul>
+<p><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
 <li><div class="fn"></div>enum <a href="qmessageserviceaction.html#Activity-enum">Activity</a></li>
 <li><div class="fn"></div><a href="qmessageserviceaction.html#QMessageServiceAction">QMessageServiceAction</a> ( QObject * )</li>
 <li><div class="fn"></div><a href="qmessageserviceaction.html#dtor.QMessageServiceAction">~QMessageServiceAction</a> ()</li>
 <li><div class="fn"></div><a href="qmessageserviceaction.html#activity">activity</a> () const : Activity</li>
 <li><div class="fn"></div><a href="qmessageserviceaction.html#activityChanged">activityChanged</a> ( QMessageServiceAction::Activity )</li>
 <li><div class="fn"></div><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a> ()</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#compose">compose</a> ( const QMessage &amp; )</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a> ()</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a> () const : QString</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieve">retrieve</a> ( const QMessageContentContainerId &amp; )</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a> ( const QMessageId &amp; )</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a> ( const QMessageId &amp; )</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#send">send</a> ( const QMessage &amp;, const QMessageAccountId &amp; )</li>
-<li><div class="fn"></div><a href="qmessageserviceaction.html#show">show</a> ( const QMessageId &amp; )</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#compose">compose</a> ( const QMessage &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a> ( const QMessageAccountId &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#lastError">lastError</a> () const : QMessageStore::ErrorCode</li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#messagesFound">messagesFound</a> ( const QMessageIdList &amp; )</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#progressChanged">progressChanged</a> ( uint, uint )</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#queryMessages">queryMessages</a> ( const QMessageFilterKey &amp;, const QMessageSortKey &amp;, uint, uint ) const : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#queryMessages-2">queryMessages</a> ( const QString &amp;, const QMessageFilterKey &amp;, const QMessageSortKey &amp;, uint, uint ) const : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieve">retrieve</a> ( const QMessageContentContainerId &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a> ( const QMessageId &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a> ( const QMessageId &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#send">send</a> ( const QMessage &amp;, const QMessageAccountId &amp; ) : bool</li>
+<li><div class="fn"></div><a href="qmessageserviceaction.html#show">show</a> ( const QMessageId &amp; ) : bool</li>
 </ul>
+</td></tr>
+</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

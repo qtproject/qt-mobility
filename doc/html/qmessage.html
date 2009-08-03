@@ -66,6 +66,7 @@
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
+<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setParentAccountId">setParentAccountId</a></b> ( const QMessageAccountId &amp; <i>accountId</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
 <li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</li>
@@ -235,6 +236,7 @@
 <p>See also <a href="qmessage.html#setOriginatorPort">setOriginatorPort</a>() and <a href="qmessage.html#setDestinationPort">setDestinationPort</a>().</p>
 <h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the parent account of the message if any; otherwise returns an invalid identifier.</p>
+<p>See also <a href="qmessage.html#setParentAccountId">setParentAccountId</a>().</p>
 <h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
 <h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -283,6 +285,10 @@
 <p>Sets the originating port of the message to <i>port</i>.</p>
 <p>Only relevant for SMS messages.</p>
 <p>See also <a href="qmessage.html#originatorPort">originatorPort</a>() and <a href="qmessage.html#setDestinationPort">setDestinationPort</a>().</p>
+<h3 class="fn"><a name="setParentAccountId"></a>void QMessage::setParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the parent account of the message to the account with identifier <i>accountId</i>.</p>
+<p>This operation is only permitted on new messages that have not yet been inserted into the message store. Attempting to change the parent account of a message already in the message store will result in an error when attempting to update the message with QMessageStore::update().</p>
+<p>See also <a href="qmessage.html#parentAccountId">parentAccountId</a>().</p>
 <h3 class="fn"><a name="setPriority"></a>void QMessage::setPriority ( <a href="qmessage.html#Priority-enum">Priority</a> <i>newPriority</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the priority of the message to <i>newPriority</i>.</p>
 <p>See also <a href="qmessage.html#priority">priority</a>().</p>

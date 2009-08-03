@@ -59,6 +59,7 @@
         <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
+        <keyword ref="qmessage.html#setParentAccountId">setParentAccountId</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
         <keyword ref="qmessage.html#setStandardFolder">setStandardFolder</keyword>
@@ -132,6 +133,7 @@
         <keyword ref="qmessageaddress.html#setType">setType</keyword>
         <keyword ref="qmessageaddress.html#type">type</keyword>
         <keyword ref="qmessageaddress.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessageaddress.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessageaddress-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
@@ -296,7 +298,10 @@
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
         <keyword ref="qmessageserviceaction.html#exportUpdates">exportUpdates</keyword>
-        <keyword ref="qmessageserviceaction.html#lastErrorString">lastErrorString</keyword>
+        <keyword ref="qmessageserviceaction.html#lastError">lastError</keyword>
+        <keyword ref="qmessageserviceaction.html#messagesFound">messagesFound</keyword>
+        <keyword ref="qmessageserviceaction.html#progressChanged">progressChanged</keyword>
+        <keyword ref="qmessageserviceaction.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessageserviceaction.html#retrieve">retrieve</keyword>
         <keyword ref="qmessageserviceaction.html#retrieveBody">retrieveBody</keyword>
         <keyword ref="qmessageserviceaction.html#retrieveHeader">retrieveHeader</keyword>

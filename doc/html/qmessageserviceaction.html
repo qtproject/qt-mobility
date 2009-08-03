@@ -29,14 +29,16 @@
 <li><div class="fn"></div><b><a href="qmessageserviceaction.html#QMessageServiceAction">QMessageServiceAction</a></b> ( QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"></div><b><a href="qmessageserviceaction.html#dtor.QMessageServiceAction">~QMessageServiceAction</a></b> ()</li>
 <li><div class="fn"></div>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ()</li>
-<li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ( const QMessageAccountId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessageserviceaction.html#lastError">lastError</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#queryMessages-2">queryMessages</a></b> ( const QString &amp; <i>body</i>, const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
 </ul>
 <a name="public-slots"></a>
 <h3>Public Slots</h3>
@@ -47,16 +49,20 @@
 <h3>Signals</h3>
 <ul>
 <li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#activityChanged">activityChanged</a></b> ( QMessageServiceAction::Activity <i>a</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#messagesFound">messagesFound</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#progressChanged">progressChanged</a></b> ( uint <i>value</i>, uint <i>total</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessageServiceAction class provides the interface for requesting messaging services.</p>
-<p>QMessageServiceAction provides the mechanisms for messaging clients to request services, and to receive information in response. All actions present the same interface for communicating status, connectivity and progress information.</p>
+<p>QMessageServiceAction provides the mechanisms for messaging clients to request services, and to receive information in response. All actions present the same interface for communicating status, and progress information.</p>
 <p>All actions communicate changes in their operational state by emitting the <a href="qmessageserviceaction.html#activityChanged">activityChanged</a>() signal.</p>
-<p>If an action operation fails, the <a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a>() function will return a string indicating the failure mode encountered. A successful operation will set the lastError() result to a null string.</p>
-<p>A user may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
-<p>A QMessageServiceAction instance supports only a single request at any time. A client may, however, use multiple QMessageServiceAction instances to send independent requests concurrently. Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivered.</p>
+<p>Actions report progress information by emitting the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal.</p>
+<p>If an action operation fails after being initiated then the <a href="qmessageserviceaction.html#lastError">lastError</a>() function will return a value indicating the failure mode encountered.</p>
+<p>A client may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
+<p>A QMessageServiceAction instance supports only a single request at any time. Attempting to initiate an operation on a QMessageServiceAction while another operation is already in progress will result in the later initiating function returning false. A client may, however, use multiple QMessageServiceAction instances to create a queue of requests that will be performed sequentially.</p>
+<p>Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivers.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Activity-enum"></a>enum QMessageServiceAction::Activity</h3>
@@ -83,34 +89,62 @@
 <p>See also <a href="qmessageserviceaction.html#activity">activity</a>().</p>
 <h3 class="fn"><a name="cancelOperation"></a>void QMessageServiceAction::cancelOperation ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to cancel the last requested operation.</p>
-<h3 class="fn"><a name="compose"></a>void QMessageServiceAction::compose ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
+<h3 class="fn"><a name="compose"></a>bool QMessageServiceAction::compose ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
 <p>Open a composer application using <i>message</i> as a prototype.</p>
 <p>The default application for handling the type of <i>message</i> should be used.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="exportUpdates"></a>void QMessageServiceAction::exportUpdates ()</h3>
+<h3 class="fn"><a name="exportUpdates"></a>bool QMessageServiceAction::exportUpdates ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> )</h3>
 <p>Synchronize any changes that have been queued by message store operations with external servers.</p>
+<p>Pending changes to the account with identifier <i>id</i> should be synchronized.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
-<h3 class="fn"><a name="lastErrorString"></a>QString QMessageServiceAction::lastErrorString () const</h3>
-<p>Returns a string indicating the last error condition reported by the action if any; otherwise returns a null string.</p>
-<h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="lastError"></a><a href="qmessagestore.html#ErrorCode-enum">QMessageStore::ErrorCode</a> QMessageServiceAction::lastError () const</h3>
+<p>Returns a value indicating the last error condition encountered by the action.</p>
+<h3 class="fn"><a name="messagesFound"></a>void QMessageServiceAction::messagesFound ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>() operation has found messages.</p>
+<p><i>ids</i> is the list of identifiers of messages found.</p>
+<p>See also <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>().</p>
+<h3 class="fn"><a name="progressChanged"></a>void QMessageServiceAction::progressChanged ( uint <i>value</i>, uint <i>total</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the action operation has progressed.</p>
+<p><i>total</i> is the total number of progress steps to perform, or zero if the number of progress steps is unknown.</p>
+<p><i>value</i> is the number of progress steps completed so far.</p>
+<h3 class="fn"><a name="queryMessages"></a>bool QMessageServiceAction::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
+<p>Emits via <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() signals <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only identifiers for messages matching the parameters set by <i>key</i> will be emitted, otherwise identifiers for all messages will be emitted. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>Returns the number of progress steps required to perform the query if known; otherwise returns 0.</p>
+<p>Calling this function may result in the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, <a href="qmessagesortkey.html">QMessageSortKey</a>, <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>(), and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>().</p>
+<h3 class="fn"><a name="queryMessages-2"></a>bool QMessageServiceAction::queryMessages ( const QString &amp; <i>body</i>, const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
+<p>Emits via the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() signal <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only identifiers for messages matching the parameters set by <i>key</i> and with a body containing the string <i>body</i> will be emitted, otherwise identifiers for all messages with a body containing <i>body</i> will be emitted. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>Returns the number of progress steps required to perform the query if known; otherwise returns 0.</p>
+<p>Calling this function may result in the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, <a href="qmessagesortkey.html">QMessageSortKey</a>, <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>(), and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>().</p>
+<h3 class="fn"><a name="retrieve"></a>bool QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve the container identified by <i>id</i>, the contents of the container should also be retrieved.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
-<h3 class="fn"><a name="retrieveBody"></a>void QMessageServiceAction::retrieveBody ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="retrieveBody"></a>bool QMessageServiceAction::retrieveBody ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve the body of the message identified by <i>id</i>.</p>
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
-<h3 class="fn"><a name="retrieveHeader"></a>void QMessageServiceAction::retrieveHeader ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="retrieveHeader"></a>bool QMessageServiceAction::retrieveHeader ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve meta data of the message identified by <i>id</i>.</p>
 <p>The meta data (including flags, from, to, subject, and date fields where applicable) of the message identified by <i>id</i> should be retrieved. If only the message envelope information is present, any other accessible header information should be retrieved.</p>
 <p>If the message can not be found on the originating server it will be marked as removed.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#Status-enum">QMessage::Removed</a>.</p>
-<h3 class="fn"><a name="send"></a>void QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
+<h3 class="fn"><a name="send"></a>bool QMessageServiceAction::send ( const <a href="qmessage.html">QMessage</a> &amp; <i>message</i>, const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
 <p>Transmit <i>message</i> using the account identified by <i>accountId</i>.</p>
 <p>The message should be placed in the standard outbox folder for the account before sending, and if the sending is successful moved to the sent folder for the account.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessageaccountid.html">QMessageAccountId</a>.</p>
-<h3 class="fn"><a name="show"></a>void QMessageServiceAction::show ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="show"></a>bool QMessageServiceAction::show ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Show the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
+<p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
