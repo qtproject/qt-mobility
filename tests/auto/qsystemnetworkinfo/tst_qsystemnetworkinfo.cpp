@@ -51,11 +51,11 @@ private slots:
     void tst_cellId();
     void tst_locationAreaCode();
 
-    void tst_currentMCC(); // Mobile Country Code
-    void tst_currentMNC(); // Mobile Network Code
+    void tst_currentMobileCountryCode(); // Mobile Country Code
+    void tst_currentMobileNetworkCode(); // Mobile Network Code
 
-    void tst_homeMCC();
-    void tst_homeMNC();
+    void tst_homeMobileCountryCode();
+    void tst_homeMobileNetworkCode();
 
     void tst_isLocationEnabled();
     void tst_isWLANAccessible();
@@ -102,29 +102,29 @@ ni.locationAreaCode();
 }
 
 
-void  tst_QSystemNetworkInfo::tst_currentMCC()
+void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-ni.currentMCC();
+ni.currentMobileCountryCode();
 }
 
-void  tst_QSystemNetworkInfo::tst_currentMNC()
+void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-ni.currentMNC();
+ni.currentMobileNetworkCode();
 }
 
 
-void  tst_QSystemNetworkInfo::tst_homeMCC()
+void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-ni.homeMCC();
+ni.homeMobileCountryCode();
 }
 
-void  tst_QSystemNetworkInfo::tst_homeMNC()
+void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-ni.homeMNC();
+ni.homeMobileNetworkCode();
 }
 
 

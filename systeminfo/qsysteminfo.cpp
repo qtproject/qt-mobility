@@ -382,33 +382,33 @@ qint32 QSystemNetworkInfo::locationAreaCode()
  /*!
     Returns the current Mobile Country Code
 /*/
-qint32 QSystemNetworkInfo::currentMCC()
+qint32 QSystemNetworkInfo::currentMobileCountryCode()
 {
-    return d->currentMCC();
+    return d->currentMobileCountryCode();
 }
 
 /*!
     Returns the current Mobile Network Code
 */
-qint32 QSystemNetworkInfo::currentMNC()
+qint32 QSystemNetworkInfo::currentMobileNetworkCode()
 {
-    return d->currentMCC();
+    return d->currentMobileNetworkCode();
 }
 
 /*!
     Returns the home Mobile Network Code
 */
-qint32 QSystemNetworkInfo::homeMCC()
+qint32 QSystemNetworkInfo::homeMobileCountryCode()
 {
-    return d->homeMCC();
+    return d->homeMobileCountryCode();
 }
 
 /*!
     Returns the home Mobile Country Code
 */
-qint32 QSystemNetworkInfo::homeMNC()
+qint32 QSystemNetworkInfo::homeMobileNetworkCode()
 {
-    return d->homeMNC();
+    return d->homeMobileNetworkCode();
 }
 
 /*!

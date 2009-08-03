@@ -140,11 +140,11 @@ public:
     qint32 cellId();
     qint32 locationAreaCode();
 
-    qint32 currentMCC(); // Mobile Country Code
-    qint32 currentMNC(); // Mobile Network Code
+    qint32 currentMobileCountryCode(); // Mobile Country Code
+    qint32 currentMobileNetworkCode(); // Mobile Network Code
 
-    qint32 homeMCC();
-    qint32 homeMNC();
+    qint32 homeMobileCountryCode();
+    qint32 homeMobileNetworkCode();
 
     bool isLocationEnabled() const;
     bool isWLANAccessible() const;

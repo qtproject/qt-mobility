@@ -473,23 +473,23 @@ qint32 QSystemNetworkInfoPrivate::locationAreaCode()
 }
 
 // Mobile Country Code
-qint32 QSystemNetworkInfoPrivate::currentMCC()
+qint32 QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return -1;
 }
 
 // Mobile Network Code
-qint32 QSystemNetworkInfoPrivate::currentMNC()
+qint32 QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return -1;
 }
 
-qint32 QSystemNetworkInfoPrivate::homeMCC()
+qint32 QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
     return -1;
 }
 
-qint32 QSystemNetworkInfoPrivate::homeMNC()
+qint32 QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
     return -1;
 }
