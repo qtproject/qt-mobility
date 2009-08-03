@@ -313,6 +313,75 @@ void tst_QContactAsync::contactIdFetch()
 
 void tst_QContactAsync::contactRemove()
 {
+    QContactManager* cm = prepareModel();
+    QContactRemoveRequest crr;
+
+    // initial state
+    QVERIFY(!crr.isActive());   // not started
+    QVERIFY(!crr.isFinished()); // not started
+
+    // specific contact removal
+    int originalCount = cm->contacts().size();
+    QContactDetailFilter dfil;
+    dfil.setDetailDefinitionName(QContactUrl::DefinitionName, QContactUrl::FieldUrl);
+    crr.setFilter(dfil);
+    crr.setManager(cm);
+    qRegisterMetaType<QContactRemoveRequest*>("QContactRemoveRequest*");
+    QSignalSpy spy(&crr, SIGNAL(progress(QContactRemoveRequest*)));
+    QVERIFY(crr.filter() == dfil);
+    QVERIFY(crr.start());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
+    QVERIFY(crr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(crr.isFinished());
+    QVERIFY(!crr.isActive());
+
+    QCOMPARE(cm->contacts().size(), originalCount - 1);
+    QVERIFY(cm->contacts(dfil).isEmpty());
+
+    // remove all contacts
+    dfil.setDetailDefinitionName(QContactDisplayLabel::DefinitionName); // delete everything.
+    crr.setFilter(dfil);
+    QVERIFY(crr.filter() == dfil);
+    QVERIFY(crr.start());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
+    QVERIFY(crr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(crr.isFinished());
+    QVERIFY(!crr.isActive());
+
+    QCOMPARE(cm->contacts().size(), 0); // no contacts should be left.
+
+    // cancelling
+    QContact temp;
+    temp.setDisplayLabel("should not be removed");
+    cm->saveContact(&temp);
+    crr.setFilter(dfil);
+    QVERIFY(crr.start());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
+    QVERIFY(crr.cancel());
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(crr.isActive());    // still cancelling
+    QVERIFY(!crr.isFinished()); // not finished cancelling
+    QVERIFY(crr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
+    QVERIFY(crr.isFinished());
+    QVERIFY(!crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelled);
+
+    QCOMPARE(cm->contacts().size(), 1);
+    QCOMPARE(cm->contact(cm->contacts().first()), temp);
+
+    delete cm;
 }
 
 void tst_QContactAsync::contactSave()
