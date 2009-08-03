@@ -821,6 +821,106 @@ void tst_QContactAsync::definitionFetch()
 
 void tst_QContactAsync::definitionRemove()
 {
+    QContactManager* cm = prepareModel();
+    QContactDetailDefinitionRemoveRequest drr;
+
+    // initial state
+    QVERIFY(!drr.isActive());   // not started
+    QVERIFY(!drr.isFinished()); // not started
+
+    // specific group removal
+    int originalCount = cm->detailDefinitions().keys().size();
+    QStringList removeIds;
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
+    drr.setManager(cm);
+    qRegisterMetaType<QContactDetailDefinitionRemoveRequest*>("QContactDetailDefinitionRemoveRequest*");
+    QSignalSpy spy(&drr, SIGNAL(progress(QContactDetailDefinitionRemoveRequest*)));
+    QVERIFY(drr.names() == removeIds);
+    QVERIFY(drr.start());
+    QVERIFY(drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!drr.isFinished());
+    QVERIFY(drr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(drr.isFinished());
+    QVERIFY(!drr.isActive());
+
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 1);
+    cm->detailDefinition(removeIds.first()); // check that it has already been removed.
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+    // remove (asynchronously) a nonexistent group - should fail.
+    drr.setNames(removeIds);
+    QVERIFY(drr.start());
+    QVERIFY(drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!drr.isFinished());
+    QVERIFY(drr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(drr.isFinished());
+    QVERIFY(!drr.isActive());
+
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 1); // hasn't changed
+    QCOMPARE(drr.error(), QContactManager::DoesNotExistError);
+
+    // remove with list containing one valid and one invalid id.
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
+    QVERIFY(drr.start());
+    QVERIFY(drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!drr.isFinished());
+    QVERIFY(drr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(drr.isFinished());
+    QVERIFY(!drr.isActive());
+
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // only one more has been removed
+    QCOMPARE(drr.errors().first(), QContactManager::DoesNotExistError);
+    QCOMPARE(drr.errors().at(1), QContactManager::NoError);
+
+    // remove with empty list - nothing should happen.
+    removeIds.clear();
+    drr.setNames(removeIds);
+    QVERIFY(drr.start());
+    QVERIFY(drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!drr.isFinished());
+    QVERIFY(drr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(drr.isFinished());
+    QVERIFY(!drr.isActive());
+
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(drr.error(), QContactManager::NoError);  // no error but no effect.
+
+    // cancelling
+    removeIds.clear();
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
+    QVERIFY(drr.start());
+    QVERIFY(drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!drr.isFinished());
+    QVERIFY(drr.cancel());
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(drr.isActive());    // still cancelling
+    QVERIFY(!drr.isFinished()); // not finished cancelling
+    QVERIFY(drr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
+    QVERIFY(drr.isFinished());
+    QVERIFY(!drr.isActive());
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelled);
+
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+
+    delete cm;
 }
 
 void tst_QContactAsync::definitionSave()
