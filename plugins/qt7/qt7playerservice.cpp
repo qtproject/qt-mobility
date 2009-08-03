@@ -34,6 +34,7 @@
 
 #include "qt7metadata.h"
 #include "qt7widget.h"
+#include "qt7movie.h"
 #include "qt7playercontrol.h"
 #include "qt7playerservice.h"
 
@@ -53,9 +54,9 @@ Qt7PlayerService::~Qt7PlayerService()
 void Qt7PlayerService::setVideoOutput(QObject *output)
 {
     Qt7Widget *vout = qobject_cast<Qt7Widget*>(output);
-    if (vout == 0) {
+    if (vout != 0) {
         QMediaPlayerService::setVideoOutput(output);
-        playerControl->setVideoOutput(vout);
+        playerControl->movie()->setVideoWidget(vout);
     }
 }
 

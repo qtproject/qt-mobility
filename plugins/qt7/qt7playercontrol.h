@@ -36,6 +36,7 @@
 #define QT7PLAYERCONTROL_H
 
 #include <qmediaplayercontrol.h>
+#include <qmediaresource.h>
 
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
@@ -92,7 +93,7 @@ public:
     void advance();
     void back();
 
-    void setVideoOutput(Qt7Widget *output);
+    Qt7Movie* movie() const;
 
 private slots:
     void setSource(QMediaResourceList const &resources);
@@ -101,7 +102,6 @@ private slots:
 private:
     Qt7PlayerControlPrivate* d;
 
-    Qt7Movie*   movie;
     QMediaPlaylist  *playlist;
     QMediaPlaylistNavigator *navigator;
     int playlistPos;

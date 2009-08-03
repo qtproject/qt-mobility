@@ -33,10 +33,11 @@
 ****************************************************************************/
 
 #include <QtCore/qurl.h>
-#include <qmediasource.h>
+#include <qmediaresource.h>
 
 #include "qt7widget.h"
 #include "qt7movie.h"
+
 #import <CoreFoundation/CoreFoundation.h>
 #import <QTKit/QTMovie.h>
 
@@ -45,6 +46,7 @@ class Qt7MoviePrivate
 {
 public:
     QTMovie*    movie;
+    Qt7Widget*  widget;
 };
 
 
@@ -64,6 +66,8 @@ qint64 Qt7Movie::duration() const
 {
     QTTime  t = [d->movie duration];
 
+    if (t.timeScale == 0)
+        return t.timeValue * 1000;
     return t.timeValue * 1000 / t.timeScale;
 }
 
@@ -110,7 +114,9 @@ void Qt7Movie::setRate(float r)
 
 bool Qt7Movie::isVideoAvailable() const
 {
-    return false;
+    NSDictionary *attributes = [d->movie movieAttributes];
+
+    return [(NSNumber*)[attributes objectForKey:QTMovieHasVideoAttribute] boolValue];
 }
 
 bool Qt7Movie::isSeekable() const
@@ -121,6 +127,7 @@ bool Qt7Movie::isSeekable() const
 void Qt7Movie::play()
 {
     [d->movie play];
+    d->widget->setMovie(d->movie);
 }
 
 void Qt7Movie::pause()
@@ -146,8 +153,9 @@ int Qt7Movie::state() const
     return 1;
 }
 
-void Qt7Movie::setVideoOutput(Qt7Widget *outpout)
+void Qt7Movie::setVideoWidget(Qt7Widget *video)
 {
+    d->widget = video;
 }
 
 void Qt7Movie::setSource(QMediaResourceList const &resources)

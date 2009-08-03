@@ -37,12 +37,24 @@
 
 #include <qmediawidgetendpoint.h>
 
+class Qt7Movie;
 
+class Qt7WidgetPrivate;
 class Qt7Widget : public QMediaWidgetEndpoint
 {
     Q_OBJECT
 
 public:
+    Qt7Widget();
+    ~Qt7Widget();
+
+    void setMovie(void *movie);
+
+protected:
+    void resizeEvent(QResizeEvent* event);
+
+private:
+    Qt7WidgetPrivate    *d;
 };
 
 
