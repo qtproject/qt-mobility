@@ -58,11 +58,17 @@ public:
     bool fullscreen;
 
     void _q_overlayFullscreenChanged(bool fullscreen);
+    void _q_dimensionsChanged();
 };
 
 void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
 {
     emit q_func()->fullscreenChanged(this->fullscreen = fullscreen);
+}
+
+void QVideoWidgetPrivate::_q_dimensionsChanged()
+{
+    q_func()->updateGeometry();
 }
 
 /*!
@@ -80,9 +86,13 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
         if (d->overlay) {
             connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
                     this, SLOT(_q_overlayFullscreenChanged(bool)));
+            connect(d->overlay, SIGNAL(nativeSizeChanged()),
+                    this, SLOT(_q_dimensionsChanged()));
             d->service->setVideoOutput(d->overlay);
         }
     }
+
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 }
 
 /*!
@@ -106,6 +116,16 @@ void QVideoWidget::setFullscreen(bool fullscreen)
 
     if (d->overlay)
         d->overlay->setFullscreen(fullscreen);
+}
+
+/*!
+    \reimp
+*/
+QSize QVideoWidget::sizeHint() const
+{
+    return d_func()->overlay
+            ? d_func()->overlay->nativeSize()
+            : QWidget::sizeHint();
 }
 
 /*!
@@ -177,7 +197,12 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
-    QWidget::paintEvent(event);
+    Q_D(QVideoWidget);
+
+    if (d->overlay && d->overlay->isEnabled())
+        d->overlay->repaint();
+    else
+        QWidget::paintEvent(event);
 }
 
 #include "moc_qvideowidget.cpp"

@@ -157,7 +157,14 @@ void QVideoOverlayEndpoint::setFullscreen(bool fullscreen)
 */
 
 /*!
-    \fn QVideoOverlayEndpoint::sizeHint() const
+    Repaints the last frame.
+*/
+void QVideoOverlayEndpoint::repaint()
+{
+}
+
+/*!
+    \fn QVideoOverlayEndpoint::nativeSize() const
 
     Returns a suggested size for the video display based on the resolution and aspect ratio of the
     video.

@@ -54,6 +54,8 @@ public:
 
     bool isFullscreen() const;
 
+    QSize sizeHint() const;
+
 public Q_SLOTS:
     void setFullscreen(bool fullscreen);
 
@@ -69,6 +71,7 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
+    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };
 
 #endif
