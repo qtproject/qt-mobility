@@ -119,7 +119,7 @@ QMessageAccountId QMessage::parentAccountId() const
     return d_ptr->_parentAccountId;
 }
 
-void QMessage::setParentAccountId(QMessageAccountId &accountId) 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId) 
 {
     d_ptr->_modified = true;
     d_ptr->_parentAccountId = accountId;
