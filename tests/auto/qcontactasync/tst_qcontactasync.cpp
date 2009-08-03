@@ -220,6 +220,95 @@ void tst_QContactAsync::contactFetch()
 
 void tst_QContactAsync::contactIdFetch()
 {
+    QContactManager* cm = prepareModel();
+    QContactIdFetchRequest cfr;
+
+    // initial state
+    QVERIFY(!cfr.isActive());   // not started
+    QVERIFY(!cfr.isFinished()); // not started
+
+    // "all contacts" retrieval
+    QContactFilter fil;
+    cfr.setManager(cm);
+    qRegisterMetaType<QContactIdFetchRequest*>("QContactIdFetchRequest*");
+    QSignalSpy spy(&cfr, SIGNAL(progress(QContactIdFetchRequest*, bool)));
+    cfr.setFilter(fil);
+    QCOMPARE(cfr.filter(), fil);
+    QVERIFY(cfr.start());
+    QVERIFY(cfr.isActive());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(cfr.isFinished());
+    QVERIFY(!cfr.isActive());
+
+    QList<QUniqueId> contactIds = cm->contacts();
+    QList<QUniqueId> result = cfr.ids();
+    QCOMPARE(contactIds, result);
+
+    // asynchronous detail filtering
+    QContactDetailFilter dfil;
+    dfil.setDetailDefinitionName(QContactUrl::DefinitionName, QContactUrl::FieldUrl);
+    cfr.setFilter(dfil);
+    QVERIFY(cfr.filter() == dfil);
+    QVERIFY(cfr.start());
+    QVERIFY(cfr.isActive());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(cfr.isFinished());
+    QVERIFY(!cfr.isActive());
+
+    contactIds = cm->contacts(dfil);
+    result = cfr.ids();
+    QCOMPARE(contactIds, result);
+
+    // sort order
+    QContactSortOrder sortOrder;
+    sortOrder.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    QList<QContactSortOrder> sorting;
+    sorting.append(sortOrder);
+    cfr.setFilter(fil);
+    cfr.setSorting(sorting);
+    QCOMPARE(cfr.sorting(), sorting);
+    QVERIFY(cfr.start());
+    QVERIFY(cfr.isActive());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(cfr.isFinished());
+    QVERIFY(!cfr.isActive());
+
+    contactIds = cm->contacts(sorting);
+    result = cfr.ids();
+    QCOMPARE(contactIds, result);
+
+    // cancelling
+    sorting.clear();
+    cfr.setFilter(fil);
+    cfr.setSorting(sorting);
+    QVERIFY(cfr.start());
+    QVERIFY(cfr.isActive());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(cfr.cancel());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(cfr.isActive());    // still cancelling
+    QVERIFY(!cfr.isFinished()); // not finished cancelling
+    QVERIFY(cfr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(cfr.isFinished());
+    QVERIFY(!cfr.isActive());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelled);
+
+    delete cm;
 }
 
 void tst_QContactAsync::contactRemove()
