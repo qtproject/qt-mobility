@@ -57,7 +57,7 @@ QStringList QContactDetailDefinitionFetchRequest::names() const
     return d->m_names;
 }
 
-QList<QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
+QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;

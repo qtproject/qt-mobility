@@ -403,6 +403,69 @@ void tst_QContactAsync::groupSave()
 
 void tst_QContactAsync::definitionFetch()
 {
+    QContactManager* cm = prepareModel();
+    QContactDetailDefinitionFetchRequest dfr;
+
+    // initial state
+    QVERIFY(!dfr.isActive());   // not started
+    QVERIFY(!dfr.isFinished()); // not started
+
+    // "all definitions" retrieval
+    dfr.setManager(cm);
+    qRegisterMetaType<QContactDetailDefinitionFetchRequest*>("QContactDetailDefinitionFetchRequest*");
+    QSignalSpy spy(&dfr, SIGNAL(progress(QContactDetailDefinitionFetchRequest*, bool)));
+    dfr.setNames(QStringList());
+    QVERIFY(dfr.start());
+    QVERIFY(dfr.isActive());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dfr.isFinished());
+    QVERIFY(dfr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(dfr.isFinished());
+    QVERIFY(!dfr.isActive());
+
+    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> result = dfr.definitions();
+    QCOMPARE(defs, result);
+
+    // specific definition retrieval
+    QStringList specific;
+    specific << QContactUrl::DefinitionName;
+    dfr.setNames(specific);
+    QVERIFY(dfr.start());
+    QVERIFY(dfr.isActive());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dfr.isFinished());
+    QVERIFY(dfr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(dfr.isFinished());
+    QVERIFY(!dfr.isActive());
+
+    defs.clear();
+    defs.insert(QContactUrl::DefinitionName, cm->detailDefinition(QContactUrl::DefinitionName));
+    result = dfr.definitions();
+    QCOMPARE(defs, result);
+
+    // cancelling
+    dfr.setNames(QStringList());
+    QVERIFY(dfr.start());
+    QVERIFY(dfr.isActive());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dfr.isFinished());
+    QVERIFY(dfr.cancel());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(dfr.isActive());    // still cancelling
+    QVERIFY(!dfr.isFinished()); // not finished cancelling
+    QVERIFY(dfr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(dfr.isFinished());
+    QVERIFY(!dfr.isActive());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelled);
+
+    delete cm;
 }
 
 void tst_QContactAsync::definitionRemove()

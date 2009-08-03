@@ -1699,21 +1699,40 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
     req->d_ptr->m_status = status;
 
     switch (req->type()) {
-        case QContactAbstractRequest::DetailDefinitionFetch:
-        {
-            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-            rd->m_definitions = result;
-            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, false);
-        }
-        break;
-
         case QContactAbstractRequest::DetailDefinitionSave:
         {
             QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
             rd->m_definitions = result;
             QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
             emit r->progress(r);
+        }
+        break;
+
+        default:
+        {
+            // this request type does not have a list of definitions to update...
+            return;
+        }
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a map of string to detail definition as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    // update the type-generic information
+    req->d_ptr->m_error = error;
+    req->d_ptr->m_errors = errors;
+    req->d_ptr->m_status = status;
+
+    switch (req->type()) {
+        case QContactAbstractRequest::DetailDefinitionFetch:
+        {
+            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+            rd->m_definitions = result;
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            emit r->progress(r, false);
         }
         break;
 

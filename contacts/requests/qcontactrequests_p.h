@@ -183,7 +183,7 @@ public:
     }
 
     QStringList m_names;
-    QList<QContactDetailDefinition> m_definitions;
+    QMap<QString, QContactDetailDefinition> m_definitions;
 };
 
 class QContactDetailDefinitionSaveRequestPrivate : public QContactAbstractRequestPrivate

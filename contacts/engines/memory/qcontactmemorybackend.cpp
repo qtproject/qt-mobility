@@ -47,6 +47,8 @@
 #include <QUuid>
 #include <QSharedData>
 
+#include <QDebug>
+
 /*!
  * \class QContactMemoryEngine
  * \brief This class provides an in-memory implementation of a contacts backend.
@@ -665,14 +667,16 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContactDetailDefinition> requestedDefinitions;
+            QMap<QString, QContactDetailDefinition> requestedDefinitions;
             QStringList names = r->names();
+            if (names.isEmpty())
+                names = detailDefinitions(operationError).keys(); // all definitions.
 
             QContactManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {
                 QContactDetailDefinition current = detailDefinition(names.at(i), tempError);
                 operationErrors.append(tempError);
-                requestedDefinitions.append(current);
+                requestedDefinitions.insert(names.at(i), current);
 
                 if (tempError != QContactManager::NoError)
                     operationError = tempError;

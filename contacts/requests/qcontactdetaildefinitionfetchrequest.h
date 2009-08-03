@@ -57,7 +57,7 @@ public:
     QStringList names() const;
 
     /* Results */
-    QList<QContactDetailDefinition> definitions() const;
+    QMap<QString, QContactDetailDefinition> definitions() const;
 
 signals:
     void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);
