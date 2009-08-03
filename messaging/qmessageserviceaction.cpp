@@ -44,20 +44,24 @@
 
     QMessageServiceAction provides the mechanisms for messaging clients to request services, 
     and to receive information in response.  All actions present the same 
-    interface for communicating status, connectivity and progress information.
+    interface for communicating status, and progress information when available.
 
     All actions communicate changes in their operational state by emitting the activityChanged()
     signal.
+
+    Actions that support reporting progress information do so by emitting the progressChanged()
+    signal.
     
-    If an action operation fails, the lastErrorString() function will return a string
-    indicating the failure mode encountered.  A successful operation will set the 
-    lastError() result to a null string.
+    If an action operation fails, the lastError() function will return a value
+    indicating the failure mode encountered.
     
-    A user may attempt to cancel an operation after it has been initiated.  The cancelOperation()
+    A user may attempt to cancel an operation after it has been initiated. The cancelOperation()
     slot is provided for this purpose.
 
     A QMessageServiceAction instance supports only a single request at any time.  A client
-    may, however, use multiple QMessageServiceAction instances to send independent requests concurrently.
+    may, however, use multiple QMessageServiceAction instances to create a queue of requests 
+    that will be performed sequentially.
+
     Each QMessageServiceAction instance will report only the changes pertaining to the request
     that instance delivered.
 */
@@ -85,6 +89,50 @@
     \fn QMessageServiceAction::~QMessageServiceAction()
   
     Destroys the message service action.
+*/
+
+/*!
+
+    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    
+    Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
+    store. If \a key is not empty only identifiers for messages matching the parameters 
+    set by \a key will be emitted, otherwise identifiers for all messages will be emitted.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    Returns the number of progress steps required to perform the query if known;
+    otherwise returns 0.
+    
+    Calling this function may result in the messagesFound() and progressChanged() 
+    signals  being emitted multiple times.
+    
+    \sa messagesFound(), availabilityChanged(), progressChanged()
+*/
+
+/*!
+    \fn QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    
+    Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
+    store. If \a key is not empty only identifiers for messages matching the parameters 
+    set by \a key and with a body containing the string \a body will be emitted, 
+    otherwise identifiers for all messages with a body containing \a body will be emitted.
+    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortKey.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+     
+    Returns the number of progress steps required to perform the query if known;
+    otherwise returns 0.
+    
+    Calling this function may result in the messagesFound() and progressChanged() 
+    signals being emitted multiple times.
+    
+    \sa messagesFound(), availabilityChanged(), progressChanged()
 */
 
 /*!

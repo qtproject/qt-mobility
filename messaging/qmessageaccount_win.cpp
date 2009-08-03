@@ -31,39 +31,48 @@
 **
 ****************************************************************************/
 #include "qmessageaccount.h"
+#include "qmessageaccount_p.h"
+#include "qmessagestore.h"
 
 QMessageAccount::QMessageAccount()
+    :d_ptr(new QMessageAccountPrivate(this))
 {
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+    :d_ptr(new QMessageAccountPrivate(this))
 {
-    Q_UNUSED(id)
+    *this = QMessageStore::instance()->account(id);
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccount &other)
+    :d_ptr(new QMessageAccountPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 const QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this)
+        *d_ptr = *other.d_ptr;
+
+    return *this;
 }
 
 QMessageAccount::~QMessageAccount()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 QMessageAccountId QMessageAccount::id() const
 {
-    return QMessageAccountId();  // stub
+    return d_ptr->_id;
 }
 
 QString QMessageAccount::name() const
 {
-    return QString(); // stub
+    return d_ptr->_name;
 }
 
 QMessageAddress QMessageAccount::fromAddress() const
@@ -73,7 +82,7 @@ QMessageAddress QMessageAccount::fromAddress() const
 
 QMessage::TypeFlags QMessageAccount::types() const
 {
-    return QMessage::None; // stub
+    return d_ptr->_types;
 }
 
 QString QMessageAccount::signature() const

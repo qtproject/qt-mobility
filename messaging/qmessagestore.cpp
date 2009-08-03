@@ -136,6 +136,8 @@
 /*!
     \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
     
+    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
+
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key will be returned, otherwise 
     identifiers for all messages will be returned.
@@ -151,6 +153,8 @@
 /*!
     \fn QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, QMessageDataComparator::Options options, uint limit, uint offset) const
     
+    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
+
     Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
     only messages matching the parameters set by \a key and with a body containing the 
     string \a body will be returned, otherwise identifiers for all messages with 
@@ -198,6 +202,8 @@
 /*!
     \fn QMessageStore::countMessages(const QMessageFilterKey& key) const
     
+    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
+
     Returns the number of messages which match the 
     filtering criteria defined in QMessageFilterKey \a key. If 
     key is empty a count of all messages is returned.
