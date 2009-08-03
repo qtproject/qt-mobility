@@ -33,6 +33,8 @@
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
 #include "qmessage_p.h"
+#include "qmessagefolder_p.h"
+#include "qmessageaccount_p.h"
 #include <QSharedDataPointer>
 #include <QSharedPointer>
 #include <QMap>
@@ -77,6 +79,7 @@ public:
     MapiFolderPtr nextSubFolder();
     QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
     MapiEntryId messageEntryId(const MapiRecordKey &messagekey);
+    QMessageFolderId id();
     bool isValid() { return _valid; }
     LPMAPIFOLDER folder() { return _folder; }
     MapiRecordKey recordKey() { return _key; }
@@ -168,6 +171,8 @@ MapiFolderPtr MapiFolder::nextSubFolder()
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
                 // TODO: Make a copy of message count, and hasSubFolders property values.
+            } else {
+                subFolder = 0;
             }
         }
         FreeProws(rows);
@@ -289,17 +294,28 @@ MapiEntryId MapiFolder::messageEntryId(const MapiRecordKey &messageKey)
     return result;
 }
 
+QMessageFolderId MapiFolder::id()
+{
+    QByteArray encodedId;
+    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+    encodedIdStream << _key;
+    encodedIdStream << _parentStoreKey;
+    return QMessageFolderId(encodedId.toBase64());
+}
 
 class MapiStore {
 public:
     MapiStore();
-    MapiStore(LPMDB store, MapiRecordKey key);
+    MapiStore(LPMDB store, MapiRecordKey key, const QString &name);
     ~MapiStore();
 
     bool isValid();
     MapiFolderPtr rootFolder();
     MapiFolderPtr findFolder(const MapiRecordKey &key);
     QMessageFolderIdList folderIds();
+    void setFolderFromId(const QMessageFolderId &folderId, QMessageFolderPrivate *outFolder);
+    QMessageAccountId id();
+    QString name() { return _name; }
 
     static MapiStorePtr null() { return MapiStorePtr(new MapiStore()); }
 
@@ -307,6 +323,7 @@ private:
     bool _valid;
     LPMDB _store;
     MapiRecordKey _key;
+    QString _name;
 };
 
 MapiStore::MapiStore()
@@ -315,10 +332,11 @@ MapiStore::MapiStore()
 {
 }
 
-MapiStore::MapiStore(LPMDB store, MapiRecordKey key)
+MapiStore::MapiStore(LPMDB store, MapiRecordKey key, const QString &name)
     :_valid(true),
      _store(store),
-     _key(key)
+     _key(key),
+     _name(name)
 {
 }
 
@@ -407,11 +425,7 @@ QMessageFolderIdList MapiStore::folderIds()
     while (!folders.isEmpty()) {
         MapiFolderPtr subFolder(folders.back()->nextSubFolder());
         if (subFolder->isValid()) {
-            QByteArray encodedId;
-            QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-            encodedIdStream << subFolder->recordKey();
-            encodedIdStream << _key;
-            folderIds.append(QMessageFolderId(encodedId.toBase64()));
+            folderIds.append(subFolder->id());
             folders.append(subFolder);
             /* Begin debug TODO remove */
             QStringList path;
@@ -426,6 +440,43 @@ QMessageFolderIdList MapiStore::folderIds()
     return folderIds;
 }
 
+void MapiStore::setFolderFromId(const QMessageFolderId &folderId, QMessageFolderPrivate *outFolder)
+{
+    QList<MapiFolderPtr> folders;
+    folders.append(rootFolder());
+
+    while (!folders.isEmpty()) {
+        MapiFolderPtr subFolder(folders.back()->nextSubFolder());
+        if (subFolder->isValid()) {
+            if (folderId == subFolder->id()) {
+                QStringList path;
+                for (int i = 0; i < folders.count(); ++i)
+                    path.append(folders[i]->name());
+                outFolder->_id = subFolder->id();
+                outFolder->_parentAccountId = id();
+                outFolder->_parentFolderId = folders.last()->id();
+                outFolder->_displayName  = subFolder->name();
+                outFolder->_path  = path.join("/");
+                qDebug() << "found" << path.join("/") << outFolder->_displayName; //TODO remove debug
+                return;
+            }
+            folders.append(subFolder);
+        } else {
+            folders.pop_back();
+        }
+    }
+
+    return;
+}
+
+QMessageAccountId MapiStore::id()
+{
+    QByteArray encodedId;
+    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+    encodedIdStream << _key;
+    return QMessageAccountId(encodedId.toBase64());
+}
+
 class MapiSession {
 public:
     MapiSession();
@@ -435,7 +486,8 @@ public:
     bool isValid();
 
     HRESULT openEntry(MapiEntryId entryId, LPMESSAGE *message);
-    MapiStorePtr defaultStore();
+    MapiStorePtr findStore(const QMessageAccountId &id = QMessageAccountId());
+    MapiStorePtr defaultStore() { return findStore(); }
     static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }
 
 private:
@@ -492,7 +544,7 @@ HRESULT MapiSession::openEntry(MapiEntryId entryId, LPMESSAGE *message)
     return _mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, reinterpret_cast<LPUNKNOWN*>(message));
 }
 
-MapiStorePtr MapiSession::defaultStore()
+MapiStorePtr MapiSession::findStore(const QMessageAccountId &id)
 {
     MapiStorePtr result(MapiStore::null());
     if (!_valid || !_mapiSession)
@@ -517,14 +569,15 @@ MapiStorePtr MapiSession::defaultStore()
             FreeProws(rows);
             break;
         }
-        if (rows->aRow[0].lpProps[defaultStoreColumn].Value.b) {
-            // default store found
+        LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
+        MapiRecordKey storeKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+        if ((!id.isValid() && rows->aRow[0].lpProps[defaultStoreColumn].Value.b) ||  // default store found
+            (id.isValid() && (id == QMessageAccountId(storeKey)))) {                 // specified store found
             LPMDB mapiStore;
             ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
             ULONG cbEntryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);
             LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rows->aRow[0].lpProps[entryIdColumn].Value.bin.lpb));
-            LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
-            MapiRecordKey storeKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+            QString name(stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ));
             /**** Test copy begin, TODO remove ****/
             SPropValue storeRecordKey;
             SPropValue storeEntryKey;
@@ -538,7 +591,7 @@ MapiStorePtr MapiSession::defaultStore()
             qDebug() << "post copy key" << storeRecordKeyB.toHex();
             /**** Test copy end ****/
             if (_mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK)
-                result = MapiStorePtr(new MapiStore(mapiStore, storeKey));
+                result = MapiStorePtr(new MapiStore(mapiStore, storeKey, name));
             FreeProws(rows);
             break;
         }
@@ -717,27 +770,40 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     Q_UNUSED(sortKey)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
-    return QMessageAccountIdList(); // stub
+    //TODO: For Windows desktop there is only one 'account' the defaultStore.
+    //TODO: But for Windows mobile an account for the 'SMS' message store should also be handled/returned.
+    QMessageAccountIdList result;
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore());
+    if (!mapiStore->isValid())
+        return result;
+
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    result.append(QMessageAccountId(mapiStore->id()));
+    // TODO for Windows Mobile only, also include the store named "SMS" if it exists.
+    return result;
 }
 
 int QMessageStore::countMessages(const QMessageFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    return queryMessages(key).count();
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    return queryFolders(key).count();
 }
 #endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
 {
-    Q_UNUSED(key)
-    return 0; // stub
+    return queryAccounts(key).count();
 }
 
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
@@ -776,18 +842,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     if (!mapiSession->isValid())
         return result;
 
-    MapiStorePtr mapiStore(mapiSession->defaultStore());
-    if (!mapiStore->isValid())
-        return result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
-
-    /* Begin debug code */
+    // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
     MapiRecordKey messageRecordKey;
     MapiRecordKey folderRecordKey;
     MapiRecordKey storeRecordKey;
     MapiEntryId entryId;
-    qDebug() << "id to string" << id.toString();
-
     QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
     idStream >> messageRecordKey;
     idStream >> folderRecordKey;
@@ -795,12 +854,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     if (!idStream.atEnd())
         idStream >> entryId;
 
-    qDebug() << "QMessageStore::message messageRecordKey" << messageRecordKey.toBase64();
-    qDebug() << "QMessageStore::message folderRecordKey" << folderRecordKey.toBase64();
-    qDebug() << "QMessageStore::message storeRecordKey" << storeRecordKey.toBase64();
-    qDebug() << "QMessageStore::message entryId" << entryId.toBase64();
-    //TODO fall back to recordKey if entryId is invalid.
-    /* end debug code */
+    QMessageAccountId accountId(storeRecordKey.toBase64());
+    MapiStorePtr mapiStore(mapiSession->findStore(accountId));
+    if (!mapiStore->isValid())
+        return result;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
     LPMESSAGE message;
     result.d_ptr->_id = id;
@@ -841,7 +899,6 @@ QMessage QMessageStore::message(const QMessageId& id) const
         QString sender(stringFromLpctstr(properties[senderColumn].Value.LPSZ));
         result.d_ptr->_from = QMessageAddress(sender, QMessageAddress::Email);
         result.d_ptr->_subject = stringFromLpctstr(properties[subjectColumn].Value.LPSZ);
-        qDebug() << "sender" << result.from().recipient() << "subject" << result.subject(); // TODO remove this
     } else {
         d_ptr->p_ptr->lastError = InvalidId;
     }
@@ -852,15 +909,50 @@ QMessage QMessageStore::message(const QMessageId& id) const
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
+    QMessageFolder result;
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
+        return result;
+
+    // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
+    MapiRecordKey folderRecordKey;
+    MapiRecordKey storeRecordKey;
+    QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
+    idStream >> folderRecordKey;
+    idStream >> storeRecordKey;
+    QMessageAccountId accountId(storeRecordKey.toBase64());
+    MapiStorePtr mapiStore(mapiSession->findStore(accountId));
+    if (!mapiStore->isValid())
+        return result;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+    mapiStore->setFolderFromId(id, result.d_ptr);
+    return result;
 }
 #endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageAccount(); // stub
+    QMessageAccount result;
+    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+
+    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
+    if (!mapiSession->isValid())
+        return result;
+
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    MapiStorePtr mapiStore(mapiSession->findStore(id));
+    if (mapiStore->isValid()) {
+        result.d_ptr->_id = mapiStore->id();
+        result.d_ptr->_name = mapiStore->name();
+        result.d_ptr->_types = QMessage::TypeFlags(QMessage::Email);
+        if (mapiStore->name() == "SMS") { // On Windows Mobile SMS store is named "SMS"
+            result.d_ptr->_types = QMessage::TypeFlags(QMessage::Sms);
+        }
+    }
+    return result;
 }
 
 void QMessageStore::startNotifications(const QMessageFilterKey &key)
