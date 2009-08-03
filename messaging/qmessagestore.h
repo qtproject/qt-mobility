@@ -104,6 +104,7 @@ public slots:
     void stopNotifications();
 
 private:
+    friend class QMessageServiceAction;
     friend class QGlobalStaticDeleter<QMessageStore>;
     QMessageStore(QObject *parent = 0);
     virtual ~QMessageStore();

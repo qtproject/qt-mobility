@@ -70,6 +70,7 @@ public:
     static QMessageAccountFilterKey name(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
+    friend class QMessageStore;
     QMessageAccountFilterKeyPrivate *d_ptr;
 };
 #endif
