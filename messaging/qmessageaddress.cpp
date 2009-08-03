@@ -63,6 +63,7 @@
 QMessageAddress::QMessageAddress()
     : d_ptr(new QMessageAddressPrivate(this))
 {
+    d_ptr->type = QMessageAddress::System;
 }
 
 /*!
@@ -106,6 +107,20 @@ QMessageAddress::~QMessageAddress()
 {
     delete d_ptr;
     d_ptr = 0;
+}
+
+/*!
+    Returns true if the message address is equal to that contained by \a other.
+*/
+bool QMessageAddress::operator==(const QMessageAddress& other) const
+{
+    return ((d_ptr->type == other.d_ptr->type) && (d_ptr->recipient == other.d_ptr->recipient));
+}
+
+/*! \internal */
+bool QMessageAddress::operator!=(const QMessageAddress& other) const
+{
+    return !operator==(other);
 }
 
 /*!

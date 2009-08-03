@@ -339,7 +339,12 @@ quint64 convert(QMessage::StatusFlags v)
 
 QMessageAddress convert(const QMailAddress &address)
 {
-    return QMessageAddress(address.toString(), QMessageAddress::Email);
+    const QString &addr(address.toString());
+    if (!addr.isEmpty()) {
+        return QMessageAddress(addr, QMessageAddress::Email);
+    }
+
+    return QMessageAddress();
 }
 
 QMailAddress convert(const QMessageAddress &address)

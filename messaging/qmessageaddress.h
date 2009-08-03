@@ -55,6 +55,9 @@ public:
     QMessageAddress(const QMessageAddress &other);
     const QMessageAddress& operator=(const QMessageAddress &other);
 
+    bool operator==(const QMessageAddress &other) const;
+    bool operator!=(const QMessageAddress &other) const;
+
     virtual ~QMessageAddress();
     QString recipient() const;
     void setRecipient(const QString &recipient);
