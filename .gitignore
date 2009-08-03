@@ -19,6 +19,7 @@ moc_*.cpp
 *.ib_pdb_index
 build
 lib
+*.app
 
 #Symbian specific
 *.mmp
