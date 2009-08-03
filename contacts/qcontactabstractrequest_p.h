@@ -49,6 +49,7 @@
 #include "qcontactabstractrequest.h"
 
 #include <QList>
+#include <QPointer>
 
 #define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr); } \
@@ -70,7 +71,7 @@ public:
 
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;
-    QContactManager* m_manager;
+    QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
 };
 

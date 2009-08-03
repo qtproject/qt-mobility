@@ -11,6 +11,7 @@ CONFIG += ordered
 
 SUBDIRS +=  qcontact\
             qcontactactions\
+            qcontactasync\
             qcontactdetail\
             qcontactdetaildefinition\
             qcontactdetails\

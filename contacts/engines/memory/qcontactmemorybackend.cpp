@@ -415,7 +415,7 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
     d->m_asynchronousOperations.enqueue(req);
     QList<QContactManager::Error> dummy;
     updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
-    QTimer::singleShot((qrand()*900) + 100, this, SLOT(performAsynchronousOperation()));
+    QTimer::singleShot((qrand()%900) + 100, this, SLOT(performAsynchronousOperation()));
     return true;
 }
 
