@@ -102,6 +102,7 @@ public:
     virtual void setType(Type t);
 
     virtual QMessageAccountId parentAccountId() const;
+    virtual void setParentAccountId(const QMessageAccountId &accountId);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     virtual QMessageFolderId parentFolderId() const;
 #endif

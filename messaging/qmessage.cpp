@@ -256,6 +256,17 @@
 */
     
 /*!
+    \fn QMessage::setParentAccountId(const QMessageAccountId &accountId) const
+    
+    Sets the parent account of the message to the account with identifier \a accountId.
+    
+    This operation is only permitted on new messages that have not yet been inserted into
+    the message store. Attempting to change the parent account of a message already
+    in the message store will result in an error when attempting to update the message
+    with QMessageStore::update().
+*/
+    
+/*!
     \fn QMessage::parentFolderId() const
   
     Returns the identifier of the folder that contains the message if any; otherwise returns an 

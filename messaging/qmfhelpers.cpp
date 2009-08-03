@@ -34,6 +34,8 @@
 #include "qmfhelpers_p.h"
 #include "qmessagestore.h"
 
+#include <QRegExp>
+
 namespace {
 
 quint64 messageStatusMask(const QString &field)
@@ -339,12 +341,43 @@ quint64 convert(QMessage::StatusFlags v)
 
 QMessageAddress convert(const QMailAddress &address)
 {
-    return QMessageAddress(address.toString(), QMessageAddress::Email);
+    QString addr(address.toString());
+    if (!addr.isEmpty()) {
+        QMessageAddress::Type type(QMessageAddress::Email);
+
+        QRegExp suffix("\\s+\\(TYPE=(\\w*)\\)$");
+        int index = suffix.indexIn(addr);
+        if (index != -1) {
+            addr = addr.left(addr.length() - suffix.cap(0).length());
+
+            QString spec(suffix.cap(1));
+            if (spec == "System") {
+                type = QMessageAddress::System;
+            } else if (spec == "Phone") {
+                type = QMessageAddress::Phone;
+            } else if (spec == "XMPP") {
+                type = QMessageAddress::Xmpp;
+            }
+        }
+
+        return QMessageAddress(addr, type);
+    }
+
+    return QMessageAddress();
 }
 
 QMailAddress convert(const QMessageAddress &address)
 {
-    return QMailAddress(address.recipient());
+    QString suffix;
+    if (address.type() == QMessageAddress::System) {
+        suffix = " (TYPE=System)";
+    } else if (address.type() == QMessageAddress::Phone) {
+        suffix = " (TYPE=Phone)";
+    } else if (address.type() == QMessageAddress::Xmpp) {
+        suffix = " (TYPE=XMPP)";
+    }
+
+    return QMailAddress(address.recipient() + suffix);
 }
 
 QMessageAddressList convert(const QList<QMailAddress> &list)

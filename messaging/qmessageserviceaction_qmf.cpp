@@ -112,7 +112,7 @@ void QMessageServiceAction::cancelOperation()
 {
 }
 
-QMessageServiceAction::ErrorCode QMessageServiceAction::lastError() const
+QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
-    return NoError;
+    return QMessageStore::NoError;
 }

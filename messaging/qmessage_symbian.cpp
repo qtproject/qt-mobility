@@ -101,6 +101,11 @@ QMessageAccountId QMessage::parentAccountId() const
     return QMessageAccountId(); // stub
 }
 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId) const
+{
+    Q_UNUSED(accountId)
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {

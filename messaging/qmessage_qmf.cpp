@@ -284,6 +284,11 @@ QMessageAccountId QMessage::parentAccountId() const
     return convert(d_ptr->_message.parentAccountId());
 }
 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
+{
+    d_ptr->_message.setParentAccountId(convert(accountId));    
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
@@ -532,7 +537,11 @@ QString QMessage::customField(const QString &name) const
 
 void QMessage::setCustomField(const QString &name, const QString &value)
 {
-    d_ptr->_message.setCustomField(name, value);
+    if (value.isNull()) {
+        d_ptr->_message.removeCustomField(name);
+    } else {
+        d_ptr->_message.setCustomField(name, value);
+    }
 }
 
 QList<QString> QMessage::customFields() const
