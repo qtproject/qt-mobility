@@ -45,55 +45,107 @@
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
+class QGstreamerVideoEncode;
+class QGstreamerCaptureControl;
+class QGstreamerMediaFormatControl;
 
-class QGstreamerCaptureSession : public QMediaCaptureControl
+class QGstreamerElementFactory
+{
+public:
+    virtual GstElement *buildElement() = 0;
+    virtual void prepareWinId() {}
+};
+
+class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
-    QGstreamerCaptureSession(QObject *parent);
+    enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
+    enum State { StoppedState, PreviewState, PausedState, RecordingState };
+
+    QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
     QMediaSink sink() const;
     bool setSink(const QMediaSink& sink);
 
-    int state() const;
-
-    qint64 position() const;    
-
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
+    QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
+    QGstreamerCaptureControl *captureControl() const { return m_captureControl; }
+    QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
+
+    void setAudioInput(QGstreamerElementFactory *audioInput);
+    void setAudioPreview(QGstreamerElementFactory *audioPreview);
+
+    void setVideoInput(QGstreamerElementFactory *videoInput);
+    void setVideoPreview(QGstreamerElementFactory *videoPreview);
+
+    State state() const;
+    qint64 position() const;
+
+    bool isPreviewEnabled() const { return m_previewEnabled; }
 
 signals:
-    void stateChanged(int state);
+    void stateChanged(QGstreamerCaptureSession::State state);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 public slots:
-    void record();
-    void pause();
-    void stop();
-
+    void setState(QGstreamerCaptureSession::State);
     void setCaptureDevice(const QString &deviceName);
+
+    void dumpGraph(const QString &fileName);
+    void enablePreview(bool enabled);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
 
 private:
-    QMediaSink m_sink;
-    QMediaCapture::State m_state;
-    QGstreamerBusHelper *m_busHelper;
-    QGstreamerAudioEncode *m_audioEncodeControl;
-    GstBus* m_bus;
+    enum PipelineMode { EmptyPipeline, PreviewPipeline, RecordingPipeline, PreviewAndRecordingPipeline };
 
+    GstElement *buildEncodeBin();
+    GstElement *buildAudioSrc();
+    GstElement *buildAudioPreview();
+    GstElement *buildVideoSrc();
+    GstElement *buildVideoPreview();
+
+    void waitForStopped();
+    void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
+
+    QMediaSink m_sink;
+    QString m_captureDevice;
+    State m_state;
+    PipelineMode m_pipelineMode;
+    QGstreamerCaptureSession::CaptureMode m_captureMode;
+    bool m_previewEnabled;
+
+    QGstreamerElementFactory *m_audioInputFactory;
+    QGstreamerElementFactory *m_audioPreviewFactory;
+    QGstreamerElementFactory *m_videoInputFactory;
+    QGstreamerElementFactory *m_videoPreviewFactory;
+
+    QGstreamerAudioEncode *m_audioEncodeControl;
+    QGstreamerVideoEncode *m_videoEncodeControl;
+    QGstreamerCaptureControl *m_captureControl;
+    QGstreamerMediaFormatControl *m_mediaFormatControl;
+
+    QGstreamerBusHelper *m_busHelper;
+    GstBus* m_bus;
     GstElement *m_pipeline;
 
-    GstElement *m_audiosrc;
-    GstElement *m_tee;
-    GstElement *m_audioconvert1;
-    GstElement *m_volume;
-    GstElement *m_encoder;    
-    GstElement *m_filesink;
-    GstElement *m_audioconvert2;
-    GstElement *m_fakesink;
+    GstElement *m_audioSrc;
+    GstElement *m_audioTee;
+    GstElement *m_audioPreviewQueue;
+    GstElement *m_audioPreview;
+
+    GstElement *m_videoSrc;
+    GstElement *m_videoTee;
+    GstElement *m_videoPreviewQueue;
+    GstElement *m_videoPreview;
+
+    GstElement *m_encodeBin;
+
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H

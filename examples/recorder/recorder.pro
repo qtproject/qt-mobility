@@ -1,14 +1,14 @@
 TEMPLATE = app
+CONFIG += example
 
 # Qt += multimedia
 # DEFINES += AUDIOSERVICES
+include(../../common.pri)
+
 INCLUDEPATH += $$PWD/../../multimedia \
     $$PWD/../../multimedia/endpoints
-LIBS += -L$$OUT_PWD/../../lib \
-    -lQtMedia
+LIBS += -lQtMedia
 QMAKE_RPATHDIR += $$OUT_PWD/../../lib
-
-DESTDIR = ../../bin
 
 HEADERS = recorder.h
 

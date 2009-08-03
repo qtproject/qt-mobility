@@ -53,16 +53,21 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
-class QPainterVideoSurface : public QAbstractVideoSurface
+#include <qmultimediaglobal.h>
+
+class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:
     QPainterVideoSurface(QObject *parent = 0);
     ~QPainterVideoSurface();
 
-    bool isFormatSupported(const QVideoFormat &format, QVideoFormat *similar = 0);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
 
-    bool start(const QVideoFormat &format);
+    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
+
+    bool start(const QVideoSurfaceFormat &format);
     void stop();
 
     bool present(const QVideoFrame &frame);
@@ -77,7 +82,7 @@ Q_SIGNALS:
 
 private:
     QVideoFrame m_frame;
-    QVideoFrame::Type m_frameType;
+    QVideoFrame::PixelFormat m_pixelFormat;
     QImage::Format m_imageFormat;
     QSize m_imageSize;
     QRect m_sourceRect;

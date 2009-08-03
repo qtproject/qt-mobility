@@ -35,22 +35,16 @@ public:
     QVariant encodingOption(const QString &name);
     void setEncodingOption(const QString &name, const QVariant &value);
 
-    void applyOptions();
-    GstElement *encoder();
+    GstElement *createEncoder();
 
 private:
-    GstBin *m_encoderBin;
-    GstElement *m_encoderElement;
-    GstElement *m_muxerElement;
-    GstElement *m_capsfilter;
-    GstElement *m_identity2;
-
-    QMap<QString, QVariant> m_options;
-    QString m_codec;
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
-    QMap<QString,QString> m_muxers;
+
+    QAudioFormat m_audioFormat;
+    QMap<QString, QVariant> m_options;
+    QString m_codec;
 };
 
 #endif

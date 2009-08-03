@@ -263,22 +263,8 @@ QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
 */
 QObject *QAbstractMediaService::createEndpoint(const char *interface)
 {
-#ifdef QT_NO_VIDEOSURFACE
     Q_UNUSED(interface);
-#else
-    if (qstrcmp(interface, QMediaWidgetEndpointInterface_iid)) {
-        QObject *object = createEndpoint(QVideoRendererEndpointInterface_iid);
 
-        if (object) {
-            QVideoRendererEndpoint *renderer = qobject_cast<QVideoRendererEndpoint *>(object);
-
-            if (renderer)
-                return new QVideoRendererWidget(renderer);
-
-            delete object;
-        }
-    }
-#endif
     return 0;
 }
 

@@ -20,11 +20,12 @@ protected slots:
     virtual void setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio);
     virtual void setCustomAspectRatio(const QSize &ratio);
 
+    void setOverlay();
+
 protected:
     virtual bool event(QEvent*);
 
 private:
-    void setOverlay();
     void windowExposed();
 
     GstElement *m_videoSink;

@@ -1,10 +1,13 @@
 
 INCLUDEPATH += $$PWD
 
-# QT += multimedia
 # DEFINES += AUDIOSERVICES
 
-DEFINES += QT_NO_VIDEOSURFACE
+multimedia {
+    QT += multimedia
+} else {
+    DEFINES += QT_NO_VIDEOSURFACE
+}
 
 HEADERS += \
     $$PWD/qaudiodeviceendpoint.h \
@@ -14,6 +17,7 @@ HEADERS += \
     $$PWD/qmediawidgetendpoint.h \
     $$PWD/qmediawidgetendpoint_p.h \
     $$PWD/qpaintervideosurface_p.h \
+    $$PWD/qvideooverlayendpoint.h \
     $$PWD/qvideorendererendpoint.h \
     $$PWD/qvideorendererwidget_p.h
 
@@ -24,5 +28,6 @@ SOURCES += \
     $$PWD/qmediaendpointinterface.cpp \
     $$PWD/qmediawidgetendpoint.cpp \
     $$PWD/qpaintervideosurface.cpp \
+    $$PWD/qvideooverlayendpoint.cpp \
     $$PWD/qvideorendererendpoint.cpp \
     $$PWD/qvideorendererwidget.cpp

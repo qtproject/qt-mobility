@@ -4,9 +4,13 @@ CONFIG += plugin
 TARGET = mpd
 QT += network
 
+PLUGIN_SUBDIR = mediaservice
+
+include (../../common.pri)
+
+LIBS += -lQtMedia
+
 INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
-LIBS += -L../../lib -lQtMedia
-DESTDIR = ../../lib/mediaservice
 
 HEADERS = \
     mpddaemon.h \

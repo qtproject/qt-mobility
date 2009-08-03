@@ -44,6 +44,7 @@ namespace Ui {
 class QMediaCapture;
 class QAudioDeviceEndpoint;
 class QAudioEncodeControl;
+class QMediaFormatControl;
 
 class Recorder : public QMainWindow
 {
@@ -60,7 +61,10 @@ private slots:
 
     void setInputDevice(int idx);
     void setAudioCodec(int idx);
+    void setContainerFormat(int idx);
     void setQuality(int value);
+
+    void displayErrorMessage();
 
 private:
     Ui::Recorder *ui;
@@ -68,6 +72,7 @@ private:
     QMediaCapture* audioCapture;
     QAudioDeviceEndpoint *audioDevice;
     QAudioEncodeControl *encodeControl;
+    QMediaFormatControl *formatControl;
 };
 
 #endif

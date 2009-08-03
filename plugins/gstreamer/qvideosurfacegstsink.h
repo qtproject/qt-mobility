@@ -26,7 +26,7 @@
 #include <QtCore/qmutex.h>
 #include <QtCore/qpointer.h>
 #include <QtCore/qwaitcondition.h>
-#include <QtMultimedia/qvideoformat.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtMultimedia/qvideoframe.h>
 
 QT_BEGIN_NAMESPACE
@@ -38,7 +38,9 @@ class QVideoSurfaceGstDelegate : public QObject
 public:
     QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
 
-    bool start(const QVideoFormat &format, int bytesPerLine);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats() const;
+
+    bool start(const QVideoSurfaceFormat &format, int bytesPerLine);
     void stop();
 
     GstFlowReturn render(GstBuffer *buffer);
@@ -53,7 +55,7 @@ private:
     QMutex m_mutex;
     QWaitCondition m_setupCondition;
     QWaitCondition m_renderCondition;
-    QVideoFormat m_format;
+    QVideoSurfaceFormat m_format;
     QVideoFrame m_frame;
     GstFlowReturn m_renderReturn;
     int m_bytesPerLine;
@@ -94,7 +96,6 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
-    GstCaps *supportedCaps;
 };
 
 

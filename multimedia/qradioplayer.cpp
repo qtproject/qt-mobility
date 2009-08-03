@@ -157,6 +157,11 @@ void QRadioPlayer::setMuted(bool muted)
     d_func()->control->setMuted(muted);
 }
 
+bool QRadioPlayer::isValid() const
+{
+    return d_func()->control->isValid();
+}
+
 void QRadioPlayer::searchForward()
 {
     d_func()->control->searchForward();

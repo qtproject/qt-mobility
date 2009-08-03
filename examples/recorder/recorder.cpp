@@ -38,7 +38,13 @@
 #include <qabstractmediaservice.h>
 #include <qmediacapture.h>
 #include <qaudiodeviceendpoint.h>
+#include <qmediawidgetendpoint.h>
 #include <qaudioencodecontrol.h>
+#include <qmediaformatcontrol.h>
+
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#endif
 
 #include <QtGui>
 
@@ -53,6 +59,7 @@ Recorder::Recorder(QWidget *parent) :
     audioDevice = audioCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     connect(audioCapture, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
+    connect(audioCapture, SIGNAL(error(QMediaCapture::Error)), this, SLOT(displayErrorMessage()));
 
     if (audioDevice) {
         audioCapture->service()->setAudioInput(audioDevice);
@@ -67,8 +74,6 @@ Recorder::Recorder(QWidget *parent) :
             audioCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
 
     if (encodeControl) {
-        encodeControl->setAudioCodec("lame");
-
         foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
             QString description = encodeControl->codecDescription(codecName);
             ui->audioCodecBox->addItem(codecName+": "+description);
@@ -81,6 +86,30 @@ Recorder::Recorder(QWidget *parent) :
         ui->audioCodecBox->setEnabled(false);
         ui->qualitySlider->setEnabled(false);
     }
+
+    formatControl = qobject_cast<QMediaFormatControl*>(
+            audioCapture->service()->control("com.nokia.qt.MediaFormatControl"));
+
+    if (formatControl) {
+        foreach(const QString &formatName, formatControl->supportedFormats()) {
+            QString description = formatControl->formatDescription(formatName);
+            ui->containerFormatBox->addItem(formatName+": "+description);
+            if (formatName == formatControl->format())
+                ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
+        }
+    } else {
+        ui->containerFormatBox->setEnabled(false);
+    }
+
+    QWidget *videoWidget = audioCapture->service()->createEndpoint<QMediaWidgetEndpoint *>();
+
+    if (videoWidget) {
+        qDebug() << "service supports video widgets, nice";
+        audioCapture->service()->setVideoOutput(videoWidget);
+    }
+
+    videoWidget->show();
+
 }
 
 Recorder::~Recorder()
@@ -119,7 +148,13 @@ void Recorder::setAudioCodec(int idx)
 void Recorder::setQuality(int value)
 {
     if (encodeControl)
-        encodeControl->setQuality(value);    
+        encodeControl->setQuality(value);
+}
+
+void Recorder::setContainerFormat(int idx)
+{
+    if (formatControl)
+        formatControl->setFormat(formatControl->supportedFormats()[idx]);
 }
 
 void Recorder::record()
@@ -139,4 +174,9 @@ void Recorder::stop()
 {
     if (audioCapture)
         audioCapture->stop();
+}
+
+void Recorder::displayErrorMessage()
+{
+    QMessageBox::warning(this, "Capture error", audioCapture->errorString());
 }

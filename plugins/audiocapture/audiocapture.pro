@@ -12,12 +12,14 @@ INCLUDEPATH += . \
     ../../multimedia/endpoints
 
 # Input
-HEADERS += audiocapturecontrol.h \
+HEADERS += audioencode.h \
+    audiodeviceendpoint.h \
     audiocaptureservice.h \
     audiocaptureserviceplugin.h \
     audiocapturesession.h
 
-SOURCES += audiocapturecontrol.cpp \
+SOURCES += audioencode.cpp \
+    audiodeviceendpoint.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
     audiocapturesession.cpp

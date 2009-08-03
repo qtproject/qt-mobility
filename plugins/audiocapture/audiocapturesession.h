@@ -35,25 +35,54 @@
 #ifndef AUDIOCAPTURESESSION_H
 #define AUDIOCAPTURESESSION_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qiodevice.h>
+#include <QFile>
 
-class AudioCaptureSession : public QObject
+#include "audioencode.h"
+#include "qmediacapturecontrol.h"
+#include "qmediasink.h"
+#include "qmediacapture.h"
+
+#include <QtMultimedia/qaudioinput.h>
+
+class AudioCaptureSession : public QMediaCaptureControl
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
     AudioCaptureSession(QObject *parent = 0);
     ~AudioCaptureSession();
 
-    void setOutputDevice(QIODevice *device);
-    void setInputDevice(QIODevice *device);
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink& sink);
+
+    int state() const;
+
+    qint64 position() const;
+
+    AudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
+
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
 
 public slots:
-    void dataReady();
+    void record();
+    void pause();
+    void stop();
+
+    void setCaptureDevice(const QString &deviceName);
+
+private slots:
+    void stateChanged(QAudio::State);
+    void notify();
 
 private:
-    QIODevice* input;
-    QIODevice* output;
+    QFile file;
+    QMediaSink m_sink;
+    QMediaCapture::State m_state;
+    AudioEncode *m_audioEncodeControl;
+    QAudioInput *m_audioInput;
+    qint64 m_position;
 };
 
 #endif

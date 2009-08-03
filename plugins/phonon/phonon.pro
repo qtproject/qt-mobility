@@ -4,9 +4,12 @@ CONFIG += plugin
 QT += phonon
 TARGET = phononengine
 
-LIBS += -L../../lib -lQtMedia
+PLUGIN_SUBDIR = mediaservice
 
-DESTDIR = $$OUT_PWD/../../lib/mediaservice
+include (../../common.pri)
+
+LIBS += -lQtMedia
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \

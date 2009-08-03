@@ -46,7 +46,7 @@ extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaSer
 
 class QMediaCapturePrivate;
 
-class QMediaCapture : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaCapture : public QAbstractMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)

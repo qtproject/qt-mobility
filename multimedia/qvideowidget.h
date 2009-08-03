@@ -32,27 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLACEHOLDERWIDGET_H
-#define QWMPPLACEHOLDERWIDGET_H
+#ifndef QVIDEOWIDGET_H
+#define QVIDEOWIDGET_H
 
-#include "qmediawidgetendpoint.h"
+#include <QtGui/qwidget.h>
 
-class QWmpPlaceholderWidget : public QMediaWidgetEndpoint
+#include "qmultimediaglobal.h"
+
+class QAbstractMediaService;
+
+class QVideoWidgetPrivate;
+
+class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen NOTIFY fullscreenChanged)
+    Q_DECLARE_PRIVATE(QVideoWidget)
 public:
-    QWmpPlaceholderWidget(QWidget *parent = 0);
-    ~QWmpPlaceholderWidget();
+    QVideoWidget(QAbstractMediaService *service, QWidget *parent = 0);
+    ~QVideoWidget();
 
-public:
-    QSize sizeHint() const;
-    void setSizeHint(const QSize &size);
+    bool isFullscreen() const;
 
 public Q_SLOTS:
     void setFullscreen(bool fullscreen);
 
+Q_SIGNALS:
+    void fullscreenChanged(bool fullscreen);
+
+protected:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+    void moveEvent(QMoveEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
+
 private:
-    QSize m_sizeHint;
+    Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
 };
 
 #endif

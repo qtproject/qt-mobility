@@ -37,6 +37,7 @@
 #ifndef QT_NO_VIDEOSURFACE
 
 #include <qpainter.h>
+#include <qvideosurfaceformat.h>
 
 /*!
     \class QPainterVideoSurface
@@ -47,16 +48,10 @@
 */
 QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
     : QAbstractVideoSurface(parent)
-    , m_frameType(QVideoFrame::InvalidType)
+    , m_pixelFormat(QVideoFrame::Format_Invalid)
     , m_imageFormat(QImage::Format_Invalid)
     ,  m_ready(false)
 {
-    setSupportedTypes(QList<QVideoFrame::Type>()
-            << QVideoFrame::Image_RGB32
-            << QVideoFrame::Image_ARGB32
-            << QVideoFrame::Image_ARGB32_Premultiplied
-            << QVideoFrame::Image_RGB565
-            << QVideoFrame::Image_RGB555);
 }
 
 /*!
@@ -67,11 +62,29 @@ QPainterVideoSurface::~QPainterVideoSurface()
 
 /*!
 */
-bool QPainterVideoSurface::isFormatSupported(const QVideoFormat &format, QVideoFormat *similar)
+QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
+        QAbstractVideoBuffer::HandleType handleType) const
+{
+    if (handleType == QAbstractVideoBuffer::NoHandle) {
+        return QList<QVideoFrame::PixelFormat>()
+            << QVideoFrame::Format_RGB32
+            << QVideoFrame::Format_ARGB32
+            << QVideoFrame::Format_ARGB32_Premultiplied
+            << QVideoFrame::Format_RGB565
+            << QVideoFrame::Format_RGB555;
+    } else {
+        return QList<QVideoFrame::PixelFormat>();
+    }
+}
+
+/*!
+*/
+bool QPainterVideoSurface::isFormatSupported(
+        const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar)
 {
     Q_UNUSED(similar);
 
-    QImage::Format imageFormat = QVideoFrame::imageFormatFromType(format.frameType());
+    QImage::Format imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
     QSize imageSize = format.frameSize();
 
     return imageFormat != QImage::Format_Invalid && !imageSize.isEmpty();
@@ -79,9 +92,9 @@ bool QPainterVideoSurface::isFormatSupported(const QVideoFormat &format, QVideoF
 
 /*!
 */
-bool QPainterVideoSurface::start(const QVideoFormat &format)
+bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
-    QImage::Format imageFormat = QVideoFrame::imageFormatFromType(format.frameType());
+    QImage::Format imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
     QSize imageSize = format.frameSize();
 
     if (imageFormat == QImage::Format_Invalid || imageSize.isEmpty()) {
@@ -95,10 +108,7 @@ bool QPainterVideoSurface::start(const QVideoFormat &format)
         m_sourceRect = format.viewport();
         m_ready = true;
 
-        setFormat(format);
-        setStarted(true);
-
-        return true;
+        return QAbstractVideoSurface::start(format);
     }
 }
 
@@ -112,8 +122,7 @@ void QPainterVideoSurface::stop()
     m_sourceRect = QRect();
     m_ready = false;
 
-    setFormat(QVideoFormat());
-    setStarted(false);
+    QAbstractVideoSurface::stop();
 }
 
 /*!
@@ -124,7 +133,7 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
         setError(isStarted() ? StoppedError : NotReadyError);
 
         return false;
-    } else if (frame.type() != m_frameType || frame.size() != m_imageSize) {
+    } else if (frame.pixelFormat() != m_pixelFormat || frame.size() != m_imageSize) {
         setError(IncorrectFormatError);
 
         return false;
@@ -156,7 +165,7 @@ void QPainterVideoSurface::setReady(bool ready)
 */
 void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 {
-    if (!m_frame.isNull()) {
+    if (!m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
         QImage image(
                 m_frame.bits(),
                 m_imageSize.width(),

@@ -52,11 +52,11 @@
 class QCameraService;
 class QCameraControl;
 
-extern QCameraService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
+extern Q_MEDIA_EXPORT QAbstractMediaService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
 
 class QCameraPrivate;
 
-class QCamera : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 {
     Q_OBJECT
 #ifdef VIDEOSERVICES
@@ -76,8 +76,11 @@ class QCamera : public QAbstractMediaObject
     Q_PROPERTY(bool autofocus READ autofocus WRITE setAutofocus)
 #endif
 public:
-    QCamera(QCameraService *service = createCameraService(), QObject *parent = 0);
+    QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
     ~QCamera();
+
+    void start();
+    void stop();
 
 #ifdef VIDEOSERVICES
     QList<QByteArray> deviceList();
@@ -86,9 +89,6 @@ public:
 
     QVideoFormat format() const;
     void setFormat(const QVideoFormat &format);
-
-    void start();
-    void stop();
 
     int framerate() const;
     void setFrameRate(int rate);

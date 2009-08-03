@@ -37,13 +37,15 @@
 #include "playercontrols.h"
 #include "playlistmodel.h"
 
+#include <qabstractmediaservice.h>
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
-#include <qabstractmediaservice.h>
-
-#include "qmediawidgetendpoint.h"
+#include <qmediawidgetendpoint.h>
+#include <qvideowidget.h>
 
 #include <QtGui>
+
+#define USE_VIDEOWIDGET
 
 Player::Player(QWidget *parent)
     : QWidget(parent)
@@ -62,6 +64,9 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferingChanged(bool)), this, SLOT(bufferingChanged(bool)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
+#ifdef USE_VIDEOWIDGET
+    QWidget *videoWidget = new QVideoWidget(player->service());
+#else
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
     if (videoWidget) {
@@ -70,7 +75,7 @@ Player::Player(QWidget *parent)
     } else {
         coverLabel = new QLabel;
     }
-
+#endif
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(player->mediaPlaylist());
 

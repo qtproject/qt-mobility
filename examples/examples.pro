@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS *= player
+SUBDIRS *= player recorder cameracapture

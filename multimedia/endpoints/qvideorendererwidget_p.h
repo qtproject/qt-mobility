@@ -54,7 +54,7 @@ class QVideoRendererEndpoint;
 
 class QVideoRendererWidgetPrivate;
 
-class QVideoRendererWidget : public QMediaWidgetEndpoint
+class Q_MEDIA_EXPORT QVideoRendererWidget : public QMediaWidgetEndpoint
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QVideoRendererWidget)

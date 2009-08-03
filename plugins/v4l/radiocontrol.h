@@ -73,6 +73,8 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
+    bool isValid() const;
+
     void searchForward();
     void searchBackward();
 

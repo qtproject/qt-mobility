@@ -43,6 +43,7 @@
 
 
 #include "qgstreamervideowidget.h"
+#include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
 
 #include "qmediaplaylistnavigator.h"
@@ -85,6 +86,7 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
     if (direction == QMediaEndpointInterface::Output) {
         res << QMediaWidgetEndpoint_iid;
 #ifndef QT_NO_VIDEOSURFACE
+        res << QVideoOverlayEndpoint_iid;
         res << QVideoRendererEndpoint_iid;
 #endif
     }
@@ -100,6 +102,11 @@ QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
     }
 
 #ifndef QT_NO_VIDEOSURFACE
+    if (qstrcmp(interface, QVideoOverlayEndpoint_iid) == 0) {
+        qDebug("new Gstreamer video overlay");
+        return new QGstreamerVideoOverlay;
+    }
+
     if (qstrcmp(interface,QVideoRendererEndpoint_iid) == 0) {
         return new QGstreamerVideoRenderer;
     }

@@ -39,9 +39,9 @@
 
 #include "qaudiocaptureservice.h"
 
-class AudioCaptureControl;
+class AudioCaptureSession;
 
-class AudioCaptureService : public QAudioCaptureService
+class AudioCaptureService : public QAbstractMediaService
 {
     Q_OBJECT
 public:
@@ -49,11 +49,12 @@ public:
     ~AudioCaptureService();
 
     QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
+    void setAudioInput(QObject *input);
     QObject *createEndpoint(const char *interface);
 
     QAbstractMediaControl *control(const char *name) const;
 private:
-    AudioCaptureControl *m_control;
+    AudioCaptureSession *m_session;
 };
 
 #endif

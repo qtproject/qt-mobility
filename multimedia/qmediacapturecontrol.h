@@ -50,7 +50,7 @@ public:
 
     virtual int state() const = 0;
 
-    virtual qint64 position() const = 0;    
+    virtual qint64 position() const = 0;
 
 signals:
     void stateChanged(int state);
@@ -62,7 +62,7 @@ public slots:
     virtual void pause() = 0;
     virtual void stop() = 0;
 
-protected:    
+protected:
     QMediaCaptureControl(QObject* parent);
 };
 

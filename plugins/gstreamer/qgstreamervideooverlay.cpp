@@ -32,45 +32,67 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOCAPTURECONTROL_H
-#define AUDIOCAPTURECONTROL_H
+#include "qgstreamervideooverlay.h"
+#include "qvideosurfacegstsink.h"
 
-#include <QtCore/qobject.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudioformat.h>
-#endif
+#include "qx11videosurface.h"
 
-#include "qaudiocapturecontrol.h"
-
-class AudioCaptureService;
-class AudioCaptureSession;
-
-class AudioCaptureControl : public QAudioCaptureControl
+QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
+    : QVideoOverlayEndpoint(parent)
+    , m_surface(new QX11VideoSurface)
+    , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
 {
-    Q_OBJECT
-public:
-    AudioCaptureControl(QObject *parent = 0);
-    AudioCaptureControl(AudioCaptureService *service, QObject *parent = 0);
-    ~AudioCaptureControl();
+    if (m_videoSink) {
+        gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
+        gst_object_sink(GST_OBJECT(m_videoSink));
+    }
+}
 
-#ifdef AUDIOSERVICES
-    QAudioFormat inputFormat() const;
-    bool setInputFormat(const QAudioFormat &format);
-    QAudioFormat outputFormat() const;
-    bool setOutputFormat(const QAudioFormat &format);
-#endif
-    void setInputDevice(QIODevice *device);
-    void setOutputDevice(QIODevice *device);
+QGstreamerVideoOverlay::~QGstreamerVideoOverlay()
+{
+    if (m_videoSink)
+        gst_object_unref(GST_OBJECT(m_videoSink));
 
-private:
-    AudioCaptureService *m_service;
-    AudioCaptureSession *m_session;
+    delete m_surface;
+}
 
-#ifdef AUDIOSERVICES
-    QAudioFormat m_inputFormat;
-    QAudioFormat m_outputFormat;;
-#endif
-};
+void QGstreamerVideoOverlay::setEnabled(bool enabled)
+{
+    QVideoOverlayEndpoint::setEnabled(enabled);
+}
 
-#endif
+void QGstreamerVideoOverlay::setWinId(WId id)
+{
+    m_surface->setWinId(id);
+
+    QVideoOverlayEndpoint::setWinId(id);
+}
+
+void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
+{
+    m_surface->setDisplayRect(rect);
+
+    QVideoOverlayEndpoint::setDisplayRect(rect);
+}
+
+void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
+{
+    QVideoOverlayEndpoint::setFullscreen(fullscreen);
+}
+
+QSize QGstreamerVideoOverlay::sizeHint() const
+{
+    return m_surface->surfaceFormat().sizeHint();
+}
+
+QAbstractVideoSurface *QGstreamerVideoOverlay::surface() const
+{
+    return m_surface;
+}
+
+GstElement *QGstreamerVideoOverlay::videoSink()
+{
+    return m_videoSink;
+}
