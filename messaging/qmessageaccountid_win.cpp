@@ -30,18 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountid.h"
+#include "qmessageaccountid_p.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
-
-typedef QByteArray MapiRecordKey;
-
-class QMessageAccountIdPrivate
-{
-public:
-    MapiRecordKey _storeRecordKey;
-};
 
 QMessageAccountId::QMessageAccountId()
     : d_ptr(0)
@@ -55,7 +47,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 }
 
 QMessageAccountId::QMessageAccountId(const QString& id)
-    : d_ptr(new QMessageAccountIdPrivate)
+    : d_ptr(new QMessageAccountIdPrivate(this))
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
     idStream >> d_ptr->_storeRecordKey;
@@ -83,7 +75,7 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     if (&other != this) {
         if (other.isValid()) {
             if (!d_ptr) {
-                d_ptr = new QMessageAccountIdPrivate;
+                d_ptr = new QMessageAccountIdPrivate(this);
             }
             d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
         } else {

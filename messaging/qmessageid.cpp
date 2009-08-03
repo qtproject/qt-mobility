@@ -30,7 +30,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageid.h"
 #include "qmessageid_p.h"
 
 /*!
