@@ -284,6 +284,11 @@ QMessageAccountId QMessage::parentAccountId() const
     return convert(d_ptr->_message.parentAccountId());
 }
 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
+{
+    d_ptr->_message.setParentAccountId(convert(accountId));    
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
