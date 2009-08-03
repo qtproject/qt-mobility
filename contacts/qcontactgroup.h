@@ -51,6 +51,8 @@ public:
     QContactGroup& operator=(const QContactGroup& other);
     virtual ~QContactGroup();
 
+    bool operator==(const QContactGroup& other) const;
+
     enum Error {
         NoError = 0,
         OutOfMemoryError,
@@ -73,7 +75,7 @@ public:
     QList<QUniqueId> members() const;
 
     // also need some way of retrieving the current index/position of a contact in the group
-    // and of moving a contact "up" or "down" in the group.
+    // and of moving a contact "up" or "down" in the group?
 
 private:
     friend class QContactManager;

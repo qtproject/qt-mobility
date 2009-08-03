@@ -595,6 +595,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactManager::Error> operationErrors;
             QList<QContactGroup> requestedGroups;
             QList<QUniqueId> requestedGroupIds = r->ids();
+            if (requestedGroupIds.isEmpty())
+                requestedGroupIds = groups(operationError); // all groups.
 
             QContactManager::Error tempError;
             for (int i = 0; i < requestedGroupIds.size(); i++) {

@@ -65,6 +65,18 @@ QContactGroup::~QContactGroup()
 {
 }
 
+/*! Returns true if the id, name and member list of this group is equal to that of \a other; otherwise, returns false */
+bool QContactGroup::operator==(const QContactGroup& other) const
+{
+    if (d->m_id != other.d->m_id)
+        return false;
+    if (d->m_name != other.d->m_name)
+        return false;
+    if (d->m_members != other.d->m_members)
+        return false;
+    return true;
+}
+
 /*! Return the id of this QContactGroup */
 QUniqueId QContactGroup::id() const
 {

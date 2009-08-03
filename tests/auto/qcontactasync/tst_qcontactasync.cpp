@@ -319,9 +319,78 @@ void tst_QContactAsync::contactSave()
 {
 }
 
-
 void tst_QContactAsync::groupFetch()
 {
+    QContactManager* cm = prepareModel();
+    QContactGroupFetchRequest gfr;
+
+    // initial state
+    QVERIFY(!gfr.isActive());   // not started
+    QVERIFY(!gfr.isFinished()); // not started
+
+    // "all groups" retrieval
+    gfr.setManager(cm);
+    qRegisterMetaType<QContactGroupFetchRequest*>("QContactGroupFetchRequest*");
+    QSignalSpy spy(&gfr, SIGNAL(progress(QContactGroupFetchRequest*, bool)));
+    gfr.setIds(QList<QUniqueId>());
+    QVERIFY(gfr.start());
+    QVERIFY(gfr.isActive());
+    QVERIFY(gfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!gfr.isFinished());
+    QVERIFY(gfr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(gfr.isFinished());
+    QVERIFY(!gfr.isActive());
+
+    QList<QUniqueId> groupIds = cm->groups();
+    QList<QContactGroup> result = gfr.groups();
+    QCOMPARE(groupIds.size(), result.size());
+    for (int i = 0; i < groupIds.size(); i++) {
+        QContactGroup curr = cm->group(groupIds.at(i));
+        QContactGroup currResult = result.at(i);
+        QVERIFY(currResult == curr);
+    }
+
+    // specific group retrieval
+    groupIds.clear();
+    groupIds.append(cm->groups().first());
+    gfr.setManager(cm);
+    gfr.setIds(groupIds);
+    QCOMPARE(gfr.ids(), groupIds);
+    QVERIFY(gfr.start());
+    QVERIFY(gfr.isActive());
+    QVERIFY(gfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!gfr.isFinished());
+    QVERIFY(gfr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(gfr.isFinished());
+    QVERIFY(!gfr.isActive());
+
+    QList<QContactGroup> expected;
+    expected.append(cm->group(cm->groups().first()));
+    result = gfr.groups();
+    QCOMPARE(expected, result);
+
+    // cancelling
+    gfr.setIds(QList<QUniqueId>());
+    QVERIFY(gfr.start());
+    QVERIFY(gfr.isActive());
+    QVERIFY(gfr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!gfr.isFinished());
+    QVERIFY(gfr.cancel());
+    QVERIFY(gfr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(gfr.isActive());    // still cancelling
+    QVERIFY(!gfr.isFinished()); // not finished cancelling
+    QVERIFY(gfr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(gfr.isFinished());
+    QVERIFY(!gfr.isActive());
+    QVERIFY(gfr.status() == QContactAbstractRequest::Cancelled);
+
+    delete cm;
 }
 
 void tst_QContactAsync::groupRemove()
