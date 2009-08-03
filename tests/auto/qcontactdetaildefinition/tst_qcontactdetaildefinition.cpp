@@ -79,7 +79,7 @@ void tst_QContactDetailDefinition::testCtor()
 
     /* Check the ctor sets sane things */
     QVERIFY(def.isEmpty());
-    QVERIFY(def.id().isEmpty());
+    QVERIFY(def.name().isEmpty());
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::Any);
     QVERIFY(def.fields().isEmpty());
     QVERIFY(def.isUnique() == false);
@@ -92,19 +92,19 @@ void tst_QContactDetailDefinition::testCtor()
     currField.dataType = QVariant::DateTime;
     map.insert("datetime", currField);
 
-    def.setId("Test ID");
+    def.setName("Test ID");
     def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setFields(map);
 
-    QVERIFY(def.id() == "Test ID");
+    QVERIFY(def.name() == "Test ID");
     QVERIFY(def.isUnique());
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def.fields() == map);
 
     QContactDetailDefinition def2(def);
 
-    QVERIFY(def2.id() == "Test ID");
+    QVERIFY(def2.name() == "Test ID");
     QVERIFY(def2.isUnique());
     QVERIFY(def2.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def2.fields() == map);
@@ -112,18 +112,18 @@ void tst_QContactDetailDefinition::testCtor()
     QContactDetailDefinition def3;
     def3 = def2;
 
-    QVERIFY(def3.id() == "Test ID");
+    QVERIFY(def3.name() == "Test ID");
     QVERIFY(def3.isUnique());
     QVERIFY(def3.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def3.fields() == map);
 
     /* Make sure they aren't improperly shared */
-    def.setId("id one");
-    QVERIFY(def2.id() != def.id());
-    QVERIFY(def3.id() != def.id());
+    def.setName("id one");
+    QVERIFY(def2.name() != def.name());
+    QVERIFY(def3.name() != def.name());
 
-    def2.setId("id two");
-    QVERIFY(def2.id() != def3.id());
+    def2.setName("id two");
+    QVERIFY(def2.name() != def3.name());
 }
 
 void tst_QContactDetailDefinition::testGetSet()
@@ -131,11 +131,11 @@ void tst_QContactDetailDefinition::testGetSet()
     QContactDetailDefinition def;
 
     /* Id */
-    def.setId("this is the id");
-    QVERIFY(def.id() == "this is the id");
+    def.setName("this is the id");
+    QVERIFY(def.name() == "this is the id");
 
-    def.setId(QString());
-    QVERIFY(def.id() == QString());
+    def.setName(QString());
+    QVERIFY(def.name() == QString());
 
     /* Uniqueness */
     def.setUnique(true);
@@ -164,9 +164,9 @@ void tst_QContactDetailDefinition::testEmpty()
 
     QVERIFY(def.isEmpty());
 
-    def.setId("Name");
+    def.setName("Name");
     QVERIFY(!def.isEmpty());
-    def.setId(QString());
+    def.setName(QString());
     QVERIFY(def.isEmpty());
     QMap<QString, QContactDetailDefinition::Field> fields;
     QContactDetailDefinition::Field f;
@@ -175,14 +175,14 @@ void tst_QContactDetailDefinition::testEmpty()
     def.setFields(fields);
     QVERIFY(!def.isEmpty());
 
-    def.setId("Name");
+    def.setName("Name");
     QVERIFY(!def.isEmpty());
 
     fields.clear();
     def.setFields(fields);
     QVERIFY(!def.isEmpty());
 
-    def.setId(QString());
+    def.setName(QString());
     QVERIFY(def.isEmpty());
 }
 
@@ -196,11 +196,11 @@ void tst_QContactDetailDefinition::testEquality()
     QVERIFY(def2 == def1);
 
     /* Change id first */
-    def1.setId("id");
+    def1.setName("id");
     QVERIFY(def1 != def2);
     QVERIFY(def2 != def1);
 
-    def2.setId("id");
+    def2.setName("id");
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
 

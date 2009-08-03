@@ -373,9 +373,9 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
         return false;
     }
     detailDefinitions(error); // just to populate the definitions if we haven't already.
-    d->m_definitions.insert(def.id(), def);
+    d->m_definitions.insert(def.name(), def);
     if (def.accessConstraint() == QContactDetailDefinition::CreateOnly)
-        d->m_createOnlyIds.insert(def.id());
+        d->m_createOnlyIds.insert(def.name());
     error = QContactManager::NoError;
     return true;
 }

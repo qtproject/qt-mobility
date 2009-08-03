@@ -86,7 +86,7 @@ QContactDetailDefinition::~QContactDetailDefinition()
 /*! Returns true if the definition has the same type, uniqueness, access constraint and allowable value datatypes as \a other */
 bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other) const
 {
-    if (d->m_id != other.d->m_id)
+    if (d->m_name != other.d->m_name)
         return false;
     if (d->m_unique != other.d->m_unique)
         return false;
@@ -100,17 +100,17 @@ bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other)
 /*! Returns true if the id and fields of this definition are empty */
 bool QContactDetailDefinition::isEmpty() const
 {
-    if (!d->m_id.isEmpty())
+    if (!d->m_name.isEmpty())
         return false;
     if (!d->m_fields.isEmpty())
         return false;
     return true;
 }
 
-/*! Sets the unique identifier of this detail type to \a id. */
-void QContactDetailDefinition::setId(const QString& id)
+/*! Sets the unique identifier of this detail type to \a definitionName. */
+void QContactDetailDefinition::setName(const QString& definitionName)
 {
-    d->m_id = id;
+    d->m_name = definitionName;
 }
 
 /*!
@@ -123,10 +123,10 @@ void QContactDetailDefinition::setUnique(bool unique)
     d->m_unique = unique;
 }
 
-/*! Returns the identifier of this detail type */
-QString QContactDetailDefinition::id() const
+/*! Returns the identifier of this detail definition */
+QString QContactDetailDefinition::name() const
 {
-    return d->m_id;
+    return d->m_name;
 }
 
 /*! Returns the per-contact uniqueness of this definition */

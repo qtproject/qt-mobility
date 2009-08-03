@@ -2059,61 +2059,61 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     QContactDetailDefinition::Field field;
 
     /* Integer */
-    def.setId("Integer");
+    def.setName("Integer");
     fields["value"].dataType = QVariant::Int;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* Date time detail */
-    def.setId("DateTime");
+    def.setName("DateTime");
     fields["value"].dataType = QVariant::DateTime;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* double detail */
-    def.setId("Double");
+    def.setName("Double");
     fields["value"].dataType = QVariant::Double;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* bool */
-    def.setId("Bool");
+    def.setName("Bool");
     fields["value"].dataType = QVariant::Bool;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* long long */
-    def.setId("LongLong");
+    def.setName("LongLong");
     fields["value"].dataType = QVariant::LongLong;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* unsigned long long */
-    def.setId("ULongLong");
+    def.setName("ULongLong");
     fields["value"].dataType = QVariant::ULongLong;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* date */
-    def.setId("Date");
+    def.setName("Date");
     fields["value"].dataType = QVariant::Date;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* time */
-    def.setId("Time");
+    def.setName("Time");
     fields["value"].dataType = QVariant::Time;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* uint */
-    def.setId("UInt");
+    def.setName("UInt");
     fields["value"].dataType = QVariant::UInt;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));
 
     /* char */
-    def.setId("Char");
+    def.setName("Char");
     fields["value"].dataType = QVariant::Char;
     def.setFields(fields);
     Q_ASSERT(cm->saveDetailDefinition(def));

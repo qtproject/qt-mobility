@@ -656,6 +656,99 @@ void tst_QContactAsync::definitionRemove()
 
 void tst_QContactAsync::definitionSave()
 {
+    QContactManager* cm = prepareModel();
+    QContactDetailDefinitionSaveRequest dsr;
+
+    // initial state
+    QVERIFY(!dsr.isActive());   // not started
+    QVERIFY(!dsr.isFinished()); // not started
+
+    // save a new group
+    int originalCount = cm->detailDefinitions().keys().size();
+    QContactDetailDefinition testDef;
+    testDef.setName("TestDefinitionId");
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    f.dataType = QVariant::String;
+    fields.insert("TestDefinitionField", f);
+    testDef.setFields(fields);
+    QList<QContactDetailDefinition> saveList;
+    saveList << testDef;
+    dsr.setManager(cm);
+    qRegisterMetaType<QContactDetailDefinitionSaveRequest*>("QContactDetailDefinitionSaveRequest*");
+    QSignalSpy spy(&dsr, SIGNAL(progress(QContactDetailDefinitionSaveRequest*)));
+    dsr.setDefinitions(saveList);
+    QCOMPARE(dsr.definitions(), saveList);
+    QVERIFY(dsr.start());
+    QVERIFY(dsr.isActive());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(dsr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(dsr.isFinished());
+    QVERIFY(!dsr.isActive());
+
+    QList<QContactDetailDefinition> expected;
+    expected << cm->detailDefinition("TestDefinitionId");
+    QList<QContactDetailDefinition> result = dsr.definitions();
+    QCOMPARE(expected, result);
+    QVERIFY(expected.contains(testDef));
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
+
+    // update a previously saved group
+    fields.insert("TestDefinitionFieldTwo", f);
+    testDef.setFields(fields);
+    saveList.clear();
+    saveList << testDef;
+    dsr.setDefinitions(saveList);
+    QCOMPARE(dsr.definitions(), saveList);
+    QVERIFY(dsr.start());
+    QVERIFY(dsr.isActive());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(dsr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(dsr.isFinished());
+    QVERIFY(!dsr.isActive());
+
+    expected.clear();
+    expected << cm->detailDefinition("TestDefinitionId");
+    result = dsr.definitions();
+    QCOMPARE(expected, result);
+    QVERIFY(expected.contains(testDef));
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
+
+    // cancelling
+    fields.insert("TestDefinitionFieldThree - shouldn't get saved", f);
+    testDef.setFields(fields);
+    saveList.clear();
+    saveList << testDef;
+    dsr.setDefinitions(saveList);
+    QCOMPARE(dsr.definitions(), saveList);
+    QVERIFY(dsr.start());
+    QVERIFY(dsr.isActive());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(dsr.cancel());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(dsr.isActive());    // still cancelling
+    QVERIFY(!dsr.isFinished()); // not finished cancelling
+    QVERIFY(dsr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
+    QVERIFY(dsr.isFinished());
+    QVERIFY(!dsr.isActive());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelled);
+
+    // verify that the changes were not saved
+    expected.clear();
+    QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
+    QVERIFY(!expected.contains(testDef));
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
+
+    delete cm;
 }
 
 QContactManager* tst_QContactAsync::prepareModel()

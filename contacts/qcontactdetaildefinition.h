@@ -63,9 +63,9 @@ public:
     /* Check emptiness */
     bool isEmpty() const;
 
-    /* "id string" of the definition */
-    void setId(const QString& definitionId);
-    QString id() const;
+    /* name (identifier) of the definition */
+    void setName(const QString& definitionName);
+    QString name() const;
 
     /* can you have more than one of these? */
     void setUnique(bool unique);
