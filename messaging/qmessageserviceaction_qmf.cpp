@@ -97,7 +97,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
     return false; // stub
 }
 
-bool QMessageServiceAction::exportUpdates(const QMessageAccount &id)
+bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
     Q_UNUSED(id)
     return false; // stub

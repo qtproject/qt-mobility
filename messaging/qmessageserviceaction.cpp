@@ -93,8 +93,7 @@
 */
 
 /*!
-
-    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
     
     Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
     store. If \a key is not empty only identifiers for messages matching the parameters 
@@ -115,11 +114,11 @@
     
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa messagesFound(), availabilityChanged(), progressChanged()
+    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged()
 */
 
 /*!
-    \fn QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
     store. If \a key is not empty only identifiers for messages matching the parameters 
@@ -141,7 +140,7 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa messagesFound(), availabilityChanged(), progressChanged()
+    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged()
 */
 
 /*!
@@ -221,9 +220,11 @@
 */
     
 /*!
-    \fn QMessageServiceAction::exportUpdates(const QMessageAccount &account)
+    \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
   
     Synchronize any changes that have been queued by message store operations with external servers.
+    
+    Pending changes to the account with identifier \a id should be synchronized.
 
     Returns true if the action can be initiated; otherwise returns false.
     

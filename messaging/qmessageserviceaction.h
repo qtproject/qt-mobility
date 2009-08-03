@@ -64,7 +64,7 @@ public:
     bool retrieveBody(const QMessageId &id);
     bool retrieve(const QMessageContentContainerId &id);
     bool show(const QMessageId &id);
-    bool exportUpdates(const QMessageAccount &account);
+    bool exportUpdates(const QMessageAccountId &id);
     Activity activity() const;
     QMessageStore::ErrorCode lastError() const;
 

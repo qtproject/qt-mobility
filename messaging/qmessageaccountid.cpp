@@ -85,7 +85,7 @@
     otherwise returns false.
 */
 
-/*! \intenral */
+/*! \internal */
 bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 {
     return !operator==(other);

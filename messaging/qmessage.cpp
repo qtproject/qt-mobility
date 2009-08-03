@@ -256,7 +256,7 @@
 */
     
 /*!
-    \fn QMessage::setParentAccountId(const QMessageAccountId &accountId) const
+    \fn QMessage::setParentAccountId(const QMessageAccountId &accountId)
     
     Sets the parent account of the message to the account with identifier \a accountId.
     
