@@ -255,11 +255,6 @@ bool QMessageContentContainer::containerDataModified() const
     return false; // stub
 }
 
-void QMessageContentContainer::setContainerDataModified(bool modified)
-{
-    Q_UNUSED(modified);
-}
-
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
 {
     Q_UNUSED(content);

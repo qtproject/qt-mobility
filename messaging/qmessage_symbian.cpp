@@ -101,7 +101,7 @@ QMessageAccountId QMessage::parentAccountId() const
     return QMessageAccountId(); // stub
 }
 
-void QMessage::setParentAccountId(const QMessageAccountId &accountId) const
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 {
     Q_UNUSED(accountId)
 }
