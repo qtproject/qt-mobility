@@ -32,63 +32,67 @@
 **
 ****************************************************************************/
 
-#ifndef QPAINTERVIDEOSURFACE_P_H
-#define QPAINTERVIDEOSURFACE_P_H
+#include "qgstreamervideooverlay.h"
+#include "qvideosurfacegstsink.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtMultimedia/qvideosurfaceformat.h>
 
-#ifndef QT_NO_VIDEOSURFACE
+#include "qx11videosurface.h"
 
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
-
-#include <qmultimediaglobal.h>
-
-class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
+    : QVideoOverlayEndpoint(parent)
+    , m_surface(new QX11VideoSurface)
+    , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
 {
-    Q_OBJECT
-public:
-    QPainterVideoSurface(QObject *parent = 0);
-    ~QPainterVideoSurface();
+    if (m_videoSink) {
+        gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
+        gst_object_sink(GST_OBJECT(m_videoSink));
+    }
+}
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+QGstreamerVideoOverlay::~QGstreamerVideoOverlay()
+{
+    if (m_videoSink)
+        gst_object_unref(GST_OBJECT(m_videoSink));
 
-    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
+    delete m_surface;
+}
 
-    bool start(const QVideoSurfaceFormat &format);
-    void stop();
+void QGstreamerVideoOverlay::setEnabled(bool enabled)
+{
+    QVideoOverlayEndpoint::setEnabled(enabled);
+}
 
-    bool present(const QVideoFrame &frame);
+void QGstreamerVideoOverlay::setWinId(WId id)
+{
+    m_surface->setWinId(id);
 
-    bool isReady() const;
-    void setReady(bool ready);
+    QVideoOverlayEndpoint::setWinId(id);
+}
 
-    void paint(QPainter *painter, const QRect &rect);
+void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
+{
+    m_surface->setDisplayRect(rect);
 
-Q_SIGNALS:
-    void frameChanged();
+    QVideoOverlayEndpoint::setDisplayRect(rect);
+}
 
-private:
-    QVideoFrame m_frame;
-    QVideoFrame::PixelFormat m_pixelFormat;
-    QImage::Format m_imageFormat;
-    QSize m_imageSize;
-    QRect m_sourceRect;
-    bool m_ready;
-};
+void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
+{
+    QVideoOverlayEndpoint::setFullscreen(fullscreen);
+}
 
-#endif
+QSize QGstreamerVideoOverlay::sizeHint() const
+{
+    return m_surface->surfaceFormat().sizeHint();
+}
 
-#endif
+QAbstractVideoSurface *QGstreamerVideoOverlay::surface() const
+{
+    return m_surface;
+}
+
+GstElement *QGstreamerVideoOverlay::videoSink()
+{
+    return m_videoSink;
+}

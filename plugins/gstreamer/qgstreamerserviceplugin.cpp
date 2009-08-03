@@ -77,5 +77,5 @@ QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
 
 #include "qgstreamerserviceplugin.moc"
 
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
 

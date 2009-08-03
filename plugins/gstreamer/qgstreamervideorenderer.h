@@ -4,6 +4,7 @@
 #ifndef QT_NO_VIDEOSURFACE
 
 #include "qvideorendererendpoint.h"
+#include "qvideosurfacegstsink.h"
 #include "qgstreamerplayersession.h"
 
 class QGstreamerVideoRenderer : public QVideoRendererEndpoint, public QGstreamerVideoRendererInterface

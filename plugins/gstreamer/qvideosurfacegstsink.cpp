@@ -18,6 +18,11 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surfac
 {
 }
 
+QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats() const
+{
+    return m_surface->supportedPixelFormats();
+}
+
 bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
 {
     QMutexLocker locker(&m_mutex);
@@ -214,47 +219,6 @@ QVideoSurfaceGstSink *QVideoSurfaceGstSink::createSink(QAbstractVideoSurface *su
             g_object_new(QVideoSurfaceGstSink::get_type(), 0));
 
     sink->delegate = new QVideoSurfaceGstDelegate(surface);
-    sink->supportedCaps = gst_caps_new_empty();
-
-    foreach (QVideoFrame::PixelFormat format, surface->supportedPixelFormats()) {
-        int index = indexOfYuvColor(format);
-
-        if (index != -1) {
-            gst_caps_append_structure(sink->supportedCaps, gst_structure_new(
-                    "video/x-raw-yuv",
-                    "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
-                    "width"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                    "height"   , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                    "format"   , GST_TYPE_FOURCC, qt_yuvColorLookup[index].fourcc,
-                    NULL));
-            continue;
-        }
-
-        const int count = sizeof(qt_rgbColorLookup) / sizeof(RgbFormat);
-
-        for (int i = 0; i < count; ++i) {
-            if (qt_rgbColorLookup[i].pixelFormat == format) {
-                GstStructure *structure = gst_structure_new(
-                        "video/x-raw-rgb",
-                        "framerate" , GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
-                        "width"     , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                        "height"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                        "bpp"       , G_TYPE_INT, qt_rgbColorLookup[i].bitsPerPixel,
-                        "depth"     , G_TYPE_INT, qt_rgbColorLookup[i].depth,
-                        "endianness", G_TYPE_INT, qt_rgbColorLookup[i].endianness,
-                        "red_mask"  , G_TYPE_INT, qt_rgbColorLookup[i].red,
-                        "green_mask", G_TYPE_INT, qt_rgbColorLookup[i].green,
-                        "blue_mask" , G_TYPE_INT, qt_rgbColorLookup[i].blue,
-                        NULL);
-
-                if (qt_rgbColorLookup[i].alpha != 0) {
-                    gst_structure_set(
-                            structure, "alpha_mask", G_TYPE_INT, qt_rgbColorLookup[i].alpha, NULL);
-                }
-                gst_caps_append_structure(sink->supportedCaps, structure);
-            }
-        }
-    }
 
     return sink;
 }
@@ -333,15 +297,11 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
     Q_UNUSED(g_class);
 
     sink->delegate = 0;
-    sink->supportedCaps = 0;
 }
 
 void QVideoSurfaceGstSink::finalize(GObject *object)
 {
-    VO_SINK(object);
-
-    if (sink->supportedCaps)
-        gst_caps_unref(sink->supportedCaps);
+    Q_UNUSED(object);
 }
 
 GstStateChangeReturn QVideoSurfaceGstSink::change_state(
@@ -357,10 +317,49 @@ GstCaps *QVideoSurfaceGstSink::get_caps(GstBaseSink *base)
 {
     VO_SINK(base);
 
-    if (sink->supportedCaps)
-        gst_caps_ref(sink->supportedCaps);
+    GstCaps *caps = gst_caps_new_empty();
 
-    return sink->supportedCaps;
+    foreach (QVideoFrame::PixelFormat format, sink->delegate->supportedPixelFormats()) {
+        int index = indexOfYuvColor(format);
+
+        if (index != -1) {
+            gst_caps_append_structure(caps, gst_structure_new(
+                    "video/x-raw-yuv",
+                    "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
+                    "width"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
+                    "height"   , GST_TYPE_INT_RANGE, 1, INT_MAX,
+                    "format"   , GST_TYPE_FOURCC, qt_yuvColorLookup[index].fourcc,
+                    NULL));
+            continue;
+        }
+
+        const int count = sizeof(qt_rgbColorLookup) / sizeof(RgbFormat);
+
+        for (int i = 0; i < count; ++i) {
+            if (qt_rgbColorLookup[i].pixelFormat == format) {
+                GstStructure *structure = gst_structure_new(
+                        "video/x-raw-rgb",
+                        "framerate" , GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
+                        "width"     , GST_TYPE_INT_RANGE, 1, INT_MAX,
+                        "height"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
+                        "bpp"       , G_TYPE_INT, qt_rgbColorLookup[i].bitsPerPixel,
+                        "depth"     , G_TYPE_INT, qt_rgbColorLookup[i].depth,
+                        "endianness", G_TYPE_INT, qt_rgbColorLookup[i].endianness,
+                        "red_mask"  , G_TYPE_INT, qt_rgbColorLookup[i].red,
+                        "green_mask", G_TYPE_INT, qt_rgbColorLookup[i].green,
+                        "blue_mask" , G_TYPE_INT, qt_rgbColorLookup[i].blue,
+                        NULL);
+
+                if (qt_rgbColorLookup[i].alpha != 0) {
+                    gst_structure_set(
+                            structure, "alpha_mask", G_TYPE_INT, qt_rgbColorLookup[i].alpha, NULL);
+                }
+                gst_caps_append_structure(caps, structure);
+            }
+        }
+    }
+
+    return caps;
 }
 
 gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)

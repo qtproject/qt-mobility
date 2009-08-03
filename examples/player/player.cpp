@@ -45,6 +45,8 @@
 
 #include <QtGui>
 
+#define USE_VIDEOWIDGET
+
 Player::Player(QWidget *parent)
     : QWidget(parent)
     , coverLabel(0)

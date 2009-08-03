@@ -38,6 +38,8 @@ class QVideoSurfaceGstDelegate : public QObject
 public:
     QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
 
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats() const;
+
     bool start(const QVideoSurfaceFormat &format, int bytesPerLine);
     void stop();
 
@@ -94,7 +96,6 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
-    GstCaps *supportedCaps;
 };
 
 

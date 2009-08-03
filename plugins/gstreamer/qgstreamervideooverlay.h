@@ -32,61 +32,42 @@
 **
 ****************************************************************************/
 
-#ifndef QPAINTERVIDEOSURFACE_P_H
-#define QPAINTERVIDEOSURFACE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QGSTREAMERVIDEOOVERLAY_H
+#define QGSTREAMERVIDEOOVERLAY_H
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
+#include "qvideooverlayendpoint.h"
+#include "qgstreamerplayersession.h"
 
-#include <qmultimediaglobal.h>
+class QAbstractVideoSurface;
+class QX11VideoSurface;
 
-class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+class QGstreamerVideoOverlay : public QVideoOverlayEndpoint, public QGstreamerVideoRendererInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QGstreamerVideoRendererInterface)
 public:
-    QPainterVideoSurface(QObject *parent = 0);
-    ~QPainterVideoSurface();
+    QGstreamerVideoOverlay(QObject *parent = 0);
+    ~QGstreamerVideoOverlay();
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+    void setEnabled(bool enabled);
 
-    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
+    void setWinId(WId id);
 
-    bool start(const QVideoSurfaceFormat &format);
-    void stop();
+    void setDisplayRect(const QRect &rect);
 
-    bool present(const QVideoFrame &frame);
+    void setFullscreen(bool fullscreen);
 
-    bool isReady() const;
-    void setReady(bool ready);
+    QSize sizeHint() const;
 
-    void paint(QPainter *painter, const QRect &rect);
+    QAbstractVideoSurface *surface() const;
 
-Q_SIGNALS:
-    void frameChanged();
+    GstElement *videoSink();
 
 private:
-    QVideoFrame m_frame;
-    QVideoFrame::PixelFormat m_pixelFormat;
-    QImage::Format m_imageFormat;
-    QSize m_imageSize;
-    QRect m_sourceRect;
-    bool m_ready;
+    QX11VideoSurface *m_surface;
+    GstElement *m_videoSink;
 };
 
 #endif

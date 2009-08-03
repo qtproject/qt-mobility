@@ -42,14 +42,18 @@ SOURCES += \
 
 multimedia {
     SOURCES += \
+        qgstreamervideooverlay.cpp \
+        qgstvideobuffer.cpp \
         qvideosurfacegstsink.cpp \
-        qgstvideobuffer.cpp
+        qx11videosurface.cpp
 
     HEADERS += \
+        qgstreamervideooverlay.h \
+        qgstvideobuffer.h \
         qvideosurfacegstsink.h \
-        qgstvideobuffer.h
+        qx11videosurface.h
 
-    LIBS += -lQtMultimedia
+    LIBS += -lQtMultimedia -lXv
 } else {
     DEFINES += QT_NO_VIDEOSURFACE
 }

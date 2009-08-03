@@ -32,61 +32,51 @@
 **
 ****************************************************************************/
 
-#ifndef QPAINTERVIDEOSURFACE_P_H
-#define QPAINTERVIDEOSURFACE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QX11VIDEOSURFACE_H
+#define QX11VIDEOSURFACE_H
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
+#include <QtGui/qwidget.h>
 #include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
 
-#include <qmultimediaglobal.h>
+#include <X11/Xlib.h>
+#include <X11/extensions/Xv.h>
+#include <X11/extensions/Xvlib.h>
 
-class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+class QX11VideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:
-    QPainterVideoSurface(QObject *parent = 0);
-    ~QPainterVideoSurface();
+    QX11VideoSurface(QObject *parent = 0);
+    ~QX11VideoSurface();
+
+    WId winId() const;
+    void setWinId(WId id);
+
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
-
-    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
 
     bool start(const QVideoSurfaceFormat &format);
     void stop();
 
     bool present(const QVideoFrame &frame);
 
-    bool isReady() const;
-    void setReady(bool ready);
-
-    void paint(QPainter *painter, const QRect &rect);
-
-Q_SIGNALS:
-    void frameChanged();
-
 private:
-    QVideoFrame m_frame;
-    QVideoFrame::PixelFormat m_pixelFormat;
-    QImage::Format m_imageFormat;
-    QSize m_imageSize;
-    QRect m_sourceRect;
-    bool m_ready;
+    WId m_winId;
+    XvPortID m_portId;
+    GC m_gc;
+    XvImage *m_image;
+    QList<QVideoFrame::PixelFormat> m_supportedPixelFormats;
+    QVector<int> m_formatIds;
+    QRect m_viewport;
+    QRect m_displayRect;
+
+    bool findPort();
+    void querySupportedFormats();
 };
 
 #endif
