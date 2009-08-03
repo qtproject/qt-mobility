@@ -38,7 +38,7 @@
 #define QTRY_VERIFY(__expr) \
     do { \
         const int __step = 50; \
-        const int __timeout = 900000; \
+        const int __timeout = 90000; \
         if (!(__expr)) { \
             QTest::qWait(0); \
         } \
@@ -52,7 +52,7 @@
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
         const int __step = 50; \
-        const int __timeout = 5000; \
+        const int __timeout = 90000; \
         if ((__expr) != (__expected)) { \
             QTest::qWait(0); \
         } \
