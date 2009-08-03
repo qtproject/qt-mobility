@@ -475,23 +475,23 @@ qint32 QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return QString();
+    return "No Network";
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return QString();
+    return "No Network";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return QString();
+    return "No Network";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return QString();
+    return "No Network";
 }
 
 bool QSystemNetworkInfoPrivate::isLocationEnabled() const
