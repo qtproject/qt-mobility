@@ -151,10 +151,6 @@ public:
 
     QString operatorName();
 
-Q_SIGNALS:
-
-    void networkStatusChanged(QSystemNetworkInfo::NetworkMode netmode, QSystemNetworkInfo::CellNetworkStatus netStatus);
-
 private:
     QSystemNetworkInfoPrivate *d;
 };
