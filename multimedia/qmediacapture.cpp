@@ -51,7 +51,7 @@ Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServicePro
         if (service != 0)
             return service;
 
-        delete service;
+        delete object;
     }
 
     return 0;

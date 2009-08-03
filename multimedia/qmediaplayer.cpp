@@ -469,7 +469,7 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
         if (service != 0)
             return service;
 
-        delete service;
+        delete object;
     }
 
     return 0;
