@@ -317,6 +317,99 @@ void tst_QContactAsync::contactRemove()
 
 void tst_QContactAsync::contactSave()
 {
+    QContactManager* cm = prepareModel();
+    QContactSaveRequest csr;
+
+    // initial state
+    QVERIFY(!csr.isActive());   // not started
+    QVERIFY(!csr.isFinished()); // not started
+
+    // save a new contact
+    int originalCount = cm->contacts().size();
+    QContact testContact;
+    testContact.setDisplayLabel("Test Contact");
+    QList<QContact> saveList;
+    saveList << testContact;
+    csr.setManager(cm);
+    qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
+    QSignalSpy spy(&csr, SIGNAL(progress(QContactSaveRequest*)));
+    csr.setContacts(saveList);
+    QCOMPARE(csr.contacts(), saveList);
+    QVERIFY(csr.start());
+    QVERIFY(csr.isActive());
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!csr.isFinished());
+    QVERIFY(csr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(csr.isFinished());
+    QVERIFY(!csr.isActive());
+
+    QList<QContact> expected;
+    expected << cm->contact(cm->contacts().last());
+    QList<QContact> result = csr.contacts();
+    QCOMPARE(expected, result);
+    QCOMPARE(cm->contacts().size(), originalCount + 1);
+
+    // update a previously saved contact
+    QContactPhoneNumber phn;
+    phn.setNumber("12345678");
+    testContact = expected.first();
+    testContact.saveDetail(&phn);
+    saveList.clear();
+    saveList << testContact;
+    csr.setContacts(saveList);
+    QCOMPARE(csr.contacts(), saveList);
+    QVERIFY(csr.start());
+    QVERIFY(csr.isActive());
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!csr.isFinished());
+    QVERIFY(csr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(csr.isFinished());
+    QVERIFY(!csr.isActive());
+
+    expected.clear();
+    expected << cm->contact(cm->contacts().last());
+    result = csr.contacts();
+    QCOMPARE(expected, result);
+    QVERIFY(expected.contains(testContact));
+    QCOMPARE(cm->contacts().size(), originalCount + 1);
+
+    // cancelling
+    QContact temp = testContact;
+    QContactUrl url;
+    url.setUrl("should not get saved");
+    temp.saveDetail(&url);
+    saveList.clear();
+    saveList << temp;
+    csr.setContacts(saveList);
+    QVERIFY(csr.start());
+    QVERIFY(csr.isActive());
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!csr.isFinished());
+    QVERIFY(csr.cancel());
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(csr.isActive());    // still cancelling
+    QVERIFY(!csr.isFinished()); // not finished cancelling
+    QVERIFY(csr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // pending + finished progress signals.
+    QVERIFY(csr.isFinished());
+    QVERIFY(!csr.isActive());
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
+
+    // verify that the changes were not saved
+    expected.clear();
+    QList<QUniqueId> allContacts = cm->contacts();
+    for (int i = 0; i < allContacts.size(); i++) {
+        expected.append(cm->contact(allContacts.at(i)));
+    }
+    QVERIFY(!expected.contains(temp));
+    QCOMPARE(cm->contacts().size(), originalCount + 1);
+
+    delete cm;
 }
 
 void tst_QContactAsync::groupFetch()
