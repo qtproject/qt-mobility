@@ -69,8 +69,24 @@ private slots:
     void testFromTransmissionFormat();
 
     void testToTransmissionFormat_simple();
-
     void testToTransmissionFormat_multipart();
+
+    void testType();
+    void testParentAccountId();
+    void testParentFolderId();
+    void testStandardFolder();
+    void testFrom();
+    void testSubject();
+    void testDate();
+    void testReceivedDate();
+    void testTo();
+    void testCc();
+    void testBcc();
+    void testStatus();
+    void testPriority();
+    void testOriginatorPort();
+    void testDestinationPort();
+    void testCustomField();
 
 private:
     QMessageAccountId testAccountId;
@@ -92,6 +108,24 @@ tst_QMessage::~tst_QMessage()
 void tst_QMessage::initTestCase()
 {
     Support::clearMessageStore();
+
+    {
+            Support::Parameters p;
+            p.insert("name", "testAccount");
+
+            testAccountId = Support::addAccount(p);
+            QVERIFY(testAccountId.isValid());
+    }
+
+    {
+        Support::Parameters p;
+        p.insert("path", "/root");
+        p.insert("displayName", "Root");
+        p.insert("parentAccountName", "testAccount");
+
+        testFolderId = Support::addFolder(p);
+        QVERIFY(testFolderId.isValid());
+    }
 }
 
 void tst_QMessage::cleanup()
@@ -421,5 +455,241 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     QCOMPARE(p8.contentAvailable(), true);
     QCOMPARE(p8.contentIds().count(), 0);
     QCOMPARE(p8.decodedContent(), p4ContentData);
+}
+
+void tst_QMessage::testType()
+{
+    QMessage msg;
+    QCOMPARE(msg.type(), QMessage::None);
+
+    msg.setType(QMessage::Email);
+    QCOMPARE(msg.type(), QMessage::Email);
+
+    msg.setType(QMessage::Mms);
+    QCOMPARE(msg.type(), QMessage::Mms);
+}
+
+void tst_QMessage::testParentAccountId()
+{
+    QMessage msg;
+    QCOMPARE(msg.parentAccountId(), QMessageAccountId());
+
+    /*
+    msg.setParentAccountId(testAccountId);
+    QCOMPARE(msg.parentAccountId(), testAccountId);
+    */
+}
+
+void tst_QMessage::testParentFolderId()
+{
+    QMessage msg;
+    QCOMPARE(msg.parentFolderId(), QMessageFolderId());
+
+    /*
+    msg.setParentFolderId(testFolderId);
+    QCOMPARE(msg.parentFolderId(), testFolderId);
+    */
+}
+
+void tst_QMessage::testStandardFolder()
+{
+    QMessage msg;
+    QCOMPARE(msg.standardFolder(), QMessage::InboxFolder);
+
+    msg.setStandardFolder(QMessage::SentFolder);
+    QCOMPARE(msg.standardFolder(), QMessage::SentFolder);
+
+    msg.setStandardFolder(QMessage::TrashFolder);
+    QCOMPARE(msg.standardFolder(), QMessage::TrashFolder);
+}
+
+void tst_QMessage::testFrom()
+{
+    QMessage msg;
+    QCOMPARE(msg.from(), QMessageAddress());
+
+    QMessageAddress addr("alice@example.org", QMessageAddress::Email);
+    msg.setFrom(addr);
+    QCOMPARE(msg.from(), addr);
+
+    /*
+    addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
+    msg.setFrom(addr);
+    QCOMPARE(msg.from(), addr);
+    */
+}
+
+void tst_QMessage::testSubject()
+{
+    QMessage msg;
+    QCOMPARE(msg.subject(), QString());
+
+    QString subject("Short message");
+    msg.setSubject(subject);
+    QCOMPARE(msg.subject(), subject);
+
+    subject = QString("A slightly longer message than the predecessor message");
+    msg.setSubject(subject);
+    QCOMPARE(msg.subject(), subject);
+}
+
+void tst_QMessage::testDate()
+{
+    QMessage msg;
+    QCOMPARE(msg.date(), QDateTime());
+
+    QDateTime now(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate));
+    msg.setDate(now);
+    QCOMPARE(msg.date(), now);
+
+    now = QDateTime::fromString("2000-01-01T00:00:01Z", Qt::ISODate);
+    msg.setDate(now);
+    QCOMPARE(msg.date(), now);
+}
+
+void tst_QMessage::testReceivedDate()
+{
+    QMessage msg;
+    QCOMPARE(msg.receivedDate(), QDateTime());
+
+    QDateTime now(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate));
+    msg.setReceivedDate(now);
+    QCOMPARE(msg.receivedDate(), now);
+
+    now = QDateTime::fromString("2000-01-01T00:00:01Z", Qt::ISODate);
+    msg.setReceivedDate(now);
+    QCOMPARE(msg.receivedDate(), now);
+}
+
+void tst_QMessage::testTo()
+{
+    QMessage msg;
+    QCOMPARE(msg.to(), QMessageAddressList());
+
+    QMessageAddressList addresses;
+    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+
+    msg.setTo(addresses);
+    QCOMPARE(msg.to(), addresses);
+
+    /*
+    addresses = QMessageAddressList();
+    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    msg.setTo(addresses);
+    QCOMPARE(msg.to(), addresses);
+    */
+}
+
+void tst_QMessage::testCc()
+{
+    QMessage msg;
+    QCOMPARE(msg.cc(), QMessageAddressList());
+
+    QMessageAddressList addresses;
+    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+
+    msg.setCc(addresses);
+    QCOMPARE(msg.cc(), addresses);
+
+    /*
+    addresses = QMessageAddressList();
+    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    msg.setCc(addresses);
+    QCOMPARE(msg.cc(), addresses);
+    */
+}
+
+void tst_QMessage::testBcc()
+{
+    QMessage msg;
+    QCOMPARE(msg.bcc(), QMessageAddressList());
+
+    QMessageAddressList addresses;
+    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+
+    msg.setBcc(addresses);
+    QCOMPARE(msg.bcc(), addresses);
+
+    /*
+    addresses = QMessageAddressList();
+    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    msg.setBcc(addresses);
+    QCOMPARE(msg.bcc(), addresses);
+    */
+}
+
+void tst_QMessage::testStatus()
+{
+    QMessage msg;
+    QCOMPARE(msg.status(), static_cast<QMessage::StatusFlags>(0));
+
+    msg.setStatus(QMessage::Removed);
+    QCOMPARE(msg.status(), QMessage::Removed);
+
+    msg.setStatus(QMessage::Read | QMessage::HasAttachments);
+    QCOMPARE(msg.status(), QMessage::Read | QMessage::HasAttachments);
+}
+
+void tst_QMessage::testPriority()
+{
+    QMessage msg;
+    QCOMPARE(msg.priority(), QMessage::Normal);
+
+    msg.setPriority(QMessage::High);
+    QCOMPARE(msg.priority(), QMessage::High);
+
+    msg.setPriority(QMessage::Low);
+    QCOMPARE(msg.priority(), QMessage::Low);
+}
+
+void tst_QMessage::testOriginatorPort()
+{
+    QMessage msg;
+    QCOMPARE(msg.originatorPort(), 0u);
+
+    msg.setOriginatorPort(0x1111u);
+    QCOMPARE(msg.originatorPort(), 0x1111u);
+
+    msg.setOriginatorPort(0xdeadu);
+    QCOMPARE(msg.originatorPort(), 0xdeadu);
+}
+
+void tst_QMessage::testDestinationPort()
+{
+    QMessage msg;
+    QCOMPARE(msg.destinationPort(), 0u);
+
+    msg.setDestinationPort(0x1111u);
+    QCOMPARE(msg.destinationPort(), 0x1111u);
+
+    msg.setDestinationPort(0xdeadu);
+    QCOMPARE(msg.destinationPort(), 0xdeadu);
+}
+
+void tst_QMessage::testCustomField()
+{
+    QMessage msg;
+    QCOMPARE(msg.customFields(), QList<QString>());
+    QCOMPARE(msg.customField("testing"), QString());
+
+    msg.setCustomField("testing", "1-2-3");
+    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" ).toList());
+    QCOMPARE(msg.customField("testing"), QString("1-2-3"));
+
+    msg.setCustomField("check", "one, two");
+    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" << "check" ).toList());
+    QCOMPARE(msg.customField("check"), QString("one, two"));
+
+    // TODO: Is this what we want?
+    msg.setCustomField("testing", "");
+    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" << "check" ).toList());
+    QCOMPARE(msg.customField("testing"), QString());
+
+    msg.setCustomField("testing", QString());
+    QCOMPARE(msg.customFields(), ( QSet<QString>() << "check" ).toList());
+    QCOMPARE(msg.customField("testing"), QString());
 }
 
