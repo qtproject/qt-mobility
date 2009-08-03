@@ -86,7 +86,6 @@ public:
     QList<QContactSortOrder> m_sorting;
     QStringList m_definitionRestrictions;
 
-    QList<QUniqueId> m_ids;
     QList<QContact> m_contacts;
 };
 

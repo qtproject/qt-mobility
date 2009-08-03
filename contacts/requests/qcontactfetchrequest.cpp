@@ -81,12 +81,6 @@ QStringList QContactFetchRequest::definitionRestrictions() const
     return d->m_definitionRestrictions;
 }
 
-QList<QUniqueId> QContactFetchRequest::ids() const
-{
-    Q_D(const QContactFetchRequest);
-    return d->m_ids;
-}
-
 QList<QContact> QContactFetchRequest::contacts() const
 {
     Q_D(const QContactFetchRequest);

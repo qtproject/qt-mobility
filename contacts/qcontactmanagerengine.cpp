@@ -1551,29 +1551,11 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
     req->d_ptr->m_status = status;
 
     switch (req->type()) {
-        case QContactAbstractRequest::ContactFetch:
-        {
-            QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
-            rd->m_ids = result;
-            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
         case QContactAbstractRequest::ContactIdFetch:
         {
             QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
             rd->m_ids = result;
             QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupFetch:
-        {
-            QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
-            rd->m_ids = result;
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;

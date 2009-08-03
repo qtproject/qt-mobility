@@ -63,7 +63,6 @@ public:
     QStringList definitionRestrictions() const;
 
     /* Results */
-    QList<QUniqueId> ids() const;
     QList<QContact> contacts() const;
 
 signals:
