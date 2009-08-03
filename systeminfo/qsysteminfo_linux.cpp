@@ -457,7 +457,7 @@ QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::getCellNetworkS
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
-qint32 QSystemNetworkInfoPrivate::networkSignalStrength()
+qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     return -1;
 }

@@ -44,9 +44,9 @@ class tst_QSystemNetworkInfo : public QObject
 private slots:
 
     void initTestCase();
-    void tst_getCellNetworkStatus_data();
     void tst_getCellNetworkStatus();
 
+    void tst_networkSignalStrength_data();
     void tst_networkSignalStrength();
     void tst_cellId();
     void tst_locationAreaCode();
@@ -71,21 +71,42 @@ void tst_QSystemNetworkInfo::initTestCase()
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
 }
 
-void tst_QSystemNetworkInfo::tst_getCellNetworkStatus_data()
-{
-
-
-}
 
 void tst_QSystemNetworkInfo::tst_getCellNetworkStatus()
 {
+    QSystemNetworkInfo ni;
+    QSystemNetworkInfo::CellNetworkStatus status = ni.getCellNetworkStatus();
+    QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
+             || status == QSystemNetworkInfo::NoNetworkAvailable
+             || status == QSystemNetworkInfo::EmergencyOnly
+             || status == QSystemNetworkInfo::Searching
+             || status == QSystemNetworkInfo::Busy
+             || status == QSystemNetworkInfo::HomeNetwork
+             || status == QSystemNetworkInfo::Denied
+             || status == QSystemNetworkInfo::Roaming);
 
+}
+
+void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
+{
+    QTest::addColumn<QSystemNetworkInfo::NetworkMode>("mode");
+
+    QTest::newRow("UnknownMode") << QSystemNetworkInfo::UnknownMode;
+    QTest::newRow("GsmMode") << QSystemNetworkInfo::GsmMode;
+    QTest::newRow("CdmaMode") << QSystemNetworkInfo::CdmaMode;
+    QTest::newRow("WcdmaMode") << QSystemNetworkInfo::WcdmaMode;
+    QTest::newRow("WlanMode") << QSystemNetworkInfo::WlanMode;
+    QTest::newRow("EthMode") << QSystemNetworkInfo::EthMode;
 }
 
 void tst_QSystemNetworkInfo::tst_networkSignalStrength()
 {
-    QSystemNetworkInfo ni;
-    ni.networkSignalStrength();
+    {
+        QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+        QSystemNetworkInfo ni;
+        QVERIFY(ni.networkSignalStrength(mode) == false
+                || ni.networkSignalStrength(mode) == true);
+    }
 }
 
 void  tst_QSystemNetworkInfo::tst_cellId()

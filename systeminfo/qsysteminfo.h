@@ -136,7 +136,7 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    qint32 networkSignalStrength();
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode);
     qint32 cellId();
     qint32 locationAreaCode();
 

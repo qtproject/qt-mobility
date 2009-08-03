@@ -81,7 +81,7 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::CellNetworkStatus getCellNetworkStatus();
-    qint32 networkSignalStrength();
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     qint32 cellId();
     qint32 locationAreaCode();
 

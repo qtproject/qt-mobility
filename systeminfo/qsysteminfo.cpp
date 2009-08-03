@@ -356,11 +356,11 @@ QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfo::getCellNetworkStatus()
 }
 
 /*!
-    Returns the strength of the network signal, per network mode , 0 - 100 linear scaling
+    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling
 */
-qint32 QSystemNetworkInfo::networkSignalStrength()
+qint32 QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    return d->networkSignalStrength();
+    return d->networkSignalStrength(mode);
 }
 
 /*!
