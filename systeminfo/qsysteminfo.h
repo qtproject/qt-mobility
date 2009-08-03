@@ -200,6 +200,7 @@ public:
 Q_SIGNALS:
     void memoryCritical(qint32);
     void diskSpaceCritical(QString &driveVolume, qint32);
+    void newMemoryCard(const QString &driveVolume);
 
 private:
     QSystemMemoryInfoPrivate *d;
