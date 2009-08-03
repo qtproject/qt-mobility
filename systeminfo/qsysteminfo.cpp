@@ -382,7 +382,7 @@ qint32 QSystemNetworkInfo::locationAreaCode()
  /*!
     Returns the current Mobile Country Code
 /*/
-qint32 QSystemNetworkInfo::currentMobileCountryCode()
+QString QSystemNetworkInfo::currentMobileCountryCode()
 {
     return d->currentMobileCountryCode();
 }
@@ -390,7 +390,7 @@ qint32 QSystemNetworkInfo::currentMobileCountryCode()
 /*!
     Returns the current Mobile Network Code
 */
-qint32 QSystemNetworkInfo::currentMobileNetworkCode()
+QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
     return d->currentMobileNetworkCode();
 }
@@ -398,7 +398,7 @@ qint32 QSystemNetworkInfo::currentMobileNetworkCode()
 /*!
     Returns the home Mobile Network Code
 */
-qint32 QSystemNetworkInfo::homeMobileCountryCode()
+QString QSystemNetworkInfo::homeMobileCountryCode()
 {
     return d->homeMobileCountryCode();
 }
@@ -406,7 +406,7 @@ qint32 QSystemNetworkInfo::homeMobileCountryCode()
 /*!
     Returns the home Mobile Country Code
 */
-qint32 QSystemNetworkInfo::homeMobileNetworkCode()
+QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
     return d->homeMobileNetworkCode();
 }
@@ -479,6 +479,7 @@ bool QSystemDisplayInfo::isScreenLockOn()
 QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
 {
     d = new QSystemMemoryInfoPrivate(parent);
+    connect(d,SIGNAL(newMemoryCardAdded(QString)),this,SIGNAL(newMemoryCard(QString)));
 }
 
 QSystemMemoryInfo::~QSystemMemoryInfo()

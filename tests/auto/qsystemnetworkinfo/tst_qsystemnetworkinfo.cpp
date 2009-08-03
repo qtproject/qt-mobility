@@ -120,38 +120,34 @@ void  tst_QSystemNetworkInfo::tst_cellId()
 void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 {
     QSystemNetworkInfo ni;
-    qint32 ac = ni.locationAreaCode();
-    QVERIFY(ac > -2);
+    qint32 lac = ni.locationAreaCode();
+    QVERIFY(lac > -2);
 }
 
 
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    qint32 mcc = ni.currentMobileCountryCode();
-    QVERIFY(mcc > -2);
+    QVERIFY(!ni.currentMobileCountryCode().isEmpty());
 }
 
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-    qint32 mnc = ni.currentMobileNetworkCode();
-    QVERIFY(mnc > -2);
+    QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
 }
 
 
 void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    qint32 mcc = ni.homeMobileCountryCode();
-    QVERIFY(mcc > -2);
+    QVERIFY(!ni.homeMobileCountryCode().isEmpty());
 }
 
 void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-    qint32 mnc = ni.homeMobileNetworkCode();
-    QVERIFY(mnc > -2);
+    QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
 }
 
 

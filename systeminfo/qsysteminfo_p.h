@@ -85,19 +85,16 @@ public:
     qint32 cellId();
     qint32 locationAreaCode();
 
-    qint32 currentMobileCountryCode(); // Mobile Country Code
-    qint32 currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode(); // Mobile Country Code
+    QString currentMobileNetworkCode(); // Mobile Network Code
 
-    qint32 homeMobileCountryCode();
-    qint32 homeMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
 
     bool isLocationEnabled() const;
     bool isWLANAccessible() const;
     QString operatorName();
 
-Q_SIGNALS:
-
-    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::CellNetworkStatus);
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -136,7 +133,9 @@ public:
 Q_SIGNALS:
     void memoryCritical(qint32);
     void diskSpaceCritical(QString &driveVolume, qint32);
- private:
+    void newMemoryCardAdded(const QString &driveVolume);
+
+private:
 #if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
     virtual bool isCriticalMemory() const;
 //    virtual bool isDiskSpaceCritical(const QString &driveVolume);

@@ -473,25 +473,25 @@ qint32 QSystemNetworkInfoPrivate::locationAreaCode()
 }
 
 // Mobile Country Code
-qint32 QSystemNetworkInfoPrivate::currentMobileCountryCode()
+QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return -1;
+    return QString();
 }
 
 // Mobile Network Code
-qint32 QSystemNetworkInfoPrivate::currentMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return -1;
+    return QString();
 }
 
-qint32 QSystemNetworkInfoPrivate::homeMobileCountryCode()
+QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return -1;
+    return QString();
 }
 
-qint32 QSystemNetworkInfoPrivate::homeMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return -1;
+    return QString();
 }
 
 bool QSystemNetworkInfoPrivate::isLocationEnabled() const
