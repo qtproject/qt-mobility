@@ -506,7 +506,7 @@ bool QSystemNetworkInfoPrivate::isWLANAccessible() const
 
 QString QSystemNetworkInfoPrivate::operatorName()
 {
-    return QString();
+    return "No Operator";
 }
 
 //////// QSystemDisplayInfo

@@ -104,61 +104,71 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength()
     {
         QFETCH(QSystemNetworkInfo::NetworkMode, mode);
         QSystemNetworkInfo ni;
-        QVERIFY(ni.networkSignalStrength(mode) == false
-                || ni.networkSignalStrength(mode) == true);
+        qint32 strength = ni.networkSignalStrength(mode);
+        QVERIFY( strength > -2
+                && strength < 101);
     }
 }
 
 void  tst_QSystemNetworkInfo::tst_cellId()
 {
     QSystemNetworkInfo ni;
-    ni.cellId();
-
+    qint32 id = ni.cellId();
+    QVERIFY(id > -2);
 }
 
 void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 {
     QSystemNetworkInfo ni;
-ni.locationAreaCode();
+    qint32 ac = ni.locationAreaCode();
+    QVERIFY(ac > -2);
 }
 
 
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-ni.currentMobileCountryCode();
+    qint32 mcc = ni.currentMobileCountryCode();
+    QVERIFY(mcc > -2);
 }
 
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-ni.currentMobileNetworkCode();
+    qint32 mnc = ni.currentMobileNetworkCode();
+    QVERIFY(mnc > -2);
 }
 
 
 void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-ni.homeMobileCountryCode();
+    qint32 mcc = ni.homeMobileCountryCode();
+    QVERIFY(mcc > -2);
 }
 
 void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-ni.homeMobileNetworkCode();
+    qint32 mnc = ni.homeMobileNetworkCode();
+    QVERIFY(mnc > -2);
 }
 
 
 void  tst_QSystemNetworkInfo::tst_isLocationEnabled()
 {
     QSystemNetworkInfo ni;
-ni.isLocationEnabled();
+    bool enabled = ni.isLocationEnabled();
+    QVERIFY(enabled == false
+            || enabled== true);
 }
 
 void  tst_QSystemNetworkInfo::tst_isWLANAccessible()
 {
     QSystemNetworkInfo ni;
-ni.isWLANAccessible();
+    bool wifi = ni.isWLANAccessible();
+    QVERIFY(wifi == false
+            || wifi== true);
 }
 
 
