@@ -86,7 +86,7 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
 
 void QEvrVideoOverlay::setFullscreen(bool fullscreen)
 {
-    if (m_displayControl && m_displayControl->SetFullScreen(fullscreen) == S_OK)
+    if (m_displayControl && m_displayControl->SetFullscreen(fullscreen) == S_OK)
         QVideoOverlayEndpoint::setFullscreen(fullscreen);
 }
 

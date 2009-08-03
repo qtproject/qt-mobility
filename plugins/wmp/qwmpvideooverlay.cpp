@@ -105,16 +105,18 @@ void QWmpVideoOverlay::setFullscreen(bool fullscreen)
 {
 }
 
-QSize QWmpVideoOverlay::sizeHint() const
+QSize QWmpVideoOverlay::nativeSize() const
 {
     return m_sizeHint;
 }
 
-void QWmpVideoOverlay::setSizeHint(const QSize &size)
+void QWmpVideoOverlay::setNativeSize(const QSize &size)
 {    
-    m_sizeHint = size;
+    if (m_sizeHint != size) {
+        m_sizeHint = size;
 
-    emit dimensionsChanged();
+        emit nativeSizeChanged();
+    }
 }
 
 void QWmpVideoOverlay::setObject(IOleObject *object, IOleClientSite *site)
