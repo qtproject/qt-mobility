@@ -30,22 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageid.h"
+#include "qmessageid_p.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
-
-typedef QByteArray MapiRecordKey;
-typedef QByteArray MapiEntryId;
-
-class QMessageIdPrivate
-{
-public:
-    MapiRecordKey _messageRecordKey;
-    MapiRecordKey _folderRecordKey;
-    MapiRecordKey _storeRecordKey;
-    MapiEntryId _entryId;
-};
 
 QMessageId::QMessageId()
     : d_ptr(0)
@@ -59,7 +47,7 @@ QMessageId::QMessageId(const QMessageId& other)
 }
 
 QMessageId::QMessageId(const QString& id)
-    : d_ptr(new QMessageIdPrivate)
+    : d_ptr(new QMessageIdPrivate(this))
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
     idStream >> d_ptr->_messageRecordKey;
@@ -95,7 +83,7 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
     if (&other != this) {
         if (other.isValid()) {
             if (!d_ptr) {
-                d_ptr = new QMessageIdPrivate;
+                d_ptr = new QMessageIdPrivate(this);
             }
             d_ptr->_messageRecordKey = other.d_ptr->_messageRecordKey;
             d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;

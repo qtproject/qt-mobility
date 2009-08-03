@@ -104,7 +104,10 @@ SOURCES += qmessageid_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
 }
 win32 {
-SOURCES += qmessageid_win.cpp \
+HEADERS += winhelpers_p.h
+
+SOURCES += winhelpers.cpp \
+           qmessageid_win.cpp \
            qmessagecontentcontainerid_win.cpp \
            qmessagefolderid_win.cpp \
            qmessageaccountid_win.cpp \

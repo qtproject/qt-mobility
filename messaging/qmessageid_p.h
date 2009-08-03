@@ -30,12 +30,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEIDPRIVATE_H
+#define QMESSAGEIDPRIVATE_H
 #include "qmessageid.h"
+#if defined(Q_OS_WIN)
+#include "winhelpers_p.h"
+#endif
 
 class QMessageIdPrivate
 {
+    Q_DECLARE_PUBLIC(QMessageId)
+
 public:
-    QMessageIdPrivate()
+    QMessageIdPrivate(QMessageId *id)
+        :q_ptr(id)
     {
     }
+    
+    QMessageId *q_ptr;
+#if defined(Q_OS_WIN)
+    MapiRecordKey _messageRecordKey;
+    MapiRecordKey _folderRecordKey;
+    MapiRecordKey _storeRecordKey;
+    MapiEntryId _entryId;
+#endif
 };
+#endif

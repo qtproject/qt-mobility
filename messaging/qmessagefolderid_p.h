@@ -30,14 +30,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFOLDERIDPRIVATE_H
+#define QMESSAGEFOLDERIDPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
+#if defined(Q_OS_WIN)
+#include "winhelpers_p.h"
+#endif
 
 class QMessageFolderIdPrivate
 {
+    Q_DECLARE_PUBLIC(QMessageFolderId)
+
 public:
-    QMessageFolderIdPrivate()
+    QMessageFolderIdPrivate(QMessageFolderId *folderId)
+        :q_ptr(folderId)
     {
     }
+
+public:
+    QMessageFolderId *q_ptr;
+#if defined(Q_OS_WIN)
+    MapiRecordKey _folderRecordKey;
+    MapiRecordKey _storeRecordKey;
+#endif
 };
+
+#endif
 #endif

@@ -31,19 +31,11 @@
 **
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-#include "qmessagefolderid.h"
+#include "qmessagefolderid_p.h"
+#include "winhelpers_p.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
-
-typedef QByteArray MapiRecordKey;
-
-class QMessageFolderIdPrivate
-{
-public:
-    MapiRecordKey _folderRecordKey;
-    MapiRecordKey _storeRecordKey;
-};
 
 QMessageFolderId::QMessageFolderId()
     : d_ptr(0)
@@ -57,7 +49,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 }
 
 QMessageFolderId::QMessageFolderId(const QString& id)
-    : d_ptr(new QMessageFolderIdPrivate)
+    : d_ptr(new QMessageFolderIdPrivate(this))
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
     idStream >> d_ptr->_folderRecordKey;
@@ -89,7 +81,7 @@ QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
     if (&other != this) {
         if (other.isValid()) {
             if (!d_ptr) {
-                d_ptr = new QMessageFolderIdPrivate;
+                d_ptr = new QMessageFolderIdPrivate(this);
             }
             d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
             d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
