@@ -55,16 +55,16 @@ public:
     QMessageServiceAction(QObject *parent = 0);
     ~QMessageServiceAction();
 
-    uint queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    uint queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    bool queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    bool queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
 
-    void send(const QMessage &message, const QMessageAccountId &accountId);
-    void compose(const QMessage &message);
-    void retrieveHeader(const QMessageId &id);
-    void retrieveBody(const QMessageId &id);
-    void retrieve(const QMessageContentContainerId &id);
-    void show(const QMessageId &id);
-    void exportUpdates();
+    bool send(const QMessage &message, const QMessageAccountId &accountId);
+    bool compose(const QMessage &message);
+    bool retrieveHeader(const QMessageId &id);
+    bool retrieveBody(const QMessageId &id);
+    bool retrieve(const QMessageContentContainerId &id);
+    bool show(const QMessageId &id);
+    bool exportUpdates(const QMessageAccount &account);
     Activity activity() const;
     QMessageStore::ErrorCode lastError() const;
 

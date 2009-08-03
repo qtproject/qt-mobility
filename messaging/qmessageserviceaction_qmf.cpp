@@ -41,58 +41,66 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-uint QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
     Q_UNUSED(key);
     Q_UNUSED(sortKey);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
-    return 0; // stub
+    return false; // stub
 }
 
-uint QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
     Q_UNUSED(body);
     Q_UNUSED(key);
     Q_UNUSED(sortKey);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
-    return 0; // stub
+    return false; // stub
 }
 
-void QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
+bool QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
 {
     Q_UNUSED(message)
     Q_UNUSED(accountId)
+    return false; // stub
 }
 
-void QMessageServiceAction::compose(const QMessage &message)
+bool QMessageServiceAction::compose(const QMessage &message)
 {
     Q_UNUSED(message)
+    return false; // stub
 }
 
-void QMessageServiceAction::retrieveHeader(const QMessageId& id)
+bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id)
+    return false; // stub
 }
 
-void QMessageServiceAction::retrieveBody(const QMessageId& id)
+bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 {
     Q_UNUSED(id)
+    return false; // stub
 }
 
-void QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
     Q_UNUSED(id)
+    return false; // stub
 }
 
-void QMessageServiceAction::show(const QMessageId& id)
+bool QMessageServiceAction::show(const QMessageId& id)
 {
     Q_UNUSED(id)
+    return false; // stub
 }
 
-void QMessageServiceAction::exportUpdates()
+bool QMessageServiceAction::exportUpdates(const QMessageAccount &id)
 {
+    Q_UNUSED(id)
+    return false; // stub
 }
 
 QMessageServiceAction::Activity QMessageServiceAction::activity() const

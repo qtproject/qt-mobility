@@ -44,26 +44,27 @@
 
     QMessageServiceAction provides the mechanisms for messaging clients to request services, 
     and to receive information in response.  All actions present the same 
-    interface for communicating status, and progress information when available.
+    interface for communicating status, and progress information.
 
     All actions communicate changes in their operational state by emitting the activityChanged()
     signal.
 
-    Actions that support reporting progress information do so by emitting the progressChanged()
-    signal.
+    Actions report progress information by emitting the progressChanged() signal.
     
-    If an action operation fails, the lastError() function will return a value
-    indicating the failure mode encountered.
+    If an action operation fails after being initiated then the lastError() function will return 
+    a value indicating the failure mode encountered.
     
-    A user may attempt to cancel an operation after it has been initiated. The cancelOperation()
+    A client may attempt to cancel an operation after it has been initiated. The cancelOperation()
     slot is provided for this purpose.
 
-    A QMessageServiceAction instance supports only a single request at any time.  A client
-    may, however, use multiple QMessageServiceAction instances to create a queue of requests 
-    that will be performed sequentially.
+    A QMessageServiceAction instance supports only a single request at any time. Attempting to
+    initiate an operation on a QMessageServiceAction while another operation is already in
+    progress will result in the later initiating function returning false. A client may, however,
+    use multiple QMessageServiceAction instances to create a queue of requests that will be 
+    performed sequentially.
 
     Each QMessageServiceAction instance will report only the changes pertaining to the request
-    that instance delivered.
+    that instance delivers.
 */
 
 /*!
@@ -108,7 +109,11 @@
     otherwise returns 0.
     
     Calling this function may result in the messagesFound() and progressChanged() 
-    signals  being emitted multiple times.
+    signals  being emitted multiple times. An emission of the progressChanged()
+    signal with a total of 0 indicates that the number of progress steps is
+    unknown.
+    
+    Returns true if the action can be initiated; otherwise returns false.
     
     \sa messagesFound(), availabilityChanged(), progressChanged()
 */
@@ -130,7 +135,11 @@
     otherwise returns 0.
     
     Calling this function may result in the messagesFound() and progressChanged() 
-    signals being emitted multiple times.
+    signals being emitted multiple times. An emission of the progressChanged()
+    signal with a total of 0 indicates that the number of progress steps is
+    unknown.
+
+    Returns true if the action can be initiated; otherwise returns false.
     
     \sa messagesFound(), availabilityChanged(), progressChanged()
 */
@@ -143,6 +152,8 @@
     The message should be placed in the standard outbox folder for the account before sending, 
     and if the sending is successful moved to the sent folder for the account.
   
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessage, QMessageAccountId
 */
 
@@ -153,6 +164,8 @@
   
     The default application for handling the type of \a message should be used.
   
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessage::type()
 */
 
@@ -167,8 +180,9 @@
     
     If the message can not be found on the originating server it will be marked as removed.
 
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessageId, QMessage::Removed
-
 */
 
 /*!
@@ -178,8 +192,9 @@
 
     If the message can not be found on the originating server it will be marked as removed.
 
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessageId, QMessage::Removed
-
 */
 
 /*!
@@ -187,6 +202,8 @@
   
     Retrieve the container identified by \a id, the contents of the container should also be 
     retrieved.
+    
+    Returns true if the action can be initiated; otherwise returns false.
     
     \sa QMessageContentContainerId
 */
@@ -198,14 +215,18 @@
 
     The default application for handling the type of message that \a id identifies should be used.
 
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessageId, QMessage::type()
 */
     
 /*!
-    \fn QMessageServiceAction::exportUpdates()
+    \fn QMessageServiceAction::exportUpdates(const QMessageAccount &account)
   
     Synchronize any changes that have been queued by message store operations with external servers.
 
+    Returns true if the action can be initiated; otherwise returns false.
+    
     \sa QMessageStore::addMessage(), QMessageStore::updateMessage(), QMessageStore::removeMessage(), QMessageStore::removeMessages()
 */
     
@@ -233,9 +254,30 @@
 */
 
 /*!
-    \fn QMessageServiceAction::lastErrorString() const
+    \fn QMessageServiceAction::messagesFound(const QMessageIdList &ids);
+
+    This signal is emitted when a queryMessages() operation has found
+    messages.
+
+    \a ids is the list of identifiers of messages found.
+
+    \sa queryMessages()
+*/
+
+/*!
+    \fn QMessageServiceAction::progressChanged(uint value, uint total)
+
+    This signal is emitted when the action operation has progressed.
+
+    \a total is the total number of progress steps to perform, or zero if
+    the number of progress steps is unknown.
+
+    \a value is the number of progress steps completed so far.
+*/
+
+/*!
+    \fn QMessageServiceAction::lastError() const
   
-    Returns a string indicating the last error condition reported by the action if any; 
-    otherwise returns a null string.
+    Returns a value indicating the last error condition encountered by the action.
 */
 
