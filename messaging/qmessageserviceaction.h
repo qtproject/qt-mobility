@@ -34,6 +34,7 @@
 #define QMESSAGESERVICEACTION_H
 #include <QObject>
 #include <qmessageglobal.h>
+#include <qmessagestore.h>
 #include <qmessage.h>
 
 class QMessageServiceActionPrivate;
@@ -54,6 +55,9 @@ public:
     QMessageServiceAction(QObject *parent = 0);
     ~QMessageServiceAction();
 
+    uint queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    uint queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+
     void send(const QMessage &message, const QMessageAccountId &accountId);
     void compose(const QMessage &message);
     void retrieveHeader(const QMessageId &id);
@@ -62,13 +66,15 @@ public:
     void show(const QMessageId &id);
     void exportUpdates();
     Activity activity() const;
-    QString lastErrorString() const;
+    QMessageStore::ErrorCode lastError() const;
 
 public slots:
     void cancelOperation();
 
 signals:
     void activityChanged(QMessageServiceAction::Activity a);
+    void messagesFound(const QMessageIdList &ids);
+    void progressChanged(uint value, uint total);
 
 private:
     QMessageServiceActionPrivate *d_ptr;

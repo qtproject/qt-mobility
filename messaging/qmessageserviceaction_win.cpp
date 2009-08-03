@@ -41,6 +41,25 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
+uint QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+{
+    Q_UNUSED(key);
+    Q_UNUSED(sortKey);
+    Q_UNUSED(limit);
+    Q_UNUSED(offset);
+    return 0; // stub
+}
+
+uint QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+{
+    Q_UNUSED(body);
+    Q_UNUSED(key);
+    Q_UNUSED(sortKey);
+    Q_UNUSED(limit);
+    Q_UNUSED(offset);
+    return 0; // stub
+}
+
 void QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
 {
     Q_UNUSED(message)
@@ -85,7 +104,7 @@ void QMessageServiceAction::cancelOperation()
 {
 }
 
-QString QMessageServiceAction::lastErrorString() const
+QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
-    return QString::null;
+    return QMessageStore::NoError;
 }
