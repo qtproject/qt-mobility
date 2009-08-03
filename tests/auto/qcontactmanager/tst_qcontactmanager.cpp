@@ -501,6 +501,7 @@ void tst_QContactManager::groups()
 
         QContactGroup g2 = cm->group(g.id());
         QCOMPARE(cm->error(), QContactManager::NoError);
+        QVERIFY(!g2.isEmpty());
         QVERIFY(g2.id() == g.id());
         QVERIFY(g2.members().count() == 0);
         QCOMPARE(g.members(), g2.members());
@@ -520,6 +521,7 @@ void tst_QContactManager::groups()
         g2 = cm->group(g2.id());
         QCOMPARE(cm->error(), QContactManager::NoError);
 
+        QVERIFY(!g2.isEmpty());
         QVERIFY(g2.id() == g.id());
         QVERIFY(g2.members().count() == 1);
         QVERIFY(g2.members().at(0) == a.id());
@@ -531,6 +533,7 @@ void tst_QContactManager::groups()
 
         g2 = cm->group(g2.id());
         QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+        QVERIFY(g2.isEmpty());
         QVERIFY(g2.id() == 0);
         QVERIFY(g2.members().count() == 0);
 
@@ -610,8 +613,9 @@ void tst_QContactManager::groups()
         QVERIFY(cm->removeGroup(g3.id()) == false);
         QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
-        /* Test that g is empty as well */
+        /* Test that g has no members (but is not empty) as well */
         g2 = cm->group(g.id());
+        QVERIFY(!g2.isEmpty());
         QVERIFY(g2.id() == g.id());
         QVERIFY(g2.members().count() == 0);
 
@@ -648,6 +652,7 @@ void tst_QContactManager::groups()
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
 
         g = cm->group(1);
+        QVERIFY(g.isEmpty());
         QVERIFY(g.id() == 0);
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
     }

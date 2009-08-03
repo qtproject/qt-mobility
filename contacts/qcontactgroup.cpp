@@ -77,6 +77,19 @@ bool QContactGroup::operator==(const QContactGroup& other) const
     return true;
 }
 
+/*! Returns true if this QContactGroup has no id or name set and no members, or false otherwise. */
+bool QContactGroup::isEmpty() const
+{
+    if (d->m_id != 0)
+        return false;
+    if (!d->m_name.isEmpty())
+        return false;
+    if (d->m_members.count() > 0)
+        return false;
+
+    return true;
+}
+
 /*! Return the id of this QContactGroup */
 QUniqueId QContactGroup::id() const
 {
