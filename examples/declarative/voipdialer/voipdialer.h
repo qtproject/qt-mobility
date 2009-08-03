@@ -41,7 +41,7 @@ class VoipDialer : public QObject
     Q_OBJECT
     Q_ENUMS(ConnectionState)
 public:
-    BluetoothTransfer(QObject *parent = 0);
+    VoipDialer(QObject *parent = 0);
     
     enum ConnectionState {
         Disconnected = 0,

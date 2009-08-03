@@ -38,9 +38,10 @@
 VoipDialer::VoipDialer(QObject *parent)
     : QObject(parent), timerId(0)
 {
+    setObjectName("MyVoipService");
 }
 
-ConnectionState VoipDialer::state() const
+VoipDialer::ConnectionState VoipDialer::state() const
 {
     return m_state;
 }
@@ -52,9 +53,10 @@ void VoipDialer::dialNumber(const QString& number)
 
     if (timerId)
         killTimer(timerId);
-    timerId = startTimer(2000)
+    timerId = startTimer(2000);
     m_state = Connecting;
-    emit stateChanged()
+    emit stateChanged();
+    qDebug() << "Dialing Voip number: " << number;
 }
 
 void VoipDialer::timerEvent(QTimerEvent* event)

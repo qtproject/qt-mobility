@@ -1,17 +1,14 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET=sfw-kinetic-example
 INCLUDEPATH += ../../../serviceframework
 TARGET = serviceframework_voipdialerservice
-
 include(../../../common.pri)
 
-QT += gui declarative
+QT += gui
 
 # Input 
-HEADERS += ../sfwexample.h
-SOURCES += ../sfwexample.cpp \
-           ../main.cpp
+HEADERS += voipdialer.h voipdialerplugin.h
+SOURCES += voipdialer.cpp voipdialerplugin.cpp
 
 LIBS += -lQtServiceFramework
 

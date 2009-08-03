@@ -85,7 +85,6 @@ Rect {
         onTriggered: status.text = ""
     }
     DialScreen {
-        property var service: 0
         property bool indial : false
         id: screen
         anchors.topMargin: 5; anchors.leftMargin: 5
@@ -95,6 +94,10 @@ Rect {
         onDial: {
             indial = true;
             status.text = "Dialing " + numberToDial +"...";
+            if (service != 0) {
+                print(service);
+               ServiceSelectionBox.service.dialNumber(numberToDial);
+            }
         }
         onHangup: {
             if (indial == true) {

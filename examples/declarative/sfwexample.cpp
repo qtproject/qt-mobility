@@ -124,13 +124,17 @@ ServiceRegister::ServiceRegister() {
     registerExampleServices();
 
     ServiceWrapper *service;
-    QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces();
+    QServiceFilter filter("com.nokia.qt.examples.Dialer");
+    QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces(filter);
     for (int i = 0; i<allImpl.count(); i++) {
-        qDebug() << "adding service" << i;
+        qDebug() << "Found service:" << allImpl.at(i).serviceName() << "(" << allImpl.at(i).interfaceName() << ")";
         service = new ServiceWrapper();
         service->setNativeDescriptor(allImpl.at(i));
         m_services.append(service);
     }
+    /*ServiceWrapper* wrapper = new ServiceWrapper();
+    wrapper->setNativeDescriptor(QServiceInterfaceDescriptor());
+    m_services.append(wrapper);*/
 }
 
 ServiceRegister::~ServiceRegister() {
@@ -140,19 +144,16 @@ ServiceRegister::~ServiceRegister() {
 void ServiceRegister::registerExampleServices()
 {
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"bluetoothtransferservce.xml" << "filemanagerservice.xml";
-    //exampleXmlFiles <<"voipdialerservice.xml";
+    exampleXmlFiles <<"voipdialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         bool s = serviceManager->addService(path);
-        qDebug() << s << serviceManager->error();;
     }
 }
 
 void ServiceRegister::unregisterExampleServices()
 {
-    //serviceManager->removeService("FileManagerService");
-    //serviceManager->removeService("BluetoothTransferService");
+    serviceManager->removeService("VoipDialer");
 }
 
 
