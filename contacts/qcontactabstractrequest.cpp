@@ -66,6 +66,11 @@ QContactManager::Error QContactAbstractRequest::error() const
     return d_ptr->m_error;
 }
 
+QList<QContactManager::Error> QContactAbstractRequest::errors() const
+{
+    return d_ptr->m_errors;
+}
+
 QContactAbstractRequest::Status QContactAbstractRequest::status() const
 {
     return d_ptr->m_status;

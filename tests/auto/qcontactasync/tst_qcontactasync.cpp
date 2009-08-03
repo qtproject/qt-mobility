@@ -557,6 +557,106 @@ void tst_QContactAsync::groupFetch()
 
 void tst_QContactAsync::groupRemove()
 {
+    QContactManager* cm = prepareModel();
+    QContactGroupRemoveRequest grr;
+
+    // initial state
+    QVERIFY(!grr.isActive());   // not started
+    QVERIFY(!grr.isFinished()); // not started
+
+    // specific group removal
+    int originalCount = cm->groups().size();
+    QList<QUniqueId> removeIds;
+    removeIds << cm->groups().first();
+    grr.setIds(removeIds);
+    grr.setManager(cm);
+    qRegisterMetaType<QContactGroupRemoveRequest*>("QContactGroupRemoveRequest*");
+    QSignalSpy spy(&grr, SIGNAL(progress(QContactGroupRemoveRequest*)));
+    QVERIFY(grr.ids() == removeIds);
+    QVERIFY(grr.start());
+    QVERIFY(grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!grr.isFinished());
+    QVERIFY(grr.waitForFinished());
+    int expectedCount = 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(grr.isFinished());
+    QVERIFY(!grr.isActive());
+
+    QCOMPARE(cm->groups().size(), originalCount - 1);
+    cm->group(removeIds.first()); // check that it has already been removed.
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+
+    // remove (asynchronously) a nonexistent group - should fail.
+    grr.setIds(removeIds);
+    QVERIFY(grr.start());
+    QVERIFY(grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!grr.isFinished());
+    QVERIFY(grr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(grr.isFinished());
+    QVERIFY(!grr.isActive());
+
+    QCOMPARE(cm->groups().size(), originalCount - 1); // hasn't changed
+    QCOMPARE(grr.error(), QContactManager::DoesNotExistError);
+
+    // remove with list containing one valid and one invalid id.
+    removeIds << cm->groups().first();
+    grr.setIds(removeIds);
+    QVERIFY(grr.start());
+    QVERIFY(grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!grr.isFinished());
+    QVERIFY(grr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(grr.isFinished());
+    QVERIFY(!grr.isActive());
+
+    QCOMPARE(cm->groups().size(), originalCount - 2); // only one more has been removed
+    QCOMPARE(grr.errors().first(), QContactManager::DoesNotExistError);
+    QCOMPARE(grr.errors().at(1), QContactManager::NoError);
+
+    // remove with empty list - nothing should happen.
+    removeIds.clear();
+    grr.setIds(removeIds);
+    QVERIFY(grr.start());
+    QVERIFY(grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!grr.isFinished());
+    QVERIFY(grr.waitForFinished());
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(grr.isFinished());
+    QVERIFY(!grr.isActive());
+
+    QCOMPARE(cm->groups().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(grr.error(), QContactManager::NoError);  // no error but no effect.
+
+    // cancelling
+    removeIds.clear();
+    removeIds << cm->groups().first();
+    grr.setIds(removeIds);
+    QVERIFY(grr.start());
+    QVERIFY(grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!grr.isFinished());
+    QVERIFY(grr.cancel());
+    QVERIFY(grr.status() == QContactAbstractRequest::Cancelling);
+    QVERIFY(grr.isActive());    // still cancelling
+    QVERIFY(!grr.isFinished()); // not finished cancelling
+    QVERIFY(grr.waitForFinished());
+    expectedCount += 3;
+    QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
+    QVERIFY(grr.isFinished());
+    QVERIFY(!grr.isActive());
+    QVERIFY(grr.status() == QContactAbstractRequest::Cancelled);
+
+    QCOMPARE(cm->groups().size(), originalCount - 2); // hasn't changed
+
+    delete cm;
 }
 
 void tst_QContactAsync::groupSave()

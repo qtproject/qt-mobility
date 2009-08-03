@@ -62,7 +62,7 @@ public:
     Status status() const;
     bool isActive() const;
     bool isFinished() const;
-    QList<QContactManager::Error> errors();
+    QList<QContactManager::Error> errors() const;
     QContactManager::Error error() const;
 
     enum Type {
