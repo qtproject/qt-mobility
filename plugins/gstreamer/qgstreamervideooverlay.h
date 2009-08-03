@@ -59,7 +59,7 @@ public:
 
     void setFullscreen(bool fullscreen);
 
-    QSize sizeHint() const;
+    QSize nativeSize() const;
 
     QAbstractVideoSurface *surface() const;
 

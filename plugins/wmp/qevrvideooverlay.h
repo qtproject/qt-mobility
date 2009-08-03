@@ -51,8 +51,7 @@ public:
     void setDisplayRect(const QRect &rect);
     void setFullscreen(bool fullscreen);
 
-    QSize sizeHint() const;
-    void setSizeHint(const QSize &size);
+    QSize nativeSize() const;
 
     void setDisplayControl(IMFVideoDisplayControl *control);
 
