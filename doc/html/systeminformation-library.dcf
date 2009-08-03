@@ -9,10 +9,8 @@
         <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryVeryLow</keyword>
         <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLow</keyword>
         <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryNormal</keyword>
-        <keyword ref="qsystemdeviceinfo.html#InputMethods-enum">InputMethods</keyword>
-        <keyword ref="qsystemdeviceinfo.html#InputMethods-enum">QSystemDeviceInfo::KeysAndTouch</keyword>
-        <keyword ref="qsystemdeviceinfo.html#InputMethods-enum">QSystemDeviceInfo::KeysOnly</keyword>
-        <keyword ref="qsystemdeviceinfo.html#InputMethods-enum">QSystemDeviceInfo::TouchOnly</keyword>
+        <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</keyword>
+        <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethods</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">PowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::UnknownPower</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPower</keyword>
@@ -34,15 +32,17 @@
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelCritical">batteryLevelCritical</keyword>
+        <keyword ref="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</keyword>
         <keyword ref="qsystemdeviceinfo.html#getSimStatus">getSimStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
+        <keyword ref="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</keyword>
         <keyword ref="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
         <keyword ref="qsystemdeviceinfo.html#manufacturer">manufacturer</keyword>
         <keyword ref="qsystemdeviceinfo.html#model">model</keyword>
         <keyword ref="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#profileChanged">profileChanged</keyword>
+        <keyword ref="qsystemdeviceinfo.html#productName">productName</keyword>
         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemdisplayinfo.html" title="QSystemDisplayInfo Class Reference">
@@ -50,8 +50,6 @@
         <keyword ref="qsystemdisplayinfo.html#colorDepth">colorDepth</keyword>
         <keyword ref="qsystemdisplayinfo.html#displayBrightness">displayBrightness</keyword>
         <keyword ref="qsystemdisplayinfo.html#isScreenLockOn">isScreenLockOn</keyword>
-        <keyword ref="qsystemdisplayinfo.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
-        <keyword ref="qsystemdisplayinfo.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
         <section ref="qsystemdisplayinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsysteminfo.html" title="QSystemInfo Class Reference">
@@ -103,6 +101,7 @@
         <keyword ref="qsystemmemoryinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</keyword>
         <keyword ref="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
         <keyword ref="qsystemmemoryinfo.html#memoryCritical">memoryCritical</keyword>
+        <keyword ref="qsystemmemoryinfo.html#newMemoryCard">newMemoryCard</keyword>
         <keyword ref="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <section ref="qsystemmemoryinfo-members.html" title="List of all members"/>
     </section>
@@ -118,6 +117,7 @@
         <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::Denied</keyword>
         <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::EmergencyOnly</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
@@ -125,18 +125,26 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::GsmMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WcdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#cellId">cellId</keyword>
-        <keyword ref="qsystemnetworkinfo.html#currentMCC">currentMCC</keyword>
-        <keyword ref="qsystemnetworkinfo.html#currentMNC">currentMNC</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</keyword>
-        <keyword ref="qsystemnetworkinfo.html#homeMCC">homeMCC</keyword>
-        <keyword ref="qsystemnetworkinfo.html#homeMNC">homeMNC</keyword>
+        <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#isLocationEnabled">isLocationEnabled</keyword>
         <keyword ref="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
-        <keyword ref="qsystemnetworkinfo.html#networkStatusChanged">networkStatusChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>
         <section ref="qsystemnetworkinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
+        <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
+        <keyword ref="qsystemscreensaver.html#ScreenSaverState-enum">ScreenSaverState</keyword>
+        <keyword ref="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</keyword>
+        <keyword ref="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</keyword>
+        <keyword ref="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
+        <keyword ref="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
+        <section ref="qsystemscreensaver-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
