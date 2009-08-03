@@ -1455,9 +1455,9 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.
+ * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
  */
-void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // convenience function that simply sets the operation error and status
     req->d_ptr->m_error = error;
@@ -1468,14 +1468,14 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         case QContactAbstractRequest::ContactFetch:
         {
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
         case QContactAbstractRequest::ContactIdFetch:
         {
             QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1496,7 +1496,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         case QContactAbstractRequest::GroupFetch:
         {
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1517,7 +1517,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         case QContactAbstractRequest::DetailDefinitionFetch:
         {
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1541,9 +1541,9 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // update the type-generic information
     req->d_ptr->m_error = error;
@@ -1556,7 +1556,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
             rd->m_ids = result;
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1565,7 +1565,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
             rd->m_ids = result;
             QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1574,7 +1574,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
             rd->m_ids = result;
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1587,9 +1587,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request. If the request is of a type which does not return a list of contacts as a result, this function will return without doing anything.
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability. If the request is of a type which does not return a list of contacts as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // update the type-generic information
     req->d_ptr->m_error = error;
@@ -1602,7 +1602,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
             rd->m_contacts = result;
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1624,9 +1624,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of groups as a result, this function will return without doing anything.
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of groups as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // update the type-generic information
     req->d_ptr->m_error = error;
@@ -1639,7 +1639,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
             rd->m_groups = result;
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1661,9 +1661,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition names as a result, this function will return without doing anything.
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of detail definition names as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // update the type-generic information
     req->d_ptr->m_error = error;
@@ -1676,7 +1676,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QS
             QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
             rd->m_names = result;
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1717,9 +1717,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a map of string to detail definition as a result, this function will return without doing anything.
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a map of string to detail definition as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // update the type-generic information
     req->d_ptr->m_error = error;
@@ -1732,7 +1732,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
             QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
             rd->m_definitions = result;
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, false);
+            emit r->progress(r, appendOnly);
         }
         break;
 
@@ -1743,5 +1743,3 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
         }
     }
 }
-
-// TODO: at the moment, emitted progress signal always has "false" for appendOnly.  Instead, need to glean this from engine...
