@@ -39,34 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QIOCTLWIFIENGINE_P_H
-#define QIOCTLWIFIENGINE_P_H
+#ifndef QGENERICENGINE_P_H
+#define QGENERICENGINE_P_H
 
 //
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API.  It exists for the convenience
-// of the QLibrary class.  This header file may change from
-// version to version without notice, or even be removed.
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
 //
 // We mean it.
 //
 
-#include "qnetworksessionengine_win_p.h"
-#include <QtCore/qtimer.h>
+#include "qnetworksessionengine_p.h"
+
+#include <QMap>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 
-class QIoctlWifiEngine : public QNetworkSessionEngine
+class QGenericEngine : public QNetworkSessionEngine
 {
     Q_OBJECT
 
 public:
-    QIoctlWifiEngine(QObject *parent = 0);
-    ~QIoctlWifiEngine();
+    QGenericEngine(QObject *parent = 0);
+    ~QGenericEngine();
 
     QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
     QString getInterfaceFromId(const QString &id);
@@ -79,14 +81,14 @@ public:
 
     void requestUpdate();
 
-    static QIoctlWifiEngine *instance();
+    static QGenericEngine *instance();
 
 private:
+    QMap<uint, QString> configurationInterface;
     QTimer pollTimer;
 };
 
 QT_END_NAMESPACE
 
 #endif
-
 

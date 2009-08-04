@@ -16,7 +16,7 @@ INCLUDEPATH += ../../bearer
 
 include(../../common.pri)
 
-LIBS += -lbearer
+LIBS += -lQtBearer
 win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2
 

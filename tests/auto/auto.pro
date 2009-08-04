@@ -4,3 +4,4 @@ SUBDIRS += qnetworkconfigmanager \
 
 win32:SUBDIRS += qnetworksession
 maemo:SUBDIRS += qnetworksession
+!mac:unix:SUBDIRS += qnetworksession

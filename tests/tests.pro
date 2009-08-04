@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += auto
+SUBDIRS += auto 
 !symbian:unix:SUBDIRS += networkmanager
 maemo:SUBDIRS -= networkmanager

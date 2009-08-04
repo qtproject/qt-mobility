@@ -143,6 +143,28 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="newConfigurationActivated" fullname="QNetworkSession::newConfigurationActivated" href="qnetworksession.html#newConfigurationActivated" location="qnetworksession.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConfigurationActivated()"></function>
         </class>
+        <page access="public" status="commendable" name="bearercloud" href="bearercloud.html" subtype="example" title="Bearer Cloud Example" fulltitle="Bearer Cloud Example" subtitle="" location="bearercloud.qdoc">
+            <contents name="setting-the-scene" title="Setting the scene" level="1"></contents>
+            <contents name="responding-to-changes" title="Responding to changes" level="1"></contents>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.cpp" href="bearercloud-bearercloud-cpp.html" subtype="file" title="" fulltitle="bearercloud.cpp Example File" subtitle="bearercloud/bearercloud.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.h" href="bearercloud-bearercloud-h.html" subtype="file" title="" fulltitle="bearercloud.h Example File" subtitle="bearercloud/bearercloud.h" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/cloud.cpp" href="bearercloud-cloud-cpp.html" subtype="file" title="" fulltitle="cloud.cpp Example File" subtitle="bearercloud/cloud.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/cloud.h" href="bearercloud-cloud-h.html" subtype="file" title="" fulltitle="cloud.h Example File" subtitle="bearercloud/cloud.h" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/lan.svg" href="bearercloud-lan-svg.html" subtype="file" title="" fulltitle="lan.svg Example File" subtitle="bearercloud/lan.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/unknown.svg" href="bearercloud-unknown-svg.html" subtype="file" title="" fulltitle="unknown.svg Example File" subtitle="bearercloud/unknown.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/wlan.svg" href="bearercloud-wlan-svg.html" subtype="file" title="" fulltitle="wlan.svg Example File" subtitle="bearercloud/wlan.svg" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/main.cpp" href="bearercloud-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearercloud/main.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.pro" href="bearercloud-bearercloud-pro.html" subtype="file" title="" fulltitle="bearercloud.pro Example File" subtitle="bearercloud/bearercloud.pro" location=""></page>
+            <page access="public" status="commendable" name="bearercloud/icons.qrc" href="bearercloud-icons-qrc.html" subtype="file" title="" fulltitle="icons.qrc Example File" subtitle="bearercloud/icons.qrc" location=""></page>
+        </page>
+        <page access="public" status="commendable" name="bearermonitor" href="bearermonitor.html" subtype="example" title="Bearer Monitor Example" fulltitle="Bearer Monitor Example" subtitle="" location="bearermonitor.qdoc">
+            <page access="public" status="commendable" name="bearermonitor/bearerdialog.cpp" href="bearermonitor-bearerdialog-cpp.html" subtype="file" title="" fulltitle="bearerdialog.cpp Example File" subtitle="bearermonitor/bearerdialog.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/bearerdialog.h" href="bearermonitor-bearerdialog-h.html" subtype="file" title="" fulltitle="bearerdialog.h Example File" subtitle="bearermonitor/bearerdialog.h" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/sessionwidget.cpp" href="bearermonitor-sessionwidget-cpp.html" subtype="file" title="" fulltitle="sessionwidget.cpp Example File" subtitle="bearermonitor/sessionwidget.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/sessionwidget.h" href="bearermonitor-sessionwidget-h.html" subtype="file" title="" fulltitle="sessionwidget.h Example File" subtitle="bearermonitor/sessionwidget.h" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/main.cpp" href="bearermonitor-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearermonitor/main.cpp" location=""></page>
+            <page access="public" status="commendable" name="bearermonitor/bearermonitor.pro" href="bearermonitor-bearermonitor-pro.html" subtype="file" title="" fulltitle="bearermonitor.pro Example File" subtitle="bearermonitor/bearermonitor.pro" location=""></page>
+        </page>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Bearer Management Library Developer Resources" fulltitle="Bearer Management Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="introduction" title="Introduction" level="1"></contents>
             <contents name="the-api-in-details" title="The API in details" level="1"></contents>
@@ -153,6 +175,7 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
             <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
             <contents name="main-classes" title="Main classes" level="2"></contents>
+            <contents name="examples" title="Examples" level="2"></contents>
         </page>
     </namespace>
 </INDEX>

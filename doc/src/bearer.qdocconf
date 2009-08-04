@@ -22,6 +22,10 @@ base                    = file:./doc/html
 defines                 = Q_QDOC \
                           __cplusplus
 
+examples.fileextensions = "*.cpp *.h *.svg"
+exampledirs             = ../../examples \
+                          ../..
+
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
                           QM_EXPORT_DNS \
@@ -64,17 +68,7 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_SQL_EXPORT \
                           Q_TYPENAME \
                           Q_XML_EXPORT \
-                          QTOPIA_EXPORT \
-                          QTOPIA_ENABLE_EXPORT \
-                          QTOPIAAUDIO_EXPORT \
-                          QTOPIABASE_EXPORT \
-                          QTOPIAMAIL_EXPORT \
-                          QTOPIAMEDIA_EXPORT \
-                          QTOPIAPIM_EXPORT \
-                          QTOPIAPHONE_EXPORT \
-                          QTUITEST_EXPORT \
-                          QTOPIA_PLUGIN_EXPORT \
-                          QTOPIA_TEMPLATE_EXPORT
+                          QTUITEST_EXPORT
 
 Cpp.ignoredirectives    = Q_DECLARE_INTERFACE \
                           Q_DECLARE_OPERATORS_FOR_FLAGS \

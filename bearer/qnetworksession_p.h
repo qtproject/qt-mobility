@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -45,30 +37,24 @@
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API.  It exists for the convenience
-// of the QLibrary class.  This header file may change from
-// version to version without notice, or even be removed.
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
 //
 // We mean it.
 //
 
 #include "qnetworkconfigmanager_p.h"
 #include "qnetworksession.h"
-#ifdef Q_OS_WIN
-#include "qnetworksessionengine_win_p.h"
+#ifdef BEARER_ENGINE
+#include "qnetworksessionengine_p.h"
 #endif
 
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
-#include <QDBusPendingCallWatcher>
-#endif
-
-QT_BEGIN_NAMESPACE
-
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
 
@@ -122,26 +108,12 @@ Q_SIGNALS:
     void quitPendingWaitsForOpened();
 
 private Q_SLOTS:
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
     void forcedSessionClose(const QNetworkConfiguration &config);
     void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
 #endif
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
-    void deviceStateChanged(quint32);
-    void slotActivationFinished(QDBusPendingCallWatcher*);
-
-    void updateDeviceInterfaceState(const QString &, quint32);
-    void propertiesChanged( const QString & path, QMap<QString,QVariant> map);
-    void configChanged(const QNetworkConfiguration &config);
-
-    void activateNmSession(const QNetworkConfiguration &config);
-    void deactivateNmSession(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
-#endif
-
 
 private:
     QNetworkConfigurationManager manager;
@@ -165,7 +137,7 @@ private:
     QNetworkSession::State state;
     bool isActive;
 
-#ifdef Q_OS_WIN
+#ifdef BEARER_ENGINE
     bool opened;
 
     QNetworkSessionEngine *engine;
@@ -175,25 +147,9 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(MAEMO)
-    bool keepActive;
-    qint32 triedServiceConnection;
+#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
-    QString currentBearerName;
-    QString currentConnectionPath;
-    QString activeConnectionPath;
-    QString getConnectionPath(const QString &name = QString());
-    QString getActiveConnectionPath();
-    QString getBearerName(quint32 type);
     void setActiveTimeStamp();
-    void updateNetworkConfigurations();
-    void activateConnection(/*QDBusInterface &iface,*/ const QString & connPath, const QString &devicePath);
-    QNetworkManagerInterface * iface;
-    QNetworkManagerInterfaceDevice *devIface;
-    QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
-    QNetworkManagerInterfaceAccessPoint *accessPointIface;
-    QNetworkManagerInterfaceDeviceWired * devWiredIface;
-
 #endif
 
 #ifdef MAEMO

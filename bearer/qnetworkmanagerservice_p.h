@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,25 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #ifndef QNETWORKMANAGERSERVICE_H
 #define QNETWORKMANAGERSERVICE_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include <NetworkManager/NetworkManager.h>
 #include <QtDBus>
@@ -83,6 +86,7 @@ public:
     QList <QDBusObjectPath> activeConnections() const;
     quint32 state();
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void deviceAdded(QDBusObjectPath);
@@ -158,6 +162,7 @@ public:
     quint32 maxBitrate() const;
     quint32 strength() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged(QMap <QString,QVariant>);
@@ -188,6 +193,7 @@ public:
     
     QDBusObjectPath ip4config() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void stateChanged(const QString &, quint32);
@@ -213,6 +219,7 @@ public:
     quint32 speed() const;
     bool carrier() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -252,6 +259,7 @@ public:
     QDBusObjectPath activeAccessPoint() const;
     quint32 wirelessCapabilities() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -276,6 +284,8 @@ public:
     QDBusInterface  *connectionInterface() const;
     QList <QDBusObjectPath> listConnections();
     bool setConnections();
+    bool isValid();
+
 Q_SIGNALS:
     void newConnection(QDBusObjectPath);
 private:
@@ -297,13 +307,23 @@ public:
     QNmSettingsMap getSettings();
     //    void update(QNmSettingsMap map);
     bool setConnections();
+    NMDeviceType getType();
+    bool isAutoConnect();
+    quint64 getTimestamp();
+    QString getId();
+    QString getUuid();
+    QString getSsid();
+    QString getMacAddress();
+    QStringList getSeenBssids();
+    bool isValid();
 
 Q_SIGNALS:
     
     void updated(QMap< QString, QMap<QString,QVariant> > s);
-    void removed();
+    void removed(const QString &);
 
 private:
+    QNmDBusHelper *nmDBusHelper;
     QNetworkManagerSettingsConnectionPrivate *d;
 }; //end QNetworkManagerSettingsConnection
 
@@ -332,6 +352,8 @@ public:
     quint32 state() const;
     bool defaultRoute() const;
     bool setConnections();
+    bool isValid();
+
     
 Q_SIGNALS:
     void propertiesChanged(QList<QDBusObjectPath>);
@@ -353,6 +375,7 @@ public:
 
 	//    QList<quint32> nameservers();
     QStringList domains() const;
+    bool isValid();
 
  private:
 	QNetworkManagerIp4ConfigPrivate *d;    

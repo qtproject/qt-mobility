@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,10 +48,11 @@
 
 static QMap<QString, QSvgRenderer *> svgCache;
 
+//! [0]
 Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 :   QGraphicsItem(parent), configuration(config), deleteAfterAnimation(false)
 {
-    session = new QNetworkSession(configuration);
+    session = new QNetworkSession(configuration, this);
     connect(session, SIGNAL(newConfigurationActivated()),
             this, SLOT(newConfigurationActivated()));
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
@@ -78,10 +71,10 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 
     newConfigurationActivated();
 }
+//! [0]
 
 Cloud::~Cloud()
 {
-    delete session;
 }
 
 void Cloud::setFinalScale(qreal factor)
@@ -181,7 +174,8 @@ bool Cloud::advance()
         animated = true;
         if (qAbs(finalScale - currentScale) > 0.0) {
             // use scale as reference
-            setOpacity(opacity() + scaleDelta * (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
+            setOpacity(opacity() + scaleDelta * (finalOpacity - opacity()) /
+                       qAbs(finalScale - currentScale));
         } else {
             setOpacity(finalOpacity);
         }
@@ -202,6 +196,7 @@ void Cloud::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
 }
 
+//! [4]
 QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     switch (change) {
@@ -214,31 +209,9 @@ QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVari
 
     return QGraphicsItem::itemChange(change, value);
 }
+//! [4]
 
-void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton) {
-        qWarning() << configuration.name()
-                << configuration.identifier();
-        qWarning() << "    configuration state:" << configurationStateToString(configuration.state());
-        qWarning() << "    session bearername:" << session->bearerName();
-        qWarning() << "    active time:"<< session->activeTime();
-        qWarning() << "    session state:" << sessionStateToString(session->state());
-        qWarning() << "    sent data:"<< session->sentData();
-        qWarning() << "    received sdata:"<< session->receivedData();
-
-
-        if(configuration.type() == QNetworkConfiguration::ServiceNetwork) {
-           qWarning() << configuration.name() << "is servicenetwork";
-            foreach (const QNetworkConfiguration &config, configuration.children()) {
-                qWarning() << "    "<< config.name() << config.identifier() << config.state();
-            }
-        }
-
-        event->accept();
-    }
-}
-
+//! [3]
 void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
@@ -250,7 +223,9 @@ void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         event->accept();
     }
 }
+//! [3]
 
+//! [2]
 void Cloud::stateChanged(QNetworkSession::State state)
 {
     if (configuration.name().isEmpty())
@@ -316,7 +291,9 @@ void Cloud::stateChanged(QNetworkSession::State state)
 
     setToolTip(tooltip);
 }
+//! [2]
 
+//! [1]
 void Cloud::newConfigurationActivated()
 {
     const QString bearerName = session->bearerName();
@@ -349,54 +326,7 @@ void Cloud::newConfigurationActivated()
 
     stateChanged(session->state());
 }
-
-QString Cloud::configurationStateToString(QNetworkConfiguration::StateFlags state)
-{
-    QString stateStr;
-
-    if ((state & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-        stateStr += "Active | ";
-    }
-    if ((state & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-        stateStr += "Discovered | ";
-    }
-    if ((state & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
-        stateStr += "Defined | ";
-    }
-    if ((state & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
-        stateStr += "Undefined";
-    }
-
-    return stateStr;
-}
-
-QString Cloud::sessionStateToString(QNetworkSession::State state)
-{
-    switch (state) {
-    case QNetworkSession::Invalid:
-        return "Invalid";
-        break;
-    case QNetworkSession::NotAvailable:
-        return "Not Available";
-        break;
-    case QNetworkSession::Connecting:
-        return "Connecting";
-        break;
-    case QNetworkSession::Connected:
-        return "Connected";
-        break;
-    case QNetworkSession::Closing:
-        return "Closing";
-        break;
-    case QNetworkSession::Disconnected:
-        return "Disconnected";
-        break;
-    case QNetworkSession::Roaming:
-        return "Roaming";
-        break;
-    };
-    return QString();
-}
+//! [1]
 
 qreal Cloud::getRadiusForState(QNetworkConfiguration::StateFlags state)
 {

@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -459,54 +451,6 @@ QNetworkConfigurationPrivate *QNlaThread::parseQuerySet(const WSAQUERYSET *query
 void QNlaThread::fetchConfigurations()
 {
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
-
-    // create configuration for each interface
-
-    // Immediately after connecting with a wireless access point
-    // QNetworkInterface::allInterfaces() will sometimes return an empty list. Calling it again a
-    // second time results in a non-empty list. If we loose interfaces we will end up removing
-    // network configurations which will break current sessions.
-    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-    if (interfaces.isEmpty())
-        interfaces = QNetworkInterface::allInterfaces();
-
-    while (!interfaces.isEmpty()) {
-        QNetworkInterface interface = interfaces.takeFirst();
-
-        if (!interface.isValid())
-            continue;
-
-        // ignore loopback interface
-        if (interface.name() == QLatin1String("MS TCP Loopback interface"))
-            continue;
-
-        // ignore WLAN interface handled in seperate engine
-        if (qGetInterfaceType(interface.name()) == "WLAN")
-            continue;
-
-        QNetworkConfigurationPrivate *cpPriv = new QNetworkConfigurationPrivate;
-        const QString humanReadableName = interface.humanReadableName();
-        cpPriv->name = humanReadableName.isEmpty() ? interface.name() : humanReadableName;
-        cpPriv->isValid = true;
-
-        uint identifier;
-        if (interface.index())
-            identifier = qHash(QLatin1String("NLA:") + QString::number(interface.index()));
-        else
-            identifier = qHash(QLatin1String("NLA:") + interface.hardwareAddress());
-
-        cpPriv->id = QString::number(identifier);
-        cpPriv->state = QNetworkConfiguration::Discovered;
-        cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-        if (interface.flags() & QNetworkInterface::IsUp)
-            cpPriv->state |= QNetworkConfiguration::Active;
-
-        QNlaEngine *engine = qobject_cast<QNlaEngine *>(parent());
-        if (engine)
-            engine->configurationInterface[identifier] = interface.name();
-
-        foundConfigurations.append(cpPriv);
-    }
 
     WSAQUERYSET qsRestrictions;
     HANDLE hLookup = 0;

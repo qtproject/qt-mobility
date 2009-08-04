@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -55,8 +47,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+//! [0]
 BearerCloud::BearerCloud(QObject *parent)
-:   QGraphicsScene(parent), updateTriggered(false), timerId(0)
+:   QGraphicsScene(parent), timerId(0)
 {
     setSceneRect(-300, -300, 600, 600);
 
@@ -90,16 +83,16 @@ BearerCloud::BearerCloud(QObject *parent)
     orbit->setPen(QColor(Qt::lightGray));
     addItem(orbit);
 
-    triggerUpdate();
-
-    connect(&manager, SIGNAL(updateCompleted()), this, SLOT(updateConfigurations()));
     connect(&manager, SIGNAL(configurationAdded(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationAdded(QNetworkConfiguration)));
     connect(&manager, SIGNAL(configurationRemoved(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationRemoved(QNetworkConfiguration)));
     connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
-            this, SLOT(triggerUpdate()));
+            this, SLOT(configurationChanged(QNetworkConfiguration)));
+
+    QTimer::singleShot(0, this, SLOT(updateConfigurations()));
 }
+//! [0]
 
 BearerCloud::~BearerCloud()
 {
@@ -132,68 +125,59 @@ void BearerCloud::timerEvent(QTimerEvent *)
     }
 }
 
+//! [2]
+void BearerCloud::configurationAdded(const QNetworkConfiguration &config)
+{
+    const QNetworkConfiguration::StateFlags state = config.state();
+
+    configStates.insert(state, config.identifier());
+
+    const qreal radius = Cloud::getRadiusForState(state);
+    const int count = configStates.count(state);
+    const qreal angle = 2 * M_PI / count;
+
+    Cloud *item = new Cloud(config);
+    configurations.insert(config.identifier(), item);
+
+    item->setPos(radius * cos((count-1) * angle + offset[state]),
+                 radius * sin((count-1) * angle + offset[state]));
+
+    addItem(item);
+}
+//! [2]
+
+//! [3]
+void BearerCloud::configurationRemoved(const QNetworkConfiguration &config)
+{
+    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
+        configStates.remove(state, config.identifier());
+
+    Cloud *item = configurations.take(config.identifier());
+
+    item->setFinalScale(0.0);
+    item->setDeleteAfterAnimation(true);
+}
+//! [3]
+
+//! [4]
+void BearerCloud::configurationChanged(const QNetworkConfiguration &config)
+{
+    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys())
+        configStates.remove(state, config.identifier());
+
+    configStates.insert(config.state(), config.identifier());
+}
+//! [4]
+
+//! [1]
 void BearerCloud::updateConfigurations()
 {
-    // find and delete removed configurations
     QList<QNetworkConfiguration> allConfigurations = manager.allConfigurations();
 
-    QMultiMap<QNetworkConfiguration::StateFlags, QString> configStates;
-
-    QList<QString> previousIds = configurations.keys();
-    for (int i = 0; i < allConfigurations.count(); ++i) {
-        const QNetworkConfiguration &config = allConfigurations.at(i);
-
-        if (configurations.contains(config.identifier())) {
-            // configurations updated
-            previousIds.removeOne(config.identifier());
-
-            configStates.insert(config.state(), config.identifier());
-        } else {
-            // new configuration
-            configStates.insert(config.state(), config.identifier());
-        }
-    }
-
-    while (!previousIds.isEmpty()) {
-        // delete configuration
-        Cloud *item = configurations.take(previousIds.takeFirst());
-        item->setFinalScale(0.0);
-        item->setDeleteAfterAnimation(true);
-    }
-
-    foreach (const QNetworkConfiguration::StateFlags &state, configStates.uniqueKeys()) {
-        const qreal radius = Cloud::getRadiusForState(state);
-        const qreal angle = 2 * M_PI / configStates.count(state);
-
-        QList<QString> identifiers = configStates.values(state);
-        for (int i = 0, j = configStates.count(state) - 1; i < identifiers.count(); ++i) {
-            if (!configurations.contains(identifiers.at(i))) {
-                QNetworkConfiguration config =
-                    manager.configurationFromIdentifier(identifiers.at(i));
-                Cloud *item = new Cloud(config);
-
-                configurations.insert(identifiers.at(i), item);
-
-                item->setPos(radius * cos(j * angle + offset[state]),
-                             radius * sin(j * angle + offset[state]));
-
-                addItem(item);
-
-                --j;
-            }
-        }
-    }
-
-    updateTriggered = false;
+    while (!allConfigurations.isEmpty())
+        configurationAdded(allConfigurations.takeFirst());
 
     cloudMoved();
 }
-
-void BearerCloud::triggerUpdate()
-{
-    if (!updateTriggered) {
-        QTimer::singleShot(0, this, SLOT(updateConfigurations()));
-        updateTriggered = true;
-    }
-}
+//! [1]
 

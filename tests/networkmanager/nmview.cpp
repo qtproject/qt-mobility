@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -67,10 +59,11 @@
 #include <qnetworkconfiguration.h>
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
+#include <qnetworkmanagerservice_p.h>
 
 //static QDBusConnection dbc = QDBusConnection::systemBus();
-typedef QMap< QString, QMap<QString,QVariant> > SettingsMap;
-Q_DECLARE_METATYPE(SettingsMap)
+//typedef QMap< QString, QMap<QString,QVariant> > SettingsMap;
+//Q_DECLARE_METATYPE(SettingsMap)
 
 
 NMView::NMView(QDialog* parent)
@@ -186,42 +179,96 @@ void NMView::getActiveConnections()
 
 void NMView::update()
 {
-    if(sess)
-    qWarning() << __FUNCTION__<< sess->sentData() << sess->bearerName();
-
-    QNetworkConfigurationManager manager;
-    manager.updateConfigurations();
-
-//    qWarning() << __FUNCTION__;
-//     QList<QNetworkConfiguration> configs = manager->allConfigurations(QNetworkConfiguration::Defined);
-//    int defined = configs.count();
-////    qWarning() << "Defined connections" << defined;
+//    if(sess)
+//    qWarning() << __FUNCTION__<< sess->sentData() << sess->bearerName();
+//    QNetworkManagerInterface *dbIface;
+//    dbIface = new QNetworkManagerInterface;
+//    QList <QDBusObjectPath> connections = dbIface->activeConnections();
 //
-//    foreach(QNetworkConfiguration p, configs) {
-//        qWarning() <<__FUNCTION__<< p.name() << p.identifier();
-//
-//        sess = new QNetworkSession(p);
-////      qWarning() <<"Sess interface name"<< sess->interface().name();
-//
-//            if (p.name() == "TTTEST") {
-//             qWarning() << sess->interface().name();
-//
-//             connect(sess, SIGNAL(newConfigurationActivated()),
-//                     this, SLOT(getActiveConnections()));
-//             connect(sess,  SIGNAL(stateChanged(QNetworkSession::State)),
-//                     this, SLOT(stateChanged(QNetworkSession::State)));
-//
-//             sess->open();
-//             break;
+//    foreach(QDBusObjectPath conpath, connections) {
+//        QNetworkManagerConnectionActive *aConn;
+//        aConn = new QNetworkManagerConnectionActive(conpath.path());
+//        // in case of accesspoint, specificObject will hold the accessPOintObjectPath
+//        qWarning() << aConn->connection().path() << aConn->specificObject().path() << aConn->devices().count();
+//        QList <QDBusObjectPath>  devs = aConn->devices();
+//        foreach(QDBusObjectPath device, devs) {
+//            qWarning() << "    " << device.path();
 //        }
 //    }
-//     QListWidgetItem* current =  cons->currentItem();
-//     if (!current) return;
-//     QStringList list = current->text().split(" -> ");
-//     QString path =list[0];
-//     if (!path.isEmpty()) {
-//         qWarning() << path;
-//     }s
+
+    QStringList connectionServices;
+    connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
+    connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
+    foreach (QString service, connectionServices) {
+        QDBusInterface allCons(service,
+                               NM_DBUS_PATH_SETTINGS,
+                               NM_DBUS_IFACE_SETTINGS,
+                               dbc);
+        if (allCons.isValid()) {
+            QDBusReply<QList<QDBusObjectPath> > reply = allCons.call("ListConnections");
+            if ( reply.isValid() ) {
+                QList<QDBusObjectPath> list = reply.value();
+                foreach(QDBusObjectPath path, list) {
+                    QDBusInterface sysIface(service,
+                                            path.path(),
+                                            NM_DBUS_IFACE_SETTINGS_CONNECTION,
+                                            dbc);
+                    if (sysIface.isValid()) {
+                        qWarning() << "";
+                        qWarning() << path.path();
+
+                        //                        QDBusMessage r = sysIface.call("GetSettings");
+                        QDBusReply< QNmSettingsMap > rep = sysIface.call("GetSettings");
+
+                        QMap< QString, QMap<QString,QVariant> > map = rep.value();
+                        QList<QString> list = map.keys();
+                        foreach (QString key, list) {
+                            QMap<QString,QVariant> innerMap = map[key];
+                            qWarning() << "       Key: " << key;
+                            QMap<QString,QVariant>::const_iterator i = innerMap.constBegin();
+
+                            while (i != innerMap.constEnd()) {
+                                QString k = i.key();
+                                qWarning() << "          Key: " << k << " Entry: " << i.value();
+                                i++;
+                            }//end innerMap
+                        }//end foreach key
+                    }//end settings connection
+                } // foreach path
+            } //end ListConnections
+        } //end settingsInterface
+    }// end services
+    QDBusInterface iface(NM_DBUS_SERVICE,
+                         NM_DBUS_PATH,
+                         NM_DBUS_INTERFACE,
+                         dbc);
+    if (iface.isValid()) {
+        QVariant prop = iface.property("ActiveConnections");
+        QList<QDBusObjectPath> connections = prop.value<QList<QDBusObjectPath> >();
+        foreach(QDBusObjectPath conpath, connections) {
+            qWarning() << "Active connection" << conpath.path();
+            QDBusInterface conDetails(NM_DBUS_SERVICE,
+                                      conpath.path(),
+                                      NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
+                                      dbc);
+            if (conDetails.isValid()) {
+
+                QVariant prop = conDetails.property("Connection");
+                QDBusObjectPath connection = prop.value<QDBusObjectPath>();
+                qWarning() << conDetails.property("Default").toBool() << connection.path();
+
+//                QVariant Sprop = conDetails.property("Devices");
+//                QList<QDBusObjectPath> so = Sprop.value<QList<QDBusObjectPath> >();
+//                foreach(QDBusObjectPath device, so) {
+//                    if(device.path() == devicePath) {
+//                        path = connection.path();
+//                    }
+//                    break;
+//                }
+            }
+        }
+    }
+qWarning() << "";
 }
 
 void NMView::deactivate()
@@ -277,7 +324,7 @@ void NMView::getDevices()
     qWarning() << "";
     qWarning() << __FUNCTION__;
     devicesTreeWidget->clear();
-    qDBusRegisterMetaType<SettingsMap>();
+    //qDBusRegisterMetaType<SettingsMap>();
 
     if (!dbc.isConnected()) {
         qWarning() << "Unable to connect to D-Bus:" << dbc.lastError();
@@ -446,71 +493,72 @@ void NMView::readSettings()
 
 void NMView::printConnectionDetails(const QString& service)
 {
-    qWarning() << __FUNCTION__ << service;
-
-    QDBusConnection dbc = QDBusConnection::systemBus();
-    if (!dbc.isConnected()) {
-        qWarning() << "Unable to connect to D-Bus:" << dbc.lastError();
-        return;
-    }
-    QDBusInterface allCons(service,
-                           NM_DBUS_PATH_SETTINGS,
-                           NM_DBUS_IFACE_SETTINGS,
-                           dbc);
-
-    if (allCons.isValid()) {
-        QDBusReply<QList<QDBusObjectPath> > reply = allCons.call("ListConnections");
-
-        if ( reply.isValid() ) {
-            qWarning() << "Known connections:";
-            QList<QDBusObjectPath> list = reply.value();
-
-            foreach(QDBusObjectPath path, list) {
-                qWarning() << "  " << path.path();
-
-                QDBusInterface sysIface(NM_DBUS_SERVICE_SYSTEM_SETTINGS,
-                                        path.path(),
-                                        NM_DBUS_IFACE_SETTINGS_CONNECTION,
-                                        dbc);
-
-                if (sysIface.isValid()) {
-                    QDBusMessage r = sysIface.call("GetSettings");
-                    QDBusReply< SettingsMap > rep = sysIface.call("GetSettings");
-
-                    qWarning() << "     GetSettings:" << r.arguments() << r.signature() << rep.isValid() << sysIface.lastError();
-
-                    QMap< QString, QMap<QString,QVariant> > map = rep.value();
-                    QList<QString> list = map.keys();
-
-                    foreach (QString key, list) {
-                        QMap<QString,QVariant> innerMap = map[key];
-                        qWarning() << "       Key: " << key;
-                        QMap<QString,QVariant>::const_iterator i = innerMap.constBegin();
-
-                        while (i != innerMap.constEnd()) {
-                            QString k = i.key();
-                            qWarning() << "          Key: " << k << " Entry: " << i.value();
-
-                            if (k == "addresses" && i.value().canConvert<QDBusArgument>()) {
-                                QDBusArgument arg = i.value().value<QDBusArgument>();
-                                arg.beginArray();
-
-                                while (!arg.atEnd()) {
-                                    QDBusVariant addr;
-                                    arg >> addr;
-                                    uint ip = addr.variant().toUInt();
-                                    qWarning() << ip;
-                                    qWarning() << "        " << QHostAddress(htonl(ip)).toString();
-                                }
-
-                            }
-                            i++;
-                        }
-                    }
-                }
-            }
-        }
-    }
+//
+//    qWarning() << __FUNCTION__ << service;
+//
+//    QDBusConnection dbc = QDBusConnection::systemBus();
+//    if (!dbc.isConnected()) {
+//        qWarning() << "Unable to connect to D-Bus:" << dbc.lastError();
+//        return;
+//    }
+//    QDBusInterface allCons(service,
+//                           NM_DBUS_PATH_SETTINGS,
+//                           NM_DBUS_IFACE_SETTINGS,
+//                           dbc);
+//
+//    if (allCons.isValid()) {
+//        QDBusReply<QList<QDBusObjectPath> > reply = allCons.call("ListConnections");
+//
+//        if ( reply.isValid() ) {
+//            qWarning() << "Known connections:";
+//            QList<QDBusObjectPath> list = reply.value();
+//
+//            foreach(QDBusObjectPath path, list) {
+//                qWarning() << "  " << path.path();
+//
+//                QDBusInterface sysIface(NM_DBUS_SERVICE_SYSTEM_SETTINGS,
+//                                        path.path(),
+//                                        NM_DBUS_IFACE_SETTINGS_CONNECTION,
+//                                        dbc);
+//
+//                if (sysIface.isValid()) {
+//                    QDBusMessage r = sysIface.call("GetSettings");
+//                    QDBusReply< QSettingsMap > rep = sysIface.call("GetSettings");
+//
+//                    qWarning() << "     GetSettings:" << r.arguments() << r.signature() << rep.isValid() << sysIface.lastError();
+//
+//                    QMap< QString, QMap<QString,QVariant> > map = rep.value();
+//                    QList<QString> list = map.keys();
+//
+//                    foreach (QString key, list) {
+//                        QMap<QString,QVariant> innerMap = map[key];
+//                        qWarning() << "       Key: " << key;
+//                        QMap<QString,QVariant>::const_iterator i = innerMap.constBegin();
+//
+//                        while (i != innerMap.constEnd()) {
+//                            QString k = i.key();
+//                            qWarning() << "          Key: " << k << " Entry: " << i.value();
+//
+//                            if (k == "addresses" && i.value().canConvert<QDBusArgument>()) {
+//                                QDBusArgument arg = i.value().value<QDBusArgument>();
+//                                arg.beginArray();
+//
+//                                while (!arg.atEnd()) {
+//                                    QDBusVariant addr;
+//                                    arg >> addr;
+//                                    uint ip = addr.variant().toUInt();
+//                                    qWarning() << ip;
+//                                    qWarning() << "        " << QHostAddress(htonl(ip)).toString();
+//                                }
+//
+//                            }
+//                            i++;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     qWarning() << "";
 }
 
@@ -564,7 +612,7 @@ void NMView::netconfig()
 {
 //    qWarning() << __FUNCTION__;
 
-    qDBusRegisterMetaType<SettingsMap>();
+//    qDBusRegisterMetaType<SettingsMap>();
     QDBusConnection dbc = QDBusConnection::systemBus();
     if (!dbc.isConnected()) {
         qWarning() << "Unable to connect to D-Bus:" << dbc.lastError();

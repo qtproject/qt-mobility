@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,8 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -172,6 +164,11 @@ void tst_QNetworkConfigurationManager::allConfigurations()
     QNetworkConfigurationManager manager;
     QList<QNetworkConfiguration> preScanConfigs = manager.allConfigurations();
 
+    foreach(QNetworkConfiguration c, preScanConfigs)
+    {
+        QVERIFY2(c.type()!=QNetworkConfiguration::UserChoice, "allConfiguration must not return UserChoice configs");
+    }
+
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations(); //initiate scans
     QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
@@ -185,6 +182,7 @@ void tst_QNetworkConfigurationManager::allConfigurations()
         QVERIFY(p.isValid());
         printConfigurationDetails(p);
         QVERIFY(p.type() != QNetworkConfiguration::Invalid);
+        QVERIFY(p.type() != QNetworkConfiguration::UserChoice);
     }
 
     configs = manager.allConfigurations(QNetworkConfiguration::Undefined);
@@ -243,6 +241,10 @@ void tst_QNetworkConfigurationManager::allConfigurations()
 void tst_QNetworkConfigurationManager::defaultConfiguration()
 {
     QNetworkConfigurationManager manager;
+    QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
+    manager.updateConfigurations(); //initiate scans
+    QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
+
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
     QNetworkConfiguration defaultConfig = manager.defaultConfiguration();
 
@@ -250,15 +252,36 @@ void tst_QNetworkConfigurationManager::defaultConfiguration()
 #ifdef MAEMO
     confirm = !confirm; // In maemo the default configuration will never be in allConfiguration because it is a pseudo config
 #endif
-    QVERIFY(confirm || !defaultConfig.isValid());
-    QVERIFY(!(confirm && !defaultConfig.isValid()));
+    bool isUserChoice = (defaultConfig.type() == QNetworkConfiguration::UserChoice);
+
+    //user choice config is not part of allConfigurations()
+    QVERIFY(isUserChoice != confirm);
+    if (!isUserChoice) {
+        QVERIFY(confirm || !defaultConfig.isValid());
+        QVERIFY(!(confirm && !defaultConfig.isValid()));
+    } else {
+        QVERIFY(defaultConfig.isValid());
+        QCOMPARE(defaultConfig.name(), QString("UserChoice"));
+        QCOMPARE(defaultConfig.children().count(), 0);
+        QVERIFY(!defaultConfig.roamingAvailable());
+        QCOMPARE(defaultConfig.state(), QNetworkConfiguration::Discovered);
+        QNetworkConfiguration copy = manager.configurationFromIdentifier(defaultConfig.identifier());
+        QVERIFY(copy == defaultConfig);
+    }
 }
 
 void tst_QNetworkConfigurationManager::configurationFromIdentifier()
 {
     QNetworkConfigurationManager manager;
     QSet<QString> allIdentifier;
+
+    //force an update to get maximum number of configs
+    QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
+    manager.updateConfigurations(); //initiate scans
+    QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
+    
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
+
     foreach(QNetworkConfiguration c, configs) {
         QVERIFY(!allIdentifier.contains(c.identifier()));
         allIdentifier.insert(c.identifier());
