@@ -147,12 +147,15 @@ they may offer their own which provide similar functionality.
     \o \l{QContactAnniversary}
     \o \l{QContactAvatar}
     \o \l{QContactBirthday}
+    \o \l{QContactDisplayLabel}
     \o \l{QContactEmailAddress}
     \o \l{QContactGender}
     \o \l{QContactGuid}
     \o \l{QContactName}
+    \o \l{QContactOrganisation}
     \o \l{QContactPhoneNumber}
     \o \l{QContactSyncTarget}
+    \o \l{QContactTimestamp}
     \o \l{QContactUrl}
 \endlist
 

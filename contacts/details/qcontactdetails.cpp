@@ -54,6 +54,11 @@
  */
 
 /*!
+ * \class QContactDisplayLabel
+ * \brief The (possibly synthesised) display label of a contact
+ */
+
+/*!
  * \class QContactEmailAddress
  * \brief An email address of a contact
  */
@@ -68,14 +73,14 @@
  * \brief The globally unique Id of a contact
  */
 
-///*!
-// * \class QContactMeeting
-// * \brief A meeting that the contact should attend
-// */
-
 /*!
  * \class QContactName
  * \brief The name of a contact
+ */
+
+/*!
+ * \class QContactOrganisation
+ * \brief Details about the organisation of which the contact is either a part of, or stands for
  */
 
 /*!
@@ -836,3 +841,29 @@ QString QContactAddress::displayLabel() const
  * \fn QContactTimestamp::setLastModified(const QDateTime& dateTime)
  * Sets the last-modified timestamp saved in this detail to \a dateTime
  */
+
+/*!
+ * \fn QContactDisplayLabel::isSynthesised() const
+ * Returns true if the display label was synthesised automatically by the manager backend
+ */
+
+/*!
+ * \fn QContactDisplayLabel::setLabel(const QString& label)
+ * Sets the display label of the contact to \a label
+ */
+
+/*!
+ * \fn QContactDisplayLabel::setSynthesised(bool synthesised)
+ * Sets the synthetic status of the display label to \a synthesised
+ */
+
+/*!
+ * \fn QContactOrganisation::setDisplayLabel(const QString& displayLabel)
+ * Sets the display label of the organisation stored in this detail to \a displayLabel
+ */
+
+/*!
+ * \fn QContactOrganisation::setLogo(const QString& logo)
+ * Sets the logo of the organisation stored in this detail to \a logo
+ */
+
