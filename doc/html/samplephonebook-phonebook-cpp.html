@@ -338,7 +338,7 @@
 
         QContactAddress address;
         address.setDisplayLabel(addressText-&gt;toPlainText());
-        address.setAttribute(QContactDetail::AttributeSubType, QString(QLatin1String(QContactAddress::AttributeSubTypeDomestic) + &quot;,&quot; + QLatin1String(QContactAddress::AttributeSubTypeParcel) + &quot;,&quot; + QLatin1String(QContactAddress::AttributeSubTypePostal)));
+        address.setAttribute(QContactDetail::AttributeSubType, QContactAddress::AttributeSubTypeDomestic + &quot;,&quot; + QContactAddress::AttributeSubTypeParcel + &quot;,&quot; + QContactAddress::AttributeSubTypePostal);
         c.saveDetail(&amp;address);
 
         return c;

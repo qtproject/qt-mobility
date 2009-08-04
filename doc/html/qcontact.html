@@ -17,40 +17,44 @@
 <pre>    #include &lt;QContact&gt;</pre><ul>
 <li><a href="qcontact-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qcontact.html#Error-enum">Error</a></b> { NoError, OutOfMemoryError, DetailDoesNotExistError, DetailAlreadyExistsError, ..., UnspecifiedError }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#Error-enum">Error</a></b> { NoError, OutOfMemoryError, DetailDoesNotExistError, DetailAlreadyExistsError, ..., UnspecifiedError }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qcontact.html#QContact">QContact</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qcontact.html#QContact-2">QContact</a></b> ( const QContact &amp; <i>other</i> )</li>
-<li><div class="fn"></div><b><a href="qcontact.html#dtor.QContact">~QContact</a></b> ()</li>
-<li><div class="fn"></div>QStringList <b><a href="qcontact.html#availableActions">availableActions</a></b> () const</li>
-<li><div class="fn"></div>QContactDetail <b><a href="qcontact.html#detail">detail</a></b> ( const QString &amp; <i>definitionName</i> ) const</li>
-<li><div class="fn"></div>T <b><a href="qcontact.html#detail-2">detail</a></b> () const</li>
-<li><div class="fn"></div>QContactDetail <b><a href="qcontact.html#detailWithAction">detailWithAction</a></b> ( const QString &amp; <i>actionName</i> ) const</li>
-<li><div class="fn"></div>QList&lt;QContactDetail&gt; <b><a href="qcontact.html#details">details</a></b> ( const QString &amp; <i>definitionName</i> = QString() ) const</li>
-<li><div class="fn"></div>QList&lt;T&gt; <b><a href="qcontact.html#details-2">details</a></b> () const</li>
-<li><div class="fn"></div>QList&lt;QContactDetail&gt; <b><a href="qcontact.html#detailsWithAction">detailsWithAction</a></b> ( const QString &amp; <i>actionName</i> )</li>
-<li><div class="fn"></div>QContactDisplayLabel <b><a href="qcontact.html#displayLabel">displayLabel</a></b> () const</li>
-<li><div class="fn"></div>Error <b><a href="qcontact.html#error">error</a></b> () const</li>
-<li><div class="fn"></div>QUniqueId <b><a href="qcontact.html#id">id</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#isEmpty">isEmpty</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#isPreferredDetail">isPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>detail</i> ) const</li>
-<li><div class="fn"></div>QContactDetail <b><a href="qcontact.html#preferredDetail">preferredDetail</a></b> ( const QString &amp; <i>actionName</i> ) const</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#removeDetail">removeDetail</a></b> ( QContactDetail * <i>detail</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#saveDetail">saveDetail</a></b> ( QContactDetail * <i>detail</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#setDisplayLabel">setDisplayLabel</a></b> ( const QContactDisplayLabel &amp; <i>label</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#setDisplayLabel-2">setDisplayLabel</a></b> ( const QString &amp; <i>label</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#setId">setId</a></b> ( const QUniqueId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#setPreferredDetail">setPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>preferredDetail</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#operator-not-eq">operator!=</a></b> ( const QContact &amp; <i>other</i> ) const</li>
-<li><div class="fn"></div>QContact &amp; <b><a href="qcontact.html#operator-eq">operator=</a></b> ( const QContact &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontact.html#operator-eq-eq">operator==</a></b> ( const QContact &amp; <i>other</i> ) const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#QContact">QContact</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#QContact-2">QContact</a></b> ( const QContact &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#dtor.QContact">~QContact</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#availableActions">availableActions</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail">detail</a></b> ( const QString &amp; <i>definitionName</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail-2">detail</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detailWithAction">detailWithAction</a></b> ( const QString &amp; <i>actionName</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactDetail&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#details">details</a></b> ( const QString &amp; <i>definitionName</i> = QString() ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;T&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#details-2">details</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactDetail&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detailsWithAction">detailsWithAction</a></b> ( const QString &amp; <i>actionName</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDisplayLabel </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#displayLabel">displayLabel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUniqueId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#groups">groups</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUniqueId </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#id">id</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#isEmpty">isEmpty</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#isPreferredDetail">isPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>detail</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#preferredDetail">preferredDetail</a></b> ( const QString &amp; <i>actionName</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#removeDetail">removeDetail</a></b> ( QContactDetail * <i>detail</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#saveDetail">saveDetail</a></b> ( QContactDetail * <i>detail</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setDisplayLabel">setDisplayLabel</a></b> ( const QContactDisplayLabel &amp; <i>label</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setDisplayLabel-2">setDisplayLabel</a></b> ( const QString &amp; <i>label</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setGroups">setGroups</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groups</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setId">setId</a></b> ( const QUniqueId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setPreferredDetail">setPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>preferredDetail</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#operator-not-eq">operator!=</a></b> ( const QContact &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContact &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#operator-eq">operator=</a></b> ( const QContact &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#operator-eq-eq">operator==</a></b> ( const QContact &amp; <i>other</i> ) const</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -62,7 +66,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QContact::Error</h3>
 <p>This enum specifies an error that occurred during the most recent operation:</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QContact::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
 <tr><td valign="top"><tt>QContact::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed due to running out of memory</td></tr>
@@ -92,13 +96,17 @@
 <p>Returns a list of details of the given <i>definitionName</i></p>
 <h3 class="fn"><a name="details-2"></a>QList&lt;T&gt; QContact::details () const</h3>
 <p>Returns a list of details of the template type</p>
-<h3 class="fn"><a name="detailsWithAction"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const QString &amp; <i>actionName</i> )</h3>
+<h3 class="fn"><a name="detailsWithAction"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const QString &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
 <h3 class="fn"><a name="displayLabel"></a>QContactDisplayLabel QContact::displayLabel () const</h3>
 <p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the QContactDisplayLabel in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesised by the manager from which the contact is retrieved.</p>
 <p>See also <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>().</p>
 <h3 class="fn"><a name="error"></a><a href="qcontact.html#Error-enum">Error</a> QContact::error () const</h3>
 <p>Returns the code of the error of the most recent operation</p>
+<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContact::groups () const</h3>
+<p>Returns a list of QUniqueIds that identify any QContactGroups that this contact is a member of.</p>
+<p>You should check that your <a href="qcontactmanager.html">QContactManager</a> supports groups.</p>
+<p>See also <a href="qcontact.html#setGroups">setGroups</a>() and <a href="qcontactgroup.html">QContactGroup</a>.</p>
 <h3 class="fn"><a name="id"></a>QUniqueId QContact::id () const</h3>
 <p>Returns the QUniqueId that identifies this contact</p>
 <p>See also <a href="qcontact.html#setId">setId</a>().</p>
@@ -128,6 +136,10 @@
 <p>Set the display label of the contact to <i>label</i>.</p>
 <p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
 <p>Returns true on success, false otherwise.</p>
+<h3 class="fn"><a name="setGroups"></a>bool QContact::setGroups ( const QList&lt;QUniqueId&gt; &amp; <i>groups</i> )</h3>
+<p>Sets the list of QContactGroups that this contact is a member of to those identified in <i>groups</i>. Returns true if the contact was added to the groups successfully, otherwise returns false.</p>
+<p>You should check that your <a href="qcontactmanager.html">QContactManager</a> supports groups.</p>
+<p>See also <a href="qcontact.html#groups">groups</a>() and <a href="qcontactgroup.html">QContactGroup</a>.</p>
 <h3 class="fn"><a name="setId"></a>bool QContact::setId ( const QUniqueId &amp; <i>id</i> )</h3>
 <p>Sets the id of this contact to <i>id</i>. Note that this only affects this structure, not any corresponding structures stored by a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If you change the id of a contact and save the contact in a manager, the previously existing contact will still exist. You can do this to create copies (possibly modified) of an existing contact.</p>

@@ -14,56 +14,66 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactDetail Class Reference</h1>
 <p>The QContactDetail class provides access to a single, complete detail about a contact. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
+<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
 <ul>
 <li><a href="qcontactdetail-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qcontactdetail.html#Error-enum">Error</a></b> { NoError, MissingValueError, IncompatibleAssignmentError, OutOfMemoryError }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Error-enum">Error</a></b> { NoError, MissingValueError, IncompatibleAssignmentError, OutOfMemoryError }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qcontactdetail.html#QContactDetail">QContactDetail</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</li>
-<li><div class="fn"></div><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</li>
-<li><div class="fn"></div>virtual <b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</li>
-<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; <i>attribute</i> ) const</li>
-<li><div class="fn"></div>QMap&lt;QString, QString&gt; <b><a href="qcontactdetail.html#attributes">attributes</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#contextAttribute">contextAttribute</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#definitionName">definitionName</a></b> () const</li>
-<li><div class="fn"></div>QContactDetail::Error <b><a href="qcontactdetail.html#error">error</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; <i>attribute</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>attribute</i>, const QString &amp; <i>value</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setAttributes">setAttributes</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>attributes</i> )</li>
-<li><div class="fn"></div>void <b><a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a></b> ( const QString &amp; <i>context</i> )</li>
-<li><div class="fn"></div>void <b><a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a></b> ( const QString &amp; <i>subType</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#setValues">setValues</a></b> ( const QVariantMap &amp; <i>values</i> )</li>
-<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a></b> () const</li>
-<li><div class="fn"></div>T <b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</li>
-<li><div class="fn"></div>QString <b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</li>
-<li><div class="fn"></div>QVariantMap <b><a href="qcontactdetail.html#values">values</a></b> () const</li>
-<li><div class="fn"></div>QVariant <b><a href="qcontactdetail.html#variantValue">variantValue</a></b> ( const QString &amp; <i>key</i> ) const</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#operator-not-eq">operator!=</a></b> ( const QContactDetail &amp; <i>other</i> ) const</li>
-<li><div class="fn"></div>QContactDetail &amp; <b><a href="qcontactdetail.html#operator-eq">operator=</a></b> ( const QContactDetail &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qcontactdetail.html#operator-eq-eq">operator==</a></b> ( const QContactDetail &amp; <i>other</i> ) const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail">QContactDetail</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContext )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-2">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubType )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-3">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextHome )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-4">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextWork )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-5">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextOther )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; <i>attribute</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#attributes">attributes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#contextAttribute">contextAttribute</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#definitionName">definitionName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail::Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#hasValue">hasValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; <i>attribute</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>attribute</i>, const QString &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setAttributes">setAttributes</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>attributes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a></b> ( const QString &amp; <i>context</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a></b> ( const QString &amp; <i>subType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValues">setValues</a></b> ( const QVariantMap &amp; <i>values</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariantMap </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#values">values</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValue">variantValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-not-eq">operator!=</a></b> ( const QContactDetail &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-eq">operator=</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-eq-eq">operator==</a></b> ( const QContactDetail &amp; <i>other</i> ) const</td></tr>
+</table>
+<hr />
 <a name="protected-functions"></a>
-<h3>Protected Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qcontactdetail.html#QContactDetail-4">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</li>
-<li><div class="fn"></div>QContactDetail &amp; <b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</li>
-</ul>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-4">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</td></tr>
+</table>
+<hr />
 <a name="macros"></a>
-<h3>Macros</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a></b></li>
-</ul>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a></b></td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -72,8 +82,8 @@
 <p>A detail is a group of logically related bits of data - for example, a street address is a single detail that has multiple fields (number, region, country etc). Every QContactDetail has an associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> id that describes the fields, their data type, any restrictions on their values, and any restrictions on creating or updating details of that definition.</p>
 <p>A detail might also has some metadata, stored in &quot;attributes&quot;. What these attributes are used for varies a little depending on the detail, but two common attributes are <tt>Context</tt> and <tt>SubType</tt>.</p>
 <ul>
-<li>The <tt>Context</tt> attribute (with id <a href="qcontactdetail.html#AttributeContext-var">AttributeContext</a>) is intended to store the context that this detail is associated with. Commonly this will be something like &quot;Home&quot; or &quot;Work&quot;.</li>
-<li>The <tt>SubType</tt> attribute (with id <a href="qcontactdetail.html#AttributeSubType-var">AttributeSubType</a>) is intended to store any particular distinctions between details of this type. For example, a phone number might have a SubType of &quot;Mobile&quot; or &quot;Fax&quot;.</li>
+<li>The <tt>Context</tt> attribute (with id AttributeContext) is intended to store the context that this detail is associated with. Commonly this will be something like &quot;Home&quot; or &quot;Work&quot;.</li>
+<li>The <tt>SubType</tt> attribute (with id AttributeSubType) is intended to store any particular distinctions between details of this type. For example, a phone number might have a SubType of &quot;Mobile&quot; or &quot;Fax&quot;.</li>
 </ul>
 <p>In general, a given attribute has a single value. In some cases, if you wish to associate more than one value, you need to comma separate the values.</p>
 <p>It is possible to inherit from QContactDetail to provide convenience or standardized access to values. For example, <a href="qcontactphonenumber.html">QContactPhoneNumber</a> provides a convenient API for manipulating a QContactDetail as a phone number, according to the schema.</p>
@@ -108,7 +118,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QContactDetail::Error</h3>
 <p>This enum specifies an error that occurred during the most recent operation:</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QContactDetail::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
 <tr><td valign="top"><tt>QContactDetail::MissingValueError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed because the value the caller wished to retrieve was missing</td></tr>
@@ -127,6 +137,11 @@
 <p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Frees the memory used by this detail</p>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContext )</h3>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-2"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeSubType )</h3>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-3"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextHome )</h3>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-4"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextWork )</h3>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-5"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextOther )</h3>
 <h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="attribute"></a>QString QContactDetail::attribute ( const QString &amp; <i>attribute</i> ) const</h3>
@@ -144,6 +159,8 @@
 <p>Returns the (unique) name of the definition which defines the semantics and structure of this detail</p>
 <h3 class="fn"><a name="error"></a><a href="qcontactdetail.html#Error-enum">QContactDetail::Error</a> QContactDetail::error () const</h3>
 <p>Returns the error code of the error resulting from the most recent state-modifying operation</p>
+<h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note: even if attributes have been set on this detail, this function will return true if no values are contained in this detail</p>
 <h3 class="fn"><a name="removeAttribute"></a>bool QContactDetail::removeAttribute ( const QString &amp; <i>attribute</i> )</h3>
@@ -184,7 +201,7 @@
 <p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a>QString QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3>
-<p>This is an overloaded member function, provided for convenience.</p>
+<p>This is an overloaded function.</p>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
 <h3 class="fn"><a name="values"></a>QVariantMap QContactDetail::values () const</h3>
 <p>Returns the values stored in this detail</p>
@@ -208,23 +225,21 @@
     public:
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
 
-        static const char DefinitionName[]; <span class="comment">// == staticType() == &quot;PhoneNumber&quot;</span>
+        Q_DECLARE_LATIN1_LITERAL(FieldNumber, &quot;PhoneNumber&quot;);
 
-        static const char FieldNumber[];
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline, &quot;Landline&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile, &quot;Mobile&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile, &quot;Facsimile&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePager, &quot;Pager&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVoice, &quot;Voice&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeModem, &quot;Modem&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVideo, &quot;Video&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar, &quot;Car&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
+        Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable, &quot;MessagingCapable&quot;);
 
-        static const char AttributeSubTypeLandline[];
-        static const char AttributeSubTypeMobile[];
-        static const char AttributeSubTypeFacsimile[];
-        static const char AttributeSubTypePager[];
-        static const char AttributeSubTypeVoice[];
-        static const char AttributeSubTypeModem[];
-        static const char AttributeSubTypeVideo[];
-        static const char AttributeSubTypeCar[];
-        static const char AttributeSubTypeBulletinBoardSystem[];
-        static const char AttributeSubTypeMessagingCapable[];
-
-        void setNumber(const QString&amp; number) {setValue(QLatin1String(FieldNumber), number);}
-        QString number() const {return value(QLatin1String(FieldNumber));}
+        void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
+        QString number() const {return value(FieldNumber);}
     };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
