@@ -41,7 +41,7 @@ namespace Ui {
 
 #include <QMainWindow>
 
-class QMediaCapture;
+class QMediaRecorder;
 class QAudioDeviceEndpoint;
 class QAudioEncodeControl;
 class QMediaFormatControl;
@@ -69,7 +69,7 @@ private slots:
 private:
     Ui::Recorder *ui;
 
-    QMediaCapture* audioCapture;
+    QMediaRecorder* audioRecorder;
     QAudioDeviceEndpoint *audioDevice;
     QAudioEncodeControl *encodeControl;
     QMediaFormatControl *formatControl;

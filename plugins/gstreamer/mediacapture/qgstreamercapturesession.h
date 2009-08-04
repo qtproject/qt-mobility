@@ -36,9 +36,9 @@
 #ifndef QGSTREAMERCAPTURESESSION_H
 #define QGSTREAMERCAPTURESESSION_H
 
-#include "qmediacapturecontrol.h"
+#include "qmediarecordercontrol.h"
 #include "qmediasink.h"
-#include "qmediacapture.h"
+#include "qmediarecorder.h"
 
 #include <gst/gst.h>
 
@@ -46,7 +46,7 @@ class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
-class QGstreamerCaptureControl;
+class QGstreamerRecorderControl;
 class QGstreamerMediaFormatControl;
 
 class QGstreamerElementFactory
@@ -72,7 +72,7 @@ public:
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
-    QGstreamerCaptureControl *captureControl() const { return m_captureControl; }
+    QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
 
     void setAudioInput(QGstreamerElementFactory *audioInput);
@@ -127,7 +127,7 @@ private:
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
-    QGstreamerCaptureControl *m_captureControl;
+    QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaFormatControl *m_mediaFormatControl;
 
     QGstreamerBusHelper *m_busHelper;

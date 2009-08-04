@@ -2,7 +2,7 @@
 #include "qaudiodeviceendpoint.h"
 #include "qalsaaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
-#include "qgstreamercapturecontrol.h"
+#include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
@@ -21,7 +21,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
         gst_init(NULL, NULL);
     }
 
-    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0")) {
+    if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0")) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
         m_cameraControl = 0;
     }
@@ -142,8 +142,8 @@ void QGstreamerCaptureService::setVideoOutput(QObject *output)
 
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
-        return m_captureSession->captureControl();
+    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0)
+        return m_captureSession->recorderControl();
 
     if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
         return m_captureSession->audioEncodeControl();

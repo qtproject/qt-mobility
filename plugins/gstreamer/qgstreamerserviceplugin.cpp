@@ -51,7 +51,7 @@ public:
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
             return new QGstreamerPlayerService;
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0"))
             return new QGstreamerCaptureService(interface);
 
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
@@ -63,12 +63,12 @@ public:
 
 QStringList QGstreamerServicePlugin::keys() const
 {
-    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiocapture") << QLatin1String("camera");
+    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiorecorder") << QLatin1String("camera");
 }
 
 QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiocapture") || key == QLatin1String("camera"))
+    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiorecorder") || key == QLatin1String("camera"))
         return new QGstreamerProvider;
 
     qDebug() << "unsupported key:" << key;

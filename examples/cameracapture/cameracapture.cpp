@@ -36,7 +36,7 @@
 #include "ui_cameracapture.h"
 
 #include <qabstractmediaservice.h>
-#include <qmediacapture.h>
+#include <qmediarecorder.h>
 #include <qaudiodeviceendpoint.h>
 #include <qmediawidgetendpoint.h>
 #include <qaudioencodecontrol.h>
@@ -58,15 +58,15 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
     camera = new QCamera;
 
-    mediaCapture = new QMediaCapture(camera->service());
-    mediaCapture->setSink(QMediaSink(QUrl("test.ogg")));
-    audioDevice = mediaCapture->service()->createEndpoint<QAudioDeviceEndpoint*>();
+    mediaRecorder = new QMediaRecorder(camera->service());
+    mediaRecorder->setSink(QMediaSink(QUrl("test.ogg")));
+    audioDevice = mediaRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
-    connect(mediaCapture, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
-    connect(mediaCapture, SIGNAL(error(QMediaCapture::Error)), this, SLOT(displayErrorMessage()));
+    connect(mediaRecorder, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
+    connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
     if (audioDevice) {
-        mediaCapture->service()->setAudioInput(audioDevice);
+        mediaRecorder->service()->setAudioInput(audioDevice);
         audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
         for (int i=0; i<audioDevice->deviceCount(); i++) {
              ui->audioInputDeviceBox->addItem(audioDevice->description(i));
@@ -75,7 +75,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->audioInputDeviceBox->setEnabled(false);
 
     audioEncodeControl = qobject_cast<QAudioEncodeControl*>(
-            mediaCapture->service()->control("com.nokia.qt.AudioEncodeControl"));
+            mediaRecorder->service()->control("com.nokia.qt.AudioEncodeControl"));
 
     if (audioEncodeControl) {
         foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
@@ -92,7 +92,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     videoEncodeControl = qobject_cast<QVideoEncodeControl*>(
-            mediaCapture->service()->control("com.nokia.qt.VideoEncodeControl"));
+            mediaRecorder->service()->control("com.nokia.qt.VideoEncodeControl"));
 
     if (videoEncodeControl) {
         foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
@@ -109,7 +109,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     formatControl = qobject_cast<QMediaFormatControl*>(
-            mediaCapture->service()->control("com.nokia.qt.MediaFormatControl"));
+            mediaRecorder->service()->control("com.nokia.qt.MediaFormatControl"));
 
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {
@@ -122,11 +122,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->containerFormatBox->setEnabled(false);
     }
 
-    QWidget *videoWidget = mediaCapture->service()->createEndpoint<QMediaWidgetEndpoint *>();
+    QWidget *videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
-        mediaCapture->service()->setVideoOutput(videoWidget);
+        mediaRecorder->service()->setVideoOutput(videoWidget);
     }
 
     videoWidget->show();
@@ -138,7 +138,7 @@ CameraCapture::~CameraCapture()
 
 void CameraCapture::updateRecordTime()
 {
-    QString str = QString("Recorded %1 sec").arg(mediaCapture->position()/1000);
+    QString str = QString("Recorded %1 sec").arg(mediaRecorder->position()/1000);
     ui->statusbar->showMessage(str);
 }
 
@@ -193,21 +193,21 @@ void CameraCapture::setContainerFormat(int idx)
 
 void CameraCapture::record()
 {
-    if (mediaCapture)
-        mediaCapture->record();
+    if (mediaRecorder)
+        mediaRecorder->record();
     updateRecordTime();
 }
 
 void CameraCapture::pause()
 {
-    if (mediaCapture)
-        mediaCapture->pause();
+    if (mediaRecorder)
+        mediaRecorder->pause();
 }
 
 void CameraCapture::stop()
 {
-    if (mediaCapture)
-        mediaCapture->stop();
+    if (mediaRecorder)
+        mediaRecorder->stop();
 }
 
 void CameraCapture::enablePreview(bool enabled)
@@ -220,5 +220,5 @@ void CameraCapture::enablePreview(bool enabled)
 
 void CameraCapture::displayErrorMessage()
 {
-    QMessageBox::warning(this, "Capture error", mediaCapture->errorString());
+    QMessageBox::warning(this, "Capture error", mediaRecorder->errorString());
 }

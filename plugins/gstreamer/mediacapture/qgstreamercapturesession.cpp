@@ -33,13 +33,13 @@
 ****************************************************************************/
 
 #include "qgstreamercapturesession.h"
-#include "qgstreamercapturecontrol.h"
+#include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerbushelper.h"
 #include "qmediastreams.h"
-#include "qmediacapture.h"
+#include "qmediarecorder.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -76,7 +76,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
-    m_captureControl = new QGstreamerCaptureControl(this);
+    m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaFormatControl = new QGstreamerMediaFormatControl(this);
 
     setState(StoppedState);
@@ -315,7 +315,7 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     }
 
     if (!ok) {
-        emit error(int(QMediaCapture::FormatError),tr("Failed to build media capture pipeline."));
+        emit error(int(QMediaRecorder::FormatError),tr("Failed to build media capture pipeline."));
     }
 
     dumpGraph( QString("rebuild_graph_%1_%2").arg(m_pipelineMode).arg(newMode) );
@@ -461,7 +461,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             GError *err;
             gchar *debug;
             gst_message_parse_error (gm, &err, &debug);
-            emit error(int(QMediaCapture::ResourceError),QString::fromUtf8(err->message));
+            emit error(int(QMediaRecorder::ResourceError),QString::fromUtf8(err->message));
             g_error_free (err);
             g_free (debug);
         }

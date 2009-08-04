@@ -34,10 +34,29 @@
 
 #include "qmediarecorder.h"
 
-#include "qabstractmediaobject_p.h"
 #include "qmediarecordercontrol.h"
-#include "qmediarecorderservice.h"
-#include "qmediasink.h"
+#include "qabstractmediaobject_p.h"
+#include "qabstractmediaservice.h"
+#include "qmediaserviceprovider.h"
+
+#include <QtCore/qdebug.h>
+
+
+Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
+{
+    QObject *object = provider ? provider->createObject("com.nokia.qt.AudioRecorder/1.0") : 0;
+
+    if (object != 0) {
+        QAbstractMediaService *service = qobject_cast<QAbstractMediaService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
 
 /*!
     \class QMediaRecorder
@@ -51,43 +70,85 @@
 
 class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QMediaRecorder)
+
 public:
-    QMediaRecorderService*  service;
+    QMediaRecorderPrivate(QAbstractMediaService *service);
+
+    QAbstractMediaService* service;
     QMediaRecorderControl* control;
+    QMediaRecorder::Error error;
+    QString errorString;
+
+    void _q_stateChanged(int state);
+    void _q_error(int error, const QString &errorString);
 };
 
-QMediaRecorder::QMediaRecorder(QMediaRecorderService *service, QObject *parent)
-    : QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
+QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
+    :QAbstractMediaObjectPrivate(),
+     service(service),
+     error(QMediaRecorder::NoError)
+{
+    control = qobject_cast<QMediaRecorderControl *>(service->control("com.nokia.qt.MediaRecorderControl"));
+}
+
+void QMediaRecorderPrivate::_q_stateChanged(int state)
+{
+    Q_Q(QMediaRecorder);
+
+    const QMediaRecorder::State ps = QMediaRecorder::State(state);
+
+    if (ps == QMediaRecorder::RecordingState)
+        q->addPropertyWatch("position");
+    else
+        q->removePropertyWatch("position");
+
+    emit q->stateChanged(ps);
+}
+
+
+void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
+{
+    Q_Q(QMediaRecorder);
+
+    this->error = QMediaRecorder::Error(error);
+    this->errorString = errorString;
+
+    emit q->error(this->error);
+    emit q->errorStringChanged(this->errorString);
+}
+
+
+QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
+    :QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
 {
     Q_D(QMediaRecorder);
 
-    d->service = service;
-    d->control = qobject_cast<QMediaRecorderControl *>(service->control("com.nokia.qt.MediaRecorderControl"));
+    if (d->control) {
+        connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
+        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+    }
+}
+
+QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent)
+    :QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->control) {
+        connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
+        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+    }
 }
 
 QMediaRecorder::~QMediaRecorder()
 {
-    Q_D(QMediaRecorder);
-
-    delete d->service;
+    stop();
 }
 
-void QMediaRecorder::setRecordingSource(QAbstractMediaObject* source)
+bool QMediaRecorder::isValid() const
 {
-}
-
-void QMediaRecorder::setRecordingSink(QAbstractMediaObject* sink)
-{
-}
-
-QMediaRecorder::State QMediaRecorder::state() const
-{
-    return QMediaRecorder::State(d_func()->control->state());
-}
-
-QMediaSink *QMediaRecorder::sink() const
-{
-    return d_func()->control->sink();
+    return d_func()->control != 0;
 }
 
 QAbstractMediaService* QMediaRecorder::service() const
@@ -95,30 +156,71 @@ QAbstractMediaService* QMediaRecorder::service() const
     return d_func()->service;
 }
 
-//public Q_SLOTS:
+QMediaSink QMediaRecorder::sink() const
+{
+    return d_func()->control ? d_func()->control->sink() : QMediaSink();
+}
+
+bool QMediaRecorder::setSink(const QMediaSink &sink)
+{
+    Q_D(QMediaRecorder);
+    return d->control ? d->control->setSink(sink) : false;
+}
+
+QMediaRecorder::State QMediaRecorder::state() const
+{
+    return d_func()->control ? QMediaRecorder::State(d_func()->control->state()) : StoppedState;
+}
+
+QMediaRecorder::Error QMediaRecorder::error() const
+{
+    return d_func()->error;
+}
+
+QString QMediaRecorder::errorString() const
+{
+    return d_func()->errorString;
+}
+
+void QMediaRecorder::unsetError()
+{
+    Q_D(QMediaRecorder);
+
+    d->error = NoError;
+    d->errorString = QString();
+}
+
+qint64 QMediaRecorder::position() const
+{
+    return d_func()->control ? d_func()->control->position() : 0;
+}
+
+void QMediaRecorder::setPositionUpdatePeriod(int ms)
+{
+    Q_D(QMediaRecorder);
+    setNotifyInterval(ms);
+}
+
+
 void QMediaRecorder::record()
 {
+    Q_D(QMediaRecorder);
+    if (d->control)
+        d->control->record();
 }
 
 void QMediaRecorder::pause()
 {
+    Q_D(QMediaRecorder);
+    if (d->control)
+        d->control->pause();
 }
 
 void QMediaRecorder::stop()
 {
+    Q_D(QMediaRecorder);
+    if (d->control)
+        d->control->stop();
 }
 
-QMediaRecorderService* createMediaRecorderService(QMediaServiceProvider *provider)
-{
-    QObject *object = provider ? provider->createObject("com.nokia.Qt.RecorderService/1.0") : 0;
-
-    if (object) {
-        QMediaRecorderService *service = qobject_cast<QMediaRecorderService *>(object);
-
-        if (service)
-            return service;
-
-        delete object;
-    }
-    return 0;
-}
+#include "moc_qmediarecorder.cpp"

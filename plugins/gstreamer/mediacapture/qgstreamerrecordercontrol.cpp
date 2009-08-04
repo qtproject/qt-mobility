@@ -32,73 +32,73 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercapturecontrol.h"
+#include "qgstreamerrecordercontrol.h"
 #include <QtCore/QDebug>
 
-QGstreamerCaptureControl::QGstreamerCaptureControl(QGstreamerCaptureSession *session)
-    :QMediaCaptureControl(session), m_session(session)
+QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *session)
+    :QMediaRecorderControl(session), m_session(session)
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
     connect(m_session, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
 }
 
-QGstreamerCaptureControl::~QGstreamerCaptureControl()
+QGstreamerRecorderControl::~QGstreamerRecorderControl()
 {
 }
 
-QMediaSink QGstreamerCaptureControl::sink() const
+QMediaSink QGstreamerRecorderControl::sink() const
 {
     return m_session->sink();
 }
 
-bool QGstreamerCaptureControl::setSink(const QMediaSink &sink)
+bool QGstreamerRecorderControl::setSink(const QMediaSink &sink)
 {
     m_session->setSink(sink);
     return true;
 }
 
 
-int QGstreamerCaptureControl::state() const
+int QGstreamerRecorderControl::state() const
 {
     switch ( m_session->state() ) {
         case QGstreamerCaptureSession::RecordingState:
-            return int(QMediaCapture::RecordingState);
+            return int(QMediaRecorder::RecordingState);
         case QGstreamerCaptureSession::PausedState:
-            return int(QMediaCapture::PausedState);
+            return int(QMediaRecorder::PausedState);
         case QGstreamerCaptureSession::PreviewState:
         case QGstreamerCaptureSession::StoppedState:
-            return int(QMediaCapture::StoppedState);
+            return int(QMediaRecorder::StoppedState);
     }
 
     return QGstreamerCaptureSession::StoppedState;
 
 }
 
-void QGstreamerCaptureControl::updateState()
+void QGstreamerRecorderControl::updateState()
 {
     emit stateChanged(state());
 }
 
-qint64 QGstreamerCaptureControl::position() const
+qint64 QGstreamerRecorderControl::position() const
 {
     return m_session->position();
 }
 
-void QGstreamerCaptureControl::record()
+void QGstreamerRecorderControl::record()
 {
     m_session->dumpGraph("before-record");
     m_session->setState(QGstreamerCaptureSession::RecordingState);
     m_session->dumpGraph("after-record");
 }
 
-void QGstreamerCaptureControl::pause()
+void QGstreamerRecorderControl::pause()
 {
     m_session->dumpGraph("before-pause");
     m_session->setState(QGstreamerCaptureSession::PausedState);
 }
 
-void QGstreamerCaptureControl::stop()
+void QGstreamerRecorderControl::stop()
 {
     m_session->setState(m_session->isPreviewEnabled() ? QGstreamerCaptureSession::PreviewState : QGstreamerCaptureSession::StoppedState);
 }
