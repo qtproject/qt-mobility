@@ -34,25 +34,11 @@
 
 #include "qmediarecordercontrol.h"
 
-QMediaRecorderControl::QMediaRecorderControl(QObject *parent)
+QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
     : QAbstractMediaControl(parent)
 {
 }
 
-int QMediaRecorderControl::state() const
-{
-    return 0;
-}
-
-void QMediaRecorderControl::setState(int state)
-{
-}
-
-QMediaSink *QMediaRecorderControl::sink() const
-{
-    return 0;
-}
-
-void QMediaRecorderControl::setSink(QMediaSink *sink)
+QMediaRecorderControl::~QMediaRecorderControl()
 {
 }

@@ -33,7 +33,6 @@ HEADERS = qabstractmediacontrol.h \
     qmediaresource.h \
     qmediarecorder.h \
     qmediarecordercontrol.h \
-    qmediarecorderservice.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
@@ -45,10 +44,8 @@ HEADERS = qabstractmediacontrol.h \
     qvideowidget.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
-    qmediacapturecontrol.h \
     qaudioencodecontrol.h \
     qvideoencodecontrol.h \
-    qmediacapture.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraservice.h \
@@ -71,7 +68,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
     qmediarecordercontrol.cpp \
-    qmediarecorderservice.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmediasink.cpp \
@@ -82,10 +78,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideowidget.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
-    qmediacapturecontrol.cpp \
     qaudioencodecontrol.cpp \
     qvideoencodecontrol.cpp \
-    qmediacapture.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraservice.cpp \
