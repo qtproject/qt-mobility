@@ -96,9 +96,9 @@ bool QContactAbstractRequest::start()
 
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine)
-        engine->startRequest(this);
+        return engine->startRequest(this);
 
-    return true;
+    return false;
 }
 
 bool QContactAbstractRequest::cancel()
@@ -109,9 +109,9 @@ bool QContactAbstractRequest::cancel()
 
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine)
-        engine->cancelRequest(this);
+        return engine->cancelRequest(this);
 
-    return true;
+    return false;
 }
 
 bool QContactAbstractRequest::waitForFinished(int msecs)
