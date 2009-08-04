@@ -45,6 +45,7 @@ isEmpty(PLUGIN_SUBDIR): PLUGIN_SUBDIR=plugins
     }
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
+
 } else {
     QT *= testlib
     CONFIG += console
@@ -60,7 +61,20 @@ isEmpty(PLUGIN_SUBDIR): PLUGIN_SUBDIR=plugins
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
     INCLUDEPATH *= $$MOC_DIR
     INCLUDEPATH *= $$RCC_DIR
+
+    # Where test plugins go.
+    TEST_PLUGIN_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
 }
+
+# Where normal plugins go
+PLUGIN_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
+
+# Add files for deployment
+CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtContacts.dll
+CONTACTS_DEPLOYMENT.path = /Windows
+CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR/*.dll
+CONTACTS_PLUGINS_DEPLOYMENT.path = ./plugins
+DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
