@@ -65,6 +65,8 @@ private slots:
     void definitionSave();
 
 private:
+    bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
+    bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
     QContactManager* prepareModel();
 };
 
@@ -82,6 +84,52 @@ void tst_QContactAsync::init()
 
 void tst_QContactAsync::cleanup()
 {
+}
+
+bool tst_QContactAsync::containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c)
+{
+    QList<QContact> cl = list;
+    QContact a(c);
+    for (int i = 0; i < cl.size(); i++) {
+        QContact b(cl.at(i));
+        if (compareIgnoringTimestamps(a, b))
+            return true;
+    }
+
+    return false;
+}
+
+bool tst_QContactAsync::compareIgnoringTimestamps(const QContact& ca, const QContact& cb)
+{
+    // Compares two contacts, ignoring any timestamp details
+    QContact a(ca);
+    QContact b(cb);
+    QList<QContactDetail> aDetails = a.details();
+    QList<QContactDetail> bDetails = b.details();
+
+    // They can be in any order, so loop
+    // First remove any matches, and any timestamps
+    foreach (QContactDetail d, aDetails) {
+        foreach (QContactDetail d2, bDetails) {
+            if (d == d2) {
+                a.removeDetail(&d);
+                b.removeDetail(&d2);
+                break;
+            }
+
+            if (d.definitionName() == QContactTimestamp::DefinitionName) {
+                a.removeDetail(&d);
+            }
+
+            if (d2.definitionName() == QContactTimestamp::DefinitionName) {
+                b.removeDetail(&d2);
+            }
+        }
+    }
+
+    if (a == b)
+        return true;
+    return false;
 }
 
 void tst_QContactAsync::contactFetch()
@@ -443,7 +491,7 @@ void tst_QContactAsync::contactSave()
     expected << cm->contact(cm->contacts().last());
     result = csr.contacts();
     QCOMPARE(expected, result);
-    QVERIFY(expected.contains(testContact));
+    QVERIFY(containsIgnoringTimestamps(expected, testContact));
     QCOMPARE(cm->contacts().size(), originalCount + 1);
 
     // cancelling

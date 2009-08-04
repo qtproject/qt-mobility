@@ -248,34 +248,6 @@ QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& so
     return sortedIds;
 }
 
-/*
-QList<QUniqueId> QContactKabcEngine::contactsWithDetail(const QString& definitionName, const QVariant& value, QContactManager::Error& error) const
-{
-    QList<QUniqueId> retn;
-    error = QContactManager::NoError;
-
-    // firstly, use KABC's native API
-    if (definitionName == "EmailAddress") {
-        QList<KABC::Addressee> matches = d->ab->findByEmail(value.toString());
-        foreach (const KABC::Addressee& a, matches)
-            retn.append(getIdOfAddressee(a, error));
-        if (retn.isEmpty() && error == QContactManager::NoError)
-            error = QContactManager::DoesNotExistError;
-        return retn;
-    } else if (definitionName == "Name") {
-        QList<KABC::Addressee> matches = d->ab->findByName(value.toString());
-        foreach (const KABC::Addressee& a, matches)
-            retn.append(getIdOfAddressee(a, error));
-        if (retn.isEmpty() && error == QContactManager::NoError)
-            error = QContactManager::DoesNotExistError;
-        return retn;
-    }
-
-    // if that doesn't work, use our default (slow) implementation
-    return QContactManagerEngine::contactsWithDetail(definitionName, value, error);
-}
-*/
-
 QContact QContactKabcEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;

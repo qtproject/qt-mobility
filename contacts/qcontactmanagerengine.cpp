@@ -1643,34 +1643,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of detail definition names as a result, this function will return without doing anything.
- */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QStringList& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
-{
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
-    switch (req->type()) {
-        case QContactAbstractRequest::DetailDefinitionFetch:
-        {
-            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-            rd->m_names = result;
-            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of definition names to update...
-            return;
-        }
-    }
-}
-
-/*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition as a result, this function will return without doing anything.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)

@@ -122,7 +122,6 @@ public:
 
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
