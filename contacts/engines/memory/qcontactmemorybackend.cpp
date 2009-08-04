@@ -407,13 +407,6 @@ void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 /*! \reimp */
 bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    if (req->status() != QContactAbstractRequest::Inactive
-        && req->status() != QContactAbstractRequest::Cancelled
-        && req->status() != QContactAbstractRequest::Finished) {
-        // not in a state able to be started.
-        return false;
-    }
-
     d->m_asynchronousOperations.enqueue(req);
     QList<QContactManager::Error> dummy;
     updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
@@ -424,11 +417,6 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 /*! \reimp */
 bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    if (req->status() != QContactAbstractRequest::Active) {
-        // not in a state able to be cancelled.
-        return false;
-    }
-
     QList<QContactManager::Error> dummy;
     updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
     return true;

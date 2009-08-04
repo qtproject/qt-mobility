@@ -1405,8 +1405,11 @@ void QContactManagerEngine::requestDestroyed(QContactAbstractRequest* req)
 }
 
 /*!
- * Asks the manager engine to begin the given request \a req.
+ * Asks the manager engine to begin the given request \a req which
+ * is currently in a (re)startable state.
  * Returns true if the request was started successfully, else returns false.
+ *
+ * \sa QContactAbstractRequest::start()
  */
 bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 {
@@ -1416,11 +1419,11 @@ bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 
 /*!
  * Asks the manager engine to cancel the given request \a req which was
- * previously started.
+ * previously started and is currently in a cancellable state.
  * Returns true if cancellation of the request was started successfully,
  * otherwise returns false.
  *
- * \sa startRequest()
+ * \sa startRequest(), QContactAbstractRequest::cancel()
  */
 bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 {
