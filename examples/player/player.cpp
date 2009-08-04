@@ -112,12 +112,24 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
     connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
 
+    QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
+    fullscreenButton->setCheckable(true);
+
+    if (videoWidget) {
+        connect(fullscreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullscreen(bool)));
+        connect(videoWidget, SIGNAL(fullscreenChanged(bool)),
+                fullscreenButton, SLOT(setChecked(bool)));
+    } else {
+        fullscreenButton->setEnabled(false);
+    }
+
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
     controlLayout->addStretch(1);
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
+    controlLayout->addWidget(fullscreenButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     if (videoWidget) {
