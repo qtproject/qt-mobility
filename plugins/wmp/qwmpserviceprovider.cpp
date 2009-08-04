@@ -47,12 +47,14 @@ QObject *QWmpServiceProvider::createObject(const char *iid) const
 
 QStringList QWmpServiceProviderPlugin::keys() const
 {
-    return QStringList() << QLatin1String("mediaplayer");
+    return QStringList()
+            << QLatin1String("mediaplayer")
+            << QLatin1String("windowsmediaplayer");
 }
 
 QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
 {
-    if (key == QLatin1String("mediaplayer"))
+    if (key == QLatin1String("mediaplayer") || key == QLatin1String("windowsmediaplayer"))
         return new QWmpServiceProvider;
     return 0;
 }
