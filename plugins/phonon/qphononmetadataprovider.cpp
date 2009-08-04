@@ -5,7 +5,7 @@
 #include <QDebug>
 
 QPhononMetadataProvider::QPhononMetadataProvider(Phonon::MediaObject *session, QObject *parent)
-    :QMetadataProvider(parent), m_session(session), m_metadataAvailable(false)
+    :QMetadataProviderControl(parent), m_session(session), m_metadataAvailable(false)
 {
     connect(m_session, SIGNAL(metaDataChanged()), SLOT(updateTags()));
 }
@@ -46,7 +46,7 @@ void QPhononMetadataProvider::setMetadata(QString const &name, QVariant const &v
 }
 
 void QPhononMetadataProvider::updateTags()
-{    
+{
     emit metadataChanged();
     if (metadataAvailable() != m_metadataAvailable) {
         m_metadataAvailable = !m_metadataAvailable;

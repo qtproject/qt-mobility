@@ -33,11 +33,11 @@
 ****************************************************************************/
 
 #include "qabstractmediacontrol_p.h"
-#include "qmetadataprovider.h"
+#include "qmetadataprovidercontrol.h"
 
 
 /*!
-    \class QMetadataProvider
+    \class QMetadataProviderControl
     \ingroup multimedia
 
     \preliminary
@@ -48,36 +48,36 @@
     Destroy the metadata object.
 */
 
-QMetadataProvider::~QMetadataProvider()
+QMetadataProviderControl::~QMetadataProviderControl()
 {
 }
 
 /*!
-    \fn bool QMetadataProvider::metadataAvailable() const
+    \fn bool QMetadataProviderControl::metadataAvailable() const
 
     Returns true if metadata can be be provided by the service.
 */
 
 /*!
-    \fn bool QMetadataProvider::isReadOnly() const
+    \fn bool QMetadataProviderControl::isReadOnly() const
 
     Returns true if metadata elements can not be added or changed for the service.
 */
 
 /*!
-    \fn QList<QString> QMetadataProvider::availableMetadata() const
+    \fn QList<QString> QMetadataProviderControl::availableMetadata() const
 
     Returns a list of the names of all the metadata elements available.
 */
 
 /*!
-    \fn QVariant QMetadataProvider::metadata(QString const &name) const
+    \fn QVariant QMetadataProviderControl::metadata(QString const &name) const
 
     Returns the metadata for the element named \a name.
 */
 
 /*!
-    \fn void QMetadataProvider::setMetadata(QString const &name, QVariant const &value)
+    \fn void QMetadataProviderControl::setMetadata(QString const &name, QVariant const &value)
 
     Change the value of the metadata element named \a name, to \a value.
 */
@@ -85,13 +85,13 @@ QMetadataProvider::~QMetadataProvider()
 /*!
     Returns a list of resources belonging to a media item.
 */
-QMediaResourceList QMetadataProvider::resources() const
+QMediaResourceList QMetadataProviderControl::resources() const
 {
     return QMediaResourceList();
 }
 
 /*!
-    \fn void QMetadataProvider::metadataChanged()
+    \fn void QMetadataProviderControl::metadataChanged()
 
     Signal the changes of metadata.
 */
@@ -104,18 +104,18 @@ QMediaResourceList QMetadataProvider::resources() const
 */
 
 /*!
-    \fn void QMetadataProvider::readOnlyChanged(bool readOnly)
+    \fn void QMetadataProviderControl::readOnlyChanged(bool readOnly)
 
     Signal a change in the read only status of meta data, \a readOnly will be
     true if metadata elements can not be added or adjusted.
 */
 
 /*!
-    Construct a QMetadataProvider with \a parent. This class is meant as s base class
+    Construct a QMetadataProviderControl with \a parent. This class is meant as s base class
     for service specific metadata providers so this contructor is protected.
 */
 
-QMetadataProvider::QMetadataProvider(QObject *parent):
+QMetadataProviderControl::QMetadataProviderControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
 }

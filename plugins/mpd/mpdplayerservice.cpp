@@ -55,9 +55,9 @@ MpdPlayerService::~MpdPlayerService()
 
 QAbstractMediaControl* MpdPlayerService::control(const char *name) const
 {
-    if (QLatin1String(name) == "com.nokia.qt.MediaPlayerControl")
+    if (QLatin1String(name) == QMediaPlayerControl_iid)
         return playerControl;
-    else if (QLatin1String(name) == "com.nokia.qt.MetadataControl")
+    else if (QLatin1String(name) == QMetadataProviderControl_iid)
         return metadataControl;
 
     return 0;

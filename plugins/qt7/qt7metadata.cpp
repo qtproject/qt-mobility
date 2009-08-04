@@ -39,7 +39,7 @@
 
 
 Qt7Metadata::Qt7Metadata(QObject *parent):
-    QMetadataProvider(parent)
+    QMetadataProviderControl(parent)
 {
 }
 

@@ -75,7 +75,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->audioInputDeviceBox->setEnabled(false);
 
     audioEncodeControl = qobject_cast<QAudioEncodeControl*>(
-            mediaRecorder->service()->control("com.nokia.qt.AudioEncodeControl"));
+            mediaRecorder->service()->control(QAudioEncodeControl_iid));
 
     if (audioEncodeControl) {
         foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
@@ -92,7 +92,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     videoEncodeControl = qobject_cast<QVideoEncodeControl*>(
-            mediaRecorder->service()->control("com.nokia.qt.VideoEncodeControl"));
+            mediaRecorder->service()->control(QVideoEncodeControl_iid));
 
     if (videoEncodeControl) {
         foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
@@ -109,7 +109,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     formatControl = qobject_cast<QMediaFormatControl*>(
-            mediaRecorder->service()->control("com.nokia.qt.MediaFormatControl"));
+            mediaRecorder->service()->control(QMediaFormatControl_iid));
 
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {

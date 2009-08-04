@@ -46,7 +46,7 @@ class QStringList;
 class Q_MEDIA_EXPORT QVideoEncodeControl : public QAbstractMediaControl
 {
     Q_OBJECT
-public:    
+public:
     virtual ~QVideoEncodeControl();
 
     virtual QSize resolution() const = 0;
@@ -81,5 +81,7 @@ public:
 protected:
     QVideoEncodeControl(QObject *parent);
 };
+
+#define QVideoEncodeControl_iid "com.nokia.qt.VideoEncodeControl"
 
 #endif // QVIDEOCAPTUREPROPERTIESCONTROL_H

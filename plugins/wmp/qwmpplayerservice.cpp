@@ -92,7 +92,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
 }
 
 QWmpPlayerService::~QWmpPlayerService()
-{    
+{
     if (m_oleVideoOverlay)
         m_oleVideoOverlay->setObject(0, 0);
 
@@ -125,9 +125,9 @@ QWmpPlayerService::~QWmpPlayerService()
 
 QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
 {
-    if (qstrcmp(name, "com.nokia.qt.MediaPlayerControl") == 0)
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
-    else if (qstrcmp(name, "com.nokia.qt.MetadataControl") == 0)
+    else if (qstrcmp(name, QMetadataProviderControl_iid) == 0)
         return m_metaData;
     else
         return 0;
@@ -415,7 +415,7 @@ HRESULT QWmpPlayerService::GetWindowContext(
 
     QueryInterface(IID_IOleInPlaceFrame, reinterpret_cast<void **>(ppFrame));
     QueryInterface(IID_IOleInPlaceUIWindow, reinterpret_cast<void **>(ppDoc));
-    
+
     HWND winId = m_oleVideoOverlay ? m_oleVideoOverlay->winId() : 0;
 
     if (winId) {

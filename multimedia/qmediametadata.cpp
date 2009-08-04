@@ -36,7 +36,7 @@
 #include <QtCore/QDebug>
 
 #include "qmediametadata.h"
-#include "qmetadataprovider.h"
+#include "qmetadataprovidercontrol.h"
 #include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
 
@@ -52,8 +52,8 @@
 class QMediaMetadataPrivate : public QObjectPrivate
 {
 public:
-    QAbstractMediaService   *service;
-    QMetadataProvider       *provider;
+    QAbstractMediaService    *service;
+    QMetadataProviderControl *provider;
 };
 
 /*!
@@ -66,7 +66,7 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
     Q_D(QMediaMetadata);
 
     d->service = mediaObject->service();
-    d->provider = qobject_cast<QMetadataProvider*>(d->service->control("com.nokia.qt.MetadataControl"));
+    d->provider = qobject_cast<QMetadataProviderControl*>(d->service->control(QMetadataProviderControl_iid));
 
     if (d->provider != 0) {
         connect(d->provider, SIGNAL(metadataChanged()), SIGNAL(metadataChanged()));

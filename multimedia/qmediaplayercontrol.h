@@ -105,5 +105,7 @@ protected:
     QMediaPlayerControl(QObject* parent);
 };
 
+#define QMediaPlayerControl_iid "com.nokia.qt.MediaPlayerControl"
+
 #endif  // QMEDIAPLAYERCONTROL_H
 

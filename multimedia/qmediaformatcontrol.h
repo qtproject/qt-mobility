@@ -54,4 +54,6 @@ protected:
     QMediaFormatControl(QObject *parent);
 };
 
+#define QMediaFormatControl_iid "com.nokia.qt.MediaFormatControl"
+
 #endif // QMEDIAFORMATCONTROL_H

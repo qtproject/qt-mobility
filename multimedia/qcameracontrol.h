@@ -110,5 +110,7 @@ protected:
     QCameraControl(QObject* parent);
 };
 
+#define QCameraControl_iid "com.nokia.qt.CameraControl"
+
 #endif  // QCAMERACONTROL_H
 

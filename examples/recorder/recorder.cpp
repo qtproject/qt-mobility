@@ -71,7 +71,7 @@ Recorder::Recorder(QWidget *parent) :
         ui->inputDeviceBox->setEnabled(false);
 
     encodeControl = qobject_cast<QAudioEncodeControl*>(
-            audioRecorder->service()->control("com.nokia.qt.AudioEncodeControl"));
+            audioRecorder->service()->control(QAudioEncodeControl_iid));
 
     if (encodeControl) {
         foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {
@@ -88,7 +88,7 @@ Recorder::Recorder(QWidget *parent) :
     }
 
     formatControl = qobject_cast<QMediaFormatControl*>(
-            audioRecorder->service()->control("com.nokia.qt.MediaFormatControl"));
+            audioRecorder->service()->control(QMediaFormatControl_iid));
 
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {

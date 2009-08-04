@@ -121,7 +121,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     Q_D(QMediaPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
+    d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
     connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
     connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));

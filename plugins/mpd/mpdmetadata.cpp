@@ -40,7 +40,7 @@
 
 
 MpdMetadata::MpdMetadata(MpdDaemon *mpd, QObject *parent):
-    QMetadataProvider(parent)
+    QMetadataProviderControl(parent)
 {
     daemon = mpd;
     connect(daemon, SIGNAL(playlistItemChanged(int)), SLOT(playlistItemChanged(int)));

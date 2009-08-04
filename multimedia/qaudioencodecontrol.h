@@ -69,7 +69,7 @@ class Q_MEDIA_EXPORT QAudioEncodeControl : public QAbstractMediaControl
 public:
     virtual ~QAudioEncodeControl();
 
-    virtual QAudioFormat format() const = 0;    
+    virtual QAudioFormat format() const = 0;
     virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
     virtual bool setFormat(const QAudioFormat &format) = 0;
 
@@ -92,5 +92,7 @@ public:
 protected:
     QAudioEncodeControl(QObject *parent);
 };
+
+#define QAudioEncodeControl_iid "com.nokia.qt.AudioEncodeControl"
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

@@ -51,7 +51,7 @@
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
     : QMediaPlayerService(parent)
-{    
+{
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
     m_metadata = new QGstreamerMetadataProvider(m_session, this);
@@ -63,10 +63,10 @@ QGstreamerPlayerService::~QGstreamerPlayerService()
 
 QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaPlayerControl") == 0)
+    if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,"com.nokia.qt.MetadataControl") == 0)
+    if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
         return m_metadata;
 
     return 0;
@@ -82,7 +82,7 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
             QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> res;
-    
+
     if (direction == QMediaEndpointInterface::Output) {
         res << QMediaWidgetEndpoint_iid;
 #ifndef QT_NO_VIDEOSURFACE

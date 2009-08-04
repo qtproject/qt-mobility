@@ -39,11 +39,11 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qmap.h>
 
-#include <qmetadataprovider.h>
+#include <qmetadataprovidercontrol.h>
 
 class Qt7Daemon;
 
-class Qt7Metadata : public QMetadataProvider
+class Qt7Metadata : public QMetadataProviderControl
 {
     Q_OBJECT
 

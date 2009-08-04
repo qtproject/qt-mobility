@@ -142,19 +142,19 @@ void QGstreamerCaptureService::setVideoOutput(QObject *output)
 
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0)
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_captureSession->recorderControl();
 
-    if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
+    if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
         return m_captureSession->audioEncodeControl();
 
-    if (qstrcmp(name,"com.nokia.qt.VideoEncodeControl") == 0)
+    if (qstrcmp(name,QVideoEncodeControl_iid) == 0)
         return m_captureSession->videoEncodeControl();
 
-    if (qstrcmp(name,"com.nokia.qt.MediaFormatControl") == 0)
+    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
         return m_captureSession->mediaFormatControl();
 
-    if (qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
+    if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
 
     return 0;

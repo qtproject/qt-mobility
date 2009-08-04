@@ -1,11 +1,11 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include "qmetadataprovider.h"
+#include "qmetadataprovidercontrol.h"
 
 class QGstreamerPlayerSession;
 
-class QGstreamerMetadataProvider : public QMetadataProvider
+class QGstreamerMetadataProvider : public QMetadataProviderControl
 {
     Q_OBJECT
 public:
