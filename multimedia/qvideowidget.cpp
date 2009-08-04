@@ -116,10 +116,10 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
                 this, SLOT(_q_dimensionsChanged()));
 
         d->service->setVideoOutput(d->renderer);
+#endif
     }
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-#endif
 }
 
 /*!
