@@ -45,12 +45,17 @@
 class QTCONTACTS_EXPORT QContactGuid : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldGuid;
+    const char* AttributeSubTypeSync;
+    const char* AttributeSubTypeOther;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid")
-
     Q_DECLARE_LATIN1_LITERAL(FieldGuid, "Guid");
-
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeSync, "Sync");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeOther, "Other");
+#endif
 
     void setGuid(const QString& guid) {setValue(FieldGuid, guid);}
     QString guid() const {return value(FieldGuid);}

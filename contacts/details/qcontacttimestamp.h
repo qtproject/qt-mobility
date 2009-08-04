@@ -44,10 +44,15 @@
 class QTCONTACTS_EXPORT QContactTimestamp : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldModificationTimestamp;
+    const char* FieldCreationTimestamp;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTimestamp, "Timestamp")
-
     Q_DECLARE_LATIN1_LITERAL(FieldModificationTimestamp, "ModificationTimestamp");
     Q_DECLARE_LATIN1_LITERAL(FieldCreationTimestamp, "CreationTimestamp");
+#endif
 
     void setLastModified(const QDateTime& timestamp) {setValue(FieldModificationTimestamp, timestamp);}
     QDateTime lastModified() const {return value<QDateTime>(FieldModificationTimestamp);}

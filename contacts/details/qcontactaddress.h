@@ -45,19 +45,31 @@
 class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldDisplayLabel;
+    const char* FieldStreet;
+    const char* FieldLocality;
+    const char* FieldRegion;
+    const char* FieldPostcode;
+    const char* FieldCountry;
+    const char* AttributeSubTypeParcel;
+    const char* AttributeSubTypePostal;
+    const char* AttributeSubTypeDomestic;
+    const char* AttributeSubTypeInternational;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
-
     Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
     Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
     Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
     Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
     Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeParcel, "Parcel");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePostal, "Postal");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeDomestic, "Domestic");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternational, "International");
+#endif
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const;

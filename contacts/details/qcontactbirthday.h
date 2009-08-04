@@ -44,9 +44,13 @@
 class QTCONTACTS_EXPORT QContactBirthday : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldBirthday;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
-
     Q_DECLARE_LATIN1_LITERAL(FieldBirthday, "Birthday");
+#endif
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}
     QDate date() const {return value<QDate>(FieldBirthday);}

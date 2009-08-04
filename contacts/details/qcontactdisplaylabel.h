@@ -45,10 +45,15 @@
 class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldLabel;
+    const char* FieldSynthesised;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
-
     Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
     Q_DECLARE_LATIN1_LITERAL(FieldSynthesised, "Synthesised");
+#endif
 
     void setLabel(const QString& label)
     {

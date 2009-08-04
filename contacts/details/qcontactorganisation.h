@@ -44,10 +44,15 @@
 class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldDisplayLabel;
+    const char* FieldLogo;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
-
     Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
+#endif
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const {return value(FieldDisplayLabel);}

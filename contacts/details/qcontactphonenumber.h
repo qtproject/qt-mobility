@@ -46,10 +46,22 @@
 class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldNumber;
+    const char* AttributeSubTypeLandline;
+    const char* AttributeSubTypeMobile;
+    const char* AttributeSubTypeFacsimile;
+    const char* AttributeSubTypePager;
+    const char* AttributeSubTypeVoice;
+    const char* AttributeSubTypeModem;
+    const char* AttributeSubTypeVideo;
+    const char* AttributeSubTypeCar;
+    const char* AttributeSubTypeBulletinBoardSystem;
+    const char* AttributeSubTypeMessagingCapable;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
-
     Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
-
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline, "Landline");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile, "Mobile");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile, "Facsimile");
@@ -60,6 +72,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar, "Car");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable, "MessagingCapable");
+#endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}
     QString number() const {return value(FieldNumber);}

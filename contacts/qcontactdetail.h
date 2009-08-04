@@ -60,11 +60,19 @@ public:
     };
 
     // Predefined attribute names and values
+#ifdef Q_QDOC
+    const char* AttributeContext;
+    const char* AttributeSubType;
+    const char* AttributeContextHome;
+    const char* AttributeContextWork;
+    const char* AttributeContextOther;
+#else
     Q_DECLARE_LATIN1_LITERAL(AttributeContext, "Context");
     Q_DECLARE_LATIN1_LITERAL(AttributeSubType, "SubType");
     Q_DECLARE_LATIN1_LITERAL(AttributeContextHome, "Home");
     Q_DECLARE_LATIN1_LITERAL(AttributeContextWork, "Work");
     Q_DECLARE_LATIN1_LITERAL(AttributeContextOther, "Other");
+#endif
 
     QContactDetail::Error error() const;
 

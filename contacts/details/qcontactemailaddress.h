@@ -45,11 +45,15 @@
 class QTCONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldEmailAddress;
+    const char* AttributeSubTypeInternet;
+#else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
-
     Q_DECLARE_LATIN1_LITERAL(FieldEmailAddress, "EmailAddress");
-
     Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternet, "Internet");
+#endif
 
     void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return value(FieldEmailAddress);}

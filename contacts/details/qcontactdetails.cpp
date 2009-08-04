@@ -848,6 +848,11 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactDisplayLabel::label() const
+ * Returns the display label of the contact
+ */
+
+/*!
  * \fn QContactDisplayLabel::setLabel(const QString& label)
  * Sets the display label of the contact to \a label
  */
