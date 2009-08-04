@@ -69,6 +69,11 @@ public:
     {
     }
 
+    virtual QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::Invalid;
+    }
+
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;
     QPointer<QContactManager> m_manager;

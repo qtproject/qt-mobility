@@ -48,8 +48,6 @@ public:
     QContactDetailDefinitionRemoveRequest();
     ~QContactDetailDefinitionRemoveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::DetailDefinitionRemove;}
-
     /* Selection */
     void setNames(const QStringList& names);
     QStringList names() const;

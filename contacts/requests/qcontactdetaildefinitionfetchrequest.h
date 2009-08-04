@@ -50,8 +50,6 @@ public:
     QContactDetailDefinitionFetchRequest();
     ~QContactDetailDefinitionFetchRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::DetailDefinitionFetch;}
-
     /* Selection */
     void setNames(const QStringList& names);
     QStringList names() const;

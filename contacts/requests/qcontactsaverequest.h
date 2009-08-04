@@ -49,8 +49,6 @@ public:
     QContactSaveRequest();
     ~QContactSaveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::ContactSave;}
-
     /* Selection */
     void setContacts(const QList<QContact>& contacts);
 

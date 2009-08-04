@@ -67,6 +67,11 @@ public:
     {
     }
 
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::ContactSave;
+    }
+
     QList<QContact> m_contacts;
 };
 
@@ -80,6 +85,11 @@ public:
 
     ~QContactFetchRequestPrivate()
     {
+    }
+
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::ContactFetch;
     }
 
     QContactFilter m_filter;
@@ -101,6 +111,11 @@ public:
     {
     }
 
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::ContactRemove;
+    }
+
     QContactFilter m_filter;
 };
 
@@ -114,6 +129,11 @@ public:
 
     ~QContactIdFetchRequestPrivate()
     {
+    }
+
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::ContactIdFetch;
     }
 
     QContactFilter m_filter;
@@ -134,6 +154,11 @@ public:
     {
     }
 
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::GroupFetch;
+    }
+
     QList<QUniqueId> m_ids;
     QList<QContactGroup> m_groups;
 };
@@ -148,6 +173,11 @@ public:
 
     ~QContactGroupSaveRequestPrivate()
     {
+    }
+
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::GroupSave;
     }
 
     QList<QContactGroup> m_groups;
@@ -166,6 +196,11 @@ public:
     {
     }
 
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::GroupRemove;
+    }
+
     QList<QUniqueId> m_ids;
 };
 
@@ -179,6 +214,11 @@ public:
 
     ~QContactDetailDefinitionFetchRequestPrivate()
     {
+    }
+
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::DetailDefinitionFetch;
     }
 
     QStringList m_names;
@@ -197,6 +237,11 @@ public:
     {
     }
 
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::DetailDefinitionSave;
+    }
+
     QList<QContactDetailDefinition> m_definitions;
 };
 
@@ -210,6 +255,11 @@ public:
 
     ~QContactDetailDefinitionRemoveRequestPrivate()
     {
+    }
+
+    QContactAbstractRequest::Type type() const
+    {
+        return QContactAbstractRequest::DetailDefinitionRemove;
     }
 
     QStringList m_names;

@@ -79,7 +79,7 @@ public:
         GroupSave
     };
 
-    virtual Type type() const = 0;
+    Type type() const;
 
     /* Which manager we want to perform the asynchronous request */
     QContactManager* manager() const;

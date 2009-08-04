@@ -51,8 +51,6 @@ public:
     QContactIdFetchRequest();
     ~QContactIdFetchRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::ContactIdFetch;}
-
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);
     void setSorting(const QList<QContactSortOrder>& sorting);

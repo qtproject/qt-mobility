@@ -49,8 +49,6 @@ public:
     QContactRemoveRequest();
     ~QContactRemoveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::ContactRemove;}
-
     /* Selection */
     void setFilter(const QContactFilter& filter);
     QContactFilter filter() const;

@@ -157,6 +157,7 @@ void tst_QContactAsync::contactFetch()
 {
     QContactManager* cm = prepareModel();
     QContactFetchRequest cfr;
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetch);
 
     // initial state
     QVERIFY(!cfr.isActive());   // not started
@@ -306,6 +307,7 @@ void tst_QContactAsync::contactIdFetch()
 {
     QContactManager* cm = prepareModel();
     QContactIdFetchRequest cfr;
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetch);
 
     // initial state
     QVERIFY(!cfr.isActive());   // not started
@@ -412,6 +414,7 @@ void tst_QContactAsync::contactRemove()
 {
     QContactManager* cm = prepareModel();
     QContactRemoveRequest crr;
+    QVERIFY(crr.type() == QContactAbstractRequest::ContactRemove);
 
     // initial state
     QVERIFY(!crr.isActive());   // not started
@@ -496,6 +499,7 @@ void tst_QContactAsync::contactSave()
 {
     QContactManager* cm = prepareModel();
     QContactSaveRequest csr;
+    QVERIFY(csr.type() == QContactAbstractRequest::ContactSave);
 
     // initial state
     QVERIFY(!csr.isActive());   // not started
@@ -604,6 +608,7 @@ void tst_QContactAsync::groupFetch()
 {
     QContactManager* cm = prepareModel();
     QContactGroupFetchRequest gfr;
+    QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetch);
 
     // initial state
     QVERIFY(!gfr.isActive());   // not started
@@ -690,6 +695,7 @@ void tst_QContactAsync::groupRemove()
 {
     QContactManager* cm = prepareModel();
     QContactGroupRemoveRequest grr;
+    QVERIFY(grr.type() == QContactAbstractRequest::GroupRemove);
 
     // initial state
     QVERIFY(!grr.isActive());   // not started
@@ -809,6 +815,7 @@ void tst_QContactAsync::groupSave()
 {
     QContactManager* cm = prepareModel();
     QContactGroupSaveRequest gsr;
+    QVERIFY(gsr.type() == QContactAbstractRequest::GroupSave);
 
     // initial state
     QVERIFY(!gsr.isActive());   // not started
@@ -913,6 +920,7 @@ void tst_QContactAsync::definitionFetch()
 {
     QContactManager* cm = prepareModel();
     QContactDetailDefinitionFetchRequest dfr;
+    QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetch);
 
     // initial state
     QVERIFY(!dfr.isActive());   // not started
@@ -991,6 +999,7 @@ void tst_QContactAsync::definitionRemove()
 {
     QContactManager* cm = prepareModel();
     QContactDetailDefinitionRemoveRequest drr;
+    QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemove);
 
     // initial state
     QVERIFY(!drr.isActive());   // not started
@@ -1110,6 +1119,7 @@ void tst_QContactAsync::definitionSave()
 {
     QContactManager* cm = prepareModel();
     QContactDetailDefinitionSaveRequest dsr;
+    QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSave);
 
     // initial state
     QVERIFY(!dsr.isActive());   // not started

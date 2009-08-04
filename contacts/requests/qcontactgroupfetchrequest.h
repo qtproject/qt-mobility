@@ -49,8 +49,6 @@ public:
     QContactGroupFetchRequest();
     ~QContactGroupFetchRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::GroupFetch;}
-
     /* Selection */
     void setIds(const QList<QUniqueId>& ids);
     QList<QUniqueId> ids() const;

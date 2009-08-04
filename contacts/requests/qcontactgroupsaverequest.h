@@ -49,8 +49,6 @@ public:
     QContactGroupSaveRequest();
     ~QContactGroupSaveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::GroupSave;}
-
     /* Selection */
     void setGroups(const QList<QContactGroup>& groups);
 

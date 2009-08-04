@@ -71,11 +71,6 @@
  */
 
 /*!
- * \fn QContactAbstractRequest::type() const
- * Returns the type of the asynchronous request
- */
-
-/*!
  * \fn QContactAbstractRequest::QContactAbstractRequest()
  * Constructs a new, invalid asynchronous request
  */
@@ -126,6 +121,14 @@ QContactManager::Error QContactAbstractRequest::error() const
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
     return d_ptr->m_errors;
+}
+
+/*!
+ * Returns the type of this asynchronous request
+ */
+QContactAbstractRequest::Type QContactAbstractRequest::type() const
+{
+    return d_ptr->type();
 }
 
 /*!

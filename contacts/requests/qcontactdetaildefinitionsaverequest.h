@@ -50,8 +50,6 @@ public:
     QContactDetailDefinitionSaveRequest();
     ~QContactDetailDefinitionSaveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::DetailDefinitionSave;}
-
     /* Selection */
     void setDefinitions(const QList<QContactDetailDefinition>& definitions);
 

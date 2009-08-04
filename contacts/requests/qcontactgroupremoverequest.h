@@ -48,8 +48,6 @@ public:
     QContactGroupRemoveRequest();
     ~QContactGroupRemoveRequest();
 
-    QContactAbstractRequest::Type type() const {return QContactAbstractRequest::GroupRemove;}
-
     /* Selection */
     void setIds(const QList<QUniqueId>& ids);
     QList<QUniqueId> ids() const;
