@@ -34,9 +34,12 @@
 #ifndef ADDRESSFINDER_H
 #define ADDRESSFINDER_H
 
-#include <QWidget>
-#include <QObject>
+#include "qtmessaging.h"
+
 #include <QMap>
+#include <QObject>
+#include <QSet>
+#include <QWidget>
 
 class QComboBox;
 class QListWidget;
@@ -53,6 +56,7 @@ private slots:
     void includePeriodChanged(int);
     void addressSelected(const QString&);
     void searchMessages();
+    void continueSearch();
 
 private:
     QComboBox *includePeriod;
@@ -61,6 +65,10 @@ private:
     QListWidget *addressList;
     QListWidget *messageList;
 
+    QMessageIdList inclusionMessages;
+    QMessageIdList exclusionMessages;
+
+    QSet<QString> excludedAddresses;
     QMap<QString, QStringList> addressMessages;
 };
 

@@ -33,8 +33,6 @@
 
 #include "addressfinder.h"
 
-#include "qtmessaging.h"
-
 #include <QComboBox>
 #include <QDateTime>
 #include <QGroupBox>
@@ -42,6 +40,7 @@
 #include <QLayout>
 #include <QListWidget>
 #include <QPushButton>
+#include <QTimer>
 #include <QDebug>
 
 AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
@@ -169,35 +168,49 @@ void AddressFinder::searchMessages()
     QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Includes));
 
-    QSet<QString> excludedAddresses;
-
     // Find all outgoing messages that are within the exclusion range
-    foreach (const QMessageId &id, QMessageStore::instance()->queryMessages(~outgoingFilter & excludeFilter)) {
-        // All recipient addresses are to be excluded
+    exclusionMessages = QMessageStore::instance()->queryMessages(~outgoingFilter & excludeFilter);
+
+    // Find all outgoing messages that are within the inclusion range
+    inclusionMessages = QMessageStore::instance()->queryMessages(~outgoingFilter & includeFilter & ~excludeFilter);
+
+    if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
+        QTimer::singleShot(0, this, SLOT(continueSearch()));
+    }
+}
+
+void AddressFinder::continueSearch()
+{
+    if (!exclusionMessages.isEmpty()) {
+        QMessageId id(exclusionMessages.takeFirst());
         const QMessage message(id);
+
+        // All recipient addresses are to be excluded
         foreach (const QMessageAddress &address, message.to()) {
             excludedAddresses.insert(address.recipient());
         }
-    }
-
-    // Find all outgoing messages that are within the inclusion range
-    foreach (const QMessageId &id, QMessageStore::instance()->queryMessages(~outgoingFilter & includeFilter & ~excludeFilter)) {
+    } else if (!inclusionMessages.isEmpty()) {
+        QMessageId id(inclusionMessages.takeFirst());
         const QMessage message(id);
 
         // Determine the properties of the message
         QString details(QString("[%1] %2").arg(message.date().toString()).arg(message.subject()));
 
         foreach (const QMessageAddress &address, message.to()) {
-            if (!excludedAddresses.contains(address.recipient())) {
+            QString recipient(address.recipient());
+            if (!excludedAddresses.contains(recipient)) {
                 // Link this message to this address
-                QStringList &messages = addressMessages[address.recipient()];
+                QStringList &messages = addressMessages[recipient];
+                if (messages.isEmpty()) {
+                    addressList->addItem(recipient);
+                }
                 messages.append(details);
             }
         }
     }
 
-    foreach (const QString &address, addressMessages.keys()) {
-        addressList->addItem(address);
+    if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
+        QTimer::singleShot(0, this, SLOT(continueSearch()));
     }
 }
 
