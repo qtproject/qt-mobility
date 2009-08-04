@@ -58,5 +58,9 @@ private:
     Q_DECLARE_PRIVATE(QAbstractMediaControl)
 };
 
+template <typename T> const char *qmediacontrol_iid() { return 0; }
+
+#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
+    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
 
 #endif  // QABSTRACTMEDIACONTROL_H

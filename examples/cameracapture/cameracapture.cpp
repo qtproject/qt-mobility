@@ -74,8 +74,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     } else
         ui->audioInputDeviceBox->setEnabled(false);
 
-    audioEncodeControl = qobject_cast<QAudioEncodeControl*>(
-            mediaRecorder->service()->control(QAudioEncodeControl_iid));
+    audioEncodeControl = mediaRecorder->service()->control<QAudioEncodeControl*>();
 
     if (audioEncodeControl) {
         foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
@@ -91,8 +90,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->audioQualitySlider->setEnabled(false);
     }
 
-    videoEncodeControl = qobject_cast<QVideoEncodeControl*>(
-            mediaRecorder->service()->control(QVideoEncodeControl_iid));
+    videoEncodeControl = mediaRecorder->service()->control<QVideoEncodeControl*>();
 
     if (videoEncodeControl) {
         foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
@@ -108,8 +106,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->videoQualitySlider->setEnabled(false);
     }
 
-    formatControl = qobject_cast<QMediaFormatControl*>(
-            mediaRecorder->service()->control(QMediaFormatControl_iid));
+    formatControl = mediaRecorder->service()->control<QMediaFormatControl*>();
 
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {
@@ -122,7 +119,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->containerFormatBox->setEnabled(false);
     }
 
-    QWidget *videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();
+    QWidget *videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint*>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";

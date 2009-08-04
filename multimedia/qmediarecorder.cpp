@@ -197,7 +197,6 @@ qint64 QMediaRecorder::position() const
 
 void QMediaRecorder::setPositionUpdatePeriod(int ms)
 {
-    Q_D(QMediaRecorder);
     setNotifyInterval(ms);
 }
 

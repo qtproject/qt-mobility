@@ -108,6 +108,7 @@ protected:
 };
 
 #define QCameraControl_iid "com.nokia.qt.CameraControl"
+Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
 
 #endif  // QCAMERACONTROL_H
 

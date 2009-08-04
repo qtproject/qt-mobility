@@ -94,5 +94,6 @@ protected:
 };
 
 #define QAudioEncodeControl_iid "com.nokia.qt.AudioEncodeControl"
+Q_MEDIA_DECLARE_CONTROL(QAudioEncodeControl, QAudioEncodeControl_iid)
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

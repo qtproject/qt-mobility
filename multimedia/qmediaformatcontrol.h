@@ -55,5 +55,6 @@ protected:
 };
 
 #define QMediaFormatControl_iid "com.nokia.qt.MediaFormatControl"
+Q_MEDIA_DECLARE_CONTROL(QMediaFormatControl, QMediaFormatControl_iid)
 
 #endif // QMEDIAFORMATCONTROL_H

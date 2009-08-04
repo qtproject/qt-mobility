@@ -66,5 +66,6 @@ protected:
 };
 
 #define QMetadataProviderControl_iid "com.nokia.qt.MetadataProviderControl"
+Q_MEDIA_DECLARE_CONTROL(QMetadataProviderControl, QMetadataProviderControl_iid)
 
 #endif  // QMETADATAPROVIDER_H
