@@ -69,8 +69,7 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control("com.nokia.qt.CameraControl"));
-        connect(d->control,SIGNAL(stateChanged(QVideoStream::State)),this,SIGNAL(stateChanged(QVideoStream::State)));
-        connect(d->control,SIGNAL(frameReady(QVideoFrame const&)),this,SIGNAL(frameReady(QVideoFrame const&)));
+        connect(d->control,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
     } else {
         d->service = 0;
         d->control = 0;
@@ -108,24 +107,25 @@ QList<QByteArray> QCamera::deviceList()
     Q_D(QCamera);
 
     QList<QByteArray> deviceNames;
-    deviceNames = d->service->deviceList();
+    QCameraService* service = qobject_cast<QCameraService*>(d->service);
+    deviceNames = service->deviceList();
 
     return deviceNames;
 }
 
-QList<QVideoFrame::Type> QCamera::supportedColorFormats()
+QList<QVideoFrame::PixelFormat> QCamera::supportedPixelFormats()
 {
     Q_D(QCamera);
 
     if(d->control)
-        return d->control->supportedColorFormats();
+        return d->control->supportedPixelFormats();
     else {
-        QList<QVideoFrame::Type> list;
+        QList<QVideoFrame::PixelFormat> list;
         return list;
     }
 }
 
-QList<QSize> QCamera::supportedResolutions(QVideoFrame::Type fmt)
+QList<QSize> QCamera::supportedResolutions(QVideoFrame::PixelFormat fmt)
 {
     Q_D(QCamera);
 
@@ -137,20 +137,31 @@ QList<QSize> QCamera::supportedResolutions(QVideoFrame::Type fmt)
     }
 }
 
-QVideoSurfaceFormat QCamera::format() const
+QVideoFrame::PixelFormat QCamera::pixelFormat() const
 {
     if(d_func()->control)
-        return d_func()->control->format();
+        return d_func()->control->pixelFormat();
 
-    return QVideoSurfaceFormat();
+    return QVideoFrame::Format_Invalid;
 }
 
-void QCamera::setFormat(const QVideoSurfaceFormat &format)
+void QCamera::setPixelFormat(QVideoFrame::PixelFormat fmt)
 {
     Q_D(QCamera);
 
     if(d->control)
-        d->control->setFormat(format);
+        d->control->setPixelFormat(fmt);
+}
+
+QSize QCamera::size() const
+{
+    //TODO
+    return QSize();
+}
+
+void QCamera::setSize(const QSize& s)
+{
+    // TODO
 }
 
 
@@ -492,12 +503,12 @@ void QCamera::setDevice(const QByteArray &device)
         d->control->setDevice(device);
 }
 
-QVideoStream::State QCamera::state() const
+QCamera::State QCamera::state() const
 {
     if(d_func()->control)
         return d_func()->control->state();
 
-    return QVideoStream::StopState;
+    return QCamera::StoppedState;
 }
 #endif
 bool QCamera::isValid() const

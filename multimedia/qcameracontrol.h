@@ -38,10 +38,8 @@
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
-#ifdef VIDEOSERVICES
-#include <QtMultimedia/qvideoformat.h>
-#include <QtMultimedia/qvideostream.h>
-#endif
+#include "qvideoframe.h"
+#include "qcamera.h"
 
 class QCameraControl : public QAbstractMediaControl
 {
@@ -54,11 +52,11 @@ public:
     virtual void stop() = 0;
 
 #ifdef VIDEOSERVICES
-    virtual QList<QVideoFrame::Type> supportedColorFormats() = 0;
-    virtual QList<QSize> supportedResolutions(QVideoFrame::Type fmt) = 0;
+    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats() = 0;
+    virtual QList<QSize> supportedResolutions(QVideoFrame::PixelFormat fmt) = 0;
 
-    virtual QVideoSurfaceFormat format() const = 0;
-    virtual void setFormat(const QVideoSurfaceFormat &format) = 0;
+    virtual QVideoFrame::PixelFormat pixelFormat() const = 0;
+    virtual void setPixelFormat(QVideoFrame::PixelFormat fmt) = 0;
 
     virtual int framerate() const = 0;
     virtual void setFrameRate(int rate) = 0;
@@ -98,13 +96,12 @@ public:
 
     virtual void setDevice(const QByteArray &device) = 0;
 
-    virtual QVideoStream::State state() const = 0;
+    virtual QCamera::State state() const = 0;
 #endif
     virtual bool isValid() const = 0;
 Q_SIGNALS:
 #ifdef VIDEOSERVICES
-    void frameReady(QVideoFrame const&);
-    void stateChanged(QVideoStream::State);
+    void stateChanged(QCamera::State);
 #endif
 protected:
     QCameraControl(QObject* parent);

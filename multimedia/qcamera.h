@@ -44,10 +44,7 @@
 
 #include "qmediaserviceprovider.h"
 
-#ifdef VIDEOSERVICES
-#include <QtMultimedia/qvideostream.h>
-#include <QtMultimedia/qvideoframe.h>
-#endif
+#include "qvideoframe.h"
 
 class QCameraService;
 class QCameraControl;
@@ -59,9 +56,15 @@ class QCameraPrivate;
 class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 {
     Q_OBJECT
+
+    Q_ENUMS(State)
+public:
+    enum State { LoadingState, ActiveState, PausedState, StoppedState };
+
 #ifdef VIDEOSERVICES
-    Q_PROPERTY(QVideoFormat format READ format WRITE setFormat)
-    Q_PROPERTY(QVideoStream::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QVideoFrame::PixelFormat pixelFormat READ pixelFormat WRITE setPixelFormat)
+    Q_PROPERTY(QSize size READ size WRITE setSize)
+    Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
     Q_PROPERTY(int framerate READ framerate WRITE setFrameRate)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness)
     Q_PROPERTY(int contrast READ contrast WRITE setContrast)
@@ -75,7 +78,6 @@ class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
     Q_PROPERTY(bool flash READ flash WRITE setFlash)
     Q_PROPERTY(bool autofocus READ autofocus WRITE setAutofocus)
 #endif
-public:
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
     ~QCamera();
 
@@ -84,11 +86,14 @@ public:
 
 #ifdef VIDEOSERVICES
     QList<QByteArray> deviceList();
-    QList<QVideoFrame::Type> supportedColorFormats();
-    QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
+    QList<QSize> supportedResolutions(QVideoFrame::PixelFormat fmt);
 
-    QVideoFormat format() const;
-    void setFormat(const QVideoFormat &format);
+    QVideoFrame::PixelFormat pixelFormat() const;
+    void setPixelFormat(QVideoFrame::PixelFormat fmt);
+
+    QSize size() const;
+    void setSize(const QSize& s);
 
     int framerate() const;
     void setFrameRate(int rate);
@@ -128,7 +133,7 @@ public:
 
     void setDevice(const QByteArray &device);
 
-    QVideoStream::State state() const;
+    QCamera::State state() const;
 #endif
     bool isValid() const;
 
@@ -136,8 +141,7 @@ public:
 
 #ifdef VIDEOSERVICES
 Q_SIGNALS:
-    void frameReady(QVideoFrame const &);
-    void stateChanged(QVideoStream::State);
+    void stateChanged(QCamera::State);
 #endif
 private:
     Q_DISABLE_COPY(QCamera)
