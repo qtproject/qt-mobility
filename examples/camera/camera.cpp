@@ -42,7 +42,7 @@
 Camera::Camera()
 {
     camera = new QCamera;
-    capture = new QMediaCapture(camera);
+    capture = new QMediaRecorder(camera);
 
     destination.setDataLocation("file:///tmp/test.avi");
     capture->setSink(destination);
