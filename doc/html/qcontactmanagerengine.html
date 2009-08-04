@@ -96,8 +96,8 @@
 <h3 class="fn"><a name="addSorted"></a>void QContactManagerEngine::addSorted ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>sorted</i>, const <a href="qcontact.html">QContact</a> &amp; <i>toAdd</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrders</i> list. The first QContactSortOrder in the list has the highest priority; if the contact <i>toAdd</i> is deemed equal to another in the <i>sorted</i> list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted or there are no more sort order objects in the list).</p>
 <h3 class="fn"><a name="cancelRequest"></a>bool QContactManagerEngine::cancelRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Asks the manager engine to cancel the given request <i>req</i> which was previously started. Returns true if cancellation of the request was started successfully, otherwise returns false.</p>
-<p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>().</p>
+<p>Asks the manager engine to cancel the given request <i>req</i> which was previously started and is currently in a cancellable state. Returns true if cancellation of the request was started successfully, otherwise returns false.</p>
+<p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>() and <a href="qcontactabstractrequest.html#cancel">QContactAbstractRequest::cancel</a>().</p>
 <h3 class="fn"><a name="compareContact"></a>int QContactManagerEngine::compareContact ( const <a href="qcontact.html">QContact</a> &amp; <i>a</i>, const <a href="qcontact.html">QContact</a> &amp; <i>b</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Compares two contacts (<i>a</i> and <i>b</i>) using the given list of <i>sortOrders</i>. Returns a negative number if <i>a</i> should appear before <i>b</i> according to the sort order, a positive number if <i>a</i> should appear after <i>b</i> according to the sort order, and zero if the two are unable to be sorted.</p>
 <h3 class="fn"><a name="compareVariant"></a>int QContactManagerEngine::compareVariant ( const QVariant &amp; <i>first</i>, const QVariant &amp; <i>second</i>, Qt::CaseSensitivity <i>sensitivity</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -199,7 +199,8 @@
 <h3 class="fn"><a name="schemaDefinitions"></a>QMap&lt;QString, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManagerEngine::schemaDefinitions ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the base schema definitions</p>
 <h3 class="fn"><a name="startRequest"></a>bool QContactManagerEngine::startRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Asks the manager engine to begin the given request <i>req</i>. Returns true if the request was started successfully, else returns false.</p>
+<p>Asks the manager engine to begin the given request <i>req</i> which is currently in a (re)startable state. Returns true if the request was started successfully, else returns false.</p>
+<p>See also <a href="qcontactabstractrequest.html#start">QContactAbstractRequest::start</a>().</p>
 <h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of data types supported by this engine.</p>
 <h3 class="fn"><a name="synthesiseDisplayLabel"></a>QString QContactManagerEngine::synthesiseDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>

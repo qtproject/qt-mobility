@@ -38,7 +38,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QContactManager * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#manager">manager</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#setManager">setManager</a></b> ( QContactManager * <i>manager</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Status </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#status">status</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual Type </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#type">type</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#type">type</a></b> () const</td></tr>
 </table>
 <hr />
 <a name="public-slots"></a>
@@ -119,8 +119,8 @@
 <h3 class="fn"><a name="status"></a><a href="qcontactabstractrequest.html#Status-enum">Status</a> QContactAbstractRequest::status () const</h3>
 <p>Returns the current status of the request.</p>
 <p>See also <a href="qcontactabstractrequest.html#isFinished">isFinished</a>() and <a href="qcontactabstractrequest.html#isActive">isActive</a>().</p>
-<h3 class="fn"><a name="type"></a><a href="qcontactabstractrequest.html#Type-enum">Type</a> QContactAbstractRequest::type () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the type of the asynchronous request</p>
+<h3 class="fn"><a name="type"></a><a href="qcontactabstractrequest.html#Type-enum">Type</a> QContactAbstractRequest::type () const</h3>
+<p>Returns the type of this asynchronous request</p>
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
 <h3 class="fn"><a name="waitForProgress"></a>bool QContactAbstractRequest::waitForProgress ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>

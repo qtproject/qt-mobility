@@ -188,7 +188,6 @@
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#names">names</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#setNames">setNames</keyword>
-        <keyword ref="qcontactdetaildefinitionfetchrequest.html#type">type</keyword>
         <section ref="qcontactdetaildefinitionfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinitionremoverequest.html" title="QContactDetailDefinitionRemoveRequest Class Reference">
@@ -196,7 +195,6 @@
         <keyword ref="qcontactdetaildefinitionremoverequest.html#names">names</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#setNames">setNames</keyword>
-        <keyword ref="qcontactdetaildefinitionremoverequest.html#type">type</keyword>
         <section ref="qcontactdetaildefinitionremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinitionsaverequest.html" title="QContactDetailDefinitionSaveRequest Class Reference">
@@ -204,7 +202,6 @@
         <keyword ref="qcontactdetaildefinitionsaverequest.html#definitions">definitions</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
-        <keyword ref="qcontactdetaildefinitionsaverequest.html#type">type</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactemailaddress.html" title="QContactEmailAddress Class Reference">
@@ -224,7 +221,6 @@
         <keyword ref="qcontactfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qcontactfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qcontactfetchrequest.html#sorting">sorting</keyword>
-        <keyword ref="qcontactfetchrequest.html#type">type</keyword>
         <section ref="qcontactfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactgender.html" title="QContactGender Class Reference">
@@ -263,7 +259,6 @@
         <keyword ref="qcontactgroupfetchrequest.html#ids">ids</keyword>
         <keyword ref="qcontactgroupfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactgroupfetchrequest.html#setIds">setIds</keyword>
-        <keyword ref="qcontactgroupfetchrequest.html#type">type</keyword>
         <section ref="qcontactgroupfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactgroupremoverequest.html" title="QContactGroupRemoveRequest Class Reference">
@@ -271,7 +266,6 @@
         <keyword ref="qcontactgroupremoverequest.html#ids">ids</keyword>
         <keyword ref="qcontactgroupremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactgroupremoverequest.html#setIds">setIds</keyword>
-        <keyword ref="qcontactgroupremoverequest.html#type">type</keyword>
         <section ref="qcontactgroupremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactgroupsaverequest.html" title="QContactGroupSaveRequest Class Reference">
@@ -279,7 +273,6 @@
         <keyword ref="qcontactgroupsaverequest.html#groups">groups</keyword>
         <keyword ref="qcontactgroupsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactgroupsaverequest.html#setGroups">setGroups</keyword>
-        <keyword ref="qcontactgroupsaverequest.html#type">type</keyword>
         <section ref="qcontactgroupsaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactguid.html" title="QContactGuid Class Reference">
@@ -297,7 +290,6 @@
         <keyword ref="qcontactidfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qcontactidfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qcontactidfetchrequest.html#sorting">sorting</keyword>
-        <keyword ref="qcontactidfetchrequest.html#type">type</keyword>
         <section ref="qcontactidfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactinvalidengine.html" title="QContactInvalidEngine Class Reference">
@@ -476,7 +468,6 @@
         <keyword ref="qcontactremoverequest.html#filter">filter</keyword>
         <keyword ref="qcontactremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactremoverequest.html#setFilter">setFilter</keyword>
-        <keyword ref="qcontactremoverequest.html#type">type</keyword>
         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactsaverequest.html" title="QContactSaveRequest Class Reference">
@@ -484,7 +475,6 @@
         <keyword ref="qcontactsaverequest.html#contacts">contacts</keyword>
         <keyword ref="qcontactsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactsaverequest.html#setContacts">setContacts</keyword>
-        <keyword ref="qcontactsaverequest.html#type">type</keyword>
         <section ref="qcontactsaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactsynctarget.html" title="QContactSyncTarget Class Reference">
