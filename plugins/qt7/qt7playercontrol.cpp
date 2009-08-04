@@ -48,6 +48,7 @@ public:
     int volume;
     bool muted;
     Qt7PlayerControl::State state;
+    Qt7Movie*   movie;
 };
 
 Qt7PlayerControl::Qt7PlayerControl(QObject *parent):
@@ -61,7 +62,7 @@ Qt7PlayerControl::Qt7PlayerControl(QObject *parent):
     connect(navigator, SIGNAL(activated(QMediaResourceList)), SLOT(setSource(QMediaResourceList)));
     connect(navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
 
-    movie = new Qt7Movie(this);
+    d->movie = new Qt7Movie(this);
 
     updateTimer = new QTimer(this);
     connect(updateTimer, SIGNAL(timeout()), SLOT(update()));
@@ -99,17 +100,17 @@ bool Qt7PlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 
 qint64 Qt7PlayerControl::duration() const
 {
-    return movie->duration();
+    return d->movie->duration();
 }
 
 qint64 Qt7PlayerControl::position() const
 {
-    return movie->position();
+    return d->movie->position();
 }
 
 void Qt7PlayerControl::setPosition(qint64 position)
 {
-    movie->setPosition(position);
+    d->movie->setPosition(position);
 }
 
 int Qt7PlayerControl::playlistPosition() const
@@ -124,22 +125,22 @@ void Qt7PlayerControl::setPlaylistPosition(int position)
 
 int Qt7PlayerControl::volume() const
 {
-    return movie->volume();
+    return d->movie->volume();
 }
 
 void Qt7PlayerControl::setVolume(int volume)
 {
-    movie->setVolume(volume);
+    d->movie->setVolume(volume);
 }
 
 bool Qt7PlayerControl::isMuted() const
 {
-    return movie->isMuted();
+    return d->movie->isMuted();
 }
 
 void Qt7PlayerControl::setMuted(bool muted)
 {
-    movie->setMuted(muted);
+    d->movie->setMuted(muted);
 }
 
 bool Qt7PlayerControl::isBuffering() const
@@ -154,34 +155,34 @@ int Qt7PlayerControl::bufferStatus() const
 
 bool Qt7PlayerControl::isVideoAvailable() const
 {
-    return movie->isVideoAvailable();
+    return d->movie->isVideoAvailable();
 }
 
 bool Qt7PlayerControl::isSeekable() const
 {
-    return movie->isSeekable();
+    return d->movie->isSeekable();
 }
 
 float Qt7PlayerControl::playbackRate() const
 {
-    return movie->rate();
+    return d->movie->rate();
 }
 
 void Qt7PlayerControl::setPlaybackRate(float rate)
 {
-    movie->setRate(rate);
+    d->movie->setRate(rate);
 }
 
 void Qt7PlayerControl::play()
 {
     switch (d->state) {
     case StoppedState: {
-        movie->setSource(navigator->currentItem());
-        movie->play();
+        d->movie->setSource(navigator->currentItem());
+        d->movie->play();
         break;
     }
     case PausedState:
-        movie->play();
+        d->movie->play();
         break;
     default:
         return;
@@ -194,7 +195,7 @@ void Qt7PlayerControl::play()
 void Qt7PlayerControl::pause()
 {
     if (d->state == PlayingState) {
-        movie->pause();
+        d->movie->pause();
         emit stateChanged(d->state = PausedState);
     }
 }
@@ -202,7 +203,7 @@ void Qt7PlayerControl::pause()
 void Qt7PlayerControl::stop()
 {
     if (d->state == PlayingState || d->state == PausedState) {
-        movie->stop();
+        d->movie->stop();
         updateTimer->stop();
         emit stateChanged(d->state = StoppedState);
     }
@@ -218,21 +219,21 @@ void Qt7PlayerControl::back()
     navigator->back();
 }
 
-void Qt7PlayerControl::setVideoOutput(Qt7Widget *output)
+Qt7Movie* Qt7PlayerControl::movie() const
 {
-    movie->setVideoOutput(output);
+    return d->movie;
 }
 
 void Qt7PlayerControl::setSource(QMediaResourceList const &resources)
 {
-    movie->setSource(resources);
+    d->movie->setSource(resources);
     if (d->state == PlayingState)
-        movie->play();
+        d->movie->play();
 }
 
 void Qt7PlayerControl::update()
 {
-    const State state = Qt7PlayerControl::State(movie->state());
+    const State state = Qt7PlayerControl::State(d->movie->state());
     if (d->state != state) {
         d->state = state;
         if (d->state == StoppedState || d->state == PausedState)
@@ -241,20 +242,20 @@ void Qt7PlayerControl::update()
         emit stateChanged(d->state);
     }
 
-    if (d->duration != movie->duration()) {
-        d->duration = movie->duration();
+    if (d->duration != d->movie->duration()) {
+        d->duration = d->movie->duration();
 
         emit durationChanged(d->duration);
     }
 
-    if (d->volume != movie->volume()) {
-        d->volume = movie->volume();
+    if (d->volume != d->movie->volume()) {
+        d->volume = d->movie->volume();
 
         emit volumeChanged(d->volume);
     }
 
-    if (d->muted != movie->isMuted()) {
-        d->muted = movie->isMuted();
+    if (d->muted != d->movie->isMuted()) {
+        d->muted = d->movie->isMuted();
 
         emit mutingChanged(d->muted);
     }

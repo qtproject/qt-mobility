@@ -50,7 +50,7 @@ QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
     : QAbstractVideoSurface(parent)
     , m_pixelFormat(QVideoFrame::Format_Invalid)
     , m_imageFormat(QImage::Format_Invalid)
-    ,  m_ready(false)
+    , m_ready(false)
 {
 }
 
@@ -103,6 +103,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
         return false;
     } else {
         m_frame = QVideoFrame();
+        m_pixelFormat = format.pixelFormat();
         m_imageFormat = imageFormat;
         m_imageSize = imageSize;
         m_sourceRect = format.viewport();
@@ -117,6 +118,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 void QPainterVideoSurface::stop()
 {
     m_frame = QVideoFrame();
+    m_pixelFormat = QVideoFrame::Format_Invalid;
     m_imageFormat = QImage::Format_Invalid;
     m_imageSize = QSize();
     m_sourceRect = QRect();
@@ -165,7 +167,7 @@ void QPainterVideoSurface::setReady(bool ready)
 */
 void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 {
-    if (!m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
+    if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
         QImage image(
                 m_frame.bits(),
                 m_imageSize.width(),

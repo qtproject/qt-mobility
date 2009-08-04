@@ -32,59 +32,45 @@
 **
 ****************************************************************************/
 
-#include "qt7metadata.h"
+#include <QMacCocoaViewContainer>
+#include <QResizeEvent>
+
 #include "qt7widget.h"
-#include "qt7movie.h"
-#include "qt7playercontrol.h"
-#include "qt7playerservice.h"
 
+#import <CoreFoundation/CoreFoundation.h>
+#import <QTKit/QTMovieView.h>
 
-
-Qt7PlayerService::Qt7PlayerService(QObject *parent):
-    QMediaPlayerService(parent)
+class Qt7WidgetPrivate
 {
-    playerControl = new Qt7PlayerControl(this);
-    metadataControl = new Qt7Metadata(this);
+public:
+    QTMovieView *movieView;
+    QMacCocoaViewContainer* viewContainer;
+};
+
+Qt7Widget::Qt7Widget():
+    d(new Qt7WidgetPrivate)
+{
 }
 
-Qt7PlayerService::~Qt7PlayerService()
+Qt7Widget::~Qt7Widget()
 {
 }
 
-void Qt7PlayerService::setVideoOutput(QObject *output)
+void Qt7Widget::setMovie(void *movie)
 {
-    Qt7Widget *vout = qobject_cast<Qt7Widget*>(output);
-    if (vout != 0) {
-        QMediaPlayerService::setVideoOutput(output);
-        playerControl->movie()->setVideoWidget(vout);
-    }
+    QRect   f = rect();
+    NSRect  frame = NSMakeRect(f.x(), f.y(), f.width(), f.height());
+    d->movieView = [[QTMovieView alloc] initWithFrame:frame];
+    d->viewContainer = new QMacCocoaViewContainer(d->movieView, this);
+
+    [d->movieView setMovie:(QTMovie*)movie];
+    [d->movieView setNeedsDisplay:TRUE];
 }
 
-QList<QByteArray> Qt7PlayerService::supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const
+void Qt7Widget::resizeEvent(QResizeEvent* event)
 {
-    QList<QByteArray>   rc;
+    const QSize& size = event->size();
 
-    if (direction == QMediaEndpointInterface::Output)
-        rc << QMediaWidgetEndpoint_iid;
-
-    return rc;
-}
-
-QObject* Qt7PlayerService::createEndpoint(const char *interface)
-{
-    if (QLatin1String(interface) == QMediaWidgetEndpoint_iid)
-        return new Qt7Widget;
-
-    return 0;
-}
-
-QAbstractMediaControl* Qt7PlayerService::control(const char *name) const
-{
-    if (QLatin1String(name) == "com.nokia.qt.MediaPlayerControl")
-        return playerControl;
-    else if (QLatin1String(name) == "com.nokia.qt.MetadataControl")
-        return metadataControl;
-
-    return 0;
+    [d->movieView setFrameSize:NSMakeSize(size.width(), size.height())];
 }
 

@@ -36,9 +36,16 @@
 
 #include "qabstractmediaservice.h"
 #include "qvideooverlayendpoint.h"
+
+#ifndef QT_NO_VIDEOSURFACE
+#include "qpaintervideosurface_p.h"
 #include "qvideorendererendpoint.h"
+#include "qvideosurfaceformat.h"
+#include <qpainter.h>
+#endif
 
 #include <qevent.h>
+
 
 #include <private/qwidget_p.h>
 
@@ -49,12 +56,20 @@ public:
     QVideoWidgetPrivate()
         : service(0)
         , overlay(0)
+#ifndef QT_NO_VIDEOSURFACE
+        , renderer(0)
+        , surface(0)
+#endif
         , fullscreen(false)
     {
     }
 
     QAbstractMediaService *service;
     QVideoOverlayEndpoint *overlay;
+#ifndef QT_NO_VIDEOSURFACE
+    QVideoRendererEndpoint *renderer;
+    QPainterVideoSurface *surface;
+#endif
     bool fullscreen;
 
     void _q_overlayFullscreenChanged(bool fullscreen);
@@ -80,16 +95,28 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
 
     d->service = service;
 
-    if (d->service) {
-        d->overlay = service->createEndpoint<QVideoOverlayEndpoint *>();
+    if (!d->service)
+        return;
 
-        if (d->overlay) {
-            connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
-                    this, SLOT(_q_overlayFullscreenChanged(bool)));
-            connect(d->overlay, SIGNAL(nativeSizeChanged()),
-                    this, SLOT(_q_dimensionsChanged()));
-            d->service->setVideoOutput(d->overlay);
-        }
+    if ((d->overlay = service->createEndpoint<QVideoOverlayEndpoint *>())) {
+        connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
+                this, SLOT(_q_overlayFullscreenChanged(bool)));
+        connect(d->overlay, SIGNAL(nativeSizeChanged()),
+                this, SLOT(_q_dimensionsChanged()));
+        d->service->setVideoOutput(d->overlay);
+#ifndef QT_NO_VIDEOSURFACE
+    } else if ((d->renderer = service->createEndpoint<QVideoRendererEndpoint *>())) {
+        d->surface = new QPainterVideoSurface;
+
+        d->renderer->setSurface(d->surface);
+
+        connect(d->surface, SIGNAL(frameChanged()), this, SLOT(update()));
+
+        connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
+                this, SLOT(_q_dimensionsChanged()));
+
+        d->service->setVideoOutput(d->renderer);
+#endif
     }
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -123,9 +150,16 @@ void QVideoWidget::setFullscreen(bool fullscreen)
 */
 QSize QVideoWidget::sizeHint() const
 {
-    return d_func()->overlay
-            ? d_func()->overlay->nativeSize()
-            : QWidget::sizeHint();
+    Q_D(const QVideoWidget);
+
+    if (d->overlay)
+        return d->overlay->nativeSize();
+#ifndef QT_NO_VIDEOSURFACE
+    else if (d->surface)
+        return d->surface->surfaceFormat().sizeHint();
+#endif
+    else
+        return QSize();
 }
 
 /*!
@@ -199,10 +233,21 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
 
-    if (d->overlay && d->overlay->isEnabled())
+    if (d->overlay && d->overlay->isEnabled()) {
         d->overlay->repaint();
-    else
+#ifndef QT_NO_VIDEOSURACE
+    } else if (d->surface) {
+        QPainter painter(this);
+
+        if (d->surface->isStarted()) {
+            d->surface->paint(&painter, rect());
+
+            d->surface->setReady(true);
+        }
+#endif
+    } else {
         QWidget::paintEvent(event);
+    }
 }
 
 #include "moc_qvideowidget.cpp"

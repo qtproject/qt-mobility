@@ -24,5 +24,5 @@ SOURCES = \
     qt7playerservice.cpp \
     qt7serviceplugin.cpp \
     qt7metadata.cpp \
-    qt7widget.cpp \
+    qt7widget.mm \
     qt7movie.mm

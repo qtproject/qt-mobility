@@ -32,7 +32,22 @@
 **
 ****************************************************************************/
 
+#include <QtGui/qmaccocoaviewcontainer.h>
+
 #include "qt7widget.h"
 
 
 
+Qt7Widget::Qt7Widget()
+{
+    viewContainer = new QMacCocoaViewContainer(0, this);
+}
+
+Qt7Widget::~Qt7Widget()
+{
+}
+
+void Qt7Widget::setMovie(Qt7Movie *movie)
+{
+    
+}
