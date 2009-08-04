@@ -66,15 +66,18 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMuted(bool muted) = 0;
 
-    virtual bool isValid() const = 0;
+    virtual bool isSearching() const = 0;
 
     virtual void searchForward() = 0;
     virtual void searchBackward() = 0;
+
+    virtual void cancelSearch() = 0;
 
 Q_SIGNALS:
     void bandChanged(QRadioPlayer::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
+    void searchingStatusChanged(bool stereo);
     void signalStrengthChanged(int signalStrength);
     void durationChanged(qint64 durattion);
     void volumeChanged(int volume);

@@ -64,11 +64,13 @@ public:
     bool isFullscreen() const;
     virtual void setFullscreen(bool fullscreen);
 
-    virtual QSize sizeHint() const = 0;
+    virtual void repaint();
+
+    virtual QSize nativeSize() const = 0;
 
 Q_SIGNALS:
     void fullscreenChanged(bool fullscreen);
-    void dimensionsChanged();
+    void nativeSizeChanged();
 };
 
 #define QVideoOverlayEndpoint_iid "com.nokia.Qt.QVideoOverlayEndpoint/1.0"

@@ -70,6 +70,7 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
         connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
         connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
         connect(d->control,SIGNAL(stereoStatusChanged(bool)),this,SIGNAL(stereoStatusChanged(bool)));
+        connect(d->control,SIGNAL(searchingStatusChanged(bool)),this,SIGNAL(searchingStatusChanged(bool)));
         connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
         connect(d->control,SIGNAL(durationChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
         connect(d->control,SIGNAL(volumeChanged(int)),this,SIGNAL(volumeChanged(int)));
@@ -159,7 +160,12 @@ void QRadioPlayer::setMuted(bool muted)
 
 bool QRadioPlayer::isValid() const
 {
-    return d_func()->control->isValid();
+    return d_func()->control != NULL;
+}
+
+bool QRadioPlayer::isSearching() const
+{
+    return d_func()->control->isSearching();
 }
 
 void QRadioPlayer::searchForward()
@@ -170,6 +176,11 @@ void QRadioPlayer::searchForward()
 void QRadioPlayer::searchBackward()
 {
     d_func()->control->searchBackward();
+}
+
+void QRadioPlayer::cancelSearch()
+{
+    d_func()->control->cancelSearch();
 }
 
 QRadioService* createRadioService(QMediaServiceProvider *provider)

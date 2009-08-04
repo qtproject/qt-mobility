@@ -43,9 +43,6 @@ HEADERS = qabstractmediacontrol.h \
     qradiotuner.h \
     qsharedmediaplaylist.h \
     qvideowidget.h \
-    qaudiocapturecontrol.h \
-    qaudiocaptureservice.h \
-    qaudiocapture.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qmediacapturecontrol.h \
@@ -83,9 +80,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp \
     qvideowidget.cpp \
-    qaudiocapturecontrol.cpp \
-    qaudiocaptureservice.cpp \
-    qaudiocapture.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qmediacapturecontrol.cpp \

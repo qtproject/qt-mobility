@@ -527,7 +527,7 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
         if (service)
             return service;
 
-        delete service;
+        delete object;
     }
     return 0;
 }
