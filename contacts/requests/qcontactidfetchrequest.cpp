@@ -34,41 +34,62 @@
 #include "qcontactidfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactIdFetchRequest
+ * \brief Allows a client to asynchronously request a list of contact ids from a contacts store manager
+ */
+
+/*!
+ * \fn QContactIdFetchRequest::progress(QContactIdFetchRequest* self, bool appendOnly)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+ * ordering of the results have been maintained since the last progress signal was emitted.
+ */
+
+/*! Constructs a new contact id fetch request */
 QContactIdFetchRequest::QContactIdFetchRequest()
     : QContactAbstractRequest(new QContactIdFetchRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this contact id fetch request */
 QContactIdFetchRequest::~QContactIdFetchRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIdFetchRequest)
 
+/*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
 void QContactIdFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactIdFetchRequest);
     d->m_filter = filter;
 }
 
+/*! Sets the future sort ordering of the result of the request to \a sorting.  This function only has
+    effect on the result if called prior to calling \c start() */
 void QContactIdFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactIdFetchRequest);
     d->m_sorting = sorting;
 }
 
+/*! Returns the filter which will be used to select the contacts whose ids will be returned */
 QContactFilter QContactIdFetchRequest::filter() const
 {
     Q_D(const QContactIdFetchRequest);
     return d->m_filter;
 }
 
+/*! Returns the sort ordering which will be used to sort the result */
 QList<QContactSortOrder> QContactIdFetchRequest::sorting() const
 {
     Q_D(const QContactIdFetchRequest);
     return d->m_sorting;
 }
 
+/*! Returns the list of ids of contacts which matched the request */
 QList<QUniqueId> QContactIdFetchRequest::ids() const
 {
     Q_D(const QContactIdFetchRequest);

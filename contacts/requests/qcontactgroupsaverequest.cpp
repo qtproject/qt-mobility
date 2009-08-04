@@ -34,23 +34,40 @@
 #include "qcontactgroupsaverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactGroupSaveRequest
+ * \brief Allows a client to asynchronously request that certain groups be saved to a contacts store
+ */
+
+/*!
+ * \fn QContactGroupSaveRequest::progress(QContactGroupSaveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new group save request */
 QContactGroupSaveRequest::QContactGroupSaveRequest()
     : QContactAbstractRequest(new QContactGroupSaveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this group save request */
 QContactGroupSaveRequest::~QContactGroupSaveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupSaveRequest)
 
+/*! Sets the groups which will be saved by this request to \a groups */
 void QContactGroupSaveRequest::setGroups(const QList<QContactGroup>& groups)
 {
     Q_D(QContactGroupSaveRequest);
     d->m_groups = groups;
 }
 
+/*! Returns the list of groups which will be saved by this request if called prior to calling \c start(),
+    otherwise returns the list of groups as they were saved in the contacts store */
 QList<QContactGroup> QContactGroupSaveRequest::groups() const
 {
     Q_D(const QContactGroupSaveRequest);

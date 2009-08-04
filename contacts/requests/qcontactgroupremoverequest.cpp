@@ -34,23 +34,39 @@
 #include "qcontactgroupremoverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactGroupRemoveRequest
+ * \brief Allows a client to asynchronously request that certain groups be removed from a contacts store
+ */
+
+/*!
+ * \fn QContactGroupRemoveRequest::progress(QContactGroupRemoveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new group remove request */
 QContactGroupRemoveRequest::QContactGroupRemoveRequest()
     : QContactAbstractRequest(new QContactGroupRemoveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this group remove request */
 QContactGroupRemoveRequest::~QContactGroupRemoveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupRemoveRequest)
 
+/*! Sets the list of ids of the groups which will be removed by this request to \a ids */
 void QContactGroupRemoveRequest::setIds(const QList<QUniqueId>& ids)
 {
     Q_D(QContactGroupRemoveRequest);
     d->m_ids = ids;
 }
 
+/*! Returns the list of ids of the groups which will be removed by this request */
 QList<QUniqueId> QContactGroupRemoveRequest::ids() const
 {
     Q_D(const QContactGroupRemoveRequest);

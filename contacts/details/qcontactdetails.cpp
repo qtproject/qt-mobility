@@ -816,3 +816,23 @@ QString QContactAddress::displayLabel() const
  * \fn QContactName::setSuffix(const QString& suffix)
  * Sets the suffix segment of the name stored in this detail to \a suffix
  */
+
+/*!
+ * \fn QContactTimestamp::created() const
+ * Returns the creation timestamp saved in this detail
+ */
+
+/*!
+ * \fn QContactTimestamp::lastModified() const
+ * Returns the last-modified timestamp saved in this detail
+ */
+
+/*!
+ * \fn QContactTimestamp::setCreated(const QDateTime& dateTime)
+ * Sets the creation timestamp saved in this detail to \a dateTime
+ */
+
+/*!
+ * \fn QContactTimestamp::setLastModified(const QDateTime& dateTime)
+ * Sets the last-modified timestamp saved in this detail to \a dateTime
+ */

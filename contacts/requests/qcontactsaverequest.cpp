@@ -34,23 +34,40 @@
 #include "qcontactsaverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactSaveRequest
+ * \brief Allows a client to asynchronously request that certain contacts be saved to a contacts store
+ */
+
+/*!
+ * \fn QContactSaveRequest::progress(QContactSaveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new contact save request */
 QContactSaveRequest::QContactSaveRequest()
     : QContactAbstractRequest(new QContactSaveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this contact save request */
 QContactSaveRequest::~QContactSaveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactSaveRequest)
 
+/*! Sets the list of contacts to be saved to \a contacts */
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
     Q_D(QContactSaveRequest);
     d->m_contacts = contacts;
 }
 
+/*! Returns the list of contacts which will be saved if called prior to calling \c start(),
+    otherwise returns the list of contacts as they were saved in the contacts store */
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);

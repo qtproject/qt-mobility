@@ -34,23 +34,40 @@
 #include "qcontactdetaildefinitionsaverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactDetailDefinitionSaveRequest
+ * \brief Allows a client to asynchronously request that certain detail definitions be saved in a contacts store
+ */
+
+/*!
+ * \fn QContactDetailDefinitionSaveRequest::progress(QContactDetailDefinitionSaveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new detail definition save request */
 QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
     : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this detail definition save request */
 QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailDefinitionSaveRequest)
 
+/*! Sets the definitions to save to be \a definitions */
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
     d->m_definitions = definitions;
 }
 
+/*! Returns the list of definitions that will be saved if called prior to calling \c start(),
+    otherwise returns the list of detail definitions as they were saved in the contacts store */
 QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);

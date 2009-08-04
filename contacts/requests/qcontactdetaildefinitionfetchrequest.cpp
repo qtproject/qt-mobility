@@ -34,29 +34,47 @@
 #include "qcontactdetaildefinitionfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactDetailDefinitionFetchRequest
+ * \brief Allows a client to asynchronously request detail definitions from a contacts store manager
+ */
+
+/*!
+ * \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+ * ordering of the results have been maintained since the last progress signal was emitted.
+ */
+
+/*! Constructs a new detail definition fetch request */
 QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest()
     : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this detail definition fetch request */
 QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailDefinitionFetchRequest)
 
+/*! Sets the names of the detail definitions to retrieve to \a names */
 void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
     d->m_names = names;
 }
 
+/*! Returns the list of names of the detail definitions that will be retrieved */
 QStringList QContactDetailDefinitionFetchRequest::names() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_names;
 }
 
+/*! Returns the map of detail definition names to detail definitions that was the result of the request */
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);

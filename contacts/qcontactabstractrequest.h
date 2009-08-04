@@ -48,7 +48,7 @@ class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractRequest() {}
+    QContactAbstractRequest() {};
     virtual ~QContactAbstractRequest();
 
     enum Status {

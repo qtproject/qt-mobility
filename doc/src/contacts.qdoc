@@ -131,7 +131,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QContactDetail}
     \o \l{QContact}
     \o \l{QContactGroup}
-    \o \l{QContactAbstractAction}
+    \o \l{QContactAction}
 \endlist
 
 \section2 Detail leaf classes
@@ -158,6 +158,23 @@ they may offer their own which provide similar functionality.
 
 Each of these subclasses provide access to information stored in fields which
 are listed in the \l{Qt Contacts Schema}{schema}.
+
+\section2 Asynchronous Requests
+
+Clients may use either the synchronous or asynchronous API to access functionality provided by a manager backend.
+The asynchronous API is offered through subclasses of the \l{QContactAbstractRequest} class:
+\list
+    \o \l {QContactFetchRequest}
+    \o \l {QContactIdFetchRequest}
+    \o \l {QContactRemoveRequest}
+    \o \l {QContactSaveRequest}
+    \o \l {QContactGroupFetchRequest}
+    \o \l {QContactGroupRemoveRequest}
+    \o \l {QContactGroupSaveRequest}
+    \o \l {QContactDetailDefinitionFetchRequest}
+    \o \l {QContactDetailDefinitionRemoveRequest}
+    \o \l {QContactDetailDefinitionSaveRequest}
+\endlist
 
 \section2 Implementing Backends
 

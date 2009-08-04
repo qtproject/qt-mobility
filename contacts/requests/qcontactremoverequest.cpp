@@ -34,23 +34,39 @@
 #include "qcontactremoverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactRemoveRequest
+ * \brief Allows a client to asynchronously request that certain contacts be removed from a contacts store
+ */
+
+/*!
+ * \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new contact remove request */
 QContactRemoveRequest::QContactRemoveRequest()
     : QContactAbstractRequest(new QContactRemoveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by the contact remove request */
 QContactRemoveRequest::~QContactRemoveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRemoveRequest)
 
+/*! Sets the filter which will be used to select the contacts to remove to \a filter */
 void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactRemoveRequest);
     d->m_filter = filter;
 }
 
+/*! Returns the filter which will be used to select the contacts to remove */
 QContactFilter QContactRemoveRequest::filter() const
 {
     Q_D(const QContactRemoveRequest);

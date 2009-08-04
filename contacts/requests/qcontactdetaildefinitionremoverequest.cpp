@@ -34,23 +34,39 @@
 #include "qcontactdetaildefinitionremoverequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactDetailDefinitionRemoveRequest
+ * \brief Allows a client to asynchronously request that certain detail definitions be removed from a contacts store
+ */
+
+/*!
+ * \fn QContactDetailDefinitionRemoveRequest::progress(QContactDetailDefinitionRemoveRequest* self)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self.
+ */
+
+/*! Constructs a new detail definition remove request */
 QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest()
     : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate)
 {
 }
 
+/*! Cleans up the memory in use by this detail definition remove request */
 QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailDefinitionRemoveRequest)
 
+/*! Sets the names of the detail definitions to remove from the manager to be \a names */
 void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
     d->m_names = names;
 }
 
+/*! Returns the list of names of the detail definitions that will be removed from the manager */
 QStringList QContactDetailDefinitionRemoveRequest::names() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);

@@ -34,29 +34,47 @@
 #include "qcontactgroupfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+/*!
+ * \class QContactGroupFetchRequest
+ * \brief Allows a client to asynchronously request groups from a contacts store manager
+ */
+
+/*!
+ * \fn QContactGroupFetchRequest::progress(QContactGroupFetchRequest* self, bool appendOnly)
+ * This signal is emitted when some progress has been made on the request, causing either a change of
+ * status or an update of results, or both.  It identifies which request the signal originated from
+ * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+ * ordering of the results have been maintained since the last progress signal was emitted.
+ */
+
+/*! Constructs a new group fetch request */
 QContactGroupFetchRequest::QContactGroupFetchRequest()
     : QContactAbstractRequest(new QContactGroupFetchRequestPrivate)
 {
 }
 
+/*! Cleans up the memory used by this group fetch request */
 QContactGroupFetchRequest::~QContactGroupFetchRequest()
 {
 }
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupFetchRequest)
 
+/*! Sets the list of ids of the groups which will be retrieved to \a ids */
 void QContactGroupFetchRequest::setIds(const QList<QUniqueId>& ids)
 {
     Q_D(QContactGroupFetchRequest);
     d->m_ids = ids;
 }
 
+/*! Returns the list of ids of the groups which will be retrieved */
 QList<QUniqueId> QContactGroupFetchRequest::ids() const
 {
     Q_D(const QContactGroupFetchRequest);
     return d->m_ids;
 }
 
+/*! Returns the list of groups which were retrieved by this request */
 QList<QContactGroup> QContactGroupFetchRequest::groups() const
 {
     Q_D(const QContactGroupFetchRequest);

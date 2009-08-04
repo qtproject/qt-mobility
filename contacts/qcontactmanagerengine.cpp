@@ -153,7 +153,7 @@
  */
 
 /*!
- * Return the list of contact ids present in this engine, sorted according to the given \a sortOrder.
+ * Return the list of contact ids present in this engine, sorted according to the given \a sortOrders.
  *
  * Any errors encountered should be stored to \a error.
  */
@@ -165,7 +165,7 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QList<QContactSortOrder>&
 }
 
 /*!
- * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrder.
+ * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error.
  *
  * The default implementation will retrieve all contacts and test them with testFilter.
@@ -689,6 +689,7 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 
 /*!
  * Checks that the given \a group passes seems valid.
+ * Saves any error that may occur during validation in \a error.
  *
  * This means:
  * - it has a name
@@ -720,7 +721,7 @@ bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactMa
  *
  * If the backend implementation wishes to have the base implementation emit any signals
  * as a result of this operation, it should add the affected id(s) to the
- * \a removed or \a changed sets as appropriate.
+ * \a removedContacts or \a changedGroups sets as appropriate.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
@@ -1375,7 +1376,7 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
 
 
 /*!
- * Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrder list.
+ * Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
  * The first QContactSortOrder in the list has the highest priority; if the contact \a toAdd is deemed equal to another
  * in the \a sorted list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted
  * or there are no more sort order objects in the list).
@@ -1404,7 +1405,8 @@ void QContactManagerEngine::requestDestroyed(QContactAbstractRequest* req)
 }
 
 /*!
- * Asks the manager engine to begin the given request \a req
+ * Asks the manager engine to begin the given request \a req.
+ * Returns true if the request was started successfully, else returns false.
  */
 bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 {
@@ -1415,6 +1417,8 @@ bool QContactManagerEngine::startRequest(QContactAbstractRequest* req)
 /*!
  * Asks the manager engine to cancel the given request \a req which was
  * previously started.
+ * Returns true if cancellation of the request was started successfully,
+ * otherwise returns false.
  *
  * \sa startRequest()
  */
