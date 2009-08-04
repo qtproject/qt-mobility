@@ -17,16 +17,22 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qcontactdetail.html#Error-enum">Error</a></b></div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldDisplayLabel )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-2">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldStreet )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-3">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldLocality )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-4">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldRegion )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-5">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldPostcode )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-6">Q_DECLARE_LATIN1_LITERAL</a></b> ( FieldCountry )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-7">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubTypeParcel )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-8">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubTypePostal )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-9">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubTypeDomestic )</div></li>
-<li><div class="fn"><b><a href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-10">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubTypeInternational )</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContext-var">AttributeContext</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextHome-var">AttributeContextHome</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextOther-var">AttributeContextOther</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextWork-var">AttributeContextWork</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#AttributeSubType-var">AttributeSubType</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#AttributeSubTypeDomestic-var">AttributeSubTypeDomestic</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#AttributeSubTypeInternational-var">AttributeSubTypeInternational</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#AttributeSubTypeParcel-var">AttributeSubTypeParcel</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#AttributeSubTypePostal-var">AttributeSubTypePostal</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#DefinitionName-var">DefinitionName</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldCountry-var">FieldCountry</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldLocality-var">FieldLocality</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldPostcode-var">FieldPostcode</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldRegion-var">FieldRegion</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactaddress.html#FieldStreet-var">FieldStreet</a></b> : const char *</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp;, const QString &amp; ) : QContactDetail &amp;</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; ) const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#attributes">attributes</a></b> () const : QMap&lt;QString, QString&gt;</div></li>
@@ -37,10 +43,10 @@
 <li><div class="fn"><b><a href="qcontactdetail.html#error">error</a></b> () const : QContactDetail::Error</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#hasValue">hasValue</a></b> ( const QString &amp; ) const : bool</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const : bool</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qcontactaddress.html#locality">locality</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactaddress.html#postcode">postcode</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactaddress.html#region">region</a></b> () const : QString</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qcontactdetail.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QString &amp; ) : bool</div></li>

@@ -32,11 +32,6 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContext )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-2">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeSubType )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-3">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextHome )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-4">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextWork )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-5">Q_DECLARE_LATIN1_LITERAL</a></b> ( AttributeContextOther )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; <i>attribute</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#attributes">attributes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#contextAttribute">contextAttribute</a></b> () const</td></tr>
@@ -82,8 +77,8 @@
 <p>A detail is a group of logically related bits of data - for example, a street address is a single detail that has multiple fields (number, region, country etc). Every QContactDetail has an associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> id that describes the fields, their data type, any restrictions on their values, and any restrictions on creating or updating details of that definition.</p>
 <p>A detail might also has some metadata, stored in &quot;attributes&quot;. What these attributes are used for varies a little depending on the detail, but two common attributes are <tt>Context</tt> and <tt>SubType</tt>.</p>
 <ul>
-<li>The <tt>Context</tt> attribute (with id AttributeContext) is intended to store the context that this detail is associated with. Commonly this will be something like &quot;Home&quot; or &quot;Work&quot;.</li>
-<li>The <tt>SubType</tt> attribute (with id AttributeSubType) is intended to store any particular distinctions between details of this type. For example, a phone number might have a SubType of &quot;Mobile&quot; or &quot;Fax&quot;.</li>
+<li>The <tt>Context</tt> attribute (with id <a href="qcontactdetail.html#AttributeContext-var">AttributeContext</a>) is intended to store the context that this detail is associated with. Commonly this will be something like &quot;Home&quot; or &quot;Work&quot;.</li>
+<li>The <tt>SubType</tt> attribute (with id <a href="qcontactdetail.html#AttributeSubType-var">AttributeSubType</a>) is intended to store any particular distinctions between details of this type. For example, a phone number might have a SubType of &quot;Mobile&quot; or &quot;Fax&quot;.</li>
 </ul>
 <p>In general, a given attribute has a single value. In some cases, if you wish to associate more than one value, you need to comma separate the values.</p>
 <p>It is possible to inherit from QContactDetail to provide convenience or standardized access to values. For example, <a href="qcontactphonenumber.html">QContactPhoneNumber</a> provides a convenient API for manipulating a QContactDetail as a phone number, according to the schema.</p>
@@ -137,11 +132,6 @@
 <p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Frees the memory used by this detail</p>
-<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContext )</h3>
-<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-2"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeSubType )</h3>
-<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-3"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextHome )</h3>
-<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-4"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextWork )</h3>
-<h3 class="fn"><a name="Q_DECLARE_LATIN1_LITERAL-5"></a>QContactDetail::Q_DECLARE_LATIN1_LITERAL ( AttributeContextOther )</h3>
 <h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="attribute"></a>QString QContactDetail::attribute ( const QString &amp; <i>attribute</i> ) const</h3>
@@ -223,10 +213,22 @@
 <pre>    class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
     {
     public:
+    #ifdef Q_QDOC
+        const char* DefinitionName;
+        const char* FieldNumber;
+        const char* AttributeSubTypeLandline;
+        const char* AttributeSubTypeMobile;
+        const char* AttributeSubTypeFacsimile;
+        const char* AttributeSubTypePager;
+        const char* AttributeSubTypeVoice;
+        const char* AttributeSubTypeModem;
+        const char* AttributeSubTypeVideo;
+        const char* AttributeSubTypeCar;
+        const char* AttributeSubTypeBulletinBoardSystem;
+        const char* AttributeSubTypeMessagingCapable;
+    #else
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
-
         Q_DECLARE_LATIN1_LITERAL(FieldNumber, &quot;PhoneNumber&quot;);
-
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline, &quot;Landline&quot;);
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile, &quot;Mobile&quot;);
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile, &quot;Facsimile&quot;);
@@ -237,6 +239,7 @@
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar, &quot;Car&quot;);
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
         Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable, &quot;MessagingCapable&quot;);
+    #endif
 
         void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
         QString number() const {return value(FieldNumber);}

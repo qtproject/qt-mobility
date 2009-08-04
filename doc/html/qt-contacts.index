@@ -3,9 +3,8 @@
 <INDEX url="" title="Qt Contacts Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactSyncTarget" href="qcontactsynctarget.html" location="qcontactsynctarget.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactSyncTarget::Q_DECLARE_LATIN1_LITERAL" href="qcontactsynctarget.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactsynctarget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldSyncTarget )">
-                <parameter left="FieldSyncTarget" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactSyncTarget::DefinitionName" href="qcontactsynctarget.html#DefinitionName-var" location="qcontactsynctarget.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSyncTarget" fullname="QContactSyncTarget::FieldSyncTarget" href="qcontactsynctarget.html#FieldSyncTarget-var" location="qcontactsynctarget.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSyncTarget" fullname="QContactSyncTarget::setSyncTarget" href="qcontactsynctarget.html#setSyncTarget" location="qcontactsynctarget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSyncTarget(const QString &amp; syncTarget)">
                 <parameter left="const QString &amp;" right="" name="syncTarget" default=""/>
             </function>
@@ -33,9 +32,8 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGender" href="qcontactgender.html" location="qcontactgender.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactGender::Q_DECLARE_LATIN1_LITERAL" href="qcontactgender.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactgender.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldGender )">
-                <parameter left="FieldGender" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactGender::DefinitionName" href="qcontactgender.html#DefinitionName-var" location="qcontactgender.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldGender" fullname="QContactGender::FieldGender" href="qcontactgender.html#FieldGender-var" location="qcontactgender.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setGender" fullname="QContactGender::setGender" href="qcontactgender.html#setGender" location="qcontactgender.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGender(const QString &amp; gender)">
                 <parameter left="const QString &amp;" right="" name="gender" default=""/>
             </function>
@@ -59,21 +57,11 @@
                 <value name="IncompatibleAssignmentError" value="2"/>
                 <value name="OutOfMemoryError" value="3"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDetail::Q_DECLARE_LATIN1_LITERAL" href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeContext )">
-                <parameter left="AttributeContext" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDetail::Q_DECLARE_LATIN1_LITERAL" href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubType )">
-                <parameter left="AttributeSubType" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDetail::Q_DECLARE_LATIN1_LITERAL" href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeContextHome )">
-                <parameter left="AttributeContextHome" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDetail::Q_DECLARE_LATIN1_LITERAL" href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeContextWork )">
-                <parameter left="AttributeContextWork" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDetail::Q_DECLARE_LATIN1_LITERAL" href="qcontactdetail.html#Q_DECLARE_LATIN1_LITERAL-5" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="5" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeContextOther )">
-                <parameter left="AttributeContextOther" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeContext" fullname="QContactDetail::AttributeContext" href="qcontactdetail.html#AttributeContext-var" location="qcontactdetail.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubType" fullname="QContactDetail::AttributeSubType" href="qcontactdetail.html#AttributeSubType-var" location="qcontactdetail.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeContextHome" fullname="QContactDetail::AttributeContextHome" href="qcontactdetail.html#AttributeContextHome-var" location="qcontactdetail.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeContextWork" fullname="QContactDetail::AttributeContextWork" href="qcontactdetail.html#AttributeContextWork-var" location="qcontactdetail.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeContextOther" fullname="QContactDetail::AttributeContextOther" href="qcontactdetail.html#AttributeContextOther-var" location="qcontactdetail.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QContactDetail::error" href="qcontactdetail.html#error" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail::Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactDetail::operator==" href="qcontactdetail.html#operator==" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactDetail &amp; other) const">
                 <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
@@ -250,36 +238,17 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAddress" href="qcontactaddress.html" location="qcontactaddress.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel )">
-                <parameter left="FieldDisplayLabel" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldStreet )">
-                <parameter left="FieldStreet" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLocality )">
-                <parameter left="FieldLocality" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldRegion )">
-                <parameter left="FieldRegion" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-5" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="5" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldPostcode )">
-                <parameter left="FieldPostcode" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-6" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="6" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldCountry )">
-                <parameter left="FieldCountry" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-7" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="7" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeParcel )">
-                <parameter left="AttributeSubTypeParcel" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-8" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="8" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePostal )">
-                <parameter left="AttributeSubTypePostal" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-9" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="9" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeDomestic )">
-                <parameter left="AttributeSubTypeDomestic" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactaddress.html#Q_DECLARE_LATIN1_LITERAL-10" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="10" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternational )">
-                <parameter left="AttributeSubTypeInternational" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAddress::DefinitionName" href="qcontactaddress.html#DefinitionName-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldDisplayLabel" fullname="QContactAddress::FieldDisplayLabel" href="qcontactaddress.html#FieldDisplayLabel-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldStreet" fullname="QContactAddress::FieldStreet" href="qcontactaddress.html#FieldStreet-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLocality" fullname="QContactAddress::FieldLocality" href="qcontactaddress.html#FieldLocality-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldRegion" fullname="QContactAddress::FieldRegion" href="qcontactaddress.html#FieldRegion-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldPostcode" fullname="QContactAddress::FieldPostcode" href="qcontactaddress.html#FieldPostcode-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldCountry" fullname="QContactAddress::FieldCountry" href="qcontactaddress.html#FieldCountry-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeParcel" fullname="QContactAddress::AttributeSubTypeParcel" href="qcontactaddress.html#AttributeSubTypeParcel-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypePostal" fullname="QContactAddress::AttributeSubTypePostal" href="qcontactaddress.html#AttributeSubTypePostal-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeDomestic" fullname="QContactAddress::AttributeSubTypeDomestic" href="qcontactaddress.html#AttributeSubTypeDomestic-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeInternational" fullname="QContactAddress::AttributeSubTypeInternational" href="qcontactaddress.html#AttributeSubTypeInternational-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContactAddress::setDisplayLabel" href="qcontactaddress.html#setDisplayLabel" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayLabel(const QString &amp; displayLabel)">
                 <parameter left="const QString &amp;" right="" name="displayLabel" default=""/>
             </function>
@@ -306,18 +275,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="country" fullname="QContactAddress::country" href="qcontactaddress.html#country" location="qcontactaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="country() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAvatar" href="qcontactavatar.html" location="qcontactavatar.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAvatar::Q_DECLARE_LATIN1_LITERAL" href="qcontactavatar.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldAvatar )">
-                <parameter left="FieldAvatar" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAvatar::Q_DECLARE_LATIN1_LITERAL" href="qcontactavatar.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeImage )">
-                <parameter left="AttributeSubTypeImage" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAvatar::Q_DECLARE_LATIN1_LITERAL" href="qcontactavatar.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVideo )">
-                <parameter left="AttributeSubTypeVideo" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAvatar::Q_DECLARE_LATIN1_LITERAL" href="qcontactavatar.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeTexturedMesh )">
-                <parameter left="AttributeSubTypeTexturedMesh" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAvatar::DefinitionName" href="qcontactavatar.html#DefinitionName-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAvatar" fullname="QContactAvatar::FieldAvatar" href="qcontactavatar.html#FieldAvatar-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeImage" fullname="QContactAvatar::AttributeSubTypeImage" href="qcontactavatar.html#AttributeSubTypeImage-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeVideo" fullname="QContactAvatar::AttributeSubTypeVideo" href="qcontactavatar.html#AttributeSubTypeVideo-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeTexturedMesh" fullname="QContactAvatar::AttributeSubTypeTexturedMesh" href="qcontactavatar.html#AttributeSubTypeTexturedMesh-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAvatar" fullname="QContactAvatar::setAvatar" href="qcontactavatar.html#setAvatar" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAvatar(const QString &amp; avatar)">
                 <parameter left="const QString &amp;" right="" name="avatar" default=""/>
             </function>
@@ -346,30 +308,20 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactManagerInfo::supportedDataTypes" href="qcontactmanagerinfo.html#supportedDataTypes" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactUrl" href="qcontacturl.html" location="qcontacturl.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactUrl::Q_DECLARE_LATIN1_LITERAL" href="qcontacturl.html#Q_DECLARE_LATIN1_LITERAL" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldUrl )">
-                <parameter left="FieldUrl" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactUrl::Q_DECLARE_LATIN1_LITERAL" href="qcontacturl.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeHomePage )">
-                <parameter left="AttributeSubTypeHomePage" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactUrl::Q_DECLARE_LATIN1_LITERAL" href="qcontacturl.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFavourite )">
-                <parameter left="AttributeSubTypeFavourite" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactUrl::Q_DECLARE_LATIN1_LITERAL" href="qcontacturl.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeSocialNetworking )">
-                <parameter left="AttributeSubTypeSocialNetworking" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactUrl::DefinitionName" href="qcontacturl.html#DefinitionName-var" location="qcontacturl.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldUrl" fullname="QContactUrl::FieldUrl" href="qcontacturl.html#FieldUrl-var" location="qcontacturl.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeHomePage" fullname="QContactUrl::AttributeSubTypeHomePage" href="qcontacturl.html#AttributeSubTypeHomePage-var" location="qcontacturl.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeFavourite" fullname="QContactUrl::AttributeSubTypeFavourite" href="qcontacturl.html#AttributeSubTypeFavourite-var" location="qcontacturl.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeSocialNetworking" fullname="QContactUrl::AttributeSubTypeSocialNetworking" href="qcontacturl.html#AttributeSubTypeSocialNetworking-var" location="qcontacturl.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setUrl" fullname="QContactUrl::setUrl" href="qcontacturl.html#setUrl" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setUrl(const QString &amp; url)">
                 <parameter left="const QString &amp;" right="" name="url" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="url" fullname="QContactUrl::url" href="qcontacturl.html#url" location="qcontacturl.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="url() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactTimestamp" href="qcontacttimestamp.html" location="qcontacttimestamp.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactTimestamp::Q_DECLARE_LATIN1_LITERAL" href="qcontacttimestamp.html#Q_DECLARE_LATIN1_LITERAL" location="qcontacttimestamp.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldModificationTimestamp )">
-                <parameter left="FieldModificationTimestamp" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactTimestamp::Q_DECLARE_LATIN1_LITERAL" href="qcontacttimestamp.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontacttimestamp.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldCreationTimestamp )">
-                <parameter left="FieldCreationTimestamp" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactTimestamp::DefinitionName" href="qcontacttimestamp.html#DefinitionName-var" location="qcontacttimestamp.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldModificationTimestamp" fullname="QContactTimestamp::FieldModificationTimestamp" href="qcontacttimestamp.html#FieldModificationTimestamp-var" location="qcontacttimestamp.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldCreationTimestamp" fullname="QContactTimestamp::FieldCreationTimestamp" href="qcontacttimestamp.html#FieldCreationTimestamp-var" location="qcontacttimestamp.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLastModified" fullname="QContactTimestamp::setLastModified" href="qcontacttimestamp.html#setLastModified" location="qcontacttimestamp.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLastModified(const QDateTime &amp; dateTime)">
                 <parameter left="const QDateTime &amp;" right="" name="dateTime" default=""/>
             </function>
@@ -440,30 +392,15 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAnniversary" href="qcontactanniversary.html" location="qcontactanniversary.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldCalendarId )">
-                <parameter left="FieldCalendarId" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldOriginalDate )">
-                <parameter left="FieldOriginalDate" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldEvent )">
-                <parameter left="FieldEvent" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeWedding )">
-                <parameter left="AttributeSubTypeWedding" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-5" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="5" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEngagement )">
-                <parameter left="AttributeSubTypeEngagement" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-6" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="6" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeHouse )">
-                <parameter left="AttributeSubTypeHouse" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-7" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="7" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEmployment )">
-                <parameter left="AttributeSubTypeEmployment" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactAnniversary::Q_DECLARE_LATIN1_LITERAL" href="qcontactanniversary.html#Q_DECLARE_LATIN1_LITERAL-8" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="8" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMemorial )">
-                <parameter left="AttributeSubTypeMemorial" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAnniversary::DefinitionName" href="qcontactanniversary.html#DefinitionName-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldCalendarId" fullname="QContactAnniversary::FieldCalendarId" href="qcontactanniversary.html#FieldCalendarId-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldOriginalDate" fullname="QContactAnniversary::FieldOriginalDate" href="qcontactanniversary.html#FieldOriginalDate-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldEvent" fullname="QContactAnniversary::FieldEvent" href="qcontactanniversary.html#FieldEvent-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeWedding" fullname="QContactAnniversary::AttributeSubTypeWedding" href="qcontactanniversary.html#AttributeSubTypeWedding-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeEngagement" fullname="QContactAnniversary::AttributeSubTypeEngagement" href="qcontactanniversary.html#AttributeSubTypeEngagement-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeHouse" fullname="QContactAnniversary::AttributeSubTypeHouse" href="qcontactanniversary.html#AttributeSubTypeHouse-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeEmployment" fullname="QContactAnniversary::AttributeSubTypeEmployment" href="qcontactanniversary.html#AttributeSubTypeEmployment-var" location="qcontactanniversary.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeMemorial" fullname="QContactAnniversary::AttributeSubTypeMemorial" href="qcontactanniversary.html#AttributeSubTypeMemorial-var" location="qcontactanniversary.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setOriginalDate" fullname="QContactAnniversary::setOriginalDate" href="qcontactanniversary.html#setOriginalDate" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setOriginalDate(const QDate &amp; date)">
                 <parameter left="const QDate &amp;" right="" name="date" default=""/>
             </function>
@@ -478,15 +415,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="event" fullname="QContactAnniversary::event" href="qcontactanniversary.html#event" location="qcontactanniversary.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="event() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGuid" href="qcontactguid.html" location="qcontactguid.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactGuid::Q_DECLARE_LATIN1_LITERAL" href="qcontactguid.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactguid.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldGuid )">
-                <parameter left="FieldGuid" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactGuid::Q_DECLARE_LATIN1_LITERAL" href="qcontactguid.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactguid.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeSync )">
-                <parameter left="AttributeSubTypeSync" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactGuid::Q_DECLARE_LATIN1_LITERAL" href="qcontactguid.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactguid.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeOther )">
-                <parameter left="AttributeSubTypeOther" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactGuid::DefinitionName" href="qcontactguid.html#DefinitionName-var" location="qcontactguid.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldGuid" fullname="QContactGuid::FieldGuid" href="qcontactguid.html#FieldGuid-var" location="qcontactguid.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeSync" fullname="QContactGuid::AttributeSubTypeSync" href="qcontactguid.html#AttributeSubTypeSync-var" location="qcontactguid.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeOther" fullname="QContactGuid::AttributeSubTypeOther" href="qcontactguid.html#AttributeSubTypeOther-var" location="qcontactguid.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setGuid" fullname="QContactGuid::setGuid" href="qcontactguid.html#setGuid" location="qcontactguid.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGuid(const QString &amp; guid)">
                 <parameter left="const QString &amp;" right="" name="guid" default=""/>
             </function>
@@ -698,12 +630,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactEmailAddress" href="qcontactemailaddress.html" location="qcontactemailaddress.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactEmailAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactemailaddress.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactemailaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldEmailAddress )">
-                <parameter left="FieldEmailAddress" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactEmailAddress::Q_DECLARE_LATIN1_LITERAL" href="qcontactemailaddress.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactemailaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternet )">
-                <parameter left="AttributeSubTypeInternet" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactEmailAddress::DefinitionName" href="qcontactemailaddress.html#DefinitionName-var" location="qcontactemailaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldEmailAddress" fullname="QContactEmailAddress::FieldEmailAddress" href="qcontactemailaddress.html#FieldEmailAddress-var" location="qcontactemailaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeInternet" fullname="QContactEmailAddress::AttributeSubTypeInternet" href="qcontactemailaddress.html#AttributeSubTypeInternet-var" location="qcontactemailaddress.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setEmailAddress" fullname="QContactEmailAddress::setEmailAddress" href="qcontactemailaddress.html#setEmailAddress" location="qcontactemailaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEmailAddress(const QString &amp; emailAddress)">
                 <parameter left="const QString &amp;" right="" name="emailAddress" default=""/>
             </function>
@@ -927,39 +856,18 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="members" fullname="QContactGroup::members" href="qcontactgroup.html#members" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="members() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactPhoneNumber" href="qcontactphonenumber.html" location="qcontactphonenumber.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldNumber )">
-                <parameter left="FieldNumber" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline )">
-                <parameter left="AttributeSubTypeLandline" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile )">
-                <parameter left="AttributeSubTypeMobile" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile )">
-                <parameter left="AttributeSubTypeFacsimile" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-5" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="5" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePager )">
-                <parameter left="AttributeSubTypePager" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-6" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="6" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVoice )">
-                <parameter left="AttributeSubTypeVoice" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-7" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="7" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeModem )">
-                <parameter left="AttributeSubTypeModem" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-8" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="8" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVideo )">
-                <parameter left="AttributeSubTypeVideo" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-9" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="9" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar )">
-                <parameter left="AttributeSubTypeCar" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-10" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="10" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem )">
-                <parameter left="AttributeSubTypeBulletinBoardSystem" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactPhoneNumber::Q_DECLARE_LATIN1_LITERAL" href="qcontactphonenumber.html#Q_DECLARE_LATIN1_LITERAL-11" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="11" type="" signature="Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable )">
-                <parameter left="AttributeSubTypeMessagingCapable" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactPhoneNumber::DefinitionName" href="qcontactphonenumber.html#DefinitionName-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldNumber" fullname="QContactPhoneNumber::FieldNumber" href="qcontactphonenumber.html#FieldNumber-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeLandline" fullname="QContactPhoneNumber::AttributeSubTypeLandline" href="qcontactphonenumber.html#AttributeSubTypeLandline-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeMobile" fullname="QContactPhoneNumber::AttributeSubTypeMobile" href="qcontactphonenumber.html#AttributeSubTypeMobile-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeFacsimile" fullname="QContactPhoneNumber::AttributeSubTypeFacsimile" href="qcontactphonenumber.html#AttributeSubTypeFacsimile-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypePager" fullname="QContactPhoneNumber::AttributeSubTypePager" href="qcontactphonenumber.html#AttributeSubTypePager-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeVoice" fullname="QContactPhoneNumber::AttributeSubTypeVoice" href="qcontactphonenumber.html#AttributeSubTypeVoice-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeModem" fullname="QContactPhoneNumber::AttributeSubTypeModem" href="qcontactphonenumber.html#AttributeSubTypeModem-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeVideo" fullname="QContactPhoneNumber::AttributeSubTypeVideo" href="qcontactphonenumber.html#AttributeSubTypeVideo-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeCar" fullname="QContactPhoneNumber::AttributeSubTypeCar" href="qcontactphonenumber.html#AttributeSubTypeCar-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeBulletinBoardSystem" fullname="QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem" href="qcontactphonenumber.html#AttributeSubTypeBulletinBoardSystem-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="AttributeSubTypeMessagingCapable" fullname="QContactPhoneNumber::AttributeSubTypeMessagingCapable" href="qcontactphonenumber.html#AttributeSubTypeMessagingCapable-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setNumber" fullname="QContactPhoneNumber::setNumber" href="qcontactphonenumber.html#setNumber" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setNumber(const QString &amp; number)">
                 <parameter left="const QString &amp;" right="" name="number" default=""/>
             </function>
@@ -1046,21 +954,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QContactManagerEngineFactory::managerName" href="qcontactmanagerenginefactory.html#managerName" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactName" href="qcontactname.html" location="qcontactname.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactName::Q_DECLARE_LATIN1_LITERAL" href="qcontactname.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldPrefix )">
-                <parameter left="FieldPrefix" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactName::Q_DECLARE_LATIN1_LITERAL" href="qcontactname.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldFirst )">
-                <parameter left="FieldFirst" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactName::Q_DECLARE_LATIN1_LITERAL" href="qcontactname.html#Q_DECLARE_LATIN1_LITERAL-3" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldMiddle )">
-                <parameter left="FieldMiddle" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactName::Q_DECLARE_LATIN1_LITERAL" href="qcontactname.html#Q_DECLARE_LATIN1_LITERAL-4" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLast )">
-                <parameter left="FieldLast" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactName::Q_DECLARE_LATIN1_LITERAL" href="qcontactname.html#Q_DECLARE_LATIN1_LITERAL-5" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="5" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldSuffix )">
-                <parameter left="FieldSuffix" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactName::DefinitionName" href="qcontactname.html#DefinitionName-var" location="qcontactname.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldPrefix" fullname="QContactName::FieldPrefix" href="qcontactname.html#FieldPrefix-var" location="qcontactname.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldFirst" fullname="QContactName::FieldFirst" href="qcontactname.html#FieldFirst-var" location="qcontactname.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldMiddle" fullname="QContactName::FieldMiddle" href="qcontactname.html#FieldMiddle-var" location="qcontactname.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLast" fullname="QContactName::FieldLast" href="qcontactname.html#FieldLast-var" location="qcontactname.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSuffix" fullname="QContactName::FieldSuffix" href="qcontactname.html#FieldSuffix-var" location="qcontactname.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="prefix" fullname="QContactName::prefix" href="qcontactname.html#prefix" location="qcontactname.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="prefix() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="first" fullname="QContactName::first" href="qcontactname.html#first" location="qcontactname.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="first() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="middle" fullname="QContactName::middle" href="qcontactname.html#middle" location="qcontactname.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="middle() const"/>
@@ -1107,12 +1006,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDisplayLabel" href="qcontactdisplaylabel.html" location="qcontactdisplaylabel.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDisplayLabel::Q_DECLARE_LATIN1_LITERAL" href="qcontactdisplaylabel.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLabel )">
-                <parameter left="FieldLabel" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDisplayLabel::Q_DECLARE_LATIN1_LITERAL" href="qcontactdisplaylabel.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldSynthesised )">
-                <parameter left="FieldSynthesised" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactDisplayLabel::DefinitionName" href="qcontactdisplaylabel.html#DefinitionName-var" location="qcontactdisplaylabel.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLabel" fullname="QContactDisplayLabel::FieldLabel" href="qcontactdisplaylabel.html#FieldLabel-var" location="qcontactdisplaylabel.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSynthesised" fullname="QContactDisplayLabel::FieldSynthesised" href="qcontactdisplaylabel.html#FieldSynthesised-var" location="qcontactdisplaylabel.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLabel" fullname="QContactDisplayLabel::setLabel" href="qcontactdisplaylabel.html#setLabel" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLabel(const QString &amp; label)">
                 <parameter left="const QString &amp;" right="" name="label" default=""/>
             </function>
@@ -1169,21 +1065,17 @@
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QContactAbstractRequest::d_ptr" href="qcontactabstractrequest.html#d_ptr-var" location="qcontactabstractrequest.h" type="QContactAbstractRequestPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactBirthday" href="qcontactbirthday.html" location="qcontactbirthday.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactBirthday::Q_DECLARE_LATIN1_LITERAL" href="qcontactbirthday.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactbirthday.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldBirthday )">
-                <parameter left="FieldBirthday" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactBirthday::DefinitionName" href="qcontactbirthday.html#DefinitionName-var" location="qcontactbirthday.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldBirthday" fullname="QContactBirthday::FieldBirthday" href="qcontactbirthday.html#FieldBirthday-var" location="qcontactbirthday.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDate" fullname="QContactBirthday::setDate" href="qcontactbirthday.html#setDate" location="qcontactbirthday.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDate(const QDate &amp; date)">
                 <parameter left="const QDate &amp;" right="" name="date" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="date" fullname="QContactBirthday::date" href="qcontactbirthday.html#date" location="qcontactbirthday.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDate" signature="date() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactOrganisation" href="qcontactorganisation.html" location="qcontactorganisation.h" bases="QContactDetail" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactOrganisation::Q_DECLARE_LATIN1_LITERAL" href="qcontactorganisation.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel )">
-                <parameter left="FieldDisplayLabel" right="" name="" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactOrganisation::Q_DECLARE_LATIN1_LITERAL" href="qcontactorganisation.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLogo )">
-                <parameter left="FieldLogo" right="" name="" default=""/>
-            </function>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOrganisation::DefinitionName" href="qcontactorganisation.html#DefinitionName-var" location="qcontactorganisation.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldDisplayLabel" fullname="QContactOrganisation::FieldDisplayLabel" href="qcontactorganisation.html#FieldDisplayLabel-var" location="qcontactorganisation.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLogo" fullname="QContactOrganisation::FieldLogo" href="qcontactorganisation.html#FieldLogo-var" location="qcontactorganisation.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContactOrganisation::setDisplayLabel" href="qcontactorganisation.html#setDisplayLabel" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayLabel(const QString &amp; displayLabel)">
                 <parameter left="const QString &amp;" right="" name="displayLabel" default=""/>
             </function>
