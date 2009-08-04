@@ -79,11 +79,9 @@ public:
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
-    template <typename T> inline T control() {
+    template <typename T> inline T control() const {
         if (QObject *object = control(qmediacontrol_iid<T>())) {
-            if (T control = qobject_cast<T>(object))
-                return control;
-            delete object;
+            return qobject_cast<T>(object);
         }
         return 0;
     }
