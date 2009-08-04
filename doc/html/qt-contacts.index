@@ -1106,6 +1106,22 @@
                 <parameter left="QContactGroupSaveRequest *" right="" name="self" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactDisplayLabel" href="qcontactdisplaylabel.html" location="qcontactdisplaylabel.h" bases="QContactDetail" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDisplayLabel::Q_DECLARE_LATIN1_LITERAL" href="qcontactdisplaylabel.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLabel )">
+                <parameter left="FieldLabel" right="" name="" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactDisplayLabel::Q_DECLARE_LATIN1_LITERAL" href="qcontactdisplaylabel.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldSynthesised )">
+                <parameter left="FieldSynthesised" right="" name="" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLabel" fullname="QContactDisplayLabel::setLabel" href="qcontactdisplaylabel.html#setLabel" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLabel(const QString &amp; label)">
+                <parameter left="const QString &amp;" right="" name="label" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="label" fullname="QContactDisplayLabel::label" href="qcontactdisplaylabel.html#label" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="label() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSynthesised" fullname="QContactDisplayLabel::setSynthesised" href="qcontactdisplaylabel.html#setSynthesised" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSynthesised(bool synthesised)">
+                <parameter left="bool" right="" name="synthesised" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isSynthesised" fullname="QContactDisplayLabel::isSynthesised" href="qcontactdisplaylabel.html#isSynthesised" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSynthesised() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" href="qcontactabstractrequest.html" location="qcontactabstractrequest.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAbstractRequest" fullname="QContactAbstractRequest::~QContactAbstractRequest" href="qcontactabstractrequest.html#dtor.QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAbstractRequest()"/>
@@ -1160,6 +1176,22 @@
                 <parameter left="const QDate &amp;" right="" name="date" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="date" fullname="QContactBirthday::date" href="qcontactbirthday.html#date" location="qcontactbirthday.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDate" signature="date() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactOrganisation" href="qcontactorganisation.html" location="qcontactorganisation.h" bases="QContactDetail" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactOrganisation::Q_DECLARE_LATIN1_LITERAL" href="qcontactorganisation.html#Q_DECLARE_LATIN1_LITERAL" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel )">
+                <parameter left="FieldDisplayLabel" right="" name="" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_LITERAL" fullname="QContactOrganisation::Q_DECLARE_LATIN1_LITERAL" href="qcontactorganisation.html#Q_DECLARE_LATIN1_LITERAL-2" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="" signature="Q_DECLARE_LATIN1_LITERAL(FieldLogo )">
+                <parameter left="FieldLogo" right="" name="" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContactOrganisation::setDisplayLabel" href="qcontactorganisation.html#setDisplayLabel" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayLabel(const QString &amp; displayLabel)">
+                <parameter left="const QString &amp;" right="" name="displayLabel" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="displayLabel" fullname="QContactOrganisation::displayLabel" href="qcontactorganisation.html#displayLabel" location="qcontactorganisation.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="displayLabel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLogo" fullname="QContactOrganisation::setLogo" href="qcontactorganisation.html#setLogo" location="qcontactorganisation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLogo(const QString &amp; logo)">
+                <parameter left="const QString &amp;" right="" name="logo" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="logo" fullname="QContactOrganisation::logo" href="qcontactorganisation.html#logo" location="qcontactorganisation.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="logo() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html" location="qcontactdetaildefinitionfetchrequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" fullname="QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionFetchRequest()"/>

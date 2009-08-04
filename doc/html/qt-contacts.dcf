@@ -204,6 +204,15 @@
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactdisplaylabel.html" title="QContactDisplayLabel Class Reference">
+        <keyword ref="qcontactdisplaylabel.html">QContactDisplayLabel</keyword>
+        <keyword ref="qcontactdisplaylabel.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</keyword>
+        <keyword ref="qcontactdisplaylabel.html#isSynthesised">isSynthesised</keyword>
+        <keyword ref="qcontactdisplaylabel.html#label">label</keyword>
+        <keyword ref="qcontactdisplaylabel.html#setLabel">setLabel</keyword>
+        <keyword ref="qcontactdisplaylabel.html#setSynthesised">setSynthesised</keyword>
+        <section ref="qcontactdisplaylabel-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactemailaddress.html" title="QContactEmailAddress Class Reference">
         <keyword ref="qcontactemailaddress.html">QContactEmailAddress</keyword>
         <keyword ref="qcontactemailaddress.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</keyword>
@@ -455,6 +464,15 @@
         <keyword ref="qcontactname.html#setSuffix">setSuffix</keyword>
         <keyword ref="qcontactname.html#suffix">suffix</keyword>
         <section ref="qcontactname-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactorganisation.html" title="QContactOrganisation Class Reference">
+        <keyword ref="qcontactorganisation.html">QContactOrganisation</keyword>
+        <keyword ref="qcontactorganisation.html#Q_DECLARE_LATIN1_LITERAL">Q_DECLARE_LATIN1_LITERAL</keyword>
+        <keyword ref="qcontactorganisation.html#displayLabel">displayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#logo">logo</keyword>
+        <keyword ref="qcontactorganisation.html#setDisplayLabel">setDisplayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#setLogo">setLogo</keyword>
+        <section ref="qcontactorganisation-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
         <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>

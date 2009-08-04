@@ -98,8 +98,8 @@
 <p>Returns a list of details of the template type</p>
 <h3 class="fn"><a name="detailsWithAction"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const QString &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
-<h3 class="fn"><a name="displayLabel"></a>QContactDisplayLabel QContact::displayLabel () const</h3>
-<p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the QContactDisplayLabel in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesised by the manager from which the contact is retrieved.</p>
+<h3 class="fn"><a name="displayLabel"></a><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> QContact::displayLabel () const</h3>
+<p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesised by the manager from which the contact is retrieved.</p>
 <p>See also <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>().</p>
 <h3 class="fn"><a name="error"></a><a href="qcontact.html#Error-enum">Error</a> QContact::error () const</h3>
 <p>Returns the code of the error of the most recent operation</p>
@@ -127,7 +127,7 @@
 <p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.</p>
 <p>If <i>detail</i> is a contact display label, the existing display label will be overwritten with <i>detail</i>. There is never more than one display label in a contact.</p>
 <p>Returns true if the detail was saved successfully, otherwise returns false</p>
-<h3 class="fn"><a name="setDisplayLabel"></a>bool QContact::setDisplayLabel ( const QContactDisplayLabel &amp; <i>label</i> )</h3>
+<h3 class="fn"><a name="setDisplayLabel"></a>bool QContact::setDisplayLabel ( const <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> &amp; <i>label</i> )</h3>
 <p>Set the display label of the contact to <i>label</i>.</p>
 <p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
 <p>Returns true on success, false otherwise.</p>
