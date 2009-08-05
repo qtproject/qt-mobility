@@ -27,6 +27,7 @@
 </ul>
 <li><a href="#adding-and-removing-of-services">Adding and removing of services</a></li>
 <ul><li><a href="#xml-format">XML format</a></li>
+<li><a href="#tools-for-xml-generation">Tools for XML generation</a></li>
 <li><a href="#installing-the-service-at-runtime">Installing the service at runtime</a></li>
 </ul>
 <li><a href="#identifying-services">Identifying services</a></li>
@@ -110,7 +111,7 @@
         &lt;!ELEMENT customproperty ( #CDATA ) &gt;
         &lt;!ATTLIST customproperty key NMTOKEN #REQUIRED &gt;</pre>
 <p>The elements and attributes have the following meanings:</p>
-<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>service</td><td></td><td>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the service.</td></tr>
@@ -151,7 +152,11 @@
                 &lt;customproperty key=&quot;key2&quot;&gt;value2&lt;/customproperty&gt;
             &lt;/interface&gt;
         &lt;/service&gt;</pre>
-<a name="installing-the-service-at-runtime"></a>
+<a name="tools-for-xml-generation"></a>
+<h3>Tools for XML generation</h3>
+<p>The framework includes a GUI tool under <tt>tools/servicexmlgen</tt> for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.</p>
+<p>Here is a screenshot of the application, loaded with the <i>TestService</i> XML description provided above.</p>
+<p align="center"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a>
 <h3>Installing the service at runtime</h3>
 <p>New services can be added and removed at any time via <a href="qservicemanager.html#addService">QServiceManager::addService</a>() and <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
 <a name="identifying-services"></a>

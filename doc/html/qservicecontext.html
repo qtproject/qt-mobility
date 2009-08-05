@@ -17,28 +17,31 @@
 <pre>    #include &lt;QServiceContext&gt;</pre><ul>
 <li><a href="qservicecontext-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"/>enum <b><a href="qservicecontext.html#ContextType-enum">ContextType</a></b> { DisplayContext, ScriptContext, UserDefined }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#ContextType-enum">ContextType</a></b> { DisplayContext, ScriptContext, UserDefined }</td></tr>
+</table>
+<hr />
 <a name="properties"></a>
-<h3>Properties</h3>
+<h2>Properties</h2>
 <ul>
-<li><div class="fn"/><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> : QString</li>
-<li><div class="fn"/><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> : QString</li>
+<li><div class="fn"><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> : QString</div></li>
+<li><div class="fn"><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> : QString</div></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"/><b><a href="qservicecontext.html#QServiceContext">QServiceContext</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/>virtual <b><a href="qservicecontext.html#dtor.QServiceContext">~QServiceContext</a></b> ()</li>
-<li><div class="fn"/>QString <b><a href="qservicecontext.html#clientId-prop">clientId</a></b> () const</li>
-<li><div class="fn"/>QString <b><a href="qservicecontext.html#clientName-prop">clientName</a></b> () const</li>
-<li><div class="fn"/>virtual void <b><a href="qservicecontext.html#notify">notify</a></b> ( ContextType <i>type</i>, const QVariant &amp; <i>data</i> ) = 0</li>
-<li><div class="fn"/>void <b><a href="qservicecontext.html#clientId-prop">setClientId</a></b> ( const QString &amp; <i>id</i> )</li>
-<li><div class="fn"/>void <b><a href="qservicecontext.html#clientName-prop">setClientName</a></b> ( const QString &amp; <i>name</i> )</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#QServiceContext">QServiceContext</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#dtor.QServiceContext">~QServiceContext</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#notify">notify</a></b> ( ContextType <i>type</i>, const QVariant &amp; <i>data</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#clientId-prop">setClientId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicecontext.html#clientName-prop">setClientName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -50,7 +53,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="ContextType-enum"></a>enum QServiceContext::ContextType</h3>
 <p>This enum describes the type of context information.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QServiceContext::DisplayContext</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The service provides user visible display text such as an error message.</td></tr>
 <tr><td valign="top"><tt>QServiceContext::ScriptContext</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service provides a script which may be executed by the client.</td></tr>
@@ -61,19 +64,19 @@
 <h3 class="fn"><a name="clientId-prop"></a>clientId : QString</h3>
 <p>This property holds the id of the client using the service.</p>
 <p>By default, this value is empty but you can change this by calling setClientId().</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>QString clientId () const</b></li>
-<li><div class="fn"/><b>void setClientId ( const QString &amp; <i>id</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>clientId</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setClientId</b> ( const QString &amp; <i>id</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="clientName-prop"></a>clientName : QString</h3>
 <p>This property holds the name of the client using the service.</p>
 <p>By default, this value is empty but you can change this by calling setClientName(). This string is translated and can be shown to the user.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"/><b>QString clientName () const</b></li>
-<li><div class="fn"/><b>void setClientName ( const QString &amp; <i>name</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>clientName</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setClientName</b> ( const QString &amp; <i>name</i> )</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QServiceContext"></a>QServiceContext::QServiceContext ( QObject * <i>parent</i> = 0 )</h3>

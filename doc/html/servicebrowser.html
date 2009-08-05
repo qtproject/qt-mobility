@@ -109,6 +109,7 @@
             item-&gt;setData(Qt::UserRole, qVariantFromValue(descriptors[i]));
             interfacesListWidget-&gt;addItem(item);
         }
+
         ...
     }</pre>
 <p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
@@ -128,6 +129,7 @@
             implementationRef = serviceManager-&gt;loadInterface(selectedImpl, 0, 0);
         else
             implementationRef = serviceManager-&gt;loadInterface(selectedImpl.interfaceName(), 0, 0);
+
         ...</pre>
 <p>The <tt>reloadAttributesList()</tt> method creates the list in the right-hand pane that shows the attributes of an interface implementation that can be invoked through the Qt meta-object system.</p>
 <p><a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() is called to get an instance of the identified interface implementation. This method finds the corresponding service plugin and returns the QObject instance provided by the service plugin's <a href="qserviceplugininterface.html#createInstance">QServicePluginInterface::createInstance</a>() method.</p>

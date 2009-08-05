@@ -227,6 +227,15 @@ An example for a valid XML service description could be the following \i TestSer
     </service>
 \endcode
 
+\section2 Tools for XML generation
+
+The framework includes a GUI tool under \tt tools/servicexmlgen for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.
+
+Here is a screenshot of the application, loaded with the \i TestService XML description provided above.
+
+\image servicexmlgen.png
+
+
 \section2 Installing the service at runtime
 
 New services can be added and removed at any time via QServiceManager::addService() and QServiceManager::removeService().
