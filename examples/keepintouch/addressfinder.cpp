@@ -158,9 +158,6 @@ void AddressFinder::searchMessages()
 {
     searchButton->setEnabled(false);
 
-    // TODO: make this unnecessary:
-    QMessageStore::instance();
-
     addressList->clear();
     messageList->clear();
     excludedAddresses.clear();
