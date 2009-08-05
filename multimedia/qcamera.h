@@ -36,6 +36,7 @@
 #define QCAMERA_H
 
 #include <QList>
+#include <QSize>
 #include <QStringList>
 
 #include "qabstractmediacontrol.h"
@@ -43,10 +44,6 @@
 #include "qabstractmediaservice.h"
 
 #include "qmediaserviceprovider.h"
-
-#ifdef VIDEOSERVICES
-#include "qvideoframe.h"
-#endif
 
 class QCameraService;
 class QCameraControl;
