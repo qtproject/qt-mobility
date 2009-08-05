@@ -157,32 +157,24 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
     or if the request was unable to be performed by the manager engine; otherwise returns true. */
 bool QContactAbstractRequest::start()
 {
-    if (status() != QContactAbstractRequest::Inactive
-        && status() != QContactAbstractRequest::Cancelled
-        && status() != QContactAbstractRequest::Finished) {
-        return false; // unable to start operation; another operation already in progress.
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine && !isActive()) {
+        return engine->startRequest(this);
     }
 
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine)
-        return engine->startRequest(this);
-
-    return false;
+    return false; // unable to start operation; another operation already in progress or no engine.
 }
 
 /*! Attempts to cancel the request.  Returns false if the request is not in the \c QContactAbstractRequest::Active state,
     or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
 bool QContactAbstractRequest::cancel()
 {
-    if (status() != QContactAbstractRequest::Active) {
-        return false; // unable to cancel operation; operation not in progress.
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine && status() == QContactAbstractRequest::Active) {
+        return engine->cancelRequest(this);
     }
 
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine)
-        return engine->cancelRequest(this);
-
-    return false;
+    return false; // unable to cancel operation; not in progress or no engine.
 }
 
 /*! Blocks until the request has been completed by the manager engine, or until \a msecs milliseconds has elapsed.
@@ -190,14 +182,12 @@ bool QContactAbstractRequest::cancel()
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
-    if (!isActive()) {
-        return false; // unable to wait for operation; not in progress.
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine && isActive()) {
+        return engine->waitForRequestFinished(this, msecs);
     }
 
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine)
-        return engine->waitForRequestFinished(this, msecs);
-    return false;
+    return false; // unable to wait for operation; not in progress or no engine.
 }
 
 /*! Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
@@ -205,12 +195,10 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
-    if (!isActive()) {
-        return false; // unable to wait for operation; not in progress.
+    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+    if (engine && isActive()) {
+        return engine->waitForRequestProgress(this, msecs);
     }
 
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine)
-        return engine->waitForRequestProgress(this, msecs);
-    return false;
+    return false; // unable to wait for operation; not in progress or no engine.
 }
