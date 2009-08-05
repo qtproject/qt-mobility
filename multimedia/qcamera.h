@@ -36,6 +36,7 @@
 #define QCAMERA_H
 
 #include <QList>
+#include <QSize>
 #include <QStringList>
 
 #include "qabstractmediacontrol.h"
