@@ -131,6 +131,13 @@ QT_BEGIN_NAMESPACE
     Signal that is emitted when a request to set \a attribute to \a value is received.
 */
 
+/*!
+    \fn void QValueSpaceObject::itemNotify(const QByteArray &attribute, bool interested)
+
+    Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
+    least on QValueSpaceItem is interested in the value of \a attribute.
+*/
+
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
 
 class QValueSpaceObjectPrivate
@@ -260,6 +267,15 @@ QString QValueSpaceObject::objectPath() const
 bool QValueSpaceObject::isValid() const
 {
     return (d->layer && d->handle != QAbstractValueSpaceLayer::InvalidHandle);
+}
+
+/*!
+    Returns true if this object will emit signals in response to requests or notifications from
+    QValueSpaceItems.
+*/
+bool QValueSpaceObject::supportsRequests() const
+{
+    return (d->layer && d->layer->supportsRequests());
 }
 
 /*!

@@ -1685,6 +1685,7 @@ public:
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
+    bool notifyInterest(Handle handle, bool interested);
     bool syncRequests();
 
     /* QValueSpaceObject functions */
@@ -1720,6 +1721,10 @@ public:
                   const QByteArray &path);
     bool doRemWatch(NodeWatch watch,
                     const QByteArray &path);
+
+    void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
+    void doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
+    void doNotifyObject(unsigned long own, unsigned long protocol);
 
     QString socket() const;
 
@@ -1845,6 +1850,7 @@ QVALUESPACE_AUTO_INSTALL_LAYER(ApplicationLayer);
 #define APPLAYER_REMWATCH 6
 #define APPLAYER_SYNC 7
 #define APPLAYER_SUBINDEX 8
+#define APPLAYER_NOTIFY 9
 
 struct ApplicationLayerClient : public QPacketProtocol
 {
@@ -2121,6 +2127,9 @@ void ApplicationLayer::doClientTransmit()
     }
 }
 
+typedef QHash<QByteArray, QMap<const QPacketProtocol *, uint> > PathsOfInterest;
+Q_GLOBAL_STATIC(PathsOfInterest, pathsOfInterest);
+
 void ApplicationLayer::disconnected()
 {
     Q_ASSERT(sender());
@@ -2148,6 +2157,46 @@ void ApplicationLayer::disconnected()
                     ++iter)
                     (*iter)->send(others);
             doClientEmit();
+        }
+
+        QList<QByteArray> paths = pathsOfInterest()->keys();
+
+        for (int i = 0; i < paths.count(); ++i) {
+            const QByteArray interestPath = paths.at(i);
+
+            if (!(*pathsOfInterest())[interestPath].remove(protocol))
+                continue;
+
+            if (!(*pathsOfInterest())[interestPath].isEmpty())
+                continue;
+
+            pathsOfInterest()->remove(interestPath);
+
+            QList<NodeWatch> owners = watchers(interestPath);
+
+            QSet<unsigned long> written;
+            QSet<QValueSpaceObject *> notified;
+
+            for (int ii = 0; ii < owners.count(); ++ii) {
+                const NodeWatch &watch = owners.at(ii);
+
+                if (watch.data1 != (unsigned long)protocol)
+                    continue;
+
+                if (watch.data1 == 0) {
+                    QValueSpaceObject *object = reinterpret_cast<QValueSpaceObject *>(watch.data2);
+                    if (!notified.contains(object)) {
+                        doClientNotify(object, interestPath, false);
+                        notified.insert(object);
+                    }
+                } else {
+                    if (!written.contains(watch.data1)) {
+                        ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << interestPath << false;
+                        written.insert(watch.data1);
+                    }
+                }
+            }
+
         }
     }
 }
@@ -2201,6 +2250,15 @@ void ApplicationLayer::readyRead()
                     QVariant val;
                     pack >> path >> val;
                     doClientWrite(path, val);
+                }
+                break;
+            case APPLAYER_NOTIFY:
+                {
+                    unsigned int owner;
+                    QByteArray path;
+                    bool interested;
+                    pack >> owner >> path >> interested;
+                    doClientNotify(reinterpret_cast<QValueSpaceObject *>(owner), path, interested);
                 }
                 break;
             default:
@@ -2306,6 +2364,14 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
+                case APPLAYER_NOTIFY:
+                    {
+                        QByteArray path;
+                        bool interested;
+                        pack >> path >> interested;
+                        doNotify(path, protocol, interested);
+                    }
+                    break;
                 default:
                     qWarning("ApplicationLayer: Invalid client request %x "
                              "received.", op);
@@ -2869,6 +2935,83 @@ bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
     return true;
 }
 
+void ApplicationLayer::doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested)
+{
+    bool sendNotification = false;
+    if (interested) {
+        if ((++(*pathsOfInterest())[path][protocol]) == 1)
+            sendNotification = true;
+    } else {
+        if ((--(*pathsOfInterest())[path][protocol]) == 0) {
+            (*pathsOfInterest())[path].remove(protocol);
+
+            if ((*pathsOfInterest())[path].isEmpty())
+                pathsOfInterest()->remove(path);
+
+            sendNotification = true;
+        }
+    }
+
+    if (!sendNotification)
+        return;
+
+    QList<NodeWatch> owners = watchers(path);
+
+    QSet<unsigned long> written;
+    QSet<QValueSpaceObject *> notified;
+
+    for (int ii = 0; ii < owners.count(); ++ii) {
+        const NodeWatch &watch = owners.at(ii);
+
+        if (watch.data1 == 0) {
+            QValueSpaceObject *object = reinterpret_cast<QValueSpaceObject *>(watch.data2);
+            if (!notified.contains(object)) {
+                doClientNotify(object, path, interested);
+                notified.insert(object);
+            }
+        } else {
+            if (!written.contains(watch.data1)) {
+                ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << path << interested;
+                written.insert(watch.data1);
+            }
+        }
+    }
+}
+
+void ApplicationLayer::doNotifyObject(unsigned long own, unsigned long protocol)
+{
+    QList<QByteArray> paths = pathsOfInterest()->keys();
+
+    for (int i = 0; i < paths.count(); ++i) {
+        const QByteArray &interestPath = paths.at(i);
+
+        QList<NodeWatch> owners = watchers(interestPath);
+
+        QSet<unsigned long> written;
+        QSet<QValueSpaceObject *> notified;
+
+        for (int ii = 0; ii < owners.count(); ++ii) {
+            const NodeWatch &watch = owners.at(ii);
+
+            if (watch.data1 != protocol || watch.data2 != own)
+                continue;
+
+            if (watch.data1 == 0) {
+                QValueSpaceObject *object = reinterpret_cast<QValueSpaceObject *>(watch.data2);
+                if (!notified.contains(object)) {
+                    doClientNotify(object, interestPath, true);
+                    notified.insert(object);
+                }
+            } else {
+                if (!written.contains(watch.data1)) {
+                    ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << interestPath << true;
+                    written.insert(watch.data1);
+                }
+            }
+        }
+    }
+}
+
 bool ApplicationLayer::setWatch(NodeWatch watch, const QByteArray &path)
 {
     if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
@@ -2897,6 +3040,8 @@ bool ApplicationLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
     bool rv = layer->addWatch(path.constData(), watch);
     updateStats();
     lock->unlock();
+
+    doNotifyObject(watch.data2, watch.data1);
 
     return rv;
 }
@@ -3302,6 +3447,28 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
     }
 }
 
+void ApplicationLayer::doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
+{
+    // Invalid object.
+    if (!watchObjects()->contains(object))
+        return;
+
+    QByteArray emitPath;
+
+    const QByteArray objectPath = object->objectPath().toUtf8();
+    if (path.startsWith(objectPath)) {
+        // path is under objectPath
+        emitPath = path.mid(objectPath.length());
+    } else if (objectPath.startsWith(path)) {
+        // path is a parent of objectPath
+    } else {
+        // path is not for this object.
+        return;
+    }
+
+    emitItemNotify(object, emitPath, interested);
+ }
+
 bool ApplicationLayer::requestSetValue(Handle handle, const QVariant &value)
 {
     if (!valid)
@@ -3382,6 +3549,27 @@ bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPa
     return true;
 }
 
+bool ApplicationLayer::notifyInterest(Handle handle, bool interested)
+{
+    if (!valid)
+        return false;
+    Q_ASSERT(layer);
+
+    ReadHandle *rhandle = rh(handle);
+    if (type == Client) {
+        if (todo.isEmpty())
+            todo << newPackId();
+
+        todo << quint8(APPLAYER_NOTIFY) << rhandle->path << interested;
+
+        triggerTodo();
+    } else {
+        doNotify(rhandle->path, 0, interested);
+    }
+
+    return true;
+}
+
 bool ApplicationLayer::syncRequests()
 {
     return true;
@@ -3393,7 +3581,7 @@ bool ApplicationLayer::setValue(QValueSpaceObject *creator, Handle handle, const
         return false;
 
     NodeOwner owner;
-    owner.data1 = reinterpret_cast<unsigned long>(creator);
+    owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned long>(creator);
 
     const QByteArray parentPath = handles.key(reinterpret_cast<ReadHandle *>(handle));
@@ -3419,7 +3607,7 @@ bool ApplicationLayer::removeValue(QValueSpaceObject *creator, Handle handle, co
         return false;
 
     NodeOwner owner;
-    owner.data1 = reinterpret_cast<unsigned int>(creator);
+    owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned int>(creator);
 
     return remItems(owner, readHandle->path + '/' + path);
@@ -3433,7 +3621,7 @@ bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
         return false;
 
     NodeOwner owner;
-    owner.data1 = reinterpret_cast<unsigned int>(creator);
+    owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned int>(creator);
 
     return remItems(owner, readHandle->path);
@@ -3465,7 +3653,7 @@ void ApplicationLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
         return;
 
     NodeWatch owner;
-    owner.data1 = reinterpret_cast<unsigned long>(creator);
+    owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned long>(creator);
 
     remWatch(owner, readHandle->path);

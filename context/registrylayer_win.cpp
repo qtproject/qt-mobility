@@ -76,6 +76,7 @@ public:
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
+    bool notifyInterest(Handle handle, bool interested);
     bool syncRequests();
 
     /* QValueSpaceObject functions */
@@ -962,6 +963,11 @@ bool RegistryLayer::requestSetValue(Handle, const QByteArray &, const QVariant &
 }
 
 bool RegistryLayer::requestRemoveValue(Handle, const QByteArray &)
+{
+    return false;
+}
+
+bool RegistryLayer::notifyInterest(Handle handle, bool interested)
 {
     return false;
 }

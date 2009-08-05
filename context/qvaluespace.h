@@ -77,6 +77,7 @@ public:
     virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
     virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
     virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0;
+    virtual bool notifyInterest(Handle handle, bool interested) = 0;
     virtual bool syncRequests() = 0;
 
     /* QValueSpaceObject functions */
@@ -91,6 +92,7 @@ protected:
     /* QValueSpaceObject functions */
     void emitItemRemove(QValueSpaceObject *object, const QByteArray &path);
     void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data);
+    void emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
 
 signals:
     void handleChanged(quintptr);

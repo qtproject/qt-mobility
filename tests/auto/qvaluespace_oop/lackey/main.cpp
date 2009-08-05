@@ -48,11 +48,15 @@
 class Controller : public QObject
 {
     Q_OBJECT
+
 public:
-    Controller(int function) 
+    enum Function { IpcTests, IpcSetValue, IpcInterestNotification };
+
+    Controller(Function function)
         : QObject(0), index(0), abortCode(0)
     {
-        if (function == 0) {
+        switch (function) {
+        case IpcTests:
             object = new QValueSpaceObject("/usr/lackey/subdir", QUuid(), this);
             connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
                     this, SLOT(itemSetValue(QByteArray,QVariant)));
@@ -63,7 +67,8 @@ public:
             connect(item, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
-        } else {
+            break;
+        case IpcSetValue:
             item = new QValueSpaceItem("/usr/lackey", this);
             if (item->setValue("changeRequests/value", 501)) {
                 QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
@@ -71,6 +76,13 @@ public:
                 abortCode = ERROR_SETVALUE_NOT_SUPPORTED;
                 QTimer::singleShot(0, this, SLOT(abort()));
             }
+            break;
+        case IpcInterestNotification:
+            qDebug() << "lackey ipc interest notification";
+            object = new QValueSpaceObject("/ipcInterestNotification");
+            connect(object, SIGNAL(itemNotify(QByteArray,bool)),
+                    this, SLOT(itemNotify(QByteArray,bool)));
+            break;
         }
     }
 
@@ -147,6 +159,20 @@ private slots:
 
     }
 
+    void itemNotify(const QByteArray &path, bool interested)
+    {
+        qDebug() << Q_FUNC_INFO << path << interested;
+        if (interested) {
+            if (path == "/value") {
+                qDebug() << "setting attribute" << path << "to" << 5;
+                object->setAttribute(path, 5);
+            }
+        } else {
+            qDebug() << "removing attribute" << path;
+            object->removeAttribute(path);
+        }
+    }
+
 private:
     QValueSpaceObject* object;
     QValueSpaceItem *item;
@@ -161,16 +187,20 @@ int main(int argc, char** argv)
     arguments.takeFirst();
     //QValueSpace::initValuespaceManager();
 
-    bool testSetValue = false;
+    Controller::Function function = Controller::IpcTests;
+
     while (!arguments.isEmpty()) {
         QString arg = arguments.takeFirst();
         if (arg == "-ipcSetValue") {
-            testSetValue = true;
+            function = Controller::IpcSetValue;
+            break;
+        } else if (arg == "-ipcInterestNotification") {
+            function = Controller::IpcInterestNotification;
             break;
         }
     }
 
-    Controller controler(testSetValue);;
+    Controller controler(function);;
     qDebug() << "Starting lackey";
     return app.exec();
 }

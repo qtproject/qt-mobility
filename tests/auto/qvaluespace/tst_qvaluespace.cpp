@@ -66,6 +66,7 @@ Q_SIGNALS:
     void copyChanged();
     void changeValue(const QByteArray&, const QVariant&);
     void itemRemove(const QByteArray&);
+    void itemNotify(const QByteArray&,bool);
 };
 
 
@@ -103,6 +104,9 @@ private slots:
     void removeValue();
     void layerSelection_data();
     void layerSelection();
+    void interestNotification_data();
+    void interestNotification();
+    void ipcInterestNotification();
 };
 
 void tst_QValueSpaceItem::initTestCase()
@@ -1150,6 +1154,198 @@ void tst_QValueSpaceItem::layerSelection()
 
         layer->removeHandle(handle);
     }
+}
+
+enum Type { Copy, CharStar, String, ByteArray };
+Q_DECLARE_METATYPE(Type);
+void tst_QValueSpaceItem::interestNotification_data()
+{
+    qRegisterMetaType<Type>("Type");
+
+    QTest::addColumn<Type>("type");
+    QTest::addColumn<QString>("basePath");
+    QTest::addColumn<QString>("objectPath");
+    QTest::addColumn<QString>("attribute");
+
+    QTest::newRow("QValueSpaceItem(char *)")
+        << CharStar << QString() << "/interestNotification" << "/value";
+    QTest::newRow("QValueSpaceItem(QString)")
+        << String << QString() << "/interestNotification" << "/value";
+    QTest::newRow("QValueSpaceItem(QByteArray)")
+        << ByteArray << QString() << "/interestNotification" << "/value";
+    QTest::newRow("QValueSpaceItem(QValueSpaceItem)")
+        << Copy << QString() << "/interestNotification" << "/value";
+    QTest::newRow("QValueSpaceItem(QValueSpaceItem, char *)")
+        << CharStar << "/interestNotification" << "subpath" << "/value";
+    QTest::newRow("QValueSpaceItem(QValueSpaceItem, QString)")
+        << String << "/interestNotification" << "subpath" << "/value";
+    QTest::newRow("QValueSpaceItem(QValueSpaceItem, QByteArray)")
+        << ByteArray << "/interestNotification" << "subpath" << "/value";
+}
+
+void tst_QValueSpaceItem::interestNotification()
+{
+    if (!root->supportsRequests())
+        QSKIP("Underlying layer does not support requests.", SkipSingle);
+
+    QFETCH(Type, type);
+    QFETCH(QString, basePath);
+    QFETCH(QString, objectPath);
+    QFETCH(QString, attribute);
+
+    QValueSpaceObject *object;
+    if (basePath.isEmpty())
+        object = new QValueSpaceObject(objectPath);
+    else
+        object = new QValueSpaceObject(basePath + '/' + objectPath);
+
+    ChangeListener notificationListener;
+    connect(object, SIGNAL(itemNotify(QByteArray,bool)),
+            &notificationListener, SIGNAL(itemNotify(QByteArray,bool)));
+
+    QSignalSpy notificationSpy(&notificationListener, SIGNAL(itemNotify(QByteArray,bool)));
+
+    const QString itemPath = objectPath + attribute;
+
+    QValueSpaceItem *baseItem = 0;
+    if (type == Copy) {
+        baseItem = new QValueSpaceItem(itemPath);
+
+        QTRY_COMPARE(notificationSpy.count(), 1);
+        notificationSpy.clear();
+    } else if (!basePath.isEmpty()) {
+        baseItem = new QValueSpaceItem(basePath);
+
+        QTest::qWait(100);
+        QCOMPARE(notificationSpy.count(), 0);
+    }
+
+    QValueSpaceItem *item;
+    switch (type) {
+    case Copy:
+        item = new QValueSpaceItem(*baseItem);
+        break;
+    case CharStar:
+        if (baseItem)
+            item = new QValueSpaceItem(*baseItem, itemPath.toUtf8().constData());
+        else
+            item = new QValueSpaceItem(itemPath.toUtf8().constData());
+        break;
+    case String:
+        if (baseItem)
+            item = new QValueSpaceItem(*baseItem, itemPath);
+        else
+            item = new QValueSpaceItem(itemPath);
+        break;
+    case ByteArray:
+        if (baseItem)
+            item = new QValueSpaceItem(*baseItem, itemPath.toUtf8());
+        else
+            item = new QValueSpaceItem(itemPath.toUtf8());
+        break;
+    default:
+        item = 0;
+        QFAIL("Invalid type");
+    }
+
+    if (type == Copy) {
+        // Copies of QValueSpaceItem share the same interest notification.
+        QTest::qWait(100);
+        QCOMPARE(notificationSpy.count(), 0);
+    } else {
+        QTRY_COMPARE(notificationSpy.count(), 1);
+
+        QList<QVariant> arguments = notificationSpy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(), attribute.toUtf8());
+        QCOMPARE(arguments.at(1).type(), QVariant::Bool);
+        QCOMPARE(arguments.at(1).toBool(), true);
+    }
+
+    QCOMPARE(item->value(QString(), 10).toInt(), 10);
+
+    object->setAttribute(attribute, 5);
+    object->sync();
+
+    QCOMPARE(item->value(QString(), 10).toInt(), 5);
+
+    notificationSpy.clear();
+
+    delete item;
+
+    if (type == Copy) {
+        // Copies of QValueSpaceItem share the same interest notification.
+        QTest::qWait(100);
+        QCOMPARE(notificationSpy.count(), 0);
+    } else {
+        QTRY_COMPARE(notificationSpy.count(), 1);
+
+        QList<QVariant> arguments = notificationSpy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(), attribute.toUtf8());
+        QCOMPARE(arguments.at(1).type(), QVariant::Bool);
+        QCOMPARE(arguments.at(1).toBool(), false);
+    }
+
+    if (baseItem) {
+        notificationSpy.clear();
+        delete baseItem;
+
+        if (type == Copy) {
+            QTRY_COMPARE(notificationSpy.count(), 1);
+        } else {
+            QTest::qWait(100);
+            QCOMPARE(notificationSpy.count(), 0);
+        }
+    }
+
+    delete object;
+}
+
+void tst_QValueSpaceItem::ipcInterestNotification()
+{
+#if defined(QT_NO_PROCESS)
+    QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
+#else
+    // Test support.
+    if (!root->supportsRequests())
+        QSKIP("Underlying layer does not support requests.", SkipSingle);
+
+    // Test QValueSpaceItem construction before QValueSpaceObject.
+
+    QValueSpaceItem *item = new QValueSpaceItem("/ipcInterestNotification/value");
+
+    ChangeListener listener;
+    QObject::connect(item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
+    QSignalSpy changeSpy(&listener, SIGNAL(baseChanged()));
+
+    // Lackey is not running, so value will not exist.
+    QCOMPARE(item->value(QString(), 10).toInt(), 10);
+
+    QProcess process;
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    process.start("vsiTestLackey", QStringList() << "-ipcInterestNotification");
+    QVERIFY(process.waitForStarted());
+
+    // Lackey will receive itemNotify from server and  set the attribute.
+    QTRY_COMPARE(changeSpy.count(), 1);
+    changeSpy.clear();
+
+    QCOMPARE(item->value(QString(), 10).toInt(), 5);
+
+    // Lackey will receive itemNotify and remove attribute.
+    delete item;
+
+
+    // Test QValueSpaceItem construction after QValueSpaceObject
+
+    item = new QValueSpaceItem("/ipcInterestNotification/value");
+    QObject::connect(item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
+
+    QTRY_COMPARE(changeSpy.count(), 1);
+
+    QCOMPARE(item->value(QString(), 10).toInt(), 5);
+#endif
 }
 
 QTEST_MAIN(tst_QValueSpaceItem)

@@ -59,6 +59,11 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
    emit object->itemSetValue(path, data);
 }
 
+void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
+{
+    emit object->itemNotify(path, interested);
+}
+
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -249,6 +254,18 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
 */
 
 /*!
+    \fn bool QAbstractValueSpaceLayer::notifyInterest(Handle handle, bool interested)
+
+    Registers or unregisters that the caller is interested in \a handle and any subpaths under it.
+    If \a interested is true interest in \a handle is registered; otherwise it is unregistered.
+
+    The caller should ensure that all calls to this function with \a interested set to true have a
+    matching call with \a interested set to false.
+
+    Returns true if the notification was successfully sent; otherwise returns false.
+*/
+
+/*!
     \fn bool QAbstractValueSpaceLayer::syncRequests()
 
     Commit any pending request made through call to requestSetValue() and requestRemoveValue().
@@ -316,6 +333,12 @@ void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const
     \fn void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
 
     Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
+*/
+
+/*!
+    \fn void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
+
+    Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.
 */
 
 /*!
@@ -501,14 +524,19 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
             QAbstractValueSpaceLayer::Handle handle = read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
             if(QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
+
+                if (read->supportsRequests())
+                    read->notifyInterest(handle, true);
             }
         }
     }
 
     ~QValueSpaceItemPrivateData()
     {
-        for(int ii = 0; ii < readers.count(); ++ii)
+        for(int ii = 0; ii < readers.count(); ++ii) {
+            readers[ii].first->notifyInterest(readers[ii].second, false);
             readers[ii].first->removeHandle(readers[ii].second);
+        }
 
         if(connections)
             delete connections;
