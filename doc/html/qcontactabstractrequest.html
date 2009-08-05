@@ -109,10 +109,10 @@
 <p>Returns true if the request is finished or cancelled; otherwise, returns false.</p>
 <p>See also <a href="qcontactabstractrequest.html#status">status</a>().</p>
 <h3 class="fn"><a name="manager"></a><a href="qcontactmanager.html">QContactManager</a> * QContactAbstractRequest::manager () const</h3>
-<p>Returns a pointer to the manager which this request performs operations on</p>
+<p>Returns a pointer to the manager of which this request instance requests operations</p>
 <p>See also <a href="qcontactabstractrequest.html#setManager">setManager</a>().</p>
 <h3 class="fn"><a name="setManager"></a>void QContactAbstractRequest::setManager ( <a href="qcontactmanager.html">QContactManager</a> * <i>manager</i> )</h3>
-<p>Sets the manager which this request performs operations on to <i>manager</i></p>
+<p>Sets the manager of which this request instance requests operations to <i>manager</i></p>
 <p>See also <a href="qcontactabstractrequest.html#manager">manager</a>().</p>
 <h3 class="fn"><a name="start"></a>bool QContactAbstractRequest::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to start the request. Returns false if the request is not in the <tt>QContactAbstractRequest::Inactive</tt>, <tt>QContactAbstractRequest::Finished</tt> or <tt>QContactAbstractRequest::Cancelled</tt> states, or if the request was unable to be performed by the manager engine; otherwise returns true.</p>
@@ -124,7 +124,7 @@
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
 <h3 class="fn"><a name="waitForProgress"></a>bool QContactAbstractRequest::waitForProgress ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Blocks until the manager engine signals that more partial results are available for the request, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
+<p>Blocks until the manager engine signals that more partial results are available for the request, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
