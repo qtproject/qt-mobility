@@ -63,7 +63,7 @@ protected:
     virtual QStringList listValues() const = 0;
 
     void initLayout(QLayout *addItemLayout);
-    void refreshView(const QModelIndex &index = QModelIndex());
+    void refreshView();
     void setAddButtonEnabled(bool enabled);
 
 private slots:
@@ -115,16 +115,13 @@ void EditableListWidgetGroup::initLayout(QLayout *addItemLayout)
     setLayout(m_grid);
 }
 
-void EditableListWidgetGroup::refreshView(const QModelIndex &currentIndex)
+void EditableListWidgetGroup::refreshView()
 {
     QStringList values = listValues();
-    if (values.isEmpty()) {
+    if (values.isEmpty())
         m_model->setStringList(QStringList(defaultValue()));
-    } else {
+    else
         m_model->setStringList(values);
-        if (currentIndex.isValid())
-            m_listView->setCurrentIndex(currentIndex);
-    }
 }
 
 void EditableListWidgetGroup::setAddButtonEnabled(bool enabled)
@@ -135,7 +132,8 @@ void EditableListWidgetGroup::setAddButtonEnabled(bool enabled)
 void EditableListWidgetGroup::clickedAdd()
 {
     if (addItem()) {
-        refreshView(m_model->index(m_model->rowCount()-1));
+        refreshView();
+        m_listView->setCurrentIndex(m_model->index(m_model->rowCount() - 1));
         emit dataChanged();
     }
 }
@@ -144,7 +142,8 @@ void EditableListWidgetGroup::clickedRemove()
 {
     QModelIndex index = m_listView->currentIndex();
     if (index.isValid() && removeItemAt(index.row())) {
-        refreshView(index.row() == 0 ? m_model->index(0) : m_model->index(index.row()-1));
+        refreshView();
+        m_listView->setCurrentIndex(m_model->index(index.row() == 0 ? 0 : index.row()-1));
         emit dataChanged();
     }
 }
