@@ -38,7 +38,6 @@
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
-#include "qvideoframe.h"
 #include "qcamera.h"
 
 class QCameraControl : public QAbstractMediaControl
