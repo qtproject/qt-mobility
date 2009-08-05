@@ -36,24 +36,53 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactActionFilter
+ * \brief The QContactActionFilter class provides a filter based around an action availability criterion
+ *
+ * It may be used to select contacts for which a particular action is available, or contacts which contain
+ * a detail of a particular value for which the action is available.
+ */
+
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactActionFilter);
 
+/*!
+ * \fn QContactActionFilter::QContactActionFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new action filter
+ */
+
+/*!
+ * Constructs a new action filter
+ */
 QContactActionFilter::QContactActionFilter()
     : QContactFilter(new QContactActionFilterPrivate)
 {
 }
 
+/*!
+ * Sets the name of the action whose availability is required to \a action
+ * \sa actionName()
+ */
 void QContactActionFilter::setActionName(const QString& action)
 {
     Q_D(QContactActionFilter);
     d->m_action = action;
 }
+
+/*!
+ * Sets the value criterion of the detail for which the action must be available to \a value
+ * \sa value()
+ */
 void QContactActionFilter::setValue(const QVariant& value)
 {
     Q_D(QContactActionFilter);
     d->m_value = value;
 }
 
+/*!
+ * Sets the vendor criterion of the action whose availability is required to the given \a vendorName and \a version
+ * \sa vendorName(), vendorVersion()
+ */
 void QContactActionFilter::setVendor(const QString& vendorName, int version)
 {
     Q_D(QContactActionFilter);
@@ -66,24 +95,40 @@ void QContactActionFilter::setVendor(const QString& vendorName, int version)
     d->m_vendorVersion = -1;
 }
 
+/*!
+ * Returns the action name criterion of the filter
+ * \sa setActionName()
+ */
 QString QContactActionFilter::actionName() const
 {
     Q_D(const QContactActionFilter);
     return d->m_action;
 }
 
+/*!
+ * Returns the value criterion of the filter
+ * \sa setValue()
+ */
 QVariant QContactActionFilter::value() const
 {
     Q_D(const QContactActionFilter);
     return d->m_value;
 }
 
+/*!
+ * Returns the vendor name criterion of the filter
+ * \sa setVendor()
+ */
 QString QContactActionFilter::vendorName() const
 {
     Q_D(const QContactActionFilter);
     return d->m_vendorName;
 }
 
+/*!
+ * Returns the vendor version criterion of the filter
+ * \sa setVendor()
+ */
 int QContactActionFilter::vendorVersion() const
 {
     Q_D(const QContactActionFilter);

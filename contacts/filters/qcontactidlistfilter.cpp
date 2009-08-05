@@ -36,19 +36,42 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactIdListFilter
+ * \brief The QContactIdListFilter class provides a filter based around a list of contact ids
+ *
+ * It may be used to select contacts whose ids are contained in the given list of ids
+ */
+
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIdListFilter);
 
+/*!
+ * \fn QContactIdListFilter::QContactIdListFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new contact id list filter
+ */
+
+/*!
+ * Constructs a new contact id list filter
+ */
 QContactIdListFilter::QContactIdListFilter()
     : QContactFilter(new QContactIdListFilterPrivate)
 {
 }
 
+/*!
+ * Sets the list which contains the ids of possible matching contacts to \a ids
+ * \sa ids()
+ */
 void QContactIdListFilter::setIds(const QList<QUniqueId>& ids)
 {
     Q_D(QContactIdListFilter);
     d->m_ids = ids;
 }
 
+/*!
+ * Returns the list of ids of contacts which match this filter
+ * \sa setIds()
+ */
 QList<QUniqueId> QContactIdListFilter::ids() const
 {
     Q_D(const QContactIdListFilter);

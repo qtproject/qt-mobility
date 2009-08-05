@@ -39,22 +39,53 @@
 
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactFilter
+ * \brief The QContactFilter class is used to select contacts made available through a QContactManager
+ *
+ * This class is used as a parameter to various functions offered by QContactManager, to allow
+ * selection of contacts which have certain details or properties.
+ */
+
+/*!
+ * \enum QContactFilter::FilterType
+ * Describes the type of the filter
+ * \value Invalid An invalid filter which matches nothing
+ * \value ContactDetail A filter which matches contacts containing one or more details of a particular definition with a particular value
+ * \value ContactDetailRange A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
+ * \value ChangeLog A filter which matches contacts whose timestamps have been updated since some particular date and time
+ * \value Action A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+ * \value GroupMembership A filter which matches contacts which are members of a particular group
+ * \value Intersection A filter which matches all contacts that are matched by all filters it includes
+ * \value Union A filter which matches any contact that is matched by any of the filters it includes
+ * \value IdList A filter which matches any contact whose id is contained in a particular list of contact ids
+ * \value Default A filter which matches everything
+ */
+
+/*!
+ * \fn QContactFilter::operator!=(const QContactFilter& other) const
+ * Returns true if this filter is not identical to the \a other filter.
+ * \sa operator==()
+ */
+
 template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
 {
     return d->clone();
 }
 
-//Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(QContactFilter)
+/*! Constructs an empty filter */
 QContactFilter::QContactFilter()
     : d_ptr(0)
 {
 }
 
+/*! Constructs a new copy of \a other */
 QContactFilter::QContactFilter(const QContactFilter& other)
     : d_ptr(other.d_ptr)
 {
 }
 
+/*! Assigns this filter to be \a other */
 QContactFilter& QContactFilter::operator=(const QContactFilter& other)
 {
     if (this != &other) {
@@ -63,10 +94,12 @@ QContactFilter& QContactFilter::operator=(const QContactFilter& other)
     return *this;
 }
 
+/*! Cleans up the memory used by this filter */
 QContactFilter::~QContactFilter()
 {
 }
 
+/*! Returns the type of the filter */
 QContactFilter::FilterType QContactFilter::type() const
 {
     if (!d_ptr)
@@ -74,6 +107,7 @@ QContactFilter::FilterType QContactFilter::type() const
     return d_ptr->type();
 }
 
+/*! Returns true if the filter has the same type and criteria as \a other */
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
     /* A default filter is only equal to other default filters */
@@ -88,12 +122,14 @@ bool QContactFilter::operator==(const QContactFilter& other) const
     return d_ptr->compare(other.d_ptr);
 }
 
+/*! Constructs a new filter from the given data pointer \a d */
 QContactFilter::QContactFilter(QContactFilterPrivate *d)
     : d_ptr(d)
 {
 
 }
 
+/*! Intersects the \a left and \a right filters */
 const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
 {
     // XXX TODO: empty intersection/union operations are not well defined yet.
@@ -117,6 +153,7 @@ const QContactFilter operator&&(const QContactFilter& left, const QContactFilter
     return nif;
 }
 
+/*! Unions the \a left and \a right filters */
 const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
 {
     if (left.type() == QContactFilter::Union) {

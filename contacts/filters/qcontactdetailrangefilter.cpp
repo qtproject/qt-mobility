@@ -36,13 +36,41 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactDetailRangeFilter
+ * \brief The QContactDetailRageFilter class provides a filter based around a detail value range criterion
+ *
+ * It may be used to select contacts which contain a detail of a particular definition with a particular value
+ */
+
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter);
 
+/*!
+ * \fn QContactDetailRangeFilter::QContactDetailRangeFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new detail range filter
+ */
+
+/*!
+ * \enum QContactDetailRangeFilter::RangeFlag
+ * Enumerates the semantics of the boundary conditions of the detail range filter
+ * \value IncludeLower
+ * \value IncludeUpper
+ * \value ExcludeLower
+ * \value ExcludeUpper
+ */
+
+/*!
+ * Constructs a new detail range filter
+ */
 QContactDetailRangeFilter::QContactDetailRangeFilter()
     : QContactFilter(new QContactDetailRangeFilterPrivate)
 {
 }
 
+/*!
+ * Sets the value range criterion of the filter to within \a min and \a max, with boundary conditions specified in the given \a flags
+ * \sa minValue(), maxValue()
+ */
 void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& max, RangeFlags flags)
 {
     Q_D(QContactDetailRangeFilter);
@@ -51,12 +79,21 @@ void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& ma
     d->m_rangeflags = flags;
 }
 
+/*!
+ * Sets the match flags of the filter criterion to \a flags
+ * \sa matchFlags()
+ */
 void QContactDetailRangeFilter::setMatchFlags(Qt::MatchFlags flags)
 {
     Q_D(QContactDetailRangeFilter);
     d->m_flags = flags;
 }
 
+/*!
+ * Sets the name of the detail definition of which type details will be inspected for matching values to \a definitionName,
+ * and the name of the field which will be inspected in details of that definition to \a fieldName.
+ * \sa detailDefinitionName(), detailFieldName()
+ */
 void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
     Q_D(QContactDetailRangeFilter);
@@ -64,36 +101,60 @@ void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitio
     d->m_fieldId = fieldName;
 }
 
+/*!
+ * Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.
+ * \sa setMatchFlags()
+ */
 Qt::MatchFlags QContactDetailRangeFilter::matchFlags() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_flags;
 }
 
+/*!
+ * Returns the definition name of the details which will be inspected for matching values
+ * \sa setDetailDefinitionName()
+ */
 QString QContactDetailRangeFilter::detailDefinitionName() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_defId;
 }
 
+/*!
+ * Returns the name of the field which contains the value which will be matched against the value criterion
+ * \sa setDetailDefinitionName()
+ */
 QString QContactDetailRangeFilter::detailFieldName() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_fieldId;
 }
 
+/*!
+ * Returns the lower bound of the value range criterion
+ * \sa setRange()
+ */
 QVariant QContactDetailRangeFilter::minValue() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_minValue;
 }
 
+/*!
+ * Returns the upper bound of the value range criterion
+ * \sa setRange()
+ */
 QVariant QContactDetailRangeFilter::maxValue() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_maxValue;
 }
 
+/*!
+ * Returns a set of flags which defines the boundary condition semantics of the value range criterion
+ * \sa setRange()
+ */
 QContactDetailRangeFilter::RangeFlags QContactDetailRangeFilter::rangeFlags() const
 {
     Q_D(const QContactDetailRangeFilter);

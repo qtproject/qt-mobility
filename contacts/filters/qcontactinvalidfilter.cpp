@@ -34,6 +34,13 @@
 #include "qcontactinvalidfilter.h"
 #include "qcontactfilter_p.h"
 
+/*!
+ * \class QContactInvalidFilter
+ * \brief A QContactInvalidFilter matches no contacts
+ *
+ * This class provides a filter which will never match any contacts
+ */
+
 class QContactInvalidFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -61,13 +68,20 @@ public:
     QList<QContactFilter> m_filters;
 };
 
+/*!
+ * Constructs a new invalid filter
+ */
 QContactInvalidFilter::QContactInvalidFilter()
     : QContactFilter(new QContactInvalidFilterPrivate)
 {
 }
 
-// Initializing a QCIF from anything is the same as just constructing a QCIF
-QContactInvalidFilter::QContactInvalidFilter(const QContactFilter&)
+/*!
+ * Constructs a new invalid filter, ignoring the \a other filter
+ */
+QContactInvalidFilter::QContactInvalidFilter(const QContactFilter& other)
     : QContactFilter(new QContactInvalidFilterPrivate)
 {
+    // Initializing a QCIF from anything is the same as just constructing a QCIF
+    Q_UNUSED(other);
 }

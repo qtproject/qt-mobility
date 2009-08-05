@@ -36,19 +36,42 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactGroupMembershipFilter
+ * \brief The QContactGroupMembershipFilter class provides a filter based around a group membership criterion
+ *
+ * It may be used to select contacts which are members of a particular group
+ */
+
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);
 
+/*!
+ * \fn QContactGroupMembershipFilter::QContactGroupMembershipFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new group membership filter
+ */
+
+/*!
+ * Constructs a new group membership filter
+ */
 QContactGroupMembershipFilter::QContactGroupMembershipFilter()
     : QContactFilter(new QContactGroupMembershipFilterPrivate)
 {
 }
 
+/*!
+ * Sets the id of the group to which a contact must belong in order to match this filter to \a id
+ * \sa groupId()
+ */
 void QContactGroupMembershipFilter::setGroupId(const QUniqueId& id)
 {
     Q_D(QContactGroupMembershipFilter);
     d->m_id = id;
 }
 
+/*!
+ * Returns the id of the group to which a contact must belong in order to match this filter
+ * \sa setGroupId()
+ */
 QUniqueId QContactGroupMembershipFilter::groupId() const
 {
     Q_D(const QContactGroupMembershipFilter);

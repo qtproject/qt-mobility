@@ -36,31 +36,70 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+/*!
+ * \class QContactChangeLogFilter
+ * \brief The QContactChangeLogFilter class provides a filter based around a contact timestamp criterion
+ *
+ * It may be used to select contacts which have been updated or created within a certain period of time.
+ */
+
+/*!
+ * \enum QContactChangeLogFilter::ChangeType
+ * Enumerates the type of changes which a changelog filter can match against
+ * \value Added
+ * \value Changed
+ * \value Removed
+ */
+
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
 
+/*!
+ * \fn QContactChangeLogFilter::QContactChangeLogFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new changelog filter
+ */
+
+/*!
+ * Constructs a new changelog filter which matches changes of the specified \a type
+ */
 QContactChangeLogFilter::QContactChangeLogFilter(ChangeType type)
     : QContactFilter(new QContactChangeLogFilterPrivate(type))
 {
 }
 
+/*!
+ * Sets the type of change that this filter will match against to \a type
+ * \sa changeType()
+ */
 void QContactChangeLogFilter::setChangeType(ChangeType type)
 {
     Q_D(QContactChangeLogFilter);
     d->m_changeType = type;
 }
 
+/*!
+ * Sets the date and time lower-bound criterion of the filter to \a since
+ * \sa since()
+ */
 void QContactChangeLogFilter::setSince(const QDateTime& since)
 {
     Q_D(QContactChangeLogFilter);
     d->m_since = since;
 }
 
+/*!
+ * Returns the date and time lower-bound criterion of the filter
+ * \sa setSince()
+ */
 QDateTime QContactChangeLogFilter::since() const
 {
     Q_D(const QContactChangeLogFilter);
     return d->m_since;
 }
 
+/*!
+ * Returns the type of change that this filter will match against
+ * \sa setChangeType()
+ */
 QContactChangeLogFilter::ChangeType QContactChangeLogFilter::changeType() const
 {
     Q_D(const QContactChangeLogFilter);
