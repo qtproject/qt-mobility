@@ -51,58 +51,25 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
 
-#ifdef VIDEOSERVICES
-    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats() = 0;
-    virtual QList<QSize> supportedResolutions(QVideoFrame::PixelFormat fmt) = 0;
-
-    virtual QVideoFrame::PixelFormat pixelFormat() const = 0;
-    virtual void setPixelFormat(QVideoFrame::PixelFormat fmt) = 0;
-
-    virtual int framerate() const = 0;
-    virtual void setFrameRate(int rate) = 0;
-
-    virtual int brightness() const = 0;
-    virtual void setBrightness(int b) = 0;
-
-    virtual int contrast() const = 0;
-    virtual void setContrast(int c) = 0;
-
-    virtual int saturation() const = 0;
-    virtual void setSaturation(int s) = 0;
-
-    virtual int hue() const = 0;
-    virtual void setHue(int h) = 0;
-
-    virtual int sharpness() const = 0;
-    virtual void setSharpness(int s) = 0;
-
-    virtual int zoom() const = 0;
-    virtual void setZoom(int z) = 0;
-
-    virtual bool backlightCompensation() const = 0;
-    virtual void setBacklightCompensation(bool) = 0;
-
-    virtual int whitelevel() const = 0;
-    virtual void setWhitelevel(int w) = 0;
-
-    virtual int rotation() const = 0;
-    virtual void setRotation(int r) = 0;
-
-    virtual bool flash() const = 0;
-    virtual void setFlash(bool f) = 0;
-
-    virtual bool autofocus() const = 0;
-    virtual void setAutofocus(bool f) = 0;
-
-    virtual void setDevice(const QByteArray &device) = 0;
-
-    virtual QCamera::State state() const = 0;
-#endif
-    virtual bool isValid() const = 0;
 Q_SIGNALS:
 #ifdef VIDEOSERVICES
     void stateChanged(QCamera::State);
 #endif
+
+public Q_SLOTS:
+    virtual void lockExposure();
+    virtual void unlockExposure();
+
+    virtual void lockFocus();
+    virtual void unlockFocus();
+
+Q_SIGNALS:
+    void flashReady(bool);
+    void focusStatusChanged(int);
+    void zoomValueChanged(double);
+    void exposureLocked();
+    void focusLocked();
+
 protected:
     QCameraControl(QObject* parent);
 };

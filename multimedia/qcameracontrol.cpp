@@ -44,3 +44,21 @@ QCameraControl::QCameraControl(QObject *parent):
 {
 }
 
+
+void QCameraControl::lockExposure()
+{
+    emit exposureLocked();
+}
+
+void QCameraControl::unlockExposure()
+{
+}
+
+void QCameraControl::lockFocus()
+{
+    emit focusLocked();
+}
+
+void QCameraControl::unlockFocus()
+{
+}
