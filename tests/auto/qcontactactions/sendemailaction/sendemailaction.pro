@@ -5,7 +5,7 @@
 ######################################################################
 
 TEMPLATE = lib
-CONFIG += plugin testcase
+CONFIG += plugin
 TARGET = $$qtLibraryTarget(contacts_sendemailactionfactory)
 
 PLUGIN_SUBDIR=dummyplugin/plugins
