@@ -641,6 +641,27 @@
         <keyword ref="qcontactsaverequest.html#setContacts">setContacts</keyword>
         <section ref="qcontactsaverequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactsortorder.html" title="QContactSortOrder Class Reference">
+        <keyword ref="qcontactsortorder.html">QContactSortOrder</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">QContactSortOrder::BlanksLast</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">QContactSortOrder::BlanksFirst</keyword>
+        <keyword ref="qcontactsortorder.html#blankPolicy">blankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#caseSensitivity">caseSensitivity</keyword>
+        <keyword ref="qcontactsortorder.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactsortorder.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactsortorder.html#direction">direction</keyword>
+        <keyword ref="qcontactsortorder.html#isValid">isValid</keyword>
+        <keyword ref="qcontactsortorder.html#setBlankPolicy">setBlankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#setCaseSensitivity">setCaseSensitivity</keyword>
+        <keyword ref="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactsortorder.html#setDirection">setDirection</keyword>
+        <keyword ref="qcontactsortorder.html#operator-QList-ltQContactSortOrder-gt">operator QList&lt;QContactSortOrder&gt;</keyword>
+        <keyword ref="qcontactsortorder.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactsortorder.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactsortorder.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactsortorder-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactsynctarget.html" title="QContactSyncTarget Class Reference">
         <keyword ref="qcontactsynctarget.html">QContactSyncTarget</keyword>
         <keyword ref="qcontactsynctarget.html#setSyncTarget">setSyncTarget</keyword>
