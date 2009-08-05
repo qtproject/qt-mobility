@@ -141,13 +141,13 @@ QContactAbstractRequest::Status QContactAbstractRequest::status() const
     return d_ptr->m_status;
 }
 
-/*! Returns a pointer to the manager which this request performs operations on */
+/*! Returns a pointer to the manager of which this request instance requests operations */
 QContactManager* QContactAbstractRequest::manager() const
 {
     return d_ptr->m_manager;
 }
 
-/*! Sets the manager which this request performs operations on to \a manager */
+/*! Sets the manager of which this request instance requests operations to \a manager */
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
     d_ptr->m_manager = manager;
@@ -192,7 +192,7 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 
 /*! Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
     If \a msecs is zero, this function will block indefinitely.
-    Returns true if the request was cancelled or completed successfully within the given period, otherwise false. */
+    Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
