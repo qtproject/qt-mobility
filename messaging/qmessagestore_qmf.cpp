@@ -38,46 +38,6 @@
 #include <QCoreApplication>
 #include <QEvent>
 
-namespace {
-
-// We need to be initialized as soon as the QApplication is created
-class Initializer : public QObject
-{
-    Q_OBJECT
-
-    class InitializationEvent : public QEvent
-    {
-    public:
-        static QEvent::Type type;
-
-        InitializationEvent() : QEvent(type) {}
-    };
-
-public:
-    Initializer() 
-        : QObject()
-    {
-        QCoreApplication::postEvent(this, new InitializationEvent);
-    }
-
-    bool event(QEvent *e)
-    {
-        if (e->type() == InitializationEvent::type) {
-            // Instantiate the message store automatically to make initialization occur early
-            QMessageStore::instance();
-            return true;
-        }
-
-        return false;
-    }
-};
-
-QEvent::Type Initializer::InitializationEvent::type = static_cast<QEvent::Type>(QEvent::registerEventType());
-
-Initializer init;
-
-}
-
 using namespace QmfHelpers;
 
 class QMessageStorePrivate
