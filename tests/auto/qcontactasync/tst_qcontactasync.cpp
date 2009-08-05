@@ -159,9 +159,9 @@ void tst_QContactAsync::contactFetch()
     QContactFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetch);
 
-    // initial state
-    QVERIFY(!cfr.isActive());   // not started
-    QVERIFY(!cfr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());
     QVERIFY(!cfr.cancel());
     QVERIFY(!cfr.waitForFinished());
@@ -171,6 +171,11 @@ void tst_QContactAsync::contactFetch()
     QContactFilter fil;
     cfr.setManager(cm);
     QCOMPARE(cfr.manager(), cm);
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+    QVERIFY(!cfr.waitForProgress());
     qRegisterMetaType<QContactFetchRequest*>("QContactFetchRequest*");
     QSignalSpy spy(&cfr, SIGNAL(progress(QContactFetchRequest*, bool)));
     cfr.setFilter(fil);
@@ -327,9 +332,9 @@ void tst_QContactAsync::contactIdFetch()
     QContactIdFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetch);
 
-    // initial state
-    QVERIFY(!cfr.isActive());   // not started
-    QVERIFY(!cfr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());
     QVERIFY(!cfr.cancel());
     QVERIFY(!cfr.waitForFinished());
@@ -339,6 +344,11 @@ void tst_QContactAsync::contactIdFetch()
     QContactFilter fil;
     cfr.setManager(cm);
     QCOMPARE(cfr.manager(), cm);
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+    QVERIFY(!cfr.waitForProgress());
     qRegisterMetaType<QContactIdFetchRequest*>("QContactIdFetchRequest*");
     QSignalSpy spy(&cfr, SIGNAL(progress(QContactIdFetchRequest*, bool)));
     cfr.setFilter(fil);
@@ -452,9 +462,9 @@ void tst_QContactAsync::contactRemove()
     QContactRemoveRequest crr;
     QVERIFY(crr.type() == QContactAbstractRequest::ContactRemove);
 
-    // initial state
-    QVERIFY(!crr.isActive());   // not started
-    QVERIFY(!crr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!crr.isActive());
+    QVERIFY(!crr.isFinished());
     QVERIFY(!crr.start());
     QVERIFY(!crr.cancel());
     QVERIFY(!crr.waitForFinished());
@@ -467,6 +477,11 @@ void tst_QContactAsync::contactRemove()
     crr.setFilter(dfil);
     crr.setManager(cm);
     QCOMPARE(crr.manager(), cm);
+    QVERIFY(!crr.isActive());
+    QVERIFY(!crr.isFinished());
+    QVERIFY(!crr.cancel());
+    QVERIFY(!crr.waitForFinished());
+    QVERIFY(!crr.waitForProgress());
     qRegisterMetaType<QContactRemoveRequest*>("QContactRemoveRequest*");
     QSignalSpy spy(&crr, SIGNAL(progress(QContactRemoveRequest*)));
     QVERIFY(crr.filter() == dfil);
@@ -558,9 +573,9 @@ void tst_QContactAsync::contactSave()
     QContactSaveRequest csr;
     QVERIFY(csr.type() == QContactAbstractRequest::ContactSave);
 
-    // initial state
-    QVERIFY(!csr.isActive());   // not started
-    QVERIFY(!csr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
     QVERIFY(!csr.start());
     QVERIFY(!csr.cancel());
     QVERIFY(!csr.waitForFinished());
@@ -574,6 +589,11 @@ void tst_QContactAsync::contactSave()
     saveList << testContact;
     csr.setManager(cm);
     QCOMPARE(csr.manager(), cm);
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+    QVERIFY(!csr.waitForProgress());
     qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
     QSignalSpy spy(&csr, SIGNAL(progress(QContactSaveRequest*)));
     csr.setContacts(saveList);
@@ -694,9 +714,9 @@ void tst_QContactAsync::groupFetch()
     QContactGroupFetchRequest gfr;
     QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetch);
 
-    // initial state
-    QVERIFY(!gfr.isActive());   // not started
-    QVERIFY(!gfr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!gfr.isActive());
+    QVERIFY(!gfr.isFinished());
     QVERIFY(!gfr.start());
     QVERIFY(!gfr.cancel());
     QVERIFY(!gfr.waitForFinished());
@@ -705,6 +725,11 @@ void tst_QContactAsync::groupFetch()
     // "all groups" retrieval
     gfr.setManager(cm);
     QCOMPARE(gfr.manager(), cm);
+    QVERIFY(!gfr.isActive());
+    QVERIFY(!gfr.isFinished());
+    QVERIFY(!gfr.cancel());
+    QVERIFY(!gfr.waitForFinished());
+    QVERIFY(!gfr.waitForProgress());
     qRegisterMetaType<QContactGroupFetchRequest*>("QContactGroupFetchRequest*");
     QSignalSpy spy(&gfr, SIGNAL(progress(QContactGroupFetchRequest*, bool)));
     gfr.setIds(QList<QUniqueId>());
@@ -732,8 +757,6 @@ void tst_QContactAsync::groupFetch()
     // specific group retrieval
     groupIds.clear();
     groupIds.append(cm->groups().first());
-    gfr.setManager(cm);
-    QCOMPARE(gfr.manager(), cm);
     gfr.setIds(groupIds);
     QCOMPARE(gfr.ids(), groupIds);
     QVERIFY(!gfr.cancel()); // not started
@@ -799,9 +822,9 @@ void tst_QContactAsync::groupRemove()
     QContactGroupRemoveRequest grr;
     QVERIFY(grr.type() == QContactAbstractRequest::GroupRemove);
 
-    // initial state
-    QVERIFY(!grr.isActive());   // not started
-    QVERIFY(!grr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!grr.isActive());
+    QVERIFY(!grr.isFinished());
     QVERIFY(!grr.start());
     QVERIFY(!grr.cancel());
     QVERIFY(!grr.waitForFinished());
@@ -814,6 +837,11 @@ void tst_QContactAsync::groupRemove()
     grr.setIds(removeIds);
     grr.setManager(cm);
     QCOMPARE(grr.manager(), cm);
+    QVERIFY(!grr.isActive());
+    QVERIFY(!grr.isFinished());
+    QVERIFY(!grr.cancel());
+    QVERIFY(!grr.waitForFinished());
+    QVERIFY(!grr.waitForProgress());
     qRegisterMetaType<QContactGroupRemoveRequest*>("QContactGroupRemoveRequest*");
     QSignalSpy spy(&grr, SIGNAL(progress(QContactGroupRemoveRequest*)));
     QVERIFY(grr.ids() == removeIds);
@@ -939,9 +967,9 @@ void tst_QContactAsync::groupSave()
     QContactGroupSaveRequest gsr;
     QVERIFY(gsr.type() == QContactAbstractRequest::GroupSave);
 
-    // initial state
-    QVERIFY(!gsr.isActive());   // not started
-    QVERIFY(!gsr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!gsr.isActive());
+    QVERIFY(!gsr.isFinished());
     QVERIFY(!gsr.start());
     QVERIFY(!gsr.cancel());
     QVERIFY(!gsr.waitForFinished());
@@ -956,6 +984,11 @@ void tst_QContactAsync::groupSave()
     saveList << testGroup;
     gsr.setManager(cm);
     QCOMPARE(gsr.manager(), cm);
+    QVERIFY(!gsr.isActive());
+    QVERIFY(!gsr.isFinished());
+    QVERIFY(!gsr.cancel());
+    QVERIFY(!gsr.waitForFinished());
+    QVERIFY(!gsr.waitForProgress());
     qRegisterMetaType<QContactGroupSaveRequest*>("QContactGroupSaveRequest*");
     QSignalSpy spy(&gsr, SIGNAL(progress(QContactGroupSaveRequest*)));
     gsr.setGroups(saveList);
@@ -1071,9 +1104,9 @@ void tst_QContactAsync::definitionFetch()
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetch);
 
-    // initial state
-    QVERIFY(!dfr.isActive());   // not started
-    QVERIFY(!dfr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!dfr.isActive());
+    QVERIFY(!dfr.isFinished());
     QVERIFY(!dfr.start());
     QVERIFY(!dfr.cancel());
     QVERIFY(!dfr.waitForFinished());
@@ -1082,6 +1115,11 @@ void tst_QContactAsync::definitionFetch()
     // "all definitions" retrieval
     dfr.setManager(cm);
     QCOMPARE(dfr.manager(), cm);
+    QVERIFY(!dfr.isActive());
+    QVERIFY(!dfr.isFinished());
+    QVERIFY(!dfr.cancel());
+    QVERIFY(!dfr.waitForFinished());
+    QVERIFY(!dfr.waitForProgress());
     qRegisterMetaType<QContactDetailDefinitionFetchRequest*>("QContactDetailDefinitionFetchRequest*");
     QSignalSpy spy(&dfr, SIGNAL(progress(QContactDetailDefinitionFetchRequest*, bool)));
     dfr.setNames(QStringList());
@@ -1168,9 +1206,9 @@ void tst_QContactAsync::definitionRemove()
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemove);
 
-    // initial state
-    QVERIFY(!drr.isActive());   // not started
-    QVERIFY(!drr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!drr.isActive());
+    QVERIFY(!drr.isFinished());
     QVERIFY(!drr.start());
     QVERIFY(!drr.cancel());
     QVERIFY(!drr.waitForFinished());
@@ -1183,6 +1221,11 @@ void tst_QContactAsync::definitionRemove()
     drr.setNames(removeIds);
     drr.setManager(cm);
     QCOMPARE(drr.manager(), cm);
+    QVERIFY(!drr.isActive());
+    QVERIFY(!drr.isFinished());
+    QVERIFY(!drr.cancel());
+    QVERIFY(!drr.waitForFinished());
+    QVERIFY(!drr.waitForProgress());
     qRegisterMetaType<QContactDetailDefinitionRemoveRequest*>("QContactDetailDefinitionRemoveRequest*");
     QSignalSpy spy(&drr, SIGNAL(progress(QContactDetailDefinitionRemoveRequest*)));
     QVERIFY(drr.names() == removeIds);
@@ -1308,9 +1351,9 @@ void tst_QContactAsync::definitionSave()
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSave);
 
-    // initial state
-    QVERIFY(!dsr.isActive());   // not started
-    QVERIFY(!dsr.isFinished()); // not started
+    // initial state - not started, no manager.
+    QVERIFY(!dsr.isActive());
+    QVERIFY(!dsr.isFinished());
     QVERIFY(!dsr.start());
     QVERIFY(!dsr.cancel());
     QVERIFY(!dsr.waitForFinished());
@@ -1329,6 +1372,11 @@ void tst_QContactAsync::definitionSave()
     saveList << testDef;
     dsr.setManager(cm);
     QCOMPARE(dsr.manager(), cm);
+    QVERIFY(!dsr.isActive());
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(!dsr.cancel());
+    QVERIFY(!dsr.waitForFinished());
+    QVERIFY(!dsr.waitForProgress());
     qRegisterMetaType<QContactDetailDefinitionSaveRequest*>("QContactDetailDefinitionSaveRequest*");
     QSignalSpy spy(&dsr, SIGNAL(progress(QContactDetailDefinitionSaveRequest*)));
     dsr.setDefinitions(saveList);
