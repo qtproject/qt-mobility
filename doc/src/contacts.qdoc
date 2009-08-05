@@ -179,6 +179,23 @@ The asynchronous API is offered through subclasses of the \l{QContactAbstractReq
     \o \l {QContactDetailDefinitionSaveRequest}
 \endlist
 
+\section2 Contact Selection
+
+Clients may select a contact by specifying a unique contact id, or by supplying a \l{QContactFilter} which matches
+the contact or contacts they wish to select.  The various derivatives of \l{QContactFilter} allow for fine-grained
+and flexible selection of contacts according to various criteria:
+\list
+    \o \l {QContactActionFilter}
+    \o \l {QContactChangeLogFilter}
+    \o \l {QContactDetailFilter}
+    \o \l {QContactDetailRangeFilter}
+    \o \l {QContactGroupMembershipFilter}
+    \o \l {QContactIdListFilter}
+    \o \l {QContactIntersectionFilter}
+    \o \l {QContactInvalidFilter}
+    \o \l {QContactUnionFilter}
+\endlist
+
 \section2 Implementing Backends
 
 A manager backend may be implemented by subclassing \l{QContactManagerEngine}, and providing a
