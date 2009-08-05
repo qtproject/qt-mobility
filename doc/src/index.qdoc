@@ -26,6 +26,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QSystemInfo}
     \o \l{QSystemMemoryInfo}
     \o \l{QSystemNetworkInfo}
+    \o \l{QSystemScreenSaver}
 \endlist
 
 

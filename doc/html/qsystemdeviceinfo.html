@@ -17,36 +17,43 @@
 <pre>    #include &lt;QSystemDeviceInfo&gt;</pre><ul>
 <li><a href="qsystemdeviceinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"/>enum <b><a href="qsystemdeviceinfo.html#BatteryLevel-enum">BatteryLevel</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</li>
-<li><div class="fn"/>enum <b><a href="qsystemdeviceinfo.html#InputMethods-enum">InputMethods</a></b> { KeysOnly, TouchOnly, KeysAndTouch }</li>
-<li><div class="fn"/>enum <b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower }</li>
-<li><div class="fn"/>enum <b><a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</li>
-<li><div class="fn"/>enum <b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#BatteryLevel-enum">BatteryLevel</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</a></b> { Keys, Keypad, Keyboard, SingleTouch, MultiTouch, Mouse }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethods</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"/><b><a href="qsystemdeviceinfo.html#QSystemDeviceInfo">QSystemDeviceInfo</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/>QSystemDeviceInfo::BatteryLevel <b><a href="qsystemdeviceinfo.html#batteryLevel">batteryLevel</a></b> () const</li>
-<li><div class="fn"/>QSystemDeviceInfo::InputMethods <b><a href="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</a></b> ()</li>
-<li><div class="fn"/>QSystemDeviceInfo::SimStatus <b><a href="qsystemdeviceinfo.html#getSimStatus">getSimStatus</a></b> ()</li>
-<li><div class="fn"/>QString <b><a href="qsystemdeviceinfo.html#imei">imei</a></b> () const</li>
-<li><div class="fn"/>QString <b><a href="qsystemdeviceinfo.html#imsi">imsi</a></b> () const</li>
-<li><div class="fn"/>bool <b><a href="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</a></b> ()</li>
-<li><div class="fn"/>QString <b><a href="qsystemdeviceinfo.html#manufacturer">manufacturer</a></b> () const</li>
-<li><div class="fn"/>QString <b><a href="qsystemdeviceinfo.html#model">model</a></b> () const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#QSystemDeviceInfo">QSystemDeviceInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo">~QSystemDeviceInfo</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::BatteryLevel </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevel">batteryLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethods </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getSimStatus">getSimStatus</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imei">imei</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imsi">imsi</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#manufacturer">manufacturer</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#model">model</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#productName">productName</a></b> () const</td></tr>
+</table>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
-<ul>
-<li><div class="fn"/>void <b><a href="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</a></b> ( QSystemDeviceInfo::BatteryLevel <i>level</i> )</li>
-<li><div class="fn"/>void <b><a href="qsystemdeviceinfo.html#batteryLevelCritical">batteryLevelCritical</a></b> ( qint32 <i>level</i> )</li>
-<li><div class="fn"/>void <b><a href="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</a></b> ( QSystemDeviceInfo::PowerState <i>state</i> )</li>
-<li><div class="fn"/>void <b><a href="qsystemdeviceinfo.html#profileChanged">profileChanged</a></b> ( QSystemDeviceInfo::Profile <i>profile</i> )</li>
-</ul>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</a></b> ( QSystemDeviceInfo::BatteryLevel <i>level</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevelCritical">batteryLevelCritical</a></b> ( qint32 <i>level</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</a></b> ( QSystemDeviceInfo::PowerState <i>state</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -55,7 +62,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="BatteryLevel-enum"></a>enum QSystemDeviceInfo::BatteryLevel</h3>
 <p>This enum describes the level of the main battery.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::NoBatteryLevel</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Battery level undetermined.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryCritical</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Battery level is critical 3% or less.</td></tr>
@@ -63,17 +70,11 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryLow</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Battery level is low 40% or less.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryNormal</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Battery level is above 40%.</td></tr>
 </table></p>
-<h3 class="fn"><a name="InputMethods-enum"></a>enum QSystemDeviceInfo::InputMethods</h3>
-<p>This enum describes the input methods for the device or desktop.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::KeysOnly</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Has only Keys or keyboard</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::TouchOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Has only touchscreen</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::KeysAndTouch</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Has both Keys and touchscreen.</td></tr>
-</table></p>
+<h3 class="flags"><a name="InputMethod-enum"></a>enum QSystemDeviceInfo::InputMethod<br />flags QSystemDeviceInfo::InputMethods</h3>
+<p>The InputMethods type is a typedef for <a href="qflags.html">QFlags</a>&lt;InputMethod&gt;. It stores an OR combination of InputMethod values.</p>
 <h3 class="fn"><a name="PowerState-enum"></a>enum QSystemDeviceInfo::PowerState</h3>
 <p>This enum describes the power state:</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::UnknownPower</tt></td><td align="center" valign="top"><tt>-1</tt></td><td valign="top">Power error.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryPower</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">On battery power.</td></tr>
@@ -81,7 +82,7 @@
 </table></p>
 <h3 class="fn"><a name="Profile-enum"></a>enum QSystemDeviceInfo::Profile</h3>
 <p>This enum describes the current operating profile of the device or computer.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::UnknownProfile</tt></td><td align="center" valign="top"><tt>-1</tt></td><td valign="top">Profile unknown or error.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::SilentProfile</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Silent profile.</td></tr>
@@ -94,7 +95,7 @@
 </table></p>
 <h3 class="fn"><a name="SimStatus-enum"></a>enum QSystemDeviceInfo::SimStatus</h3>
 <p>This enum describes the status is the sim card or cards.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::SimNotAvailable</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">SIM is not available on this device.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::SingleAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One SIM card is available on this.</td></tr>
@@ -105,13 +106,16 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QSystemDeviceInfo"></a>QSystemDeviceInfo::QSystemDeviceInfo ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a> with the given <i>parent</i>.</p>
+<h3 class="fn"><a name="dtor.QSystemDeviceInfo"></a>QSystemDeviceInfo::~QSystemDeviceInfo ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <h3 class="fn"><a name="batteryLevel"></a><a href="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLevel</a> QSystemDeviceInfo::batteryLevel () const</h3>
 <p>Returns the battery charge level as percentage 1 - 100 scale</p>
 <h3 class="fn"><a name="batteryLevelChanged"></a>void QSystemDeviceInfo::batteryLevelChanged ( <a href="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLevel</a> <i>level</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when battery level has changed. <i>level</i> is the new level.</p>
 <h3 class="fn"><a name="batteryLevelCritical"></a>void QSystemDeviceInfo::batteryLevelCritical ( qint32 <i>level</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the level of the battery charge as become critical or 3% or less. <i>level</i> New battery level</p>
-<h3 class="fn"><a name="getInputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethods-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::getInputMethodType ()</h3>
+<h3 class="fn"><a name="getCurrentProfile"></a><a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> QSystemDeviceInfo::getCurrentProfile ()</h3>
+<p>Gets the current device profile <a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a></p>
+<h3 class="fn"><a name="getInputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::getInputMethodType ()</h3>
 <p>Returns the InputMethodType that the system uses.</p>
 <h3 class="fn"><a name="getSimStatus"></a><a href="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimStatus</a> QSystemDeviceInfo::getSimStatus ()</h3>
 <p>Returns status of SIM card.</p>
@@ -119,6 +123,8 @@
 <p>Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.</p>
 <h3 class="fn"><a name="imsi"></a>QString QSystemDeviceInfo::imsi () const</h3>
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.</p>
+<h3 class="fn"><a name="isBatteryCharging"></a>bool QSystemDeviceInfo::isBatteryCharging ()</h3>
+<p>Returns true if the battery is charging, otherwise false;</p>
 <h3 class="fn"><a name="isDeviceLocked"></a>bool QSystemDeviceInfo::isDeviceLocked ()</h3>
 <p>Returns true if the device is locked, otherwise false.</p>
 <h3 class="fn"><a name="manufacturer"></a>QString QSystemDeviceInfo::manufacturer () const</h3>
@@ -127,8 +133,8 @@
 <p>Returns the model of the device, 0r in the case of desktops, the CPU.</p>
 <h3 class="fn"><a name="powerStateChanged"></a>void QSystemDeviceInfo::powerStateChanged ( <a href="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::PowerState</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall. <i>state</i> is the new power state.</p>
-<h3 class="fn"><a name="profileChanged"></a>void QSystemDeviceInfo::profileChanged ( <a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> <i>profile</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted when user changes the current operating profile. <i>profile</i> is the new profile.</p>
+<h3 class="fn"><a name="productName"></a>QString QSystemDeviceInfo::productName () const</h3>
+<p>Returns the product name of the device.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
