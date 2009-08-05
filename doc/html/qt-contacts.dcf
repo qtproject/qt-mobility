@@ -356,7 +356,9 @@
         <keyword ref="qcontactgroup.html#name">name</keyword>
         <keyword ref="qcontactgroup.html#removeMember">removeMember</keyword>
         <keyword ref="qcontactgroup.html#setId">setId</keyword>
+        <keyword ref="qcontactgroup.html#setMembers">setMembers</keyword>
         <keyword ref="qcontactgroup.html#setName">setName</keyword>
+        <keyword ref="qcontactgroup.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactgroup.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactgroup.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactgroup-members.html" title="List of all members"/>

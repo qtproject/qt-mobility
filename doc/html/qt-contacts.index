@@ -900,6 +900,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactGroup::operator==" href="qcontactgroup.html#operator==" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactGroup &amp; other) const">
                 <parameter left="const QContactGroup &amp;" right="" name="other" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactGroup::operator!=" href="qcontactgroup.html#operator!=" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactGroup &amp; other) const">
+                <parameter left="const QContactGroup &amp;" right="" name="other" default=""/>
+            </function>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QContactGroup::Error" href="qcontactgroup.html#Error-enum" location="qcontactgroup.h">
                 <value name="NoError" value="0"/>
                 <value name="OutOfMemoryError" value="1"/>
@@ -924,10 +927,13 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="removeMember" fullname="QContactGroup::removeMember" href="qcontactgroup.html#removeMember" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMember(const QUniqueId &amp; contactId)">
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMembers" fullname="QContactGroup::setMembers" href="qcontactgroup.html#setMembers" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMembers(const QList&lt;QUniqueId&gt; &amp; members)">
+                <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="members" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="members" fullname="QContactGroup::members" href="qcontactgroup.html#members" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="members() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasMember" fullname="QContactGroup::hasMember" href="qcontactgroup.html#hasMember" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasMember(const QUniqueId &amp; contactId) const">
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="members" fullname="QContactGroup::members" href="qcontactgroup.html#members" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="members() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactPhoneNumber" href="qcontactphonenumber.html" location="qcontactphonenumber.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactPhoneNumber::DefinitionName" href="qcontactphonenumber.html#DefinitionName-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
