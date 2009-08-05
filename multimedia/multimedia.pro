@@ -8,7 +8,7 @@ TARGET = QtMedia
 
 include (../common.pri)
 
-DLLDESTDIR = $$DESTDIR
+videosurface: QT += multimedia
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB

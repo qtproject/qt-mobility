@@ -1,7 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = gstengine
-QT+=multimedia
 
 PLUGIN_SUBDIR = mediaservice
 
@@ -25,7 +24,6 @@ PKGCONFIG += \
     gstreamer-audio-0.10 \
     gstreamer-video-0.10
 
-
 # Input
 HEADERS += \
     qgstreamermessage.h \
@@ -43,7 +41,9 @@ SOURCES += \
     qgstreamerserviceplugin.cpp \
     qalsaaudiodeviceendpoint.cpp
 
-multimedia {
+videosurface {
+    QT += multimedia
+
     SOURCES += \
         qgstreamervideooverlay.cpp \
         qgstvideobuffer.cpp \
@@ -56,9 +56,7 @@ multimedia {
         qvideosurfacegstsink.h \
         qx11videosurface.h
 
-    LIBS += -lQtMultimedia -lXv
-} else {
-    DEFINES += QT_NO_VIDEOSURFACE
+    LIBS += -lXv
 }
 
 include(mediaplayer/mediaplayer.pri)

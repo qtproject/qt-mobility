@@ -65,6 +65,6 @@ symbian {
 	INCLUDEPATH += $$MOC_DIR
 }
 
-contains(QT_CONFIG, multimedia): CONFIG += multimedia
+!contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
 
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
