@@ -12,17 +12,19 @@ LIBS += -lQtMedia
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \
-    ../../multimedia/endpoints \
-    /usr/include/gstreamer-0.10 \
-    /usr/include/glib-2.0 \
-    /usr/lib/glib-2.0/include/
-QMAKE_CXXFLAGS += $$QT_CFLAGS_GSTREAMER
-LIBS += $$QT_LIBS_GSTREAMER \
-    -lgstinterfaces-0.10 \
-    -lgstvideo-0.10 \
-    -lgstbase-0.10 \
-    -lgstaudio-0.10 \
+    ../../multimedia/endpoints
+LIBS += \
     -lasound
+
+CONFIG += link_pkgconfig
+
+PKGCONFIG += \
+    gstreamer-0.10 \
+    gstreamer-base-0.10 \
+    gstreamer-interfaces-0.10 \
+    gstreamer-audio-0.10 \
+    gstreamer-video-0.10
+
 
 # Input
 HEADERS += \
@@ -60,4 +62,4 @@ multimedia {
 }
 
 include(mediaplayer/mediaplayer.pri)
-include(mediacapture/mediacapture.pri)
+#include(mediacapture/mediacapture.pri)

@@ -36,8 +36,13 @@
 #include <QtCore/qdebug.h>
 
 #include "qgstreamerserviceplugin.h"
+
+#ifdef QMEDIA_GSTREAMER_PLAYER
 #include "qgstreamerplayerservice.h"
+#endif
+#ifdef QMEDIA_GSTREAMER_CAPTURE
 #include "qgstreamercaptureservice.h"
+#endif
 
 #include <qmediaserviceprovider.h>
 
@@ -48,27 +53,45 @@ class QGstreamerProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
+#ifdef QMEDIA_GSTREAMER_PLAYER
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
             return new QGstreamerPlayerService;
-
+#endif
+#ifdef QMEDIA_GSTREAMER_CAPTURE
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0"))
             return new QGstreamerCaptureService(interface);
 
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
             return new QGstreamerCaptureService(interface);
-
+#endif
         return 0;
     }
 };
 
 QStringList QGstreamerServicePlugin::keys() const
 {
-    return QStringList() << QLatin1String("mediaplayer") << QLatin1String("audiorecorder") << QLatin1String("camera");
+    return QStringList()
+#ifdef QMEDIA_GSTREAMER_PLAYER
+            << QLatin1String("mediaplayer")
+#endif
+#ifdef QMEDIA_GSTREAMER_CAPTURE
+            << QLatin1String("audiorecorder")
+            << QLatin1String("camera")
+#endif
+            ;
 }
 
 QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("audiorecorder") || key == QLatin1String("camera"))
+    if (false
+#ifdef QMEDIA_GSTREAMER_PLAYER
+            || key == QLatin1String("mediaplayer")
+#endif
+#ifdef QMEDIA_GSTREAMER_CAPTURE
+            || key == QLatin1String("audiorecorder")
+            || key == QLatin1String("camera")
+#endif
+            )
         return new QGstreamerProvider;
 
     qDebug() << "unsupported key:" << key;

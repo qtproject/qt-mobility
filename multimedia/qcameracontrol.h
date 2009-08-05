@@ -40,6 +40,10 @@
 
 #include "qcamera.h"
 
+#ifndef QT_NO_VIDEOSURFACE
+#include <QtMultimedia/qvideoframe.h>
+#endif
+
 class QCameraControl : public QAbstractMediaControl
 {
     Q_OBJECT
@@ -93,7 +97,7 @@ public:
     virtual QSize frameSize() const = 0;
     virtual void setFrameSize(const QSize& s) = 0;
     virtual void setDevice(const QByteArray &device) = 0;
-#ifdef VIDEOSERVICES
+#ifndef QT_NO_VIDEOSURFACE
     virtual QVideoFrame::PixelFormat pixelFormat() const = 0;
     virtual void setPixelFormat(QVideoFrame::PixelFormat fmt) = 0;
     virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats() = 0;

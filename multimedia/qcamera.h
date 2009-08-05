@@ -45,10 +45,6 @@
 
 #include "qmediaserviceprovider.h"
 
-#ifdef VIDEOSERVICES
-#include "qvideoframe.h"
-#endif
-
 class QCameraService;
 class QCameraControl;
 

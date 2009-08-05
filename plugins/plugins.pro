@@ -1,8 +1,10 @@
 TEMPLATE = subdirs
 
-SUBDIRS *= mpd phonon
+SUBDIRS = mpd
 
-win32: SUBDIRS *= wmp
+contains(QT_CONFIG, phonon): SUBDIRS += phonon
+
+win32: SUBDIRS += wmp
 mac: SUBDIRS += qt7
-unix:!mac: SUBDIRS += gstreamer
+unix:contains(QT_CONFIG, gstreamer): SUBDIRS += gstreamer
 
