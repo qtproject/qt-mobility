@@ -1552,26 +1552,14 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
-    switch (req->type()) {
-        case QContactAbstractRequest::ContactIdFetch:
-        {
-            QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
-            rd->m_ids = result;
-            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of ids to update...
-            return;
-        }
+    if (req->type() == QContactAbstractRequest::ContactIdFetch) {
+        req->d_ptr->m_error = error;
+        req->d_ptr->m_errors = errors;
+        req->d_ptr->m_status = status;
+        QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
+        rd->m_ids = result;
+        QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+        emit r->progress(r, appendOnly);
     }
 }
 
@@ -1580,14 +1568,12 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetch:
         {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->m_status = status;
             QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
             rd->m_contacts = result;
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
@@ -1597,6 +1583,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 
         case QContactAbstractRequest::ContactSave:
         {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->m_status = status;
             QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
             rd->m_contacts = result;
             QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
@@ -1617,14 +1606,12 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
     switch (req->type()) {
         case QContactAbstractRequest::GroupFetch:
         {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->m_status = status;
             QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
             rd->m_groups = result;
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
@@ -1634,6 +1621,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 
         case QContactAbstractRequest::GroupSave:
         {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->m_status = status;
             QContactGroupSaveRequestPrivate* rd = static_cast<QContactGroupSaveRequestPrivate*>(req->d_ptr);
             rd->m_groups = result;
             QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
@@ -1654,26 +1644,14 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
-    switch (req->type()) {
-        case QContactAbstractRequest::DetailDefinitionSave:
-        {
-            QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
-            rd->m_definitions = result;
-            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of definitions to update...
-            return;
-        }
+    if (req->type() == QContactAbstractRequest::DetailDefinitionSave) {
+        req->d_ptr->m_error = error;
+        req->d_ptr->m_errors = errors;
+        req->d_ptr->m_status = status;
+        QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
+        rd->m_definitions = result;
+        QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+        emit r->progress(r);
     }
 }
 
@@ -1682,25 +1660,13 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    // update the type-generic information
-    req->d_ptr->m_error = error;
-    req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-
-    switch (req->type()) {
-        case QContactAbstractRequest::DetailDefinitionFetch:
-        {
-            QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-            rd->m_definitions = result;
-            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of definitions to update...
-            return;
-        }
+    if (req->type() == QContactAbstractRequest::DetailDefinitionFetch) {
+        req->d_ptr->m_error = error;
+        req->d_ptr->m_errors = errors;
+        req->d_ptr->m_status = status;
+        QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+        rd->m_definitions = result;
+        QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+        emit r->progress(r, appendOnly);
     }
 }
