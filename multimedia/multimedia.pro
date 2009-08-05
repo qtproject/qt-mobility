@@ -46,10 +46,12 @@ HEADERS = qabstractmediacontrol.h \
     qmediastreamscontrol.h \
     qaudioencodecontrol.h \
     qvideoencodecontrol.h \
+    qimageencodecontrol.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraservice.h \
     qmediaformatcontrol.h
+
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
@@ -80,6 +82,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediastreamscontrol.cpp \
     qaudioencodecontrol.cpp \
     qvideoencodecontrol.cpp \
+    qimageencodecontrol.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraservice.cpp \
