@@ -116,7 +116,7 @@
 <p>Returns the contact in the database identified by <i>contactId</i></p>
 <h3 class="fn"><a name="contacts"></a>QList&lt;QUniqueId&gt; QContactManager::contacts ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
 <p>Return the list of added contact ids, sorted according to the given list of <i>sortOrders</i></p>
-<h3 class="fn"><a name="contacts-2"></a>QList&lt;QUniqueId&gt; QContactManager::contacts ( const QContactFilter &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
+<h3 class="fn"><a name="contacts-2"></a>QList&lt;QUniqueId&gt; QContactManager::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
 <p>Returns a list of contact ids that match the given <i>filter</i>, sorted according to the given list of <i>sortOrders</i>.</p>
 <p>Depending on the backend, this filtering operation may involve retrieving all the contacts.</p>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

@@ -53,14 +53,14 @@
 <p>Constructs a new contact id fetch request</p>
 <h3 class="fn"><a name="dtor.QContactIdFetchRequest"></a>QContactIdFetchRequest::~QContactIdFetchRequest ()</h3>
 <p>Cleans up the memory in use by this contact id fetch request</p>
-<h3 class="fn"><a name="filter"></a>QContactFilter QContactIdFetchRequest::filter () const</h3>
+<h3 class="fn"><a name="filter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactIdFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the contacts whose ids will be returned</p>
 <p>See also <a href="qcontactidfetchrequest.html#setFilter">setFilter</a>().</p>
 <h3 class="fn"><a name="ids"></a>QList&lt;QUniqueId&gt; QContactIdFetchRequest::ids () const</h3>
 <p>Returns the list of ids of contacts which matched the request</p>
 <h3 class="fn"><a name="progress"></a>void QContactIdFetchRequest::progress ( QContactIdFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>, and contains an <i>appendOnly</i> flag which signifies whether or not the total ordering of the results have been maintained since the last progress signal was emitted.</p>
-<h3 class="fn"><a name="setFilter"></a>void QContactIdFetchRequest::setFilter ( const QContactFilter &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="setFilter"></a>void QContactIdFetchRequest::setFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the filter which will be used to select the contacts whose ids will be returned to <i>filter</i></p>
 <p>See also <a href="qcontactidfetchrequest.html#filter">filter</a>().</p>
 <h3 class="fn"><a name="setSorting"></a>void QContactIdFetchRequest::setSorting ( const QList&lt;QContactSortOrder&gt; &amp; <i>sorting</i> )</h3>

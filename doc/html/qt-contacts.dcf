@@ -86,6 +86,17 @@
         <keyword ref="qcontactaction.html#vendor">vendor</keyword>
         <section ref="qcontactaction-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactactionfilter.html" title="QContactActionFilter Class Reference">
+        <keyword ref="qcontactactionfilter.html">QContactActionFilter</keyword>
+        <keyword ref="qcontactactionfilter.html#actionName">actionName</keyword>
+        <keyword ref="qcontactactionfilter.html#setActionName">setActionName</keyword>
+        <keyword ref="qcontactactionfilter.html#setValue">setValue</keyword>
+        <keyword ref="qcontactactionfilter.html#setVendor">setVendor</keyword>
+        <keyword ref="qcontactactionfilter.html#value">value</keyword>
+        <keyword ref="qcontactactionfilter.html#vendorName">vendorName</keyword>
+        <keyword ref="qcontactactionfilter.html#vendorVersion">vendorVersion</keyword>
+        <section ref="qcontactactionfilter-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactaddress.html" title="QContactAddress Class Reference">
         <keyword ref="qcontactaddress.html">QContactAddress</keyword>
         <keyword ref="qcontactaddress.html#country">country</keyword>
@@ -150,6 +161,18 @@
         <keyword ref="qcontactbirthday.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactbirthday.html#FieldBirthday-var">FieldBirthday</keyword>
         <section ref="qcontactbirthday-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactchangelogfilter.html" title="QContactChangeLogFilter Class Reference">
+        <keyword ref="qcontactchangelogfilter.html">QContactChangeLogFilter</keyword>
+        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">ChangeType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Removed</keyword>
+        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Added</keyword>
+        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Changed</keyword>
+        <keyword ref="qcontactchangelogfilter.html#changeType">changeType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#setChangeType">setChangeType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#setSince">setSince</keyword>
+        <keyword ref="qcontactchangelogfilter.html#since">since</keyword>
+        <section ref="qcontactchangelogfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetail.html" title="QContactDetail Class Reference">
         <keyword ref="qcontactdetail.html">QContactDetail</keyword>
@@ -226,6 +249,36 @@
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactdetailfilter.html" title="QContactDetailFilter Class Reference">
+        <keyword ref="qcontactdetailfilter.html">QContactDetailFilter</keyword>
+        <keyword ref="qcontactdetailfilter.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactdetailfilter.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactdetailfilter.html#matchFlags">matchFlags</keyword>
+        <keyword ref="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactdetailfilter.html#setMatchFlags">setMatchFlags</keyword>
+        <keyword ref="qcontactdetailfilter.html#setValue">setValue</keyword>
+        <keyword ref="qcontactdetailfilter.html#value">value</keyword>
+        <section ref="qcontactdetailfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetailrangefilter.html" title="QContactDetailRangeFilter Class Reference">
+        <keyword ref="qcontactdetailrangefilter.html">QContactDetailRangeFilter</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlag</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::IncludeLower</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::IncludeUpper</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::ExcludeUpper</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::ExcludeLower</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#matchFlags">matchFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#maxValue">maxValue</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#minValue">minValue</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setRange">setRange</keyword>
+        <section ref="qcontactdetailrangefilter-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactdisplaylabel.html" title="QContactDisplayLabel Class Reference">
         <keyword ref="qcontactdisplaylabel.html">QContactDisplayLabel</keyword>
         <keyword ref="qcontactdisplaylabel.html#isSynthesised">isSynthesised</keyword>
@@ -257,6 +310,25 @@
         <keyword ref="qcontactfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qcontactfetchrequest.html#sorting">sorting</keyword>
         <section ref="qcontactfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactfilter.html" title="QContactFilter Class Reference">
+        <keyword ref="qcontactfilter.html">QContactFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">FilterType</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Invalid</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::GroupMembership</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Action</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IdList</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Default</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetail</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailRange</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Intersection</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Union</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ChangeLog</keyword>
+        <keyword ref="qcontactfilter.html#type">type</keyword>
+        <keyword ref="qcontactfilter.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactfilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactfilter.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactgender.html" title="QContactGender Class Reference">
         <keyword ref="qcontactgender.html">QContactGender</keyword>
@@ -297,6 +369,12 @@
         <keyword ref="qcontactgroupfetchrequest.html#setIds">setIds</keyword>
         <section ref="qcontactgroupfetchrequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactgroupmembershipfilter.html" title="QContactGroupMembershipFilter Class Reference">
+        <keyword ref="qcontactgroupmembershipfilter.html">QContactGroupMembershipFilter</keyword>
+        <keyword ref="qcontactgroupmembershipfilter.html#groupId">groupId</keyword>
+        <keyword ref="qcontactgroupmembershipfilter.html#setGroupId">setGroupId</keyword>
+        <section ref="qcontactgroupmembershipfilter-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactgroupremoverequest.html" title="QContactGroupRemoveRequest Class Reference">
         <keyword ref="qcontactgroupremoverequest.html">QContactGroupRemoveRequest</keyword>
         <keyword ref="qcontactgroupremoverequest.html#ids">ids</keyword>
@@ -331,11 +409,31 @@
         <keyword ref="qcontactidfetchrequest.html#sorting">sorting</keyword>
         <section ref="qcontactidfetchrequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactidlistfilter.html" title="QContactIdListFilter Class Reference">
+        <keyword ref="qcontactidlistfilter.html">QContactIdListFilter</keyword>
+        <keyword ref="qcontactidlistfilter.html#ids">ids</keyword>
+        <keyword ref="qcontactidlistfilter.html#setIds">setIds</keyword>
+        <section ref="qcontactidlistfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactintersectionfilter.html" title="QContactIntersectionFilter Class Reference">
+        <keyword ref="qcontactintersectionfilter.html">QContactIntersectionFilter</keyword>
+        <keyword ref="qcontactintersectionfilter.html#append">append</keyword>
+        <keyword ref="qcontactintersectionfilter.html#filters">filters</keyword>
+        <keyword ref="qcontactintersectionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qcontactintersectionfilter.html#remove">remove</keyword>
+        <keyword ref="qcontactintersectionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qcontactintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qcontactintersectionfilter-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactinvalidengine.html" title="QContactInvalidEngine Class Reference">
         <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
         <keyword ref="qcontactinvalidengine.html#deref">deref</keyword>
         <keyword ref="qcontactinvalidengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
         <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
+        <keyword ref="qcontactinvalidfilter.html">QContactInvalidFilter</keyword>
+        <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanager.html" title="QContactManager Class Reference">
         <keyword ref="qcontactmanager.html">QContactManager</keyword>
@@ -561,6 +659,16 @@
         <keyword ref="qcontacttimestamp.html#FieldCreationTimestamp-var">FieldCreationTimestamp</keyword>
         <keyword ref="qcontacttimestamp.html#FieldModificationTimestamp-var">FieldModificationTimestamp</keyword>
         <section ref="qcontacttimestamp-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactunionfilter.html" title="QContactUnionFilter Class Reference">
+        <keyword ref="qcontactunionfilter.html">QContactUnionFilter</keyword>
+        <keyword ref="qcontactunionfilter.html#append">append</keyword>
+        <keyword ref="qcontactunionfilter.html#filters">filters</keyword>
+        <keyword ref="qcontactunionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qcontactunionfilter.html#remove">remove</keyword>
+        <keyword ref="qcontactunionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qcontactunionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qcontactunionfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
         <keyword ref="qcontacturl.html">QContactUrl</keyword>

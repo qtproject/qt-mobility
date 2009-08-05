@@ -31,6 +31,26 @@
                 <parameter left="bool" right="" name="appendOnly" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailFilter" href="qcontactdetailfilter.html" location="qcontactdetailfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailFilter" fullname="QContactDetailFilter::QContactDetailFilter" href="qcontactdetailfilter.html#QContactDetailFilter" location="qcontactdetailfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailFilter" fullname="QContactDetailFilter::QContactDetailFilter" href="qcontactdetailfilter.html#QContactDetailFilter-2" location="qcontactdetailfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactDetailFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDetailDefinitionName" fullname="QContactDetailFilter::setDetailDefinitionName" href="qcontactdetailfilter.html#setDetailDefinitionName" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDetailDefinitionName(const QString &amp; definitionName, const QString &amp; fieldName)">
+                <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
+                <parameter left="const QString &amp;" right="" name="fieldName" default="QString()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMatchFlags" fullname="QContactDetailFilter::setMatchFlags" href="qcontactdetailfilter.html#setMatchFlags" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMatchFlags(Qt::MatchFlags flags)">
+                <parameter left="Qt::MatchFlags" right="" name="flags" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactDetailFilter::setValue" href="qcontactdetailfilter.html#setValue" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setValue(const QVariant &amp; value)">
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="detailDefinitionName" fullname="QContactDetailFilter::detailDefinitionName" href="qcontactdetailfilter.html#detailDefinitionName" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="detailDefinitionName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="detailFieldName" fullname="QContactDetailFilter::detailFieldName" href="qcontactdetailfilter.html#detailFieldName" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="detailFieldName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="matchFlags" fullname="QContactDetailFilter::matchFlags" href="qcontactdetailfilter.html#matchFlags" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Qt::MatchFlags" signature="matchFlags() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetailFilter::value" href="qcontactdetailfilter.html#value" location="qcontactdetailfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGender" href="qcontactgender.html" location="qcontactgender.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactGender::DefinitionName" href="qcontactgender.html#DefinitionName-var" location="qcontactgender.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldGender" fullname="QContactGender::FieldGender" href="qcontactgender.html#FieldGender-var" location="qcontactgender.h" type="const char *" static="false"/>
@@ -307,6 +327,28 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactManagerInfo::supportedDataTypes" href="qcontactmanagerinfo.html#supportedDataTypes" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactUnionFilter" href="qcontactunionfilter.html" location="qcontactunionfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactUnionFilter" fullname="QContactUnionFilter::QContactUnionFilter" href="qcontactunionfilter.html#QContactUnionFilter" location="qcontactunionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactUnionFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactUnionFilter" fullname="QContactUnionFilter::QContactUnionFilter" href="qcontactunionfilter.html#QContactUnionFilter-2" location="qcontactunionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactUnionFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFilters" fullname="QContactUnionFilter::setFilters" href="qcontactunionfilter.html#setFilters" location="qcontactunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilters(const QList&lt;QContactFilter&gt; &amp; filters)">
+                <parameter left="const QList&lt;QContactFilter&gt; &amp;" right="" name="filters" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="prepend" fullname="QContactUnionFilter::prepend" href="qcontactunionfilter.html#prepend" location="qcontactunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="prepend(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="append" fullname="QContactUnionFilter::append" href="qcontactunionfilter.html#append" location="qcontactunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="append(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QContactUnionFilter::remove" href="qcontactunionfilter.html#remove" location="qcontactunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="remove(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" fullname="QContactUnionFilter::operator&lt;&lt;" href="qcontactunionfilter.html#operator&lt;&lt;" location="qcontactunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactUnionFilter &amp;" signature="operator&lt;&lt;(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="filters" fullname="QContactUnionFilter::filters" href="qcontactunionfilter.html#filters" location="qcontactunionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactFilter&gt;" signature="filters() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactUrl" href="qcontacturl.html" location="qcontacturl.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactUrl::DefinitionName" href="qcontacturl.html#DefinitionName-var" location="qcontacturl.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldUrl" fullname="QContactUrl::FieldUrl" href="qcontacturl.html#FieldUrl-var" location="qcontacturl.h" type="const char *" static="false"/>
@@ -341,6 +383,28 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="progress" fullname="QContactDetailDefinitionRemoveRequest::progress" href="qcontactdetaildefinitionremoverequest.html#progress" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactDetailDefinitionRemoveRequest * self)">
                 <parameter left="QContactDetailDefinitionRemoveRequest *" right="" name="self" default=""/>
             </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" href="qcontactintersectionfilter.html" location="qcontactintersectionfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" fullname="QContactIntersectionFilter::QContactIntersectionFilter" href="qcontactintersectionfilter.html#QContactIntersectionFilter" location="qcontactintersectionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactIntersectionFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" fullname="QContactIntersectionFilter::QContactIntersectionFilter" href="qcontactintersectionfilter.html#QContactIntersectionFilter-2" location="qcontactintersectionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactIntersectionFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFilters" fullname="QContactIntersectionFilter::setFilters" href="qcontactintersectionfilter.html#setFilters" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilters(const QList&lt;QContactFilter&gt; &amp; filters)">
+                <parameter left="const QList&lt;QContactFilter&gt; &amp;" right="" name="filters" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="prepend" fullname="QContactIntersectionFilter::prepend" href="qcontactintersectionfilter.html#prepend" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="prepend(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="append" fullname="QContactIntersectionFilter::append" href="qcontactintersectionfilter.html#append" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="append(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QContactIntersectionFilter::remove" href="qcontactintersectionfilter.html#remove" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="remove(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" fullname="QContactIntersectionFilter::operator&lt;&lt;" href="qcontactintersectionfilter.html#operator&lt;&lt;" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactIntersectionFilter &amp;" signature="operator&lt;&lt;(const QContactFilter &amp; filter)">
+                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="filters" fullname="QContactIntersectionFilter::filters" href="qcontactintersectionfilter.html#filters" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactFilter&gt;" signature="filters() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinition" href="qcontactdetaildefinition.html" location="qcontactdetaildefinition.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinition" fullname="QContactDetailDefinition::QContactDetailDefinition" href="qcontactdetaildefinition.html#QContactDetailDefinition" location="qcontactdetaildefinition.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinition()"/>
@@ -423,6 +487,16 @@
                 <parameter left="const QString &amp;" right="" name="guid" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="guid" fullname="QContactGuid::guid" href="qcontactguid.html#guid" location="qcontactguid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="guid() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactIdListFilter" href="qcontactidlistfilter.html" location="qcontactidlistfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactIdListFilter" fullname="QContactIdListFilter::QContactIdListFilter" href="qcontactidlistfilter.html#QContactIdListFilter" location="qcontactidlistfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactIdListFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactIdListFilter" fullname="QContactIdListFilter::QContactIdListFilter" href="qcontactidlistfilter.html#QContactIdListFilter-2" location="qcontactidlistfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactIdListFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setIds" fullname="QContactIdListFilter::setIds" href="qcontactidlistfilter.html#setIds" location="qcontactidlistfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setIds(const QList&lt;QUniqueId&gt; &amp; ids)">
+                <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="ids" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactIdListFilter::ids" href="qcontactidlistfilter.html#ids" location="qcontactidlistfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="ids() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngine" href="qcontactmanagerengine.html" location="qcontactmanagerengine.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactManagerEngine" fullname="QContactManagerEngine::QContactManagerEngine" href="qcontactmanagerengine.html#QContactManagerEngine" location="qcontactmanagerengine.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactManagerEngine()"/>
@@ -873,6 +947,43 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="number" fullname="QContactPhoneNumber::number" href="qcontactphonenumber.html#number" location="qcontactphonenumber.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="number() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailRangeFilter" href="qcontactdetailrangefilter.html" location="qcontactdetailrangefilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailRangeFilter" fullname="QContactDetailRangeFilter::QContactDetailRangeFilter" href="qcontactdetailrangefilter.html#QContactDetailRangeFilter" location="qcontactdetailrangefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailRangeFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailRangeFilter" fullname="QContactDetailRangeFilter::QContactDetailRangeFilter" href="qcontactdetailrangefilter.html#QContactDetailRangeFilter-2" location="qcontactdetailrangefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactDetailRangeFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="RangeFlag" fullname="QContactDetailRangeFilter::RangeFlag" href="qcontactdetailrangefilter.html#RangeFlag-enum" location="qcontactdetailrangefilter.h" typedef="QContactDetailRangeFilter::RangeFlags">
+                <value name="IncludeLower" value="0"/>
+                <value name="IncludeUpper" value="1"/>
+                <value name="ExcludeLower" value="2"/>
+                <value name="ExcludeUpper" value="0"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="RangeFlags" fullname="QContactDetailRangeFilter::RangeFlags" href="qcontactdetailrangefilter.html#RangeFlags-typedef" location="qcontactdetailrangefilter.h" enum="QContactDetailRangeFilter::RangeFlag"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDetailDefinitionName" fullname="QContactDetailRangeFilter::setDetailDefinitionName" href="qcontactdetailrangefilter.html#setDetailDefinitionName" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDetailDefinitionName(const QString &amp; definitionName, const QString &amp; fieldName)">
+                <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
+                <parameter left="const QString &amp;" right="" name="fieldName" default="QString()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMatchFlags" fullname="QContactDetailRangeFilter::setMatchFlags" href="qcontactdetailrangefilter.html#setMatchFlags" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMatchFlags(Qt::MatchFlags flags)">
+                <parameter left="Qt::MatchFlags" right="" name="flags" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRange" fullname="QContactDetailRangeFilter::setRange" href="qcontactdetailrangefilter.html#setRange" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRange(const QVariant &amp; min, const QVariant &amp; max, QFlags&lt;QContactDetailRangeFilter::RangeFlag&gt; flags)">
+                <parameter left="const QVariant &amp;" right="" name="min" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="max" default=""/>
+                <parameter left="QFlags&lt;QContactDetailRangeFilter::RangeFlag&gt;" right="" name="flags" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="detailDefinitionName" fullname="QContactDetailRangeFilter::detailDefinitionName" href="qcontactdetailrangefilter.html#detailDefinitionName" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="detailDefinitionName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="detailFieldName" fullname="QContactDetailRangeFilter::detailFieldName" href="qcontactdetailrangefilter.html#detailFieldName" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="detailFieldName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="matchFlags" fullname="QContactDetailRangeFilter::matchFlags" href="qcontactdetailrangefilter.html#matchFlags" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Qt::MatchFlags" signature="matchFlags() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minValue" fullname="QContactDetailRangeFilter::minValue" href="qcontactdetailrangefilter.html#minValue" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="minValue() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maxValue" fullname="QContactDetailRangeFilter::maxValue" href="qcontactdetailrangefilter.html#maxValue" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="maxValue() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="rangeFlags" fullname="QContactDetailRangeFilter::rangeFlags" href="qcontactdetailrangefilter.html#rangeFlags" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RangeFlags" signature="rangeFlags() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidFilter" href="qcontactinvalidfilter.html" location="qcontactinvalidfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidFilter" fullname="QContactInvalidFilter::QContactInvalidFilter" href="qcontactinvalidfilter.html#QContactInvalidFilter" location="qcontactinvalidfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactInvalidFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidFilter" fullname="QContactInvalidFilter::QContactInvalidFilter" href="qcontactinvalidfilter.html#QContactInvalidFilter-2" location="qcontactinvalidfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactInvalidFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html" location="qcontactdetaildefinitionsaverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionSaveRequest" fullname="QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html#QContactDetailDefinitionSaveRequest" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionSaveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactDetailDefinitionSaveRequest" fullname="QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html#dtor.QContactDetailDefinitionSaveRequest" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactDetailDefinitionSaveRequest()"/>
@@ -934,6 +1045,27 @@
                 <parameter left="QContactRemoveRequest *" right="" name="self" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ChangeType" fullname="QContactChangeLogFilter::ChangeType" href="qcontactchangelogfilter.html#ChangeType-enum" location="qcontactchangelogfilter.h">
+                <value name="Added" value="0"/>
+                <value name="Changed" value="1"/>
+                <value name="Removed" value="2"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeLogFilter(ChangeType type)">
+                <parameter left="ChangeType" right="" name="type" default="Added"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter-2" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactChangeLogFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setChangeType" fullname="QContactChangeLogFilter::setChangeType" href="qcontactchangelogfilter.html#setChangeType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setChangeType(ChangeType type)">
+                <parameter left="ChangeType" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSince" fullname="QContactChangeLogFilter::setSince" href="qcontactchangelogfilter.html#setSince" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSince(const QDateTime &amp; since)">
+                <parameter left="const QDateTime &amp;" right="" name="since" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="since" fullname="QContactChangeLogFilter::since" href="qcontactchangelogfilter.html#since" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="since() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="changeType" fullname="QContactChangeLogFilter::changeType" href="qcontactchangelogfilter.html#changeType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ChangeType" signature="changeType() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html" location="qcontactgroupremoverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" fullname="QContactGroupRemoveRequest::QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html#QContactGroupRemoveRequest" location="qcontactgroupremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactGroupRemoveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactGroupRemoveRequest" fullname="QContactGroupRemoveRequest::~QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html#dtor.QContactGroupRemoveRequest" location="qcontactgroupremoverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactGroupRemoveRequest()"/>
@@ -945,6 +1077,47 @@
                 <parameter left="QContactGroupRemoveRequest *" right="" name="self" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactFilter" href="qcontactfilter.html" location="qcontactfilter.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactFilter" fullname="QContactFilter::QContactFilter" href="qcontactfilter.html#QContactFilter" location="qcontactfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactFilter" fullname="QContactFilter::~QContactFilter" href="qcontactfilter.html#dtor.QContactFilter" location="qcontactfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactFilter" fullname="QContactFilter::QContactFilter" href="qcontactfilter.html#QContactFilter-2" location="qcontactfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QContactFilter::operator=" href="qcontactfilter.html#operator=" location="qcontactfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactFilter &amp;" signature="operator=(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="FilterType" fullname="QContactFilter::FilterType" href="qcontactfilter.html#FilterType-enum" location="qcontactfilter.h">
+                <value name="Invalid" value="0"/>
+                <value name="ContactDetail" value="1"/>
+                <value name="ContactDetailRange" value="2"/>
+                <value name="ChangeLog" value="3"/>
+                <value name="Action" value="4"/>
+                <value name="GroupMembership" value="5"/>
+                <value name="Intersection" value="6"/>
+                <value name="Union" value="7"/>
+                <value name="Default" value="8"/>
+                <value name="IdList" value="9"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QContactFilter::type" href="qcontactfilter.html#type" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FilterType" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactFilter::operator==" href="qcontactfilter.html#operator==" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactFilter &amp; other) const">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactFilter::operator!=" href="qcontactfilter.html#operator!=" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactFilter &amp; other) const">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="QContactFilter" fullname="QContactFilter::QContactFilter" href="qcontactfilter.html#QContactFilter-3" location="qcontactfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QContactFilter(QContactFilterPrivate * d)">
+                <parameter left="QContactFilterPrivate *" right="" name="d" default=""/>
+            </function>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QContactFilter::d_ptr" href="qcontactfilter.html#d_ptr-var" location="qcontactfilter.h" type="QSharedDataPointer&lt;QContactFilterPrivate&gt;" static="false"/>
+        </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&amp;&amp;" href="#operator&amp;&amp;" location="qcontactfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QContactFilter" signature="operator&amp;&amp;(const QContactFilter &amp; left, const QContactFilter &amp; right)">
+            <parameter left="const QContactFilter &amp;" right="" name="left" default=""/>
+            <parameter left="const QContactFilter &amp;" right="" name="right" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator||" href="#operator||" location="qcontactfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="const QContactFilter" signature="operator||(const QContactFilter &amp; left, const QContactFilter &amp; right)">
+            <parameter left="const QContactFilter &amp;" right="" name="left" default=""/>
+            <parameter left="const QContactFilter &amp;" right="" name="right" default=""/>
+        </function>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerEngineFactory" fullname="QContactManagerEngineFactory::~QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory" location="qcontactmanagerenginefactory.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerEngineFactory()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="engine" fullname="QContactManagerEngineFactory::engine" href="qcontactmanagerenginefactory.html#engine" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="engine(const QMap&lt;QString, QString&gt; &amp; parameters, QContactManager::Error &amp; error)">
@@ -1018,6 +1191,16 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isSynthesised" fullname="QContactDisplayLabel::isSynthesised" href="qcontactdisplaylabel.html#isSynthesised" location="qcontactdisplaylabel.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSynthesised() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactGroupMembershipFilter" href="qcontactgroupmembershipfilter.html" location="qcontactgroupmembershipfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactGroupMembershipFilter" fullname="QContactGroupMembershipFilter::QContactGroupMembershipFilter" href="qcontactgroupmembershipfilter.html#QContactGroupMembershipFilter" location="qcontactgroupmembershipfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactGroupMembershipFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactGroupMembershipFilter" fullname="QContactGroupMembershipFilter::QContactGroupMembershipFilter" href="qcontactgroupmembershipfilter.html#QContactGroupMembershipFilter-2" location="qcontactgroupmembershipfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactGroupMembershipFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setGroupId" fullname="QContactGroupMembershipFilter::setGroupId" href="qcontactgroupmembershipfilter.html#setGroupId" location="qcontactgroupmembershipfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGroupId(const QUniqueId &amp; id)">
+                <parameter left="const QUniqueId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="groupId" fullname="QContactGroupMembershipFilter::groupId" href="qcontactgroupmembershipfilter.html#groupId" location="qcontactgroupmembershipfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUniqueId" signature="groupId() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" href="qcontactabstractrequest.html" location="qcontactabstractrequest.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAbstractRequest" fullname="QContactAbstractRequest::~QContactAbstractRequest" href="qcontactabstractrequest.html#dtor.QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAbstractRequest()"/>
@@ -1071,6 +1254,26 @@
                 <parameter left="const QDate &amp;" right="" name="date" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="date" fullname="QContactBirthday::date" href="qcontactbirthday.html#date" location="qcontactbirthday.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDate" signature="date() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" href="qcontactactionfilter.html" location="qcontactactionfilter.h" bases="QContactFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter-2" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactActionFilter(const QContactFilter &amp; other)">
+                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionFilter::setActionName" href="qcontactactionfilter.html#setActionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; action)">
+                <parameter left="const QString &amp;" right="" name="action" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactActionFilter::setValue" href="qcontactactionfilter.html#setValue" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setValue(const QVariant &amp; value)">
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setVendor" fullname="QContactActionFilter::setVendor" href="qcontactactionfilter.html#setVendor" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendor(const QString &amp; vendorName, int version)">
+                <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
+                <parameter left="int" right="" name="version" default="-1"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionFilter::actionName" href="qcontactactionfilter.html#actionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactActionFilter::value" href="qcontactactionfilter.html#value" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionFilter::vendorName" href="qcontactactionfilter.html#vendorName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="vendorVersion" fullname="QContactActionFilter::vendorVersion" href="qcontactactionfilter.html#vendorVersion" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="vendorVersion() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactOrganisation" href="qcontactorganisation.html" location="qcontactorganisation.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOrganisation::DefinitionName" href="qcontactorganisation.html#DefinitionName-var" location="qcontactorganisation.h" type="const char *" static="false"/>
@@ -1145,6 +1348,7 @@
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
+            <contents name="contact-selection" title="Contact Selection" level="2"/>
             <contents name="implementing-backends" title="Implementing Backends" level="2"/>
             <contents name="manager-information-and-functionality-reporting" title="Manager information and functionality reporting" level="2"/>
             <contents name="examples" title="Examples" level="2"/>

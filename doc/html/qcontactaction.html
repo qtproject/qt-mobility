@@ -42,7 +42,7 @@
 <p>Clears any memory in use by this instance of the action implementation</p>
 <h3 class="fn"><a name="actionName"></a>QString QContactAction::actionName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the action provided by this implementation. The name of the action identifies the action provided; different implementations of an action with the same name must provide the same functionality, but may differ in implementation semantics. Hence, the action name includes the major version of the interface definition implemented.</p>
-<h3 class="fn"><a name="contactFilter"></a>QContactFilter QContactAction::contactFilter ( const QVariant &amp; <i>value</i> = QVariant() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="contactFilter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactAction::contactFilter ( const QVariant &amp; <i>value</i> = QVariant() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a filter which may be used to filter contacts by the availability of this action implementation for them. If <i>value</i> is valid, only contacts which have a detail with the given value and for which the action is available are returned</p>
 <h3 class="fn"><a name="implementationVersion"></a>int QContactAction::implementationVersion () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the (minor) version of the implementation of this action. Note that the major version (which describes the semantics/outcomes of the action) is included in the action name itself.</p>
