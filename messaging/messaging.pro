@@ -66,7 +66,25 @@ SOURCES += qmessageid.cpp \
            qmessageserviceaction.cpp
 
 
-symbian|win32 {
+symbian|win32|maemo {
+maemo {
+SOURCES += qmessageid_maemo.cpp \
+           qmessagecontentcontainerid_maemo.cpp \
+           qmessagefolderid_maemo.cpp \
+           qmessageaccountid_maemo.cpp \
+           qmessagecontentcontainer_maemo.cpp \
+           qmessage_maemo.cpp \
+           qmessagefolder_maemo.cpp \
+           qmessageaccount_maemo.cpp \
+           qmessageaccountfilterkey_maemo.cpp \
+           qmessageaccountsortkey_maemo.cpp \
+           qmessagefolderfilterkey_maemo.cpp \
+           qmessagefoldersortkey_maemo.cpp \
+           qmessagefilterkey_maemo.cpp \
+           qmessagesortkey_maemo.cpp \
+           qmessagestore_maemo.cpp \
+           qmessageserviceaction_maemo.cpp 
+}
 symbian {
 SOURCES += qmessageid_symbian.cpp \
            qmessagecontentcontainerid_symbian.cpp \

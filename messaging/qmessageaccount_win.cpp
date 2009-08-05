@@ -34,6 +34,15 @@
 #include "qmessageaccount_p.h"
 #include "qmessagestore.h"
 
+QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessage::TypeFlags &types)
+{
+    QMessageAccount result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_name = name;
+    result.d_ptr->_types = types;
+    return result;
+}
+
 QMessageAccount::QMessageAccount()
     :d_ptr(new QMessageAccountPrivate(this))
 {

@@ -30,28 +30,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-#include "qmessagefolder.h"
+#include "qmessagecontentcontainerid.h"
 
-class QMessageFolderPrivate
+QMessageContentContainerId::QMessageContentContainerId()
 {
-    Q_DECLARE_PUBLIC(QMessageFolder)
+}
 
-public:
-    QMessageFolderPrivate(QMessageFolder *folder)
-        :q_ptr(folder)
-    {
-    }
+QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
+{
+    Q_UNUSED(other)
+}
 
-    QMessageFolder *q_ptr;
+QMessageContentContainerId::QMessageContentContainerId(const QString& id)
+{
+    Q_UNUSED(id)
+}
 
-    QMessageFolderId _id;
-    QMessageAccountId _parentAccountId;
-    QMessageFolderId _parentFolderId;
-    QString _displayName;
-    QString _path;
-#if defined(Q_OS_WIN)
-    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
-#endif
-};
-#endif
+QMessageContentContainerId::~QMessageContentContainerId()
+{
+}
+
+bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+QString QMessageContentContainerId::toString() const
+{
+    return QString::null; // stub
+}
+
+bool QMessageContentContainerId::isValid() const
+{
+    return false; // stub
+}

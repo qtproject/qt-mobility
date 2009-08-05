@@ -92,7 +92,7 @@ public:
     MapiFolderPtr rootFolder();
     MapiFolderPtr findFolder(const MapiRecordKey &key);
     QMessageFolderIdList folderIds();
-    void setFolderFromId(const QMessageFolderId &folderId, QMessageFolderPrivate *outFolder);
+    QMessageFolder folderFromId(const QMessageFolderId &folderId);
     QMessageAccountId id();
     QString name() { return _name; }
 

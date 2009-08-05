@@ -47,4 +47,7 @@ public:
     QMessageAccountId _id;
     QString _name;
     QMessage::TypeFlags _types;
+#if defined(Q_OS_WIN)
+    static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessage::TypeFlags &types);
+#endif
 };

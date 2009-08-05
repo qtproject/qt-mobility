@@ -55,4 +55,7 @@ public:
     QMessageAddress _from;
     QMessage::StatusFlags _status;
     QString _subject;
+#if defined(Q_OS_WIN)
+    static QMessage from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject);
+#endif
 };

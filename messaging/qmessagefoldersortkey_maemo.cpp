@@ -31,27 +31,56 @@
 **
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-#include "qmessagefolder.h"
+#include "qmessagefoldersortkey.h"
+#include "qmessagefoldersortkey_p.h"
 
-class QMessageFolderPrivate
+
+QMessageFolderSortKey::QMessageFolderSortKey()
 {
-    Q_DECLARE_PUBLIC(QMessageFolder)
+}
 
-public:
-    QMessageFolderPrivate(QMessageFolder *folder)
-        :q_ptr(folder)
-    {
-    }
+QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
+{
+}
 
-    QMessageFolder *q_ptr;
+bool QMessageFolderSortKey::isEmpty() const
+{
+    return false; // stub
+}
 
-    QMessageFolderId _id;
-    QMessageAccountId _parentAccountId;
-    QMessageFolderId _parentFolderId;
-    QString _displayName;
-    QString _path;
-#if defined(Q_OS_WIN)
-    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
-#endif
-};
+QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
+{
+    Q_UNUSED(other)
+    return QMessageFolderSortKey(); // stub
+}
+
+QMessageFolderSortKey& QMessageFolderSortKey::operator+=(const QMessageFolderSortKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+bool QMessageFolderSortKey::operator==(const QMessageFolderSortKey& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFolderSortKey& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortKey(); // stub
+}
+
+QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortKey(); // stub
+}
 #endif

@@ -31,57 +31,30 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
-#include "qmessage_p.h"
-#include "qmessagestore.h"
-
-//TODO: For the set* functions rather than updating shadowed MAPI structures, 
-//TODO: consider using an EntryId to update a MAPI object directly.
-//TODO: Note, this will require keeping the MAPI message open which may not
-//TODO: be appropriate for many messages (as it may exhaust system resources
-//TODO: and crash the OS).
-
-QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject)
-{
-    QMessage result;
-    result.d_ptr->_id = id;
-    result.d_ptr->_status = status;
-    result.d_ptr->_from = from;
-    result.d_ptr->_subject = subject;
-    return result;
-}
 
 QMessage::QMessage()
-    :d_ptr(new QMessagePrivate(this))
 {
-    d_ptr->_modified = false;
-    d_ptr->_size = 0;
 }
 
 QMessage::QMessage(const QMessageId& id)
-    :d_ptr(new QMessagePrivate(this))
 {
-    *this = QMessageStore::instance()->message(id);
+    Q_UNUSED(id)
 }
 
 QMessage::QMessage(const QMessage &other)
-    :QMessageContentContainer(other),
-     d_ptr(new QMessagePrivate(this))
+    :QMessageContentContainer(other)
 {
-    this->operator=(other);
+    Q_UNUSED(other)
 }
 
 const QMessage& QMessage::operator=(const QMessage& other)
 {
-    if (&other != this)
-        *d_ptr = *other.d_ptr;
-
-    return *this;
+    Q_UNUSED(other)
+    return *this; // stub
 }
 
 QMessage::~QMessage()
 {
-    delete d_ptr;
-    d_ptr = 0;
 }
 
 QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
@@ -110,35 +83,33 @@ void QMessage::toTransmissionFormat(QDataStream& out) const
 
 QMessageId QMessage::id() const
 {
-    return d_ptr->_id;
+    return QMessageId(); // stub
 }
 
 QMessage::Type QMessage::type() const
 {
-    return d_ptr->_type;
+    return None; // stub
 }
 
 void QMessage::setType(Type t)
 {
-    d_ptr->_modified = true;
-    d_ptr->_type = t;
+    Q_UNUSED(t)
 }
 
 QMessageAccountId QMessage::parentAccountId() const
 {
-    return d_ptr->_parentAccountId;
+    return QMessageAccountId(); // stub
 }
 
-void QMessage::setParentAccountId(const QMessageAccountId &accountId) 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 {
-    d_ptr->_modified = true;
-    d_ptr->_parentAccountId = accountId;
+    Q_UNUSED(accountId)
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
-    return d_ptr->_parentFolderId;
+    return QMessageFolderId(); // stub
 }
 #endif
 
@@ -149,29 +120,27 @@ QMessage::StandardFolder QMessage::standardFolder() const
 
 void QMessage::setStandardFolder(StandardFolder sf)
 {
-    Q_UNUSED(sf) // stub
+    Q_UNUSED(sf)
 }
 
 QMessageAddress QMessage::from() const
 {
-    return d_ptr->_from;
+    return QMessageAddress(); // stub
 }
 
 void QMessage::setFrom(const QMessageAddress &address)
 {
-    d_ptr->_modified = true;
-    d_ptr->_from = address;
+    Q_UNUSED(address)
 }
 
 QString QMessage::subject() const
 {
-    return d_ptr->_subject;
+    return QString::null; //stub
 }
 
 void QMessage::setSubject(const QString &s)
 {
-    d_ptr->_modified = true;
-    d_ptr->_subject = s;
+    Q_UNUSED(s)
 }
 
 QDateTime QMessage::date() const
@@ -181,7 +150,6 @@ QDateTime QMessage::date() const
 
 void QMessage::setDate(const QDateTime &d)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(d)
 }
 
@@ -192,7 +160,6 @@ QDateTime QMessage::receivedDate() const
 
 void QMessage::setReceivedDate(const QDateTime &d)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(d)
 }
 
@@ -203,13 +170,11 @@ QMessageAddressList QMessage::to() const
 
 void QMessage::setTo(const QMessageAddressList& toList)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(toList)
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(address)
 }
 
@@ -220,7 +185,6 @@ QMessageAddressList QMessage::cc() const
 
 void QMessage::setCc(const QMessageAddressList& ccList)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(ccList)
 }
 
@@ -231,19 +195,17 @@ QMessageAddressList QMessage::bcc() const
 
 void QMessage::setBcc(const QMessageAddressList& bccList)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(bccList)
 }
 
 QMessage::StatusFlags QMessage::status() const
 {
-    return d_ptr->_status;
+    return StatusFlags(None); // stub
 }
 
 void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
-    d_ptr->_modified = true;
-    d_ptr->_status = newStatus;
+    Q_UNUSED(newStatus)
 }
 
 QMessage::Priority QMessage::priority() const
@@ -253,13 +215,12 @@ QMessage::Priority QMessage::priority() const
 
 void QMessage::setPriority(Priority newPriority)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(newPriority)
 }
 
 uint QMessage::size() const
 {
-    return d_ptr->_size;
+    return 0; // stub
 }
 
 QMessageContentContainerId QMessage::body() const
@@ -275,7 +236,6 @@ void QMessage::setBody(const QString &body)
 {
     // Implementation note, this should be platform independent. Will require a member variable 
     // for the body id, maybe should add protected setBodyId() and bodyId() methods to the API.
-    d_ptr->_modified = true;
     Q_UNUSED(body)
 }
 
@@ -283,7 +243,6 @@ void QMessage::setBodyFromFile(const QString &fileName)
 {
     // Implementation note, this should be platform independent. Will require a member variable 
     // for the body id. Will need to use prepend for multipart messages.
-    d_ptr->_modified = true;
     Q_UNUSED(fileName)
 }
 
@@ -300,7 +259,6 @@ QMessageContentContainerIdList QMessage::attachments() const
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
     // Implementation note, this should be platform independent.
-    d_ptr->_modified = true;
     Q_UNUSED(fileNames)
 }
 
@@ -312,7 +270,6 @@ void QMessage::clearAttachments()
 #ifdef QMESSAGING_OPTIONAL
 void QMessage::setOriginatorPort(uint port)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(port)
 }
 
@@ -323,7 +280,6 @@ uint QMessage::originatorPort()
 
 void QMessage::setDestinationPort(uint port)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(port)
 }
 
@@ -340,7 +296,6 @@ QString QMessage::customField(const QString &name) const
 
 void QMessage::setCustomField(const QString &name, const QString &value)
 {
-    d_ptr->_modified = true;
     Q_UNUSED(name);
     Q_UNUSED(value);
 }
@@ -353,7 +308,7 @@ QList<QString> QMessage::customFields() const
 
 bool QMessage::dataModified() const
 {
-    return d_ptr->_modified;
+    return false; // stub
 }
 
 QMessage QMessage::replyTo() const
