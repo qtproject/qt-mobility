@@ -40,6 +40,16 @@
 //TODO: be appropriate for many messages (as it may exhaust system resources
 //TODO: and crash the OS).
 
+QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject)
+{
+    QMessage result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_status = status;
+    result.d_ptr->_from = from;
+    result.d_ptr->_subject = subject;
+    return result;
+}
+
 QMessage::QMessage()
     :d_ptr(new QMessagePrivate(this))
 {

@@ -50,5 +50,8 @@ public:
     QMessageFolderId _parentFolderId;
     QString _displayName;
     QString _path;
+#if defined(Q_OS_WIN)
+    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
+#endif
 };
 #endif

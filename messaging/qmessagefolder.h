@@ -59,8 +59,6 @@ public:
     QString path() const;
 
 private:
-    friend class QMessageStore;
-
     QMessageFolderPrivate *d_ptr;
 };
 #endif

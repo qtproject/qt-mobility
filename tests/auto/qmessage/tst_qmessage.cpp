@@ -474,10 +474,8 @@ void tst_QMessage::testParentAccountId()
     QMessage msg;
     QCOMPARE(msg.parentAccountId(), QMessageAccountId());
 
-    /*
     msg.setParentAccountId(testAccountId);
     QCOMPARE(msg.parentAccountId(), testAccountId);
-    */
 }
 
 void tst_QMessage::testParentFolderId()

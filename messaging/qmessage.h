@@ -164,8 +164,6 @@ public:
     virtual QMessage forward() const;
 
 private:
-    friend class QMessageStore;
-
     QMessagePrivate *d_ptr;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)

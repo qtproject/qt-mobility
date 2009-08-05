@@ -34,7 +34,9 @@
 #include "qmessageid_p.h"
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
+#include "qmessage_p.h"
 #include "qmessagefolder_p.h"
+#include "qmessageaccount_p.h"
 #include <qdebug.h>
 
 // TODO Retrieve message count, and hasSubfolders flag for message folders.
@@ -356,8 +358,9 @@ QMessageFolderIdList MapiStore::folderIds()
     return folderIds;
 }
 
-void MapiStore::setFolderFromId(const QMessageFolderId &folderId, QMessageFolderPrivate *outFolder)
+QMessageFolder MapiStore::folderFromId(const QMessageFolderId &folderId)
 {
+    QMessageFolder result;
     QList<MapiFolderPtr> folders;
     folders.append(rootFolder());
 
@@ -368,13 +371,9 @@ void MapiStore::setFolderFromId(const QMessageFolderId &folderId, QMessageFolder
                 QStringList path;
                 for (int i = 0; i < folders.count(); ++i)
                     path.append(folders[i]->name());
-                outFolder->_id = subFolder->id();
-                outFolder->_parentAccountId = id();
-                outFolder->_parentFolderId = folders.last()->id();
-                outFolder->_displayName  = subFolder->name();
-                outFolder->_path  = path.join("/");
-                qDebug() << "found" << path.join("/") << outFolder->_displayName; //TODO remove debug
-                return;
+                result = QMessageFolderPrivate::from(subFolder->id(), id(), folders.last()->id(), subFolder->name(), path.join("/"));
+                qDebug() << "found" << path.join("/") << subFolder->name(); //TODO remove debug
+                return result;
             }
             folders.append(subFolder);
         } else {
@@ -382,7 +381,7 @@ void MapiStore::setFolderFromId(const QMessageFolderId &folderId, QMessageFolder
         }
     }
 
-    return;
+    return result;
 }
 
 QMessageAccountId MapiStore::id()
