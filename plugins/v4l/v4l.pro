@@ -1,18 +1,22 @@
 TEMPLATE = lib
 CONFIG += plugin
+TARGET = v4lengine
 
-TARGET = radio
-DESTDIR = $$OUT_PWD/../../lib/mediaservice
+PLUGIN_SUBDIR = mediaservice
+
+include (../../common.pri)
+
+LIBS += -lQtMedia
+
+QT += multimedia
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \
     ../../multimedia/endpoints
 
-# Input
-HEADERS += radiocontrol.h \
-    radioservice.h \
-    radioserviceplugin.h
+HEADERS += v4lserviceplugin.h
+SOURCES += v4lserviceplugin.cpp
 
-SOURCES += radiocontrol.cpp \
-    radioservice.cpp \
-    radioserviceplugin.cpp
+include(radio/radio.pri)
+include(camera/camera.pri)

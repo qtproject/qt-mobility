@@ -32,25 +32,25 @@
 **
 ****************************************************************************/
 
-#ifndef RADIOSERVICE_H
-#define RADIOSERVICE_H
+#ifndef V4LRADIOSERVICE_H
+#define V4LRADIOSERVICE_H
 
 #include <QtCore/qobject.h>
 
 #include "qradioservice.h"
 
-class RadioControl;
+class V4LRadioControl;
 
-class RadioService : public QRadioService
+class V4LRadioService : public QRadioService
 {
     Q_OBJECT
 public:
-    RadioService(QObject *parent = 0);
-    ~RadioService();
+    V4LRadioService(QObject *parent = 0);
+    ~V4LRadioService();
 
     QAbstractMediaControl *control(const char* name) const;
 private:
-    RadioControl *m_control;
+    V4LRadioControl *m_control;
 };
 
 #endif

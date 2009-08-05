@@ -84,6 +84,10 @@ QCamera::~QCamera()
 {
 }
 
+/*!
+    Start camera.
+*/
+
 void QCamera::start()
 {
     Q_D(QCamera);
@@ -91,6 +95,10 @@ void QCamera::start()
     if(d->control)
         d->control->start();
 }
+
+/*!
+    Stop camera.
+*/
 
 void QCamera::stop()
 {
@@ -100,7 +108,9 @@ void QCamera::stop()
         d->control->stop();
 }
 
-#ifdef VIDEOSERVICES
+/*!
+    Return a list of camera devices.
+*/
 
 QList<QByteArray> QCamera::deviceList()
 {
@@ -113,57 +123,45 @@ QList<QByteArray> QCamera::deviceList()
     return deviceNames;
 }
 
-QList<QVideoFrame::PixelFormat> QCamera::supportedPixelFormats()
+/*!
+    Return a list of resolutions available from selected device.
+*/
+
+QList<QSize> QCamera::supportedResolutions()
 {
     Q_D(QCamera);
 
     if(d->control)
-        return d->control->supportedPixelFormats();
-    else {
-        QList<QVideoFrame::PixelFormat> list;
-        return list;
-    }
-}
-
-QList<QSize> QCamera::supportedResolutions(QVideoFrame::PixelFormat fmt)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        return d->control->supportedResolutions(fmt);
+        return d->control->supportedResolutions();
     else {
         QList<QSize> sizes;
         return sizes;
     }
 }
 
-QVideoFrame::PixelFormat QCamera::pixelFormat() const
+/*!
+    Return the current resolution being used.
+*/
+
+QSize QCamera::frameSize() const
 {
     if(d_func()->control)
-        return d_func()->control->pixelFormat();
+        return d_func()->control->frameSize();
 
-    return QVideoFrame::Format_Invalid;
+    return QSize();
 }
 
-void QCamera::setPixelFormat(QVideoFrame::PixelFormat fmt)
+/*!
+    Set the resolution to use.
+*/
+
+void QCamera::setFrameSize(const QSize& s)
 {
     Q_D(QCamera);
 
     if(d->control)
-        d->control->setPixelFormat(fmt);
+        return d->control->setFrameSize(s);
 }
-
-QSize QCamera::size() const
-{
-    //TODO
-    return QSize();
-}
-
-void QCamera::setSize(const QSize& s)
-{
-    // TODO
-}
-
 
 /*!
     Returns the current framerate
@@ -510,7 +508,7 @@ QCamera::State QCamera::state() const
 
     return QCamera::StoppedState;
 }
-#endif
+
 bool QCamera::isValid() const
 {
     if(d_func()->control)

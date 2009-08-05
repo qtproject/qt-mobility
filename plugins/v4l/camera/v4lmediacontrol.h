@@ -32,18 +32,41 @@
 **
 ****************************************************************************/
 
+#ifndef V4LMEDIACONTROL_H
+#define V4LMEDIACONTROL_H
 
-#ifndef RADIOSERVICEPLUGIN_H
-#define RADIOSERVICEPLUGIN_H
+#include <QtCore/qobject.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include "qmediasink.h"
+#include "qmediarecorder.h"
+#include "qmediarecordercontrol.h"
+#include "qcameracontrol.h"
 
-class RadioServicePlugin : public QMediaServiceProviderPlugin
+class V4LMediaControl : public QMediaRecorderControl
 {
     Q_OBJECT
 public:
-    QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
+    V4LMediaControl(QObject *parent = 0);
+    ~V4LMediaControl();
+
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink &sink);
+
+    int state() const;
+
+    qint64 position() const;
+
+    void setCameraControl(QCameraControl* c);
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
+private:
+    QMediaSink           m_sink;
+    QCamera::State       m_state;
+    QCameraControl*      m_cameracontrol;
 };
 
-#endif // RADIOSERVICEPLUGIN_H
+#endif

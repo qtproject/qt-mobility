@@ -38,7 +38,7 @@
 #include <QtGui>
 
 #include <qcamera.h>
-#include <qmediacapture.h>
+#include <qmediarecorder.h>
 
 class QComboBox;
 class QLabel;
@@ -53,13 +53,13 @@ public:
 private slots:
     void deviceChanged(int idx);
     void togglePlay();
-    void stateChanged(QVideoStream::State);
-    void frameReady(QVideoFrame const &frame);
+    void stateChanged(QCamera::State);
+    //void frameReady(QVideoFrame const &frame);
 
 private:
-    QMediaCapture* capture;
+    QMediaRecorder* capture;
     QCamera*       camera;
-    QVideoFormat   format;
+    //QVideoFormat   format;
     QComboBox*     deviceBox;
     QLabel*        recTime;
     QPushButton*   button;

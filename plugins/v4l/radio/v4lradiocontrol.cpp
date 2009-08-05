@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#include "radiocontrol.h"
-#include "radioservice.h"
+#include "v4lradiocontrol.h"
+#include "v4lradioservice.h"
 
 #include <QtCore/qdebug.h>
 
@@ -49,7 +49,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-RadioControl::RadioControl(QObject *parent)
+V4LRadioControl::V4LRadioControl(QObject *parent)
     :QRadioTuner(parent)
 {
     fd = -1;
@@ -67,7 +67,7 @@ RadioControl::RadioControl(QObject *parent)
     timer->start();
 }
 
-RadioControl::~RadioControl()
+V4LRadioControl::~V4LRadioControl()
 {
     timer->stop();
 
@@ -75,12 +75,12 @@ RadioControl::~RadioControl()
         ::close(fd);
 }
 
-int RadioControl::band() const
+int V4LRadioControl::band() const
 {
     return currentBand;
 }
 
-bool RadioControl::isSupportedBand(int b) const
+bool V4LRadioControl::isSupportedBand(int b) const
 {
     QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
     switch(bnd) {
@@ -102,7 +102,7 @@ bool RadioControl::isSupportedBand(int b) const
     return false;
 }
 
-void RadioControl::setBand(int b)
+void V4LRadioControl::setBand(int b)
 {
     if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioPlayer::FM) {
         // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
@@ -130,12 +130,12 @@ void RadioControl::setBand(int b)
     }
 }
 
-int RadioControl::frequency() const
+int V4LRadioControl::frequency() const
 {
     return currentFreq;
 }
 
-void RadioControl::setFrequency(int frequency)
+void V4LRadioControl::setFrequency(int frequency)
 {
     qint64 f = frequency;
 
@@ -166,12 +166,12 @@ void RadioControl::setFrequency(int frequency)
     }
 }
 
-bool RadioControl::isStereo() const
+bool V4LRadioControl::isStereo() const
 {
     return stereo;
 }
 
-void RadioControl::setStereo(bool stereo)
+void V4LRadioControl::setStereo(bool stereo)
 {
     v4l2_tuner tuner;
 
@@ -189,7 +189,7 @@ void RadioControl::setStereo(bool stereo)
     }
 }
 
-int RadioControl::signalStrength() const
+int V4LRadioControl::signalStrength() const
 {
     v4l2_tuner tuner;
 
@@ -208,12 +208,12 @@ int RadioControl::signalStrength() const
     return 0;
 }
 
-qint64 RadioControl::duration() const
+qint64 V4LRadioControl::duration() const
 {
     return playTime.elapsed();
 }
 
-int RadioControl::volume() const
+int V4LRadioControl::volume() const
 {
     v4l2_queryctrl queryctrl;
 
@@ -221,7 +221,6 @@ int RadioControl::volume() const
         memset( &queryctrl, 0, sizeof( queryctrl ) );
         queryctrl.id = V4L2_CID_AUDIO_VOLUME;
         if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
-            v4l2_control control;
             if(queryctrl.maximum == 0) {
                 return vol;
             } else {
@@ -233,7 +232,7 @@ int RadioControl::volume() const
     return 0;
 }
 
-void RadioControl::setVolume(int volume)
+void V4LRadioControl::setVolume(int volume)
 {
     v4l2_queryctrl queryctrl;
 
@@ -256,12 +255,12 @@ void RadioControl::setVolume(int volume)
     }
 }
 
-bool RadioControl::isMuted() const
+bool V4LRadioControl::isMuted() const
 {
     return muted;
 }
 
-void RadioControl::setMuted(bool muted)
+void V4LRadioControl::setMuted(bool muted)
 {
     v4l2_queryctrl queryctrl;
 
@@ -280,7 +279,18 @@ void RadioControl::setMuted(bool muted)
     }
 }
 
-void RadioControl::searchForward()
+bool V4LRadioControl::isSearching() const
+{
+    //TODO
+    return false;
+}
+
+void V4LRadioControl::cancelSearch()
+{
+    //TODO
+}
+
+void V4LRadioControl::searchForward()
 {
     // Scan up
     if(scanning) {
@@ -291,7 +301,7 @@ void RadioControl::searchForward()
     forward  = true;
 }
 
-void RadioControl::searchBackward()
+void V4LRadioControl::searchBackward()
 {
     // Scan down
     if(scanning) {
@@ -303,7 +313,7 @@ void RadioControl::searchBackward()
     timer->start();
 }
 
-void RadioControl::search()
+void V4LRadioControl::search()
 {
     int signal = signalStrength();
     if(sig != signal) {
@@ -322,16 +332,15 @@ void RadioControl::search()
     emit signalStrengthChanged(signalStrength());
 }
 
-bool RadioControl::isValid() const
+bool V4LRadioControl::isValid() const
 {
     return available;
 }
 
-bool RadioControl::initRadio()
+bool V4LRadioControl::initRadio()
 {
     v4l2_tuner tuner;
     v4l2_input input;
-    v4l2_audio audio;
     v4l2_frequency freq;
     v4l2_capability cap;
 
@@ -410,7 +419,7 @@ bool RadioControl::initRadio()
     return false;
 }
 
-void RadioControl::setVol(int v)
+void V4LRadioControl::setVol(int v)
 {
     int fd = ::open( "/dev/mixer", O_RDWR, 0 );
     if ( fd < 0 )
@@ -426,7 +435,7 @@ void RadioControl::setVol(int v)
     ::close( fd );
 }
 
-int RadioControl::getVol()
+int V4LRadioControl::getVol()
 {
     int fd = ::open( "/dev/mixer", O_RDWR, 0 );
     if ( fd >= 0 ) {

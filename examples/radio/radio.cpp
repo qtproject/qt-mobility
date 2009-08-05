@@ -41,7 +41,7 @@
 
 Radio::Radio()
 {
-    player = new QRadioPlayer();
+    player = new QRadioPlayer;
     connect(player,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
     connect(player,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
 

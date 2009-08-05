@@ -32,42 +32,18 @@
 **
 ****************************************************************************/
 
-#ifndef MEDIACONTROL_H
-#define MEDIACONTROL_H
 
-#include <QtCore/qobject.h>
+#ifndef V4LSERVICEPLUGIN_H
+#define V4LSERVICEPLUGIN_H
 
-#include "qmediasink.h"
-#include "qmediacapture.h"
-#include "qmediacapturecontrol.h"
-#include "qcameracontrol.h"
+#include <qmediaserviceproviderplugin.h>
 
-class MediaControl : public QMediaCaptureControl
+class V4LServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
-    MediaControl(QObject *parent = 0);
-    ~MediaControl();
-
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink &sink);
-
-    int state() const;
-
-    qint64 position() const;
-    void setPositionUpdatePeriod(int ms);
-
-    void setCameraControl(QCameraControl* control);
-
-public slots:
-    void record();
-    void pause();
-    void stop();
-
-private:
-    QMediaSink           m_sink;
-    QMediaCapture::State m_state;
-    QCameraControl*      m_cameracontrol;
+    QStringList keys() const;
+    QMediaServiceProvider* create(QString const& key);
 };
 
-#endif
+#endif // V4LSERVICEPLUGIN_H

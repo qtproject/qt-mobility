@@ -61,9 +61,7 @@ class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 public:
     enum State { LoadingState, ActiveState, PausedState, StoppedState };
 
-#ifdef VIDEOSERVICES
-    Q_PROPERTY(QVideoFrame::PixelFormat pixelFormat READ pixelFormat WRITE setPixelFormat)
-    Q_PROPERTY(QSize size READ size WRITE setSize)
+    Q_PROPERTY(QSize frameSize READ frameSize WRITE setFrameSize)
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
     Q_PROPERTY(int framerate READ framerate WRITE setFrameRate)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness)
@@ -77,23 +75,18 @@ public:
     Q_PROPERTY(int rotation READ rotation WRITE setRotation)
     Q_PROPERTY(bool flash READ flash WRITE setFlash)
     Q_PROPERTY(bool autofocus READ autofocus WRITE setAutofocus)
-#endif
+
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
     ~QCamera();
 
     void start();
     void stop();
 
-#ifdef VIDEOSERVICES
     QList<QByteArray> deviceList();
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
-    QList<QSize> supportedResolutions(QVideoFrame::PixelFormat fmt);
+    QList<QSize> supportedResolutions();
 
-    QVideoFrame::PixelFormat pixelFormat() const;
-    void setPixelFormat(QVideoFrame::PixelFormat fmt);
-
-    QSize size() const;
-    void setSize(const QSize& s);
+    QSize frameSize() const;
+    void setFrameSize(const QSize& s);
 
     int framerate() const;
     void setFrameRate(int rate);
@@ -134,15 +127,14 @@ public:
     void setDevice(const QByteArray &device);
 
     QCamera::State state() const;
-#endif
+
     bool isValid() const;
 
     QAbstractMediaService* service() const;
 
-#ifdef VIDEOSERVICES
 Q_SIGNALS:
     void stateChanged(QCamera::State);
-#endif
+
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)

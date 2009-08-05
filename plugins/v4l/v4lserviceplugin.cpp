@@ -32,18 +32,49 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#ifndef CAMERASERVICEPLUGIN_H
-#define CAMERASERVICEPLUGIN_H
+#include "v4lserviceplugin.h"
+#include "v4lcameraservice.h"
+#include "v4lradioservice.h"
 
-#include <qmediaserviceproviderplugin.h>
+#include <qmediaserviceprovider.h>
 
-class CameraServicePlugin : public QMediaServiceProviderPlugin
+
+class V4LProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
-    QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
+    QObject* createObject(const char *interface) const
+    {
+        qWarning()<<interface;
+
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
+            return new V4LRadioService;
+
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
+            return new V4LCameraService;
+
+        return 0;
+    }
 };
 
-#endif // CAMERASERVICEPLUGIN_H
+QStringList V4LServicePlugin::keys() const
+{
+    return QStringList() << QLatin1String("radio") << QLatin1String("camera");
+}
+
+QMediaServiceProvider* V4LServicePlugin::create(QString const& key)
+{
+    if (key == QLatin1String("radio") || key == QLatin1String("camera"))
+        return new V4LProvider;
+
+    qDebug() << "unsupported key:" << key;
+    return 0;
+}
+
+#include "v4lserviceplugin.moc"
+
+Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
+
