@@ -56,7 +56,7 @@ public:
     };
 
     /* Mutators */
-    void setDetailDefinitionName(const QString& definitionId, const QString& fieldId);
+    void setDetailDefinitionName(const QString& definitionName, const QString& fieldName);
     void setBlankPolicy(BlankPolicy blankPolicy);
     void setDirection(Qt::SortOrder direction);
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity);

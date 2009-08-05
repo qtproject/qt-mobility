@@ -67,8 +67,8 @@ public:
     QContactSortOrder::BlankPolicy m_blankPolicy;
     Qt::SortOrder m_direction;
     Qt::CaseSensitivity m_sensitivity;
-    QString m_definitionId;
-    QString m_fieldId;
+    QString m_definitionName;
+    QString m_fieldName;
 };
 
 #endif

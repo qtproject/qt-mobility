@@ -872,3 +872,8 @@ QString QContactAddress::displayLabel() const
  * Sets the logo of the organisation stored in this detail to \a logo
  */
 
+/*!
+ * \fn QContactOrganisation::logo() const
+ * Returns the logo of the organisation stored in this detail
+ */
+
