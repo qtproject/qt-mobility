@@ -52,6 +52,7 @@ public:
     virtual ~QContactGroup();
 
     bool operator==(const QContactGroup& other) const;
+    bool operator!=(const QContactGroup& other) const {return !operator==(other);}
 
     enum Error {
         NoError = 0,
@@ -73,11 +74,9 @@ public:
 
     bool addMember(const QUniqueId& contactId);
     bool removeMember(const QUniqueId& contactId);
-    bool hasMember(const QUniqueId& contactId) const;
+    bool setMembers(const QList<QUniqueId>& members);
     QList<QUniqueId> members() const;
-
-    // also need some way of retrieving the current index/position of a contact in the group
-    // and of moving a contact "up" or "down" in the group?
+    bool hasMember(const QUniqueId& contactId) const;
 
 private:
     friend class QContactManager;

@@ -41,6 +41,12 @@
  * of contacts who are a member of the group.
  */
 
+/*!
+ * \fn QContactGroup::operator!=(const QContactGroup& other) const
+ * Returns true if this group is not identical to the \a other group.
+ * \sa operator==()
+ */
+
 /*! Create a new QContactGroup */
 QContactGroup::QContactGroup()
     : d(new QContactGroupData)
@@ -179,6 +185,19 @@ QList<QUniqueId> QContactGroup::members() const
 {
     d->m_error = QContactGroup::NoError;
     return d->m_members;
+}
+
+/*!
+ * Sets the list of ids of contacts which are members of this group to \a members.
+ * If the order of contact ids in the group is important, this function should be used instead of \l addMember().
+ * Returns true if the member list is set successfully, otherwise returns false.
+ * \sa members(), addMember(), hasMember()
+ */
+bool QContactGroup::setMembers(const QList<QUniqueId>& members)
+{
+    d->m_error = QContactGroup::NoError;
+    d->m_members = members;
+    return true;
 }
 
 
