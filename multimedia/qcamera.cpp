@@ -164,6 +164,230 @@ bool QCamera::isValid() const
     return d_func()->control != NULL;
 }
 
+QCamera::FlashMode QCamera::flashMode() const
+{
+    return d_func()->control ? d_func()->control->flashMode() : QCamera::FlashOff;
+}
+
+void QCamera::setFlashMode(QCamera::FlashMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setFlashMode(mode);
+}
+
+QCamera::FlashModes QCamera::supportedFlashModes() const
+{
+    return d_func()->control ? d_func()->control->supportedFlashModes() : QCamera::FlashOff;
+}
+
+bool QCamera::isFlashReady() const
+{
+    return d_func()->control ? d_func()->control->isFlashReady() : true;
+}
+
+QCamera::FocusMode QCamera::focusMode() const
+{
+    return d_func()->control ? d_func()->control->focusMode() : QCamera::AutoFocus;
+}
+
+void QCamera::setFocusMode(QCamera::FocusMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setFocusMode(mode);
+}
+
+QCamera::FocusModes QCamera::supportedFocusModes() const
+{
+    return d_func()->control ? d_func()->control->supportedFocusModes() : QCamera::AutoFocus;
+}
+
+QCamera::FocusStatus QCamera::focusStatus() const
+{
+    return d_func()->control ? d_func()->control->focusStatus() : QCamera::FocusDisabled;
+}
+
+bool QCamera::macroFocusingEnabled() const
+{
+    return d_func()->control ? d_func()->control->macroFocusingEnabled() : false;
+}
+
+bool QCamera::isMacroFocusingSupported() const
+{
+    return d_func()->control ? d_func()->control->isMacroFocusingSupported() : false;
+}
+
+void QCamera::setMacroFocusingEnabled(bool enabled)
+{
+    if (d_func()->control)
+        d_func()->control->setMacroFocusingEnabled(enabled);
+}
+
+QCamera::ExposureMode QCamera::exposureMode() const
+{
+    return d_func()->control ? d_func()->control->exposureMode() : QCamera::ExposureAuto;
+}
+
+void QCamera::setExposureMode(QCamera::ExposureMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setExposureMode(mode);
+}
+
+QCamera::ExposureModes QCamera::supportedExposureModes() const
+{
+    return d_func()->control ? d_func()->control->supportedExposureModes() : QCamera::ExposureAuto;
+}
+
+double QCamera::exposureCompensation() const
+{
+    return d_func()->control ? d_func()->control->exposureCompensation() : 0;
+}
+
+void QCamera::setExposureCompensation(double ev)
+{
+    if (d_func()->control)
+        d_func()->control->setExposureCompensation(ev);
+}
+
+QCamera::MeteringMode QCamera::meteringMode() const
+{
+    return d_func()->control ? d_func()->control->meteringMode() : QCamera::MeteringMatrix;
+}
+
+void QCamera::setMeteringMode(QCamera::MeteringMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setMeteringMode(mode);
+}
+
+QCamera::MeteringModes QCamera::supportedMeteringModes() const
+{
+    return d_func()->control ? d_func()->control->supportedMeteringModes() : QCamera::MeteringMatrix;
+}
+
+QCamera::WhiteBalanceMode QCamera::whiteBalanceMode() const
+{
+    return d_func()->control ? d_func()->control->whiteBalanceMode() : QCamera::WhiteBalanceAuto;
+}
+
+void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setWhiteBalanceMode(mode);
+}
+
+QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
+{
+    return d_func()->control ? d_func()->control->supportedWhiteBalanceModes() : QCamera::WhiteBalanceAuto;
+}
+
+int QCamera::manualWhiteBalance() const
+{
+    return d_func()->control ? d_func()->control->manualWhiteBalance() : -1;
+}
+
+void QCamera::setManualWhiteBalance(int colorTemperature)
+{
+    if (d_func()->control)
+        d_func()->control->setManualWhiteBalance(colorTemperature);
+}
+
+int QCamera::isoSensitivity() const
+{
+    return d_func()->control ? d_func()->control->isoSensitivity() : -1;
+}
+QPair<int, int> QCamera::supportedIsoSensitivityRange() const
+{
+    return d_func()->control ? d_func()->control->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
+}
+
+void QCamera::setManualIsoSensitivity(int iso)
+{
+    if (d_func()->control)
+        d_func()->control->setManualIsoSensitivity(iso);
+}
+
+void QCamera::setAutoIsoSensitivity()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoIsoSensitivity();
+}
+
+double QCamera::aperture() const
+{
+    return d_func()->control ? d_func()->control->aperture() : -1.0;
+}
+QPair<double, double> QCamera::supportedApertureRange() const
+{
+    return d_func()->control ? d_func()->control->supportedApertureRange() : qMakePair<double,double>(-1,-1);
+}
+
+void QCamera::setManualAperture(double aperture)
+{
+    if (d_func()->control)
+        d_func()->control->setManualAperture(aperture);
+}
+
+void QCamera::setAutoAperture()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoAperture();
+}
+
+double QCamera::shutterSpeed() const
+{
+    return d_func()->control ? d_func()->control->shutterSpeed() : -1;
+}
+
+QPair<double, double> QCamera::supportedShutterSpeedRange() const
+{
+    return d_func()->control ? d_func()->control->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
+}
+
+void QCamera::setManualShutterSpeed(double seconds)
+{
+    if (d_func()->control)
+        d_func()->control->setManualShutterSpeed(seconds);
+}
+
+void QCamera::setAutoShutterSpeed()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoShutterSpeed();
+}
+
+double QCamera::maximumOpticalZoom() const
+{
+    return d_func()->control ? d_func()->control->maximumOpticalZoom() : 1.0;
+}
+
+double QCamera::maximumDigitalZoom() const
+{
+    return d_func()->control ? d_func()->control->maximumDigitalZoom() : 1.0;
+}
+
+double QCamera::zoomValue() const
+{
+    return d_func()->control ? d_func()->control->zoomValue() : 1.0;
+}
+
+void QCamera::zoomTo(int value)
+{
+    if (d_func()->control)
+        d_func()->control->zoomTo(value);
+}
+
+bool QCamera::isExposureLocked() const
+{
+    return d_func()->control ? d_func()->control->isExposureLocked() : true;
+}
+
+bool QCamera::isFocusLocked() const
+{
+    return d_func()->control ? d_func()->control->isFocusLocked() : true;
+}
+
+
 /*!
     Returns the session object being controlled by this recorder.
 */
