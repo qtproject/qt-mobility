@@ -91,7 +91,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged(int start, int end))
-    Q_PRIVATE_SLOT(d_func(), void _q_updateCurrentItemPos())
 };
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H
