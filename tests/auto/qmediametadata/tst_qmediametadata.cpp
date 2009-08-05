@@ -37,16 +37,16 @@
 #include <qabstractmediaobject.h>
 #include <qabstractmediacontrol.h>
 #include <qabstractmediaservice.h>
-#include <qmetadataprovider.h>
+#include <qmetadataprovidercontrol.h>
 #include <qmediametadata.h>
 
-class MockProvider : public QMetadataProvider
+class MockProvider : public QMetadataProviderControl
 {
     Q_OBJECT
 
 public:
     MockProvider(QObject *parent):
-        QMetadataProvider(parent),
+        QMetadataProviderControl(parent),
         m_metadataAvailable(false),
         m_readOnly(true) {}
 

@@ -38,7 +38,6 @@
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
-#include "qvideoframe.h"
 #include "qcamera.h"
 
 class QCameraControl : public QAbstractMediaControl
@@ -105,6 +104,9 @@ Q_SIGNALS:
 protected:
     QCameraControl(QObject* parent);
 };
+
+#define QCameraControl_iid "com.nokia.qt.CameraControl"
+Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
 
 #endif  // QCAMERACONTROL_H
 

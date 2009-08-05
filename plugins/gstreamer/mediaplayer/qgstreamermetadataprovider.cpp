@@ -3,7 +3,7 @@
 #include <QDebug>
 
 QGstreamerMetadataProvider::QGstreamerMetadataProvider(QGstreamerPlayerSession *session, QObject *parent)
-    :QMetadataProvider(parent), m_session(session)
+    :QMetadataProviderControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
@@ -44,6 +44,6 @@ void QGstreamerMetadataProvider::setMetadata(QString const &name, QVariant const
 }
 
 void QGstreamerMetadataProvider::updateTags()
-{    
+{
     emit metadataChanged();
 }

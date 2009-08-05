@@ -48,9 +48,9 @@
 
 QPhononPlayerService::QPhononPlayerService(QObject *parent)
     : QMediaPlayerService(parent)
-{    
+{
     m_mediaObject = new Phonon::MediaObject(this);
-    m_videoWidget = new Phonon::VideoWidget();    
+    m_videoWidget = new Phonon::VideoWidget();
     m_control = new QPhononPlayerControl(m_mediaObject, this);
     m_metadata = new QPhononMetadataProvider(m_mediaObject, this);
 }
@@ -61,10 +61,10 @@ QPhononPlayerService::~QPhononPlayerService()
 
 QAbstractMediaControl *QPhononPlayerService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaPlayerControl") == 0)
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,"com.nokia.qt.MetadataControl") == 0)
+    if (qstrcmp(name, QMetadataProviderControl_iid) == 0)
         return m_metadata;
 
     return 0;
@@ -80,7 +80,7 @@ QList<QByteArray> QPhononPlayerService::supportedEndpointInterfaces(
             QMediaEndpointInterface::Direction direction) const
 {
     QList<QByteArray> res;
-    
+
     if (direction == QMediaEndpointInterface::Output)
         res << QMediaWidgetEndpoint_iid;
 

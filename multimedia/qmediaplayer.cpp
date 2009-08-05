@@ -121,7 +121,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     Q_D(QMediaPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QMediaPlayerControl *>(service->control("com.nokia.qt.MediaPlayerControl"));
+    d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
     connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
     connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));
@@ -461,6 +461,12 @@ void QMediaPlayer::setPlaybackRate(float rate)
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
+    if (!provider) {
+        const char *providerKey = getenv("QT_MEDIAPLAYER_PROVIDER");
+
+        provider = defaultServiceProvider(providerKey ? providerKey : "mediaplayer");
+    }
+
     QObject *object = provider ? provider->createObject("com.nokia.qt.MediaPlayer/1.0") : 0;
 
     if (object != 0) {

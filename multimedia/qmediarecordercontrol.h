@@ -66,4 +66,7 @@ protected:
     QMediaRecorderControl(QObject* parent);
 };
 
+#define QMediaRecorderControl_iid "com.nokia.qt.MediaRecorderControl"
+Q_MEDIA_DECLARE_CONTROL(QMediaRecorderControl, QMediaRecorderControl_iid)
+
 #endif

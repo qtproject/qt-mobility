@@ -45,7 +45,7 @@
 #include <QtCore/qvariant.h>
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMetadataProvider(parent)
+    : QMetadataProviderControl(parent)
     , m_media(0)
 {
     player->get_currentMedia(&m_media);

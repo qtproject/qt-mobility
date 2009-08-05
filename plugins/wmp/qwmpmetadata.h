@@ -35,14 +35,14 @@
 #ifndef QWMPMETADATA_H
 #define QWMPMETADATA_H
 
-#include "qmetadataprovider.h"
+#include "qmetadataprovidercontrol.h"
 #include "qmediaresource.h"
 
 #include <wmp.h>
 
 class QWmpEvents;
 
-class QWmpMetaData : public QMetadataProvider
+class QWmpMetaData : public QMetadataProviderControl
 {
     Q_OBJECT
 public:

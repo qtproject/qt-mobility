@@ -68,7 +68,7 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
 
     if(service) {
         d->service = service;
-        d->control = qobject_cast<QCameraControl *>(service->control("com.nokia.qt.CameraControl"));
+        d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
         connect(d->control,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
     } else {
         d->service = 0;

@@ -39,11 +39,11 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qmap.h>
 
-#include <qmetadataprovider.h>
+#include <qmetadataprovidercontrol.h>
 
 class MpdDaemon;
 
-class MpdMetadata : public QMetadataProvider
+class MpdMetadata : public QMetadataProviderControl
 {
     Q_OBJECT
 

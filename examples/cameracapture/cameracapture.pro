@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += example
 
-# Qt += multimedia
+QT += multimedia
 # DEFINES += AUDIOSERVICES
 INCLUDEPATH += $$PWD/../../multimedia \
     $$PWD/../../multimedia/endpoints

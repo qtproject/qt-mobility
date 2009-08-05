@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = gstengine
+QT+=multimedia
 
 PLUGIN_SUBDIR = mediaservice
 

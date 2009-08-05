@@ -72,6 +72,7 @@ protected:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
+    Q_PRIVATE_SLOT(d_func(), void _q_fullscreenWindowDone());
 };
 
 #endif

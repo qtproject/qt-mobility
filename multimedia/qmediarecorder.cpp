@@ -89,7 +89,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
      service(service),
      error(QMediaRecorder::NoError)
 {
-    control = qobject_cast<QMediaRecorderControl *>(service->control("com.nokia.qt.MediaRecorderControl"));
+    control = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
 }
 
 void QMediaRecorderPrivate::_q_stateChanged(int state)
@@ -197,7 +197,6 @@ qint64 QMediaRecorder::position() const
 
 void QMediaRecorder::setPositionUpdatePeriod(int ms)
 {
-    Q_D(QMediaRecorder);
     setNotifyInterval(ms);
 }
 

@@ -44,8 +44,9 @@
 #include <qpainter.h>
 #endif
 
+#include <qapplication.h>
 #include <qevent.h>
-
+#include <qdialog.h>
 
 #include <private/qwidget_p.h>
 
@@ -60,6 +61,7 @@ public:
         , renderer(0)
         , surface(0)
 #endif
+        , fullscreenWindow(0)
         , fullscreen(false)
     {
     }
@@ -70,10 +72,12 @@ public:
     QVideoRendererEndpoint *renderer;
     QPainterVideoSurface *surface;
 #endif
+    QDialog *fullscreenWindow;
     bool fullscreen;
 
     void _q_overlayFullscreenChanged(bool fullscreen);
     void _q_dimensionsChanged();
+    void _q_fullscreenWindowDone();
 };
 
 void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
@@ -84,6 +88,12 @@ void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
     q_func()->updateGeometry();
+}
+
+void QVideoWidgetPrivate::_q_fullscreenWindowDone()
+{
+    if (fullscreen)
+        q_func()->setFullscreen(false);
 }
 
 /*!
@@ -126,6 +136,9 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
 */
 QVideoWidget::~QVideoWidget()
 {
+    Q_D(QVideoWidget);
+
+    delete d->fullscreenWindow;
 }
 
 /*!
@@ -141,8 +154,36 @@ void QVideoWidget::setFullscreen(bool fullscreen)
 {
     Q_D(QVideoWidget);
 
-    if (d->overlay)
-        d->overlay->setFullscreen(fullscreen);
+    if (fullscreen) {
+        if (!d->fullscreenWindow) {
+            d->fullscreenWindow = new QDialog;
+
+            connect(d->fullscreenWindow, SIGNAL(finished(int)),
+                    this, SLOT(_q_fullscreenWindowDone()));
+        }
+
+        d->fullscreenWindow->showFullScreen();
+
+        if (d->overlay) {
+            d->overlay->setWinId(d->fullscreenWindow->winId());
+            d->overlay->setFullscreen(true);
+            d->overlay->setDisplayRect(d->fullscreenWindow->rect());
+        } else {
+            emit fullscreenChanged(d->fullscreen = true);
+        }
+    } else if (d->fullscreenWindow) {
+        if (d->overlay) {
+            d->overlay->setFullscreen(false);
+            d->overlay->setWinId(effectiveWinId());
+
+            QRect displayRect = rect();
+            displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
+            d->overlay->setDisplayRect(displayRect);
+        } else {
+            emit fullscreenChanged(d->fullscreen = false);
+        }
+        d->fullscreenWindow->hide();
+    }
 }
 
 /*!
@@ -203,7 +244,7 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
 
     QWidget::moveEvent(event);
 
-    if (d->overlay) {
+    if (d->overlay && !d->fullscreen) {
         QRect displayRect = rect();
         displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
         d->overlay->setDisplayRect(displayRect);
@@ -219,7 +260,7 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 
     QWidget::resizeEvent(event);
 
-    if (d->overlay) {
+    if (d->overlay && !d->fullscreen) {
         QRect displayRect = rect();
         displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
         d->overlay->setDisplayRect(displayRect);
@@ -235,12 +276,19 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 
     if (d->overlay && d->overlay->isEnabled()) {
         d->overlay->repaint();
-#ifndef QT_NO_VIDEOSURACE
+#ifndef QT_NO_VIDEOSURFACE
     } else if (d->surface) {
-        QPainter painter(this);
+        QWidget *widget;
+
+        if (d->fullscreenWindow && d->fullscreenWindow->isVisible())
+            widget = d->fullscreenWindow;
+        else
+            widget = this;
+
+        QPainter painter(widget);
 
         if (d->surface->isStarted()) {
-            d->surface->paint(&painter, rect());
+            d->surface->paint(&painter, widget->rect());
 
             d->surface->setReady(true);
         }

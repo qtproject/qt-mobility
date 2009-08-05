@@ -36,11 +36,10 @@
 #define QABSTRACTMEDIASERVICE_H
 
 #include "qmediaendpointinterface.h"
+#include "qabstractmediacontrol.h"
 
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
-
-class QAbstractMediaControl;
 
 class QAbstractMediaServicePrivate;
 
@@ -80,6 +79,13 @@ public:
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
+    template <typename T> inline T control() const {
+        if (QObject *object = control(qmediacontrol_iid<T>())) {
+            return qobject_cast<T>(object);
+        }
+        return 0;
+    }
+
     template <typename T> inline T createEndpoint() {
         if (QObject *object = createEndpoint(qmediaendpoint_iid<T>())) {
             if (T endpoint = qobject_cast<T>(object))
