@@ -30,28 +30,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTIDPRIVATE_H
-#define QMESSAGEACCOUNTIDPRIVATE_H
-#include "qmessageaccountid.h"
-#if defined(Q_OS_WIN)
-#include "winhelpers_p.h"
-#endif
 
-class QMessageAccountIdPrivate
+#include <QApplication>
+
+#include "addressfinder.h"
+
+int main(int argc, char *argv[])
 {
-    Q_DECLARE_PUBLIC(QMessageAccountId)
+    QApplication app(argc, argv);
+    AddressFinder finder;
+    finder.show();
+    return app.exec();
+}
 
-public:
-    QMessageAccountIdPrivate(QMessageAccountId *accountId)
-        :q_ptr(accountId)
-    {
-    }
-    
-    QMessageAccountId *q_ptr;
-#if defined(Q_OS_WIN)
-    MapiRecordKey _storeRecordKey;
-    static QMessageAccountId from(const MapiRecordKey &storeKey);
-    static MapiRecordKey storeRecordKey(const QMessageAccountId &id);
-#endif
-};
-#endif

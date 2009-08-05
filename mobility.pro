@@ -3,5 +3,5 @@ TARGET =
 
 CONFIG += ordered
 
-SUBDIRS = messaging tests
+SUBDIRS = messaging tests examples
 

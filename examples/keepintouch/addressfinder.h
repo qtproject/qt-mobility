@@ -30,28 +30,54 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTIDPRIVATE_H
-#define QMESSAGEACCOUNTIDPRIVATE_H
-#include "qmessageaccountid.h"
-#if defined(Q_OS_WIN)
-#include "winhelpers_p.h"
-#endif
 
-class QMessageAccountIdPrivate
+#ifndef ADDRESSFINDER_H
+#define ADDRESSFINDER_H
+
+#include "qtmessaging.h"
+
+#include <QMap>
+#include <QObject>
+#include <QSet>
+#include <QWidget>
+
+class QComboBox;
+class QListWidget;
+class QPushButton;
+
+class AddressFinder : public QWidget
 {
-    Q_DECLARE_PUBLIC(QMessageAccountId)
+    Q_OBJECT
 
 public:
-    QMessageAccountIdPrivate(QMessageAccountId *accountId)
-        :q_ptr(accountId)
-    {
-    }
-    
-    QMessageAccountId *q_ptr;
-#if defined(Q_OS_WIN)
-    MapiRecordKey _storeRecordKey;
-    static QMessageAccountId from(const MapiRecordKey &storeKey);
-    static MapiRecordKey storeRecordKey(const QMessageAccountId &id);
-#endif
+    AddressFinder(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~AddressFinder();
+
+private slots:
+    void includePeriodChanged(int);
+    void addressSelected(const QString&);
+    void searchMessages();
+    void activityChanged(QMessageServiceAction::Activity a);
+    void messagesFound(const QMessageIdList &ids);
+    void continueSearch();
+
+private:
+    QComboBox *includePeriod;
+    QComboBox *excludePeriod;
+    QPushButton *searchButton;
+
+    QListWidget *addressList;
+    QListWidget *messageList;
+
+    QMessageServiceAction service;
+
+    QMessageFilterKey inclusionFilter;
+
+    QMessageIdList inclusionMessages;
+    QMessageIdList exclusionMessages;
+
+    QSet<QString> excludedAddresses;
+    QMap<QString, QStringList> addressMessages;
 };
+
 #endif

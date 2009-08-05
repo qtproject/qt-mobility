@@ -51,7 +51,6 @@ public:
     static QMessageAccountSortKey name(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    friend class QMessageStore;
     QMessageAccountSortKeyPrivate *d_ptr;
 };
 #endif

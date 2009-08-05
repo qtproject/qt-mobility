@@ -281,10 +281,18 @@ QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessage
     QMailMessageKey key;
 
     // This should be interpreted as specifying a match or otherwise on each of the flags set in the mask
-    if (mask & QMessage::Read) key &= QMailMessageKey::status(QMailMessage::Read, convert(cmp));
-    if (mask & QMessage::HasAttachments) key &= QMailMessageKey::status(QMailMessage::HasAttachments, convert(cmp));
-    if (mask & QMessage::Incoming) key &= QMailMessageKey::status(QMailMessage::Incoming, convert(cmp));
-    if (mask & QMessage::Removed) key &= QMailMessageKey::status(QMailMessage::Removed, convert(cmp));
+    if (mask & QMessage::Read) {
+        key &= QMailMessageKey::status(convert(QMessage::Read), convert(cmp));
+    }
+    if (mask & QMessage::HasAttachments) {
+        key &= QMailMessageKey::status(convert(QMessage::HasAttachments), convert(cmp));
+    }
+    if (mask & QMessage::Incoming) {
+        key &= QMailMessageKey::status(convert(QMessage::Incoming), convert(cmp));
+    }
+    if (mask & QMessage::Removed) {
+        key &= QMailMessageKey::status(convert(QMessage::Removed), convert(cmp));
+    }
 
     QMessageFilterKey result;
     result.d_ptr->_key = (key.isEmpty() ? QMailMessageKey::nonMatchingKey() : key);

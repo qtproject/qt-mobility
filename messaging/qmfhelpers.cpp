@@ -316,6 +316,10 @@ QMessage::StatusFlags convert(quint64 v)
 
 quint64 convert(QMessage::Status v)
 {
+    // We cannot rely on the QMailMessage status masks until the store has been initialized
+    static QMailStore *store = QMailStore::instance();
+    Q_UNUSED(store);
+
     quint64 result(0);
 
     if (v & QMessage::Read) {

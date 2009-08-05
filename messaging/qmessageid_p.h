@@ -53,6 +53,11 @@ public:
     MapiRecordKey _folderRecordKey;
     MapiRecordKey _storeRecordKey;
     MapiEntryId _entryId;
+    static QMessageId from(const MapiRecordKey &messageKey, const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId = MapiEntryId());
+    static MapiEntryId entryId(const QMessageId &id);
+    static MapiRecordKey messageRecordKey(const QMessageId &id);
+    static MapiRecordKey folderRecordKey(const QMessageId &id);
+    static MapiRecordKey storeRecordKey(const QMessageId &id);
 #endif
 };
 #endif

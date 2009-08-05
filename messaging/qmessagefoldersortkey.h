@@ -56,7 +56,6 @@ public:
     static QMessageFolderSortKey path(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    friend class QMessageStore;
     QMessageFolderSortKeyPrivate *d_ptr;
 };
 #endif

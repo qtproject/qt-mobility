@@ -37,6 +37,29 @@
 
 #include <QTimer>
 
+namespace {
+
+struct TextPartSearcher
+{
+    QString _search;
+
+    TextPartSearcher(const QString &searchText) : _search(searchText) {}
+
+    bool operator()(const QMailMessagePart &part)
+    {
+        if (part.contentType().type().toLower() == "text") {
+            if (part.body().data().contains(_search, Qt::CaseInsensitive)) {
+                // We have located some matching text - stop the traversal
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
+
+}
+
 using namespace QmfHelpers;
 
 class QMessageServiceActionPrivate : public QObject
@@ -51,18 +74,36 @@ public:
     QMailServiceAction *_active;
     QMessageStore::ErrorCode _error;
 
+    QList<QMessageId> _matchingIds;
+    QList<QMailMessageId> _candidateIds;
+    QMessageFilterKey _lastKey;
+    QMessageSortKey _lastSortKey;
+    QString _match;
+    int _limit;
+    int _offset;
+
 signals:
     void activityChanged(QMessageServiceAction::Activity);
+    void messagesFound(const QMessageIdList&);
+    void progressChanged(uint, uint);
 
 protected slots:
     void activityChanged(QMailServiceAction::Activity a);
     void completed();
+    void reportMatchingIds();
+    void findMatchingIds();
+    void testNextMessage();
+
+private:
+    bool messageMatch(const QMailMessageId &messageid);
 };
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate()
     : QObject(),
       _active(0),
-      _error(QMessageStore::NoError)
+      _error(QMessageStore::NoError),
+      _limit(0),
+      _offset(0)
 {
 }
 
@@ -76,12 +117,89 @@ void QMessageServiceActionPrivate::completed()
     emit activityChanged(convert(QMailServiceAction::Successful));
 }
 
+bool QMessageServiceActionPrivate::messageMatch(const QMailMessageId &messageId)
+{
+    if (_match.isEmpty()) {
+        return true;
+    }
+
+    const QMailMessage candidate(messageId);
+    if (candidate.id().isValid()) {
+        // Search only messages or message parts that are of type 'text/*'
+        if (candidate.hasBody()) {
+            if (candidate.contentType().type().toLower() == "text") {
+                if (candidate.body().data().contains(_match, Qt::CaseInsensitive))
+                    return true;
+            }
+        } else if (candidate.multipartType() != QMailMessage::MultipartNone) {
+            // Search all 'text/*' parts within this message
+            TextPartSearcher searcher(_match);
+            if (candidate.foreachPart<TextPartSearcher&>(searcher) == false) {
+                // We found a matching part in the message
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void QMessageServiceActionPrivate::reportMatchingIds()
+{
+    emit messagesFound(convert(_candidateIds));
+    completed();
+}
+
+void QMessageServiceActionPrivate::findMatchingIds()
+{
+    int required = ((_offset + _limit) - _matchingIds.count());
+
+    // Are any of the existing IDs part of the result set?
+    if (required < _limit) {
+        emit messagesFound(_matchingIds.mid(_offset, _limit));
+    }
+
+    if (required > 0) {
+        QTimer::singleShot(0, this, SLOT(testNextMessage()));
+    } else {
+        completed();
+    }
+}
+
+void QMessageServiceActionPrivate::testNextMessage()
+{
+    int required = ((_offset + _limit) - _matchingIds.count());
+    if (required > 0) {
+        QMailMessageId messageId(_candidateIds.takeFirst());
+        if (messageMatch(messageId)) {
+            _matchingIds.append(convert(messageId));
+            --required;
+
+            if (required < _limit) {
+                // This is within the result set
+                emit messagesFound(QMessageIdList() << _matchingIds.last());
+            }
+        }
+
+        if ((required > 0) && !_candidateIds.isEmpty()) {
+            QTimer::singleShot(0, this, SLOT(testNextMessage()));
+            return;
+        }
+    }
+
+    completed();
+}
+
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageServiceActionPrivate)
 {
     connect(d_ptr, SIGNAL(activityChanged(QMessageServiceAction::Activity)), 
             this, SIGNAL(activityChanged(QMessageServiceAction::Activity)));
+    connect(d_ptr, SIGNAL(messagesFound(QMessageIdList)), 
+            this, SIGNAL(messagesFound(QMessageIdList)));
+    connect(d_ptr, SIGNAL(progressChanged(uint, uint)), 
+            this, SIGNAL(progressChanged(uint, uint)));
 }
 
 QMessageServiceAction::~QMessageServiceAction()
@@ -91,21 +209,65 @@ QMessageServiceAction::~QMessageServiceAction()
 
 bool QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key);
-    Q_UNUSED(sortKey);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = 0;
+    
+    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(key), convert(sortKey), limit, offset);
+    d_ptr->_error = convert(QMailStore::instance()->lastError());
+
+    if (d_ptr->_error == QMessageStore::NoError) {
+        d_ptr->_lastKey = QMessageFilterKey();
+        d_ptr->_lastSortKey = QMessageSortKey();
+        d_ptr->_match = QString();
+        d_ptr->_limit = static_cast<int>(limit);
+        d_ptr->_offset = 0;
+        d_ptr->_matchingIds.clear();
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+
+    return false;
 }
 
 bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(body);
-    Q_UNUSED(key);
-    Q_UNUSED(sortKey);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (body.isEmpty()) {
+        return queryMessages(key, sortKey, limit, offset);
+    }
+
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = 0;
+    
+    if ((key == d_ptr->_lastKey) && (sortKey == d_ptr->_lastSortKey) && (body == d_ptr->_match)) {
+        // This is a continuation of the last search
+        d_ptr->_limit = static_cast<int>(limit);
+        d_ptr->_offset = static_cast<int>(offset);
+        QTimer::singleShot(0, d_ptr, SLOT(findMatchingIds()));
+        return true;
+    }
+
+    // Find all messages to perform the body search on
+    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(key), convert(sortKey));
+    d_ptr->_error = convert(QMailStore::instance()->lastError());
+
+    if (d_ptr->_error == QMessageStore::NoError) {
+        d_ptr->_lastKey = key;
+        d_ptr->_lastSortKey = sortKey;
+        d_ptr->_match = body;
+        d_ptr->_limit = static_cast<int>(limit);
+        d_ptr->_offset = static_cast<int>(offset);
+        d_ptr->_matchingIds.clear();
+        QTimer::singleShot(0, d_ptr, SLOT(findMatchingIds()));
+        return true;
+    }
+
+    return false;
 }
 
 bool QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)

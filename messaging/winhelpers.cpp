@@ -31,6 +31,9 @@
 **
 ****************************************************************************/
 #include "winhelpers_p.h"
+#include "qmessageid_p.h"
+#include "qmessagefolderid_p.h"
+#include "qmessageaccountid_p.h"
 #include "qmessagefolder_p.h"
 #include <qdebug.h>
 
@@ -169,13 +172,7 @@ QMessageIdList MapiFolder::queryMessages(const QMessageFilterKey &key, const QMe
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
             MapiEntryId entryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
-            QByteArray encodedId;
-            QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-            encodedIdStream << recordKey;       // message key
-            encodedIdStream << _key;            // folder key
-            encodedIdStream << _parentStoreKey; // store key
-            encodedIdStream << entryId;
-            result.append(QMessageId(encodedId.toBase64()));
+            result.append(QMessageIdPrivate::from(recordKey, _key, _parentStoreKey, entryId));
         }
         FreeProws(rows);
         if (limit && !workingLimit)
@@ -242,11 +239,7 @@ MapiEntryId MapiFolder::messageEntryId(const MapiRecordKey &messageKey)
 
 QMessageFolderId MapiFolder::id()
 {
-    QByteArray encodedId;
-    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-    encodedIdStream << _key;
-    encodedIdStream << _parentStoreKey;
-    return QMessageFolderId(encodedId.toBase64());
+    return QMessageFolderIdPrivate::from(_key, _parentStoreKey);
 }
 
 MapiStore::MapiStore()
@@ -394,10 +387,7 @@ void MapiStore::setFolderFromId(const QMessageFolderId &folderId, QMessageFolder
 
 QMessageAccountId MapiStore::id()
 {
-    QByteArray encodedId;
-    QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-    encodedIdStream << _key;
-    return QMessageAccountId(encodedId.toBase64());
+    return QMessageAccountIdPrivate::from(_key);
 }
 
 MapiSession::MapiSession()
@@ -477,7 +467,7 @@ MapiStorePtr MapiSession::findStore(const QMessageAccountId &id)
         LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
         MapiRecordKey storeKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
         if ((!id.isValid() && rows->aRow[0].lpProps[defaultStoreColumn].Value.b) ||  // default store found
-            (id.isValid() && (id == QMessageAccountId(storeKey)))) {                 // specified store found
+            (id.isValid() && (id == QMessageAccountIdPrivate::from(storeKey)))) {    // specified store found
             LPMDB mapiStore;
             ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
             ULONG cbEntryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);

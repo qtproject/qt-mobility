@@ -35,6 +35,8 @@
 
 #include <qmailstore.h>
 
+#include <QCoreApplication>
+#include <QEvent>
 
 using namespace QmfHelpers;
 
@@ -285,4 +287,6 @@ void QMessageStore::stopNotifications()
 {
     // TODO: implement notifications
 }
+
+#include "qmessagestore_qmf.moc"
 
