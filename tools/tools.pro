@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += servicefw
+SUBDIRS += servicefw servicexmlgen
