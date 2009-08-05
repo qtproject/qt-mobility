@@ -43,6 +43,7 @@
 
 class QComboBox;
 class QListWidget;
+class QPushButton;
 
 class AddressFinder : public QWidget
 {
@@ -61,6 +62,7 @@ private slots:
 private:
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
+    QPushButton *searchButton;
 
     QListWidget *addressList;
     QListWidget *messageList;

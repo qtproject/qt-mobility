@@ -47,12 +47,17 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags),
       includePeriod(0),
       excludePeriod(0),
+      searchButton(0),
       addressList(0),
       messageList(0)
 {
+    setWindowTitle(tr("Keep In Touch"));
+
     excludePeriod = new QComboBox;
+    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     includePeriod = new QComboBox;
+    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     includePeriod->addItem(tr("Year"));
     includePeriod->addItem(tr("9 Months"));
     includePeriod->addItem(tr("6 Months"));
@@ -63,34 +68,50 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
 
     connect(includePeriod, SIGNAL(currentIndexChanged(int)), this, SLOT(includePeriodChanged(int)));
 
-    QGridLayout *filterayout = new QGridLayout;
-    filterayout->addWidget(new QLabel(tr("Contacted within the last")), 0, 0);
-    filterayout->addWidget(new QLabel(tr("But not the last")), 1, 0);
-    filterayout->addWidget(includePeriod, 0, 1);
-    filterayout->addWidget(excludePeriod, 1, 1);
+    QLabel *includeLabel = new QLabel(tr("Contacted within the last"));
+
+    QLabel *excludeLabel = new QLabel(tr("But not the last"));
+
+    QGridLayout *filterLayout = new QGridLayout;
+    filterLayout->addWidget(includeLabel, 0, 0);
+    filterLayout->setAlignment(includeLabel, Qt::AlignRight);
+    filterLayout->addWidget(excludeLabel, 1, 0);
+    filterLayout->setAlignment(excludeLabel, Qt::AlignRight);
+    filterLayout->addWidget(includePeriod, 0, 1);
+    filterLayout->addWidget(excludePeriod, 1, 1);
 
     QGroupBox *inputGroup = new QGroupBox(tr("Find addresses"));
-    inputGroup->setLayout(filterayout);
+    inputGroup->setLayout(filterLayout);
+    inputGroup->setAlignment(Qt::AlignLeft);
 
-    QPushButton *searchButton = new QPushButton(tr("Search"));
+    searchButton = new QPushButton(tr("Search"));
+    searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()));
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
 
     QHBoxLayout *inputLayout = new QHBoxLayout;
     inputLayout->addWidget(inputGroup);
+    inputLayout->setStretchFactor(inputGroup, 2);
     inputLayout->addWidget(searchButton);
+    inputLayout->setStretchFactor(searchButton, 1);
+    inputLayout->setAlignment(searchButton, Qt::AlignLeft | Qt::AlignBottom);
+    inputLayout->addStretch(1);
 
     addressList = new QListWidget;
+    addressList ->setSelectionMode(QAbstractItemView::SingleSelection);
 
     connect(addressList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
 
     QGroupBox *addressGroup = new QGroupBox(tr("Address"));
+    addressGroup->setAlignment(Qt::AlignLeft);
     addressGroup->setLayout(new QHBoxLayout);
     addressGroup->layout()->addWidget(addressList);
 
     messageList = new QListWidget;
+    messageList->setSelectionMode(QAbstractItemView::NoSelection);
 
     QGroupBox *messageGroup = new QGroupBox(tr("Messages"));
+    messageGroup->setAlignment(Qt::AlignLeft);
     messageGroup->setLayout(new QHBoxLayout);
     messageGroup->layout()->addWidget(messageList);
 
@@ -135,6 +156,8 @@ void AddressFinder::addressSelected(const QString &address)
 
 void AddressFinder::searchMessages()
 {
+    searchButton->setEnabled(false);
+
     // TODO: make this unnecessary:
     QMessageStore::instance();
 
@@ -176,6 +199,8 @@ void AddressFinder::searchMessages()
 
     if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
         QTimer::singleShot(0, this, SLOT(continueSearch()));
+    } else {
+        searchButton->setEnabled(true);
     }
 }
 
@@ -194,7 +219,7 @@ void AddressFinder::continueSearch()
         const QMessage message(id);
 
         // Determine the properties of the message
-        QString details(QString("[%1] %2").arg(message.date().toString()).arg(message.subject()));
+        QString details(QString("[%1] %2").arg(message.date().toString("d MMM")).arg(message.subject()));
 
         foreach (const QMessageAddress &address, message.to()) {
             QString recipient(address.recipient());
@@ -211,6 +236,8 @@ void AddressFinder::continueSearch()
 
     if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
         QTimer::singleShot(0, this, SLOT(continueSearch()));
+    } else {
+        searchButton->setEnabled(true);
     }
 }
 
