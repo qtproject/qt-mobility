@@ -93,9 +93,11 @@ public:
     virtual QSize frameSize() const = 0;
     virtual void setFrameSize(const QSize& s) = 0;
     virtual void setDevice(const QByteArray &device) = 0;
+#ifdef VIDEOSERVICES
     virtual QVideoFrame::PixelFormat pixelFormat() const = 0;
     virtual void setPixelFormat(QVideoFrame::PixelFormat fmt) = 0;
     virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats() = 0;
+#endif
     virtual QList<QSize> supportedResolutions() = 0;
 
 Q_SIGNALS:
