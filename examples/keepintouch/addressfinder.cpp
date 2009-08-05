@@ -163,6 +163,7 @@ void AddressFinder::searchMessages()
 
     addressList->clear();
     messageList->clear();
+    excludedAddresses.clear();
     addressMessages.clear();
 
     QDateTime now(QDateTime::currentDateTime());
@@ -189,15 +190,15 @@ void AddressFinder::searchMessages()
 
     QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Includes));
+    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Excludes));
 
     // Find all outgoing messages that are within the exclusion range
-    exclusionMessages = QMessageStore::instance()->queryMessages(~outgoingFilter & excludeFilter);
+    exclusionMessages = QMessageStore::instance()->queryMessages(outgoingFilter & excludeFilter);
 
     // Find all outgoing messages that are within the inclusion range
-    inclusionMessages = QMessageStore::instance()->queryMessages(~outgoingFilter & includeFilter & ~excludeFilter);
+    inclusionMessages = QMessageStore::instance()->queryMessages(outgoingFilter & includeFilter & ~excludeFilter);
 
-    if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
+    if (!inclusionMessages.isEmpty()) {
         QTimer::singleShot(0, this, SLOT(continueSearch()));
     } else {
         searchButton->setEnabled(true);
