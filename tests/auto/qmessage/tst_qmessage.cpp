@@ -483,10 +483,9 @@ void tst_QMessage::testParentFolderId()
     QMessage msg;
     QCOMPARE(msg.parentFolderId(), QMessageFolderId());
 
-    /*
-    msg.setParentFolderId(testFolderId);
-    QCOMPARE(msg.parentFolderId(), testFolderId);
-    */
+    // We can't set the parent folder directly, but we can verify that it has been modified
+    msg.setStandardFolder(QMessage::TrashFolder);
+    QVERIFY(msg.parentFolderId() != QMessageFolderId());
 }
 
 void tst_QMessage::testStandardFolder()
