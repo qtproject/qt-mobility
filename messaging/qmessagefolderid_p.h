@@ -53,6 +53,9 @@ public:
 #if defined(Q_OS_WIN)
     MapiRecordKey _folderRecordKey;
     MapiRecordKey _storeRecordKey;
+    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey);
+    static MapiRecordKey folderRecordKey(const QMessageFolderId &id);
+    static MapiRecordKey storeRecordKey(const QMessageFolderId &id);
 #endif
 };
 

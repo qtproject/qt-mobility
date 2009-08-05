@@ -30,9 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagestore.h"
 #include "qmessagestore_p.h"
 #include "qmessage_p.h"
+#include "qmessageid_p.h"
+#include "qmessageaccountid_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
 #include "winhelpers_p.h"
@@ -279,20 +280,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     if (!mapiSession->isValid())
         return result;
 
-    // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
-    MapiRecordKey messageRecordKey;
-    MapiRecordKey folderRecordKey;
-    MapiRecordKey storeRecordKey;
-    MapiEntryId entryId;
-    QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
-    idStream >> messageRecordKey;
-    idStream >> folderRecordKey;
-    idStream >> storeRecordKey;
-    if (!idStream.atEnd())
-        idStream >> entryId;
-
-    QMessageAccountId accountId(storeRecordKey.toBase64());
-    MapiStorePtr mapiStore(mapiSession->findStore(accountId));
+    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
+    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
+    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
+    MapiStorePtr mapiStore(mapiSession->findStore(QMessageAccountIdPrivate::from(storeRecordKey)));
     if (!mapiStore->isValid())
         return result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
@@ -316,13 +308,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
             return result;
         }
 
-        QByteArray encodedId;
-        QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
-        encodedIdStream << messageRecordKey;
-        encodedIdStream << folderRecordKey;
-        encodedIdStream << storeRecordKey;
-        encodedIdStream << entryId;
-        newId = QMessageId(encodedId.toBase64());
+        newId = QMessageIdPrivate::from(messageRecordKey, folderRecordKey, storeRecordKey, entryId);
     }
 
     const int nCols(4);

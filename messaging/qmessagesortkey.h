@@ -63,7 +63,6 @@ public:
     static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    friend class QMessageStore;
     QMessageSortKeyPrivate *d_ptr;
 };
 #endif

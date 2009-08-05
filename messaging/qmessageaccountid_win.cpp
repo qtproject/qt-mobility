@@ -35,6 +35,22 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
+QMessageAccountId QMessageAccountIdPrivate::from(const MapiRecordKey &storeKey)
+{
+    QMessageAccountId result;
+    if (!result.d_ptr)
+        result.d_ptr = new QMessageAccountIdPrivate(&result);
+    result.d_ptr->_storeRecordKey = storeKey;
+    return result;
+}
+
+MapiRecordKey QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_storeRecordKey;
+    return MapiRecordKey();
+}
+
 QMessageAccountId::QMessageAccountId()
     : d_ptr(0)
 {

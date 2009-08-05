@@ -82,7 +82,6 @@ public:
     static QMessageFolderFilterKey ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
-    friend class QMessageStore;
     QMessageFolderFilterKeyPrivate *d_ptr;
 };
 #endif
