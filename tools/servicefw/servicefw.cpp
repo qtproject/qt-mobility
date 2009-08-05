@@ -161,17 +161,16 @@ void CommandProcessor::search(const QStringList &args)
 
 static const char * const errorTable[] = {
     "No error", //0
-    "Storage permission error",
-    "Storage read error", //2
+    "Storage read error",
     "Invalid service location",
-    "Invalid service xml", //4
+    "Invalid service xml",
     "Invalid service interface descriptor",
-    "Service exists already", //6
-    "Implementation exists already",
-    "Loading of plug-in failed",  //8
-    "Component not found",
-    "Insufficient capabilities to access service", //10
-    "Unknown error" 
+    "Service already exists",
+    "Interface implementation already exists",
+    "Loading of plug-in failed",
+    "Service or interface not found",
+    "Insufficient capabilities to access service",
+    "Unknown error"
 };
 
 void CommandProcessor::add(const QStringList &args)
