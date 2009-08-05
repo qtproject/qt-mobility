@@ -35,6 +35,17 @@
 #include "qmessagefolder_p.h"
 #include "qmessagestore.h"
 
+QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path)
+{
+    QMessageFolder result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_parentAccountId = accountId;
+    result.d_ptr->_parentFolderId = parentId;
+    result.d_ptr->_displayName = name;
+    result.d_ptr->_path = path;
+    return result;
+}
+
 QMessageFolder::QMessageFolder()
     :d_ptr(new QMessageFolderPrivate(this))
 {

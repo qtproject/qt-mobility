@@ -290,7 +290,6 @@ QMessage QMessageStore::message(const QMessageId& id) const
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
     LPMESSAGE message;
-    result.d_ptr->_id = id;
 #if 0 // force lookup using record keys, TODO remove
     if (true) {
 #else
@@ -317,11 +316,13 @@ QMessage QMessageStore::message(const QMessageId& id) const
     ULONG count;
     LPSPropValue properties;
     if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-        result.d_ptr->_id = newId;
-        result.d_ptr->_status = ((properties[flagsColumn].Value.ul & MSGFLAG_READ) ? QFlags<QMessage::Status>(QMessage::Read) : 0);
         QString sender(stringFromLpctstr(properties[senderColumn].Value.LPSZ));
-        result.d_ptr->_from = QMessageAddress(sender, QMessageAddress::Email);
-        result.d_ptr->_subject = stringFromLpctstr(properties[subjectColumn].Value.LPSZ);
+        QMessageAddress from(sender, QMessageAddress::Email);
+        QString subject(stringFromLpctstr(properties[subjectColumn].Value.LPSZ));
+        QMessage::StatusFlags status;
+        if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
+            status |= QMessage::Read;
+        result = QMessagePrivate::from(newId, status, from, subject);
     } else {
         d_ptr->p_ptr->lastError = InvalidId;
     }
@@ -351,7 +352,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
         return result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    mapiStore->setFolderFromId(id, result.d_ptr);
+    result = mapiStore->folderFromId(id);
     return result;
 }
 #endif
@@ -368,12 +369,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
     MapiStorePtr mapiStore(mapiSession->findStore(id));
     if (mapiStore->isValid()) {
-        result.d_ptr->_id = mapiStore->id();
-        result.d_ptr->_name = mapiStore->name();
-        result.d_ptr->_types = QMessage::TypeFlags(QMessage::Email);
+        QMessageAccountId id(mapiStore->id());
+        QString name(mapiStore->name());
+        QMessage::TypeFlags types(QMessage::Email);
         if (mapiStore->name() == "SMS") { // On Windows Mobile SMS store is named "SMS"
-            result.d_ptr->_types = QMessage::TypeFlags(QMessage::Sms);
+            types = QMessage::TypeFlags(QMessage::Sms);
         }
+        result = QMessageAccountPrivate::from(id, name, types);
     }
     return result;
 }
