@@ -122,6 +122,9 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(inputLayout);
     mainLayout->addLayout(outputLayout);
+
+    connect(&service, SIGNAL(activityChanged(QMessageServiceAction::Activity)), this, SLOT(activityChanged(QMessageServiceAction::Activity)));
+    connect(&service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
 }
 
 AddressFinder::~AddressFinder()
@@ -189,16 +192,40 @@ void AddressFinder::searchMessages()
     QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Excludes));
 
-    // Find all outgoing messages that are within the exclusion range
-    exclusionMessages = QMessageStore::instance()->queryMessages(outgoingFilter & excludeFilter);
+    // Search for messages containing addresses to exclude
+    service.queryMessages(outgoingFilter & excludeFilter);
 
-    // Find all outgoing messages that are within the inclusion range
-    inclusionMessages = QMessageStore::instance()->queryMessages(outgoingFilter & includeFilter & ~excludeFilter);
+    // Create the filter needed to locate messages to search for addresses
+    inclusionFilter = (outgoingFilter & includeFilter & ~excludeFilter);
+}
 
-    if (!inclusionMessages.isEmpty()) {
-        QTimer::singleShot(0, this, SLOT(continueSearch()));
-    } else {
+void AddressFinder::activityChanged(QMessageServiceAction::Activity a)
+{
+    if (a == QMessageServiceAction::Successful) {
+        if (!inclusionFilter.isEmpty()) {
+            // Now find the included messages
+            service.queryMessages(inclusionFilter);
+            inclusionFilter = QMessageFilterKey();
+        } else {
+            // We have found the message sets to process
+            if (!inclusionMessages.isEmpty()) {
+                QTimer::singleShot(0, this, SLOT(continueSearch()));
+            } else {
+                searchButton->setEnabled(true);
+            }
+        }
+    } else if (a == QMessageServiceAction::Failed) {
+        qWarning() << "Search failed!";
         searchButton->setEnabled(true);
+    }
+}
+
+void AddressFinder::messagesFound(const QMessageIdList &ids)
+{
+    if (!inclusionFilter.isEmpty()) {
+        exclusionMessages.append(ids);
+    } else {
+        inclusionMessages.append(ids);
     }
 }
 

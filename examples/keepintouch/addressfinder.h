@@ -57,6 +57,8 @@ private slots:
     void includePeriodChanged(int);
     void addressSelected(const QString&);
     void searchMessages();
+    void activityChanged(QMessageServiceAction::Activity a);
+    void messagesFound(const QMessageIdList &ids);
     void continueSearch();
 
 private:
@@ -66,6 +68,10 @@ private:
 
     QListWidget *addressList;
     QListWidget *messageList;
+
+    QMessageServiceAction service;
+
+    QMessageFilterKey inclusionFilter;
 
     QMessageIdList inclusionMessages;
     QMessageIdList exclusionMessages;
