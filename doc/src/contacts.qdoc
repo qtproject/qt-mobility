@@ -196,6 +196,9 @@ and flexible selection of contacts according to various criteria:
     \o \l {QContactUnionFilter}
 \endlist
 
+A client can also request that the results of such a selection be sorted, by passing a \l{QContactSortOrder} (or
+list of sort orders) to the manager.
+
 \section2 Implementing Backends
 
 A manager backend may be implemented by subclassing \l{QContactManagerEngine}, and providing a
