@@ -32,33 +32,30 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERACONTROL_H
-#define CAMERACONTROL_H
+#ifndef V4LCAMERACONTROL_H
+#define V4LCAMERACONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QSocketNotifier>
 
 #include "qcameracontrol.h"
 
 #include <QtMultimedia/qvideoframe.h>
-#include <QtMultimedia/qvideoformat.h>
 
+struct video_buffer {
+    void* start;
+    size_t length;
+};
 
-class CameraService;
-class QVideoCamera;
+class V4LCameraService;
 
-class CameraControl : public QCameraControl
+class V4LCameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    CameraControl(QObject *parent = 0);
-    CameraControl(CameraService *service, QObject *parent = 0);
-    ~CameraControl();
-
-    QList<QVideoFrame::Type> supportedColorFormats();
-    QList<QSize> supportedResolutions(QVideoFrame::Type fmt);
-
-    QVideoFormat format() const;
-    void setFormat(const QVideoFormat &format);
+    V4LCameraControl(QObject *parent = 0);
+    V4LCameraControl(V4LCameraService *service, QObject *parent = 0);
+    ~V4LCameraControl();
 
     void start();
     void stop();
@@ -99,14 +96,31 @@ public:
     bool autofocus() const;
     void setAutofocus(bool f);
 
-    void setDevice(const QByteArray &device);
     bool isValid() const;
 
-    QVideoStream::State state() const;
+    QCamera::State state() const;
+
+    QSize frameSize() const;
+    void setFrameSize(const QSize& s);
+    void setDevice(const QByteArray &device);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
+    QVideoFrame::PixelFormat pixelFormat() const;
+    void setPixelFormat(QVideoFrame::PixelFormat fmt);
+    QList<QSize> supportedResolutions();
+
+private Q_SLOTS:
+    void captureFrame();
 
 private:
-    CameraService *m_service;
-    QVideoCamera* m_camera;
+    V4LCameraService *m_service;
+    QSocketNotifier *notifier;
+    QList<video_buffer> buffers;
+
+    bool available;
+    int sfd;
+    QCamera::State m_state;
+    QByteArray m_device;
+    char* videoData;
 };
 
 #endif

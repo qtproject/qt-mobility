@@ -32,32 +32,61 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERASERVICE_H
-#define CAMERASERVICE_H
+#include "v4lmediacontrol.h"
+#include "v4lcameracontrol.h"
 
-#include <QtCore/qobject.h>
+#include <QtCore/qdebug.h>
 
-#include "qcameraservice.h"
-
-class CameraControl;
-class MediaControl;
-
-class CameraService : public QCameraService
+V4LMediaControl::V4LMediaControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-    Q_OBJECT
-public:
-    CameraService(QObject *parent = 0);
-    ~CameraService();
+    qWarning()<<"yyyyyyyyyyyy";
+}
 
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    QObject *createEndpoint(const char *interface);
+V4LMediaControl::~V4LMediaControl()
+{
+}
 
-    QAbstractMediaControl *control(const char *name) const;
+QMediaSink V4LMediaControl::sink() const
+{
+    return m_sink;
+}
 
-    QList<QByteArray> deviceList();
-private:
-    CameraControl *m_control;
-    MediaControl  *m_media;
-};
+bool V4LMediaControl::setSink(const QMediaSink& sink)
+{
+    m_sink = sink;
+    //QUrl url = sink.dataLocation().toUrl();
 
-#endif
+    return true;
+}
+
+int V4LMediaControl::state() const
+{
+    return int(m_state);
+}
+
+qint64 V4LMediaControl::position() const
+{
+    return 0;
+}
+
+void V4LMediaControl::record()
+{
+    qWarning()<<"@@@@@@@@@@@@@@";
+    m_cameracontrol->start();
+}
+
+void V4LMediaControl::pause()
+{
+    m_cameracontrol->stop();
+}
+
+void V4LMediaControl::stop()
+{
+    m_cameracontrol->stop();
+}
+
+void V4LMediaControl::setCameraControl(QCameraControl* c)
+{
+    m_cameracontrol = c;
+}

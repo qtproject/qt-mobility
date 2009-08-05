@@ -84,6 +84,10 @@ QCamera::~QCamera()
 {
 }
 
+/*!
+    Start camera.
+*/
+
 void QCamera::start()
 {
     Q_D(QCamera);
@@ -91,6 +95,10 @@ void QCamera::start()
     if(d->control)
         d->control->start();
 }
+
+/*!
+    Stop camera.
+*/
 
 void QCamera::stop()
 {
@@ -141,6 +149,14 @@ QString QCamera::deviceDescription(const QByteArray &device)
 {
     Q_UNUSED(device);
     return QString();
+}
+
+QCamera::State QCamera::state() const
+{
+    if(d_func()->control)
+        return d_func()->control->state();
+
+    return QCamera::StoppedState;
 }
 
 bool QCamera::isValid() const

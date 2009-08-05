@@ -32,43 +32,73 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
+#include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
+#include <QtGui/qwidget.h>
 
-#include "radioserviceplugin.h"
-#include "radioservice.h"
+#include "endpoints/qvideorendererendpoint.h"
 
-#include <qmediaserviceprovider.h>
+#include "v4lcameraservice.h"
+#include "v4lcameracontrol.h"
+#include "v4lmediacontrol.h"
 
-
-class RadioProvider : public QMediaServiceProvider
+V4LCameraService::V4LCameraService(QObject *parent)
+    : QCameraService(parent)
 {
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
-            return new RadioService;
-
-        return 0;
-    }
-};
-
-QStringList RadioServicePlugin::keys() const
-{
-    return QStringList() << "radio";
+    m_control = new V4LCameraControl(this, this);
+    m_media = new V4LMediaControl(this);
+    m_media->setCameraControl(m_control);
 }
 
-QMediaServiceProvider* RadioServicePlugin::create(QString const& key)
+V4LCameraService::~V4LCameraService()
 {
-    if (key == "radio")
-        return new RadioProvider;
+    delete m_media;
+    delete m_control;
+}
 
-    qDebug() << "unsupported key:" << key;
+QAbstractMediaControl *V4LCameraService::control(const char *name) const
+{
+    qWarning()<<"eeeeeeeeeeee "<<name;
+
+    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0) {
+        qWarning()<<"found media control";
+        return m_media;
+    }
+
+    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0) {
+        qWarning()<<"found camera control";
+        return m_control;
+    }
+
     return 0;
 }
 
-#include "radioserviceplugin.moc"
+QList<QByteArray> V4LCameraService::supportedEndpointInterfaces(
+        QMediaEndpointInterface::Direction direction) const
+{
+    QList<QByteArray> list;
 
-Q_EXPORT_PLUGIN2(radioserviceplugin, RadioServicePlugin);
+    if (direction == QMediaEndpointInterface::Input)
+        list << QByteArray(QVideoRendererEndpoint_iid);
+
+    return list;
+}
+
+QObject *V4LCameraService::createEndpoint(const char *interface)
+{
+    if (qstrcmp(interface, QVideoRendererEndpoint_iid) == 0) {
+        return new QVideoRendererEndpoint(this);
+    }
+
+    return 0;
+}
+
+QList<QByteArray> V4LCameraService::deviceList()
+{
+    QList<QByteArray> devices;
+
+    devices << "/dev/video0" << "/dev/video1";
+
+    return devices;
+}
 

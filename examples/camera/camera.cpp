@@ -80,11 +80,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::stateChanged(QVideoStream::State state)
+void Camera::stateChanged(QCamera::State state)
 {
     qWarning()<<"stateChanged() "<<state;
 }
-
+/*
 void Camera::frameReady(QVideoFrame const &frame)
 {
     qWarning()<<"frameReady";
@@ -93,26 +93,27 @@ void Camera::frameReady(QVideoFrame const &frame)
     QString str = QString("%1 sec").arg(currentTime/framerate);
     recTime->setText(str);
 }
-
+*/
 void Camera::deviceChanged(int idx)
 {
     QByteArray device;
     device = deviceBox->itemText(idx).toLocal8Bit().constData();
     camera->setDevice(device);
+    /*
     QList<QVideoFrame::Type> fmts = camera->supportedColorFormats();
     qWarning()<<"fmts = "<<fmts;
     QList<QSize> sizes = camera->supportedResolutions(fmts.first());
     qWarning()<<"sizes = "<<sizes;
     format = QVideoFormat(sizes.first(),fmts.first());
     camera->setFormat(format);
-
+*/
     // Change a camera property
     camera->setBrightness(camera->brightness());
     framerate = camera->framerate();
     if(framerate == 0) framerate = 25;
 
-    connect(camera,SIGNAL(stateChanged(QVideoStream::State)),this,SLOT(stateChanged(QVideoStream::State)));
-    connect(camera,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
+    connect(camera,SIGNAL(stateChanged(QCamera::State)),this,SLOT(stateChanged(QCamera::State)));
+    //connect(camera,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
 }
 
 void Camera::togglePlay()

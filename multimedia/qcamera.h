@@ -37,6 +37,7 @@
 
 #include <QList>
 #include <QPair>
+#include <QSize>
 #include <QStringList>
 
 #include "qabstractmediacontrol.h"
@@ -127,6 +128,8 @@ public:
     };
     Q_DECLARE_FLAGS(WhiteBalanceModes, WhiteBalanceMode)
 
+    Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
+
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
     QCamera(const QByteArray &device, QObject *parent = 0);
     ~QCamera();
@@ -139,6 +142,8 @@ public:
 
     void start();
     void stop();
+
+    State state() const;
 
     FlashMode flashMode() const;
     void setFlashMode(FlashMode mode);
@@ -207,6 +212,9 @@ Q_SIGNALS:
     void zoomValueChanged(double);
     void exposureLocked();
     void focusLocked();
+    
+    void stateChanged(QCamera::State);
+
 
 private:
     Q_DISABLE_COPY(QCamera)

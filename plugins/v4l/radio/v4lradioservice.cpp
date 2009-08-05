@@ -35,64 +35,26 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
+#include <QtCore/qfile.h>
 
-#include <QtMultimedia/qvideocamera.h>
+#include "v4lradioservice.h"
+#include "v4lradiocontrol.h"
 
-#include "mediacontrol.h"
-#include "endpoints/qvideorendererendpoint.h"
-
-#include "cameraservice.h"
-#include "cameracontrol.h"
-
-CameraService::CameraService(QObject *parent)
-    : QCameraService(parent)
+V4LRadioService::V4LRadioService(QObject *parent)
+    : QRadioService(parent)
 {
-    m_control = new CameraControl(this, this);
-    m_media = new MediaControl(this);
-    m_media->setCameraControl(m_control);
+    m_control = new V4LRadioControl(this);
 }
 
-CameraService::~CameraService()
+V4LRadioService::~V4LRadioService()
 {
-    delete m_media;
-    delete m_control;
 }
 
-QAbstractMediaControl *CameraService::control(const char *name) const
+QAbstractMediaControl *V4LRadioService::control(const char* name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
-        return m_media;
+    Q_UNUSED(name)
 
-    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
-        return m_control;
-
-    return 0;
+    return m_control;
 }
 
-QList<QByteArray> CameraService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-
-    if (direction == QMediaEndpointInterface::Input)
-        list << QByteArray(QVideoRendererEndpoint_iid);
-
-    return list;
-}
-
-QObject *CameraService::createEndpoint(const char *interface)
-{
-    if (qstrcmp(interface, QVideoRendererEndpoint_iid) == 0) {
-        return new QVideoRendererEndpoint(this);
-    }
-
-    return 0;
-}
-
-QList<QByteArray> CameraService::deviceList()
-{
-    QList<QByteArray> devices;
-    devices = QVideoCamera::deviceForOrientation(QCameraInfo::Any);
-    return devices;
-}
 

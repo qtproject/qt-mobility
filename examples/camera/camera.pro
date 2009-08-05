@@ -1,15 +1,14 @@
 TEMPLATE = app
+CONFIG += example
 
-DEFINES += VIDEOSERVICES
 QT += multimedia
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
+include (../../common.pri)
 
-LIBS += -L$$OUT_PWD/../../lib -lQtMedia
+LIBS += -lQtMedia
 
-QMAKE_RPATHDIR += $$OUT_PWD/../../lib
-
-DESTDIR = ../../bin
+QMAKE_RPATHDIR += $$DESTDIR
 
 HEADERS = \
     camera.h

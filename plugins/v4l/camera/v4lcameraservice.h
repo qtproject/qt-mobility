@@ -32,27 +32,32 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
+#ifndef V4LCAMERASERVICE_H
+#define V4LCAMERASERVICE_H
 
-#include "radioservice.h"
-#include "radiocontrol.h"
+#include <QtCore/qobject.h>
 
-RadioService::RadioService(QObject *parent)
-    : QRadioService(parent)
+#include "qcameraservice.h"
+
+class V4LCameraControl;
+class V4LMediaControl;
+
+class V4LCameraService : public QCameraService
 {
-    m_control = new RadioControl(this);
-}
+    Q_OBJECT
+public:
+    V4LCameraService(QObject *parent = 0);
+    ~V4LCameraService();
 
-RadioService::~RadioService()
-{
-}
+    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
+    QObject *createEndpoint(const char *interface);
 
-QAbstractMediaControl *RadioService::control(const char* name) const
-{
-    return m_control;
-}
+    QAbstractMediaControl *control(const char *name) const;
 
+    QList<QByteArray> deviceList();
+private:
+    V4LCameraControl *m_control;
+    V4LMediaControl  *m_media;
+};
 
+#endif

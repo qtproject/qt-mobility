@@ -38,8 +38,11 @@
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
-#include "qvideoframe.h"
 #include "qcamera.h"
+
+#ifndef QT_NO_VIDEOSURFACE
+#include <QtMultimedia/qvideoframe.h>
+#endif
 
 class QCameraControl : public QAbstractMediaControl
 {
@@ -51,10 +54,7 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
 
-Q_SIGNALS:
-#ifdef VIDEOSERVICES
-    void stateChanged(QCamera::State);
-#endif
+    virtual QCamera::State state() const = 0;
 
 public Q_SLOTS:
     virtual void lockExposure();
@@ -69,6 +69,9 @@ Q_SIGNALS:
     void zoomValueChanged(double);
     void exposureLocked();
     void focusLocked();
+
+Q_SIGNALS:
+    void stateChanged(QCamera::State);
 
 protected:
     QCameraControl(QObject* parent);

@@ -1,14 +1,6 @@
 
 INCLUDEPATH += $$PWD
 
-# DEFINES += AUDIOSERVICES
-
-multimedia {
-    QT += multimedia
-} else {
-    DEFINES += QT_NO_VIDEOSURFACE
-}
-
 HEADERS += \
     $$PWD/qaudiodeviceendpoint.h \
     $$PWD/qaudiorendererendpoint.h \

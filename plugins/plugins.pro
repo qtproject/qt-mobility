@@ -1,8 +1,12 @@
 TEMPLATE = subdirs
 
-SUBDIRS *= mpd phonon
+DEPENDPATH += $$PWD/../multimedia
 
-win32: SUBDIRS *= wmp
+SUBDIRS = mpd
+
+contains(QT_CONFIG, phonon): SUBDIRS += phonon
+
+win32: SUBDIRS += wmp
 mac: SUBDIRS += qt7
-unix:!mac: SUBDIRS += gstreamer
+unix:contains(QT_CONFIG, gstreamer): SUBDIRS += gstreamer
 

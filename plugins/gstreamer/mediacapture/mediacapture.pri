@@ -1,4 +1,7 @@
 INCLUDEPATH += $$PWD
+
+DEFINES += QMEDIA_GSTREAMER_CAPTURE
+
 HEADERS += $$PWD/qgstreamercaptureservice.h \
     $$PWD/qgstreamercapturesession.h \
     $$PWD/qgstreameraudioencode.h \

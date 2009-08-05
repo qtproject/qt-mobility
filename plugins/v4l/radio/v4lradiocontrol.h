@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef RADIOCONTROL_H
-#define RADIOCONTROL_H
+#ifndef V4LRADIOCONTROL_H
+#define V4LRADIOCONTROL_H
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
@@ -44,14 +44,14 @@
 
 #include "linux/videodev2.h"
 
-class RadioService;
+class V4LRadioService;
 
-class RadioControl : public QRadioTuner
+class V4LRadioControl : public QRadioTuner
 {
     Q_OBJECT
 public:
-    RadioControl(QObject *parent = 0);
-    ~RadioControl();
+    V4LRadioControl(QObject *parent = 0);
+    ~V4LRadioControl();
 
     int band() const;
     void setBand(int b);
@@ -72,6 +72,9 @@ public:
 
     bool isMuted() const;
     void setMuted(bool muted);
+
+    bool isSearching() const;
+    void cancelSearch();
 
     bool isValid() const;
 
