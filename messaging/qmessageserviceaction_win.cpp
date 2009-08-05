@@ -60,10 +60,9 @@ bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFil
     return false; // stub
 }
 
-bool QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
+bool QMessageServiceAction::send(QMessage &message)
 {
     Q_UNUSED(message)
-    Q_UNUSED(accountId)
     return false; // stub
 }
 

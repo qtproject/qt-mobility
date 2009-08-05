@@ -82,6 +82,8 @@ public:
     int _limit;
     int _offset;
 
+    QMailMessageIdList _transmitIds;
+    
 signals:
     void activityChanged(QMessageServiceAction::Activity);
     void messagesFound(const QMessageIdList&);
@@ -109,6 +111,25 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate()
 
 void QMessageServiceActionPrivate::activityChanged(QMailServiceAction::Activity a)
 {
+    if (a == QMailServiceAction::Successful) {
+        if (!_transmitIds.isEmpty()) {
+            // If these messages were transmitted, we need to move them to Sent folder
+            QMailMessageKey key(QMailMessageKey::id(_transmitIds));
+            foreach (const QMailMessageId &id, QMailStore::instance()->queryMessages(key & QMailMessageKey::status(QMailMessage::Sent))) {
+                QMessage message(convert(id));
+
+                message.setStandardFolder(QMessage::SentFolder);
+                if (!QMessageStore::instance()->updateMessage(&message)) {
+                    qWarning() << "Unable to mark message as sent!";
+                }
+            }
+
+            _transmitIds.clear();
+        }
+    } else if (a == QMailServiceAction::Failed) {
+        _transmitIds.clear();
+    }
+
     emit activityChanged(convert(a));
 }
 
@@ -270,7 +291,7 @@ bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFil
     return false;
 }
 
-bool QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
+bool QMessageServiceAction::send(QMessage &message)
 {
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
         qWarning() << "Action is currently busy";
@@ -278,36 +299,46 @@ bool QMessageServiceAction::send(const QMessage &message, const QMessageAccountI
     }
     d_ptr->_active = 0;
 
-    if (!message.id().isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
-        qWarning() << "Invalid message ID";
-        return false;
-    }
-    if (message.parentAccountId() != accountId) {
-        d_ptr->_error = QMessageStore::InvalidId;
-        qWarning() << "Invalid message account ID";
-        return false;
-    }
-    if (!message.parentFolderId().isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
-        qWarning() << "Invalid message folder ID";
-        return false;
-    }
-
-    const QMailMessage *m(convert(&message));
-
-    if (!(m->status() & QMailMessage::Outbox)) {
-        QMailMessage msg(m->id());
-        msg.setStatus(QMailMessage::Outbox, true);
-        if (!QMailStore::instance()->updateMessage(&msg)) {
-            d_ptr->_error = QMessageStore::FrameworkFault;
-            qWarning() << "Unable to mark message as outgoing";
+    if (!message.parentAccountId().isValid()) {
+        // Attach to the default account
+        message.setParentAccountId(QMessageAccount::defaultAccount(message.type()));
+        if (!message.parentAccountId().isValid()) {
+            d_ptr->_error = QMessageStore::InvalidId;
+            qWarning() << "Invalid message account ID";
             return false;
         }
     }
 
+    QMessageFolderId existingFolderId(message.parentFolderId());
+
+    // Move the message to the Outbox folder
+    message.setStandardFolder(QMessage::OutboxFolder);
+
+    QMailMessage *msg(convert(&message));
+
+    // Mark this message as outgoing
+    msg->setStatus(QMailMessage::Outbox, true);
+
+    if (msg->id().isValid()) {
+        // Update the message
+        if (!QMailStore::instance()->updateMessage(msg)) {
+            d_ptr->_error = QMessageStore::FrameworkFault;
+            qWarning() << "Unable to mark message as outgoing";
+            return false;
+        }
+    } else {
+        // Add this message to the store
+        if (!QMailStore::instance()->addMessage(msg)) {
+            d_ptr->_error = QMessageStore::FrameworkFault;
+            qWarning() << "Unable to store message for transmission";
+            return false;
+        }
+    }
+
+    d_ptr->_transmitIds = QMailStore::instance()->queryMessages(QMailMessageKey::status(QMailMessage::Outgoing) & QMailMessageKey::parentAccountId(msg->parentAccountId()));
+
     d_ptr->_active = &d_ptr->_transmit;
-    d_ptr->_transmit.transmitMessages(convert(accountId));
+    d_ptr->_transmit.transmitMessages(msg->parentAccountId());
     return true;
 }
 

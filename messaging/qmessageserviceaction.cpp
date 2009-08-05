@@ -144,12 +144,16 @@
 */
 
 /*!
-    \fn QMessageServiceAction::send(const QMessage &message, const QMessageAccountId &accountId)
+    \fn QMessageServiceAction::send(QMessage &message)
   
-    Transmit \a message using the account identified by \a accountId. 
+    Transmit \a message using the account identified by the message's \l{QMessage::parentAccountId()}{parentAccountId} function.
+    If the message does not have a valid parentAccountId, it will be set to the 
+    result of QMessageAccount::defaultAccount() for the message's \l{QMessage::Type}{type}.
     
-    The message should be placed in the standard outbox folder for the account before sending, 
-    and if the sending is successful moved to the sent folder for the account.
+    The message will be stored in the standard Outbox folder for the account before
+    transmission, or moved to that folder if it is already stored in another folder.
+    If transmission is successful, the message will be moved to the standard Sent
+    folder for the account.
   
     Returns true if the action can be initiated; otherwise returns false.
     

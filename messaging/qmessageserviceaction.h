@@ -58,7 +58,7 @@ public:
     bool queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
     bool queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
 
-    bool send(const QMessage &message, const QMessageAccountId &accountId);
+    bool send(QMessage &message);
     bool compose(const QMessage &message);
     bool retrieveHeader(const QMessageId &id);
     bool retrieveBody(const QMessageId &id);
