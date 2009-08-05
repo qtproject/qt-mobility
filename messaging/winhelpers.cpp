@@ -477,7 +477,7 @@ MapiStorePtr MapiSession::findStore(const QMessageAccountId &id)
         LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
         MapiRecordKey storeKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
         if ((!id.isValid() && rows->aRow[0].lpProps[defaultStoreColumn].Value.b) ||  // default store found
-            (id.isValid() && (id == QMessageAccountId(storeKey)))) {                 // specified store found
+            (id.isValid() && (id == QMessageAccountId(storeKey.toBase64())))) {                 // specified store found
             LPMDB mapiStore;
             ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
             ULONG cbEntryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);
