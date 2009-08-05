@@ -276,7 +276,7 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 
     if (d->overlay && d->overlay->isEnabled()) {
         d->overlay->repaint();
-#ifndef QT_NO_VIDEOSURACE
+#ifndef QT_NO_VIDEOSURFACE
     } else if (d->surface) {
         QWidget *widget;
 
