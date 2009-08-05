@@ -37,6 +37,30 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
+QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey)
+{
+    QMessageFolderId result;
+    if (!result.d_ptr)
+        result.d_ptr = new QMessageFolderIdPrivate(&result);
+    result.d_ptr->_folderRecordKey = folderKey;
+    result.d_ptr->_storeRecordKey = storeKey;
+    return result;
+}
+
+MapiRecordKey QMessageFolderIdPrivate::folderRecordKey(const QMessageFolderId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_folderRecordKey;
+    return MapiRecordKey();
+}
+
+MapiRecordKey QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_storeRecordKey;
+    return MapiRecordKey();
+}
+
 QMessageFolderId::QMessageFolderId()
     : d_ptr(0)
 {

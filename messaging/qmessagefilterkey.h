@@ -107,7 +107,6 @@ public:
 #endif
 
 private:
-    friend class QMessageStore;
     QMessageFilterKeyPrivate *d_ptr;
 };
 #endif

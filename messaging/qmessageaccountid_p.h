@@ -50,6 +50,8 @@ public:
     QMessageAccountId *q_ptr;
 #if defined(Q_OS_WIN)
     MapiRecordKey _storeRecordKey;
+    static QMessageAccountId from(const MapiRecordKey &storeKey);
+    static MapiRecordKey storeRecordKey(const QMessageAccountId &id);
 #endif
 };
 #endif
