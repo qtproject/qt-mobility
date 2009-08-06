@@ -1249,4 +1249,4 @@ int main(int argc, char** argv)
 }
 
 //QTEST_MAIN(tst_QValueSpaceItem_oop)
-#include "tst_qvaluespace_oop.moc"
+#include "tst_qvaluespaceitem_oop.moc"

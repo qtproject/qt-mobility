@@ -1,4 +1,4 @@
-TARGET = tst_qvaluespace
+TARGET = tst_qvaluespaceitem_oop
 INCLUDEPATH += ../../../../context
 
 CONFIG+=testcase
@@ -8,7 +8,7 @@ QT = core
 include(../../../../common.pri)
 
 # Input 
-SOURCES += ../tst_qvaluespace.cpp
+SOURCES += ../tst_qvaluespaceitem_oop.cpp
 
 LIBS += -lQtContextFramework
 
