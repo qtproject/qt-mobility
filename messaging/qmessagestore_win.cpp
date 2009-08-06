@@ -127,22 +127,23 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     Q_UNUSED(key)
     Q_UNUSED(sortKey)
     QMessageIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
-
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
-        return result;
-
-    MapiStorePtr mapiStore(mapiSession->defaultStore());
-    if (!mapiStore->isValid())
-        return result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore(&d_ptr->p_ptr->lastError));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
 
     uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
     QStringList path;
     QList<MapiFolderPtr> folders; // depth first search;
 
-    folders.append(mapiStore->rootFolder());
+    folders.append(mapiStore->rootFolder(&d_ptr->p_ptr->lastError));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
     path.append(folders.back()->name());
     while (!folders.isEmpty() && (!limit || workingLimit)) {
         if (!folders.back()->isValid()) {
@@ -151,13 +152,17 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
             continue;
         }
 
-        MapiFolderPtr folder(folders.back()->nextSubFolder());
+        MapiFolderPtr folder(folders.back()->nextSubFolder(&d_ptr->p_ptr->lastError));
+        if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+            return result;
         if (folder->isValid() && (!limit || workingLimit)) {
             uint oldCount(result.count());
             folders.append(folder);
             path.append(folder->name());
             qDebug() << "Path: " << path; // TODO remove debug;
-            result.append(folder->queryMessages(QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
+            result.append(folder->queryMessages(&d_ptr->p_ptr->lastError, QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
+            if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+                return result;
             if (limit)
                 workingLimit -= (result.count() - oldCount);
         } else {
@@ -187,18 +192,17 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
     Q_UNUSED(key)
     Q_UNUSED(sortKey)
     QMessageFolderIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
-
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
-        return result;
-
-    MapiStorePtr mapiStore(mapiSession->defaultStore());
-    if (!mapiStore->isValid())
-        return result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    return mapiStore->folderIds().mid(offset, limit);
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore(&d_ptr->p_ptr->lastError));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+
+    return mapiStore->folderIds(&d_ptr->p_ptr->lastError).mid(offset, limit);
 }
 #endif
 
@@ -211,17 +215,16 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     //TODO: For Windows desktop there is only one 'account' the defaultStore.
     //TODO: But for Windows mobile an account for the 'SMS' message store should also be handled/returned.
     QMessageAccountIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
-
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
-        return result;
-
-    MapiStorePtr mapiStore(mapiSession->defaultStore());
-    if (!mapiStore->isValid())
-        return result;
-
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+
+    MapiStorePtr mapiStore(mapiSession->defaultStore(&d_ptr->p_ptr->lastError));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+
     result.append(QMessageAccountId(mapiStore->id()));
     // TODO for Windows Mobile only, also include the store named "SMS" if it exists.
     return result;
@@ -274,35 +277,34 @@ QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
     QMessageId newId(id);
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    QMessageStore::ErrorCode ignoredError;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
     MapiEntryId entryId(QMessageIdPrivate::entryId(id));
     MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
     MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
     MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
-    MapiStorePtr mapiStore(mapiSession->findStore(QMessageAccountIdPrivate::from(storeRecordKey)));
-    if (!mapiStore->isValid())
+    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
     LPMESSAGE message;
 #if 0 // force lookup using record keys, TODO remove
     if (true) {
 #else
-    if (mapiSession->openEntry(entryId, &message) != S_OK) {
+    if (mapiSession->openEntry(&ignoredError, entryId, &message) != S_OK) {
 #endif
-        MapiFolderPtr parentFolder(mapiStore->findFolder(folderRecordKey));
-        if (!parentFolder->isValid()) {
-            d_ptr->p_ptr->lastError = InvalidId;
+        MapiFolderPtr parentFolder(mapiStore->findFolder(&d_ptr->p_ptr->lastError, folderRecordKey));
+        if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
             return result;
-        }
+
         qDebug() << "parentFolder" << parentFolder->name(); // TODO remove this
-        entryId = parentFolder->messageEntryId(messageRecordKey);
-        if (!entryId.count() || (mapiSession->openEntry(entryId, &message) != S_OK)) {
+        entryId = parentFolder->messageEntryId(&d_ptr->p_ptr->lastError, messageRecordKey);
+        if (!entryId.count() || (mapiSession->openEntry(&d_ptr->p_ptr->lastError, entryId, &message) != S_OK)) {
             d_ptr->p_ptr->lastError = InvalidId;
             return result;
         }
@@ -334,10 +336,10 @@ QMessage QMessageStore::message(const QMessageId& id) const
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     QMessageFolder result;
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
     // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
@@ -347,12 +349,11 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
     idStream >> folderRecordKey;
     idStream >> storeRecordKey;
     QMessageAccountId accountId(storeRecordKey.toBase64());
-    MapiStorePtr mapiStore(mapiSession->findStore(accountId));
-    if (!mapiStore->isValid())
+    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, accountId));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    result = mapiStore->folderFromId(id);
+    result = mapiStore->folderFromId(&d_ptr->p_ptr->lastError, id);
     return result;
 }
 #endif
@@ -360,14 +361,13 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
     QMessageAccount result;
-    d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(new MapiSession(d_ptr->p_ptr->_mapiInitialized));
-    if (!mapiSession->isValid())
+    MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
-    MapiStorePtr mapiStore(mapiSession->findStore(id));
+    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, id));
     if (mapiStore->isValid()) {
         QMessageAccountId id(mapiStore->id());
         QString name(mapiStore->name());

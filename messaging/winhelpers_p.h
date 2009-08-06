@@ -53,11 +53,11 @@ QString stringFromLpctstr(LPCTSTR lpszValue);
 class MapiFolder {
 public:
     MapiFolder();
-    MapiFolder(LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name = QString());
+    MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name = QString());
     ~MapiFolder();
-    MapiFolderPtr nextSubFolder();
-    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    MapiEntryId messageEntryId(const MapiRecordKey &messagekey);
+    MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
+    QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
     QMessageFolderId id();
     bool isValid() { return _valid; }
     LPMAPIFOLDER folder() { return _folder; }
@@ -68,7 +68,7 @@ public:
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
 private:
-    void findSubFolders();
+    void findSubFolders(QMessageStore::ErrorCode *lastError);
 
     bool _valid;
     LPMAPIFOLDER _folder;
@@ -89,10 +89,10 @@ public:
     ~MapiStore();
 
     bool isValid();
-    MapiFolderPtr rootFolder();
-    MapiFolderPtr findFolder(const MapiRecordKey &key);
-    QMessageFolderIdList folderIds();
-    QMessageFolder folderFromId(const QMessageFolderId &folderId);
+    MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError);
+    MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key);
+    QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError);
+    QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
     QMessageAccountId id();
     QString name() { return _name; }
 
@@ -108,14 +108,14 @@ private:
 class MapiSession {
 public:
     MapiSession();
-    MapiSession(bool mapiInitialized);
+    MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
     ~MapiSession();
 
     bool isValid();
 
-    HRESULT openEntry(MapiEntryId entryId, LPMESSAGE *message);
-    MapiStorePtr findStore(const QMessageAccountId &id = QMessageAccountId());
-    MapiStorePtr defaultStore() { return findStore(); }
+    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message);
+    MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId());
+    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
     static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }
 
 private:
