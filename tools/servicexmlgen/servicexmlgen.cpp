@@ -223,7 +223,7 @@ void ServiceXmlGenerator::loadFromXml()
     if (file.open(QIODevice::ReadOnly)) {
         data.setDevice(&file);
         if (data.extractMetadata()) {
-            m_serviceInfo->load(data);
+            m_serviceInfo->load(data.parseResults());
             m_unsavedData = false;
             return;
         }
@@ -289,8 +289,7 @@ void ServiceXmlGenerator::clickedNew()
     if (!shouldClearData())
         return;
 
-    ServiceMetaData data(0);
-    m_serviceInfo->load(data);
+    m_serviceInfo->load(ServiceMetaDataResults());
     m_unsavedData = false;
 }
 

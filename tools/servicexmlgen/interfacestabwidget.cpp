@@ -34,7 +34,7 @@
 #include "interfacewidget.h"
 #include "errorcollector.h"
 
-#include <servicemetadata_p.h>
+#include <qserviceinterfacedescriptor.h>
 
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -48,7 +48,7 @@ InterfacesTabWidget::InterfacesTabWidget(QWidget *parent)
     connect(tabBar(), SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
 }
 
-void InterfacesTabWidget::load(const ServiceMetaDataResults &data)
+void InterfacesTabWidget::load(const QList<QServiceInterfaceDescriptor> &descriptors)
 {
     QWidget *widg;
     while (count() > 0) {
@@ -60,7 +60,6 @@ void InterfacesTabWidget::load(const ServiceMetaDataResults &data)
     }
 
     InterfaceWidget *iface;
-    QList<QServiceInterfaceDescriptor> descriptors = data.interfaces;
     for (int i=0; i<descriptors.count(); i++)
         iface = addInterface(descriptors[i]);
 
