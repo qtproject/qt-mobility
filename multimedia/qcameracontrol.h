@@ -100,11 +100,7 @@ public:
 
     virtual bool isValid() const = 0;
 
-    virtual QSize frameSize() const = 0;
-    virtual void setFrameSize(const QSize& s) = 0;
-
     virtual void setDevice(const QByteArray &device) = 0;
-    virtual QList<QSize> supportedResolutions() = 0;
 
     virtual bool isExposureLocked() const;
     virtual bool isFocusLocked() const;

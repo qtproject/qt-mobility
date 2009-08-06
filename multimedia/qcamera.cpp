@@ -152,7 +152,8 @@ QList<QByteArray> QCamera::deviceList()
 
     if(d->service) {
         QCameraService* serv = qobject_cast<QCameraService*>(d->service);
-        list << serv->deviceList();
+        if (serv)
+            list << serv->deviceList();
     }
 
     return list;
