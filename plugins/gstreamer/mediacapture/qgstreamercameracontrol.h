@@ -47,6 +47,8 @@ public:
 
     bool isValid() const { return true; }
 
+    void setDevice(const QByteArray &device);
+
     QCamera::State state() const;
 
     GstElement *buildElement();
@@ -57,6 +59,7 @@ public:
 
 private:
     QGstreamerCaptureSession *m_session;
+    QByteArray m_device;
 };
 
 #endif // QGSTREAMERCAMERACONTROL_H
