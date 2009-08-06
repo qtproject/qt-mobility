@@ -125,7 +125,7 @@ void callContact(QContactManager* cm)
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 {
     QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName("PhoneNumber", "Number");
+    phoneFilter.setDetailDefinitionName("PhoneNumber", "PhoneNumber");
     phoneFilter.setValue(incomingCallNbr);
     phoneFilter.setMatchFlags(Qt::MatchExactly);
 
@@ -153,7 +153,7 @@ void viewSpecificDetail(QContactManager* cm)
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(a));
     qDebug() << "The first phone number of" << cdl.label()
-             << "is" << a.details("PhoneNumber").first().value("Number");
+             << "is" << a.details("PhoneNumber").first().value("PhoneNumber");
 }
 //! [Viewing a specific detail of a contact]
 
