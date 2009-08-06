@@ -8,8 +8,6 @@ include (../../common.pri)
 
 LIBS += -lQtMedia
 
-QT += multimedia
-
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \

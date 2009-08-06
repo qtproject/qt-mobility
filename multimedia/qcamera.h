@@ -134,6 +134,9 @@ public:
 Q_SIGNALS:
     void stateChanged(QCamera::State);
 
+private slots:
+    void statusChange(int state);
+
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)

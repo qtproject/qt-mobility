@@ -34,13 +34,14 @@
 
 #include "v4lmediacontrol.h"
 #include "v4lcameracontrol.h"
+#include "v4lcamerasession.h"
 
 #include <QtCore/qdebug.h>
 
 V4LMediaControl::V4LMediaControl(QObject *parent)
     :QMediaRecorderControl(parent)
 {
-    qWarning()<<"yyyyyyyyyyyy";
+    m_session = qobject_cast<V4LCameraSession*>(parent);
 }
 
 V4LMediaControl::~V4LMediaControl()
@@ -49,44 +50,35 @@ V4LMediaControl::~V4LMediaControl()
 
 QMediaSink V4LMediaControl::sink() const
 {
-    return m_sink;
+    return m_session->sink();
 }
 
 bool V4LMediaControl::setSink(const QMediaSink& sink)
 {
-    m_sink = sink;
-    //QUrl url = sink.dataLocation().toUrl();
-
-    return true;
+    return m_session->setSink(sink);
 }
 
 int V4LMediaControl::state() const
 {
-    return int(m_state);
+    return m_session->state();
 }
 
 qint64 V4LMediaControl::position() const
 {
-    return 0;
+    return m_session->position();
 }
 
 void V4LMediaControl::record()
 {
-    qWarning()<<"@@@@@@@@@@@@@@";
-    m_cameracontrol->start();
+    m_session->record();
 }
 
 void V4LMediaControl::pause()
 {
-    m_cameracontrol->stop();
+    m_session->stop();
 }
 
 void V4LMediaControl::stop()
 {
-    m_cameracontrol->stop();
-}
-
-void V4LMediaControl::setCameraControl(QCameraControl* c)
-{
-    m_cameracontrol = c;
+    m_session->stop();
 }

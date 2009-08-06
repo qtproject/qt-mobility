@@ -42,6 +42,8 @@
 #include "qmediarecordercontrol.h"
 #include "qcameracontrol.h"
 
+class V4LCameraSession;
+
 class V4LMediaControl : public QMediaRecorderControl
 {
     Q_OBJECT
@@ -56,17 +58,13 @@ public:
 
     qint64 position() const;
 
-    void setCameraControl(QCameraControl* c);
-
 public slots:
     void record();
     void pause();
     void stop();
 
 private:
-    QMediaSink           m_sink;
-    QCamera::State       m_state;
-    QCameraControl*      m_cameracontrol;
+    V4LCameraSession* m_session;
 };
 
 #endif

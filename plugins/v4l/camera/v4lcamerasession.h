@@ -32,70 +32,95 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERACONTROL_H
-#define V4LCAMERACONTROL_H
+#ifndef V4LCAMERASESSION_H
+#define V4LCAMERASESSION_H
 
 #include <QtCore/qobject.h>
-#include "qcameracontrol.h"
+#include <QSocketNotifier>
 
-class V4LCameraService;
-class V4LCameraSession;
+#include "qmediasink.h"
+#include "qcamera.h"
+#include <QtMultimedia/qvideoframe.h>
 
-class V4LCameraControl : public QCameraControl
+class V4LVideoWidget;
+
+struct video_buffer {
+    void* start;
+    size_t length;
+};
+
+class V4LCameraSession : public QObject
 {
     Q_OBJECT
 public:
-    V4LCameraControl(QObject *parent = 0);
-    V4LCameraControl(V4LCameraService *service, QObject *parent = 0);
-    ~V4LCameraControl();
+    V4LCameraSession(QObject *parent = 0);
+    ~V4LCameraSession();
 
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
+    bool deviceReady();
+
+    // camera controls
 
     int framerate() const;
     void setFrameRate(int rate);
-
     int brightness() const;
     void setBrightness(int b);
-
     int contrast() const;
     void setContrast(int c);
-
     int saturation() const;
     void setSaturation(int s);
-
     int hue() const;
     void setHue(int h);
-
     int sharpness() const;
     void setSharpness(int s);
-
     int zoom() const;
     void setZoom(int z);
-
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
-
     int whitelevel() const;
     void setWhitelevel(int w);
-
     int rotation() const;
     void setRotation(int r);
-
     bool flash() const;
     void setFlash(bool f);
-
     bool autofocus() const;
     void setAutofocus(bool f);
 
-    bool isValid() const;
-
+    QSize frameSize() const;
+    void setFrameSize(const QSize& s);
     void setDevice(const QByteArray &device);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
+    QVideoFrame::PixelFormat pixelFormat() const;
+    void setPixelFormat(QVideoFrame::PixelFormat fmt);
     QList<QSize> supportedResolutions();
 
+    // media control
+
+    bool setSink(const QMediaSink &sink);
+    QMediaSink sink() const;
+    qint64 position() const;
+    int state() const;
+    void record();
+    void pause();
+    void stop();
+
+    void setVideoOutput(QWidget* widget);
+
+Q_SIGNALS:
+    void stateChanged(QCamera::State);
+
+private Q_SLOTS:
+    void captureFrame();
+
 private:
-    V4LCameraSession *m_session;
-    V4LCameraService *m_service;
+    QSocketNotifier *notifier;
+    QList<video_buffer> buffers;
+
+    int sfd;
+    bool available;
+    QCamera::State m_state;
+    QByteArray m_device;
+    QMediaSink m_sink;
+    V4LVideoWidget*   m_output;
 };
 
 #endif

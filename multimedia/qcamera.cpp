@@ -39,6 +39,7 @@
 #include "qabstractmediaobject_p.h"
 #include "qcameracontrol.h"
 #include "qcameraservice.h"
+#include "qmediarecordercontrol.h"
 
 /*!
     \class QCamera
@@ -54,6 +55,7 @@ class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QAbstractMediaService* service;
+    QMediaRecorderControl* media;
     QCameraControl* control;
 };
 
@@ -69,10 +71,12 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
-        connect(d->control,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
+        d->media   = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
+        connect(d->media,SIGNAL(stateChanged(int)),this,SLOT(statusChange(int)));
     } else {
         d->service = 0;
         d->control = 0;
+        d->media   = 0;
     }
 }
 
@@ -84,6 +88,11 @@ QCamera::~QCamera()
 {
 }
 
+void QCamera::statusChange(int state)
+{
+    emit stateChanged((QCamera::State)state);
+}
+
 /*!
     Start camera.
 */
@@ -92,8 +101,8 @@ void QCamera::start()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->start();
+    if(d->media)
+        d->media->record();
 }
 
 /*!
@@ -104,8 +113,8 @@ void QCamera::stop()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->stop();
+    if(d->media)
+        d->media->stop();
 }
 
 /*!
@@ -503,8 +512,8 @@ void QCamera::setDevice(const QByteArray &device)
 
 QCamera::State QCamera::state() const
 {
-    if(d_func()->control)
-        return d_func()->control->state();
+    if(d_func()->media)
+        return (QCamera::State)d_func()->media->state();
 
     return QCamera::StoppedState;
 }

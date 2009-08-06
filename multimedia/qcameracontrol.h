@@ -40,19 +40,12 @@
 
 #include "qcamera.h"
 
-#ifndef QT_NO_VIDEOSURFACE
-#include <QtMultimedia/qvideoframe.h>
-#endif
-
 class QCameraControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
     ~QCameraControl();
-
-    virtual void start() = 0;
-    virtual void stop() = 0;
 
     virtual int framerate() const = 0;
     virtual void setFrameRate(int rate) = 0;
@@ -90,22 +83,13 @@ public:
     virtual bool autofocus() const = 0;
     virtual void setAutofocus(bool f) = 0;
 
-    virtual QCamera::State state() const = 0;
-
     virtual bool isValid() const = 0;
 
     virtual QSize frameSize() const = 0;
     virtual void setFrameSize(const QSize& s) = 0;
-    virtual void setDevice(const QByteArray &device) = 0;
-#ifndef QT_NO_VIDEOSURFACE
-    virtual QVideoFrame::PixelFormat pixelFormat() const = 0;
-    virtual void setPixelFormat(QVideoFrame::PixelFormat fmt) = 0;
-    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats() = 0;
-#endif
-    virtual QList<QSize> supportedResolutions() = 0;
 
-Q_SIGNALS:
-    void stateChanged(QCamera::State);
+    virtual void setDevice(const QByteArray &device) = 0;
+    virtual QList<QSize> supportedResolutions() = 0;
 
 protected:
     QCameraControl(QObject* parent);

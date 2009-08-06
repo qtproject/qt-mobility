@@ -41,6 +41,7 @@
 
 class V4LCameraControl;
 class V4LMediaControl;
+class V4LCameraSession;
 
 class V4LCameraService : public QCameraService
 {
@@ -52,12 +53,15 @@ public:
     QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
     QObject *createEndpoint(const char *interface);
 
+    void setVideoOutput(QObject *output);
+
     QAbstractMediaControl *control(const char *name) const;
 
     QList<QByteArray> deviceList();
 private:
     V4LCameraControl *m_control;
     V4LMediaControl  *m_media;
+    V4LCameraSession *m_session;
 };
 
 #endif

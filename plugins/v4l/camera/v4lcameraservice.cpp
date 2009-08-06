@@ -36,39 +36,46 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
-#include "endpoints/qvideorendererendpoint.h"
+#include "endpoints/qmediawidgetendpoint.h"
 
 #include "v4lcameraservice.h"
 #include "v4lcameracontrol.h"
 #include "v4lmediacontrol.h"
+#include "v4lcamerasession.h"
+#include "v4lvideowidget.h"
 
 V4LCameraService::V4LCameraService(QObject *parent)
     : QCameraService(parent)
 {
-    m_control = new V4LCameraControl(this, this);
-    m_media = new V4LMediaControl(this);
-    m_media->setCameraControl(m_control);
+    m_session = new V4LCameraSession(this);
+    m_control = new V4LCameraControl(this,m_session);
+    m_media = new V4LMediaControl(m_session);
 }
 
 V4LCameraService::~V4LCameraService()
 {
     delete m_media;
     delete m_control;
+    delete m_session;
+}
+
+void V4LCameraService::setVideoOutput(QObject *output)
+{
+    V4LVideoWidget *videoWidget = qobject_cast<V4LVideoWidget*>(output);
+    if (videoWidget) {
+        m_session->setVideoOutput(videoWidget);
+    }
+
+    QAbstractMediaService::setVideoOutput(output);
 }
 
 QAbstractMediaControl *V4LCameraService::control(const char *name) const
 {
-    qWarning()<<"eeeeeeeeeeee "<<name;
-
-    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0) {
-        qWarning()<<"found media control";
+    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0)
         return m_media;
-    }
 
-    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0) {
-        qWarning()<<"found camera control";
+    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
         return m_control;
-    }
 
     return 0;
 }
@@ -79,15 +86,15 @@ QList<QByteArray> V4LCameraService::supportedEndpointInterfaces(
     QList<QByteArray> list;
 
     if (direction == QMediaEndpointInterface::Input)
-        list << QByteArray(QVideoRendererEndpoint_iid);
+        list << QByteArray(QMediaWidgetEndpoint_iid);
 
     return list;
 }
 
 QObject *V4LCameraService::createEndpoint(const char *interface)
 {
-    if (qstrcmp(interface, QVideoRendererEndpoint_iid) == 0) {
-        return new QVideoRendererEndpoint(this);
+    if (qstrcmp(interface, QMediaWidgetEndpoint_iid) == 0) {
+        return new V4LVideoWidget;
     }
 
     return 0;

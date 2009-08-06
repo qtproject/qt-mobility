@@ -36,6 +36,7 @@
 
 #include <qabstractmediaservice.h>
 #include <qcameracontrol.h>
+#include "qmediawidgetendpoint.h"
 
 #include <QtGui>
 
@@ -49,6 +50,14 @@ Camera::Camera()
 
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
+
+    QWidget *videoWidget = capture->service()->createEndpoint<QMediaWidgetEndpoint*>();
+    if(videoWidget) {
+        videoWidget->setBaseSize(QSize(320,240));
+        capture->service()->setVideoOutput(videoWidget);
+        layout->addWidget(videoWidget);
+        videoWidget->show();
+    }
 
     deviceBox = new QComboBox(this);
     QList<QByteArray> devices = camera->deviceList();
