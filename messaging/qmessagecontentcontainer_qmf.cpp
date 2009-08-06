@@ -361,6 +361,7 @@ void QMessageContentContainer::clearContents()
 void QMessageContentContainer::setContent(const QString &text)
 {
     d_ptr->_type = "text";
+    d_ptr->_subType = "plain";
     d_ptr->_textContent = text;
     d_ptr->_charset = charsetFor(text);
 
