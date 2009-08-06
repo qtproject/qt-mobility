@@ -31,6 +31,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContactGroup </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#group">group</a></b> ( const QUniqueId &amp; <i>groupId</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QUniqueId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#groups">groups</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#parameters">parameters</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; <i>contactId</i>, QSet&lt;QUniqueId&gt; &amp; <i>removedContacts</i>, QSet&lt;QUniqueId&gt; &amp; <i>changedGroups</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; <i>groupId</i>, QSet&lt;QUniqueId&gt; &amp; <i>groupsRemoved</i>, QSet&lt;QUniqueId&gt; &amp; <i>contactsChanged</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
@@ -44,7 +45,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</a></b> ( QContactAbstractRequest * <i>req</i>, int <i>msecs</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>34 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
@@ -63,7 +64,7 @@
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>34 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div class="fn"></div>35 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 <li><div class="fn"></div>6 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
 </ul>
 <a name="details"></a>
@@ -100,6 +101,8 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#groups">QContactManagerEngine::groups</a>().</p>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine::hasFeature</a>().</p>
+<h3 class="fn"><a name="parameters"></a>QMap&lt;QString, QString&gt; QContactMemoryEngine::parameters () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qcontactmanagerengine.html#parameters">QContactManagerEngine::parameters</a>().</p>
 <h3 class="fn"><a name="removeContact"></a>bool QContactMemoryEngine::removeContact ( const QUniqueId &amp; <i>contactId</i>, QSet&lt;QUniqueId&gt; &amp; <i>removedContacts</i>, QSet&lt;QUniqueId&gt; &amp; <i>changedGroups</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeContact">QContactManagerEngine::removeContact</a>().</p>
 <h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactMemoryEngine::removeDetailDefinition ( const QString &amp; <i>definitionId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>

@@ -90,7 +90,7 @@
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
         QContactDetailFilter phoneFilter;
-        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;, &quot;Number&quot;);
+        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;, &quot;PhoneNumber&quot;);
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(Qt::MatchExactly);
 
@@ -118,7 +118,7 @@
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
-                 &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;Number&quot;);
+                 &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;PhoneNumber&quot;);
     }</pre>
 <a name="viewing-all-of-the-details-of-a-contact"></a>
 <h3>Viewing all of the details of a contact</h3>
@@ -279,6 +279,7 @@
 <li><a href="qcontactorganisation.html">QContactOrganisation</a></li>
 <li><a href="qcontactphonenumber.html">QContactPhoneNumber</a></li>
 <li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
+<li><a href="qcontactrelationship.html">QContactRelationship</a></li>
 <li><a href="qcontacttimestamp.html">QContactTimestamp</a></li>
 <li><a href="qcontacturl.html">QContactUrl</a></li>
 </ul>
