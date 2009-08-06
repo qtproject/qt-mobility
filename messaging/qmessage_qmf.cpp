@@ -100,16 +100,19 @@ QMessage QMessagePrivate::convert(const QMailMessage &message)
 
 QMailMessage QMessagePrivate::convert(const QMessage &message)
 {
+    message.applyPendingChanges();
     return message.d_ptr->_message;
 }
 
 QMailMessage *QMessagePrivate::convert(QMessage *message)
 {
+    message->applyPendingChanges();
     return &message->d_ptr->_message;
 }
 
 const QMailMessage *QMessagePrivate::convert(const QMessage *message)
 {
+    message->applyPendingChanges();
     return &message->d_ptr->_message;
 }
 

@@ -104,6 +104,7 @@ protected:
 
 private:
     friend class QMessage;
+    friend class QMessagePrivate;
 
     void setDerivedMessage(QMessage *derived);
     void applyPendingChanges() const;
