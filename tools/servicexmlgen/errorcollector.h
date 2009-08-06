@@ -30,34 +30,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MANDATORYLINEEDIT_H
-#define MANDATORYLINEEDIT_H
+#ifndef ERRORCOLLECTOR_H
+#define ERRORCOLLECTOR_H
 
-#include <QLineEdit>
+#include <QStringList>
 
-class ErrorCollector;
-
-class MandatoryLineEdit : public QLineEdit
+class ErrorCollector
 {
-    Q_OBJECT
 public:
-    MandatoryLineEdit(const QString &invalidValueText, QWidget *parent = 0);
+    ErrorCollector();
+    ~ErrorCollector();
 
-    void validate(ErrorCollector *errors);
-    bool hasText() const;
+    void addMissingFieldError();
+    void addError(const QString &msg);
+    QString errorMessage() const;
 
-protected:
-    void focusInEvent(QFocusEvent *event);
-
-private slots:
-    void valueChanged(const QString &text);
+    int errorCount() const;
 
 private:
-    bool m_badValue;
-    QString m_badValueText;
+    QStringList m_errors;
+    bool m_hasMissingField;
+    int m_count;
 };
 
 
 #endif
-
-

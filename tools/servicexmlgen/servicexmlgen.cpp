@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "servicewidget.h"
+#include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
@@ -47,6 +48,45 @@
 #include <QDesktopWidget>
 #include <QBuffer>
 #include <QMenuBar>
+
+
+static const QString serviceMetaDataErrorString(int error)
+{
+    switch (error) {
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE:
+            return QObject::tr("XML does not contain <service> node.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME:
+            return QObject::tr("XML does not specify service name.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH:
+            return QObject::tr("XML does not specify service resource location.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE:
+            return QObject::tr("XML does not contain any interfaces.");
+        case ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION:
+            return QObject::tr("XML specifies an interface without a version.");
+        case ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME:
+            return QObject::tr("XML specifies an interface without a name.");
+        case ServiceMetaData::SFW_ERROR_UNABLE_TO_OPEN_FILE:
+            return QObject::tr("Cannot open XML file.");
+        case ServiceMetaData::SFW_ERROR_INVALID_XML_FILE:
+            return QObject::tr("The file's XML data is not valid.");
+        case ServiceMetaData::SFW_ERROR_PARSE_SERVICE:
+            return QObject::tr("Unable to parse service details.");
+        case ServiceMetaData::SFW_ERROR_PARSE_INTERFACE:
+            return QObject::tr("Unable to parse interface details.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE:
+            return QObject::tr("XML contains duplicate interface.");
+        case ServiceMetaData::SFW_ERROR_INVALID_VERSION:
+            return QObject::tr("XML contains invalid interface version.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_TAG:
+            return QObject::tr("XML contains a duplicate tag.");
+        case ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG:
+            return QObject::tr("XML contains an invalid custom property.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY:
+            return QObject::tr("XML contains a duplicate custom property.");
+        default:
+            return QString();
+    }
+}
 
 
 class ServiceXmlGenerator : public QMainWindow
@@ -171,21 +211,29 @@ void ServiceXmlGenerator::serviceDataChanged()
 
 void ServiceXmlGenerator::loadFromXml()
 {
-    QString fileName = QFileDialog::getOpenFileName(0, tr("Choose XML file"), QString(), "*.xml");
+    if (!shouldClearData())
+        return;
+
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open XML file"), QString(), "*.xml");
     if (fileName.isEmpty())
         return;
 
     QFile file(fileName);
+    ServiceMetaData data(0);
     if (file.open(QIODevice::ReadOnly)) {
-        ServiceMetaData data(&file);
+        data.setDevice(&file);
         if (data.extractMetadata()) {
             m_serviceInfo->load(data);
+            m_unsavedData = false;
             return;
         }
     }
 
-    QMessageBox::warning(0, tr("Error loading XML file"),
-            tr("Cannot read contents of %1", "file name").arg(fileName));
+    QString msg = tr("Cannot read contents of %1.", "file name").arg(fileName);
+    QString details = serviceMetaDataErrorString(data.getLatestError());
+    if (!details.isEmpty())
+        msg += "\n\n" + tr("Error: ") + details;
+    QMessageBox::warning(0, tr("Error loading XML file"), msg);
 }
 
 void ServiceXmlGenerator::togglePreview()
@@ -202,18 +250,19 @@ void ServiceXmlGenerator::togglePreview()
 
 bool ServiceXmlGenerator::saveToXml()
 {
-    bool serviceInfoOk = m_serviceInfo->validate();
-    if (!serviceInfoOk) {
-        QMessageBox::information(0, tr("Service incomplete"),
-                tr("One or more mandatory fields are incomplete."));
+    ErrorCollector errors;
+    m_serviceInfo->validate(&errors);
+    if (errors.errorCount() > 0) {
+        QMessageBox::information(0, tr("Invalid data"), errors.errorMessage());
         return false;
     }
+
+    refreshPreview();
 
     QString fileName = QFileDialog::getSaveFileName(0, tr("Save to file"));
     if (fileName.isEmpty())
         return false;
 
-    refreshPreview();
     QFile out(fileName);
     if (!out.open(QIODevice::WriteOnly)) {
         QMessageBox::warning(0, tr("Write error"),
@@ -249,6 +298,7 @@ bool ServiceXmlGenerator::shouldClearData()
 {
     if (m_unsavedData) {
         QMessageBox msg;
+        msg.setWindowTitle(tr("Save changes?"));
         msg.setText("The service has been modified.");
         msg.setInformativeText("Do you want to save your changes?");
         msg.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);

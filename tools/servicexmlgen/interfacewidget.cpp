@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include "interfacewidget.h"
 #include "mandatorylineedit.h"
+#include "errorcollector.h"
 
 #include <qserviceinterfacedescriptor_p.h>
 
@@ -58,18 +59,18 @@ signals:
     void dataChanged();
 
 protected:
-    virtual bool addItem() = 0;
+    virtual int addItem() = 0;
     virtual bool removeItemAt(int index) = 0;
     virtual QStringList listValues() const = 0;
 
-    void initLayout(QLayout *addItemLayout);
-    void refreshView(const QModelIndex &index = QModelIndex());
+    void initLayout(QLayout *addItemLayout, const QString &buttonAddText);
+    void refreshView();
     void setAddButtonEnabled(bool enabled);
 
 private slots:
     void clickedAdd();
     void clickedRemove();
-    void currentRowChanged(const QModelIndex &current, const QModelIndex &previous); 
+    void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
 private:
     QString defaultValue() const;
@@ -85,14 +86,17 @@ EditableListWidgetGroup::EditableListWidgetGroup(QWidget *parent)
     : QWidget(parent),
       m_model(new QStringListModel(this)),
       m_listView(new QListView),
-      m_buttonAdd(new QPushButton(tr("Add"))),
+      m_buttonAdd(new QPushButton),
       m_buttonDel(new QPushButton(tr("Delete"))),
       m_grid(new QGridLayout)
 {
+    m_listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
-void EditableListWidgetGroup::initLayout(QLayout *addItemLayout)
+void EditableListWidgetGroup::initLayout(QLayout *addItemLayout, const QString &buttonAddText)
 {
+    m_buttonAdd->setText(buttonAddText);
+
     m_grid->setContentsMargins(0, 0, 0, 0);
     m_grid->addWidget(m_listView, 0, 0);
     m_grid->addWidget(m_buttonDel, 0, 1, Qt::AlignTop);
@@ -115,16 +119,13 @@ void EditableListWidgetGroup::initLayout(QLayout *addItemLayout)
     setLayout(m_grid);
 }
 
-void EditableListWidgetGroup::refreshView(const QModelIndex &currentIndex)
+void EditableListWidgetGroup::refreshView()
 {
     QStringList values = listValues();
-    if (values.isEmpty()) {
+    if (values.isEmpty())
         m_model->setStringList(QStringList(defaultValue()));
-    } else {
+    else
         m_model->setStringList(values);
-        if (currentIndex.isValid())
-            m_listView->setCurrentIndex(currentIndex);
-    }
 }
 
 void EditableListWidgetGroup::setAddButtonEnabled(bool enabled)
@@ -134,8 +135,10 @@ void EditableListWidgetGroup::setAddButtonEnabled(bool enabled)
 
 void EditableListWidgetGroup::clickedAdd()
 {
-    if (addItem()) {
-        refreshView(m_model->index(m_model->rowCount()-1));
+    int index = addItem();
+    if (index >= 0) {
+        refreshView();
+        m_listView->setCurrentIndex(m_model->index(index));
         emit dataChanged();
     }
 }
@@ -144,7 +147,8 @@ void EditableListWidgetGroup::clickedRemove()
 {
     QModelIndex index = m_listView->currentIndex();
     if (index.isValid() && removeItemAt(index.row())) {
-        refreshView(index.row() == 0 ? m_model->index(0) : m_model->index(index.row()-1));
+        refreshView();
+        m_listView->setCurrentIndex(m_model->index(index.row() == 0 ? 0 : index.row()-1));
         emit dataChanged();
     }
 }
@@ -171,7 +175,7 @@ public:
     const QStringList &capabilities() const { return m_values; }
 
 protected:
-    virtual bool addItem();
+    virtual int addItem();
     virtual bool removeItemAt(int index);
     virtual QStringList listValues() const;
 
@@ -192,7 +196,7 @@ CapabilitiesWidget::CapabilitiesWidget(QWidget *parent)
 
     QHBoxLayout *box = new QHBoxLayout;
     box->addWidget(m_newValueEdit);
-    initLayout(box);
+    initLayout(box, tr("Add"));
 }
 
 void CapabilitiesWidget::setCapabilities(const QStringList &values)
@@ -201,14 +205,14 @@ void CapabilitiesWidget::setCapabilities(const QStringList &values)
     refreshView();
 }
 
-bool CapabilitiesWidget::addItem()
+int CapabilitiesWidget::addItem()
 {
     if (!m_newValueEdit->text().isEmpty()) {
         m_values << m_newValueEdit->text();
         m_newValueEdit->clear();
-        return true;
+        return m_values.count() - 1;
     }
-    return false;
+    return -1;
 }
 
 bool CapabilitiesWidget::removeItemAt(int index)
@@ -243,7 +247,7 @@ public:
     const QHash<QString, QString> &properties() const { return m_pairs; }
 
 protected:
-    virtual bool addItem();
+    virtual int addItem();
     virtual bool removeItemAt(int index);
     virtual QStringList listValues() const;
 
@@ -269,7 +273,7 @@ CustomPropertiesWidget::CustomPropertiesWidget(QWidget *parent)
     box->addWidget(m_newKeyEdit);
     box->addWidget(new QLabel(QLatin1String("=>")));
     box->addWidget(m_newValueEdit);
-    initLayout(box);
+    initLayout(box, tr("Add / Modify"));
 }
 
 void CustomPropertiesWidget::setProperties(const QHash<QString, QString> &values)
@@ -279,18 +283,21 @@ void CustomPropertiesWidget::setProperties(const QHash<QString, QString> &values
     refreshView();
 }
 
-bool CustomPropertiesWidget::addItem()
+int CustomPropertiesWidget::addItem()
 {
+    int index = -1;
     QString key = m_newKeyEdit->text();
     if (!key.isEmpty()) {
-        if (!m_pairs.contains(key))
+        index = m_keys.indexOf(key);
+        if (index < 0) {
             m_keys << key;
+            index = m_keys.count() - 1;
+        }
         m_pairs[key] = m_newValueEdit->text();
         m_newKeyEdit->clear();
         m_newValueEdit->clear();
-        return true;
     }
-    return false;
+    return index;
 }
 
 bool CustomPropertiesWidget::removeItemAt(int index)
@@ -373,9 +380,9 @@ void InterfaceWidget::load(const QServiceInterfaceDescriptor &info)
         m_customPropWidget->setProperties(p->customProperties);
 }
 
-bool InterfaceWidget::validate()
+void InterfaceWidget::validate(ErrorCollector *errors)
 {
-    return m_name->validate();
+    m_name->validate(errors);
 }
 
 void InterfaceWidget::writeXml(QXmlStreamWriter *writer) const
@@ -399,7 +406,7 @@ void InterfaceWidget::writeXml(QXmlStreamWriter *writer) const
 
 QString InterfaceWidget::title() const
 {
-    QString name = m_name->text().isEmpty() ? tr("(No name)") : m_name->text();
+    QString name = m_name->text().isEmpty() ? tr("[New Interface]") : m_name->text();
     return QString("%1 %2.%3").arg(name).arg(m_verMajor->value()).arg(m_verMinor->value());
 }
 

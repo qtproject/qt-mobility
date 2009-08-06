@@ -30,34 +30,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MANDATORYLINEEDIT_H
-#define MANDATORYLINEEDIT_H
+#include "errorcollector.h"
 
-#include <QLineEdit>
-
-class ErrorCollector;
-
-class MandatoryLineEdit : public QLineEdit
+ErrorCollector::ErrorCollector()
+    : m_hasMissingField(false),
+      m_count(0)
 {
-    Q_OBJECT
-public:
-    MandatoryLineEdit(const QString &invalidValueText, QWidget *parent = 0);
+}
 
-    void validate(ErrorCollector *errors);
-    bool hasText() const;
+ErrorCollector::~ErrorCollector()
+{
+}
 
-protected:
-    void focusInEvent(QFocusEvent *event);
+void ErrorCollector::addMissingFieldError()
+{
+    m_count++;
+    m_hasMissingField = true;
+}
 
-private slots:
-    void valueChanged(const QString &text);
+void ErrorCollector::addError(const QString &msg)
+{
+    m_count++;
+    m_errors << msg;
+}
 
-private:
-    bool m_badValue;
-    QString m_badValueText;
-};
+QString ErrorCollector::errorMessage() const
+{
+    QStringList errMsgs = m_errors;
+    if (m_hasMissingField)
+        errMsgs.insert(0, QObject::tr("One or more mandatory fields are incomplete."));
 
+    QString msg;
+    for (int i=0; i<errMsgs.count(); i++) {
+        if (errMsgs.count() > 1)
+            msg += "* ";
+        msg += errMsgs[i];
+        if (errMsgs.count() > 1)
+            msg += "\n";
+    }
+    return msg;
+}
 
-#endif
-
-
+int ErrorCollector::errorCount() const
+{
+    return m_count;
+}

@@ -33,6 +33,7 @@
 #include "servicewidget.h"
 #include "interfacestabwidget.h"
 #include "mandatorylineedit.h"
+#include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
@@ -52,8 +53,7 @@ ServiceWidget::ServiceWidget(QWidget *parent)
       m_path(new MandatoryLineEdit(tr("(Path required)"))),
       m_desc(new QLineEdit)
 {
-    connect(m_name, SIGNAL(textChanged(QString)),
-            m_title, SLOT(setText(QString)));
+    connect(m_name, SIGNAL(textChanged(QString)), SLOT(setTitle(QString)));
 
     connect(m_name, SIGNAL(textEdited(QString)), SIGNAL(dataChanged()));
     connect(m_path, SIGNAL(textEdited(QString)), SIGNAL(dataChanged()));
@@ -63,6 +63,7 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     QFont f = m_title->font();
     f.setBold(true);
     m_title->setFont(f);
+    setTitle(QString());
 
     QPushButton *buttonAdd = new QPushButton(tr("Add interface"));
     buttonAdd->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -97,23 +98,14 @@ void ServiceWidget::load(const ServiceMetaData &parser)
     m_desc->setText(data.description);
     m_ifacesTabs->load(data);
 
-    if (data.name.isEmpty())
-        m_title->setText(tr("[New Service]"));
-
     m_name->setFocus();
 }
 
-bool ServiceWidget::validate()
+void ServiceWidget::validate(ErrorCollector *errors)
 {
-    bool ok = true;
-    if (!m_name->validate())
-        ok = false;
-    if (!m_path->validate())
-        ok = false;
-    if (!m_ifacesTabs->validate())
-        ok = false;
-
-    return ok;
+    m_name->validate(errors);
+    m_path->validate(errors);
+    m_ifacesTabs->validate(errors);
 }
 
 void ServiceWidget::writeXml(QXmlStreamWriter *writer) const
@@ -122,4 +114,12 @@ void ServiceWidget::writeXml(QXmlStreamWriter *writer) const
     writer->writeTextElement(QLatin1String("filepath"), !m_path->hasText() ? QString() : m_path->text());
     writer->writeTextElement(QLatin1String("description"), m_desc->text());
     m_ifacesTabs->writeXml(writer);
+}
+
+void ServiceWidget::setTitle(const QString &text)
+{
+    if (text.isEmpty())
+        m_title->setText(tr("[New Service]"));
+    else
+        m_title->setText(text);
 }

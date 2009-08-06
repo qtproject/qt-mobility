@@ -41,6 +41,7 @@ class ServiceMetaData;
 class QXmlStreamWriter;
 class InterfacesTabWidget;
 class MandatoryLineEdit;
+class ErrorCollector;
 
 class ServiceWidget : public QWidget
 {
@@ -49,11 +50,14 @@ public:
     ServiceWidget(QWidget *parent = 0);
     void load(const ServiceMetaData &data);
 
-    bool validate();
+    void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *writer) const;
 
 signals:
     void dataChanged();
+
+private slots:
+    void setTitle(const QString &text);
 
 private:
     InterfacesTabWidget *m_ifacesTabs;

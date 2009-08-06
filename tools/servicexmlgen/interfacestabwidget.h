@@ -41,6 +41,7 @@
 class ServiceMetaDataResults;
 class QXmlStreamWriter;
 class InterfaceWidget;
+class ErrorCollector;
 
 class InterfacesTabWidget : public QTabWidget
 {
@@ -49,7 +50,7 @@ public:
     InterfacesTabWidget(QWidget *parent = 0);
     void load(const ServiceMetaDataResults &data);
 
-    bool validate();
+    void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *device) const;
 
 signals:

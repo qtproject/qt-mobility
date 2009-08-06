@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "mandatorylineedit.h"
+#include "errorcollector.h"
 
 #include <QPalette>
 #include <QDebug>
@@ -43,7 +44,7 @@ MandatoryLineEdit::MandatoryLineEdit(const QString &invalidValueText, QWidget *p
     connect(this, SIGNAL(textChanged(QString)), SLOT(valueChanged(QString)));
 }
 
-bool MandatoryLineEdit::validate()
+void MandatoryLineEdit::validate(ErrorCollector *errors)
 {
     QPalette pal;
     pal.setColor(QPalette::Text, Qt::red);
@@ -52,8 +53,8 @@ bool MandatoryLineEdit::validate()
         setText(m_badValueText);
         setPalette(pal);
         m_badValue = true;
+        errors->addMissingFieldError();
     }
-    return !m_badValue;
 }
 
 bool MandatoryLineEdit::hasText() const
@@ -67,10 +68,10 @@ void MandatoryLineEdit::valueChanged(const QString &)
     m_badValue = false;
 }
 
-void MandatoryLineEdit::mousePressEvent(QMouseEvent *event)
+void MandatoryLineEdit::focusInEvent(QFocusEvent *event)
 {
-    QLineEdit::mousePressEvent(event);
     if (m_badValue)
-        selectAll();
+        clear();
+    QLineEdit::focusInEvent(event);
 }
 
