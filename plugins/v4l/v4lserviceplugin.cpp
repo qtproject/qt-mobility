@@ -48,8 +48,6 @@ class V4LProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        qWarning()<<interface;
-
         if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
             return new V4LRadioService;
 

@@ -37,6 +37,7 @@
 
 #include <QtCore/qobject.h>
 #include <QSocketNotifier>
+#include <QTime>
 
 #include "qmediasink.h"
 #include "qcamera.h"
@@ -116,11 +117,16 @@ private:
     QList<video_buffer> buffers;
 
     int sfd;
+    QTime timeStamp;
     bool available;
     QCamera::State m_state;
     QByteArray m_device;
     QMediaSink m_sink;
     V4LVideoWidget*   m_output;
+    QVideoFrame::PixelFormat pixelF;
+    QSize m_windowSize;
+    QList<QSize> resolutions;
+    QList<unsigned int> formats;
 };
 
 #endif

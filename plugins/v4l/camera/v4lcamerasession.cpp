@@ -55,6 +55,8 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     :QObject(parent)
 {
     available = false;
+    resolutions.clear();
+    formats.clear();
     m_state = QCamera::StoppedState;
     m_device = "/dev/video0";
 
@@ -62,9 +64,30 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
 
     if (sfd != -1) {
         available = true;
+
+        // get formats available
+        v4l2_fmtdesc fmt;
+        memset(&fmt, 0, sizeof(v4l2_fmtdesc));
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        int sanity = 0;
+        for (fmt.index = 0;; fmt.index++) {
+            if (sanity++ > 8)
+                break;
+            if(  ::ioctl(sfd, VIDIOC_ENUM_FMT, &fmt) == -1) {
+                if(errno == EINVAL)
+                    break;
+            }
+            formats.append(fmt.pixelformat);
+        }
+
+        // get sizes available
+        resolutions << QSize(176, 144) << QSize(320, 240) << QSize(640, 480);
+
         ::close(sfd);
     }
     m_output = 0;
+    m_windowSize = QSize(320,240);
+    pixelF = QVideoFrame::Format_RGB32;
 }
 
 V4LCameraSession::~V4LCameraSession()
@@ -79,7 +102,7 @@ bool V4LCameraSession::deviceReady()
 void V4LCameraSession::setVideoOutput(QWidget* widget)
 {
     m_output = qobject_cast<V4LVideoWidget*>(widget);
-    m_output->setBaseSize(QSize(320,240));
+    m_output->setBaseSize(m_windowSize);
 }
 
 int V4LCameraSession::framerate() const
@@ -264,18 +287,16 @@ void V4LCameraSession::setAutofocus(bool f)
 
 QSize V4LCameraSession::frameSize() const
 {
-    return QSize(320,240);
+    return m_windowSize;
 }
 
 void V4LCameraSession::setFrameSize(const QSize& s)
 {
-    Q_UNUSED(s)
+    m_windowSize = s;
 }
 
 void V4LCameraSession::setDevice(const QByteArray &device)
 {
-    qWarning()<<"setDevice "<<device;
-
     available = false;
     m_state = QCamera::StoppedState;
     m_device = device;
@@ -293,7 +314,16 @@ QList<QVideoFrame::PixelFormat> V4LCameraSession::supportedPixelFormats()
     QList<QVideoFrame::PixelFormat> list;
 
     if(available) {
-        list << QVideoFrame::Format_RGB32;
+        for(int i=0;i<formats.size();i++) {
+            if(formats.at(i) == V4L2_PIX_FMT_YUYV)
+                list << QVideoFrame::Format_YUYV;
+            else if(formats.at(i) == V4L2_PIX_FMT_UYVY)
+                list << QVideoFrame::Format_UYVY;
+            else if(formats.at(i) == V4L2_PIX_FMT_RGB24)
+                list << QVideoFrame::Format_RGB24;
+            else if(formats.at(i) == V4L2_PIX_FMT_RGB565)
+                list << QVideoFrame::Format_RGB565;
+        }
     }
 
     return list;
@@ -301,15 +331,12 @@ QList<QVideoFrame::PixelFormat> V4LCameraSession::supportedPixelFormats()
 
 QVideoFrame::PixelFormat V4LCameraSession::pixelFormat() const
 {
-    return QVideoFrame::Format_RGB32;
-
-    return QVideoFrame::Format_Invalid;
+    return pixelF;
 }
 
 void V4LCameraSession::setPixelFormat(QVideoFrame::PixelFormat fmt)
 {
-    Q_UNUSED(fmt)
-    // ignore for example
+    pixelF = fmt;
 }
 
 QList<QSize> V4LCameraSession::supportedResolutions()
@@ -317,7 +344,7 @@ QList<QSize> V4LCameraSession::supportedResolutions()
     QList<QSize> list;
 
     if(available) {
-        list <<QSize(320, 240);
+        list << resolutions;
     }
 
     return list;
@@ -337,7 +364,7 @@ QMediaSink V4LCameraSession::sink() const
 
 qint64 V4LCameraSession::position() const
 {
-    return 0;
+    return timeStamp.elapsed();
 }
 
 int V4LCameraSession::state() const
@@ -346,8 +373,6 @@ int V4LCameraSession::state() const
 }
 void V4LCameraSession::record()
 {
-    qWarning()<<"start";
-
     sfd = ::open(m_device.constData(), O_RDWR);
     if(sfd == -1) {
         qWarning()<<"can't open v4l "<<m_device;
@@ -355,21 +380,9 @@ void V4LCameraSession::record()
         return;
     }
 
-    //struct v4l2_cropcap cropcap;
-    //struct v4l2_crop crop;
-    struct v4l2_format fmt;
-    //unsigned int min;
     int ret;
-/*
-    memset(&cropcap, 0, sizeof(cropcap));
-    cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    ret = ::ioctl(sfd, VIDIOC_CROPCAP, &cropcap);
-    if(ret == 0) {
-        crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        crop.c = cropcap.defrect;
-        ret = ::ioctl(sfd, VIDIOC_S_CROP, &crop);
-    }
-*/
+    struct v4l2_format fmt;
+
     memset(&fmt, 0, sizeof(fmt));
     fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     fmt.fmt.pix.width       = 320;
@@ -389,7 +402,6 @@ void V4LCameraSession::record()
         emit stateChanged(QCamera::StoppedState);
         return;
     }
-    qWarning()<<"buffers = "<<req.count;
 
     for(int i=0;i<(int)req.count;++i) {
         struct v4l2_buffer buf;
@@ -446,10 +458,25 @@ void V4LCameraSession::record()
 
     m_state = QCamera::ActiveState;
     emit stateChanged(QCamera::ActiveState);
+    timeStamp.restart();
 }
 
 void V4LCameraSession::pause()
 {
+    if(sfd != -1) {
+        v4l2_buf_type buf_type;
+        buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        ::ioctl(sfd, VIDIOC_STREAMOFF, &buf_type);
+        if (notifier) {
+            notifier->setEnabled(false);
+            disconnect(notifier, 0, 0, 0);
+            delete notifier;
+            notifier = 0;
+        }
+        ::close(sfd);
+        m_state = QCamera::PausedState;
+        emit stateChanged(m_state);
+    }
 }
 
 void V4LCameraSession::stop()
@@ -466,7 +493,7 @@ void V4LCameraSession::stop()
         }
         ::close(sfd);
         m_state = QCamera::StoppedState;
-        emit stateChanged(QCamera::StoppedState);
+        emit stateChanged(m_state);
     }
 }
 
@@ -474,7 +501,6 @@ void V4LCameraSession::captureFrame()
 {
     if(sfd == -1) return;
 
-    qWarning()<<"TODO:captureFrame()";
     v4l2_buffer buf;
     memset(&buf, 0, sizeof(struct v4l2_buffer));
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -485,11 +511,7 @@ void V4LCameraSession::captureFrame()
         return;
     }
 
-    qWarning()<<"size: "<<buf.bytesused<<", time: "<<(quint64)buf.timestamp.tv_sec/1000000 + (quint64)buf.timestamp.tv_usec*1000000;;
-    qWarning()<<"index = "<<buf.index;
-    qWarning()<<"l="<<buffers.at(buf.index).length;
-    qWarning()<<"*="<<buffers.at(buf.index).start;
-    qWarning()<<"m_output = "<<m_output;
+    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<(quint64)buf.timestamp.tv_sec/1000000 + (quint64)buf.timestamp.tv_usec*1000000;;
 
     if(m_output) {
         m_output->setLength(buffers.at(buf.index).length);

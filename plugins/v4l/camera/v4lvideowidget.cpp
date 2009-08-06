@@ -36,12 +36,18 @@ void V4LVideoWidget::setLength(qint64 len)
 
 void V4LVideoWidget::paintEvent(QPaintEvent *event)
 {
+    int w = width();
+    int h = height();
+
+    if(w > 320) w = 320;
+    if(h > 240) h = 240;
+
     if(!converter)
-        converter = CameraFormatConverter::createFormatConverter(width(),height());
+        converter = CameraFormatConverter::createFormatConverter(w,h);
 
     if(m_data) {
         QImage image;
-        image = QImage(converter->convert((unsigned char*)m_data,m_length),width(),height(),QImage::Format_RGB16);
+        image = QImage(converter->convert((unsigned char*)m_data,m_length),w,h,QImage::Format_RGB16);
         QPainter painter(this);
         if(painter.viewport().isValid()) {
             painter.drawImage(painter.viewport(),image);
