@@ -6,8 +6,9 @@ HEADERS += details/qcontactaddress.h \
     details/qcontactdetails.h \
     details/qcontactdisplaylabel.h \
     details/qcontactemailaddress.h \
-    details/qcontactguid.h \
     details/qcontactgender.h \
+    details/qcontactgeolocation.h \
+    details/qcontactguid.h \
     details/qcontactname.h \
     details/qcontactorganisation.h \
     details/qcontactphonenumber.h \

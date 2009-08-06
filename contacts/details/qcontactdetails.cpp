@@ -69,6 +69,11 @@
  */
 
 /*!
+ * \class QContactGeolocation
+ * \brief A global location coordinate associated with a contact
+ */
+
+/*!
  * \class QContactGuid
  * \brief The globally unique Id of a contact
  */
@@ -179,6 +184,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::DefinitionName, "Anniversary");
  * The constant string which identifies the definition of details which identify the gender of a contact in a given context
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
+
+/*!
+ * \variable QContactGeolocation::DefinitionName
+ * The constant string which identifies the definition of details which describe a location associated with a contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
 
 /*!
  * \variable QContactOrganisation::DefinitionName
@@ -332,6 +343,61 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
 Q_DEFINE_LATIN1_LITERAL(QContactGender::FieldGender, "Gender");
 
 /*!
+ * \variable QContactGeolocation::FieldLabel
+ * The constant key for which the location label value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLabel, "Label");
+
+/*!
+ * \variable QContactGeolocation::FieldLatitude
+ * The constant key for which the latitude value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLatitude, "Latitude");
+
+/*!
+ * \variable QContactGeolocation::FieldLongitude
+ * The constant key for which the longitude value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLongitude, "Longitude");
+
+/*!
+ * \variable QContactGeolocation::FieldAccuracy
+ * The constant key for which the location accuracy value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAccuracy, "Accuracy");
+
+/*!
+ * \variable QContactGeolocation::FieldAltitude
+ * The constant key for which the altitude value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitude, "Altitude");
+
+
+/*!
+ * \variable QContactGeolocation::FieldAltitudeAccuracy
+ * The constant key for which the altitude accuracy value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
+
+/*!
+ * \variable QContactGeolocation::FieldHeading
+ * The constant key for which the heading value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldHeading, "Heading");
+
+/*!
+ * \variable QContactGeolocation::FieldSpeed
+ * The constant key for which the speed value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldSpeed, "Speed");
+
+/*!
+ * \variable QContactGeolocation::FieldTimestamp
+ * The constant key for which the timestamp value is stored in details of the QContactGeolocation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
+
+/*!
  * \variable QContactOrganisation::FieldDisplayLabel
  * The constant key for which the display label value is stored in details of the QContactOrganisation type
  */
@@ -360,6 +426,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
  * The constant key for the value which is stored in details of the QContactRelationship type which defines the type of relationship that is being described in the detail
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelationshipType, "RelationshipType");
+
+/*!
+ * \variable QContactRelationship::FieldRelatedContactLabel
+ * The constant key for the value which is stored in details of the QContactRelationship type which contains the label of the other contact with whom this contact has the relationship
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactLabel, "RelatedContactLabel");
 
 /*!
  * \variable QContactRelationship::FieldRelatedContactUid
@@ -770,6 +842,96 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactGender::setGender(const QString& gender)
  * Sets the gender of the contact (as stored in this detail) to \a gender, if \a gender is either "Male" or "Female", otherwise sets it to "Unspecified"
+ */
+
+/*!
+ * \fn QContactGeolocation::setLabel(const QString& label)
+ * Sets the label of the location stored in the detail to \a label
+ */
+
+/*!
+ * \fn QContactGeolocation::label() const
+ * Returns the label of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setLatitude(double latitude)
+ * Sets the latitude portion of the coordinate (in decimal degrees) of the location stored in the detail to \a latitude
+ */
+
+/*!
+ * \fn QContactGeolocation::latitude() const
+ * Returns the latitude portion of the coordinate (specified in decimal degrees) of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setLongitude(double longitude)
+ * Sets the longitude portion of the coordinate (in decimal degrees) of the location stored in the detail to \a longitude
+ */
+
+/*!
+ * \fn QContactGeolocation::longitude() const
+ * Returns the longitude portion of the coordinate (specified in decimal degrees) of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setAccuracy(double accuracy)
+ * Specifies that the latitude and longitude portions of the location stored in the detail are accurate to within \a accuracy metres
+ */
+
+/*!
+ * \fn QContactGeolocation::accuracy() const
+ * Returns the accuracy (in metres) of the latitude and longitude of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setAltitude(double altitude)
+ * Sets the altitude portion of the coordinate (in metres above the ellipsoid) of the location stored in the detail to \a altitude
+ */
+
+/*!
+ * \fn QContactGeolocation::altitude() const
+ * Returns the altitude (in metres) of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
+ * Sets the altitude-accuracy portion of the coordinate (in metres) of the location stored in the detail to \a altitudeAccuracy
+ */
+
+/*!
+ * \fn QContactGeolocation::altitudeAccuracy() const
+ * Returns the accuracy of the altitude portion of the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGeolocation::setHeading(double heading)
+ * Sets the heading portion of the coordinate (in decimal degrees clockwise relative to true north) of the location-aware device at the time of measurement to \a heading
+ */
+
+/*!
+ * \fn QContactGeolocation::heading() const
+ * Returns the heading (at the time of measurement) of the location-aware device that recorded (or was provided) the measurement
+ */
+
+/*!
+ * \fn QContactGeolocation::setSpeed(double speed)
+ * Sets the speed portion of the coordinate (in metres per second) of the location-aware device at the time of measurement to \a speed
+ */
+
+/*!
+ * \fn QContactGeolocation::speed() const
+ * Returns the speed (at the time of measurement) of the location-aware device that recorded (or was provided) the measurement
+ */
+
+/*!
+ * \fn QContactGeolocation::setTimestamp(const QDateTime& timestamp)
+ * Sets the creation (or first-valid) timestamp of the location information to \a timestamp
+ */
+
+/*!
+ * \fn QContactGeolocation::timestamp() const
+ * Returns the timestamp associated with the location stored in the detail
  */
 
 /*!
