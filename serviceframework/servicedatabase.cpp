@@ -241,7 +241,8 @@ bool ServiceDatabase::open()
    DBError::NoWritePermissions
    DBError::InvalidDatabaseFile
 */
-bool ServiceDatabase::registerService(ServiceMetaData &service)
+//bool ServiceDatabase::registerService(ServiceMetaData &service)
+bool ServiceDatabase::registerService(const ServiceMetaDataResults &service)
 {
     if(!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -265,7 +266,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     //See if the service's location has already been previously registered
     QString statement("SELECT Name from Service WHERE Location=? COLLATE NOCASE");
     QList<QVariant> bindValues;
-    bindValues.append(service.location());
+    bindValues.append(service.location);
     if (!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -282,8 +283,8 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
                     "for new registration to take place.";
 
         m_lastError.setError(DBError::LocationAlreadyRegistered,
-                errorText.arg(service.name())
-                        .arg(service.location())
+                errorText.arg(service.name)
+                        .arg(service.location)
                         .arg(alreadyRegisteredService));
 
         rollbackTransaction(&query);
@@ -299,8 +300,8 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
 
     bindValues.clear();
     bindValues.append(serviceID);
-    bindValues.append(service.name());
-    bindValues.append(service.location());
+    bindValues.append(service.name);
+    bindValues.append(service.location);
 
     if (!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
@@ -315,10 +316,10 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
     bindValues.clear();
     bindValues.append(serviceID);
     bindValues.append(SERVICE_DESCRIPTION_KEY);
-    if (service.description().isNull())
+    if (service.description.isNull())
         bindValues.append("");
     else
-        bindValues.append(service.description());
+        bindValues.append(service.description);
 
     if (!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
@@ -329,7 +330,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         return false;
     }
 
-    QList <QServiceInterfaceDescriptor> interfaces = service.getInterfaces();
+    QList <QServiceInterfaceDescriptor> interfaces = service.interfaces;
     QString interfaceID;;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
         interfaceID = getInterfaceID(&query, interface);
@@ -375,7 +376,7 @@ bool ServiceDatabase::registerService(ServiceMetaData &service)
         }
     }
 
-    interfaces = service.latestInterfaces();
+    interfaces = service.latestInterfaces;
     QServiceInterfaceDescriptor defaultInterface;
     foreach(const QServiceInterfaceDescriptor &interface, interfaces) {
         defaultInterface = interfaceDefault(interface.interfaceName(), NULL, true);

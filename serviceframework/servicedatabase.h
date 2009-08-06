@@ -103,7 +103,7 @@ class Q_SFW_EXPORT ServiceDatabase : public QObject
         void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
-        bool registerService(ServiceMetaData &service);
+        bool registerService(const ServiceMetaDataResults &service);
         bool unregisterService(const QString &serviceName);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);

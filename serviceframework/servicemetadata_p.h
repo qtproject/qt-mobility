@@ -58,6 +58,32 @@ QT_BEGIN_NAMESPACE
 // FORWARD DECLARATIONS
 class QServiceInterfaceDescriptor;
 
+class Q_SFW_EXPORT ServiceMetaDataResults 
+{
+public:
+    ServiceMetaDataResults() {}
+
+    ServiceMetaDataResults(const ServiceMetaDataResults& other)
+    {
+        description = other.description;
+        location = other.location;
+        name = other.name;
+        interfaces = other.interfaces;
+        latestInterfaces = other.latestInterfaces;
+    }
+    
+    QString location;
+    QString name;
+    QString description;
+    QList<QServiceInterfaceDescriptor> interfaces;
+    QList<QServiceInterfaceDescriptor> latestInterfaces;
+};
+
+#ifndef QT_NO_DATASTREAM
+Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
+Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
+#endif
+
 class Q_SFW_EXPORT ServiceMetaData 
 {
 public:
@@ -100,18 +126,11 @@ public:
 
     int getLatestError() const;
 
-    QString name() const;
-
-    QString location() const;
-
-    QString description() const;
-    
-    QList<QServiceInterfaceDescriptor> getInterfaces() const;
-
-    QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
-    QList<QServiceInterfaceDescriptor> latestInterfaces() const;
+    ServiceMetaDataResults parseResults() const;
 
 private:
+    QList<QServiceInterfaceDescriptor> latestInterfaces() const;
+    QServiceInterfaceDescriptor latestInterfaceVersion(const QString &interfaceName);
     bool processServiceElement(QXmlStreamReader &aXMLReader);
     
     bool processInterfaceElement(QXmlStreamReader &aXMLReader);

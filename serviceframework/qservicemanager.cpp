@@ -487,24 +487,25 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 bool QServiceManager::addService(QIODevice *device)
 {
     d->setError(NoError);
-    ServiceMetaData data(device);
-    if (!data.extractMetadata()) {
+    ServiceMetaData parser(device);
+    if (!parser.extractMetadata()) {
         d->setError(InvalidServiceXml);
         return false;
     }
+    const ServiceMetaDataResults data = parser.parseResults();
 
     DatabaseManager::DbScope scope = d->scope == UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
-    bool result = d->dbManager->registerService(data, scope);
+    bool result = d->dbManager->registerService(parser, scope);
     if (result) {
-        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location()));
+        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
         if (pluginIFace) {
             pluginIFace->installService();
         } else {
             d->setError(PluginLoadingFailed);
             result = false;
-            d->dbManager->unregisterService(data.name(), scope);
+            d->dbManager->unregisterService(data.name, scope);
         }
         loader->unload();
         delete loader;

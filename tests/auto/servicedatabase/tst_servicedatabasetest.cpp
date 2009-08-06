@@ -100,61 +100,61 @@ void ServiceDatabaseUnitTest::testRegistration()
 
     ServiceMetaData parser(testdir.absoluteFilePath("ServiceAcme.xml"));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser));
+    QVERIFY(!database.registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
 
     QVERIFY(database.open());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceOmni.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceLuthorCorp.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceWayneEnt.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServicePrimatech.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceCyberdyne.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceSkynet.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceAutobot.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     //try to register an already registered service
-    QVERIFY(!database.registerService(parser));
+    QVERIFY(!database.registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::LocationAlreadyRegistered);
 
     //try to register a service with a dll that provides interface implementations
     //that are already provided by a currently registered service
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServicePrimatech2error.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser));
+    QVERIFY(!database.registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::IfaceImplAlreadyRegistered);
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceYamagatoError.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser));
+    QVERIFY(!database.registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::LocationAlreadyRegistered);
 
     //make sure errors above are corectly rolled back by
     //registering a valid service
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDecepticon.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
 
     QStringList xmlFiles;
     xmlFiles << "ServiceDharma_Swan.xml"
@@ -164,7 +164,7 @@ void ServiceDatabaseUnitTest::testRegistration()
     foreach(const QString &file, xmlFiles) {
         parser.setDevice(new QFile(testdir.absoluteFilePath(file)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(database.registerService(parser));
+        QVERIFY(database.registerService(parser.parseResults()));
     }
 
     QVERIFY(database.close());
@@ -1259,7 +1259,7 @@ void ServiceDatabaseUnitTest::unregister()
     QDir testdir = QDir(TESTDATA_DIR "/testdata" );
     ServiceMetaData parser(testdir.absoluteFilePath("ServiceDharma_Flame.xml"));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
     interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(interface.isValid());
     filter.setServiceName("DharmaInitiative");
@@ -1269,7 +1269,7 @@ void ServiceDatabaseUnitTest::unregister()
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser));
+    QVERIFY(database.registerService(parser.parseResults()));
     filter.setServiceName("DharmaInitiative");
     filter.setInterface("");
     interfaces = database.getInterfaces(filter);

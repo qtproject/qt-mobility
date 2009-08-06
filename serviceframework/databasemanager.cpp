@@ -304,7 +304,7 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
         if(!openDb(DatabaseManager::SystemScope)) {
             return false;
         }  else {
-            if (!m_systemDb->registerService(service)) {
+            if (!m_systemDb->registerService(service.parseResults())) {
                 m_lastError = m_systemDb->lastError();
                 return false;
             } else { //must be successful registration
@@ -316,7 +316,7 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
         if (!openDb(DatabaseManager::UserScope)) {
             return false;
         } else {
-            if (!m_userDb->registerService(service)) {
+            if (!m_userDb->registerService(service.parseResults())) {
                 m_lastError = m_userDb->lastError();
                 return false;
             } else { //must be successful registration

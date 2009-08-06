@@ -47,7 +47,7 @@ InterfacesTabWidget::InterfacesTabWidget(QWidget *parent)
     connect(tabBar(), SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
 }
 
-void InterfacesTabWidget::load(const ServiceMetaData &data)
+void InterfacesTabWidget::load(const ServiceMetaDataResults &data)
 {
     QWidget *widg;
     while (count() > 0) {
@@ -59,7 +59,7 @@ void InterfacesTabWidget::load(const ServiceMetaData &data)
     }
 
     InterfaceWidget *iface;
-    QList<QServiceInterfaceDescriptor> descriptors = data.getInterfaces();
+    QList<QServiceInterfaceDescriptor> descriptors = data.interfaces;
     for (int i=0; i<descriptors.count(); i++)
         iface = addInterface(descriptors[i]);
 

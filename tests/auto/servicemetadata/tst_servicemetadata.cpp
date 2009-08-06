@@ -84,12 +84,13 @@ void ServiceMetadataTest::parseValidServiceXML()
 {
     ServiceMetaData parser(dir.absoluteFilePath("ServiceTest.xml"));
     QCOMPARE(parser.extractMetadata(),true);
-    QCOMPARE(parser.name(), QString("TestService"));
-    QCOMPARE(parser.description(), QString("Test service description"));
+    const ServiceMetaDataResults data = parser.parseResults();
+    QCOMPARE(data.name, QString("TestService"));
+    QCOMPARE(data.description, QString("Test service description"));
     
-    QCOMPARE(parser.location(), QString("C:/TestData/testservice.dll"));
+    QCOMPARE(data.location, QString("C:/TestData/testservice.dll"));
 
-    QList<QServiceInterfaceDescriptor> allInterfaces = parser.getInterfaces();
+    QList<QServiceInterfaceDescriptor> allInterfaces = data.interfaces;
     QServiceInterfaceDescriptor aInterface = allInterfaces.at(0);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.IDownloader"));
     QCOMPARE(aInterface.majorVersion(), 1);
@@ -140,7 +141,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     
     ServiceMetaData parser1(dir.absoluteFilePath("WrongOrder.xml"));
     QCOMPARE(parser1.extractMetadata(),true);
-    QList<QServiceInterfaceDescriptor> allInterfacesWrongOrder = parser1.getInterfaces();
+    QList<QServiceInterfaceDescriptor> allInterfacesWrongOrder = parser1.parseResults().interfaces;
     foreach(const QServiceInterfaceDescriptor d, allInterfacesWrongOrder) {
         QCOMPARE(d.serviceName(), QString("ovi"));
         QCOMPARE(d.property(QServiceInterfaceDescriptor::Location).toString(), QString("C:/Nokia/ovi.dll"));

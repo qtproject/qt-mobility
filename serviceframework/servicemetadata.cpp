@@ -53,6 +53,24 @@ QT_BEGIN_NAMESPACE
 
 static const char  PATH_SEPARATOR[] = "\\";
 
+#ifndef QT_NO_DATASTREAM
+QDataStream &operator<<(QDataStream &out, const ServiceMetaDataResults &r)
+{
+    out << r.name << r.location;
+    out << r.description << r.interfaces << r.latestInterfaces;
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, ServiceMetaDataResults &r)
+{
+    in >> r.name >> r.location;
+    in >> r.description >> r.interfaces >> r.latestInterfaces;
+
+    return in;
+}
+#endif
+
 /*
     \class ServiceMetaData
 
@@ -122,39 +140,56 @@ QIODevice *ServiceMetaData::device() const
  *
  * @return service name or default value (empty string) if it is not available
  */
-QString ServiceMetaData::name() const
+/*QString ServiceMetaData::name() const
 {
     return serviceName;
-}
+}*/
  
 /*
  *  Gets the path of the service implementation file
  *
  * @return service implementation filepath
  */
-QString ServiceMetaData::location() const
+/*QString ServiceMetaData::location() const
 {
     return serviceLocation;
-}
+}*/
  
 /*
  *  Gets the service description
  *
  * @return service description or default value (empty string) if it is not available
  */
-QString ServiceMetaData::description() const
+/*QString ServiceMetaData::description() const
 {
     return serviceDescription;
-}
+}*/
  
 /*
    Returns the metadata of the interace at \a index; otherwise
    returns 0.
  */
-QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces() const
+/*QList<QServiceInterfaceDescriptor> ServiceMetaData::getInterfaces() const
 {
     return serviceInterfaces;
-} 
+} */
+
+/*!
+    \internal
+
+    Returns a streamable object containing the results of the parsing.
+*/
+ServiceMetaDataResults ServiceMetaData::parseResults() const
+{
+    ServiceMetaDataResults results;
+    results.location = serviceLocation;
+    results.name = serviceName;
+    results.description = serviceDescription;
+    results.interfaces = serviceInterfaces;
+    results.latestInterfaces = latestInterfaces();
+
+    return results;
+}
 
 /*
     Parses the file and extracts the service metadata \n

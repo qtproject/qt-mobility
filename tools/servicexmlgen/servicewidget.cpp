@@ -89,14 +89,15 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     setLayout(main);
 }
 
-void ServiceWidget::load(const ServiceMetaData &data)
+void ServiceWidget::load(const ServiceMetaData &parser)
 {
-    m_name->setText(data.name());
-    m_path->setText(data.location());
-    m_desc->setText(data.description());
+    const ServiceMetaDataResults data = parser.parseResults();
+    m_name->setText(data.name);
+    m_path->setText(data.location);
+    m_desc->setText(data.description);
     m_ifacesTabs->load(data);
 
-    if (data.name().isEmpty())
+    if (data.name.isEmpty())
         m_title->setText(tr("[New Service]"));
 
     m_name->setFocus();
