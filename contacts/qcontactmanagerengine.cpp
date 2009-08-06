@@ -448,6 +448,41 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.name(), d);
 
+    // relationship
+    fields.clear();
+    QVariantList relationshipTypes;
+    relationshipTypes << QString(QLatin1String("Is"));
+    relationshipTypes << QString(QLatin1String("Was"));
+    relationshipTypes << QString(QLatin1String("Father"));
+    relationshipTypes << QString(QLatin1String("Mother"));
+    relationshipTypes << QString(QLatin1String("Child"));
+    relationshipTypes << QString(QLatin1String("Son"));
+    relationshipTypes << QString(QLatin1String("Daughter"));
+    relationshipTypes << QString(QLatin1String("Sibling"));
+    relationshipTypes << QString(QLatin1String("Brother"));
+    relationshipTypes << QString(QLatin1String("Daughter"));
+    relationshipTypes << QString(QLatin1String("Cousin"));
+    relationshipTypes << QString(QLatin1String("Friend"));
+    relationshipTypes << QString(QLatin1String("Spouse"));
+    relationshipTypes << QString(QLatin1String("Fiancee"));
+    relationshipTypes << QString(QLatin1String("Husband"));
+    relationshipTypes << QString(QLatin1String("Wife"));
+    relationshipTypes << QString(QLatin1String("Employer"));
+    relationshipTypes << QString(QLatin1String("Employee"));
+    relationshipTypes << QString(QLatin1String("Other"));
+    relationshipTypes << QString(QLatin1String("Unknown"));
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setName(QContactGender::DefinitionName);
+    fields.insert(QContactRelationship::FieldRelatedContactUid, f);
+    fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
+    f.allowableValues = relationshipTypes;
+    fields.insert(QContactRelationship::FieldRelationshipType, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::Any);
+    retn.insert(d.name(), d);
+
     // avatar
     fields.clear();
     f.dataType = QVariant::String;

@@ -56,11 +56,14 @@ private slots:
     void anniversary();
     void avatar();
     void birthday();
+    void displayLabel();
     void emailAddress();
     void gender();
     void guid();
     void name();
+    void organisation();
     void phoneNumber();
+    void relationship();
     void syncTarget();
     void timestamp();
     void url();
@@ -331,6 +334,38 @@ void tst_QContactDetails::birthday()
     QCOMPARE(c.details(QContactBirthday::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::displayLabel()
+{
+    QContact c;
+    QContactDisplayLabel d1, d2;
+
+    // test property set
+    d1.setLabel("label one");
+    QCOMPARE(d1.label(), QString("label one"));
+    QCOMPARE(d1.value(QContactDisplayLabel::FieldLabel), QString("label one"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&d1));
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
+    QCOMPARE(QContactDisplayLabel(c.details(QContactDisplayLabel::DefinitionName).value(0)).label(), d1.label());
+
+    // test property update
+    d1.setLabel("label two");
+    QVERIFY(c.saveDetail(&d1));
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).value(0).value(QContactDisplayLabel::FieldLabel), QString("label two"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&d1));
+    QVERIFY(c.error() == QContact::NoError); // should successfully _clear_ (but not remove) the label
+    QCOMPARE(c.displayLabel().label(), QString());
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1); // cannot remove display label
+    d2.setLabel("second label");
+    QVERIFY(c.saveDetail(&d2));    // should successfully _replace_ the label
+    QVERIFY(c.error() == QContact::NoError); // should successfully _clear_ (but not remove) the label
+    QCOMPARE(c.displayLabel().label(), QString("second label"));
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
+}
+
 void tst_QContactDetails::emailAddress()
 {
     QContact c;
@@ -493,6 +528,38 @@ void tst_QContactDetails::name()
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 1);
 }
 
+void tst_QContactDetails::organisation()
+{
+    QContact c;
+    QContactOrganisation o1, o2;
+
+    // test property set
+    o1.setDisplayLabel("organisation one");
+    QCOMPARE(o1.displayLabel(), QString("organisation one"));
+    QCOMPARE(o1.value(QContactOrganisation::FieldDisplayLabel), QString("organisation one"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&o1));
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 1);
+    QCOMPARE(QContactOrganisation(c.details(QContactOrganisation::DefinitionName).value(0)).displayLabel(), o1.displayLabel());
+
+    // test property update
+    o1.setDisplayLabel("organisation two");
+    QVERIFY(c.saveDetail(&o1));
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).value(0).value(QContactOrganisation::FieldDisplayLabel), QString("organisation two"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&o1));
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&o2));
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&o2));
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&o2) == false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::phoneNumber()
 {
     QContact c;
@@ -532,6 +599,37 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::relationship()
+{
+    QContact c;
+    QContactRelationship r1, r2;
+
+    // test property set
+    r1.setRelatedContactUid("contact12345");
+    QCOMPARE(r1.relatedContactUid(), QString("contact12345"));
+    QCOMPARE(r1.value(QContactRelationship::FieldRelatedContactUid), QString("contact12345"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
+    QCOMPARE(QContactRelationship(c.details(QContactRelationship::DefinitionName).value(0)).relatedContactUid(), r1.relatedContactUid());
+
+    // test property update
+    r1.setRelatedContactUid("contact54321");
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).value(0).value(QContactRelationship::FieldRelatedContactUid), QString("contact54321"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&r1));
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&r2));
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&r2));
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&r2) == false);
+    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
+    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
+}
 
 void tst_QContactDetails::syncTarget()
 {

@@ -89,6 +89,11 @@
  */
 
 /*!
+ * \class QContactRelationship
+ * \brief Describes the relationship that this contact has to another
+ */
+
+/*!
  * \class QContactSyncTarget
  * \brief A sync target for a contact
  */
@@ -187,6 +192,11 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::DefinitionName, "Organisation");
  */
 Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
 
+/*!
+ * \variable QContactRelationship::DefinitionName
+ * The constant string which identifies the definition of details which contain information about a relationship of a contact to another contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::DefinitionName, "Relationship");
 
 
 /*!
@@ -346,6 +356,24 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
 Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
 
 /*!
+ * \variable QContactRelationship::FieldRelationshipType
+ * The constant key for the value which is stored in details of the QContactRelationship type which defines the type of relationship that is being described in the detail
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelationshipType, "RelationshipType");
+
+/*!
+ * \variable QContactRelationship::FieldRelatedContactUid
+ * The constant key for the value which is stored in details of the QContactRelationship type which defines the unique identifier of the other contact to whom this contact has the relationship
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactUid, "RelatedContactUid");
+
+/*!
+ * \variable QContactRelationship::FieldRelatedContactManagerUri
+ * The constant key for the value which is stored in details of the QContactRelationship type which defines the universal resource identifier of the manager which contains the contact to whom this contact has the relationship
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactManagerUri, "RelatedContactManagerUri");
+
+/*!
  * \variable QContactTimestamp::FieldModificationTimestamp
  * The constant key for the value which is stored in details of the QContactTimestamp type which describes the last modification date and time of a contact
  */
@@ -495,24 +523,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::AttributeSubTypeFavourite, "Favourite");
  * The constant attribute value which describes the url as being one of the social networking pages of the contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactUrl::AttributeSubTypeSocialNetworking, "SocialNetworking");
-
-///*!
-// * \variable QContactMeeting::AttributeSubTypeBusiness
-// * The constant attribute value which describes the meeting as being a business meeting
-// */
-//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypeBusiness, "Business");
-
-///*!
-// * \variable QContactMeeting::AttributeSubTypePersonal
-// * The constant attribute value which describes the url as being a personal meeting
-// */
-//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypePersonal, "Personal");
-
-///*!
-// * \variable QContactMeeting::AttributeSubTypeAppointment
-// * The constant attribute value which describes the url as being a professional appointment
-// */
-//Q_DEFINE_LATIN1_LITERAL(QContactMeeting::AttributeSubTypeAppointment, "Appointment");
 
 /*!
  * \variable QContactAnniversary::AttributeSubTypeWedding
@@ -840,6 +850,47 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactTimestamp::setLastModified(const QDateTime& dateTime)
  * Sets the last-modified timestamp saved in this detail to \a dateTime
+ */
+
+/*!
+ * \fn QContactRelationship::setRelationshipType(const QString& relationshipType)
+ * Sets the relationship type saved in this detail to \a relationshipType
+ */
+
+/*!
+ * \fn QContactRelationship::relationshipType() const
+ * Returns the relationship type saved in this detail
+ */
+
+/*!
+ * \fn QContactRelationship::setRelatedContactLabel(const QString& label)
+ * Sets the label for the contact to whom this contact has a relationship with to \a label.
+ * This is especially useful if no unique identifier (or other information) for the related contact is known.
+ */
+
+/*!
+ * \fn QContactRelationship::relatedContactLabel() const
+ * Returns the label for the contact to whom this contact has the relationship
+ */
+
+/*!
+ * \fn QContactRelationship::setRelatedContactUid(const QString& contactUid)
+ * Sets the value of the unique identifier of the contact to whom this contact has a relationship with to \a contactUid
+ */
+
+/*!
+ * \fn QContactRelationship::relatedContactUid() const
+ * Returns the unique identifier of the contact to whom this contact has the relationship
+ */
+
+/*!
+ * \fn QContactRelationship::setRelatedContactManagerUri(const QString& managerUri)
+ * Sets the value of the universal resource identifier of the manager containing the contact to whom this contact has a relationship with to \a managerUri
+ */
+
+/*!
+ * \fn QContactRelationship::relatedContactManagerUri() const
+ * Returns the universal resource identifier of the manager which contains the contact with whom this contact has a relationship
  */
 
 /*!

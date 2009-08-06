@@ -11,6 +11,7 @@ HEADERS += details/qcontactaddress.h \
     details/qcontactname.h \
     details/qcontactorganisation.h \
     details/qcontactphonenumber.h \
+    details/qcontactrelationship.h \
     details/qcontactsynctarget.h \
     details/qcontacttimestamp.h \
     details/qcontacturl.h

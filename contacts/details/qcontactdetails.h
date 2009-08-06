@@ -56,6 +56,7 @@
 #include "qcontactname.h"
 #include "qcontactorganisation.h"
 #include "qcontactphonenumber.h"
+#include "qcontactrelationship.h"
 #include "qcontactsynctarget.h"
 #include "qcontacttimestamp.h"
 #include "qcontacturl.h"
