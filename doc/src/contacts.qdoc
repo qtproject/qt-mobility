@@ -155,6 +155,7 @@ they may offer their own which provide similar functionality.
     \o \l{QContactOrganisation}
     \o \l{QContactPhoneNumber}
     \o \l{QContactSyncTarget}
+    \o \l{QContactRelationship}
     \o \l{QContactTimestamp}
     \o \l{QContactUrl}
 \endlist
