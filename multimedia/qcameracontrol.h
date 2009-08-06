@@ -98,8 +98,6 @@ public:
     virtual double zoomValue() const;
     virtual void zoomTo(int value);
 
-    virtual bool isValid() const = 0;
-
     virtual void setDevice(const QByteArray &device) = 0;
 
     virtual bool isExposureLocked() const;
