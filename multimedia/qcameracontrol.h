@@ -47,41 +47,56 @@ class QCameraControl : public QAbstractMediaControl
 public:
     ~QCameraControl();
 
-    virtual int framerate() const = 0;
-    virtual void setFrameRate(int rate) = 0;
+    virtual QCamera::FlashMode flashMode() const;
+    virtual void setFlashMode(QCamera::FlashMode mode);
+    virtual QCamera::FlashModes supportedFlashModes() const;
+    virtual bool isFlashReady() const;
 
-    virtual int brightness() const = 0;
-    virtual void setBrightness(int b) = 0;
+    virtual QCamera::FocusMode focusMode() const;
+    virtual void setFocusMode(QCamera::FocusMode mode);
+    virtual QCamera::FocusModes supportedFocusModes() const;
+    virtual QCamera::FocusStatus focusStatus() const;
 
-    virtual int contrast() const = 0;
-    virtual void setContrast(int c) = 0;
+    virtual bool macroFocusingEnabled() const;
+    virtual bool isMacroFocusingSupported() const;
+    virtual void setMacroFocusingEnabled(bool);
 
-    virtual int saturation() const = 0;
-    virtual void setSaturation(int s) = 0;
+    virtual QCamera::ExposureMode exposureMode() const;
+    virtual void setExposureMode(QCamera::ExposureMode mode);
+    virtual QCamera::ExposureModes supportedExposureModes() const;
 
-    virtual int hue() const = 0;
-    virtual void setHue(int h) = 0;
+    virtual double exposureCompensation() const;
+    virtual void setExposureCompensation(double ev);
 
-    virtual int sharpness() const = 0;
-    virtual void setSharpness(int s) = 0;
+    virtual QCamera::MeteringMode meteringMode() const;
+    virtual void setMeteringMode(QCamera::MeteringMode mode);
+    virtual QCamera::MeteringModes supportedMeteringModes() const;
 
-    virtual int zoom() const = 0;
-    virtual void setZoom(int z) = 0;
+    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const;
+    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
+    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
+    virtual int manualWhiteBalance() const;
+    virtual void setManualWhiteBalance(int colorTemperature);
 
-    virtual bool backlightCompensation() const = 0;
-    virtual void setBacklightCompensation(bool) = 0;
+    virtual int isoSensitivity() const;
+    virtual QPair<int, int> supportedIsoSensitivityRange() const;
+    virtual void setManualIsoSensitivity(int iso);
+    virtual void setAutoIsoSensitivity();
 
-    virtual int whitelevel() const = 0;
-    virtual void setWhitelevel(int w) = 0;
+    virtual double aperture() const;
+    virtual QPair<double, double> supportedApertureRange() const;
+    virtual void setManualAperture(double aperture);
+    virtual void setAutoAperture();
 
-    virtual int rotation() const = 0;
-    virtual void setRotation(int r) = 0;
+    virtual double shutterSpeed() const;
+    virtual QPair<double, double> supportedShutterSpeedRange() const;
+    virtual void setManualShutterSpeed(double seconds);
+    virtual void setAutoShutterSpeed();
 
-    virtual bool flash() const = 0;
-    virtual void setFlash(bool f) = 0;
-
-    virtual bool autofocus() const = 0;
-    virtual void setAutofocus(bool f) = 0;
+    virtual double maximumOpticalZoom() const;
+    virtual double maximumDigitalZoom() const;
+    virtual double zoomValue() const;
+    virtual void zoomTo(int value);
 
     virtual bool isValid() const = 0;
 
@@ -90,6 +105,23 @@ public:
 
     virtual void setDevice(const QByteArray &device) = 0;
     virtual QList<QSize> supportedResolutions() = 0;
+
+    virtual bool isExposureLocked() const;
+    virtual bool isFocusLocked() const;
+
+public Q_SLOTS:
+    virtual void lockExposure();
+    virtual void unlockExposure();
+
+    virtual void lockFocus();
+    virtual void unlockFocus();
+
+Q_SIGNALS:
+    void flashReady(bool);
+    void focusStatusChanged(int);
+    void zoomValueChanged(double);
+    void exposureLocked();
+    void focusLocked();
 
 protected:
     QCameraControl(QObject* parent);

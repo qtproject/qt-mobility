@@ -32,44 +32,21 @@
 **
 ****************************************************************************/
 
+#include "qimageencodecontrol.h"
+#include <QtCore/qstringlist.h>
 
-#include "qgstreamercameracontrol.h"
 
-QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session)
+QImageEncodeControl::QImageEncodeControl(QObject *parent)
+    :QAbstractMediaControl(parent)
 {
 }
 
-QGstreamerCameraControl::~QGstreamerCameraControl()
+QImageEncodeControl::~QImageEncodeControl()
 {
 }
 
-GstElement *QGstreamerCameraControl::buildElement()
+QList<QSize> QImageEncodeControl::supportedResolutions() const
 {
-    //TODO: add caps filter with desired camera settings, like resolution, framerate, etc
-    return gst_element_factory_make("v4l2src", "camera_source");
+    return QList<QSize>();
 }
 
-void QGstreamerCameraControl::start()
-{
-    m_session->enablePreview(true);
-}
-
-void QGstreamerCameraControl::stop()
-{
-    m_session->enablePreview(false);
-}
-
-QCamera::State QGstreamerCameraControl::state() const
-{
-    switch (m_session->state()) {
-        case QGstreamerCaptureSession::StoppedState:
-            return QCamera::StoppedState;
-        case QGstreamerCaptureSession::PausedState:
-            return QCamera::PausedState;
-        default:
-            return QCamera::ActiveState;
-    };
-
-    return QCamera::ActiveState;
-}

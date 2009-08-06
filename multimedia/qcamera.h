@@ -36,6 +36,7 @@
 #define QCAMERA_H
 
 #include <QList>
+#include <QPair>
 #include <QSize>
 #include <QStringList>
 
@@ -60,82 +61,160 @@ class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 public:
     enum State { LoadingState, ActiveState, PausedState, StoppedState };
 
-    Q_PROPERTY(QSize frameSize READ frameSize WRITE setFrameSize)
+    enum FlashMode {
+        FlashOff = 0x1,
+        FlashOn = 0x2,
+        FlashAuto = 0x4,
+        FlashRedEyeReduction  = 0x8,
+        FlashFill = 0x10
+    };
+    Q_DECLARE_FLAGS(FlashModes, FlashMode)
+
+    enum FocusMode {
+        ManualFocus = 0x1,
+        AutoFocus = 0x2,
+        ContinuousFocus = 0x4
+    };
+    Q_DECLARE_FLAGS(FocusModes, FocusMode)
+
+    enum FocusStatus {
+        FocusDisabled, //manual mode
+        FocusRequested,
+        FocusReached,
+        FocusLost,
+        FocusUnableToReach
+    };
+
+    enum ExposureMode {
+        ExposureManual = 0x1,
+        ExposureAuto = 0x2,
+        ExposureNight = 0x4,
+        ExposureBacklight = 0x8,
+        ExposureSpotlight = 0x10,
+        ExposureSports = 0x20,
+        ExposureSnow = 0x40,
+        ExposureBeach  = 0x80,
+        ExposureLargeAperture = 0x100,
+        ExposureSmallAperture = 0x200,
+        ExposurePortrait = 0x400,
+        ExposureNightPortrait = 0x800
+    };
+    Q_DECLARE_FLAGS(ExposureModes, ExposureMode)
+
+    enum ExposureStatus {
+        CorrectExposure,
+        UnderExposure,
+        OverExposure
+    };
+
+    enum MeteringMode {
+        MeteringAverage = 0x1,
+        MeteringSpot = 0x2,
+        MeteringMatrix = 0x4
+    };
+    Q_DECLARE_FLAGS(MeteringModes, MeteringMode)
+
+    enum WhiteBalanceMode {
+        WhiteBalanceManual = 0x1,
+        WhiteBalanceAuto = 0x2,
+        WhiteBalanceSunlight = 0x4,
+        WhiteBalanceCloudy = 0x8,
+        WhiteBalanceShade = 0x10,
+        WhiteBalanceTungsten = 0x20,
+        WhiteBalanceFluorescent = 0x40,
+        WhiteBalanceIncandescent = 0x80,
+        WhiteBalanceFlash = 0x100,
+        WhiteBalanceSunset = 0x200
+    };
+    Q_DECLARE_FLAGS(WhiteBalanceModes, WhiteBalanceMode)
+
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(int framerate READ framerate WRITE setFrameRate)
-    Q_PROPERTY(int brightness READ brightness WRITE setBrightness)
-    Q_PROPERTY(int contrast READ contrast WRITE setContrast)
-    Q_PROPERTY(int saturation READ saturation WRITE setSaturation)
-    Q_PROPERTY(int hue READ hue WRITE setHue)
-    Q_PROPERTY(int sharpness READ sharpness WRITE setSharpness)
-    Q_PROPERTY(int zoom READ zoom WRITE setZoom)
-    Q_PROPERTY(bool backlightCompensation READ backlightCompensation WRITE setBacklightCompensation)
-    Q_PROPERTY(int whitelevel READ whitelevel WRITE setWhitelevel)
-    Q_PROPERTY(int rotation READ rotation WRITE setRotation)
-    Q_PROPERTY(bool flash READ flash WRITE setFlash)
-    Q_PROPERTY(bool autofocus READ autofocus WRITE setAutofocus)
 
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
+    QCamera(const QByteArray &device, QObject *parent = 0);
     ~QCamera();
+
+    QList<QByteArray> deviceList();
+    void setDevice(const QByteArray& device);
+    static QString deviceDescription(const QByteArray &device);
+
+    bool isValid() const;
+    QAbstractMediaService* service() const;
 
     void start();
     void stop();
 
-    QList<QByteArray> deviceList();
-    QList<QSize> supportedResolutions();
+    State state() const;
 
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
+    FlashMode flashMode() const;
+    void setFlashMode(FlashMode mode);
+    FlashModes supportedFlashModes() const;
+    bool isFlashReady() const;
 
-    int framerate() const;
-    void setFrameRate(int rate);
+    FocusMode focusMode() const;
+    void setFocusMode(FocusMode mode);
+    FocusModes supportedFocusModes() const;
+    FocusStatus focusStatus() const;
 
-    int brightness() const;
-    void setBrightness(int b);
+    bool macroFocusingEnabled() const;
+    bool isMacroFocusingSupported() const;
+    void setMacroFocusingEnabled(bool);
 
-    int contrast() const;
-    void setContrast(int c);
+    ExposureMode exposureMode() const;
+    void setExposureMode(ExposureMode mode);
+    ExposureModes supportedExposureModes() const;
 
-    int saturation() const;
-    void setSaturation(int s);
+    double exposureCompensation() const;
+    void setExposureCompensation(double ev);
 
-    int hue() const;
-    void setHue(int h);
+    MeteringMode meteringMode() const;
+    void setMeteringMode(MeteringMode mode);
+    MeteringModes supportedMeteringModes() const;
 
-    int sharpness() const;
-    void setSharpness(int s);
+    WhiteBalanceMode whiteBalanceMode() const;
+    void setWhiteBalanceMode(WhiteBalanceMode mode);
+    WhiteBalanceModes supportedWhiteBalanceModes() const;
+    int manualWhiteBalance() const;
+    void setManualWhiteBalance(int colorTemperature);
 
-    int zoom() const;
-    void setZoom(int);
+    int isoSensitivity() const;
+    QPair<int, int> supportedIsoSensitivityRange() const;
+    void setManualIsoSensitivity(int iso);
+    void setAutoIsoSensitivity();
 
-    bool backlightCompensation() const;
-    void setBacklightCompensation(bool);
+    double aperture() const;
+    QPair<double, double> supportedApertureRange() const;
+    void setManualAperture(double aperture);
+    void setAutoAperture();
 
-    int whitelevel() const;
-    void setWhitelevel(int);
+    double shutterSpeed() const;
+    QPair<double, double> supportedShutterSpeedRange() const;
+    void setManualShutterSpeed(double seconds);
+    void setAutoShutterSpeed();
 
-    int rotation() const;
-    void setRotation(int);
+    double maximumOpticalZoom() const;
+    double maximumDigitalZoom() const;
+    double zoomValue() const;
+    void zoomTo(int value);
 
-    bool flash() const;
-    void setFlash(bool);
+    bool isExposureLocked() const;
+    bool isFocusLocked() const;
 
-    bool autofocus() const;
-    void setAutofocus(bool);
+public Q_SLOTS:
+    void lockExposure();
+    void unlockExposure();
 
-    void setDevice(const QByteArray &device);
-
-    QCamera::State state() const;
-
-    bool isValid() const;
-
-    QAbstractMediaService* service() const;
+    void lockFocus();
+    void unlockFocus();
 
 Q_SIGNALS:
-    void stateChanged(QCamera::State);
+    void flashReady(bool);
+    void focusStatusChanged(FocusStatus);
+    void zoomValueChanged(double);
+    void exposureLocked();
+    void focusLocked();
 
-private slots:
-    void statusChange(int state);
+    void stateChanged(QCamera::State);
 
 private:
     Q_DISABLE_COPY(QCamera)

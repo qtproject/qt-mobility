@@ -56,10 +56,9 @@ class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
 public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
-        currentPos(-1),        
+        currentPos(-1),
         playbackMode(QMediaPlaylistNavigator::Linear),
-        randomPositionsOffset(-1),
-        currentPosAfterListModifications(0)
+        randomPositionsOffset(-1)
     {
     }
 
@@ -71,15 +70,12 @@ public:
     mutable QList<int> randomModePositions;
     mutable int randomPositionsOffset;
 
-    int currentPosAfterListModifications;
-
     int nextItemPos(int steps = 1) const;
     int previousItemPos(int steps = 1) const;
 
     void _q_itemsInserted(int start, int end);
     void _q_itemsRemoved(int start, int end);
     void _q_itemsChanged(int start, int end);
-    void _q_updateCurrentItemPos();
 };
 
 
@@ -91,7 +87,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {        
+    switch (playbackMode) {
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -136,7 +132,7 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {        
+    switch (playbackMode) {
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -209,7 +205,7 @@ enum QMediaPlaylistNavigator::PlaybackMode
   */
 QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
     :QObject(*new QMediaPlaylistNavigatorPrivate, parent)
-{    
+{
     setPlaylist(playlist ? playlist : _q_nullMediaPlaylist());
 }
 
@@ -273,11 +269,8 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
         d->playlist = _q_nullMediaPlaylist();
     }
 
-    connect(d->playlist, SIGNAL(itemsAboutToBeInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
-    connect(d->playlist, SIGNAL(itemsInserted()), SLOT(_q_updateCurrentItemPos()));
-    connect(d->playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
-    connect(d->playlist, SIGNAL(itemsRemoved()), SLOT(_q_updateCurrentItemPos()));
-
+    connect(d->playlist, SIGNAL(itemsInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
+    connect(d->playlist, SIGNAL(itemsRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
     connect(d->playlist, SIGNAL(itemsChanged(int,int)), SLOT(_q_itemsChanged(int,int)));
 
     d->randomPositionsOffset = -1;
@@ -452,10 +445,16 @@ void QMediaPlaylistNavigator::jump(int pos)
   \internal
   */
 void QMediaPlaylistNavigatorPrivate::_q_itemsInserted(int start, int end)
-{    
+{
+    Q_Q(QMediaPlaylistNavigator);
+
     if (currentPos >= start) {
-        currentPosAfterListModifications = end-start+1;
+        currentPos = end-start+1;
+        q->jump(currentPos);
     }
+
+    //TODO: check if they really changed
+    emit q->surroundingItemsChanged();
 }
 
 /*!
@@ -463,22 +462,15 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsInserted(int start, int end)
   */
 void QMediaPlaylistNavigatorPrivate::_q_itemsRemoved(int start, int end)
 {
+    Q_Q(QMediaPlaylistNavigator);
+
     if (currentPos > end) {
-        currentPosAfterListModifications = currentPos - end-start+1;
+        currentPos = currentPos - end-start+1;
+        q->jump(currentPos);
     } else if (currentPos >= start) {
         //current item was removed
-        currentPosAfterListModifications = qMin(start, playlist->size()-1);
-    }
-}
-
-/*!
-  \internal
-  */
-void QMediaPlaylistNavigatorPrivate::_q_updateCurrentItemPos()
-{    
-    Q_Q(QMediaPlaylistNavigator);
-    if (currentPos != currentPosAfterListModifications) {
-        q->jump(currentPosAfterListModifications);
+        currentPos = qMin(start, playlist->size()-1);
+        q->jump(currentPos);
     }
 
     //TODO: check if they really changed

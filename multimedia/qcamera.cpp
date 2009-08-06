@@ -72,7 +72,7 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
         d->media   = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
-        connect(d->media,SIGNAL(stateChanged(int)),this,SLOT(statusChange(int)));
+        //connect(d->media,SIGNAL(stateChanged(QCamera::State)),this,SLOT(statusChange(int)));
     } else {
         d->service = 0;
         d->control = 0;
@@ -86,11 +86,6 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
 
 QCamera::~QCamera()
 {
-}
-
-void QCamera::statusChange(int state)
-{
-    emit stateChanged((QCamera::State)state);
 }
 
 /*!
@@ -117,397 +112,64 @@ void QCamera::stop()
         d->media->stop();
 }
 
-/*!
-    Return a list of camera devices.
-*/
+void QCamera::lockExposure()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->lockExposure();
+}
+
+void QCamera::unlockExposure()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->unlockExposure();
+}
+
+void QCamera::lockFocus()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->lockFocus();
+}
+
+void QCamera::unlockFocus()
+{
+    Q_D(QCamera);
+
+    if(d->control)
+        d->control->unlockFocus();
+}
 
 QList<QByteArray> QCamera::deviceList()
 {
     Q_D(QCamera);
 
-    QList<QByteArray> deviceNames;
-    QCameraService* service = qobject_cast<QCameraService*>(d->service);
-    deviceNames = service->deviceList();
+    QList<QByteArray> list;
 
-    return deviceNames;
-}
-
-/*!
-    Return a list of resolutions available from selected device.
-*/
-
-QList<QSize> QCamera::supportedResolutions()
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        return d->control->supportedResolutions();
-    else {
-        QList<QSize> sizes;
-        return sizes;
+    if(d->service) {
+        QCameraService* serv = qobject_cast<QCameraService*>(d->service);
+        list << serv->deviceList();
     }
+
+    return list;
 }
 
-/*!
-    Return the current resolution being used.
-*/
-
-QSize QCamera::frameSize() const
-{
-    if(d_func()->control)
-        return d_func()->control->frameSize();
-
-    return QSize();
-}
-
-/*!
-    Set the resolution to use.
-*/
-
-void QCamera::setFrameSize(const QSize& s)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        return d->control->setFrameSize(s);
-}
-
-/*!
-    Returns the current framerate
-
-    Return value of -1 indicates not supported
-*/
-
-int QCamera::framerate() const
-{
-    if(d_func()->control)
-        return d_func()->control->framerate();
-
-    return 0;
-}
-
-/*!
-    Sets the framrerate
-
-    Note: If supported, the device will set the framerate to the closest value of \a value
-*/
-
-void QCamera::setFrameRate(int rate)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setFrameRate(rate);
-}
-
-/*!
-    Returns the brightness level
-
-    Return value of -1 indicates not supported.
-*/
-
-int QCamera::brightness() const
-{
-    if(d_func()->control)
-        return d_func()->control->brightness();
-
-    return 0;
-}
-
-/*!
-    Sets the brightness to \a value
-    note: ranges 0-100
-*/
-
-void QCamera::setBrightness(int b)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setBrightness(b);
-}
-
-/*!
-    Returns the contrast
-
-    Return of -1 indicates this is not supported
-*/
-
-int QCamera::contrast() const
-{
-    if(d_func()->control)
-        return d_func()->control->contrast();
-
-    return 0;
-}
-
-/*
-    Sets the contrast to \a value
-
-    Note: ranges 0-100
-*/
-
-void QCamera::setContrast(int c)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setContrast(c);
-}
-
-/*!
-    Returns the saturation
-
-    Return value of -1 indicates that this is not supported
-*/
-
-int QCamera::saturation() const
-{
-    if(d_func()->control)
-        return d_func()->control->saturation();
-
-    return 0;
-}
-
-/*!
-    Sets the saturation to \a value
-
-    Note: ranges 0-100
-*/
-
-void QCamera::setSaturation(int s)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setSaturation(s);
-}
-
-/*!
-    Sets the hue
-
-    note: ranges 0-100
-*/
-
-int QCamera::hue() const
-{
-    if(d_func()->control)
-        return d_func()->control->hue();
-
-    return 0;
-}
-
-/*!
-    Returns  current hue
-
-    Return value of -1 indicates that this is not supported
-*/
-
-void QCamera::setHue(int h)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setHue(h);
-}
-
-/*!
-    Returns current sharpness
-
-    Return value of -1 indicates that this is not supported
-*/
-
-int QCamera::sharpness() const
-{
-    if(d_func()->control)
-        return d_func()->control->sharpness();
-
-    return 0;
-}
-
-/*!
-    Sets current sharpness to \a value
-
-    Note: ranges 01-00
-*/
-
-void QCamera::setSharpness(int s)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setSharpness(s);
-}
-
-/*!
-    Returns the zoom level
-
-    Return of -1 indicates not supported
-*/
-
-int QCamera::zoom() const
-{
-    if(d_func()->control)
-        return d_func()->control->zoom();
-
-    return 0;
-}
-
-/*!
-    Sets the zoom
-
-    Note: ranges 0-100
-*/
-
-void QCamera::setZoom(int z)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setZoom(z);
-}
-
-/*!
-    Return true if backlight compensation is on
-    false otherwise
-*/
-
-bool QCamera::backlightCompensation() const
-{
-    if(d_func()->control)
-        return d_func()->control->backlightCompensation();
-
-    return false;
-}
-
-/*!
-    Enables/disables backlight compensation with \a value
-*/
-
-void QCamera::setBacklightCompensation(bool b)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setBacklightCompensation(b);
-}
-
-/*
-    Returns the whitelevel
-
-    Return -1 indicates not supported
-*/
-
-int QCamera::whitelevel() const
-{
-    if(d_func()->control)
-        return d_func()->control->whitelevel();
-
-    return 0;
-}
-
-/*!
-    Set the white level
-
-    note: ranges 0-100
-*/
-
-void QCamera::setWhitelevel(int w)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setWhitelevel(w);
-}
-
-/*!
-    Returns the current rotation
-
-    Returns -1 if not impleneted
-*/
-
-int QCamera::rotation() const
-{
-    if(d_func()->control)
-        return d_func()->control->rotation();
-
-    return 0;
-}
-
-/*!
-    Sets the rotation to \a value
-*/
-
-void QCamera::setRotation(int r)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setRotation(r);
-}
-
-/*!
-    Returns true if flash is active false otherwise
-    Returns false if not implemented
-*/
-
-bool QCamera::flash() const
-{
-    if(d_func()->control)
-        return d_func()->control->flash();
-
-    return 0;
-}
-
-/*!
-    Set \a value to true to enable flash
-    Set \a value to false to disable
-*/
-
-void QCamera::setFlash(bool f)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setFlash(f);
-}
-
-/*!
-    Returns true if auto focus is active false otherwise
-    Returns false if not implemented
-*/
-
-bool QCamera::autofocus() const
-{
-    if(d_func()->control)
-        return d_func()->control->autofocus();
-
-    return false;
-}
-
-/*!
-    Set \a value to true to enable auto focus
-    set \a value to false to disable
-*/
-
-void QCamera::setAutofocus(bool f)
-{
-    Q_D(QCamera);
-
-    if(d->control)
-        d->control->setAutofocus(f);
-}
-
-/*!
-    Set the camera device to \a device.
-*/
-
-void QCamera::setDevice(const QByteArray &device)
+void QCamera::setDevice(const QByteArray& device)
 {
     Q_D(QCamera);
 
     if(d->control)
         d->control->setDevice(device);
+}
+
+QString QCamera::deviceDescription(const QByteArray &device)
+{
+    Q_UNUSED(device);
+    return QString();
 }
 
 QCamera::State QCamera::state() const
@@ -520,11 +182,232 @@ QCamera::State QCamera::state() const
 
 bool QCamera::isValid() const
 {
-    if(d_func()->control)
-        return d_func()->control->isValid();
-
-    return false;
+    return d_func()->control != NULL;
 }
+
+QCamera::FlashMode QCamera::flashMode() const
+{
+    return d_func()->control ? d_func()->control->flashMode() : QCamera::FlashOff;
+}
+
+void QCamera::setFlashMode(QCamera::FlashMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setFlashMode(mode);
+}
+
+QCamera::FlashModes QCamera::supportedFlashModes() const
+{
+    return d_func()->control ? d_func()->control->supportedFlashModes() : QCamera::FlashOff;
+}
+
+bool QCamera::isFlashReady() const
+{
+    return d_func()->control ? d_func()->control->isFlashReady() : true;
+}
+
+QCamera::FocusMode QCamera::focusMode() const
+{
+    return d_func()->control ? d_func()->control->focusMode() : QCamera::AutoFocus;
+}
+
+void QCamera::setFocusMode(QCamera::FocusMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setFocusMode(mode);
+}
+
+QCamera::FocusModes QCamera::supportedFocusModes() const
+{
+    return d_func()->control ? d_func()->control->supportedFocusModes() : QCamera::AutoFocus;
+}
+
+QCamera::FocusStatus QCamera::focusStatus() const
+{
+    return d_func()->control ? d_func()->control->focusStatus() : QCamera::FocusDisabled;
+}
+
+bool QCamera::macroFocusingEnabled() const
+{
+    return d_func()->control ? d_func()->control->macroFocusingEnabled() : false;
+}
+
+bool QCamera::isMacroFocusingSupported() const
+{
+    return d_func()->control ? d_func()->control->isMacroFocusingSupported() : false;
+}
+
+void QCamera::setMacroFocusingEnabled(bool enabled)
+{
+    if (d_func()->control)
+        d_func()->control->setMacroFocusingEnabled(enabled);
+}
+
+QCamera::ExposureMode QCamera::exposureMode() const
+{
+    return d_func()->control ? d_func()->control->exposureMode() : QCamera::ExposureAuto;
+}
+
+void QCamera::setExposureMode(QCamera::ExposureMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setExposureMode(mode);
+}
+
+QCamera::ExposureModes QCamera::supportedExposureModes() const
+{
+    return d_func()->control ? d_func()->control->supportedExposureModes() : QCamera::ExposureAuto;
+}
+
+double QCamera::exposureCompensation() const
+{
+    return d_func()->control ? d_func()->control->exposureCompensation() : 0;
+}
+
+void QCamera::setExposureCompensation(double ev)
+{
+    if (d_func()->control)
+        d_func()->control->setExposureCompensation(ev);
+}
+
+QCamera::MeteringMode QCamera::meteringMode() const
+{
+    return d_func()->control ? d_func()->control->meteringMode() : QCamera::MeteringMatrix;
+}
+
+void QCamera::setMeteringMode(QCamera::MeteringMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setMeteringMode(mode);
+}
+
+QCamera::MeteringModes QCamera::supportedMeteringModes() const
+{
+    return d_func()->control ? d_func()->control->supportedMeteringModes() : QCamera::MeteringMatrix;
+}
+
+QCamera::WhiteBalanceMode QCamera::whiteBalanceMode() const
+{
+    return d_func()->control ? d_func()->control->whiteBalanceMode() : QCamera::WhiteBalanceAuto;
+}
+
+void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
+{
+    if (d_func()->control)
+        d_func()->control->setWhiteBalanceMode(mode);
+}
+
+QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
+{
+    return d_func()->control ? d_func()->control->supportedWhiteBalanceModes() : QCamera::WhiteBalanceAuto;
+}
+
+int QCamera::manualWhiteBalance() const
+{
+    return d_func()->control ? d_func()->control->manualWhiteBalance() : -1;
+}
+
+void QCamera::setManualWhiteBalance(int colorTemperature)
+{
+    if (d_func()->control)
+        d_func()->control->setManualWhiteBalance(colorTemperature);
+}
+
+int QCamera::isoSensitivity() const
+{
+    return d_func()->control ? d_func()->control->isoSensitivity() : -1;
+}
+QPair<int, int> QCamera::supportedIsoSensitivityRange() const
+{
+    return d_func()->control ? d_func()->control->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
+}
+
+void QCamera::setManualIsoSensitivity(int iso)
+{
+    if (d_func()->control)
+        d_func()->control->setManualIsoSensitivity(iso);
+}
+
+void QCamera::setAutoIsoSensitivity()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoIsoSensitivity();
+}
+
+double QCamera::aperture() const
+{
+    return d_func()->control ? d_func()->control->aperture() : -1.0;
+}
+QPair<double, double> QCamera::supportedApertureRange() const
+{
+    return d_func()->control ? d_func()->control->supportedApertureRange() : qMakePair<double,double>(-1,-1);
+}
+
+void QCamera::setManualAperture(double aperture)
+{
+    if (d_func()->control)
+        d_func()->control->setManualAperture(aperture);
+}
+
+void QCamera::setAutoAperture()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoAperture();
+}
+
+double QCamera::shutterSpeed() const
+{
+    return d_func()->control ? d_func()->control->shutterSpeed() : -1;
+}
+
+QPair<double, double> QCamera::supportedShutterSpeedRange() const
+{
+    return d_func()->control ? d_func()->control->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
+}
+
+void QCamera::setManualShutterSpeed(double seconds)
+{
+    if (d_func()->control)
+        d_func()->control->setManualShutterSpeed(seconds);
+}
+
+void QCamera::setAutoShutterSpeed()
+{
+    if (d_func()->control)
+        d_func()->control->setAutoShutterSpeed();
+}
+
+double QCamera::maximumOpticalZoom() const
+{
+    return d_func()->control ? d_func()->control->maximumOpticalZoom() : 1.0;
+}
+
+double QCamera::maximumDigitalZoom() const
+{
+    return d_func()->control ? d_func()->control->maximumDigitalZoom() : 1.0;
+}
+
+double QCamera::zoomValue() const
+{
+    return d_func()->control ? d_func()->control->zoomValue() : 1.0;
+}
+
+void QCamera::zoomTo(int value)
+{
+    if (d_func()->control)
+        d_func()->control->zoomTo(value);
+}
+
+bool QCamera::isExposureLocked() const
+{
+    return d_func()->control ? d_func()->control->isExposureLocked() : true;
+}
+
+bool QCamera::isFocusLocked() const
+{
+    return d_func()->control ? d_func()->control->isFocusLocked() : true;
+}
+
 
 /*!
     Returns the session object being controlled by this recorder.

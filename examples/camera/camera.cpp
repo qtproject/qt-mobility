@@ -116,10 +116,6 @@ void Camera::deviceChanged(int idx)
     format = QVideoFormat(sizes.first(),fmts.first());
     camera->setFormat(format);
 */
-    // Change a camera property
-    camera->setBrightness(camera->brightness());
-    framerate = camera->framerate();
-    if(framerate == 0) framerate = 25;
 
     connect(camera,SIGNAL(stateChanged(QCamera::State)),this,SLOT(stateChanged(QCamera::State)));
     //connect(camera,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));

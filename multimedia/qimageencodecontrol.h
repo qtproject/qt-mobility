@@ -32,44 +32,42 @@
 **
 ****************************************************************************/
 
+#ifndef QIMAGEENCODECONTROL_H
+#define QIMAGEENCODECONTROL_H
 
-#include "qgstreamercameracontrol.h"
+#include "qabstractmediacontrol.h"
 
-QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session)
+#include <QtCore/qsize.h>
+
+class QByteArray;
+class QStringList;
+
+class Q_MEDIA_EXPORT QImageEncodeControl : public QAbstractMediaControl
 {
-}
+    Q_OBJECT
+public:
+    virtual ~QImageEncodeControl();
 
-QGstreamerCameraControl::~QGstreamerCameraControl()
-{
-}
+    virtual QSize resolution() const = 0;
+    virtual QSize minimumResolution() const = 0;
+    virtual QSize maximumResolution() const = 0;
+    virtual QList<QSize> supportedResolutions() const;
+    virtual void setResolution(const QSize &) = 0;
 
-GstElement *QGstreamerCameraControl::buildElement()
-{
-    //TODO: add caps filter with desired camera settings, like resolution, framerate, etc
-    return gst_element_factory_make("v4l2src", "camera_source");
-}
+    virtual QStringList supportedImageCodecs() const = 0;
+    virtual QString imageCodec() const = 0;
+    virtual bool setImageCodec(const QString &codecName) = 0;
 
-void QGstreamerCameraControl::start()
-{
-    m_session->enablePreview(true);
-}
+    virtual QString imageCodecDescription(const QString &codecName) const = 0;
 
-void QGstreamerCameraControl::stop()
-{
-    m_session->enablePreview(false);
-}
+    virtual qreal quality() const = 0;
+    virtual void setQuality(qreal) = 0;
 
-QCamera::State QGstreamerCameraControl::state() const
-{
-    switch (m_session->state()) {
-        case QGstreamerCaptureSession::StoppedState:
-            return QCamera::StoppedState;
-        case QGstreamerCaptureSession::PausedState:
-            return QCamera::PausedState;
-        default:
-            return QCamera::ActiveState;
-    };
+protected:
+    QImageEncodeControl(QObject *parent);
+};
 
-    return QCamera::ActiveState;
-}
+#define QImageEncodeControl_iid "com.nokia.qt.ImageEncodeControl"
+Q_MEDIA_DECLARE_CONTROL(QImageEncodeControl, QImageEncodeControl_iid)
+
+#endif // QVIDEOCAPTUREPROPERTIESCONTROL_H
