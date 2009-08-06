@@ -33,6 +33,7 @@
 #include "servicewidget.h"
 #include "interfacestabwidget.h"
 #include "mandatorylineedit.h"
+#include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
@@ -102,17 +103,11 @@ void ServiceWidget::load(const ServiceMetaData &data)
     m_name->setFocus();
 }
 
-bool ServiceWidget::validate()
+void ServiceWidget::validate(ErrorCollector *errors)
 {
-    bool ok = true;
-    if (!m_name->validate())
-        ok = false;
-    if (!m_path->validate())
-        ok = false;
-    if (!m_ifacesTabs->validate())
-        ok = false;
-
-    return ok;
+    m_name->validate(errors);
+    m_path->validate(errors);
+    m_ifacesTabs->validate(errors);
 }
 
 void ServiceWidget::writeXml(QXmlStreamWriter *writer) const

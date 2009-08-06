@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "servicewidget.h"
+#include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
@@ -202,18 +203,19 @@ void ServiceXmlGenerator::togglePreview()
 
 bool ServiceXmlGenerator::saveToXml()
 {
-    bool serviceInfoOk = m_serviceInfo->validate();
-    if (!serviceInfoOk) {
-        QMessageBox::information(0, tr("Service incomplete"),
-                tr("One or more mandatory fields are incomplete."));
+    ErrorCollector errors;
+    m_serviceInfo->validate(&errors);
+    if (errors.errorCount() > 0) {
+        QMessageBox::information(0, tr("Invalid service data"), errors.errorMessage());
         return false;
     }
+
+    refreshPreview();
 
     QString fileName = QFileDialog::getSaveFileName(0, tr("Save to file"));
     if (fileName.isEmpty())
         return false;
 
-    refreshPreview();
     QFile out(fileName);
     if (!out.open(QIODevice::WriteOnly)) {
         QMessageBox::warning(0, tr("Write error"),

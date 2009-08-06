@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include "interfacestabwidget.h"
 #include "interfacewidget.h"
+#include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
@@ -68,22 +69,37 @@ void InterfacesTabWidget::load(const ServiceMetaData &data)
     setCurrentIndex(0);
 }
 
-bool InterfacesTabWidget::validate()
+void InterfacesTabWidget::validate(ErrorCollector *errors)
 {
-    bool ok = true;
     int firstInvalid = -1;
+    QHash<QString, int> titleCount;
     for (int i=0; i<count(); i++) {
         InterfaceWidget *ifaceWidget = qobject_cast<InterfaceWidget*>(widget(i));
-        if (ifaceWidget && !ifaceWidget->validate()) {
+        int errCountBefore = errors->errorCount();
+        ifaceWidget->validate(errors);
+        if (errors->errorCount() > errCountBefore) {
             if (firstInvalid < 0)
                 firstInvalid = i;
             tabBar()->setTabTextColor(i, Qt::red);
-            ok = false;
+        } else {
+            QString title = ifaceWidget->title();
+            if (titleCount.contains(title)) {
+                titleCount[title]++;
+            } else {
+                titleCount[title] = 1;
+            }
         }
     }
+
+    QHashIterator<QString, int> i(titleCount);
+    while (i.hasNext()) {
+        if (i.next().value() > 1) {
+            errors->addError(tr("Found multiple implementations for interface \"%1\". A service cannot have multiple implementations of the same interface with the same version.", "interface name and version").arg(i.key()));
+        }
+    }
+
     if (firstInvalid >= 0)
         setCurrentIndex(firstInvalid);
-    return ok;
 }
 
 void InterfacesTabWidget::writeXml(QXmlStreamWriter *writer) const

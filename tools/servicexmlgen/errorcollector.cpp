@@ -30,41 +30,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SERVICEWIDGET_H
-#define SERVICEWIDGET_H
+#include "errorcollector.h"
 
-#include <QWidget>
-#include <QLineEdit>
-
-class QLabel;
-class ServiceMetaData;
-class QXmlStreamWriter;
-class InterfacesTabWidget;
-class MandatoryLineEdit;
-class ErrorCollector;
-
-class ServiceWidget : public QWidget
+ErrorCollector::ErrorCollector()
+    : m_hasMissingField(false),
+      m_count(0)
 {
-    Q_OBJECT
-public:
-    ServiceWidget(QWidget *parent = 0);
-    void load(const ServiceMetaData &data);
+}
 
-    void validate(ErrorCollector *errors);
-    void writeXml(QXmlStreamWriter *writer) const;
+ErrorCollector::~ErrorCollector()
+{
+}
 
-signals:
-    void dataChanged();
+void ErrorCollector::addMissingFieldError()
+{
+    m_count++;
+    m_hasMissingField = true;
+}
 
-private:
-    InterfacesTabWidget *m_ifacesTabs;
+void ErrorCollector::addError(const QString &msg)
+{
+    m_count++;
+    m_errors << msg;
+}
 
-    QLabel *m_title;
-    MandatoryLineEdit *m_name;
-    MandatoryLineEdit *m_path;
-    QLineEdit *m_desc;
-};
+QString ErrorCollector::errorMessage() const
+{
+    QStringList errMsgs = m_errors;
+    if (m_hasMissingField)
+        errMsgs.insert(0, QObject::tr("One or more mandatory fields are incomplete."));
 
+    QString msg;
+    for (int i=0; i<errMsgs.count(); i++) {
+        if (errMsgs.count() > 1)
+            msg += "* ";
+        msg += errMsgs[i];
+        if (errMsgs.count() > 1)
+            msg += "\n";
+    }
+    return msg;
+}
 
-#endif
-
+int ErrorCollector::errorCount() const
+{
+    return m_count;
+}

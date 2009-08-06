@@ -30,41 +30,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SERVICEWIDGET_H
-#define SERVICEWIDGET_H
+#ifndef ERRORCOLLECTOR_H
+#define ERRORCOLLECTOR_H
 
-#include <QWidget>
-#include <QLineEdit>
+#include <QStringList>
 
-class QLabel;
-class ServiceMetaData;
-class QXmlStreamWriter;
-class InterfacesTabWidget;
-class MandatoryLineEdit;
-class ErrorCollector;
-
-class ServiceWidget : public QWidget
+class ErrorCollector
 {
-    Q_OBJECT
 public:
-    ServiceWidget(QWidget *parent = 0);
-    void load(const ServiceMetaData &data);
+    ErrorCollector();
+    ~ErrorCollector();
 
-    void validate(ErrorCollector *errors);
-    void writeXml(QXmlStreamWriter *writer) const;
+    void addMissingFieldError();
+    void addError(const QString &msg);
+    QString errorMessage() const;
 
-signals:
-    void dataChanged();
+    int errorCount() const;
 
 private:
-    InterfacesTabWidget *m_ifacesTabs;
-
-    QLabel *m_title;
-    MandatoryLineEdit *m_name;
-    MandatoryLineEdit *m_path;
-    QLineEdit *m_desc;
+    QStringList m_errors;
+    bool m_hasMissingField;
+    int m_count;
 };
 
 
 #endif
-

@@ -43,6 +43,7 @@ class QXmlStreamWriter;
 class ServiceMetaData;
 class QServiceInterfaceDescriptor;
 class MandatoryLineEdit;
+class ErrorCollector;
 
 class InterfaceWidget : public QWidget
 {
@@ -54,7 +55,7 @@ public:
     QString title() const;
     void load(const QServiceInterfaceDescriptor &info);
 
-    bool validate();
+    void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *device) const;
 
 signals:

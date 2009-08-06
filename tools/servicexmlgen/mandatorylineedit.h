@@ -35,13 +35,15 @@
 
 #include <QLineEdit>
 
+class ErrorCollector;
+
 class MandatoryLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
     MandatoryLineEdit(const QString &invalidValueText, QWidget *parent = 0);
 
-    bool validate();
+    void validate(ErrorCollector *errors);
     bool hasText() const;
 
 protected:

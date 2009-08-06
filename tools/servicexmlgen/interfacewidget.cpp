@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include "interfacewidget.h"
 #include "mandatorylineedit.h"
+#include "errorcollector.h"
 
 #include <qserviceinterfacedescriptor_p.h>
 
@@ -372,9 +373,9 @@ void InterfaceWidget::load(const QServiceInterfaceDescriptor &info)
         m_customPropWidget->setProperties(p->customProperties);
 }
 
-bool InterfaceWidget::validate()
+void InterfaceWidget::validate(ErrorCollector *errors)
 {
-    return m_name->validate();
+    m_name->validate(errors);
 }
 
 void InterfaceWidget::writeXml(QXmlStreamWriter *writer) const
@@ -398,7 +399,7 @@ void InterfaceWidget::writeXml(QXmlStreamWriter *writer) const
 
 QString InterfaceWidget::title() const
 {
-    QString name = m_name->text().isEmpty() ? tr("(No name)") : m_name->text();
+    QString name = m_name->text().isEmpty() ? tr("[New Interface]") : m_name->text();
     return QString("%1 %2.%3").arg(name).arg(m_verMajor->value()).arg(m_verMinor->value());
 }
 
