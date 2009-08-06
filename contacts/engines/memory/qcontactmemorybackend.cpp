@@ -119,6 +119,14 @@ void QContactMemoryEngine::deref()
 }
 
 /*! \reimp */
+QMap<QString, QString> QContactMemoryEngine::parameters() const
+{
+    QMap<QString, QString> params;
+    params.insert("id", d->m_id);
+    return params;
+}
+
+/*! \reimp */
 QList<QUniqueId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     // TODO: this needs to be done properly...

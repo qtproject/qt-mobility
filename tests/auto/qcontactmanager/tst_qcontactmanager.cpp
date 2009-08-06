@@ -432,10 +432,10 @@ void tst_QContactManager::ctors()
     QCOMPARE(em6->managerName(), QString("invalid"));
     QCOMPARE(em.managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em2.managerParameters(), tst_QContactManager_QStringMap());
-    QCOMPARE(em3.managerParameters(), randomParameters);
+    QCOMPARE(em3.managerParameters(), tst_QContactManager_QStringMap()); // invalid engine discards params.
     QCOMPARE(em4->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em5->managerParameters(), tst_QContactManager_QStringMap());
-    QCOMPARE(em6->managerParameters(), randomParameters);
+    QCOMPARE(em6->managerParameters(), tst_QContactManager_QStringMap()); // invalid engine discards params.
 
 
     /* Cleanse */

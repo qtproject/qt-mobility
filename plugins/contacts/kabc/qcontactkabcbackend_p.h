@@ -120,6 +120,9 @@ public:
     QContactKabcEngine& operator=(const QContactKabcEngine& other);
     void deref();
 
+    /* Parameter Reporting */
+    QMap<QString, QString> parameters() const;
+
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;

@@ -87,7 +87,7 @@ public:
     }
 
     QAtomicInt m_refCount;
-    QString m_id;
+    QString m_id;                                  // the id parameter value
 
     QList<QContact> m_contacts;                    // list of contacts
     QMap<QUniqueId, QContactGroup> m_groups;       // map of group id to groups.
@@ -110,6 +110,9 @@ public:
 
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
     void deref();
+
+    /* Parameter Reporting */
+    QMap<QString, QString> parameters() const;
 
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;

@@ -153,6 +153,16 @@
  */
 
 /*!
+ * Returns the parameters with which this engine was constructed.  Note that
+ * the engine may have discarded unused or invalid parameters at the time of
+ * construction, and these will not be returned.
+ */
+QMap<QString, QString> QContactManagerEngine::parameters() const
+{
+    return QMap<QString, QString>(); // default implementation requires no parameters.
+}
+
+/*!
  * Return the list of contact ids present in this engine, sorted according to the given \a sortOrders.
  *
  * Any errors encountered should be stored to \a error.

@@ -108,7 +108,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
             m_engine = new QContactInvalidEngine(); // XXX share
         }
     }
-    m_params = parameters;
+    m_params = m_engine->parameters();
     m_uri = QContactManager::buildUri(m_managerName, parameters);
 }
 

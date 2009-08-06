@@ -227,6 +227,14 @@ void QContactKabcEngine::settingsFileChanged()
     }
 }
 
+QMap<QString, QString> QContactKabcEngine::parameters() const
+{
+    QMap<QString, QString> params;
+    params.insert("resource", d->m_resourceFile);
+    params.insert("settings", d->m_settingsFile);
+    return params;
+}
+
 QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QUniqueId> allCIds;

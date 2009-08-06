@@ -60,6 +60,9 @@ public:
     QContactManagerEngine() {}
     virtual void deref() = 0;
 
+    /* Parameters reporting */
+    virtual QMap<QString, QString> parameters() const;
+
     /* Filtering */
     virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
