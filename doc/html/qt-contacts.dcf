@@ -338,6 +338,38 @@
         <keyword ref="qcontactgender.html#FieldGender-var">FieldGender</keyword>
         <section ref="qcontactgender-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference">
+        <keyword ref="qcontactgeolocation.html">QContactGeolocation</keyword>
+        <keyword ref="qcontactgeolocation.html#accuracy">accuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#altitude">altitude</keyword>
+        <keyword ref="qcontactgeolocation.html#altitudeAccuracy">altitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#heading">heading</keyword>
+        <keyword ref="qcontactgeolocation.html#label">label</keyword>
+        <keyword ref="qcontactgeolocation.html#latitude">latitude</keyword>
+        <keyword ref="qcontactgeolocation.html#longitude">longitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setAccuracy">setAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#setAltitude">setAltitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setAltitudeAccuracy">setAltitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#setHeading">setHeading</keyword>
+        <keyword ref="qcontactgeolocation.html#setLabel">setLabel</keyword>
+        <keyword ref="qcontactgeolocation.html#setLatitude">setLatitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setLongitude">setLongitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setSpeed">setSpeed</keyword>
+        <keyword ref="qcontactgeolocation.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qcontactgeolocation.html#speed">speed</keyword>
+        <keyword ref="qcontactgeolocation.html#timestamp">timestamp</keyword>
+        <keyword ref="qcontactgeolocation.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldHeading-var">FieldHeading</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLabel-var">FieldLabel</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</keyword>
+        <section ref="qcontactgeolocation-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactgroup.html" title="QContactGroup Class Reference">
         <keyword ref="qcontactgroup.html">QContactGroup</keyword>
         <keyword ref="qcontactgroup.html#Error-enum">Error</keyword>
@@ -642,6 +674,7 @@
         <keyword ref="qcontactrelationship.html#setRelatedContactUid">setRelatedContactUid</keyword>
         <keyword ref="qcontactrelationship.html#setRelationshipType">setRelationshipType</keyword>
         <keyword ref="qcontactrelationship.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactrelationship.html#FieldRelatedContactLabel-var">FieldRelatedContactLabel</keyword>
         <keyword ref="qcontactrelationship.html#FieldRelatedContactManagerUri-var">FieldRelatedContactManagerUri</keyword>
         <keyword ref="qcontactrelationship.html#FieldRelatedContactUid-var">FieldRelatedContactUid</keyword>
         <keyword ref="qcontactrelationship.html#FieldRelationshipType-var">FieldRelationshipType</keyword>
