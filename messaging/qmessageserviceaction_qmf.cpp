@@ -86,11 +86,13 @@ public:
     
 signals:
     void activityChanged(QMessageServiceAction::Activity);
-    void messagesFound(const QMessageIdList&);
     void progressChanged(uint, uint);
+    void messagesFound(const QMessageIdList&);
 
 protected slots:
-    void activityChanged(QMailServiceAction::Activity a);
+    void transmitActivityChanged(QMailServiceAction::Activity a);
+    void retrievalActivityChanged(QMailServiceAction::Activity a);
+    void statusChanged(const QMailServiceAction::Status &s);
     void completed();
     void reportMatchingIds();
     void findMatchingIds();
@@ -107,9 +109,14 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate()
       _limit(0),
       _offset(0)
 {
+    connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(transmitActivityChanged(QMailServiceAction::Activity)));
+    connect(&_transmit, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
+
+    connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(retrievalActivityChanged(QMailServiceAction::Activity)));
+    connect(&_retrieval, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 }
 
-void QMessageServiceActionPrivate::activityChanged(QMailServiceAction::Activity a)
+void QMessageServiceActionPrivate::transmitActivityChanged(QMailServiceAction::Activity a)
 {
     if (a == QMailServiceAction::Successful) {
         if (!_transmitIds.isEmpty()) {
@@ -130,6 +137,29 @@ void QMessageServiceActionPrivate::activityChanged(QMailServiceAction::Activity 
         _transmitIds.clear();
     }
 
+    emit activityChanged(convert(a));
+}
+
+void QMessageServiceActionPrivate::statusChanged(const QMailServiceAction::Status &s)
+{
+    if (s.errorCode != QMailServiceAction::Status::ErrNoError) {
+        qWarning() << QString("Service error %1: \"%2\"").arg(s.errorCode).arg(s.text);
+
+        if (s.errorCode == QMailServiceAction::Status::ErrNotImplemented) {
+            _error = QMessageStore::NotYetImplemented;
+        } else if ((s.errorCode == QMailServiceAction::Status::ErrNonexistentMessage) ||
+                   (s.errorCode == QMailServiceAction::Status::ErrEnqueueFailed) ||
+                   (s.errorCode == QMailServiceAction::Status::ErrInvalidAddress) ||
+                   (s.errorCode == QMailServiceAction::Status::ErrInvalidData)) {
+            _error = QMessageStore::ConstraintFailure;
+        } else {
+            _error = QMessageStore::FrameworkFault;
+        }
+    }
+}
+
+void QMessageServiceActionPrivate::retrievalActivityChanged(QMailServiceAction::Activity a)
+{
     emit activityChanged(convert(a));
 }
 
@@ -306,7 +336,18 @@ bool QMessageServiceAction::send(QMessage &message)
             d_ptr->_error = QMessageStore::InvalidId;
             qWarning() << "Invalid message account ID";
             return false;
+        } else {
+            // Set the from address if it isn't already set
+            if (message.from().recipient().isEmpty()) {
+                QMessageAccount account(message.parentAccountId());
+                message.setFrom(account.fromAddress());
+            }
         }
+    }
+
+    // Ensure the message contains a timestamp
+    if (!message.date().isValid()) {
+        message.setDate(QDateTime::currentDateTime());
     }
 
     QMessageFolderId existingFolderId(message.parentFolderId());
@@ -337,6 +378,7 @@ bool QMessageServiceAction::send(QMessage &message)
 
     d_ptr->_transmitIds = QMailStore::instance()->queryMessages(QMailMessageKey::status(QMailMessage::Outgoing) & QMailMessageKey::parentAccountId(msg->parentAccountId()));
 
+    d_ptr->_error = QMessageStore::NoError;
     d_ptr->_active = &d_ptr->_transmit;
     d_ptr->_transmit.transmitMessages(msg->parentAccountId());
     return true;
@@ -374,6 +416,7 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
     }
 
     // Operation is not relevant to QMF - meta data retrieval always includes header information
+    d_ptr->_error = QMessageStore::NoError;
     d_ptr->_active = 0;
     QTimer::singleShot(0, d_ptr, SLOT(completed()));
     return true;
@@ -394,6 +437,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
         return false;
     }
 
+    d_ptr->_error = QMessageStore::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.retrieveMessages(QMailMessageIdList() << messageId, QMailRetrievalAction::Content);
     return true;
@@ -414,6 +458,7 @@ bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
         return false;
     }
     
+    d_ptr->_error = QMessageStore::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.retrieveMessagePart(location);
     return true;
@@ -450,6 +495,7 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
         return false;
     }
 
+    d_ptr->_error = QMessageStore::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.exportUpdates(accountId);
     return true;
@@ -473,16 +519,7 @@ void QMessageServiceAction::cancelOperation()
 
 QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
-    if (d_ptr->_active) {
-        if (d_ptr->_active->activity() == QMailServiceAction::Failed) {
-            // TODO: who knows?
-            return QMessageStore::FrameworkFault;
-        }
-    } else {
-        return d_ptr->_error;
-    }
-
-    return QMessageStore::NoError;
+    return d_ptr->_error;
 }
 
 #include "qmessageserviceaction_qmf.moc"
