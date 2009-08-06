@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 // FORWARD DECLARATIONS
 class QServiceInterfaceDescriptor;
 
-class Q_SFW_EXPORT ServiceMetaDataResults 
+class ServiceMetaDataResults 
 {
 public:
     ServiceMetaDataResults() {}
