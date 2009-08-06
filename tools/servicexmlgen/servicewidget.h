@@ -56,6 +56,9 @@ public:
 signals:
     void dataChanged();
 
+private slots:
+    void setTitle(const QString &text);
+
 private:
     InterfacesTabWidget *m_ifacesTabs;
 

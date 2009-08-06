@@ -47,7 +47,7 @@ public:
     bool hasText() const;
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void focusInEvent(QFocusEvent *event);
 
 private slots:
     void valueChanged(const QString &text);

@@ -68,10 +68,10 @@ void MandatoryLineEdit::valueChanged(const QString &)
     m_badValue = false;
 }
 
-void MandatoryLineEdit::mousePressEvent(QMouseEvent *event)
+void MandatoryLineEdit::focusInEvent(QFocusEvent *event)
 {
-    QLineEdit::mousePressEvent(event);
     if (m_badValue)
-        selectAll();
+        clear();
+    QLineEdit::focusInEvent(event);
 }
 

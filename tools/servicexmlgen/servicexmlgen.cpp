@@ -253,7 +253,7 @@ bool ServiceXmlGenerator::saveToXml()
     ErrorCollector errors;
     m_serviceInfo->validate(&errors);
     if (errors.errorCount() > 0) {
-        QMessageBox::information(0, tr("Invalid service data"), errors.errorMessage());
+        QMessageBox::information(0, tr("Invalid data"), errors.errorMessage());
         return false;
     }
 
@@ -298,6 +298,7 @@ bool ServiceXmlGenerator::shouldClearData()
 {
     if (m_unsavedData) {
         QMessageBox msg;
+        msg.setWindowTitle(tr("Save changes?"));
         msg.setText("The service has been modified.");
         msg.setInformativeText("Do you want to save your changes?");
         msg.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
