@@ -47,12 +47,12 @@ public:
 
     bool isValid() const { return true; }
 
+    QCamera::State state() const;
+
     GstElement *buildElement();
 
     void start();
     void stop();
-
-signals:
 
 
 private:

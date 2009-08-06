@@ -59,3 +59,17 @@ void QGstreamerCameraControl::stop()
 {
     m_session->enablePreview(false);
 }
+
+QCamera::State QGstreamerCameraControl::state() const
+{
+    switch (m_session->state()) {
+        case QGstreamerCaptureSession::StoppedState:
+            return QCamera::StoppedState;
+        case QGstreamerCaptureSession::PausedState:
+            return QCamera::PausedState;
+        default:
+            return QCamera::ActiveState;
+    };
+
+    return QCamera::ActiveState;
+}

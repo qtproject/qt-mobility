@@ -17,6 +17,7 @@ LIBS += \
 
 CONFIG += link_pkgconfig
 
+
 PKGCONFIG += \
     gstreamer-0.10 \
     gstreamer-base-0.10 \
@@ -60,4 +61,4 @@ videosurface {
 }
 
 include(mediaplayer/mediaplayer.pri)
-#include(mediacapture/mediacapture.pri)
+include(mediacapture/mediacapture.pri)
