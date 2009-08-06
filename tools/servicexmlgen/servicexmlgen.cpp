@@ -50,6 +50,45 @@
 #include <QMenuBar>
 
 
+static const QString serviceMetaDataErrorString(int error)
+{
+    switch (error) {
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE:
+            return QObject::tr("XML does not contain <service> node.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_NAME:
+            return QObject::tr("XML does not specify service name.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_FILEPATH:
+            return QObject::tr("XML does not specify service resource location.");
+        case ServiceMetaData::SFW_ERROR_NO_SERVICE_INTERFACE:
+            return QObject::tr("XML does not contain any interfaces.");
+        case ServiceMetaData::SFW_ERROR_NO_INTERFACE_VERSION:
+            return QObject::tr("XML specifies an interface without a version.");
+        case ServiceMetaData::SFW_ERROR_NO_INTERFACE_NAME:
+            return QObject::tr("XML specifies an interface without a name.");
+        case ServiceMetaData::SFW_ERROR_UNABLE_TO_OPEN_FILE:
+            return QObject::tr("Cannot open XML file.");
+        case ServiceMetaData::SFW_ERROR_INVALID_XML_FILE:
+            return QObject::tr("The file's XML data is not valid.");
+        case ServiceMetaData::SFW_ERROR_PARSE_SERVICE:
+            return QObject::tr("Unable to parse service details.");
+        case ServiceMetaData::SFW_ERROR_PARSE_INTERFACE:
+            return QObject::tr("Unable to parse interface details.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_INTERFACE:
+            return QObject::tr("XML contains duplicate interface.");
+        case ServiceMetaData::SFW_ERROR_INVALID_VERSION:
+            return QObject::tr("XML contains invalid interface version.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_TAG:
+            return QObject::tr("XML contains a duplicate tag.");
+        case ServiceMetaData::SFW_ERROR_INVALID_CUSTOM_TAG:
+            return QObject::tr("XML contains an invalid custom property.");
+        case ServiceMetaData::SFW_ERROR_DUPLICATED_CUSTOM_KEY:
+            return QObject::tr("XML contains a duplicate custom property.");
+        default:
+            return QString();
+    }
+}
+
+
 class ServiceXmlGenerator : public QMainWindow
 {
     Q_OBJECT
@@ -172,21 +211,29 @@ void ServiceXmlGenerator::serviceDataChanged()
 
 void ServiceXmlGenerator::loadFromXml()
 {
-    QString fileName = QFileDialog::getOpenFileName(0, tr("Choose XML file"), QString(), "*.xml");
+    if (!shouldClearData())
+        return;
+
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open XML file"), QString(), "*.xml");
     if (fileName.isEmpty())
         return;
 
     QFile file(fileName);
+    ServiceMetaData data(0);
     if (file.open(QIODevice::ReadOnly)) {
-        ServiceMetaData data(&file);
+        data.setDevice(&file);
         if (data.extractMetadata()) {
             m_serviceInfo->load(data);
+            m_unsavedData = false;
             return;
         }
     }
 
-    QMessageBox::warning(0, tr("Error loading XML file"),
-            tr("Cannot read contents of %1", "file name").arg(fileName));
+    QString msg = tr("Cannot read contents of %1.", "file name").arg(fileName);
+    QString details = serviceMetaDataErrorString(data.getLatestError());
+    if (!details.isEmpty())
+        msg += "\n\n" + tr("Error: ") + details;
+    QMessageBox::warning(0, tr("Error loading XML file"), msg);
 }
 
 void ServiceXmlGenerator::togglePreview()
