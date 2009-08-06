@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += qvaluespaceitem qvaluespaceitem_oop
+SUBDIRS += qvaluespace qvaluespaceitem qvaluespaceitem_oop
