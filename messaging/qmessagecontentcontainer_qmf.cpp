@@ -403,7 +403,7 @@ void QMessageContentContainer::readContentFrom(QDataStream &in)
     while (!in.atEnd()) {
         char buffer[1024];
         int len = in.readRawData(buffer, 1024);
-        content.append(buffer, len);
+        content.append(QByteArray(buffer, len));
     }
 
     setContent(content);

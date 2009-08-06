@@ -288,5 +288,3 @@ void QMessageStore::stopNotifications()
     // TODO: implement notifications
 }
 
-#include "qmessagestore_qmf.moc"
-

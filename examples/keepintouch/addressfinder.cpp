@@ -223,9 +223,9 @@ void AddressFinder::activityChanged(QMessageServiceAction::Activity a)
 void AddressFinder::messagesFound(const QMessageIdList &ids)
 {
     if (!inclusionFilter.isEmpty()) {
-        exclusionMessages.append(ids);
+        exclusionMessages << ids;
     } else {
-        inclusionMessages.append(ids);
+        inclusionMessages << ids;
     }
 }
 
