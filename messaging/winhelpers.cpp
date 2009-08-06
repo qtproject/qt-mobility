@@ -45,7 +45,7 @@
 // TODO Consider wrapping LPMAPITABLE and LPSRowSet
 // TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
 
-QString stringFromLpctstr(LPCTSTR lpszValue) //TODO rename to QStringFromLpctstr
+QString QStringFromLpctstr(LPCTSTR lpszValue)
 {
     if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
         return QString::null;
@@ -126,7 +126,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             folderKey = MapiRecordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
-                name = stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
+                name = QStringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
                 // TODO: Make a copy of message count, and hasSubFolders property values.
             } else {
                 subFolder = 0;
@@ -182,8 +182,8 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
             /* Begin test code TODO remove */
             bool read(rows->aRow[0].lpProps[flagsColumn].Value.ul & MSGFLAG_READ);
-            QString sender = stringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);
-            QString subject = stringFromLpctstr(rows->aRow[0].lpProps[subjectColumn].Value.LPSZ);
+            QString sender = QStringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);
+            QString subject = QStringFromLpctstr(rows->aRow[0].lpProps[subjectColumn].Value.LPSZ);
             qDebug() << ((!read) ? '*' : ' ') << sender.leftJustified(25, ' ', true) << subject.leftJustified(46, ' ' , true);
             /* End test code */
 
@@ -514,7 +514,7 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
             ULONG flags(MDB_NO_DIALOG | MAPI_BEST_ACCESS);
             ULONG cbEntryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);
             LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rows->aRow[0].lpProps[entryIdColumn].Value.bin.lpb));
-            QString name(stringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ));
+            QString name(QStringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ));
             /**** Test copy begin, TODO remove ****/
             SPropValue storeRecordKey;
             SPropValue storeEntryKey;

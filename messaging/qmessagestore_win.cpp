@@ -318,9 +318,9 @@ QMessage QMessageStore::message(const QMessageId& id) const
     ULONG count;
     LPSPropValue properties;
     if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-        QString sender(stringFromLpctstr(properties[senderColumn].Value.LPSZ));
+        QString sender(QStringFromLpctstr(properties[senderColumn].Value.LPSZ));
         QMessageAddress from(sender, QMessageAddress::Email);
-        QString subject(stringFromLpctstr(properties[subjectColumn].Value.LPSZ));
+        QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
         QMessage::StatusFlags status;
         if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
             status |= QMessage::Read;

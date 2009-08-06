@@ -48,7 +48,7 @@ typedef QSharedPointer<MapiFolder> MapiFolderPtr;
 typedef QSharedPointer<MapiStore> MapiStorePtr;
 typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
-QString stringFromLpctstr(LPCTSTR lpszValue);
+QString QStringFromLpctstr(LPCTSTR lpszValue);
 
 class MapiFolder {
 public:
