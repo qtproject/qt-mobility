@@ -83,7 +83,6 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
 QWmpPlayerControl::~QWmpPlayerControl()
 {
     delete m_playlist;
-    delete m_playlistSource;
 
     if (m_controls) m_controls->Release();
     if (m_settings) m_settings->Release();
