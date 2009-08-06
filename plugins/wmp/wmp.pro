@@ -6,7 +6,9 @@ PLUGIN_SUBDIR = mediaservice
 
 include(../../common.pri)
 
-DEFINES += QWMP_EVR
+TMP_INCLUDE = $$quote($$(INCLUDE))
+TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
+for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
 LIBS += -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
