@@ -76,7 +76,7 @@ public:
     virtual bool supportsRequests() = 0;
     virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
     virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
-    virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray()) = 0;
+    virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray("/")) = 0;
     virtual bool notifyInterest(Handle handle, bool interested) = 0;
     virtual bool syncRequests() = 0;
 

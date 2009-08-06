@@ -1684,7 +1684,7 @@ public:
     bool supportsRequests() { return true; }
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
-    bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
+    bool requestRemoveValue(Handle handle, const QByteArray &path);
     bool notifyInterest(Handle handle, bool interested);
     bool syncRequests();
 
@@ -3577,16 +3577,16 @@ bool ApplicationLayer::syncRequests()
 
 bool ApplicationLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path, const QVariant &data)
 {
-    if (!handles.values().contains(reinterpret_cast<ReadHandle *>(handle)))
+    ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
+
+    if (!handles.values().contains(readHandle))
         return false;
 
     NodeOwner owner;
     owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned long>(creator);
 
-    const QByteArray parentPath = handles.key(reinterpret_cast<ReadHandle *>(handle));
-
-    QByteArray fullPath(parentPath);
+    QByteArray fullPath(readHandle->path);
     if (!fullPath.endsWith('/'))
         fullPath.append('/');
 
@@ -3610,7 +3610,17 @@ bool ApplicationLayer::removeValue(QValueSpaceObject *creator, Handle handle, co
     owner.data1 = 0;
     owner.data2 = reinterpret_cast<unsigned int>(creator);
 
-    return remItems(owner, readHandle->path + '/' + path);
+    QByteArray fullPath(readHandle->path);
+    if (!fullPath.endsWith('/'))
+        fullPath.append('/');
+
+    int index = 0;
+    while (index < path.length() && path[index] == '/')
+        ++index;
+
+    fullPath.append(path.mid(index));
+
+    return remItems(owner, fullPath);
 }
 
 bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)

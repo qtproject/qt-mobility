@@ -500,16 +500,39 @@ struct QValueSpaceItemPrivate
     Type type;
 };
 
+static QByteArray qCanonicalPath(const QByteArray &path)
+{
+    if (path.isEmpty())
+        return QByteArray("/");
+
+    QByteArray result;
+    result.resize(path.length());
+    const char *from = path.constData();
+    const char *fromend = from + path.length();
+    int outc=0;
+    char *to = result.data();
+    for (;;) {
+        if (from!=fromend)
+            to[outc++] = '/';
+        while (from!=fromend && *from == '/')
+            ++from;
+        while (from!=fromend && *from != '/')
+            to[outc++] = *from++;
+        if (from==fromend)
+            break;
+    }
+    if (outc > 1 && to[outc-1] == '/')
+        --outc;
+    result.resize(outc);
+    return result;
+}
+
 struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
 {
     QValueSpaceItemPrivateData(const QByteArray &_path)
         : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
     {
-        if(*_path.constData() != '/')
-            path.append("/");
-        path.append(_path);
-        if(path.length() != 1 && '/' == *(path.constData() + path.length() - 1))
-            path.truncate(path.length() - 1);
+        path = qCanonicalPath(_path);
 
         QValueSpaceManager *man = QValueSpaceManager::instance();
         if (!man)
@@ -1156,8 +1179,7 @@ bool QValueSpaceItem::sync()
                             value)) rv = false;
                 }
             } else {
-                QByteArray vpath =
-                    ((*path.constData()) == '/')?path:(QByteArray("/") + path);
+                const QByteArray vpath(qCanonicalPath(path));
                 for(int ii = md->readers.count(); ii > 0; --ii) {
                     if(!md->readers[ii - 1].first->requestSetValue(md->readers[ii - 1].second,
                             vpath, value)) rv = false;
@@ -1169,8 +1191,7 @@ bool QValueSpaceItem::sync()
                     if(!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second)) rv = false;
                 }
             } else {
-                QByteArray vpath =
-                    ((*path.constData()) == '/')?path:(QByteArray("/") + path);
+                const QByteArray vpath(qCanonicalPath(path));
                 for(int ii = md->readers.count(); ii > 0; --ii) {
                     if(!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second, vpath)) rv = false;
                 }
@@ -1238,8 +1259,7 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
                 return value;
         }
     } else {
-        QByteArray vpath =
-            ((*subPath.constData()) == '/')?subPath:(QByteArray("/") + subPath);
+        const QByteArray vpath(qCanonicalPath(subPath));
         for(int ii = md->readers.count(); ii > 0; --ii) {
             if(md->readers[ii - 1].first->value(md->readers[ii - 1].second,
                                                 vpath, &value))
