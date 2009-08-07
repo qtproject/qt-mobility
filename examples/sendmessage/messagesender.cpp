@@ -34,10 +34,12 @@
 #include "messagesender.h"
 
 #include <QDateTime>
+#include <QFileDialog>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QTextEdit>
@@ -49,7 +51,10 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
       toEdit(0),
       subjectEdit(0),
       textEdit(0),
-      sendButton(0)
+      sendButton(0),
+      removeButton(0),
+      addButton(0),
+      attachmentsList(0)
 {
     setWindowTitle(tr("Send Message"));
 
@@ -71,17 +76,43 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     metaDataLayout->addWidget(toEdit, 0, 1);
     metaDataLayout->addWidget(subjectEdit, 1, 1);
 
+    removeButton = new QPushButton(tr("Remove"));
+    removeButton->setEnabled(false);
+
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(removeAttachment()));
+
+    addButton = new QPushButton(tr("Add"));
+
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addAttachment()));
+
+    QVBoxLayout *buttonLayout = new QVBoxLayout;
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(removeButton);
+    buttonLayout->addWidget(addButton);
+
+    attachmentsList = new QListWidget;
+    attachmentsList->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    connect(attachmentsList, SIGNAL(currentRowChanged(int)), this, SLOT(attachmentSelected(int)));
+
+    QHBoxLayout *attachmentsLayout = new QHBoxLayout;
+    attachmentsLayout->addWidget(attachmentsList);
+    attachmentsLayout->addLayout(buttonLayout);
+
+    QGroupBox *attachmentsGroup = new QGroupBox(tr("Attachments"));
+    attachmentsGroup->setLayout(attachmentsLayout);
+
     textEdit = new QTextEdit;
 
     sendButton = new QPushButton(tr("Send"));
-    sendButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     connect(sendButton, SIGNAL(clicked()), this, SLOT(send()), Qt::QueuedConnection);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(metaDataLayout);
-    mainLayout->addWidget(textEdit);
-    mainLayout->addWidget(sendButton);
+    mainLayout->addLayout(metaDataLayout, 0);
+    mainLayout->addWidget(textEdit, 2);
+    mainLayout->addWidget(attachmentsGroup, 1);
+    mainLayout->addWidget(sendButton, 0);
     mainLayout->setAlignment(sendButton, Qt::AlignRight);
 
     connect(&service, SIGNAL(activityChanged(QMessageServiceAction::Activity)), this, SLOT(activityChanged(QMessageServiceAction::Activity)));
@@ -89,6 +120,27 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
 
 MessageSender::~MessageSender()
 {
+}
+
+void MessageSender::removeAttachment()
+{
+    delete attachmentsList->takeItem(attachmentsList->currentRow());
+    if (attachmentsList->count() == 0) {
+        removeButton->setEnabled(false);
+    }
+}
+
+void MessageSender::addAttachment()
+{
+    QString path(QFileDialog::getOpenFileName());
+    if (!path.isEmpty()) {
+        attachmentsList->addItem(new QListWidgetItem(path));
+    }
+}
+
+void MessageSender::attachmentSelected(int)
+{
+    removeButton->setEnabled(true);
 }
 
 void MessageSender::send()
@@ -115,7 +167,25 @@ void MessageSender::send()
     message.setType(QMessage::Email);
     message.setTo(QMessageAddress(to, QMessageAddress::Email));
     message.setSubject(subject);
-    message.setContent(text);
+
+    if (attachmentsList->count()) {
+        QMessageContentContainer textPart;
+        textPart.setContentType("text");
+        textPart.setContentSubType("plain");
+        textPart.setContentCharset("UTF-8");
+        textPart.setContent(text);
+
+        message.appendContent(textPart);
+
+        QStringList paths;
+        for (int i = 0; i < attachmentsList->count(); ++i) {
+            paths.append(attachmentsList->item(i)->text());
+        }
+
+        message.appendAttachments(paths);
+    } else {
+        message.setContent(text);
+    }
 
     if (service.send(message)) {
         sendButton->setEnabled(false);

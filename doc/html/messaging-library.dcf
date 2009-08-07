@@ -33,19 +33,14 @@
         <keyword ref="qmessage.html#body">body</keyword>
         <keyword ref="qmessage.html#cc">cc</keyword>
         <keyword ref="qmessage.html#clearAttachments">clearAttachments</keyword>
-        <keyword ref="qmessage.html#customField">customField</keyword>
-        <keyword ref="qmessage.html#customFields">customFields</keyword>
         <keyword ref="qmessage.html#dataModified">dataModified</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
-        <keyword ref="qmessage.html#destinationPort">destinationPort</keyword>
         <keyword ref="qmessage.html#forward">forward</keyword>
         <keyword ref="qmessage.html#from">from</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
         <keyword ref="qmessage.html#id">id</keyword>
-        <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
         <keyword ref="qmessage.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessage.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
         <keyword ref="qmessage.html#replyTo">replyTo</keyword>
@@ -54,11 +49,8 @@
         <keyword ref="qmessage.html#setBody">setBody</keyword>
         <keyword ref="qmessage.html#setBodyFromFile">setBodyFromFile</keyword>
         <keyword ref="qmessage.html#setCc">setCc</keyword>
-        <keyword ref="qmessage.html#setCustomField">setCustomField</keyword>
         <keyword ref="qmessage.html#setDate">setDate</keyword>
-        <keyword ref="qmessage.html#setDestinationPort">setDestinationPort</keyword>
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
-        <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setParentAccountId">setParentAccountId</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
@@ -138,11 +130,7 @@
     </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
         <keyword ref="qmessagecontentcontainer.html">QMessageContentContainer</keyword>
-        <keyword ref="qmessagecontentcontainer.html#appendContent">appendContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</keyword>
-        <keyword ref="qmessagecontentcontainer.html#clearContents">clearContents</keyword>
         <keyword ref="qmessagecontentcontainer.html#container">container</keyword>
-        <keyword ref="qmessagecontentcontainer.html#containerDataModified">containerDataModified</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#contains">contains</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentAvailable">contentAvailable</keyword>
@@ -159,16 +147,6 @@
         <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
         <keyword ref="qmessagecontentcontainer.html#messageId">messageId</keyword>
         <keyword ref="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</keyword>
-        <keyword ref="qmessagecontentcontainer.html#prependContent">prependContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#readContentFrom">readContentFrom</keyword>
-        <keyword ref="qmessagecontentcontainer.html#replaceContent">replaceContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContent">setContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentCharset">setContentCharset</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentFileName">setContentFileName</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentSubType">setContentSubType</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setContentType">setContentType</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
         <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#size">size</keyword>
         <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
@@ -203,13 +181,11 @@
     </section>
     <section ref="qmessagefilterkey.html" title="QMessageFilterKey Class Reference">
         <keyword ref="qmessagefilterkey.html">QMessageFilterKey</keyword>
-        <keyword ref="qmessagefilterkey.html#ancestorFolderIds">ancestorFolderIds</keyword>
         <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
         <keyword ref="qmessagefilterkey.html#id">id</keyword>
         <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmessagefilterkey.html#options">options</keyword>
         <keyword ref="qmessagefilterkey.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessagefilterkey.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
         <keyword ref="qmessagefilterkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagefilterkey.html#recipients">recipients</keyword>
@@ -228,55 +204,6 @@
         <keyword ref="qmessagefilterkey.html#operator-7c-eq">operator|=</keyword>
         <keyword ref="qmessagefilterkey.html#operator-7e">operator~</keyword>
         <section ref="qmessagefilterkey-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagefolder.html" title="QMessageFolder Class Reference">
-        <keyword ref="qmessagefolder.html">QMessageFolder</keyword>
-        <keyword ref="qmessagefolder.html#displayName">displayName</keyword>
-        <keyword ref="qmessagefolder.html#id">id</keyword>
-        <keyword ref="qmessagefolder.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessagefolder.html#parentFolderId">parentFolderId</keyword>
-        <keyword ref="qmessagefolder.html#path">path</keyword>
-        <keyword ref="qmessagefolder.html#operator-eq">operator=</keyword>
-        <section ref="qmessagefolder-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagefolderfilterkey.html" title="QMessageFolderFilterKey Class Reference">
-        <keyword ref="qmessagefolderfilterkey.html">QMessageFolderFilterKey</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#ancestorFolderIds">ancestorFolderIds</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#displayName">displayName</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#id">id</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#options">options</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#parentFolderId">parentFolderId</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#path">path</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#setOptions">setOptions</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-and">operator&amp;</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-and-eq">operator&amp;=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7c">operator|</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7c-eq">operator|=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7e">operator~</keyword>
-        <section ref="qmessagefolderfilterkey-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagefolderid.html" title="QMessageFolderId Class Reference">
-        <keyword ref="qmessagefolderid.html">QMessageFolderId</keyword>
-        <keyword ref="qmessagefolderid.html#isValid">isValid</keyword>
-        <keyword ref="qmessagefolderid.html#toString">toString</keyword>
-        <keyword ref="qmessagefolderid.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefolderid.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagefolderid-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagefoldersortkey.html" title="QMessageFolderSortKey Class Reference">
-        <keyword ref="qmessagefoldersortkey.html">QMessageFolderSortKey</keyword>
-        <keyword ref="qmessagefoldersortkey.html#displayName">displayName</keyword>
-        <keyword ref="qmessagefoldersortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefoldersortkey.html#path">path</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-2b">operator+</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-2b-eq">operator+=</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagefoldersortkey-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageid.html" title="QMessageId Class Reference">
         <keyword ref="qmessageid.html">QMessageId</keyword>
@@ -343,9 +270,7 @@
         <keyword ref="qmessagestore.html#account">account</keyword>
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>
-        <keyword ref="qmessagestore.html#countFolders">countFolders</keyword>
         <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
-        <keyword ref="qmessagestore.html#folder">folder</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
@@ -353,7 +278,6 @@
         <keyword ref="qmessagestore.html#messagesRemoved">messagesRemoved</keyword>
         <keyword ref="qmessagestore.html#messagesUpdated">messagesUpdated</keyword>
         <keyword ref="qmessagestore.html#queryAccounts">queryAccounts</keyword>
-        <keyword ref="qmessagestore.html#queryFolders">queryFolders</keyword>
         <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
