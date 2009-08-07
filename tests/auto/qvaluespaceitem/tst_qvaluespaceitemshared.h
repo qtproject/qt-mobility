@@ -56,8 +56,6 @@ private slots:
     void setValue();
     void ipcSetValue();
     void removeValue();
-    void layerSelection_data();
-    void layerSelection();
     void interestNotification_data();
     void interestNotification();
     void ipcInterestNotification();

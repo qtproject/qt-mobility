@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += qvaluespace qvaluespaceitem qvaluespaceitem_oop
+SUBDIRS += qvaluespace qvaluespaceobject qvaluespaceitem qvaluespaceitem_oop
 SUBDIRS += lackey
