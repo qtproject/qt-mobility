@@ -37,7 +37,7 @@
 #include <QLineEdit>
 
 class QLabel;
-class ServiceMetaData;
+class ServiceMetaDataResults;
 class QXmlStreamWriter;
 class InterfacesTabWidget;
 class MandatoryLineEdit;
@@ -48,7 +48,7 @@ class ServiceWidget : public QWidget
     Q_OBJECT
 public:
     ServiceWidget(QWidget *parent = 0);
-    void load(const ServiceMetaData &data);
+    void load(const ServiceMetaDataResults &data);
 
     void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *writer) const;

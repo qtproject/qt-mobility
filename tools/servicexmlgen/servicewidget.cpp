@@ -90,13 +90,12 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     setLayout(main);
 }
 
-void ServiceWidget::load(const ServiceMetaData &parser)
+void ServiceWidget::load(const ServiceMetaDataResults &data)
 {
-    const ServiceMetaDataResults data = parser.parseResults();
     m_name->setText(data.name);
     m_path->setText(data.location);
     m_desc->setText(data.description);
-    m_ifacesTabs->load(data);
+    m_ifacesTabs->load(data.interfaces);
 
     m_name->setFocus();
 }

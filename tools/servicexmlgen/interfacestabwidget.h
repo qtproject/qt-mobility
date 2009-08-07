@@ -38,17 +38,17 @@
 #include <QTabWidget>
 #include <QByteArray>
 
-class ServiceMetaDataResults;
 class QXmlStreamWriter;
 class InterfaceWidget;
 class ErrorCollector;
+class QServiceInterfaceDescriptor;
 
 class InterfacesTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
     InterfacesTabWidget(QWidget *parent = 0);
-    void load(const ServiceMetaDataResults &data);
+    void load(const QList<QServiceInterfaceDescriptor> &descriptors);
 
     void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *device) const;
