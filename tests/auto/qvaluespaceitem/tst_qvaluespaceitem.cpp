@@ -1349,4 +1349,4 @@ void tst_QValueSpaceItem::ipcInterestNotification()
 }
 
 QTEST_MAIN(tst_QValueSpaceItem)
-#include "tst_qvaluespace.moc"
+#include "tst_qvaluespaceitem.moc"
