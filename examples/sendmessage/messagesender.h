@@ -39,6 +39,7 @@
 #include <QWidget>
 
 class QLineEdit;
+class QListWidget;
 class QTextEdit;
 class QPushButton;
 
@@ -52,6 +53,9 @@ public:
 
 private slots:
     void activityChanged(QMessageServiceAction::Activity a);
+    void removeAttachment();
+    void addAttachment();
+    void attachmentSelected(int);
     void send();
 
 private:
@@ -59,6 +63,9 @@ private:
     QLineEdit *subjectEdit;
     QTextEdit *textEdit;
     QPushButton *sendButton;
+    QPushButton *removeButton;
+    QPushButton *addButton;
+    QListWidget *attachmentsList;
 
     QMessageId sendId;
 
