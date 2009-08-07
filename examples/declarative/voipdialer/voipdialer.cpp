@@ -36,9 +36,10 @@
 #include "voipdialer.h"
 
 VoipDialer::VoipDialer(QObject *parent)
-    : QObject(parent), timerId(0)
+    : QObject(parent), timerId(0), m_state(Disconnected)
 {
-    setObjectName("MyVoipService");
+    setObjectName("VoipService");
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
 }
 
 VoipDialer::ConnectionState VoipDialer::state() const
@@ -48,6 +49,7 @@ VoipDialer::ConnectionState VoipDialer::state() const
 
 void VoipDialer::dialNumber(const QString& number)
 {
+    qDebug() << "Dialing Voip number: " << number;
     if (m_state != Disconnected)
         return;
 
@@ -56,16 +58,16 @@ void VoipDialer::dialNumber(const QString& number)
     timerId = startTimer(2000);
     m_state = Connecting;
     emit stateChanged();
-    qDebug() << "Dialing Voip number: " << number;
 }
 
-void VoipDialer::timerEvent(QTimerEvent* event)
+void VoipDialer::timerEvent(QTimerEvent* /*event*/)
 {
     setNewState();
 }
 
 void VoipDialer::hangup()
 {
+    qDebug() << "Hangup on VoipDialer";
     if (timerId)
         killTimer(timerId);
     timerId = 0;
@@ -80,12 +82,16 @@ void VoipDialer::setNewState()
         case Disconnected:
             break;
         case Connecting:
-            m_state = Connected;
+            if ((qrand() %2) == 0)
+                m_state = Connected;
+            else
+                m_state = Engaged;
             emit stateChanged();
             break;
         case Connected:
             break;
         case Engaged:
+
             break;
     }
 }

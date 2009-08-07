@@ -31,43 +31,23 @@
 **
 ****************************************************************************/
 
-#ifndef VOIPDIALER_H
-#define VOIPDIALER_H
+#include <qserviceinterfacedescriptor.h>
+#include <qabstractsecuritysession.h>
+#include <qservicecontext.h>
+#include <QDebug>
 
-#include <QObject>
+#include "landlinedialerplugin.h"
+#include "landlinedialer.h"
 
-class VoipDialer : public QObject
+QObject* LandlineDialerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
-    Q_OBJECT
-    Q_ENUMS(ConnectionState)
-public:
-    VoipDialer(QObject *parent = 0);
-    
-    enum ConnectionState {
-        Disconnected = 0,
-        Connecting,
-        Connected,
-        Engaged
-    };
+    Q_UNUSED(descriptor);
+    Q_UNUSED(context);
+    Q_UNUSED(session);
+    if (descriptor.majorVersion() == 1)
+        return new LandlineDialer(this);
+    else 
+        return 0;
+}
 
-    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
-    ConnectionState state() const;
-
-
-public slots:
-    void dialNumber(const QString& number);
-    void hangup();
-
-signals:
-    void stateChanged();
-
-protected:
-    void timerEvent(QTimerEvent* event);
-private:
-    void setNewState();
-    int timerId;
-    ConnectionState m_state;
-};
-
-
-#endif
+Q_EXPORT_PLUGIN2(serviceframework_landlinedialerservice, LandlineDialerPlugin)

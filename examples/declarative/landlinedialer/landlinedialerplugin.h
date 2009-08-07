@@ -31,43 +31,22 @@
 **
 ****************************************************************************/
 
-#ifndef VOIPDIALER_H
-#define VOIPDIALER_H
+#ifndef LANDLINEDIALERPLUGIN_H
+#define LANDLINEDIALERPLUGIN_H
 
 #include <QObject>
 
-class VoipDialer : public QObject
+#include <qserviceplugininterface.h>
+
+class LandlineDialerPlugin : public QObject,
+                                public QServicePluginInterface
 {
     Q_OBJECT
-    Q_ENUMS(ConnectionState)
+    Q_INTERFACES(QServicePluginInterface)
 public:
-    VoipDialer(QObject *parent = 0);
-    
-    enum ConnectionState {
-        Disconnected = 0,
-        Connecting,
-        Connected,
-        Engaged
-    };
-
-    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
-    ConnectionState state() const;
-
-
-public slots:
-    void dialNumber(const QString& number);
-    void hangup();
-
-signals:
-    void stateChanged();
-
-protected:
-    void timerEvent(QTimerEvent* event);
-private:
-    void setNewState();
-    int timerId;
-    ConnectionState m_state;
+    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
+                            QServiceContext* context,
+                            QAbstractSecuritySession* session);
 };
-
 
 #endif

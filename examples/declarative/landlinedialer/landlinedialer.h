@@ -31,17 +31,17 @@
 **
 ****************************************************************************/
 
-#ifndef VOIPDIALER_H
-#define VOIPDIALER_H
+#ifndef LANDLINEDIALER_H
+#define LANDLINEDIALER_H
 
 #include <QObject>
 
-class VoipDialer : public QObject
+class LandlineDialer : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ConnectionState)
 public:
-    VoipDialer(QObject *parent = 0);
+    LandlineDialer(QObject *parent = 0);
     
     enum ConnectionState {
         Disconnected = 0,

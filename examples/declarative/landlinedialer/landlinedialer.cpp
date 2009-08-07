@@ -31,43 +31,67 @@
 **
 ****************************************************************************/
 
-#ifndef VOIPDIALER_H
-#define VOIPDIALER_H
+#include <QtCore>
 
-#include <QObject>
+#include "landlinedialer.h"
 
-class VoipDialer : public QObject
+LandlineDialer::LandlineDialer(QObject *parent)
+    : QObject(parent), timerId(0), m_state(Disconnected)
 {
-    Q_OBJECT
-    Q_ENUMS(ConnectionState)
-public:
-    VoipDialer(QObject *parent = 0);
-    
-    enum ConnectionState {
-        Disconnected = 0,
-        Connecting,
-        Connected,
-        Engaged
-    };
+    setObjectName("LandlineService");
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+}
 
-    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
-    ConnectionState state() const;
+LandlineDialer::ConnectionState LandlineDialer::state() const
+{
+    return m_state;
+}
 
+void LandlineDialer::dialNumber(const QString& number)
+{
+    qDebug() << "Dialing Landline number: " << number;
+    if (m_state != Disconnected)
+        return;
 
-public slots:
-    void dialNumber(const QString& number);
-    void hangup();
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000);
+    m_state = Connecting;
+    emit stateChanged();
+}
 
-signals:
-    void stateChanged();
+void LandlineDialer::timerEvent(QTimerEvent* /*event*/)
+{
+    setNewState();
+}
 
-protected:
-    void timerEvent(QTimerEvent* event);
-private:
-    void setNewState();
-    int timerId;
-    ConnectionState m_state;
-};
+void LandlineDialer::hangup()
+{
+    qDebug() << "Hangup on LandlineDialer";
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = Disconnected;
+    emit stateChanged();
+}
 
+void LandlineDialer::setNewState()
+{
 
-#endif
+    switch(m_state) {
+        case Disconnected:
+            break;
+        case Connecting:
+            if ((qrand() %2) == 0)
+                m_state = Connected;
+            else
+                m_state = Engaged;
+            emit stateChanged();
+            break;
+        case Connected:
+            break;
+        case Engaged:
+
+            break;
+    }
+}
