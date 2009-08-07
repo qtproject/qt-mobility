@@ -133,8 +133,6 @@
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
         <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
         <keyword ref="qservicefilter.html#operator-eq">operator=</keyword>
-        <keyword ref="qservicefilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
-        <keyword ref="qservicefilter.html#operator-gt-gt">operator&gt;&gt;</keyword>
         <section ref="qservicefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qserviceinterfacedescriptor.html" title="QServiceInterfaceDescriptor Class Reference">

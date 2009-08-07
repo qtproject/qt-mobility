@@ -17,20 +17,21 @@
 <pre>    #include &lt;QServicePluginInterface&gt;</pre><ul>
 <li><a href="qserviceplugininterface-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"/>virtual QObject * <b><a href="qserviceplugininterface.html#createInstance">createInstance</a></b> ( const QServiceInterfaceDescriptor &amp; <i>descriptor</i>, QServiceContext * <i>context</i>, QAbstractSecuritySession * <i>securitySession</i> ) = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qserviceplugininterface.html#installService">installService</a></b> ()</li>
-<li><div class="fn"/>virtual void <b><a href="qserviceplugininterface.html#uninstallService">uninstallService</a></b> ()</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qserviceplugininterface.html#createInstance">createInstance</a></b> ( const QServiceInterfaceDescriptor &amp; <i>descriptor</i>, QServiceContext * <i>context</i>, QAbstractSecuritySession * <i>securitySession</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qserviceplugininterface.html#installService">installService</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qserviceplugininterface.html#uninstallService">uninstallService</a></b> ()</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QServicePluginInterface class defines the interface that every plug-in based service must implement.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="createInstance"></a>QObject * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>securitySession</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createInstance"></a><a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>securitySession</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Creates a new instance of the service specified by <i>descriptor</i>. The service may use the given <i>context</i> and <i>securitySession</i>. <i>context</i> and <i>securitySession</i> object are owned by the client of the service.</p>
 <p>This function returns a null pointer if the plug-in doesn't support the given <i>descriptor</i>.</p>
 <h3 class="fn"><a name="installService"></a>void QServicePluginInterface::installService ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
