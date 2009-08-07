@@ -51,7 +51,7 @@ MapiEntryId QMessageIdPrivate::entryId(const QMessageId &id)
 {
     if (id.d_ptr)
         return id.d_ptr->_entryId;
-    return MapiRecordKey();
+    return MapiEntryId();
 }
 
 MapiRecordKey QMessageIdPrivate::messageRecordKey(const QMessageId &id)

@@ -53,7 +53,7 @@ QString QStringFromLpctstr(LPCTSTR lpszValue);
 class MapiFolder {
 public:
     MapiFolder();
-    MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name = QString());
+    MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name,  const MapiEntryId &entryId);
     ~MapiFolder();
     MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;

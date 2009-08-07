@@ -67,7 +67,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
 
     if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK)) {
         Q_ASSERT(_folder);
-        *lastError = QMessageStore::FrameworkFault;
+        *lastError = QMessageStore::ContentInaccessible;
         return;
     }
 
@@ -78,13 +78,14 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         _subFolders = subFolders;
 }
 
-MapiFolder::MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name)
+MapiFolder::MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId)
     :_valid(true),
      _folder(folder),
      _key(key),
      _parentStoreKey(parentStoreKey),
      _name(name),
-     _subFolders(0)
+     _subFolders(0),
+     _entryId(entryId)
 {
     if (!folder)
         _valid = false;
@@ -117,18 +118,21 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     LPMAPIFOLDER subFolder(0);
     MapiRecordKey folderKey;
     QString name;
+    MapiEntryId entryId;
 
     if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
         if (rows->cRows == 1) {
-            LPSPropValue entryId(&rows->aRow[0].lpProps[entryIdColumn]);
-            ULONG cbEntryId(entryId->Value.bin.cb);
-            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryId->Value.bin.lpb));
+            LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
+            ULONG cbEntryId(entryIdProp->Value.bin.cb);
+            LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryIdProp->Value.bin.lpb));
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             folderKey = MapiRecordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+            entryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = QStringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
                 // TODO: Make a copy of message count, and hasSubFolders property values.
             } else {
+                *lastError = QMessageStore::ContentInaccessible;
                 subFolder = 0;
             }
         }
@@ -139,7 +143,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     MAPIFreeBuffer(rows);
     if (!subFolder)
         return MapiFolder::null();
-    return MapiFolderPtr(new MapiFolder(lastError, subFolder, folderKey, _parentStoreKey, name));
+    return MapiFolderPtr(new MapiFolder(lastError, subFolder, folderKey, _parentStoreKey, name, entryId));
 }
 
 QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
@@ -266,7 +270,7 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
 
 QMessageFolderId MapiFolder::id()
 {
-    return QMessageFolderIdPrivate::from(_key, _parentStoreKey);
+    return QMessageFolderIdPrivate::from(_key, _parentStoreKey, _entryId);
 }
 
 MapiStore::MapiStore()
@@ -323,7 +327,7 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
     ULONG ulObjectType;
     ULONG cbEntryId(rgProps[0].Value.bin.cb);
     LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rgProps[0].Value.bin.lpb));
-
+    MapiEntryId entryId(reinterpret_cast<const char*>(rgProps[0].Value.bin.lpb), rgProps[0].Value.bin.cb);
 #if 0 // NO_MAPI_CACHING
     if (_store->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK) {
 #else
@@ -335,7 +339,7 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
 
     MAPIFreeBuffer(rgProps);
     if (mapiFolder)
-        result = MapiFolderPtr(new MapiFolder(lastError, mapiFolder, QByteArray(), _key)); /// TODO Try to find a better record key for the root folder
+        result = MapiFolderPtr(new MapiFolder(lastError, mapiFolder, QByteArray(), _key, QString(), entryId)); /// TODO Try to find a better record key for the root folder
     return result;
 }
 

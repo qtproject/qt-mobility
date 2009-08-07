@@ -37,13 +37,14 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
-QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey)
+QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId)
 {
     QMessageFolderId result;
     if (!result.d_ptr)
         result.d_ptr = new QMessageFolderIdPrivate(&result);
     result.d_ptr->_folderRecordKey = folderKey;
     result.d_ptr->_storeRecordKey = storeKey;
+    result.d_ptr->_entryId = entryId;
     return result;
 }
 
@@ -59,6 +60,13 @@ MapiRecordKey QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id
     if (id.d_ptr)
         return id.d_ptr->_storeRecordKey;
     return MapiRecordKey();
+}
+
+MapiEntryId QMessageFolderIdPrivate::entryId(const QMessageFolderId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_entryId;
+    return MapiEntryId();
 }
 
 QMessageFolderId::QMessageFolderId()
@@ -78,6 +86,8 @@ QMessageFolderId::QMessageFolderId(const QString& id)
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
     idStream >> d_ptr->_folderRecordKey;
     idStream >> d_ptr->_storeRecordKey;
+    if (!idStream.atEnd())
+        idStream >> d_ptr->_entryId;
 }
 
 QMessageFolderId::~QMessageFolderId()
@@ -109,6 +119,7 @@ QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
             }
             d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
             d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
+            d_ptr->_entryId = other.d_ptr->_entryId;
         } else {
             delete d_ptr;
             d_ptr = 0;
@@ -126,6 +137,8 @@ QString QMessageFolderId::toString() const
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_folderRecordKey;
     encodedIdStream << d_ptr->_storeRecordKey;
+    if (d_ptr->_entryId.count())
+        encodedIdStream << d_ptr->_entryId;
     return encodedId.toBase64();
 }
 
