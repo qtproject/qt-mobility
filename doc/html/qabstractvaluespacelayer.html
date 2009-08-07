@@ -20,35 +20,47 @@
 <a name="public-types"></a>
 <h3>Public Types</h3>
 <ul>
-<li><div class="fn"/>typedef <b><a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a></b></li>
+<li><div class="fn"/>typedef <b><a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a></b></li>
 <li><div class="fn"/>enum <b><a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a></b> { Publish }</li>
 <li><div class="fn"/>enum <b><a href="qabstractvaluespacelayer.html#Type-enum">Type</a></b> { Server, Client }</li>
 </ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
-<li><div class="fn"/>virtual QSet&lt;QByteArray&gt; <b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( HANDLE <i>handle</i> ) = 0</li>
+<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i> ) = 0</li>
+<li><div class="fn"/>virtual QSet&lt;QByteArray&gt; <b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( Handle <i>handle</i> ) = 0</li>
 <li><div class="fn"/>virtual QUuid <b><a href="qabstractvaluespacelayer.html#id">id</a></b> () = 0</li>
-<li><div class="fn"/>virtual HANDLE <b><a href="qabstractvaluespacelayer.html#item">item</a></b> ( HANDLE <i>parent</i>, const QByteArray &amp; <i>subPath</i> ) = 0</li>
+<li><div class="fn"/>virtual Handle <b><a href="qabstractvaluespacelayer.html#item">item</a></b> ( Handle <i>parent</i>, const QByteArray &amp; <i>subPath</i> ) = 0</li>
 <li><div class="fn"/>virtual QString <b><a href="qabstractvaluespacelayer.html#name">name</a></b> () = 0</li>
 <li><div class="fn"/>virtual unsigned int <b><a href="qabstractvaluespacelayer.html#order">order</a></b> () = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#remHandle">remHandle</a></b> ( HANDLE <i>handle</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#remove">remove</a></b> ( HANDLE <i>handle</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#remove-2">remove</a></b> ( HANDLE <i>handle</i>, const QByteArray &amp; <i>subPath</i> ) = 0</li>
+<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a></b> ( Handle <i>handle</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i> ) = 0</li>
+<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>parent</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i> = QByteArray() ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</a></b> ( Handle <i>handle</i>, const QVariant &amp; <i>value</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#requestSetValue-2">requestSetValue</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</li>
 <li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#restart">restart</a></b> () = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( HANDLE <i>handle</i>, Properties <i>property</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( HANDLE <i>handle</i>, const QVariant &amp; <i>value</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#setValue-2">setValue</a></b> ( HANDLE <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</li>
+<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle <i>handle</i>, Properties <i>property</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</li>
 <li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#shutdown">shutdown</a></b> () = 0</li>
 <li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#startup">startup</a></b> ( Type <i>type</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#syncChanges">syncChanges</a></b> () = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#value">value</a></b> ( HANDLE <i>handle</i>, QVariant * <i>data</i> ) = 0</li>
-<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#value-2">value</a></b> ( HANDLE <i>handle</i>, const QByteArray &amp; <i>subPath</i>, QVariant * <i>data</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#supportsRequests">supportsRequests</a></b> () = 0</li>
+<li><div class="fn"/>virtual void <b><a href="qabstractvaluespacelayer.html#sync">sync</a></b> () = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#syncRequests">syncRequests</a></b> () = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#value">value</a></b> ( Handle <i>handle</i>, QVariant * <i>data</i> ) = 0</li>
+<li><div class="fn"/>virtual bool <b><a href="qabstractvaluespacelayer.html#value-2">value</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, QVariant * <i>data</i> ) = 0</li>
 </ul>
 <a name="signals"></a>
 <h3>Signals</h3>
 <ul>
-<li><div class="fn"/>void <b><a href="qabstractvaluespacelayer.html#handleChanged">handleChanged</a></b> ( unsigned int <i>handle</i> )</li>
+<li><div class="fn"/>void <b><a href="qabstractvaluespacelayer.html#handleChanged">handleChanged</a></b> ( quintptr <i>handle</i> )</li>
+</ul>
+<a name="protected-functions"></a>
+<h3>Protected Functions</h3>
+<ul>
+<li><div class="fn"/>void <b><a href="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</a></b> ( QValueSpaceObject * <i>object</i>, const QByteArray &amp; <i>path</i> )</li>
+<li><div class="fn"/>void <b><a href="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</a></b> ( QValueSpaceObject * <i>object</i>, const QByteArray &amp; <i>path</i>, const QVariant &amp; <i>data</i> )</li>
 </ul>
 <a name="macros"></a>
 <h3>Macros</h3>
@@ -61,8 +73,8 @@
 <p>The QAbstractValueSpaceLayer class provides support for adding new logical data layers to the Qt Value Space.</p>
 <hr />
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="HANDLE-typedef"></a>typedef QAbstractValueSpaceLayer::HANDLE</h3>
-<p>The HANDLE type is an opaque, pointer sized contextual handle used to represent paths within value space layers. HANDLES are only ever created by <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>() and are always released by calls to <a href="qabstractvaluespacelayer.html#remHandle">QAbstractValueSpaceLayer::remHandle</a>(). The special, <tt>InvalidHandle</tt> is reserved to represent an invalid handle.</p>
+<h3 class="fn"><a name="Handle-typedef"></a>typedef QAbstractValueSpaceLayer::Handle</h3>
+<p>The Handle type is an opaque, pointer sized contextual handle used to represent paths within value space layers. Handles are only ever created by <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>() and are always released by calls to <a href="qabstractvaluespacelayer.html#removeHandle">QAbstractValueSpaceLayer::removeHandle</a>(). The special value, <tt>InvalidHandle</tt> is reserved to represent an invalid handle.</p>
 <h3 class="fn"><a name="Properties-enum"></a>enum QAbstractValueSpaceLayer::Properties</h3>
 <p>To allow for efficient layer implementations, expensive handle operations, currently only monitoring for changes, are enabled and disabled as needed on a per-handle basis. The Properties enumeration is a bitmask representing the different properties that can exist on a handle.</p>
 <p><table border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -78,49 +90,77 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="children"></a>QSet&lt;QByteArray&gt; QAbstractValueSpaceLayer::children ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="addWatch"></a>void QAbstractValueSpaceLayer::addWatch ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Registers <i>creator</i> for change notifications to values under <i>handle</i>.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a>(), <a href="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</a>(), and <a href="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</a>().</p>
+<h3 class="fn"><a name="children"></a>QSet&lt;QByteArray&gt; QAbstractValueSpaceLayer::children ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the set of children of <i>handle</i>. For example, in a layer providing the following items:</p>
 <pre>    /Device/Configuration/Applications/FocusedApplication
     /Device/Configuration/Buttons/PrimaryInput
     /Device/Configuration/Name</pre>
 <p>a request for children of &quot;/Device/Configuration&quot; will return { &quot;Applications&quot;, &quot;Buttons&quot;, &quot;Name&quot; }.</p>
-<h3 class="fn"><a name="handleChanged"></a>void QAbstractValueSpaceLayer::handleChanged ( unsigned int <i>handle</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="emitItemRemove"></a>void QAbstractValueSpaceLayer::emitItemRemove ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>object</i>, const QByteArray &amp; <i>path</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Emits the <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>() signal on <i>object</i> with <i>path</i>.</p>
+<h3 class="fn"><a name="emitItemSetValue"></a>void QAbstractValueSpaceLayer::emitItemSetValue ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>object</i>, const QByteArray &amp; <i>path</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Emits the <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>() signal on <i>object</i> with <i>path</i> and <i>data</i>.</p>
+<h3 class="fn"><a name="handleChanged"></a>void QAbstractValueSpaceLayer::handleChanged ( quintptr <i>handle</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted whenever the <i>handle</i>'s value, or any sub value, changes.</p>
 <h3 class="fn"><a name="id"></a>QUuid QAbstractValueSpaceLayer::id ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Return a globally unique id for the layer. This id is used to break ordering ties.</p>
-<h3 class="fn"><a name="item"></a><a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> QAbstractValueSpaceLayer::item ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>parent</i>, const QByteArray &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="item"></a><a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> QAbstractValueSpaceLayer::item ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i>, const QByteArray &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a new opaque handle for the requested <i>subPath</i> of <i>parent</i>. If <i>parent</i> is an InvalidHandle, <i>subPath</i> is an absolute path.</p>
+<p>The caller should call <a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a>() to free resources used by the handle when it is no longer required.</p>
 <h3 class="fn"><a name="name"></a>QString QAbstractValueSpaceLayer::name ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the Value Space layer. This name is only used for diagnostics purposes.</p>
 <h3 class="fn"><a name="order"></a>unsigned int QAbstractValueSpaceLayer::order ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return the position in the Value Space layer stack that this layer should reside. Higher numbers mean the layer has a higher precedence and its values will &quot;shadow&quot; those below it. If two layers specify the same ordering, the <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>() value is used to break the tie.</p>
-<h3 class="fn"><a name="remHandle"></a>void QAbstractValueSpaceLayer::remHandle ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Return the position in the Value Space layer stack that this layer should reside. Higher numbers mean the layer has a higher precedence and its values will &quot;shadow&quot; those below it. If two layers specify the same ordering, the <a href="qabstractvaluespacelayer.html#id">id</a>() value is used to break the tie.</p>
+<h3 class="fn"><a name="removeHandle"></a>void QAbstractValueSpaceLayer::removeHandle ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Releases a <i>handle</i> previously returned from <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>().</p>
-<h3 class="fn"><a name="remove"></a>bool QAbstractValueSpaceLayer::remove ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process a client side <a href="qvaluespaceitem.html#remove">QValueSpaceItem::remove</a>() for the specified <i>handle</i>. Return true on success and false on failure.</p>
-<h3 class="fn"><a name="remove-2"></a>bool QAbstractValueSpaceLayer::remove ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="removeSubTree"></a>bool QAbstractValueSpaceLayer::removeSubTree ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to QValueSpaceObject::~QValueSpaceObject() by removing the entire sub tree created by <i>creator</i> under <i>handle</i>.</p>
+<p>Returns true on success; otherwise returns false.</p>
+<h3 class="fn"><a name="removeValue"></a>bool QAbstractValueSpaceLayer::removeValue ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to <a href="qvaluespaceobject.html#removeAttribute">QValueSpaceObject::removeAttribute</a>() by removing the value space item identified by <i>handle</i> and <i>subPath</i> and created by <i>creator</i>.</p>
+<p>Returns true on success; otherwise returns false.</p>
+<h3 class="fn"><a name="removeWatches"></a>void QAbstractValueSpaceLayer::removeWatches ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Removes all registered change notifications for <i>creator</i> under <i>parent</i>.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#addWatch">addWatch</a>(), <a href="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</a>(), and <a href="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</a>().</p>
+<h3 class="fn"><a name="requestRemoveValue"></a>bool QAbstractValueSpaceLayer::requestRemoveValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i> = QByteArray() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process a client side <a href="qvaluespaceitem.html#remove">QValueSpaceItem::remove</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to remove the item.</p>
+<p>Returns true if the request was successfully sent; otherwise returns false.</p>
+<h3 class="fn"><a name="requestSetValue"></a>bool QAbstractValueSpaceLayer::requestSetValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> to set it to <i>value</i>.</p>
+<p>Returns true if the request was successfully sent; otherwise returns false.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#handleChanged">handleChanged</a>().</p>
+<h3 class="fn"><a name="requestSetValue-2"></a>bool QAbstractValueSpaceLayer::requestSetValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This is an overloaded member function, provided for convenience.</p>
-<p>Process a client side <a href="qvaluespaceitem.html#remove">QValueSpaceItem::remove</a>() for the specified <i>subPath</i> of <i>handle</i>. Return true on success and false on failure.</p>
+<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to set the value to <i>value</i>.</p>
+<p>Returns true if the request was successfully sent; otherwise returns false.</p>
 <h3 class="fn"><a name="restart"></a>bool QAbstractValueSpaceLayer::restart ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Called by the Value Space system to restart each layer. Returns true upon success; otherwise returns false.</p>
-<h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Called by the Value Space system to restart each layer.</p>
+<p>Returns true upon success; otherwise returns false.</p>
+<h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Apply the specified <i>property</i> mask to <i>handle</i>.</p>
-<h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() for the specified <i>handle</i> and <i>value</i>. Return true on success and false on failure.</p>
+<h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to <a href="qvaluespaceobject.html#setAttribute">QValueSpaceObject::setAttribute</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the value space item is assigned to <i>creator</i>.</p>
+<p>Returns true on success; otherwise returns false.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#value">value</a>().</p>
-<h3 class="fn"><a name="setValue-2"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>This is an overloaded member function, provided for convenience.</p>
-<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() for the specified <i>subPath</i> of <i>handle</i> and the provided <i>value</i>. Return true on success and false on failure.</p>
 <h3 class="fn"><a name="shutdown"></a>void QAbstractValueSpaceLayer::shutdown ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Called by the Value Space system to uninitialize each layer. The shutdown call can be used to release any resources in use by the layer.</p>
 <h3 class="fn"><a name="startup"></a>bool QAbstractValueSpaceLayer::startup ( <a href="qabstractvaluespacelayer.html#Type-enum">Type</a> <i>type</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Called by the Value Space system to initialize each layer. The <i>type</i> parameter will be set accordingly, and layer implementors can use this to implement a client/server architecture if desired. Returns true upon success; otherwise returns false.</p>
-<h3 class="fn"><a name="syncChanges"></a>bool QAbstractValueSpaceLayer::syncChanges ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Commit any changes made through <a href="qabstractvaluespacelayer.html#setValue">setValue</a>(). Return true on success and false on failure.</p>
-<h3 class="fn"><a name="value"></a>bool QAbstractValueSpaceLayer::value ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, QVariant * <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Called by the Value Space system to initialize each layer. The <i>type</i> parameter will be set accordingly, and layer implementors can use this to implement a client/server architecture if desired.</p>
+<p>Returns true upon success; otherwise returns false.</p>
+<h3 class="fn"><a name="supportsRequests"></a>bool QAbstractValueSpaceLayer::supportsRequests ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns true if the layer supports sending requests via the <a href="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</a>() and <a href="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</a>() functions; otherwise returns false.</p>
+<h3 class="fn"><a name="sync"></a>void QAbstractValueSpaceLayer::sync ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Flushes all pending changes made by calls to <a href="qabstractvaluespacelayer.html#setValue">setValue</a>(), <a href="qabstractvaluespacelayer.html#removeValue">removeValue</a>() and <a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a>().</p>
+<h3 class="fn"><a name="syncRequests"></a>bool QAbstractValueSpaceLayer::syncRequests ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Commit any pending request made through call to <a href="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</a>() and <a href="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</a>().</p>
+<p>Returns true on success; otherwise returns false.</p>
+<h3 class="fn"><a name="value"></a>bool QAbstractValueSpaceLayer::value ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, QVariant * <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the value for a particular <i>handle</i>. If a value is available, the layer will set <i>data</i> and return true. If no value is available, false is returned.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a>bool QAbstractValueSpaceLayer::value ( <a href="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, QVariant * <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="value-2"></a>bool QAbstractValueSpaceLayer::value ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, QVariant * <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Returns the value for a particular <i>subPath</i> of <i>handle</i>. If a value is available, the layer will set <i>data</i> and return true. If no value is available, false is returned.</p>
 <hr />

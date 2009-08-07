@@ -30,14 +30,14 @@
 <li><div class="fn"/><b><a href="qvaluespaceitem.html#QValueSpaceItem-8">QValueSpaceItem</a></b> ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</li>
 <li><div class="fn"/>virtual <b><a href="qvaluespaceitem.html#dtor.QValueSpaceItem">~QValueSpaceItem</a></b> ()</li>
 <li><div class="fn"/>QString <b><a href="qvaluespaceitem.html#itemName">itemName</a></b> () const</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#remove">remove</a></b> ()</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#remove-2">remove</a></b> ( const QByteArray &amp; <i>subPath</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#remove-3">remove</a></b> ( const char * <i>subPath</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#remove-4">remove</a></b> ( const QString &amp; <i>subPath</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#setValue">setValue</a></b> ( const QVariant &amp; <i>value</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#setValue-2">setValue</a></b> ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#setValue-3">setValue</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
-<li><div class="fn"/>void <b><a href="qvaluespaceitem.html#setValue-4">setValue</a></b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#remove">remove</a></b> ()</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#remove-2">remove</a></b> ( const QByteArray &amp; <i>subPath</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#remove-3">remove</a></b> ( const char * <i>subPath</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#remove-4">remove</a></b> ( const QString &amp; <i>subPath</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#setValue">setValue</a></b> ( const QVariant &amp; <i>value</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#setValue-2">setValue</a></b> ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#setValue-3">setValue</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
+<li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#setValue-4">setValue</a></b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</li>
 <li><div class="fn"/>QList&lt;QString&gt; <b><a href="qvaluespaceitem.html#subPaths">subPaths</a></b> () const</li>
 <li><div class="fn"/>bool <b><a href="qvaluespaceitem.html#sync">sync</a></b> ()</li>
 <li><div class="fn"/>QVariant <b><a href="qvaluespaceitem.html#value">value</a></b> ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</li>
@@ -98,43 +98,51 @@
 <p>Emitted whenever the value of this item, or any sub-items changes.</p>
 <h3 class="fn"><a name="itemName"></a>QString QValueSpaceItem::itemName () const</h3>
 <p>Returns the item name of this <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
-<h3 class="fn"><a name="remove"></a>void QValueSpaceItem::remove ()</h3>
+<h3 class="fn"><a name="remove"></a>bool QValueSpaceItem::remove ()</h3>
 <p>Request that the item be removed. The provider of the item determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-2"></a>void QValueSpaceItem::remove ( const QByteArray &amp; <i>subPath</i> )</h3>
+<h3 class="fn"><a name="remove-2"></a>bool QValueSpaceItem::remove ( const QByteArray &amp; <i>subPath</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-3"></a>void QValueSpaceItem::remove ( const char * <i>subPath</i> )</h3>
+<h3 class="fn"><a name="remove-3"></a>bool QValueSpaceItem::remove ( const char * <i>subPath</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-4"></a>void QValueSpaceItem::remove ( const QString &amp; <i>subPath</i> )</h3>
+<h3 class="fn"><a name="remove-4"></a>bool QValueSpaceItem::remove ( const QString &amp; <i>subPath</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="setValue"></a>void QValueSpaceItem::setValue ( const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue"></a>bool QValueSpaceItem::setValue ( const QVariant &amp; <i>value</i> )</h3>
 <p>Request that the value of this item be changed to <i>value</i>. The provider of the item determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceitem.html#value">value</a>() and <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-2"></a>void QValueSpaceItem::setValue ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-2"></a>bool QValueSpaceItem::setValue ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-3"></a>void QValueSpaceItem::setValue ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-3"></a>bool QValueSpaceItem::setValue ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-4"></a>void QValueSpaceItem::setValue ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-4"></a>bool QValueSpaceItem::setValue ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>This is an overloaded member function, provided for convenience.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
 <h3 class="fn"><a name="subPaths"></a>QList&lt;QString&gt; QValueSpaceItem::subPaths () const</h3>
 <p>Returns a list of sub-paths for this item. For example, given a Value Space tree containing:</p>
