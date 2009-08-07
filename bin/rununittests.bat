@@ -5,6 +5,7 @@ set PATH=%BATCH_PATH%..\build\Debug\bin;%PATH%
 
 cd %BATCH_PATH%..\build\tests\Debug\bin
 tst_qvaluespace.exe
+tst_qvaluespaceobject.exe
 tst_qvaluespaceitem.exe
 tst_qvaluespaceitem_oop.exe
 
