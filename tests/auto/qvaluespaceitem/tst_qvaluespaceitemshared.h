@@ -44,7 +44,6 @@ private slots:
     void cleanupTestCase();
     void init();
 
-    void availableLayers();
     void testConstructor();
     void testConstructor_data();
     void testAssignmentOperator();
