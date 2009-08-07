@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemMemoryInfo Class Reference</h1>
 <p>The QSystemMemoryInfo class provides access to memory and disk information from the system. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSystemMemoryInfo&gt;</pre><ul>
+<pre>    #include &lt;QSystemMemoryInfo&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
+<ul>
 <li><a href="qsystemmemoryinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -36,6 +37,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qlonglong </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</a></b> ( const QString &amp; <i>volumeDrive</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -44,6 +48,18 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#memoryCritical">memoryCritical</a></b> ( qint32 <i>percent</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#newMemoryCard">newMemoryCard</a></b> ( const QString &amp; <i>driveVolume</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -60,25 +76,25 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QSystemMemoryInfo"></a>QSystemMemoryInfo::QSystemMemoryInfo ( QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSystemMemoryInfo"></a>QSystemMemoryInfo::QSystemMemoryInfo ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemmemoryinfo.html">QSystemMemoryInfo</a> with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QSystemMemoryInfo"></a>QSystemMemoryInfo::~QSystemMemoryInfo ()</h3>
-<h3 class="fn"><a name="availableDiskSpace"></a>qlonglong QSystemMemoryInfo::availableDiskSpace ( const QString &amp; <i>volumeDrive</i> )</h3>
+<h3 class="fn"><a name="availableDiskSpace"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qlonglong-typedef">qlonglong</a> QSystemMemoryInfo::availableDiskSpace ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>volumeDrive</i> )</h3>
 <p>Returns the amount of available free space on the <i>volumeDrive</i>.</p>
-<h3 class="fn"><a name="diskSpaceCritical"></a>void QSystemMemoryInfo::diskSpaceCritical ( QString &amp; <i>driveVolume</i>, qint32 <i>spaceRemaining</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="diskSpaceCritical"></a>void QSystemMemoryInfo::diskSpaceCritical ( <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>driveVolume</i>, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint32-typedef">qint32</a> <i>spaceRemaining</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when disk space has reached 3% of capacity. <i>driveVolume</i> is the volume, drive or disk that has reached critical. <i>spaceRemaining</i> is the space remaining in kilobytes,</p>
-<h3 class="fn"><a name="freeMemoryLevel"></a>quint64 QSystemMemoryInfo::freeMemoryLevel () const</h3>
+<h3 class="fn"><a name="freeMemoryLevel"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#quint64-typedef">quint64</a> QSystemMemoryInfo::freeMemoryLevel () const</h3>
 <p>Returns the amount of free RAM memory in kilobytes.</p>
-<h3 class="fn"><a name="getVolumeType"></a><a href="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::VolumeType</a> QSystemMemoryInfo::getVolumeType ( const QString &amp; <i>driveVolume</i> )</h3>
+<h3 class="fn"><a name="getVolumeType"></a><a href="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::VolumeType</a> QSystemMemoryInfo::getVolumeType ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>driveVolume</i> )</h3>
 <p>Returns the type of volume <i>driveVolume</i></p>
 <h3 class="fn"><a name="hasRamMemoryLevel"></a>bool QSystemMemoryInfo::hasRamMemoryLevel ()</h3>
 <p>Returns true, if the system can present RAM mempry levels, otherwise false.</p>
-<h3 class="fn"><a name="listOfVolumes"></a>QStringList QSystemMemoryInfo::listOfVolumes ()</h3>
-<p>Returns a QStringList of volumes or partitions.</p>
-<h3 class="fn"><a name="memoryCritical"></a>void QSystemMemoryInfo::memoryCritical ( qint32 <i>percent</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="listOfVolumes"></a><a href="http://doc.qtsoftware.com/4.5/qstringlist.html">QStringList</a> QSystemMemoryInfo::listOfVolumes ()</h3>
+<p>Returns a <a href="http://doc.qtsoftware.com/4.5/qstringlist.html">QStringList</a> of volumes or partitions.</p>
+<h3 class="fn"><a name="memoryCritical"></a>void QSystemMemoryInfo::memoryCritical ( <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint32-typedef">qint32</a> <i>percent</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when memory fall below 3%. <i>percent</i> of current charge.</p>
-<h3 class="fn"><a name="newMemoryCard"></a>void QSystemMemoryInfo::newMemoryCard ( const QString &amp; <i>driveVolume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<h3 class="fn"><a name="totalDiskSpace"></a>qlonglong QSystemMemoryInfo::totalDiskSpace ( const QString &amp; <i>volumeDrive</i> )</h3>
+<h3 class="fn"><a name="newMemoryCard"></a>void QSystemMemoryInfo::newMemoryCard ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>driveVolume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="totalDiskSpace"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qlonglong-typedef">qlonglong</a> QSystemMemoryInfo::totalDiskSpace ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>volumeDrive</i> )</h3>
 <p>Returns the amount of total space on the <i>volumeDrive</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
