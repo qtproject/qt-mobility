@@ -3528,25 +3528,25 @@ bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPa
     //Q_ASSERT(*subPath.constData() == '/');
 
     ReadHandle * rhandle = rh(handle);
+
+    QByteArray fullPath;
+    if (rhandle->path == "/")
+        fullPath = subPath;
+    else if (subPath.length() > 1)
+        fullPath = rhandle->path + subPath;
+    else
+        fullPath = rhandle->path;
+
     if(Client == type) {
         if(todo.isEmpty())
             todo << newPackId();
 
-        if (rhandle->path == "/")
-            todo << (quint8)APPLAYER_REMOVE << subPath;
-        else if (subPath.length() > 1)
-            todo << (quint8)APPLAYER_REMOVE << (rhandle->path + subPath);
-        else
-            todo << (quint8)APPLAYER_REMOVE << rhandle->path;
+        todo << (quint8)APPLAYER_REMOVE << fullPath;
 
         triggerTodo();
     } else {
-        bool changed;
-        if(rhandle->path != "/")
-            changed = doRemove(rhandle->path + subPath);
-        else
-            changed = doRemove(subPath);
-        if(changed) triggerTodo();
+        if (doRemove(fullPath))
+            triggerTodo();
     }
     return true;
 }

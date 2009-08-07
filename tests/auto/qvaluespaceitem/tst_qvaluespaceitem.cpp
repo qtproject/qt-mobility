@@ -538,67 +538,65 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("user/int")
         << 3;
 
-    //home base item + "/user" subpath -> should not work
     item1 = new QValueSpaceItem(*baseHome, QString("/user"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, QString(\"/user\"), this)")
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("/home//user")
+        << allPaths
+        << QString("/home/user")
         << QString("int")
-        << 100;
+        << 3;
 
     item1 = new QValueSpaceItem(*baseHome, QByteArray("/user"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, QByteArray(\"/user\"), this)")
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("/home//user")
+        << allPaths
+        << QString("/home/user")
         << QString("int")
-        << 100;
+        << 3;
 
     item1 = new QValueSpaceItem(*baseHome, "/user", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, \"/user\", this)")
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("/home//user")
+        << allPaths
+        << QString("/home/user")
         << QString("int")
-        << 100;
+        << 3;
 
-    //root base item + "/home" subpath -> should not work
     item1 = new QValueSpaceItem(*baseRoot, QString("/home"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QString(\"/home\"), this)") 
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("//home")
+        << (QList<QString>() << "user" << "usercount")
+        << QString("/home")
         << QString("user/int")
-        << 100;
+        << 3;
 
     item1 = new QValueSpaceItem(*baseRoot, QByteArray("/home"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QByteArray(\"/home\"), this)") 
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("//home")
+        << (QList<QString>() << "user" << "usercount")
+        << QString("/home")
         << QString("user/int")
-        << 100;
+        << 3;
 
     item1 = new QValueSpaceItem(*baseRoot, "/home", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, \"/home\",this)")
         << data
         << QVariant()
-        << QList<QString>()
-        << QString("//home")
+        << (QList<QString>() << "user" << "usercount")
+        << QString("/home")
         << QString("user/int")
-        << 100;
+        << 3;
 } 
 
 void tst_QValueSpaceItem::testConstructor()
