@@ -3532,10 +3532,12 @@ bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPa
         if(todo.isEmpty())
             todo << newPackId();
 
-        if(rhandle->path != "/")
+        if (rhandle->path == "/")
+            todo << (quint8)APPLAYER_REMOVE << subPath;
+        else if (subPath.length() > 1)
             todo << (quint8)APPLAYER_REMOVE << (rhandle->path + subPath);
         else
-            todo << (quint8)APPLAYER_REMOVE << subPath;
+            todo << (quint8)APPLAYER_REMOVE << rhandle->path;
 
         triggerTodo();
     } else {
