@@ -49,8 +49,8 @@
 <a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-lt-lt-3">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-gt-gt-2">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-lt-lt-71">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-gt-gt-68">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -72,16 +72,16 @@
 <p>Creates a new filter object that matches all service implementations.</p>
 <h3 class="fn"><a name="QServiceFilter-2"></a>QServiceFilter::QServiceFilter ( const QServiceFilter &amp; <i>other</i> )</h3>
 <p>Creates a copy of <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i>.</p>
-<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
+<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
 <h3 class="fn"><a name="clearCustomProperties"></a>void QServiceFilter::clearCustomProperties ()</h3>
 <p>Clears all custom properties from the filter's set of constraints</p>
 <p>See also <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
-<h3 class="fn"><a name="customKeys"></a>QList&lt;QString&gt; QServiceFilter::customKeys () const</h3>
+<h3 class="fn"><a name="customKeys"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>&gt; QServiceFilter::customKeys () const</h3>
 <p>Returns the list of custom keys which have been added to the filter.</p>
-<h3 class="fn"><a name="customProperty"></a>QString QServiceFilter::customProperty ( const QString &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="customProperty"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QServiceFilter::customProperty ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
 <p>See also <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
 <h3 class="fn"><a name="interfaceMajorVersion"></a>int QServiceFilter::interfaceMajorVersion () const</h3>
@@ -90,23 +90,23 @@
 <h3 class="fn"><a name="interfaceMinorVersion"></a>int QServiceFilter::interfaceMinorVersion () const</h3>
 <p>Returns the minor interface version for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="interfaceName"></a>QString QServiceFilter::interfaceName () const</h3>
+<h3 class="fn"><a name="interfaceName"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QServiceFilter::interfaceName () const</h3>
 <p>Returns the interface name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="removeCustomProperty"></a>void QServiceFilter::removeCustomProperty ( const QString &amp; <i>key</i> )</h3>
+<h3 class="fn"><a name="removeCustomProperty"></a>void QServiceFilter::removeCustomProperty ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> )</h3>
 <p>Removes the custom property <i>key</i> from the filter's set of constraints</p>
 <p>See also <a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a>() and <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>().</p>
-<h3 class="fn"><a name="serviceName"></a>QString QServiceFilter::serviceName () const</h3>
+<h3 class="fn"><a name="serviceName"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
-<h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>value</i> )</h3>
 <p>The filter only matches implementations which have the custom property <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
 <p>See also <a href="qservicefilter.html#customProperty">customProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
-<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
+<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>
 <p>This method does nothing if <i>version</i> is not a valid version string or if <i>interfaceName</i> is empty.</p>
 <p>A valid version string has the format x.y whereby x and y are positive integer numbers.</p>
-<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const QString &amp; <i>serviceName</i> )</h3>
+<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>serviceName</i> )</h3>
 <p>The filter only matches implementations which are provided by the service specified by <i>serviceName</i>.</p>
 <p>If the <i>serviceName</i> is empty the filter matches any service.</p>
 <p>See also <a href="qservicefilter.html#serviceName">serviceName</a>().</p>
@@ -117,9 +117,9 @@
 <p>Copies the content of the <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i> into this one.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-3"></a>QDataStream &amp; operator&lt;&lt; ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-71"></a><a href="http://doc.qtsoftware.com/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://doc.qtsoftware.com/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
 <p>Writes service filter <i>sf</i> to the stream <i>out</i> and returns a reference to the stream.</p>
-<h3 class="fn"><a name="operator-gt-gt-2"></a>QDataStream &amp; operator&gt;&gt; ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-gt-gt-68"></a><a href="http://doc.qtsoftware.com/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://doc.qtsoftware.com/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
 <p>Reads a service filter into <i>sf</i> from the stream <i>in</i> and returns a reference to the stream.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

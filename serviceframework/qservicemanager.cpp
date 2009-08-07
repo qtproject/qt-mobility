@@ -192,11 +192,11 @@ private slots:
 /*!
     \enum QServiceManager::Scope
 
-    \value UserScope When adding and removing services, use a storage location
-    specific to the current user (e.g. in the user's home directory). When
-    searching for services and interface implementations, first search in the
+    \value UserScope When adding and removing services, uses a storage location
+    specific to the current user.
+    When searching for services and interface implementations, first searches in the
     user-specific location; if the service or interface implementation
-    is not found, search in the system-wide storage location (if the user has
+    is not found, searches in the system-wide storage location (if the user has
     sufficient permissions to do so).
 
     \value SystemScope When adding and removing services, use a system-wide

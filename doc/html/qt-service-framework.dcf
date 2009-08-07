@@ -57,8 +57,6 @@
         <keyword ref="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-eq">operator=</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#operator-lt-lt">operator&lt;&lt;</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#operator-gt-gt">operator&gt;&gt;</keyword>
         <section ref="qserviceinterfacedescriptor-members.html" title="List of all members"/>
     </section>
     <section ref="qservicemanager.html" title="QServiceManager Class Reference">
