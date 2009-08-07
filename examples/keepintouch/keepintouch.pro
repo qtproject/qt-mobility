@@ -3,9 +3,15 @@ TARGET = keepintouch
 
 QT += gui
 
+win32:debug {
+    OUTPREFIX=Debug
+} else:win32 {
+    OUTPREFIX=Release
+}
+
 # Build against the messaging library
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../messaging
-LIBS += -L$$OUT_PWD/../../messaging -lQtMessaging
+LIBS += -L$$OUT_PWD/../../messaging/$$OUTPREFIX -lQtMessaging
 
 symbian|win32 {
 } else {

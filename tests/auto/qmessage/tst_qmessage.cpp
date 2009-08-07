@@ -73,8 +73,10 @@ private slots:
 
     void testType();
     void testParentAccountId();
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     void testParentFolderId();
     void testStandardFolder();
+#endif
     void testFrom();
     void testSubject();
     void testDate();
@@ -84,13 +86,18 @@ private slots:
     void testBcc();
     void testStatus();
     void testPriority();
+
+#ifdef QMESSAGING_OPTIONAL
     void testOriginatorPort();
     void testDestinationPort();
     void testCustomField();
+#endif
 
 private:
     QMessageAccountId testAccountId;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
+#endif
 };
 
 QTEST_MAIN(tst_QMessage)
@@ -123,8 +130,10 @@ void tst_QMessage::initTestCase()
         p.insert("displayName", "Root");
         p.insert("parentAccountName", "testAccount");
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
         testFolderId = Support::addFolder(p);
         QVERIFY(testFolderId.isValid());
+#endif
     }
 }
 
@@ -209,8 +218,28 @@ void tst_QMessage::testFromTransmissionFormat()
     QFETCH(QByteArray, charset);
     QFETCH(QString, text);
 
+//TODO
+
+/*
     QString path(SRCDIR "/testdata/" + fileName);
     QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
+
+    Support::Parameters p;
+    p.insert("to", to);
+    p.insert("from", from);
+    p.insert("date", date);
+    p.insert("subject", subject);
+    p.insert("text", text);
+    p.insert("parentAccountName", testAccountName);
+ 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    p.insert("parentFolderPath", testFolder.path());
+#endif
+
+    QMessageId messageId(Support::addMessage(p));
+
+*/
+    QMessage message;
 
     QCOMPARE(message.to().first().recipient(), to);
     QCOMPARE(message.from().recipient(), from);
@@ -259,11 +288,12 @@ void tst_QMessage::testToTransmissionFormat_simple()
     m1.setSubject(subject);
     m1.setDate(date);
 
+#ifdef QMESSAGING_OPTIONAL
     m1.setContentType(contentType);
     m1.setContentSubType(contentSubType);
     m1.setContentCharset(contentCharset);
     m1.setContent(contentText);
-
+#endif
     QByteArray serialized(m1.toTransmissionFormat());
 
     QCOMPARE(m1.from().recipient(), from);
@@ -324,6 +354,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
     m1.setSubject(subject);
 
+#ifdef QMESSAGING_OPTIONAL
     m1.setContentType(contentType);
     m1.setContentSubType(contentSubType);
 
@@ -361,6 +392,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
         m1.appendContent(p2);
     }
+#endif
 
     QByteArray serialized(m1.toTransmissionFormat());
 
@@ -477,7 +509,7 @@ void tst_QMessage::testParentAccountId()
     msg.setParentAccountId(testAccountId);
     QCOMPARE(msg.parentAccountId(), testAccountId);
 }
-
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 void tst_QMessage::testParentFolderId()
 {
     QMessage msg;
@@ -499,7 +531,7 @@ void tst_QMessage::testStandardFolder()
     msg.setStandardFolder(QMessage::TrashFolder);
     QCOMPARE(msg.standardFolder(), QMessage::TrashFolder);
 }
-
+#endif
 void tst_QMessage::testFrom()
 {
     QMessage msg;
@@ -634,6 +666,7 @@ void tst_QMessage::testPriority()
     QCOMPARE(msg.priority(), QMessage::Low);
 }
 
+#ifdef QMESSAGING_OPTIONAL
 void tst_QMessage::testOriginatorPort()
 {
     QMessage msg;
@@ -681,4 +714,6 @@ void tst_QMessage::testCustomField()
     QCOMPARE(msg.customFields(), ( QSet<QString>() << "check" ).toList());
     QCOMPARE(msg.customField("testing"), QString());
 }
+
+#endif
 

@@ -68,8 +68,11 @@ private slots:
     void testAccount_data();
     void testAccount();
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+
     void testFolder_data();
     void testFolder();
+#endif
 
     void testMessage_data();
     void testMessage();
@@ -131,6 +134,8 @@ void tst_QMessageStore::testAccount()
     QVERIFY(accountIds.contains(accountId));
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+
 void tst_QMessageStore::testFolder_data()
 {
     QTest::addColumn<QString>("path");
@@ -189,6 +194,8 @@ void tst_QMessageStore::testFolder()
     QVERIFY(folderIds.contains(folderId));
 }
 
+#endif
+
 void tst_QMessageStore::testMessage_data()
 {
     /*
@@ -227,6 +234,7 @@ void tst_QMessageStore::testMessage()
     }
     QVERIFY(testAccountId.isValid());
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(QMessageFolderFilterKey::parentAccountId(testAccountId)));
     if (folderIds.isEmpty()) {
@@ -240,6 +248,7 @@ void tst_QMessageStore::testMessage()
 
     QMessageFolder testFolder(testFolderId);
 
+#endif
     /*
     QFETCH(QString, fileName);
 
@@ -261,7 +270,10 @@ void tst_QMessageStore::testMessage()
     p.insert("subject", subject);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
+ 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     p.insert("parentFolderPath", testFolder.path());
+#endif
 
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
@@ -292,13 +304,14 @@ void tst_QMessageStore::testMessage()
 
     QString replacementText("This is replacement text.");
 
+#ifdef QMESSAGING_OPTIONAL
     QMessageContentContainer replacement;
     replacement.setContentType("text");
     replacement.setContentSubType("fancy");
     replacement.setContentCharset("UTF-8");
     replacement.setContent(QByteArray(replacementText.toAscii()));
-
     message.replaceContent(bodyId, replacement);
+#endif
     body = message.container(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));

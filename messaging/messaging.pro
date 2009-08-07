@@ -3,11 +3,8 @@ TEMPLATE = lib
 TARGET = QtMessaging
 INCLUDEPATH += .
 
-include(../common.pri)
-
 #Input
 
-!static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MESSAGING_LIB
 DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
@@ -104,6 +101,8 @@ SOURCES += qmessageid_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
 }
 win32 {
+!static:DEFINES += QT_MAKEDLL
+
 HEADERS += winhelpers_p.h
 
 SOURCES += winhelpers.cpp \

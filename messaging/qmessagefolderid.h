@@ -62,7 +62,7 @@ private:
 
 typedef QList<QMessageFolderId> QMessageFolderIdList;
 
-uint qHash(const QMessageFolderId &id);
+Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
 
 #endif
 #endif

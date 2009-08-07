@@ -61,6 +61,6 @@ private:
 
 typedef QList<QMessageAccountId> QMessageAccountIdList;
 
-uint qHash(const QMessageAccountId &id);
+Q_MESSAGING_EXPORT uint qHash(const QMessageAccountId &id);
 
 #endif

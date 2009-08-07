@@ -32,6 +32,9 @@
 ****************************************************************************/
 
 #include "support.h"
+#include <qmessageaccountid.h>
+#include <qmessagefolderid.h>
+#include <qmessageid.h>
 
 namespace Support {
 
@@ -45,14 +48,14 @@ QMessageAccountId addAccount(const Parameters &params)
 
     return QMessageAccountId();
 }
-
+#ifdef QMESSAGE_OPTIONAL_FOLDER
 QMessageFolderId addFolder(const Parameters &params)
 {
     Q_UNUSED(params)
 
     return QMessageFolderId();
 }
-
+#endif
 QMessageId addMessage(const Parameters &params)
 {
     Q_UNUSED(params)

@@ -35,6 +35,7 @@
 
 #include <QMap>
 #include <QString>
+#include <qmessageglobal.h>
 
 class QMessageAccountId;
 class QMessageFolderId;
@@ -44,11 +45,13 @@ namespace Support {
 
 typedef QMap<QString, QString> Parameters;
 
-void clearMessageStore();
+Q_MESSAGING_EXPORT void clearMessageStore();
 
-QMessageAccountId addAccount(const Parameters &params);
-QMessageFolderId addFolder(const Parameters &params);
-QMessageId addMessage(const Parameters &params);
+Q_MESSAGING_EXPORT QMessageAccountId addAccount(const Parameters &params);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+Q_MESSAGING_EXPORT QMessageFolderId addFolder(const Parameters &params);
+#endif
+Q_MESSAGING_EXPORT QMessageId addMessage(const Parameters &params);
 
 }
 

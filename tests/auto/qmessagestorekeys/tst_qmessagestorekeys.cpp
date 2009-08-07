@@ -71,12 +71,13 @@ private slots:
     void testAccountSortKey_data();
     void testAccountSortKey();
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     void testFolderFilterKey_data();
     void testFolderFilterKey();
 
     void testFolderSortKey_data();
     void testFolderSortKey();
-
+#endif
     void testMessageFilterKey_data();
     void testMessageFilterKey();
 
@@ -84,10 +85,12 @@ private slots:
     void testMessageSortKey();
 
 private:
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList standardFolderIds;
+    QMessageFolderIdList folderIds;
+#endif
 
     QMessageAccountIdList accountIds;
-    QMessageFolderIdList folderIds;
     QMessageIdList messageIds;
 };
 
@@ -95,9 +98,11 @@ Q_DECLARE_METATYPE(QMessageAccountIdList)
 Q_DECLARE_METATYPE(QMessageAccountFilterKey)
 Q_DECLARE_METATYPE(QMessageAccountSortKey)
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 Q_DECLARE_METATYPE(QMessageFolderIdList)
 Q_DECLARE_METATYPE(QMessageFolderFilterKey)
 Q_DECLARE_METATYPE(QMessageFolderSortKey)
+#endif
 
 Q_DECLARE_METATYPE(QMessageIdList)
 Q_DECLARE_METATYPE(QMessageFilterKey)
@@ -111,11 +116,12 @@ QDebug &operator<<(QDebug &dbg, const QMessageAccountId &id)
     return dbg << id.toString();
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QDebug &operator<<(QDebug &dbg, const QMessageFolderId &id)
 {
     return dbg << id.toString();
 }
-
+#endif
 QDebug &operator<<(QDebug &dbg, const QMessageId &id)
 {
     return dbg << id.toString();
@@ -160,11 +166,7 @@ void tst_QMessageStoreKeys::initTestCase()
 {
     Support::clearMessageStore();
 
-    standardFolderIds = QMessageStore::instance()->queryFolders();
-
     QList<Support::Parameters> accountParams;
-    QList<Support::Parameters> folderParams;
-    QList<Support::Parameters> messageParams;
 
     accountParams << Params()("name", "Work")
                              ("fromAddress", "Important.Person@example.com")
@@ -173,6 +175,10 @@ void tst_QMessageStoreKeys::initTestCase()
                   << Params()("name", "Alter Ego")
                              ("fromAddress", "UltraMegaLightningBabe@superhero.test");
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    standardFolderIds = QMessageStore::instance()->queryFolders();
+
+    QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
                             ("path", "[Root]")
                             ("displayName", "My messages")
@@ -190,6 +196,13 @@ void tst_QMessageStoreKeys::initTestCase()
                             ("displayName", "X-Archived")
                             ("parentFolderPath", "/Inbox/X-Announce");
 
+foreach (const Support::Parameters &params, folderParams) {
+        folderIds.append(Support::addFolder(params));
+        QVERIFY(folderIds.last().isValid());
+    }
+#endif
+
+    QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
                              ("parentFolderPath", "[Root]")
                              ("type", "sms")
@@ -257,11 +270,7 @@ void tst_QMessageStoreKeys::initTestCase()
         accountIds.append(Support::addAccount(params));
         QVERIFY(accountIds.last().isValid());
     }
-    foreach (const Support::Parameters &params, folderParams) {
-        folderIds.append(Support::addFolder(params));
-        QVERIFY(folderIds.last().isValid());
-    }
-    foreach (const Support::Parameters &params, messageParams) {
+        foreach (const Support::Parameters &params, messageParams) {
         messageIds.append(Support::addMessage(params));
         QVERIFY(messageIds.last().isValid());
     }
@@ -640,6 +649,7 @@ void tst_QMessageStoreKeys::testAccountSortKey()
     QCOMPARE(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey(), sortKey), ids);
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 void tst_QMessageStoreKeys::testFolderFilterKey_data()
 {
     QTest::addColumn<QMessageFolderFilterKey>("key");
@@ -1254,6 +1264,8 @@ void tst_QMessageStoreKeys::testFolderSortKey()
     QMessageFolderFilterKey key(QMessageFolderFilterKey::parentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual));
     QCOMPARE(QMessageStore::instance()->queryFolders(key, sortKey), ids);
 }
+
+#endif //QMESSAGING_OPTIONAL_FOLDER
 
 void tst_QMessageStoreKeys::testMessageFilterKey_data()
 {
@@ -2172,6 +2184,8 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << messageIds
         << QMessageIdList();
 
+
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilterKey::parentFolderId(folderIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] )
@@ -2251,7 +2265,6 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList();
-
     QTest::newRow("ancestorFolderIds inclusion 1")
         << QMessageFilterKey::ancestorFolderIds(folderIds[1], QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
@@ -2331,6 +2344,7 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("NoneSuch"), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList();
+#endif
 }
 
 void tst_QMessageStoreKeys::testMessageFilterKey()
