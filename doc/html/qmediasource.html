@@ -18,22 +18,25 @@
 <ul>
 <li><a href="qmediasource-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource">QMediaSource</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource-2">QMediaSource</a></b> ( const QString &amp; <i>mimeType</i>, const QVariant &amp; <i>url</i> )</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#QMediaSource-3">QMediaSource</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
-<li><div class="fn"></div><b><a href="qmediasource.html#dtor.QMediaSource">~QMediaSource</a></b> ()</li>
-<li><div class="fn"></div>QVariant <b><a href="qmediasource.html#dataLocation">dataLocation</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#isNull">isNull</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qmediasource.html#mimeType">mimeType</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmediasource.html#setDataLocation">setDataLocation</a></b> ( const QVariant &amp; <i>url</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediasource.html#setMimeType">setMimeType</a></b> ( const QString &amp; <i>mimeType</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#operator-not-eq">operator!=</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
-<li><div class="fn"></div>QMediaSource &amp; <b><a href="qmediasource.html#operator-eq">operator=</a></b> ( const QMediaSource &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmediasource.html#operator-eq-eq">operator==</a></b> ( const QMediaSource &amp; <i>other</i> ) const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#QMediaSource">QMediaSource</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#QMediaSource-2">QMediaSource</a></b> ( const QString &amp; <i>mimeType</i>, const QVariant &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#QMediaSource-3">QMediaSource</a></b> ( const QMediaSource &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#dtor.QMediaSource">~QMediaSource</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#dataLocation">dataLocation</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#duration">duration</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#isNull">isNull</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#mimeType">mimeType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#setDataLocation">setDataLocation</a></b> ( const QVariant &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#setDuration">setDuration</a></b> ( int <i>ms</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#setMimeType">setMimeType</a></b> ( const QString &amp; <i>mimeType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#operator-not-eq">operator!=</a></b> ( const QMediaSource &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaSource &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#operator-eq">operator=</a></b> ( const QMediaSource &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediasource.html#operator-eq-eq">operator==</a></b> ( const QMediaSource &amp; <i>other</i> ) const</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -41,17 +44,23 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaSource"></a>QMediaSource::QMediaSource ()</h3>
-<h3 class="fn"><a name="QMediaSource-2"></a>QMediaSource::QMediaSource ( const QString &amp; <i>mimeType</i>, const QVariant &amp; <i>url</i> )</h3>
+<h3 class="fn"><a name="QMediaSource-2"></a>QMediaSource::QMediaSource ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> &amp; <i>url</i> )</h3>
 <h3 class="fn"><a name="QMediaSource-3"></a>QMediaSource::QMediaSource ( const QMediaSource &amp; <i>other</i> )</h3>
 <h3 class="fn"><a name="dtor.QMediaSource"></a>QMediaSource::~QMediaSource ()</h3>
-<h3 class="fn"><a name="dataLocation"></a>QVariant QMediaSource::dataLocation () const</h3>
+<h3 class="fn"><a name="dataLocation"></a><a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> QMediaSource::dataLocation () const</h3>
 <p>See also <a href="qmediasource.html#setDataLocation">setDataLocation</a>().</p>
+<h3 class="fn"><a name="duration"></a>int QMediaSource::duration () const</h3>
+<p>Return the duration of media in miliseconds or -1 if duration is not available.</p>
+<p>See also <a href="qmediasource.html#setDuration">setDuration</a>().</p>
 <h3 class="fn"><a name="isNull"></a>bool QMediaSource::isNull () const</h3>
-<h3 class="fn"><a name="mimeType"></a>QString QMediaSource::mimeType () const</h3>
+<h3 class="fn"><a name="mimeType"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QMediaSource::mimeType () const</h3>
 <p>See also <a href="qmediasource.html#setMimeType">setMimeType</a>().</p>
-<h3 class="fn"><a name="setDataLocation"></a>void QMediaSource::setDataLocation ( const QVariant &amp; <i>url</i> )</h3>
+<h3 class="fn"><a name="setDataLocation"></a>void QMediaSource::setDataLocation ( const <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> &amp; <i>url</i> )</h3>
 <p>See also <a href="qmediasource.html#dataLocation">dataLocation</a>().</p>
-<h3 class="fn"><a name="setMimeType"></a>void QMediaSource::setMimeType ( const QString &amp; <i>mimeType</i> )</h3>
+<h3 class="fn"><a name="setDuration"></a>void QMediaSource::setDuration ( int <i>ms</i> )</h3>
+<p>Set the duration of media in miliseconds.</p>
+<p>See also <a href="qmediasource.html#duration">duration</a>().</p>
+<h3 class="fn"><a name="setMimeType"></a>void QMediaSource::setMimeType ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>mimeType</i> )</h3>
 <p>See also <a href="qmediasource.html#mimeType">mimeType</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QMediaSource::operator!= ( const QMediaSource &amp; <i>other</i> ) const</h3>
 <h3 class="fn"><a name="operator-eq"></a>QMediaSource &amp; QMediaSource::operator= ( const QMediaSource &amp; <i>other</i> )</h3>

@@ -10,6 +10,8 @@ sourcedirs = ../../multimedia \
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
+indexes                 = $QTDIR/doc/html/qt.index
+
 outputdir               = ../html
 
 extraimages.HTML        = qtlogo \
