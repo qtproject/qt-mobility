@@ -13,6 +13,7 @@ public:
     V4LVideoWidget(QWidget *parent = 0);
     ~V4LVideoWidget();
 
+    void setFrameSize(const QSize& s);
     void setLength(qint64 len);
     void setData(char* data);
 
@@ -27,6 +28,7 @@ public slots:
 private:
     char* m_data;
     qint64 m_length;
+    QSize m_size;
     CameraFormatConverter* converter;
 };
 

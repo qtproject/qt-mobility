@@ -32,40 +32,34 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
 
-#include <QtCore/qobject.h>
+#ifndef V4LMEDIAFORMATCONTROL_H
+#define V4LMEDIAFORMATCONTROL_H
 
-#include "qcameraservice.h"
+#include "qmediaformatcontrol.h"
+#include <QtCore/qstringlist.h>
 
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
 class V4LCameraSession;
 
-class V4LCameraService : public QCameraService
+class V4LMediaFormatControl : public QMediaFormatControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    V4LMediaFormatControl(QObject *parent);
+    virtual ~V4LMediaFormatControl() {};
 
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    QObject *createEndpoint(const char *interface);
+    virtual QStringList supportedFormats() const { return m_supportedFormats; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    void setVideoOutput(QObject *output);
+    virtual QString formatDescription(const QString &formatMimeType) { return m_formatDescriptions.value(formatMimeType); }
 
-    QAbstractMediaControl *control(const char *name) const;
-
-    QList<QByteArray> deviceList();
 private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
+    V4LCameraSession* m_session;
+
+    QString m_format;
+    QStringList m_supportedFormats;
+    QMap<QString, QString> m_formatDescriptions;
 };
 
-#endif
+#endif // V4LMEDIAFORMATCONTROL_H

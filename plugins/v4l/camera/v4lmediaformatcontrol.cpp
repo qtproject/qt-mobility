@@ -32,40 +32,15 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "v4lmediaformatcontrol.h"
+#include "v4lcamerasession.h"
 
-#include <QtCore/qobject.h>
-
-#include "qcameraservice.h"
-
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
-class V4LCameraSession;
-
-class V4LCameraService : public QCameraService
+V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-    Q_OBJECT
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    m_session = qobject_cast<V4LCameraSession*>(parent);
 
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    QObject *createEndpoint(const char *interface);
+    m_supportedFormats.append("no mux");
+    setFormat(m_supportedFormats[0]);
+}
 
-    void setVideoOutput(QObject *output);
-
-    QAbstractMediaControl *control(const char *name) const;
-
-    QList<QByteArray> deviceList();
-private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-};
-
-#endif

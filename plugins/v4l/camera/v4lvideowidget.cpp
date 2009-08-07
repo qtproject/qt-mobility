@@ -11,12 +11,13 @@ V4LVideoWidget::V4LVideoWidget(QWidget *parent)
 {
     m_data   = 0;
     m_length = 0;
+    m_size   = QSize(320,240);
     converter = 0;
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
-    setMinimumHeight(240);
-    setMinimumWidth(320);
-    setBaseSize(320,240);
+    setMinimumHeight(m_size.height());
+    setMinimumWidth(m_size.width());
+    setBaseSize(m_size.width(),m_size.height());
     setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 }
 
@@ -34,23 +35,33 @@ void V4LVideoWidget::setLength(qint64 len)
     m_length = len;
 }
 
+void V4LVideoWidget::setFrameSize(const QSize& s)
+{
+    m_size = s;
+    setMinimumHeight(m_size.height());
+    setMinimumWidth(m_size.width());
+    setBaseSize(m_size.width(),m_size.height());
+    if(converter)
+        delete converter;
+
+    converter = CameraFormatConverter::createFormatConverter(m_size.width(),m_size.height());
+}
+
 void V4LVideoWidget::paintEvent(QPaintEvent *event)
 {
-    int w = width();
-    int h = height();
+    if(!converter || !m_data) return;
 
-    if(w > 320) w = 320;
-    if(h > 240) h = 240;
+    QImage image;
+    image = QImage(converter->convert((unsigned char*)m_data,m_length),m_size.width(),m_size.height(),QImage::Format_RGB16);
 
-    if(!converter)
-        converter = CameraFormatConverter::createFormatConverter(w,h);
-
-    if(m_data) {
-        QImage image;
-        image = QImage(converter->convert((unsigned char*)m_data,m_length),w,h,QImage::Format_RGB16);
-        QPainter painter(this);
-        if(painter.viewport().isValid()) {
+    QPainter painter(this);
+    if(painter.viewport().isValid()) {
+        if(m_size.width() == width())
             painter.drawImage(painter.viewport(),image);
+        else {
+            int x = (width() - image.width())/2;
+            int y = (height() - image.height())/2;
+            painter.drawImage(x,y,image);
         }
     }
 }

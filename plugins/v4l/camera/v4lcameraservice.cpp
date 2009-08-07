@@ -43,6 +43,8 @@
 #include "v4lmediacontrol.h"
 #include "v4lcamerasession.h"
 #include "v4lvideowidget.h"
+#include "v4lmediaformatcontrol.h"
+#include "v4lvideoencode.h"
 
 V4LCameraService::V4LCameraService(QObject *parent)
     : QCameraService(parent)
@@ -50,6 +52,8 @@ V4LCameraService::V4LCameraService(QObject *parent)
     m_session = new V4LCameraSession(this);
     m_control = new V4LCameraControl(this,m_session);
     m_media = new V4LMediaControl(m_session);
+    m_mediaFormat = new V4LMediaFormatControl(m_session);
+    m_videoEncode = new V4LVideoEncode(m_session);
 }
 
 V4LCameraService::~V4LCameraService()
@@ -57,6 +61,8 @@ V4LCameraService::~V4LCameraService()
     delete m_media;
     delete m_control;
     delete m_session;
+    delete m_videoEncode;
+    delete m_mediaFormat;
 }
 
 void V4LCameraService::setVideoOutput(QObject *output)
@@ -71,11 +77,17 @@ void V4LCameraService::setVideoOutput(QObject *output)
 
 QAbstractMediaControl *V4LCameraService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaRecorderControl") == 0)
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_media;
 
-    if(qstrcmp(name,"com.nokia.qt.CameraControl") == 0)
+    if(qstrcmp(name,QCameraControl_iid) == 0)
         return m_control;
+
+    if(qstrcmp(name,QVideoEncodeControl_iid) == 0)
+        return m_videoEncode;
+
+    if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+        return m_mediaFormat;
 
     return 0;
 }

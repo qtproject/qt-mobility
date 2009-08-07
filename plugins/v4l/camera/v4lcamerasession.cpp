@@ -84,6 +84,7 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
         resolutions << QSize(176, 144) << QSize(320, 240) << QSize(640, 480);
 
         ::close(sfd);
+        sfd = -1;
     }
     m_output = 0;
     m_windowSize = QSize(320,240);
@@ -103,6 +104,7 @@ void V4LCameraSession::setVideoOutput(QWidget* widget)
 {
     m_output = qobject_cast<V4LVideoWidget*>(widget);
     m_output->setBaseSize(m_windowSize);
+    m_output->setFrameSize(m_windowSize);
 }
 
 int V4LCameraSession::framerate() const
@@ -293,6 +295,8 @@ QSize V4LCameraSession::frameSize() const
 void V4LCameraSession::setFrameSize(const QSize& s)
 {
     m_windowSize = s;
+    if(m_output)
+        m_output->setFrameSize(s);
 }
 
 void V4LCameraSession::setDevice(const QByteArray &device)
@@ -306,6 +310,7 @@ void V4LCameraSession::setDevice(const QByteArray &device)
     if (sfd != -1) {
         available = true;
         ::close(sfd);
+        sfd = -1;
     }
 }
 
@@ -385,9 +390,18 @@ void V4LCameraSession::record()
 
     memset(&fmt, 0, sizeof(fmt));
     fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = 320;
-    fmt.fmt.pix.height      = 240;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    fmt.fmt.pix.width       = m_windowSize.width();
+    fmt.fmt.pix.height      = m_windowSize.height();
+
+    if(pixelF == QVideoFrame::Format_YUYV)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    if(pixelF == QVideoFrame::Format_RGB24)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    if(pixelF == QVideoFrame::Format_RGB565)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
+    if(pixelF == QVideoFrame::Format_UYVY)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+
     fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
     ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
 
@@ -419,6 +433,7 @@ void V4LCameraSession::record()
         if (mmap_data == reinterpret_cast<void*>(-1)) {
             qWarning()<<"can't mmap video data";
             ::close(sfd);
+            sfd = -1;
             emit stateChanged(QCamera::StoppedState);
             return;
         }
@@ -439,6 +454,7 @@ void V4LCameraSession::record()
         if(ret == -1) {
             qWarning()<<"can't mmap video data";
             ::close(sfd);
+            sfd = -1;
             emit stateChanged(QCamera::StoppedState);
             return;
         }
@@ -449,6 +465,7 @@ void V4LCameraSession::record()
     if(ret < 0) {
         qWarning()<<"can't start capture";
         ::close(sfd);
+        sfd = -1;
         emit stateChanged(QCamera::StoppedState);
         return;
     }
@@ -474,6 +491,7 @@ void V4LCameraSession::pause()
             notifier = 0;
         }
         ::close(sfd);
+        sfd = -1;
         m_state = QCamera::PausedState;
         emit stateChanged(m_state);
     }
@@ -492,6 +510,7 @@ void V4LCameraSession::stop()
             notifier = 0;
         }
         ::close(sfd);
+        sfd = -1;
         m_state = QCamera::StoppedState;
         emit stateChanged(m_state);
     }
