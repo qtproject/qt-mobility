@@ -60,7 +60,7 @@ public:
 private:
     void dumpContactDifferences(const QContact& a, const QContact& b);
     void dumpContact(const QContact &c);
-    void dumpContacts();
+    void dumpContacts(QContactManager *cm);
     bool isSuperset(const QContact& ca, const QContact& cb);
 
     void addManagers(); // add standard managers to the data
@@ -68,6 +68,9 @@ public slots:
     void init();
     void cleanup();
 private slots:
+
+    void doDump();
+    void doDump_data() {addManagers();}
 
     /* Special test with special data */
     void uriParsing();
@@ -220,13 +223,14 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     }
 }
 
-void tst_QContactManager::dumpContacts()
+void tst_QContactManager::dumpContacts(QContactManager *cm)
 {
-    QContactManager m;
-    QList<QUniqueId> ids = m.contacts();
+    QList<QUniqueId> ids = cm->contacts();
+
+    qDebug() << "There are" << ids.count() << "contacts in" << cm->storeUri();
 
     foreach(QUniqueId id, ids) {
-        QContact c = m.contact(id);
+        QContact c = cm->contact(id);
         dumpContact(c);
     }
 }
@@ -446,6 +450,17 @@ void tst_QContactManager::ctors()
     delete cm6;
 
     /* cm9 should be deleted by ~parent */
+}
+
+void tst_QContactManager::doDump()
+{
+    // Only do this if it has been explicitly selected
+    if (QCoreApplication::arguments().contains("doDump")) {
+        QFETCH(QString, uri);
+        QContactManager* cm = QContactManager::fromUri(uri);
+
+        dumpContacts(cm);
+    }
 }
 
 void tst_QContactManager::groups()
@@ -688,7 +703,7 @@ void tst_QContactManager::add()
     QVERIFY(added.id() == alice.id());
 
     if (!isSuperset(added, alice)) {
-        dumpContacts();
+        dumpContacts(cm);
         dumpContactDifferences(added, alice);
     }
     delete cm;
