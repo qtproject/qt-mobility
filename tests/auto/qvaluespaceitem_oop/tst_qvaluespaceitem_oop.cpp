@@ -791,7 +791,7 @@ void tst_QValueSpaceItem_oop::ipcTests()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("vsiTestLackey_oop");
+    process.start("vsiTestLackey");
     QVERIFY(process.waitForStarted());
 
     //lackey sets 100 as part of its startup
@@ -947,7 +947,7 @@ void tst_QValueSpaceItem_oop::ipcSetValue()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("vsiTestLackey_oop",QStringList()<< "-ipcSetValue" );
+    process.start("vsiTestLackey",QStringList()<< "-ipcSetValue" );
     QVERIFY(process.waitForStarted());
 
     QTest::qWait(5000);
@@ -1181,7 +1181,7 @@ void tst_QValueSpaceItem_oop::ipcInterestNotification()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("vsiTestLackey_oop", QStringList() << "-ipcInterestNotification");
+    process.start("vsiTestLackey", QStringList() << "-ipcInterestNotification");
     QVERIFY(process.waitForStarted());
 
     // Lackey will receive itemNotify from server and  set the attribute.

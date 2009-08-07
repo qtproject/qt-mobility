@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = test lackey
+SUBDIRS = test
