@@ -18,12 +18,12 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://www.qtsoftware.com/contact.
@@ -35,10 +35,9 @@
 #include <qvaluespaceobject.h>
 
 #include <QCoreApplication>
-#include <QTest>
-#include <QFile>
+#include <QStringList>
 #include <QTimer>
-#include <stdio.h>
+
 #include <QDebug>
 
 #define TIMEOUT 700
@@ -78,7 +77,6 @@ public:
             }
             break;
         case IpcInterestNotification:
-            qDebug() << "lackey ipc interest notification";
             object = new QValueSpaceObject("/ipcInterestNotification");
             connect(object, SIGNAL(itemNotify(QByteArray,bool)),
                     this, SLOT(itemNotify(QByteArray,bool)));
@@ -105,7 +103,7 @@ private slots:
             case 4:
                 item->remove(QByteArray("changeRequests/value"));
                 break;
-            case 5: 
+            case 5:
                 item->remove("changeRequests/test");
                 break;
             case 6:
@@ -114,11 +112,10 @@ private slots:
         }
         index++;
         item->sync();
-        if (index == 7) {
+        if (index == 7)
             QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
-        } else
+        else
             QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
- 
     }
 
     void proceed() {
@@ -155,20 +152,16 @@ private slots:
 
     void changes()
     {
-        qDebug() << "changes:" << item->value("mine", 6).toInt();
-
+        //qDebug() << "changes:" << item->value("mine", 6).toInt();
     }
 
     void itemNotify(const QByteArray &path, bool interested)
     {
         qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
-            if (path == "/value") {
-                qDebug() << "setting attribute" << path << "to" << 5;
+            if (path == "/value")
                 object->setAttribute(path, 5);
-            }
         } else {
-            qDebug() << "removing attribute" << path;
             object->removeAttribute(path);
         }
     }
@@ -185,7 +178,6 @@ int main(int argc, char** argv)
     QCoreApplication app(argc, argv);
     QStringList arguments = app.arguments();
     arguments.takeFirst();
-    //QValueSpace::initValuespaceManager();
 
     Controller::Function function = Controller::IpcTests;
 
