@@ -34,12 +34,12 @@
 #define INTERFACEWIDGET_H
 
 #include <QWidget>
+#include <QXmlStreamWriter>
 
 class QLineEdit;
 class QSpinBox;
 class CapabilitiesWidget;
 class CustomPropertiesWidget;
-class QXmlStreamWriter;
 class ServiceMetaData;
 class QServiceInterfaceDescriptor;
 class MandatoryLineEdit;

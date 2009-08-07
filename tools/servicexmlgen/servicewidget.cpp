@@ -41,7 +41,6 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QGroupBox>
-#include <QXmlStreamWriter>
 #include <QPushButton>
 #include <QDebug>
 

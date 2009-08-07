@@ -40,7 +40,6 @@
 #include <QPushButton>
 #include <QTabBar>
 #include <QDebug>
-#include <QXmlStreamWriter>
 
 InterfacesTabWidget::InterfacesTabWidget(QWidget *parent)
     : QTabWidget(parent)
