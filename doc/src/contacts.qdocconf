@@ -17,6 +17,8 @@ exampledirs = ../../examples \
 
 outputdir               = ../html
 
+indexes                 = $QTDIR/doc/html/qt.index
+
 extraimages.HTML        = qtlogo \
                           codeless
 

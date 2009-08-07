@@ -32,6 +32,7 @@
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>8 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -39,9 +40,18 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactidfetchrequest.html#progress">progress</a></b> ( QContactIdFetchRequest * <i>self</i>, bool <i>appendOnly</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>4 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -56,17 +66,17 @@
 <h3 class="fn"><a name="filter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactIdFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the contacts whose ids will be returned</p>
 <p>See also <a href="qcontactidfetchrequest.html#setFilter">setFilter</a>().</p>
-<h3 class="fn"><a name="ids"></a>QList&lt;QUniqueId&gt; QContactIdFetchRequest::ids () const</h3>
+<h3 class="fn"><a name="ids"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; QContactIdFetchRequest::ids () const</h3>
 <p>Returns the list of ids of contacts which matched the request</p>
 <h3 class="fn"><a name="progress"></a>void QContactIdFetchRequest::progress ( QContactIdFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>, and contains an <i>appendOnly</i> flag which signifies whether or not the total ordering of the results have been maintained since the last progress signal was emitted.</p>
 <h3 class="fn"><a name="setFilter"></a>void QContactIdFetchRequest::setFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the filter which will be used to select the contacts whose ids will be returned to <i>filter</i></p>
 <p>See also <a href="qcontactidfetchrequest.html#filter">filter</a>().</p>
-<h3 class="fn"><a name="setSorting"></a>void QContactIdFetchRequest::setSorting ( const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
+<h3 class="fn"><a name="setSorting"></a>void QContactIdFetchRequest::setSorting ( const <a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the future sort ordering of the result of the request to <i>sorting</i>. This function only has effect on the result if called prior to calling <tt>start()</tt></p>
 <p>See also <a href="qcontactidfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; QContactIdFetchRequest::sorting () const</h3>
+<h3 class="fn"><a name="sorting"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; QContactIdFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering which will be used to sort the result</p>
 <p>See also <a href="qcontactidfetchrequest.html#setSorting">setSorting</a>().</p>
 <p /><address><hr /><div align="center">
