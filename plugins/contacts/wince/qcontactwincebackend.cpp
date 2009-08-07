@@ -169,21 +169,22 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& s
 
 // Our fields to POOM
 // QMap<definition, {QMap<field, poomid>, datatype, maxnumber}>
+typedef void (*processContactPoomElement)(const QContactDetail& detail, int index, QVector<CEPROPVAL>& props);
 
 // POOM to us
 // something like
 // {PIMPR_,PIMPR_} -> function
 // Might then need PIMPR -> bag above
 
-struct PoomMapElement;
-typedef void (*processElement)(const PoomMapElement& e, const QVariantList& values, QContact& ret);
+struct PoomContactElement;
+typedef void (*processPoomContactElement)(const PoomContactElement& e, const QVariantList& values, QContact& ret);
 
-struct PoomMapElement {
+struct PoomContactElement {
     QList<CEPROPID> poom;
-    processElement func;
+    processPoomContactElement func;
 };
 
-static void processName(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processName(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     name.setValue(QContactName::FieldPrefix, values[0]);
@@ -194,7 +195,7 @@ static void processName(const PoomMapElement& e, const QVariantList& values, QCo
     ret.saveDetail(&name);
 }
 
-static void processFileAs(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processFileAs(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     ret.setDisplayLabel(values[0].toString());
 }
@@ -212,23 +213,22 @@ static void processAddress(const QString& context, const QVariantList& values, Q
     ret.saveDetail(&address);
 }
 
-static void processHomeAddress(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processHomeAddress(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     processAddress(QContactDetail::AttributeContextHome, values, ret);
 }
 
-static void processWorkAddress(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processWorkAddress(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     processAddress(QContactDetail::AttributeContextWork, values, ret);
 }
 
-static void processOtherAddress(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processOtherAddress(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     processAddress(QContactDetail::AttributeContextOther, values, ret);
 }
 
-
-static void processEmails(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processEmails(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     // Just create an email address for each one
     foreach (const QVariant& v, values) {
@@ -240,7 +240,7 @@ static void processEmails(const PoomMapElement& e, const QVariantList& values, Q
     }
 }
 
-static void processPhones(const PoomMapElement& e, const QVariantList& values, QContact& ret)
+static void processPhones(const PoomContactElement& e, const QVariantList& values, QContact& ret)
 {
     // Crazy ordering, here
     for (int i=0; i < values.count(); i++) {
@@ -291,52 +291,52 @@ static void processPhones(const PoomMapElement& e, const QVariantList& values, Q
     }
 }
 
-static void contactTransformationMap(QHash<CEPROPID, PoomMapElement>& prophash, QVector<CEPROPID>& propids)
+static void contactP2QTransforms(QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
-    static QHash<CEPROPID, PoomMapElement> hash;
+    static QHash<CEPROPID, PoomContactElement> hash;
     static QVector<CEPROPID> ids;
 
     if (hash.count() == 0) {
-        QList<PoomMapElement> list;
+        QList<PoomContactElement> list;
 
         // Display label
-        PoomMapElement fileas;
+        PoomContactElement fileas;
         fileas.poom << PIMPR_FILEAS;
         fileas.func = processFileAs;
         list.append(fileas);
 
         // Names
-        PoomMapElement name;
+        PoomContactElement name;
         name.poom << PIMPR_TITLE << PIMPR_FIRST_NAME << PIMPR_MIDDLE_NAME << PIMPR_LAST_NAME << PIMPR_SUFFIX;
         name.func = processName;
         list.append(name);
 
         // Home address
-        PoomMapElement homeAddress;
+        PoomContactElement homeAddress;
         homeAddress.poom << PIMPR_HOME_ADDRESS << PIMPR_HOME_ADDRESS_STREET << PIMPR_HOME_ADDRESS_POSTAL_CODE << PIMPR_HOME_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_HOME_ADDRESS_COUNTRY;
         homeAddress.func = processHomeAddress;
         list.append(homeAddress);
 
         // Work address
-        PoomMapElement workAddress;
+        PoomContactElement workAddress;
         workAddress.poom << PIMPR_BUSINESS_ADDRESS << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_COUNTRY;
         workAddress.func = processWorkAddress;
         list.append(workAddress);
 
         // Other address
-        PoomMapElement otherAddress;
+        PoomContactElement otherAddress;
         otherAddress.poom << PIMPR_OTHER_ADDRESS << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_COUNTRY;
         otherAddress.func = processOtherAddress;
         list.append(otherAddress);
 
         // Emails
-        PoomMapElement emails;
+        PoomContactElement emails;
         emails.poom << PIMPR_EMAIL1_ADDRESS << PIMPR_EMAIL2_ADDRESS << PIMPR_EMAIL3_ADDRESS;
         emails.func = processEmails;
         list.append(emails);
 
         // Phone numbers
-        PoomMapElement phones;
+        PoomContactElement phones;
         phones.poom << PIMPR_BUSINESS_TELEPHONE_NUMBER << PIMPR_BUSINESS2_TELEPHONE_NUMBER
             << PIMPR_CAR_TELEPHONE_NUMBER  << PIMPR_MOBILE_TELEPHONE_NUMBER
             << PIMPR_HOME_TELEPHONE_NUMBER << PIMPR_HOME2_TELEPHONE_NUMBER
@@ -351,7 +351,7 @@ static void contactTransformationMap(QHash<CEPROPID, PoomMapElement>& prophash, 
 
 
         // Now, build the hash
-        foreach(const PoomMapElement& e, list) {
+        foreach(const PoomContactElement& e, list) {
             foreach(CEPROPID id, e.poom) {
                 ids.append(id);
                 hash.insert(id, e);
@@ -360,6 +360,46 @@ static void contactTransformationMap(QHash<CEPROPID, PoomMapElement>& prophash, 
     }
     propids = ids;
     prophash = hash;
+}
+
+static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
+{
+    CEPROPVAL val;
+    val.propid = id;
+    val.wFlags = 0;
+    val.wLenData = 0;
+    val.val.lpwstr = wcsdup(value.utf16()); // XXX leaks
+
+    return val;
+}
+
+static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPROPVAL>& props)
+{
+    if (!value.isEmpty()) {
+        props.append(convertToCEPropVal(id, value));
+    }
+}
+
+static void processQName(const QContactDetail& detail, int index, QVector<CEPROPVAL>& props)
+{
+    if (index == 0) {
+        addIfNotEmpty(PIMPR_TITLE, detail.value(QContactName::FieldPrefix), props);
+        addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirst), props);
+        addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
+        addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
+        addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    } else {
+        qDebug() << "Extra name!??";
+    }
+}
+
+static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
+{
+    static QHash<QString, processContactPoomElement> hash;
+    if (hash.count() == 0) {
+        hash.insert(QContactName::DefinitionName, processQName);
+    }
+    ret = hash;
 }
 
 static QVariant convertCEPropVal(const CEPROPVAL& val)
@@ -410,11 +450,11 @@ QContact QContactWinCEEngine::convertContact(IItem *contact) const
     unsigned long cbSize = 0;
 
     // Map information
-    QHash<CEPROPID, PoomMapElement> hash;
+    QHash<CEPROPID, PoomContactElement> hash;
     QVector<CEPROPID> props;
 
     // Get our mapping tables
-    contactTransformationMap(hash, props);
+    contactP2QTransforms(hash, props);
 
     CEPROPVAL *propvals = 0;
     HRESULT hr = contact->GetProps(props.constData(), CEDB_ALLOWREALLOC, props.count(), &propvals, &cbSize, GetProcessHeap());
@@ -435,7 +475,7 @@ QContact QContactWinCEEngine::convertContact(IItem *contact) const
             CEPROPID id = valueHash.constBegin().key();
 
             qDebug() << "Property:" << id << TypeFromPropID(id) << valueHash.value(id);
-            const PoomMapElement& qmap = hash.value(id);
+            const PoomContactElement& qmap = hash.value(id);
             if (qmap.func) {
                 // We need to create values for each of qmap.poom
                 // (which means we need to find each value of qmap.poom)
@@ -456,6 +496,41 @@ QContact QContactWinCEEngine::convertContact(IItem *contact) const
     }
 
     return ret;
+}
+
+bool QContactWinCEEngine::convertContact(const QContact& contact, IItem* item, QContactManager::Error &error) const
+{
+    // We have to create a whole bunch of CEPROPVALs for each detail
+    // This is slightly hampered by the limited storage slots
+
+    QList<QContactDetail> details = contact.details();
+    QHash<QString, int> indices;
+    QHash<QString, processContactPoomElement> transforms;
+
+    contactQ2PTransforms(transforms);
+    processContactPoomElement func;
+
+    QVector<CEPROPVAL> props;
+
+    foreach (const QContactDetail& detail, details) {
+        func = transforms.value(detail.definitionName());
+        if (func) {
+            int idx = indices.value(detail.definitionName(), 0);
+            func(detail, idx, props);
+            indices.insert(detail.definitionName(), idx + 1);
+        }
+    }
+
+    // Now set it
+    qDebug() << "Trying to set" << props.count() << "properties";
+    HRESULT hr = item->SetProps(0, props.count(), props.data());
+    if (SUCCEEDED(hr)) {
+        qDebug() << "Set props ok!";
+        return true;
+    } else {
+        qDebug() << "Failed to set props:" << HRESULT_CODE(hr);
+    }
+    return false;
 }
 
 QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
@@ -492,20 +567,92 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
     }
 
     // ensure that the contact's details conform to their definitions
+    /*
     if (!validateContact(*contact, error)) {
+        qDebug() << "Failed to validate";
         error = QContactManager::InvalidDetailError;
         return false;
+    }*/
+
+    IItem *icontact = 0;
+    bool wasOld = false;
+    // Figure out if this is a new or old contact
+    if (d->m_ids.contains(contact->id())) {
+        // update existing contact
+        HRESULT hr = d->m_app->GetItemFromOidEx(contact->id(), 0, &icontact);
+        if (SUCCEEDED(hr)) {
+            wasOld = true;
+            qDebug() << "Got old item ok";
+        } else {
+            qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
+            error = QContactManager::UnspecifiedError;
+        }
+    } else {
+        // new contact!
+        HRESULT hr = d->m_items2->Add((IDispatch**) &icontact);
+        if (SUCCEEDED(hr)) {
+            qDebug() << "Succeeded creating contact";
+        } else {
+            qDebug() << "Failed to create contact: "<< HRESULT_CODE(hr);
+            error = QContactManager::OutOfMemoryError;
+        }
     }
 
+    if (icontact) {
+        // Convert our QContact to the Icontact (via setProps)
+        if (convertContact(*contact, icontact, error)) {
+            HRESULT hr = icontact->Save();
+            if (SUCCEEDED(hr)) {
+                // yay! we also need to set the new contact id
+                long oid = 0;
+                hr = icontact->get_Oid(&oid);
+                if (SUCCEEDED(hr)) {
+                    contact->setId((QUniqueId)oid);
+                    if (wasOld)
+                        contactsChanged.insert(contact->id());
+                    else
+                        contactsAdded.insert(contact->id());
+                    d->m_ids.append(contact->id());
+                    error = QContactManager::NoError;
+                    icontact->Release();
+                    return true;
+                }
+                qDebug() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
+                // Blargh.
+                error = QContactManager::UnspecifiedError;
+            } else {
+                qDebug() << "Failed to save contact" << HRESULT_CODE(hr);
+            }
+        } else {
+            qDebug() << "Failed to convert contact";
+        }
+        icontact->Release();
+    }
 
-    // success!
-    error = QContactManager::NoError;
-    return true;
+    // error should have been set.
+    return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+
+bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& , QContactManager::Error& error)
 {
-    error = QContactManager::DoesNotExistError;
+    // Fetch an IItem* for this
+    IItem* item = 0;
+    HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
+    if (SUCCEEDED(hr)) {
+        hr = item->Delete();
+        if (SUCCEEDED(hr)) {
+            contactsChanged.insert(contactId);
+            item->Release();
+            error = QContactManager::NoError;
+            return true;
+        }
+        qDebug() << "Failed to delete:" << HRESULT_CODE(hr);
+        error = QContactManager::UnspecifiedError;
+    } else {
+        qDebug() << "Failed to retrieve item pointer" << HRESULT_CODE(hr);
+        error = QContactManager::DoesNotExistError;
+    }
     return false;
 }
 
@@ -513,7 +660,7 @@ bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUnique
 QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    return QMap<QString, QContactDetailDefinition>();
+    return QContactManagerEngine::schemaDefinitions();
 }
 
 QContactDetailDefinition QContactWinCEEngine::detailDefinition(const QString& definitionName, QContactManager::Error& error) const
@@ -546,11 +693,8 @@ bool QContactWinCEEngine::removeDetailDefinition(const QString& definitionId, QC
 bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Batch:
-        case QContactManagerInfo::ActionPreferences:
         case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::CreateOnlyDetails:
-        case QContactManagerInfo::MutableDefinitions:
+//        case QContactManagerInfo::MutableDefinitions:
         case QContactManagerInfo::Synchronous:
             return true;
         default:
