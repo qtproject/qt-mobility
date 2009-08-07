@@ -35,7 +35,6 @@
 
 #include <qvaluespace.h>
 #include <qvaluespaceobject.h>
-#include <qvaluespacemanager_p.h>
 
 #include <QTest>
 #include <QSet>
@@ -69,20 +68,18 @@ Q_SIGNALS:
     void copyChanged();
     void changeValue(const QByteArray&, const QVariant&);
     void itemRemove(const QByteArray&);
-    void itemNotify(const QByteArray&,bool);
+    void itemNotify(const QByteArray&, bool);
 };
 
-Q_DECLARE_METATYPE(QAbstractValueSpaceLayer*)
 Q_DECLARE_METATYPE(QValueSpaceItem*)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QList<QString>)
-Q_DECLARE_METATYPE(QUuid)
 
 void tst_QValueSpaceItem::initTestCase()
 {
-    qRegisterMetaType<QVariant>("QVariant");
-
+#if defined(QT_START_VALUESPACE)
     QValueSpace::initValuespaceManager();
+#endif
 
     root = new QValueSpaceObject("/");
     root->setAttribute("/home/user/bool", true);
@@ -155,7 +152,9 @@ void tst_QValueSpaceItem::dataVersatility()
 
     QValueSpaceObject object("/usr/data");
     object.setAttribute(typeString, data);
+    object.sync();
     QValueSpaceItem item("/usr/data");
+    item.sync();
     QVariant v = item.value(typeString);
 
     QCOMPARE(v.type(), (QVariant::Type)typeIdent);
@@ -172,7 +171,6 @@ void tst_QValueSpaceItem::testConstructor_data()
     QTest::addColumn< int >("expectedValue");
 
     QList<QString> allPaths;
-    //allPaths << "bool" << "int" << "QString" << "QByteArray" << "double" << "float" << "QChar" << "QRect";
     allPaths << "bool" << "int" << "QString" << "QStringList" << "qint64" << "QByteArray" << "double" << "float" << "QChar";
 
     //valid items based on / path
@@ -566,7 +564,6 @@ void tst_QValueSpaceItem::testConstructor()
     QCOMPARE(item->value(), value);
     QCOMPARE(item->subPaths().toSet(), subPaths.toSet());
     QCOMPARE(item->itemName(), itemName);
-
     QCOMPARE(item->value(relItemPath, 100).toInt(), expectedValue);
 }
 
@@ -734,8 +731,6 @@ void tst_QValueSpaceItem::value()
     QCOMPARE( base2->value("QByteArray", QByteArray("invalid")).toByteArray(), QByteArray("testByteArray"));
     QCOMPARE( base2->value("double", 4.0).toDouble(), 4.56);
     //QCOMPARE( base2->value("float", 4.0).toDouble(), 4.56);
-
-
 }
 
 void tst_QValueSpaceItem::ipcTests()
@@ -751,8 +746,6 @@ void tst_QValueSpaceItem::ipcTests()
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
     process.start("vsiTestLackey");
-    bool result = process.waitForStarted();
-    qDebug() << result << process.error() << process.errorString();
     QVERIFY(process.waitForStarted());
 
     //lackey sets 100 as part of its startup
@@ -782,8 +775,10 @@ void tst_QValueSpaceItem::setValue()
     QValueSpaceObject* object = new QValueSpaceObject("/usr/intern/changeRequests");
     object->setAttribute("value", 500);
     object->setObjectName("object");
+    object->sync();
     QValueSpaceObject* rel_object = new QValueSpaceObject("/usr/intern");
     rel_object->setObjectName("rel_object");
+    rel_object->sync();
 
 
     QValueSpaceItem item("/usr/intern/changeRequests/value");
@@ -869,6 +864,7 @@ void tst_QValueSpaceItem::removeValue()
 {
     QValueSpaceObject* object = new QValueSpaceObject("/usr/intern/changeRequests");
     object->setAttribute("value", 500);
+    object->sync();
     object->setObjectName("object");
     QValueSpaceObject* rel_object = new QValueSpaceObject("/usr/intern");
     rel_object->setObjectName("rel_object");
@@ -959,6 +955,7 @@ void tst_QValueSpaceItem::ipcSetValue()
     objects.append( new QValueSpaceObject("/usr") ); //parent path
     objects.append( new QValueSpaceObject("/usr/lackey/unrelated")); //subpath
     objects.at(0)->setAttribute("changeRequests/value", 500);
+    objects.at(0)->sync();
 
     QValueSpaceItem item("/usr/lackey/changeRequests/value");
 
@@ -1191,7 +1188,6 @@ void tst_QValueSpaceItem::ipcInterestNotification()
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
-    // Test support.
     if (!root->supportsRequests())
         QSKIP("Underlying layer does not support requests.", SkipSingle);
 

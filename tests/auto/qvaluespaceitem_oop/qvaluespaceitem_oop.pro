@@ -7,6 +7,10 @@ QT = core
 
 include(../../../common.pri)
 
+VPATH += ../qvaluespaceitem
+DEPENDPATH += ../qvaluespaceitem
+INCLUDEPATH += ../qvaluespaceitem
+
 # Input
 SOURCES += tst_qvaluespaceitem_oop.cpp \
            tst_qvaluespaceitemshared.cpp

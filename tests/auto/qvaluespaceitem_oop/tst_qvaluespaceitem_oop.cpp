@@ -65,7 +65,7 @@ int main(int argc, char** argv)
     QStringList args = app.arguments();
 
 #if defined(QT_NO_PROCESS)
-        tst_QValueSpaceItem_oop test;
+        tst_QValueSpaceItem test;
         return QTest::qExec(&test, argc-1, argv);
 #else
     if (args.contains("-vsClientMode")) {
