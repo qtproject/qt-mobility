@@ -36,6 +36,7 @@
 #include <qmailnamespace.h>
 
 #include <QCoreApplication>
+#include <QFileInfo>
 
 using namespace QmfHelpers;
 
@@ -484,8 +485,10 @@ void QMessage::appendAttachments(const QStringList &fileNames)
     foreach (const QString &filename, fileNames) {
         QString mimeType(QMail::mimeTypeFromFileName(filename));
         if (!mimeType.isEmpty()) {
+            QFileInfo fi(filename);
+
             QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
-            cd.setFilename(filename.toAscii());
+            cd.setFilename(fi.fileName().toAscii());
 
             QMailMessageContentType ct(mimeType.toAscii());
 
