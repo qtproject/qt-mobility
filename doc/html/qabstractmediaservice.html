@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../multimedia/qabstractmediaservice.cpp -->
+<head>
+  <title>QAbstractMediaService Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAbstractMediaService Class Reference</h1>
+<pre>    #include &lt;QAbstractMediaService&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qabstractmediaservice-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#audioInput-prop">audioInput</a></b> : QObject *</div></li>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#audioOutput-prop">audioOutput</a></b> : QObject *</div></li>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#dataInput-prop">dataInput</a></b> : QObject *</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#dataOutput-prop">dataOutput</a></b> : QObject *</div></li>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#videoInput-prop">videoInput</a></b> : QObject *</div></li>
+<li><div class="fn"><b><a href="qabstractmediaservice.html#videoOutput-prop">videoOutput</a></b> : QObject *</div></li>
+</ul>
+</td></tr>
+</table></p>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">audioInput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioOutput-prop">audioOutput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaControl * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#control">control</a></b> ( const char * <i>name</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a></b> ( const char * <i>interface</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataInput-prop">dataInput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataOutput-prop">dataOutput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">setAudioInput</a></b> ( QObject * <i>input</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a></b> ( QObject * <i>output</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataInput-prop">setDataInput</a></b> ( QObject * <i>input</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataOutput-prop">setDataOutput</a></b> ( QObject * <i>output</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoInput-prop">setVideoInput</a></b> ( QObject * <i>input</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a></b> ( QObject * <i>output</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a></b> ( QMediaEndpointInterface::Direction <i>direction</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoInput-prop">videoInput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoOutput-prop">videoOutput</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#QAbstractMediaService">QAbstractMediaService</a></b> ( QObject * <i>parent</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<hr />
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="audioInput-prop"></a>audioInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioInput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioInput</b> ( QObject * <i>input</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="audioOutput-prop"></a>audioOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioOutput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioOutput</b> ( QObject * <i>output</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="dataInput-prop"></a>dataInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataInput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataInput</b> ( QObject * <i>input</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="dataOutput-prop"></a>dataOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataOutput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataOutput</b> ( QObject * <i>output</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="videoInput-prop"></a>videoInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoInput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setVideoInput</b> ( QObject * <i>input</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="videoOutput-prop"></a>videoOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoOutput</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setVideoOutput</b> ( QObject * <i>output</i> )</td></tr>
+</table>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QAbstractMediaService"></a>QAbstractMediaService::QAbstractMediaService ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="control"></a>QAbstractMediaControl * QAbstractMediaService::control ( const char * <i>name</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createEndpoint"></a><a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * QAbstractMediaService::createEndpoint ( const char * <i>interface</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Creates a new media end point object from the given <i>interface</i>.</p>
+<p>An end point object may be an input or output to a media service and can only be used with the service object that created it.</p>
+<p>A list of supported end point interfaces can be queried using the <a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a>() function.</p>
+<p>See also supportedEndpointInterface(), <a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a>(), and <a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a>().</p>
+<h3 class="fn"><a name="supportedEndpointInterfaces"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a>&gt; QAbstractMediaService::supportedEndpointInterfaces ( <a href="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Direction</a> <i>direction</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns a list of interfaces for <i>direction</i> media end point objects that can be created by a media service.</p>
+<p>See also <a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Multimedia API</div></td>
+</tr></table></div></address></body>
+</html>
