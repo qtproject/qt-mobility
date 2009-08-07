@@ -883,6 +883,87 @@ void tst_QValueSpaceItem::setValue()
 #endif
 }
 
+void tst_QValueSpaceItem::removeValue()
+{
+    QValueSpaceObject* object = new QValueSpaceObject("/usr/intern/changeRequests");
+    object->setAttribute("value", 500);
+    object->sync();
+    object->setObjectName("object");
+    QValueSpaceObject* rel_object = new QValueSpaceObject("/usr/intern");
+    rel_object->setObjectName("rel_object");
+
+
+    QValueSpaceItem item("/usr/intern/changeRequests/value");
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    ChangeListener* listener = new ChangeListener();
+    connect(object, SIGNAL(itemRemove(QByteArray)),
+            listener, SIGNAL(itemRemove(QByteArray)));
+    QSignalSpy spy(listener, SIGNAL(itemRemove(QByteArray)));
+
+    ChangeListener* rel_listener = new ChangeListener();
+    connect(rel_object, SIGNAL(itemRemove(QByteArray)),
+            rel_listener, SIGNAL(itemRemove(QByteArray)));
+    QSignalSpy rel_spy(rel_listener, SIGNAL(itemRemove(QByteArray)));
+
+    QList<QVariant> arguments;
+
+    if (item.remove()) {
+        item.sync();
+
+        QTRY_COMPARE(spy.count(), 1);
+        arguments = spy.takeFirst();
+
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(item.value("", 600).toInt(), 500);
+    }
+
+    QValueSpaceItem item2("/usr/intern");
+    QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+
+    if (item2.remove("changeRequests/value")) {
+        item2.sync();
+        QTRY_COMPARE(spy.count(), 1);
+
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(item2.value("changeRequests/value", 600).toInt(), 500);
+    }
+
+    QValueSpaceItem item3("/");
+    QCOMPARE(item3.value("usr/intern/changeRequests/value", 600).toInt(), 500);
+
+    if (item3.remove(QString("usr/intern/changeRequests/value"))) {
+        item3.sync();
+        QTRY_COMPARE(spy.count(), 1);
+
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(item3.value(QString("usr/intern/changeRequests/value"), 600).toInt(), 500);
+    }
+
+    QValueSpaceItem item4("/usr/intern/changeRequests");
+    QCOMPARE(item4.value("value", 600).toInt(), 500);
+
+    if (item4.remove(QByteArray("value"))) {
+        item4.sync();
+        QTRY_COMPARE(spy.count(), 1);
+
+        arguments = spy.takeFirst();
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
+    }
+
+    delete listener;
+    delete rel_listener;
+    delete object;
+    delete rel_object;
+}
+
 void tst_QValueSpaceItem::ipcSetValue()
 {
 #if defined(QT_NO_PROCESS)

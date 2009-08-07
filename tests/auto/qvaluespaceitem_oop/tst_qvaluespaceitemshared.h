@@ -55,11 +55,12 @@ private slots:
     void ipcTests();
     void setValue();
     void ipcSetValue();
+    void removeValue();
     void interestNotification_data();
     void interestNotification();
     void ipcInterestNotification();
 
 private:
-    QValueSpaceObject* root;
-    QValueSpaceObject* busy;
+    QValueSpaceObject *root;
+    QValueSpaceObject *busy;
 };
