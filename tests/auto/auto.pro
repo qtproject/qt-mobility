@@ -1,7 +1,9 @@
 TEMPLATE = subdirs
-SUBDIRS = tst_qcoordinate \
-          tst_qpositionupdate \
+SUBDIRS = tst_qgeocoordinate \
+          tst_qgeopositioninfo \
           tst_qsatelliteinfo \
           tst_qsatelliteinfosource \
-          tst_qpositionsource \
-          tst_qpositionareamonitor
+          tst_qgeopositioninfosource \
+          tst_qgeoareamonitor \
+          tst_qlocationutils \
+          tst_qnmeapositioninfosource

@@ -30,57 +30,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#ifndef QGEOAREAMONITOR_H
+#define QGEOAREAMONITOR_H
 
 #include "qlocationglobal.h"
+#include "qgeocoordinate.h"
 
-class QDebug;
-class QSatelliteInfoPrivate;
+#include <QObject>
+
+class QGeoPositionInfo;
+class QGeoAreaMonitorPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QSatelliteInfo
+class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
 {
+    Q_OBJECT
 public:
-    enum Property {
-        Elevation,
-        Azimuth
-    };
+    explicit QGeoAreaMonitor(QObject *parent = 0);
+    virtual ~QGeoAreaMonitor() = 0;
 
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
+    virtual void setMonitoredArea(const QGeoCoordinate &coordinate, int radius);
+    QGeoCoordinate coordinate() const;
+    int radius() const;
 
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
+    static QGeoAreaMonitor *createMonitor(QObject *parent = 0);
 
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
-
-    void setPrnNumber(int prn);
-    int prnNumber() const;
-
-    void setSignalStrength(int signalStrength);
-    int signalStrength() const;
-
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
-
-    bool hasProperty(Property property) const;
+signals:
+    void areaEntered(const QGeoPositionInfo &update);
+    void areaExited(const QGeoPositionInfo &update);
 
 private:
-#ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
-    QSatelliteInfoPrivate *d;
-};
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
+    Q_DISABLE_COPY(QGeoAreaMonitor)
+    QGeoAreaMonitorPrivate *d;
+}; 
 
 QT_END_NAMESPACE
 

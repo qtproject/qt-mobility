@@ -30,60 +30,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#ifndef QLOCATIONTESTUTILS_P_H
+#define QLOCATIONTESTUTILS_P_H
 
-#include "qlocationglobal.h"
+#include <QString>
+#include <QTest>
 
-class QDebug;
-class QSatelliteInfoPrivate;
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
 
-QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QSatelliteInfo
+class QLocationTestUtils
 {
 public:
-    enum Property {
-        Elevation,
-        Azimuth
-    };
+    static void uheap_mark();
+    static void uheap_mark_end();
 
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
-
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
-
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
-
-    void setPrnNumber(int prn);
-    int prnNumber() const;
-
-    void setSignalStrength(int signalStrength);
-    int signalStrength() const;
-
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
-
-    bool hasProperty(Property property) const;
-
-private:
-#ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
-    QSatelliteInfoPrivate *d;
+    static QString addNmeaChecksumAndBreaks(const QString &sentence);
 };
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

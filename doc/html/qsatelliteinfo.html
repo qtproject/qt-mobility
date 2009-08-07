@@ -30,12 +30,12 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#QSatelliteInfo">QSatelliteInfo</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#QSatelliteInfo-2">QSatelliteInfo</a></b> ( const QSatelliteInfo &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#dtor.QSatelliteInfo">~QSatelliteInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#doubleProperty">doubleProperty</a></b> ( Property <i>property</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#hasProperty">hasProperty</a></b> ( Property <i>property</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#prnNumber">prnNumber</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#property">property</a></b> ( Property <i>property</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#removeProperty">removeProperty</a></b> ( Property <i>property</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#setDoubleProperty">setDoubleProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#setPrnNumber">setPrnNumber</a></b> ( int <i>prn</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#setProperty">setProperty</a></b> ( Property <i>property</i>, qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#setSignalStrength">setSignalStrength</a></b> ( int <i>signalStrength</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#signalStrength">signalStrength</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfo.html#operator-not-eq">operator!=</a></b> ( const QSatelliteInfo &amp; <i>other</i> ) const</td></tr>
@@ -64,24 +64,24 @@
 <p>Creates a satellite information object with the values of <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QSatelliteInfo"></a>QSatelliteInfo::~QSatelliteInfo ()</h3>
 <p>Destroys a satellite information object.</p>
-<h3 class="fn"><a name="doubleProperty"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> QSatelliteInfo::doubleProperty ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
-<p>Returns the value of the specified <i>property</i> as a qreal value.</p>
-<p>Returns -1 if the value has not been set.</p>
-<p>See also <a href="qsatelliteinfo.html#hasProperty">hasProperty</a>() and <a href="qsatelliteinfo.html#setDoubleProperty">setDoubleProperty</a>().</p>
 <h3 class="fn"><a name="hasProperty"></a>bool QSatelliteInfo::hasProperty ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns true if the specified <i>property</i> is present in this update.</p>
 <h3 class="fn"><a name="prnNumber"></a>int QSatelliteInfo::prnNumber () const</h3>
 <p>Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.</p>
 <p>See also <a href="qsatelliteinfo.html#setPrnNumber">setPrnNumber</a>().</p>
+<h3 class="fn"><a name="property"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> QSatelliteInfo::property ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
+<p>Returns the value of the specified <i>property</i> as a qreal value.</p>
+<p>Returns -1 if the value has not been set.</p>
+<p>See also <a href="qsatelliteinfo.html#hasProperty">hasProperty</a>() and <a href="qsatelliteinfo.html#setProperty">setProperty</a>().</p>
 <h3 class="fn"><a name="removeProperty"></a>void QSatelliteInfo::removeProperty ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i> )</h3>
 <p>Removes the specified <i>property</i> and its value.</p>
-<h3 class="fn"><a name="setDoubleProperty"></a>void QSatelliteInfo::setDoubleProperty ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i>, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
-<p>Sets the value for <i>property</i> to <i>value</i>.</p>
-<p>See also <a href="qsatelliteinfo.html#doubleProperty">doubleProperty</a>().</p>
 <h3 class="fn"><a name="setPrnNumber"></a>void QSatelliteInfo::setPrnNumber ( int <i>prn</i> )</h3>
 <p>Sets the PRN (Pseudo-random noise) number to <i>prn</i>.</p>
 <p>The PRN number can be used to identify a satellite.</p>
 <p>See also <a href="qsatelliteinfo.html#prnNumber">prnNumber</a>().</p>
+<h3 class="fn"><a name="setProperty"></a>void QSatelliteInfo::setProperty ( <a href="qsatelliteinfo.html#Property-enum">Property</a> <i>property</i>, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
+<p>Sets the value for <i>property</i> to <i>value</i>.</p>
+<p>See also <a href="qsatelliteinfo.html#property">property</a>().</p>
 <h3 class="fn"><a name="setSignalStrength"></a>void QSatelliteInfo::setSignalStrength ( int <i>signalStrength</i> )</h3>
 <p>Sets the signal strength to <i>signalStrength</i>, in decibels.</p>
 <p>See also <a href="qsatelliteinfo.html#signalStrength">signalStrength</a>().</p>

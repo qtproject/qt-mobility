@@ -30,57 +30,64 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#ifndef QGEOPOSITIONINFOSOURCE_H
+#define QGEOPOSITIONINFOSOURCE_H
 
 #include "qlocationglobal.h"
+#include "qgeopositioninfo.h"
 
-class QDebug;
-class QSatelliteInfoPrivate;
+#include <QObject>
+
+class QGeoPositionInfoSourcePrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QSatelliteInfo
+
+class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
 {
+    Q_OBJECT
 public:
-    enum Property {
-        Elevation,
-        Azimuth
+    enum PositioningMethod {
+        SatellitePositioningMethods = 0x000000ff,
+        NonSatellitePositioningMethods = 0xffffff00,
+        AllPositioningMethods = 0xffffffff
     };
+    Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
 
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
+    explicit QGeoPositionInfoSource(QObject *parent = 0);
+    virtual ~QGeoPositionInfoSource();
 
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
+    virtual void setUpdateInterval(int msec);
+    int updateInterval() const;
 
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
+    virtual void setPreferredPositioningMethods(PositioningMethods methods);
+    PositioningMethods preferredPositioningMethods() const;
 
-    void setPrnNumber(int prn);
-    int prnNumber() const;
+    virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 
-    void setSignalStrength(int signalStrength);
-    int signalStrength() const;
+    virtual PositioningMethods supportedPositioningMethods() const = 0;
+    virtual int minimumUpdateInterval() const = 0;
 
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
+    static QGeoPositionInfoSource *createSource(QObject *parent = 0);
 
-    bool hasProperty(Property property) const;
+public slots:
+    virtual void startUpdates() = 0;
+    virtual void stopUpdates() = 0;
+
+    virtual void requestUpdate(int timeout = 5000) = 0;
+
+signals:
+    void positionUpdated(const QGeoPositionInfo &update);
+    void requestTimeout();
 
 private:
-#ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
-    QSatelliteInfoPrivate *d;
+    Q_DISABLE_COPY(QGeoPositionInfoSource)
+    QGeoPositionInfoSourcePrivate *d;
 };
 
-#ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
-#endif
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPositionInfoSource::PositioningMethods)
 
 QT_END_NAMESPACE
 

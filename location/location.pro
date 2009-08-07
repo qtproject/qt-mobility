@@ -5,6 +5,7 @@ QT = core
 include(../common.pri)
 
 symbian {
+    TARGET.UID3 = 0xEEA0E2D0
     TARGET.CAPABILITY = ALL -TCB
 }
 
@@ -14,17 +15,21 @@ INCLUDEPATH += .
 DEPENDPATH += .
 
 HEADERS +=  qlocationglobal.h \
-            qcoordinate.h \
-            qpositionupdate.h \
+            qlocationutils_p.h \
+            qgeocoordinate.h \
+            qgeopositioninfo.h \
             qsatelliteinfo.h \
             qsatelliteinfosource.h \
-            qpositionsource.h \
-            qpositionareamonitor.h
+            qgeopositioninfosource.h \
+            qgeoareamonitor.h \
+            qnmeapositioninfosource.h \
+            qnmeapositioninfosource_p.h
 
-SOURCES +=  qcoordinate.cpp \
-            qpositionupdate.cpp \
+SOURCES +=  qlocationutils.cpp \
+            qgeocoordinate.cpp \
+            qgeopositioninfo.cpp \
             qsatelliteinfo.cpp \
             qsatelliteinfosource.cpp \
-            qpositionsource.cpp \
-            qpositionareamonitor.cpp
-
+            qgeopositioninfosource.cpp \
+            qgeoareamonitor.cpp \
+            qnmeapositioninfosource.cpp

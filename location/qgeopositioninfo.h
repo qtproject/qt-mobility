@@ -30,40 +30,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#ifndef QGEOPOSITIONINFO_H
+#define QGEOPOSITIONINFO_H
 
 #include "qlocationglobal.h"
+#include "qgeocoordinate.h"
+
+#include <QDateTime>
 
 class QDebug;
-class QSatelliteInfoPrivate;
+class QDataStream;
+class QGeoPositionInfoPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QSatelliteInfo
+class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:
     enum Property {
-        Elevation,
-        Azimuth
+        Heading,
+        GroundSpeed,
+        VerticalSpeed,
+        MagneticVariation,
+        HorizontalAccuracy,
+        VerticalAccuracy
     };
 
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
+    QGeoPositionInfo();
+    QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime);
+    QGeoPositionInfo(const QGeoPositionInfo &other);
+    ~QGeoPositionInfo();
 
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
+    QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
 
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
+    bool operator==(const QGeoPositionInfo &other) const;
+    inline bool operator!=(const QGeoPositionInfo &other) const { return !operator==(other); }
 
-    void setPrnNumber(int prn);
-    int prnNumber() const;
+    bool isValid() const;
 
-    void setSignalStrength(int signalStrength);
-    int signalStrength() const;
+    void setDateTime(const QDateTime &dateTime);
+    QDateTime dateTime() const;
+
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    QGeoCoordinate coordinate() const;
 
     void setProperty(Property property, qreal value);
     qreal property(Property property) const;
@@ -73,13 +84,22 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
 #endif
-    QSatelliteInfoPrivate *d;
+#ifndef QT_NO_DATASTREAM
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
+#endif
+    QGeoPositionInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
+#endif
+
+#ifndef QT_NO_DATASTREAM
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
 #endif
 
 QT_END_NAMESPACE

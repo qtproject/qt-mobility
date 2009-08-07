@@ -30,60 +30,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#include "qlocationtestutils_p.h"
 
-#include "qlocationglobal.h"
+#if defined(Q_OS_SYMBIAN)
+    #include <e32std.h>
+#endif
 
-class QDebug;
-class QSatelliteInfoPrivate;
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QSatelliteInfo
+void QLocationTestUtils::uheap_mark()
 {
-public:
-    enum Property {
-        Elevation,
-        Azimuth
-    };
-
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
-
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
-
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
-
-    void setPrnNumber(int prn);
-    int prnNumber() const;
-
-    void setSignalStrength(int signalStrength);
-    int signalStrength() const;
-
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
-
-    bool hasProperty(Property property) const;
-
-private:
-#ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+#if defined(Q_OS_SYMBIAN)
+    __UHEAP_MARK;
 #endif
-    QSatelliteInfoPrivate *d;
-};
+}
 
-#ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+void QLocationTestUtils::uheap_mark_end()
+{
+#if defined(Q_OS_SYMBIAN)
+    __UHEAP_MARKEND;
 #endif
+}
 
-QT_END_NAMESPACE
+QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
+{
+    Q_ASSERT(sentence[0] == '$' && sentence[sentence.length()-1] == '*');
 
-QT_END_HEADER
-
-#endif
+    // XOR byte value of all characters between '$' and '*'
+    int result = 0;
+    for (int i=1; i<sentence.length()-1; i++)
+        result ^= sentence[i].toAscii();
+    QString sum;
+    sum.sprintf("%02x", result);
+    return sentence + sum + "\r\n";
+}

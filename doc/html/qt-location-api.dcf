@@ -1,101 +1,118 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-location-api.png" imagedir="../../gif" title="Qt Location API Reference Documentation">
 <section ref="classes.html" title="Classes">
-    <section ref="qcoordinate.html" title="QCoordinate Class Reference">
-        <keyword ref="qcoordinate.html">QCoordinate</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DecimalDegreesWithHemisphere</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DecimalDegrees</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DegreesMinutes</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DegreesMinutesWithHemisphere</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DegreesMinutesSeconds</keyword>
-        <keyword ref="qcoordinate.html#CoordinateFormat-enum">QCoordinate::DegreesMinutesSecondsWithHemisphere</keyword>
-        <keyword ref="qcoordinate.html#CoordinateType-enum">CoordinateType</keyword>
-        <keyword ref="qcoordinate.html#CoordinateType-enum">QCoordinate::InvalidCoordinate</keyword>
-        <keyword ref="qcoordinate.html#CoordinateType-enum">QCoordinate::Coordinate2D</keyword>
-        <keyword ref="qcoordinate.html#CoordinateType-enum">QCoordinate::Coordinate3D</keyword>
-        <keyword ref="qcoordinate.html#altitude">altitude</keyword>
-        <keyword ref="qcoordinate.html#azimuthTo">azimuthTo</keyword>
-        <keyword ref="qcoordinate.html#distanceTo">distanceTo</keyword>
-        <keyword ref="qcoordinate.html#isValid">isValid</keyword>
-        <keyword ref="qcoordinate.html#latitude">latitude</keyword>
-        <keyword ref="qcoordinate.html#longitude">longitude</keyword>
-        <keyword ref="qcoordinate.html#setAltitude">setAltitude</keyword>
-        <keyword ref="qcoordinate.html#setLatitude">setLatitude</keyword>
-        <keyword ref="qcoordinate.html#setLongitude">setLongitude</keyword>
-        <keyword ref="qcoordinate.html#toString">toString</keyword>
-        <keyword ref="qcoordinate.html#type">type</keyword>
-        <keyword ref="qcoordinate.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qcoordinate.html#operator-eq">operator=</keyword>
-        <keyword ref="qcoordinate.html#operator-eq-eq">operator==</keyword>
-        <section ref="qcoordinate-members.html" title="List of all members"/>
+    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
+        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
+        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
+        <keyword ref="qgeoareamonitor.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeoareamonitor.html#createMonitor">createMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#radius">radius</keyword>
+        <keyword ref="qgeoareamonitor.html#setMonitoredArea">setMonitoredArea</keyword>
+        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
-    <section ref="qpositionareamonitor.html" title="QPositionAreaMonitor Class Reference">
-        <keyword ref="qpositionareamonitor.html">QPositionAreaMonitor</keyword>
-        <keyword ref="qpositionareamonitor.html#areaEntered">areaEntered</keyword>
-        <keyword ref="qpositionareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qpositionareamonitor.html#coordinate">coordinate</keyword>
-        <keyword ref="qpositionareamonitor.html#createMonitor">createMonitor</keyword>
-        <keyword ref="qpositionareamonitor.html#radius">radius</keyword>
-        <keyword ref="qpositionareamonitor.html#setMonitoredArea">setMonitoredArea</keyword>
-        <section ref="qpositionareamonitor-members.html" title="List of all members"/>
+    <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
+        <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DecimalDegreesWithHemisphere</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DecimalDegrees</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DegreesMinutes</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DegreesMinutesWithHemisphere</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DegreesMinutesSeconds</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">QGeoCoordinate::DegreesMinutesSecondsWithHemisphere</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateType-enum">CoordinateType</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::Coordinate2D</keyword>
+        <keyword ref="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::Coordinate3D</keyword>
+        <keyword ref="qgeocoordinate.html#altitude">altitude</keyword>
+        <keyword ref="qgeocoordinate.html#azimuthTo">azimuthTo</keyword>
+        <keyword ref="qgeocoordinate.html#distanceTo">distanceTo</keyword>
+        <keyword ref="qgeocoordinate.html#isValid">isValid</keyword>
+        <keyword ref="qgeocoordinate.html#latitude">latitude</keyword>
+        <keyword ref="qgeocoordinate.html#longitude">longitude</keyword>
+        <keyword ref="qgeocoordinate.html#setAltitude">setAltitude</keyword>
+        <keyword ref="qgeocoordinate.html#setLatitude">setLatitude</keyword>
+        <keyword ref="qgeocoordinate.html#setLongitude">setLongitude</keyword>
+        <keyword ref="qgeocoordinate.html#toString">toString</keyword>
+        <keyword ref="qgeocoordinate.html#type">type</keyword>
+        <keyword ref="qgeocoordinate.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeocoordinate.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeocoordinate.html#operator-eq-eq">operator==</keyword>
+        <section ref="qgeocoordinate-members.html" title="List of all members"/>
     </section>
-    <section ref="qpositionsource.html" title="QPositionSource Class Reference">
-        <keyword ref="qpositionsource.html">QPositionSource</keyword>
-        <keyword ref="qpositionsource.html#PositioningMethod-enum">PositioningMethod</keyword>
-        <keyword ref="qpositionsource.html#PositioningMethod-enum">PositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::SatellitePositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::AllPositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#PositioningMethod-enum">QPositionSource::NonSatellitePositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#createSource">createSource</keyword>
-        <keyword ref="qpositionsource.html#lastKnownPosition">lastKnownPosition</keyword>
-        <keyword ref="qpositionsource.html#minimumUpdateInterval">minimumUpdateInterval</keyword>
-        <keyword ref="qpositionsource.html#positionUpdated">positionUpdated</keyword>
-        <keyword ref="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#requestTimeout">requestTimeout</keyword>
-        <keyword ref="qpositionsource.html#requestUpdate">requestUpdate</keyword>
-        <keyword ref="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#setUpdateInterval">setUpdateInterval</keyword>
-        <keyword ref="qpositionsource.html#startUpdates">startUpdates</keyword>
-        <keyword ref="qpositionsource.html#stopUpdates">stopUpdates</keyword>
-        <keyword ref="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
-        <keyword ref="qpositionsource.html#updateInterval">updateInterval</keyword>
-        <section ref="qpositionsource-members.html" title="List of all members"/>
+    <section ref="qgeopositioninfo.html" title="QGeoPositionInfo Class Reference">
+        <keyword ref="qgeopositioninfo.html">QGeoPositionInfo</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">Property</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::HorizontalAccuracy</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::VerticalAccuracy</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::Heading</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::VerticalSpeed</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::GroundSpeed</keyword>
+        <keyword ref="qgeopositioninfo.html#Property-enum">QGeoPositionInfo::MagneticVariation</keyword>
+        <keyword ref="qgeopositioninfo.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeopositioninfo.html#dateTime">dateTime</keyword>
+        <keyword ref="qgeopositioninfo.html#hasProperty">hasProperty</keyword>
+        <keyword ref="qgeopositioninfo.html#isValid">isValid</keyword>
+        <keyword ref="qgeopositioninfo.html#property">property</keyword>
+        <keyword ref="qgeopositioninfo.html#removeProperty">removeProperty</keyword>
+        <keyword ref="qgeopositioninfo.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qgeopositioninfo.html#setDateTime">setDateTime</keyword>
+        <keyword ref="qgeopositioninfo.html#setProperty">setProperty</keyword>
+        <keyword ref="qgeopositioninfo.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeopositioninfo.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeopositioninfo.html#operator-eq-eq">operator==</keyword>
+        <section ref="qgeopositioninfo-members.html" title="List of all members"/>
     </section>
-    <section ref="qpositionupdate.html" title="QPositionUpdate Class Reference">
-        <keyword ref="qpositionupdate.html">QPositionUpdate</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">Property</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::HorizontalAccuracy</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::VerticalAccuracy</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::Heading</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::VerticalSpeed</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::GroundSpeed</keyword>
-        <keyword ref="qpositionupdate.html#Property-enum">QPositionUpdate::MagneticVariation</keyword>
-        <keyword ref="qpositionupdate.html#coordinate">coordinate</keyword>
-        <keyword ref="qpositionupdate.html#doubleProperty">doubleProperty</keyword>
-        <keyword ref="qpositionupdate.html#hasProperty">hasProperty</keyword>
-        <keyword ref="qpositionupdate.html#isValid">isValid</keyword>
-        <keyword ref="qpositionupdate.html#removeProperty">removeProperty</keyword>
-        <keyword ref="qpositionupdate.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qpositionupdate.html#setDoubleProperty">setDoubleProperty</keyword>
-        <keyword ref="qpositionupdate.html#setUpdateTime">setUpdateTime</keyword>
-        <keyword ref="qpositionupdate.html#updateTime">updateTime</keyword>
-        <keyword ref="qpositionupdate.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qpositionupdate.html#operator-eq">operator=</keyword>
-        <keyword ref="qpositionupdate.html#operator-eq-eq">operator==</keyword>
-        <section ref="qpositionupdate-members.html" title="List of all members"/>
+    <section ref="qgeopositioninfosource.html" title="QGeoPositionInfoSource Class Reference">
+        <keyword ref="qgeopositioninfosource.html">QGeoPositionInfoSource</keyword>
+        <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethod</keyword>
+        <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::SatellitePositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::AllPositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::NonSatellitePositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#createSource">createSource</keyword>
+        <keyword ref="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
+        <keyword ref="qgeopositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</keyword>
+        <keyword ref="qgeopositioninfosource.html#positionUpdated">positionUpdated</keyword>
+        <keyword ref="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#requestTimeout">requestTimeout</keyword>
+        <keyword ref="qgeopositioninfosource.html#requestUpdate">requestUpdate</keyword>
+        <keyword ref="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#setUpdateInterval">setUpdateInterval</keyword>
+        <keyword ref="qgeopositioninfosource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qgeopositioninfosource.html#stopUpdates">stopUpdates</keyword>
+        <keyword ref="qgeopositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#updateInterval">updateInterval</keyword>
+        <section ref="qgeopositioninfosource-members.html" title="List of all members"/>
+    </section>
+    <section ref="qnmeapositioninfosource.html" title="QNmeaPositionInfoSource Class Reference">
+        <keyword ref="qnmeapositioninfosource.html">QNmeaPositionInfoSource</keyword>
+        <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</keyword>
+        <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::SimulationMode</keyword>
+        <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::RealTimeMode</keyword>
+        <keyword ref="qnmeapositioninfosource.html#device">device</keyword>
+        <keyword ref="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
+        <keyword ref="qnmeapositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</keyword>
+        <keyword ref="qnmeapositioninfosource.html#requestUpdate">requestUpdate</keyword>
+        <keyword ref="qnmeapositioninfosource.html#setDevice">setDevice</keyword>
+        <keyword ref="qnmeapositioninfosource.html#setUpdateInterval">setUpdateInterval</keyword>
+        <keyword ref="qnmeapositioninfosource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qnmeapositioninfosource.html#stopUpdates">stopUpdates</keyword>
+        <keyword ref="qnmeapositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
+        <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
+        <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>
     <section ref="qsatelliteinfo.html" title="QSatelliteInfo Class Reference">
         <keyword ref="qsatelliteinfo.html">QSatelliteInfo</keyword>
         <keyword ref="qsatelliteinfo.html#Property-enum">Property</keyword>
         <keyword ref="qsatelliteinfo.html#Property-enum">QSatelliteInfo::Azimuth</keyword>
         <keyword ref="qsatelliteinfo.html#Property-enum">QSatelliteInfo::Elevation</keyword>
-        <keyword ref="qsatelliteinfo.html#doubleProperty">doubleProperty</keyword>
         <keyword ref="qsatelliteinfo.html#hasProperty">hasProperty</keyword>
         <keyword ref="qsatelliteinfo.html#prnNumber">prnNumber</keyword>
+        <keyword ref="qsatelliteinfo.html#property">property</keyword>
         <keyword ref="qsatelliteinfo.html#removeProperty">removeProperty</keyword>
-        <keyword ref="qsatelliteinfo.html#setDoubleProperty">setDoubleProperty</keyword>
         <keyword ref="qsatelliteinfo.html#setPrnNumber">setPrnNumber</keyword>
+        <keyword ref="qsatelliteinfo.html#setProperty">setProperty</keyword>
         <keyword ref="qsatelliteinfo.html#setSignalStrength">setSignalStrength</keyword>
         <keyword ref="qsatelliteinfo.html#signalStrength">signalStrength</keyword>
         <keyword ref="qsatelliteinfo.html#operator-not-eq">operator!=</keyword>
