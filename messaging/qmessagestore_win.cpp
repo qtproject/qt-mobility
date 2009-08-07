@@ -33,6 +33,7 @@
 #include "qmessagestore_p.h"
 #include "qmessage_p.h"
 #include "qmessageid_p.h"
+#include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
@@ -343,12 +344,8 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
         return result;
 
     // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
-    MapiRecordKey folderRecordKey;
-    MapiRecordKey storeRecordKey;
-    QDataStream idStream(QByteArray::fromBase64(id.toString().toLatin1()));
-    idStream >> folderRecordKey;
-    idStream >> storeRecordKey;
-    QMessageAccountId accountId(storeRecordKey.toBase64());
+    MapiRecordKey storeRecordKey(QMessageFolderIdPrivate::storeRecordKey(id));
+    QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
     MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, accountId));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
