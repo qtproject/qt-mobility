@@ -56,7 +56,7 @@ public:
 
     Handle item(Handle parent, const QByteArray &subPath);
     void removeHandle(Handle handle);
-    void setProperty(Handle handle, Properties properties) { }
+    void setProperty(Handle, Properties) { }
 
     bool value(Handle handle, QVariant *data);
     bool value(Handle handle, const QByteArray &subPath, QVariant *data);
@@ -168,7 +168,7 @@ QSet<QByteArray> FakeLayer::children(Handle handle)
     return QSet<QByteArray>();
 }
 
-bool FakeLayer::requestSetValue(Handle handle, const QVariant &value)
+bool FakeLayer::requestSetValue(Handle handle, const QVariant &)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
@@ -176,7 +176,7 @@ bool FakeLayer::requestSetValue(Handle handle, const QVariant &value)
     return true;
 }
 
-bool FakeLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
+bool FakeLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
@@ -212,9 +212,12 @@ bool FakeLayer::notifyInterest(Handle handle, bool interested)
         if (interest[handle] == 0)
             interest.remove(handle);
     }
+
+    return true;
 }
 
-bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
+bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
+                         const QByteArray &subPath, const QVariant &)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
