@@ -71,7 +71,7 @@ public:
 
     Band band() const;
 
-    bool isSupportedBand(int b) const;
+    bool isSupportedBand(Band b) const;
 
     int frequency() const;
 

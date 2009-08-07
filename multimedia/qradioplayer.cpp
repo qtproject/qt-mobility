@@ -103,7 +103,7 @@ bool QRadioPlayer::isStereo() const
     return d_func()->control->isStereo();
 }
 
-bool QRadioPlayer::isSupportedBand(int b) const
+bool QRadioPlayer::isSupportedBand(QRadioPlayer::Band b) const
 {
     return d_func()->control->isSupportedBand(b);
 }
