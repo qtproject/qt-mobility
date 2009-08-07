@@ -47,6 +47,10 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen NOTIFY fullscreenChanged)
+    Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
+    Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
+    Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)
+    Q_PROPERTY(int saturation READ saturation WRITE setSaturation NOTIFY saturationChanged)
     Q_DECLARE_PRIVATE(QVideoWidget)
 public:
     QVideoWidget(QAbstractMediaService *service, QWidget *parent = 0);
@@ -54,13 +58,26 @@ public:
 
     bool isFullscreen() const;
 
+    int brightness() const;
+    int contrast() const;
+    int hue() const;
+    int saturation() const;
+
     QSize sizeHint() const;
 
 public Q_SLOTS:
     void setFullscreen(bool fullscreen);
+    void setBrightness(int brightness);
+    void setContrast(int contrast);
+    void setHue(int hue);
+    void setSaturation(int saturation);
 
 Q_SIGNALS:
     void fullscreenChanged(bool fullscreen);
+    void brightnessChanged(int brightness);
+    void contrastChanged(int contrast);
+    void hueChanged(int hue);
+    void saturationChanged(int saturation);
 
 protected:
     void showEvent(QShowEvent *event);

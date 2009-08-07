@@ -41,6 +41,10 @@ class QVideoOverlayEndpointPrivate : public QObjectPrivate
 public:
     QVideoOverlayEndpointPrivate()
         : winId(0)
+        , brightness(0)
+        , contrast(0)
+        , hue(0)
+        , saturation(0)
         , enabled(false)
         , fullscreen(false)
     {
@@ -48,6 +52,10 @@ public:
 
     QRect displayRect;
     WId winId;
+    int brightness;
+    int contrast;
+    int hue;
+    int saturation;
     bool enabled;
     bool fullscreen;
 };
@@ -171,7 +179,111 @@ void QVideoOverlayEndpoint::repaint()
 */
 
 /*!
-    \fn QVideoOverlayEndpoint::dimensionsChanged()
+    \fn QVideoOverlayEndpoint::nativeSizeChanged()
 
     Signals that the native dimensions of the video have changed.
+*/
+
+/*!
+    Returns the brightness adjustment applied to a video overlay.
+
+    Valid brightness values range between -100 and 100, the default is 0.
+*/
+int QVideoOverlayEndpoint::brightness() const
+{
+    return d_func()->brightness;
+}
+
+/*!
+    Sets a \a brightness adjustment for a video overlay.
+
+    Valid brightness values range between -100 and 100, the default is 0.
+*/
+void QVideoOverlayEndpoint::setBrightness(int brightness)
+{
+    emit brightnessChanged(d_func()->brightness = brightness);
+}
+
+/*!
+    \fn QVideoOverlayEndpoint::brightnessChanged(int brightness)
+
+    Signals that a video overlay's \a brightness adjustment has changed.
+*/
+
+/*!
+    Returns the contrast adjustment applied to a video overlay.
+
+    Valid contrast values range between -100 and 100, the default is 0.
+*/
+int QVideoOverlayEndpoint::contrast() const
+{
+    return d_func()->contrast;
+}
+
+/*!
+    Sets the contrast adjustment for a video overlay.
+
+    Valid contrast values range between -100 and 100, the default is 0.
+*/
+void QVideoOverlayEndpoint::setContrast(int contrast)
+{
+    emit contrastChanged(d_func()->contrast = contrast);
+}
+
+/*!
+    \fn QVideoOverlayEndpoint::contrastChanged(int contrast)
+
+    Signals that a video overlay's \a contrast adjustment has changed.
+*/
+
+/*!
+    Returns the hue adjustment applied to a video overlay.
+
+    Value hue values range between -100 and 100, the default is 0.
+*/
+int QVideoOverlayEndpoint::hue() const
+{
+    return d_func()->hue;
+}
+
+/*!
+    Sets a \a hue adjustment for a video overlay.
+
+    Valid hue values range between -100 and 100, the default is 0.
+*/
+void QVideoOverlayEndpoint::setHue(int hue)
+{
+    emit hueChanged(d_func()->hue = hue);
+}
+
+/*!
+    \fn QVideoOverlayEndpoint::hueChanged(int hue)
+
+    Signals that a video overlay's \a hue adjustment has changed.
+*/
+
+/*!
+    Returns the saturation adjustment applied to a video overlay.
+
+    Value saturation values range between -100 and 100, the default is 0.
+*/
+int QVideoOverlayEndpoint::saturation() const
+{
+    return d_func()->saturation;
+}
+
+/*!
+    Sets a \a saturation adjustment for a video overlay.
+
+    Valid saturation values range between -100 and 100, the default is 0.
+*/
+void QVideoOverlayEndpoint::setSaturation(int saturation)
+{
+    emit saturationChanged(d_func()->saturation = saturation);
+}
+
+/*!
+    \fn QVideoOverlayEndpoint::saturationChanged(int saturation)
+
+    Signals that a video overlay's \a saturation adjustment has changed.
 */

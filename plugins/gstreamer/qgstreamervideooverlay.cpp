@@ -50,7 +50,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     }
 
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-            this, SIGNAL(nativeSizeChanged()));
+            this, SLOT(surfaceFormatChanged()));
 }
 
 QGstreamerVideoOverlay::~QGstreamerVideoOverlay()
@@ -80,6 +80,34 @@ void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
     QVideoOverlayEndpoint::setDisplayRect(rect);
 }
 
+void QGstreamerVideoOverlay::setBrightness(int brightness)
+{
+    m_surface->setBrightness(brightness);
+
+    QVideoOverlayEndpoint::setBrightness(brightness);
+}
+
+void QGstreamerVideoOverlay::setContrast(int contrast)
+{
+    m_surface->setContrast(contrast);
+
+    QVideoOverlayEndpoint::setContrast(contrast);
+}
+
+void QGstreamerVideoOverlay::setHue(int hue)
+{
+    m_surface->setHue(hue);
+
+    QVideoOverlayEndpoint::setHue(hue);
+}
+
+void QGstreamerVideoOverlay::setSaturation(int saturation)
+{
+    m_surface->setSaturation(saturation);
+
+    QVideoOverlayEndpoint::setSaturation(saturation);
+}
+
 void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
 {
     QVideoOverlayEndpoint::setFullscreen(fullscreen);
@@ -98,4 +126,14 @@ QAbstractVideoSurface *QGstreamerVideoOverlay::surface() const
 GstElement *QGstreamerVideoOverlay::videoSink()
 {
     return m_videoSink;
+}
+
+void QGstreamerVideoOverlay::surfaceFormatChanged()
+{
+    QVideoOverlayEndpoint::setBrightness(m_surface->brightness());
+    QVideoOverlayEndpoint::setContrast(m_surface->contrast());
+    QVideoOverlayEndpoint::setHue(m_surface->hue());
+    QVideoOverlayEndpoint::setSaturation(m_surface->saturation());
+
+    emit nativeSizeChanged();
 }

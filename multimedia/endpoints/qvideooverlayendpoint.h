@@ -68,8 +68,24 @@ public:
 
     virtual QSize nativeSize() const = 0;
 
+    int brightness() const;
+    virtual void setBrightness(int brightness);
+
+    int contrast() const;
+    virtual void setContrast(int contrast);
+
+    int hue() const;
+    virtual void setHue(int hue);
+
+    int saturation() const;
+    virtual void setSaturation(int saturation);
+
 Q_SIGNALS:
     void fullscreenChanged(bool fullscreen);
+    void brightnessChanged(int brightness);
+    void contrastChanged(int contrast);
+    void hueChanged(int hue);
+    void saturationChanged(int saturation);
     void nativeSizeChanged();
 };
 

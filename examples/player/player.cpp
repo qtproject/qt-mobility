@@ -49,8 +49,10 @@
 
 Player::Player(QWidget *parent)
     : QWidget(parent)
+    , videoWidget(0)
     , coverLabel(0)
     , slider(0)
+    , colorDialog(0)
 {
     player = new QMediaPlayer;
     metaData = new QMediaMetadata(player);
@@ -65,7 +67,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
 #ifdef USE_VIDEOWIDGET
-    QWidget *videoWidget = new QVideoWidget(player->service());
+    videoWidget = new QVideoWidget(player->service());
 #else
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
@@ -123,6 +125,12 @@ Player::Player(QWidget *parent)
         fullscreenButton->setEnabled(false);
     }
 
+    QPushButton *colorButton = new QPushButton(tr("Color Options..."));
+    if (videoWidget)
+        connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
+    else
+        colorButton->setEnabled(false);
+
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
@@ -130,6 +138,7 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
     controlLayout->addWidget(fullscreenButton);
+    controlLayout->addWidget(colorButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     if (videoWidget) {
@@ -286,4 +295,44 @@ void Player::setStatusInfo(const QString &info)
         setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
     else
         setWindowTitle(trackInfo);
+}
+
+void Player::showColorDialog()
+{
+    if (!colorDialog) {
+        QSlider *brightnessSlider = new QSlider(Qt::Horizontal);
+        brightnessSlider->setRange(-100, 100);
+        brightnessSlider->setValue(videoWidget->brightness());
+        connect(brightnessSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setBrightness(int)));
+        connect(videoWidget, SIGNAL(brightnessChanged(int)), brightnessSlider, SLOT(setValue(int)));
+
+        QSlider *contrastSlider = new QSlider(Qt::Horizontal);
+        contrastSlider->setRange(-100, 100);
+        contrastSlider->setValue(videoWidget->contrast());
+        connect(contrastSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setContrast(int)));
+        connect(videoWidget, SIGNAL(contrastChanged(int)), contrastSlider, SLOT(setValue(int)));
+
+        QSlider *hueSlider = new QSlider(Qt::Horizontal);
+        hueSlider->setRange(-100, 100);
+        hueSlider->setValue(videoWidget->hue());
+        connect(hueSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setHue(int)));
+        connect(videoWidget, SIGNAL(hueChanged(int)), hueSlider, SLOT(setValue(int)));
+
+        QSlider *saturationSlider = new QSlider(Qt::Horizontal);
+        saturationSlider->setRange(-100, 100);
+        saturationSlider->setValue(videoWidget->saturation());
+        connect(saturationSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setSaturation(int)));
+        connect(videoWidget, SIGNAL(saturationChanged(int)), saturationSlider, SLOT(setValue(int)));
+
+        QFormLayout *layout = new QFormLayout;
+        layout->addRow(tr("Brightness"), brightnessSlider);
+        layout->addRow(tr("Contrast"), contrastSlider);
+        layout->addRow(tr("Hue"), hueSlider);
+        layout->addRow(tr("Saturation"), saturationSlider);
+
+        colorDialog = new QDialog(this);
+        colorDialog->setWindowTitle(tr("Color Options"));
+        colorDialog->setLayout(layout);
+    }
+    colorDialog->show();
 }
