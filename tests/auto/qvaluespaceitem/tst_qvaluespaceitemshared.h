@@ -31,8 +31,39 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespaceitemshared.h"
+#include <QObject>
 
-#include <QTest>
+class QValueSpaceObject;
 
-QTEST_MAIN(tst_QValueSpaceItem)
+class tst_QValueSpaceItem : public QObject
+{
+    Q_OBJECT
+
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+
+    void availableLayers();
+    void testConstructor();
+    void testConstructor_data();
+    void testAssignmentOperator();
+    void contentsChanged_data();
+    void contentsChanged();
+    void dataVersatility_data();
+    void dataVersatility();
+    void value();
+    void ipcTests();
+    void setValue();
+    void ipcSetValue();
+    void removeValue();
+    void layerSelection_data();
+    void layerSelection();
+    void interestNotification_data();
+    void interestNotification();
+    void ipcInterestNotification();
+
+private:
+    QValueSpaceObject *root;
+    QValueSpaceObject *busy;
+};

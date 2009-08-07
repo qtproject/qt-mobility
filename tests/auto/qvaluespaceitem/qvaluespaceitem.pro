@@ -8,7 +8,8 @@ QT = core
 include(../../../common.pri)
 
 # Input
-SOURCES += tst_qvaluespaceitem.cpp
+SOURCES += tst_qvaluespaceitem.cpp tst_qvaluespaceitemshared.cpp
+HEADERS += tst_qvaluespaceitemshared.h
 
 LIBS += -lQtContextFramework
 
