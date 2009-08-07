@@ -323,7 +323,7 @@ QContact PhoneBook::buildContact() const
 
     QContactAddress address;
     address.setDisplayLabel(addressText->toPlainText());
-    address.setAttribute(QContactDetail::AttributeSubType, QContactAddress::AttributeSubTypeDomestic + "," + QContactAddress::AttributeSubTypeParcel + "," + QContactAddress::AttributeSubTypePostal);
+    address.setAttribute(QContactDetail::AttributeSubType, QString(QContactAddress::AttributeSubTypeDomestic) + QLatin1String(",") + QString(QContactAddress::AttributeSubTypeParcel) + QLatin1String(",") + QString(QContactAddress::AttributeSubTypePostal));
     c.saveDetail(&address);
 
     return c;

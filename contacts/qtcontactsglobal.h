@@ -58,6 +58,7 @@ template <int N> struct Latin1Literal
 
     operator QLatin1String() const {return QLatin1String(str);}
     operator QString() const {return QString::fromLatin1(str, N-1);}
+    operator const char*() const {return str;}
 };
 
 template<int N> bool operator==(const Latin1Literal<N>& a, const QLatin1String& b)
