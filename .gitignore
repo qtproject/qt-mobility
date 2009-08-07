@@ -2,6 +2,7 @@
 .obj
 *.moc
 Makefile*
+*.dylib
 *.so.*
 *.so
 *.so.debug
@@ -18,6 +19,8 @@ moc_*.cpp
 *.ib_pdb_index
 build
 lib
+*.app
+*.pro.user
 
 #Symbian specific
 *.mmp

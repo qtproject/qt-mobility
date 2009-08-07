@@ -35,55 +35,52 @@
 #ifndef QWMPPLAYLIST_H
 #define QWMPPLAYLIST_H
 
-#include "qwmpglobal.h"
+#include "qmediaplaylistsource.h"
 
-#include <QtCore/qobject.h>
 #include <QtCore/qvariant.h>
 
 #include <wmp.h>
 
-class Q_WMP_EXPORT QMediaPlaylist : public QObject
+class QWmpEvents;
+
+class QWmpPlaylist : public QMediaPlaylistSource
 {
     Q_OBJECT
 public:
-    QMediaPlaylist(QObject *parent = 0) : QObject(parent) {}
-
-    virtual int count() const = 0;
-
-    virtual QStringList keys(int index) const = 0;
-
-    virtual int valueCount(int index, const QString &key) const = 0;
-
-    virtual QVariant value(int index, const QString &key, int value = 0) const = 0;
-    virtual QVariantList values(int index, const QString &key) const = 0;
-
-Q_SIGNALS:
-    void changed();
-};
-
-class QWmpPlaylist : public QMediaPlaylist
-{
-    Q_OBJECT
-public:
-    QWmpPlaylist(QObject *parent = 0);
+    QWmpPlaylist(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpPlaylist();
 
-    int count() const;
+    bool load(const QString &location, const char *format = 0);
+    bool load(QIODevice * device, const char *format = 0);
+    bool save(const QString &location, const char *format = 0);
+    bool save(QIODevice * device, const char *format);
+
+    int size() const;
+    QMediaResourceList resources(int pos) const;
+
+    bool isReadOnly() const;
+
+    bool appendItem(const QMediaResourceList &resources);
+    bool insertItem(int pos, const QMediaResourceList &resources);
+    bool removeItem(int pos);
+    bool removeItems(int start, int end);
+    bool clear();
 
     QStringList keys(int index) const;
+    QVariant value(int index, const QString &key) const;
 
-    int valueCount(int index, const QString &key) const;
+public Q_SLOTS:
+    virtual void shuffle();
 
-    QVariant value(int index, const QString &key, int value = 0) const;
-    QVariantList values(int index, const QString &key) const;
-
-    IWMPPlaylist *playlist() const;
-    void setPlaylist(IWMPPlaylist *playlist);
-
-    using QMediaPlaylist::changed;
+private Q_SLOTS:
+    void currentPlaylistChangeEvent(WMPPlaylistChangeEventType change);
+    void openPlaylistChangeEvent(IDispatch *dispatch);
+    void mediaChangeEvent(IDispatch *dispatch);
 
 private:
+    IWMPCore3 *m_player;
     IWMPPlaylist *m_playlist;
+    long m_count;
 };
 
 #endif

@@ -38,49 +38,6 @@
 
 #include <Mferror.h>
 
-QMFActivate::QMFActivate()
-    : m_ref(1)
-{
-}
-
-QMFActivate::~QMFActivate()
-{
-}
-
-// IUnknown
-
-HRESULT QMFActivate::QueryInterface(REFIID riid, void **object)
-{
-    if (riid == __uuidof(IUnknown)) {
-        *object = static_cast<IUnknown *>(this);
-    } else if (riid == __uuidof(IMFAttributes)) {
-        *object = static_cast<IMFAttributes *>(this);
-    } else if (riid == __uuidof(IMFActivate)) {
-        *object = static_cast<IMFActivate *>(this);
-    } else {
-        return E_NOINTERFACE;
-    }
-
-    AddRef();
-
-    return S_OK;
-}
-
-ULONG QMFActivate::AddRef()
-{
-    return InterlockedIncrement(&m_ref);
-}
-
-ULONG QMFActivate::Release()
-{
-    ULONG ref = InterlockedDecrement(&m_ref);
-
-    if (ref == 0)
-        delete this;
-
-    return ref;
-}
-
 
 // IMFAttributes
 

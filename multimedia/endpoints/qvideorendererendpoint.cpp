@@ -38,31 +38,6 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
-/*!
-    \class QVideoRendererEndpointInterface
-    \preliminary
-    \internal
-    \brief The QVideoRendererEndpointInterface class provides an interface for video renderer
-    media end points.
-
-    \sa QVideoRendererEndpoint
-*/
-
-/*!
-    Destroys a video renderer media output.
-*/
-QVideoRendererEndpointInterface::~QVideoRendererEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QVideoRendererEndpointInterface::direction() const
-{
-    return Output;
-}
-
 class QVideoRendererEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -80,14 +55,24 @@ public:
     \brief The QVideoRendererEndpoint class provides a media end point that renders to a video
     surface.
 
-    \note QVideoRendererEndpoint must be created by a media service and cannot be instantiated
-    directly.
+    The interface name of QVideoRendererEndpoint is \c com.nokia.Qt.QVideoRendererEndpoint/1.0 as
+    defined in QVideoRendererEndpoint_iid.
 
-    \sa QAbstractVideoService::createEndpoint()
+    \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
 */
 
 /*!
-    Constructs a new video renderer media end point.
+    \macro QVideoRendererEndpoint_iid
+
+    \c com.nokia.Qt.QVideoRendererEndpoint/1.0
+
+    Defines the interface name of QVideoRendererEndpoint.
+
+    \relates QVideoRendererEndpoint
+*/
+
+/*!
+    Constructs a new video renderer media end point with the given \a parent.
 */
 QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
     : QObject(*new QVideoRendererEndpointPrivate, parent)
@@ -100,6 +85,20 @@ QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
 QVideoRendererEndpoint::~QVideoRendererEndpoint()
 {
 }
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QVideoRendererEndpoint::direction() const
+{
+    return Output;
+}
+
+/*!
+    \property QVideoRendererEndpoint::surface
+
+    The video surface a renderer renders to.
+*/
 
 /*!
     Returns the video surface a renderer renders to.

@@ -1,17 +1,22 @@
 TEMPLATE = app
+CONFIG += example
+
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
+include (../../common.pri)
 
-LIBS += -L$$OUT_PWD/../../lib -lQtMedia
+LIBS += -lQtMedia
 
-DESTDIR = ../../bin
+QMAKE_RPATHDIR += $$DESTDIR
 
 HEADERS = \
     player.h \
+    playercontrols.h \
     playlistmodel.h
   
 SOURCES = \
     main.cpp \
     player.cpp \
+    playercontrols.cpp \
     playlistmodel.cpp
     

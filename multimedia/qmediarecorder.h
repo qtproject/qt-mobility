@@ -35,54 +35,75 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
 
 #include "qmediaserviceprovider.h"
+#include "qmediasink.h"
 
-class QAbstractMediaObject;
+
 class QMediaRecorderService;
-class QMediaSink;
+extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiorecorder"));
 
 class QMediaRecorderPrivate;
-
-
-extern QMediaRecorderService *createMediaRecorderService(QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder"));
 
 class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
-
-    // Q_PROPERTY(int position READ position NOTIFY positionChanged)
-
-    Q_ENUMS(State)
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 
 public:
-    enum State { LoadingState, RecordingState, PausedState, StoppedState };
+    enum State
+    {
+        StoppedState,
+        RecordingState,
+        PausedState
+    };
 
-    QMediaRecorder(QMediaRecorderService *service = createMediaRecorderService(), QObject *parent = 0);
-    ~QMediaRecorder();
+    enum Error
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        NetworkError
+    };
 
-    void setRecordingSource(QAbstractMediaObject* source);
-    void setRecordingSink(QAbstractMediaObject* sink);
+    QMediaRecorder(QAbstractMediaService *service = createMediaCaptureService(), QObject *parent = 0);
+    QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent = 0);
+    virtual ~QMediaRecorder();
 
-    State state() const;
-    QMediaSink *sink() const;
+    bool isValid() const;
 
     QAbstractMediaService* service() const;
 
-public Q_SLOTS:
+    QMediaSink sink() const;
+    bool setSink(const QMediaSink &sink);
+
+    State state() const;
+
+    Error error() const;
+    QString errorString() const;
+    void unsetError();
+
+    qint64 position() const;
+    void setPositionUpdatePeriod(int ms);
+
+public slots:
     void record();
     void pause();
     void stop();
 
-Q_SIGNALS:
-    void stateChanged(QMediaRecorder::State state);
+signals:
+    void stateChanged(State state);
+    void positionChanged(qint64 position);
+    void error(QMediaRecorder::Error error);
+    void errorStringChanged(const QString &error);
+
 
 private:
     Q_DISABLE_COPY(QMediaRecorder)
     Q_DECLARE_PRIVATE(QMediaRecorder)
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
 
 #endif  // QMEDIARECORDER_H

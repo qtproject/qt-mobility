@@ -35,52 +35,36 @@
 #ifndef QAUDIORENDERERENDPOINT_H
 #define QAUDIORENDERERENDPOINT_H
 
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
+#endif
+
 #include "qmediaendpointinterface.h"
 
-class Q_MEDIA_EXPORT QAudioRendererEndpointInterface : public QMediaEndpointInterface
-{
-public:
-    virtual ~QAudioRendererEndpointInterface();
-
-    Direction direction() const;
-};
-
-#define QAudioRendererEndpointInterface_iid "com.nokia.Qt.QAudioRendererEndpointInterface/1.0"
-
-Q_DECLARE_INTERFACE(QAudioRendererEndpointInterface, QAudioRendererEndpointInterface_iid)
-
 class QIODevice;
+class QByteArray;
 
 class QAudioRendererEndpointPrivate;
 
-class Q_MEDIA_EXPORT QAudioRendererEndpoint
-        : public QObject
-        , public QAudioRendererEndpointInterface
+class Q_MEDIA_EXPORT QAudioRendererEndpoint: public QObject, public QMediaEndpointInterface
 {
     Q_OBJECT
-    Q_PROPERTY(int frequency READ frequency WRITE setFrequency)
-    Q_PROPERTY(int channels READ channels WRITE setChannels)
-    Q_PROPERTY(int sampleSize READ sampleSize WRITE setSampleSize)
-    Q_INTERFACES(QAudioRendererEndpointInterface)
+
+    Q_INTERFACES(QMediaEndpointInterface)
     Q_DECLARE_PRIVATE(QAudioRendererEndpoint)
 public:
     QAudioRendererEndpoint(QObject *parent = 0);
     ~QAudioRendererEndpoint();
 
-    int frequency() const;
-    virtual void setFrequency(int frequency);
-    virtual QList<int> supportedFrequencies() const = 0;
-
-    int channels() const;
-    virtual void setChannels(int channels);
-    virtual QList<int> supportedChannels() const = 0;
-
-    int sampleSize() const;
-    virtual void setSampleSize(int size);
-    virtual QList<int> supportedSampleSizes() const = 0;
+    Direction direction() const;
 
     QIODevice *device() const;
     virtual void setDevice(QIODevice *device);
 };
+
+#define QAudioRendererEndpoint_iid "com.nokia.Qt.QAudioRendererEndpoint/1.0"
+
+Q_MEDIA_DECLARE_ENDPOINT(QAudioRendererEndpoint, QAudioRendererEndpoint_iid)
 
 #endif

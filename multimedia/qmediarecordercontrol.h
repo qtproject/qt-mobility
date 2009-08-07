@@ -39,17 +39,34 @@
 
 class QMediaSink;
 
-class Q_MEDIA_EXPORT QMediaRecorderControl : public QAbstractMediaControl
+class QMediaRecorderControl : public QAbstractMediaControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    QMediaRecorderControl(QObject *parent = 0);
+    virtual ~QMediaRecorderControl();
 
-    int state() const;
-    virtual void setState(int state);
+    virtual QMediaSink sink() const = 0;
+    virtual bool setSink(const QMediaSink &sink) = 0;
 
-    QMediaSink *sink() const;
-    virtual void setSink(QMediaSink *sink);
+    virtual int state() const = 0;
+
+    virtual qint64 position() const = 0;
+
+signals:
+    void stateChanged(int state);
+    void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
+
+public slots:
+    virtual void record() = 0;
+    virtual void pause() = 0;
+    virtual void stop() = 0;
+
+protected:
+    QMediaRecorderControl(QObject* parent);
 };
+
+#define QMediaRecorderControl_iid "com.nokia.qt.MediaRecorderControl"
+Q_MEDIA_DECLARE_CONTROL(QMediaRecorderControl, QMediaRecorderControl_iid)
 
 #endif

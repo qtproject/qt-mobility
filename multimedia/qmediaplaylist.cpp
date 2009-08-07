@@ -46,6 +46,57 @@
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
 
+
+void QMediaPlaylistPrivate::_q_itemsAboutToBeInserted(int start, int end)
+{
+    Q_ASSERT(startPendingInsert == -1);
+    Q_ASSERT(endPendingInsert == -1);
+
+    startPendingInsert = start;
+    endPendingInsert = end;
+
+    emit q_func()->itemsAboutToBeInserted(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsInserted()
+{
+    Q_ASSERT(startPendingInsert != -1);
+    Q_ASSERT(endPendingInsert != -1);
+
+    int start = startPendingInsert;
+    int end = endPendingInsert;
+
+    startPendingInsert = -1;
+    endPendingInsert = -1;
+
+    emit q_func()->itemsInserted(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsAboutToBeRemoved(int start, int end)
+{
+    Q_ASSERT(startPendingRemove == -1);
+    Q_ASSERT(endPendingRemove == -1);
+
+    startPendingRemove = start;
+    endPendingRemove = end;
+
+    emit q_func()->itemsRemoved(start, end);
+}
+
+void QMediaPlaylistPrivate::_q_itemsRemoved()
+{
+    Q_ASSERT(startPendingRemove != -1);
+    Q_ASSERT(endPendingRemove != -1);
+
+    int start = startPendingRemove;
+    int end = endPendingRemove;
+
+    startPendingRemove = -1;
+    endPendingRemove = -1;
+
+    emit q_func()->itemsAboutToBeRemoved(start, end);
+}
+
 /*!
     \class QMediaPlaylist
     \ingroup multimedia
@@ -53,13 +104,16 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
     \preliminary
     \brief The QMediaPlaylist class provides a list of media sources to play.
 
-    \sa QMediaSource
+    Depending on playlist source implementation,
+    most of playlist modifcation operations can be asynchronous.
+
+    \sa QMediaResource
 */
 
 
 
 /*!
-  Create a new playlist object for playlist \a source.
+  Create a new playlist object for playlist \a source with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
@@ -74,10 +128,10 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
     }
 
     connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
-    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
+    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(_q_itemsAboutToBeInserted(int,int)));
+    connect(d->source, SIGNAL(itemsInserted()), this, SLOT(_q_itemsInserted()));
+    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(_q_itemsAboutToBeRemoved(int,int)));
+    connect(d->source, SIGNAL(itemsRemoved()), this, SLOT(_q_itemsRemoved()));
 }
 
 /*!
@@ -86,13 +140,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
     :QObject(dd, parent)
 {
-    Q_D(QMediaPlaylist);
-
-    connect(d->source, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(d->source, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-    connect(d->source, SIGNAL(itemsInserted()), this, SIGNAL(itemsInserted()));
-    connect(d->source, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-    connect(d->source, SIGNAL(itemsRemoved()), this, SIGNAL(itemsRemoved()));
 }
 
 /*!
@@ -123,7 +170,7 @@ bool QMediaPlaylist::isEmpty() const
 
 /*!
   Returns true if the playlist can be modified; otherwise returns false.
-  \sa size().
+  \sa size()
   */
 bool QMediaPlaylist::isReadOnly() const
 {
@@ -131,63 +178,86 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
+    Returns the primary resource for the media item at \a index.
+*/
+QMediaResource QMediaPlaylist::resource(int index) const
+{
+    return d_func()->source->resources(index).value(0);
+}
+
+/*!
   Returns the media source at index \a position in the playlist.  
   */
-QMediaSource QMediaPlaylist::itemAt(int position) const
+QMediaResourceList QMediaPlaylist::resources(int position) const
 {
-    if (position<0 || position>=size())
-        return QMediaSource();
-    else
-        return d_func()->source->itemAt(position);
+    return d_func()->source->resources(position);
 }
 
 /*!
   Append the media \a source to the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::append(const QMediaSource &source)
+bool QMediaPlaylist::appendItem(const QMediaResource &resource)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->append(source);
+    return !resource.isNull()
+            ? d_func()->source->appendItem(QMediaResourceList() << resource)
+            : false;
 }
 
 /*!
   Append the list of media \a sources to the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::append(const QList<QMediaSource> &sources)
+bool QMediaPlaylist::appendItem(const QMediaResourceList &resources)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->append(sources);
+    return d_func()->source->appendItem(resources);
 }
 
 /*!
   Insert the media \a source to the playlist at position \a pos.
+
+  Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::insert(int pos, const QMediaSource &source)
+bool QMediaPlaylist::insertItem(int pos, const QMediaResource &resource)
 {
-    Q_D(QMediaPlaylist);
-    return d->source->insert(pos,source);
+    return !resource.isNull()
+            ? d_func()->source->insertItem(pos, QMediaResourceList() << resource)
+            : false;
+}
+
+bool QMediaPlaylist::insertItem(int index, const QMediaResourceList &resources)
+{
+    return d_func()->source->insertItem(index, resources);
 }
 
 /*!
   Remove the item from the playlist at position \a pos.
+
+  Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::remove(int pos)
+bool QMediaPlaylist::removeItem(int pos)
 {
     Q_D(QMediaPlaylist);
-    return d->source->remove(pos);
+    return d->source->removeItem(pos);
 }
 
 /*!
   Remove the items from the playlist from position \a start to \a end inclusive.
+
+  Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::remove(int start, int end)
+bool QMediaPlaylist::removeItems(int start, int end)
 {
     Q_D(QMediaPlaylist);
-    return d->source->remove(start, end);
+    return d->source->removeItems(start, end);
 }
 
 /*!
   Remove all the items from the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
   */
 bool QMediaPlaylist::clear()
 {
@@ -197,10 +267,8 @@ bool QMediaPlaylist::clear()
 
 bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 {
-    while (!reader->atEnd()) {
-        QMediaSource src = reader->readItem();
-        source->append(src);
-    }
+    while (!reader->atEnd())
+        source->appendItem(reader->readItem());
 
     return true;
 }
@@ -208,7 +276,7 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 {
     for (int i=0; i<source->size(); i++) {
-        if (!writter->writeItem(source->itemAt(i)))
+        if (!writter->writeItem(source->resources(i)))
             return false;
     }
     writter->close();
@@ -216,7 +284,13 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 }
 
 /*!
-  */
+  Load playlist from \a location. If \a format is specified, it is used,
+  otherwise format is guessed from location name and data.
+
+  New items are appended to playlist.
+
+  Returns true if playlist was loaded succesfully, otherwise returns false.
+*/
 bool QMediaPlaylist::load(const QString &location, const char *format)
 {
     Q_D(QMediaPlaylist);
@@ -241,7 +315,13 @@ bool QMediaPlaylist::load(const QString &location, const char *format)
 }
 
 /*!
-  */
+  Load playlist from QIODevice \a device. If \a format is specified, it is used,
+  otherwise format is guessed from device data.
+
+  New items are appended to playlist.
+
+  Returns true if playlist was loaded succesfully, otherwise returns false.
+*/
 bool QMediaPlaylist::load(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
@@ -266,6 +346,10 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
 }
 
 /*!
+  Save playlist to \a location. If \a format is specified, it is used,
+  otherwise format is guessed from location name.
+
+  Returns true if playlist was saved succesfully, otherwise returns false.
   */
 bool QMediaPlaylist::save(const QString &location, const char *format)
 {
@@ -282,7 +366,10 @@ bool QMediaPlaylist::save(const QString &location, const char *format)
 }
 
 /*!
-  */
+  Save playlist to QIODevice \a device using format \a format.
+
+  Returns true if playlist was saved succesfully, otherwise returns false.
+*/
 bool QMediaPlaylist::save(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
@@ -306,6 +393,9 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     return false;
 }
 
+/*!
+  Shuffle items in the playlist.
+*/
 void QMediaPlaylist::shuffle()
 {
     d_func()->source->shuffle();
@@ -316,19 +406,21 @@ void QMediaPlaylist::shuffle()
     \fn void QMediaPlaylist::itemsInserted(int start, int end)
 
     This signal is emitted after media sources have been inserted into the playlist.
-    The new items are those between start and end inclusive.
+    The new items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsRemoved(int start, int end)
 
     This signal is emitted after media sources have been removed from the playlist.
-    The removed items are those between start and end inclusive.
+    The removed items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsChanged(int start, int end)
 
     This signal is emitted after media sources have been changed in the playlist
-    between start and end positions inclusive.
+    between \a start and \a end positions inclusive.
  */
+
+#include "moc_qmediaplaylist.cpp"

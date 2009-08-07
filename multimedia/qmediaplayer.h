@@ -38,13 +38,13 @@
 #include "qabstractmediaobject.h"
 
 #include "qmediaserviceprovider.h"
-#include "qmediasource.h"
+#include "qmediaresource.h"
 
 
 class QMediaPlayerService;
 class QMediaPlaylist;
 
-extern QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = defaultServiceProvider("mediaplayer"));
+extern Q_MEDIA_EXPORT QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = 0);
 
 
 class QMediaPlayerPrivate;
@@ -53,26 +53,60 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_OBJECT
 
     Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
+    Q_PROPERTY(QMediaResourceList mediaResources READ currentMediaResources NOTIFY currentMediaResourcesChanged)
+    Q_PROPERTY(int playlistPosition READ playlistPosition WRITE setPlaylistPosition NOTIFY playlistPositionChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
-    Q_PROPERTY(bool video READ isVideoAvailable NOTIFY videoAvailablityChanged)
-    // Q_PROPERTY(int playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
+    Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailablityChanged)
+    Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
+    Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-
+    Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
+    Q_PROPERTY(QString error READ errorString NOTIFY errorStringChanged)
     Q_ENUMS(State)
-
+    Q_ENUMS(MediaStatus)
 public:
-    enum State { LoadingState, PlayingState, PausedState, StoppedState, SeekingState, EndOfStreamState };
+    enum State
+    {
+        StoppedState,
+        PlayingState,
+        PausedState
+    };
+
+    enum MediaStatus
+    {
+        UnknownMediaStatus,
+        NoMedia,
+        LoadingMedia,
+        LoadedMedia,
+        StalledMedia,
+        PrimedMedia,
+        EndOfMedia,
+        InvalidMedia
+    };
+
+    enum Error
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        NetworkError
+    };
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
     ~QMediaPlayer();
 
-    State state() const;
+    bool isValid() const;
+
     QMediaPlaylist* mediaPlaylist() const;
+    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+
+    int playlistPosition() const;
+    QMediaResourceList currentMediaResources() const;
 
     qint64 duration() const;
     qint64 position() const;
@@ -85,12 +119,20 @@ public:
 
     bool isVideoAvailable() const;
 
+    bool isSeekable() const;
+
+    float playbackRate() const;
+
+    State state() const;
+    MediaStatus mediaStatus() const;
+
+    Error error() const;
+    QString errorString() const;
+    void unsetError();
+
     QAbstractMediaService* service() const;
 
-
 public Q_SLOTS:
-    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
-
     void play();
     void pause();
     void stop();
@@ -99,19 +141,37 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
+    void advance();
+    void back();
+    void setPlaylistPosition(int playListPosition);
+    void setPlaybackRate(float rate);
+
 Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void stateChanged(State newState);
+    void playlistPositionChanged(int playlistPosition);
+    void currentMediaResourcesChanged(const QMediaResourceList &resources);
+    void stateChanged(QMediaPlayer::State newState);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
+    void seekableChanged(bool seekable);
+    void playbackRateChanged(float rate);
+
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+
+    void error(QMediaPlayer::Error error);
+    void errorStringChanged(const QString &error);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_bufferingChanged(bool));
 };
 
 #endif  // QMEDIAPLAYER_H

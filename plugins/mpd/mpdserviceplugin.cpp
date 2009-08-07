@@ -68,8 +68,7 @@ QMediaServiceProvider* MpdServicePlugin::create(QString const& key)
     return 0;
 }
 
-#include "mpdserviceplugin.moc"
-
 Q_EXPORT_PLUGIN2(mpd_serviceplugin, MpdServicePlugin);
 
+#include "mpdserviceplugin.moc"
 

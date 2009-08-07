@@ -34,31 +34,161 @@
 
 #include "qwmpplaylist.h"
 
+#include "qwmpevents.h"
 #include "qwmpmetadata.h"
+#include "qwmpglobal.h"
 
 #include <QtCore/qstringlist.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
-
-QWmpPlaylist::QWmpPlaylist(QObject *parent)
-    : QMediaPlaylist(parent)
+QWmpPlaylist::QWmpPlaylist(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
+    : QMediaPlaylistSource(parent)
+    , m_player(player)
     , m_playlist(0)
+    , m_count(0)
 {
+    if (m_player && m_player->get_currentPlaylist(&m_playlist) == S_OK)
+        m_playlist->get_count(&m_count);
+
+    connect(events, SIGNAL(CurrentPlaylistChange(WMPPlaylistChangeEventType)),
+            this, SLOT(currentPlaylistChangeEvent(WMPPlaylistChangeEventType)));
+    connect(events, SIGNAL(OpenPlaylistSwitch(IDispatch*)),
+            this, SLOT(openPlaylistChangeEvent(IDispatch*)));
+    connect(events, SIGNAL(MediaChange(IDispatch*)), this, SLOT(mediaChangeEvent(IDispatch*)));
 }
 
 QWmpPlaylist::~QWmpPlaylist()
 {
     if (m_playlist)
         m_playlist->Release();
+
+    if (m_player)
+        m_player->Release();
 }
 
-int QWmpPlaylist::count() const
+bool QWmpPlaylist::load(const QString &location, const char *format)
 {
-    long count = 0;
+    Q_UNUSED(location);
+    Q_UNUSED(format);
 
-    if (m_playlist)
-        m_playlist->get_count(&count);
+    return false;
+}
 
-    return count;
+bool QWmpPlaylist::load(QIODevice * device, const char *format)
+{
+    Q_UNUSED(device);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+bool QWmpPlaylist::save(const QString &location, const char *format)
+{
+    Q_UNUSED(location);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+bool QWmpPlaylist::save(QIODevice * device, const char *format)
+{
+    Q_UNUSED(device);
+    Q_UNUSED(format);
+
+    return false;
+}
+
+int QWmpPlaylist::size() const
+{
+    return m_count;
+}
+
+QMediaResourceList QWmpPlaylist::resources(int pos) const
+{
+    QMediaResourceList resources;
+
+    IWMPMedia *media = 0;
+    if (m_playlist && m_playlist->get_item(pos, &media) == S_OK) {
+        resources = QWmpMetaData::resources(media);
+
+        media->Release();
+    }
+
+    return resources;
+}
+
+bool QWmpPlaylist::isReadOnly() const
+{
+    return false;
+}
+
+bool QWmpPlaylist::appendItem(const QMediaResourceList &resources)
+{
+    bool appended = false;
+
+    IWMPMedia *media = 0;
+    if (!resources.isEmpty() && m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(resources.first().uri()), &media) == S_OK) {
+        appended = m_playlist->appendItem(media) == S_OK;
+
+        media->Release();
+    }
+
+    return appended;
+}
+
+bool QWmpPlaylist::insertItem(int pos, const QMediaResourceList &resources)
+{
+    bool inserted = false;
+
+    IWMPMedia *media = 0;
+    if (!resources.isEmpty() && m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(resources.first().uri()), &media) == S_OK) {
+        inserted = m_playlist->insertItem(pos, media) == S_OK;
+
+        media->Release();
+    }
+
+    return inserted;
+}
+
+bool QWmpPlaylist::removeItem(int pos)
+{
+    IWMPMedia *media = 0;
+    if (m_playlist->get_item(pos, &media) == S_OK) {
+        bool removed = m_playlist->removeItem(media) == S_OK;
+
+        media->Release();
+
+        return removed;
+    } else {
+        return false;
+    }
+}
+
+bool QWmpPlaylist::removeItems(int start, int end)
+{
+    if (!m_playlist)
+        return false;
+
+    for (int i = start; i <= end; ++i) {
+        IWMPMedia *media = 0;
+        if (m_playlist->get_item(start, &media) == S_OK) {
+            bool removed = m_playlist->removeItem(media) == S_OK;
+
+            media->Release();
+
+            if (!removed)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool QWmpPlaylist::clear()
+{
+    return m_playlist && m_playlist->clear() == S_OK;
 }
 
 QStringList QWmpPlaylist::keys(int index) const
@@ -75,27 +205,13 @@ QStringList QWmpPlaylist::keys(int index) const
     return keys;
 }
 
-int QWmpPlaylist::valueCount(int index, const QString &key) const
-{
-    int count = 0;
-
-    IWMPMedia *media = 0;
-    if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        count = QWmpMetaData::valueCount(media, key);
-
-        media->Release();
-    }
-
-    return count;
-}
-
-QVariant QWmpPlaylist::value(int index, const QString &key, int value) const
+QVariant QWmpPlaylist::value(int index, const QString &key) const
 {
     QVariant v;
     
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        v = QWmpMetaData::value(media, key, value);
+        v = QWmpMetaData::value(media, key);
 
         media->Release();
     }
@@ -103,33 +219,74 @@ QVariant QWmpPlaylist::value(int index, const QString &key, int value) const
     return v;
 }
 
-QVariantList QWmpPlaylist::values(int index, const QString &key) const
+void QWmpPlaylist::shuffle()
 {
-    QVariantList values;
+}
+
+
+void QWmpPlaylist::currentPlaylistChangeEvent(WMPPlaylistChangeEventType change)
+{
+    Q_UNUSED(change);
+
+    long count = 0;
+    if (m_playlist && m_playlist->get_count(&count) == S_OK && count > 0) {
+        if (count > m_count) {
+            emit itemsAboutToBeInserted(m_count, count - 1);
+            m_count = count;
+            emit itemsInserted();
+        } else if (count < m_count) {
+            emit itemsAboutToBeRemoved(count, m_count - 1);
+            m_count = count;
+            emit itemsRemoved();
+        }
+    }
+    if (m_count > 0)
+        emit itemsChanged(0, m_count - 1);
+}
+
+void QWmpPlaylist::openPlaylistChangeEvent(IDispatch *dispatch)
+{
+    if (m_playlist && m_count > 0) {
+        emit itemsAboutToBeRemoved(0, m_count - 1);
+        m_playlist->Release();
+        m_playlist = 0;
+        m_count = 0;
+        emit itemsRemoved();
+    } else if (m_playlist) {
+        m_playlist->Release();
+        m_playlist = 0;
+    }
+
+    IWMPPlaylist *playlist = 0;
+    if (dispatch && dispatch->QueryInterface(
+            __uuidof(IWMPPlaylist), reinterpret_cast<void **>(&playlist))) {
+
+        long count = 0;
+        if (playlist->get_count(&count) == S_OK && count > 0) {
+            emit itemsAboutToBeInserted(0, count - 1);
+            m_playlist = playlist;
+            m_count = count;
+            emit itemsInserted();
+        } else {
+            m_playlist = playlist;
+        }
+    }
+}
+
+void QWmpPlaylist::mediaChangeEvent(IDispatch *dispatch)
+{
 
     IWMPMedia *media = 0;
-    if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        values = QWmpMetaData::values(media, key);
+    if (dispatch &&  dispatch->QueryInterface(
+            __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
+        VARIANT_BOOL isMember = VARIANT_FALSE;
 
+        if (media->isMemberOf(m_playlist, &isMember) == S_OK && isMember) {
+            int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
+
+            if (index >= 0)
+                emit itemsChanged(index, index);
+        }
         media->Release();
     }
-    return values;
-}
-
-IWMPPlaylist *QWmpPlaylist::playlist() const
-{
-    return m_playlist;
-}
-
-void QWmpPlaylist::setPlaylist(IWMPPlaylist *playlist)
-{
-    if (m_playlist)
-        m_playlist->Release();
-
-    m_playlist = playlist;
-
-    if (m_playlist)
-        m_playlist->AddRef();
-
-    emit changed();
 }

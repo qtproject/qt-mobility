@@ -49,16 +49,17 @@ public:
     ~MpdPlayerControl();
 
     int state() const;
-    void setState(int state);
 
     QMediaPlaylist* mediaPlaylist() const;
-    void setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
 
     qint64 duration() const;
-    void setDuration(qint64 duration);
 
     qint64 position() const;
-    void setPosition(qint64 position);
+    void setPosition(qint64);
+
+    int playlistPosition() const;
+    void setPlaylistPosition(int position);
 
     int volume() const;
     void setVolume(int volume);
@@ -67,26 +68,36 @@ public:
     void setMuted(bool muted);
 
     bool isBuffering() const;
-    void setBuffering(bool buffering);
 
     int bufferStatus() const;
-    void setBufferState(int bufferStatus);
 
     bool isVideoAvailable() const;
-    void setVideoAvailable(bool videoAvailable);
+
+    bool isSeekable() const;
+
+    float playbackRate() const;
+    void setPlaybackRate(float rate);
 
     void play();
     void pause();
     void stop();
 
+    void advance();
+    void back();
+
 private slots:
     void notify();
-    void playerChanged();
+//    void playerStateChanged();
+    void playlistItemChanged(int position);
     void mixerChanged();
+    void handleVolumeChanged(int volume);
 
 private:
     MpdDaemon *daemon;
     QMediaPlaylist *playlist;
+    int playlistPos;
+    int savedVolume;
+    bool m_muted;
 };
 
 #endif  // MPDPLAYERCONTROL_H

@@ -38,16 +38,25 @@
 #include "mpdplaylistsource.h"
 #include "mpddaemon.h"
 
+#include "qmediaplaylist.h"
 
 MpdPlayerControl::MpdPlayerControl(MpdDaemon *mpd, QObject *parent):
     QMediaPlayerControl(parent),
     daemon(mpd)
 {
-    setMediaPlaylist(new QMediaPlaylist(new MpdPlaylistSource(daemon, this)));
+    playlist = new QMediaPlaylist(new MpdPlaylistSource(daemon, this));
 
     connect(daemon, SIGNAL(notify()), SLOT(notify()));
-    connect(daemon, SIGNAL(playerChanged()), SLOT(playerChanged()));
+    connect(daemon, SIGNAL(playerStateChanged(int)), SIGNAL(stateChanged(int)));
     connect(daemon, SIGNAL(mixerChanged()), SLOT(mixerChanged()));
+    connect(daemon, SIGNAL(playlistItemChanged(int)), SLOT(playlistItemChanged(int)));
+    connect(daemon, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+    connect(daemon, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(daemon, SIGNAL(volumeChanged(int)), SLOT(handleVolumeChanged(int)));
+    connect(daemon, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+
+    savedVolume = 100;
+    m_muted = false;
 }
 
 MpdPlayerControl::~MpdPlayerControl()
@@ -64,42 +73,67 @@ QMediaPlaylist* MpdPlayerControl::mediaPlaylist() const
     return playlist;
 }
 
-void MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
+bool MpdPlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
 {
+    Q_UNUSED(mediaPlaylist);
+    return false;
 }
 
 
 qint64 MpdPlayerControl::duration() const
 {
-    return 0;
+    return daemon->duration();
 }
 
 qint64 MpdPlayerControl::position() const
 {
-    return 0;
+    return daemon->position();
 }
 
 void MpdPlayerControl::setPosition(qint64 position)
 {
+    daemon->send(QString("seek %1 %2").arg(daemon->currentSongPos()).arg(int(position / 1000)));
+}
+
+int MpdPlayerControl::playlistPosition() const
+{
+    return playlistPos;
+}
+
+void MpdPlayerControl::setPlaylistPosition(int position)
+{
+    daemon->send(QString("play %1").arg(position));
 }
 
 int MpdPlayerControl::volume() const
 {
-    return 100;
+    return daemon->volume();
+}
+
+static inline int clamp_volume(int volume)
+{
+    return qMin(100, qMax(0, volume));
 }
 
 void MpdPlayerControl::setVolume(int volume)
 {
+    daemon->send(QString("setvol %1").arg(clamp_volume(volume)));
 }
 
 bool MpdPlayerControl::isMuted() const
 {
-    return false;
+    return m_muted;
 }
-
 
 void MpdPlayerControl::setMuted(bool muted)
 {
+    if (m_muted == muted)
+        return;
+    m_muted = muted;
+    if (m_muted)
+        savedVolume = daemon->volume();
+
+    daemon->send(QString("setvol %1").arg(muted ? 0 : savedVolume));
 }
 
 bool MpdPlayerControl::isBuffering() const
@@ -117,6 +151,20 @@ bool MpdPlayerControl::isVideoAvailable() const
     return false;
 }
 
+bool MpdPlayerControl::isSeekable() const
+{
+    return true;
+}
+
+float MpdPlayerControl::playbackRate() const
+{
+    return 1;
+}
+
+void MpdPlayerControl::setPlaybackRate(float rate)
+{
+    Q_UNUSED(rate);
+}
 
 void MpdPlayerControl::play()
 {
@@ -133,24 +181,46 @@ void MpdPlayerControl::stop()
     daemon->send("stop");
 }
 
-void MpdPlayerControl::notify()
+void MpdPlayerControl::advance()
 {
-    if (duration() != daemon->duration())
-        setDuration(daemon->duration());
-    if (position() != daemon->position())
-        setPosition(daemon->position());
+    const int currentSongPos = daemon->currentSongPos();
+
+    if (currentSongPos + 1 == playlist->size())
+        return;
+
+    daemon->send(QString("play %1").arg(currentSongPos + 1));
 }
 
-void MpdPlayerControl::playerChanged()
+void MpdPlayerControl::back()
 {
-    if (state() != daemon->playerState())
-        setState(daemon->playerState());
+    const int currentSongPos = daemon->currentSongPos();
+
+    if (currentSongPos == 0)
+        return;
+
+    daemon->send(QString("play %1").arg(currentSongPos - 1));
+}
+
+void MpdPlayerControl::notify()
+{
+    emit durationChanged(daemon->duration());
+    emit positionChanged(daemon->position());
 }
 
 void MpdPlayerControl::mixerChanged()
 {
-    if (volume() != daemon->volume())
-        setVolume(daemon->volume());
-    if (isMuted() != (daemon->volume() == 0))
-        setMuted(daemon->volume() == 0);
+    emit volumeChanged(daemon->volume());
+    emit mutingChanged(daemon->volume() == 0);
 }
+
+void MpdPlayerControl::playlistItemChanged(int position)
+{
+    emit playlistPositionChanged(playlistPos = position);
+}
+
+void MpdPlayerControl::handleVolumeChanged(int volume)
+{
+    if (!m_muted)
+        emit volumeChanged(volume);
+}
+

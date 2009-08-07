@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../multimedia/qcamera.cpp -->
+<head>
+  <title>QCamera Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCamera Class Reference</h1>
+<pre>    #include &lt;QCamera&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qabstractmediaobject.html">QAbstractMediaObject</a>.</p>
+<ul>
+<li><a href="qcamera-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposureNightPortrait }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureModes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureStatus-enum">ExposureStatus</a></b> { CorrectExposure, UnderExposure, OverExposure }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FlashMode-enum">FlashMode</a></b> { FlashOff, FlashOn, FlashAuto, FlashRedEyeReduction, FlashFill }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FlashMode-enum">FlashModes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusMode-enum">FocusMode</a></b> { ManualFocus, AutoFocus, ContinuousFocus }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusMode-enum">FocusModes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusStatus-enum">FocusStatus</a></b> { FocusDisabled, FocusRequested, FocusReached, FocusLost, FocusUnableToReach }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#MeteringMode-enum">MeteringMode</a></b> { MeteringAverage, MeteringSpot, MeteringMatrix }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#MeteringMode-enum">MeteringModes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#State-enum">State</a></b> { LoadingState, ActiveState, PausedState, StoppedState }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</a></b> { WhiteBalanceManual, WhiteBalanceAuto, WhiteBalanceSunlight, WhiteBalanceCloudy, ..., WhiteBalanceSunset }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceModes</a></b></td></tr>
+</table>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qcamera.html#state-prop">state</a></b> : const QCamera::State</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#QCamera">QCamera</a></b> ( QAbstractMediaService * <i>service</i> = createCameraService(), QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#QCamera-2">QCamera</a></b> ( const QByteArray &amp; <i>device</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#dtor.QCamera">~QCamera</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#aperture">aperture</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#deviceList">deviceList</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureCompensation">exposureCompensation</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ExposureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureMode">exposureMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FlashMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashMode">flashMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FocusMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusMode">focusMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FocusStatus </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatus">focusStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isExposureLocked">isExposureLocked</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isFlashReady">isFlashReady</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isFocusLocked">isFocusLocked</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivity">isoSensitivity</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#manualWhiteBalance">manualWhiteBalance</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MeteringMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#meteringMode">meteringMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoAperture">setAutoAperture</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setDevice">setDevice</a></b> ( const QByteArray &amp; <i>device</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setExposureCompensation">setExposureCompensation</a></b> ( double <i>ev</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setExposureMode">setExposureMode</a></b> ( ExposureMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setFlashMode">setFlashMode</a></b> ( FlashMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setFocusMode">setFocusMode</a></b> ( FocusMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setMacroFocusingEnabled">setMacroFocusingEnabled</a></b> ( bool )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setManualAperture">setManualAperture</a></b> ( double <i>aperture</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setManualIsoSensitivity">setManualIsoSensitivity</a></b> ( int <i>iso</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setManualShutterSpeed">setManualShutterSpeed</a></b> ( double <i>seconds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setManualWhiteBalance">setManualWhiteBalance</a></b> ( int <i>colorTemperature</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setMeteringMode">setMeteringMode</a></b> ( MeteringMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</a></b> ( WhiteBalanceMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeed">shutterSpeed</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stop">stop</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;double, double&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedApertureRange">supportedApertureRange</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ExposureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedExposureModes">supportedExposureModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedFlashModes">supportedFlashModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FocusModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedFocusModes">supportedFocusModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;int, int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MeteringModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedMeteringModes">supportedMeteringModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;double, double&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedShutterSpeedRange">supportedShutterSpeedRange</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#whiteBalanceMode">whiteBalanceMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomTo">zoomTo</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValue">zoomValue</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#service">service</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#lockExposure">lockExposure</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#lockFocus">lockFocus</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#unlockExposure">unlockExposure</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#unlockFocus">unlockFocus</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashReady">flashReady</a></b> ( bool )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusLocked">focusLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( FocusStatus )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValueChanged">zoomValueChanged</a></b> ( double )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#deviceDescription">deviceDescription</a></b> ( const QByteArray &amp; <i>device</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>2 protected functions inherited from <a href="qabstractmediaobject.html#protected-functions">QAbstractMediaObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="flags"><a name="ExposureMode-enum"></a>enum QCamera::ExposureMode<br />flags QCamera::ExposureModes</h3>
+<p>The ExposureModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;ExposureMode&gt;. It stores an OR combination of ExposureMode values.</p>
+<h3 class="fn"><a name="ExposureStatus-enum"></a>enum QCamera::ExposureStatus</h3>
+<h3 class="flags"><a name="FlashMode-enum"></a>enum QCamera::FlashMode<br />flags QCamera::FlashModes</h3>
+<p>The FlashModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FlashMode&gt;. It stores an OR combination of FlashMode values.</p>
+<h3 class="flags"><a name="FocusMode-enum"></a>enum QCamera::FocusMode<br />flags QCamera::FocusModes</h3>
+<p>The FocusModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FocusMode&gt;. It stores an OR combination of FocusMode values.</p>
+<h3 class="fn"><a name="FocusStatus-enum"></a>enum QCamera::FocusStatus</h3>
+<h3 class="flags"><a name="MeteringMode-enum"></a>enum QCamera::MeteringMode<br />flags QCamera::MeteringModes</h3>
+<p>The MeteringModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;MeteringMode&gt;. It stores an OR combination of MeteringMode values.</p>
+<h3 class="fn"><a name="State-enum"></a>enum QCamera::State</h3>
+<h3 class="flags"><a name="WhiteBalanceMode-enum"></a>enum QCamera::WhiteBalanceMode<br />flags QCamera::WhiteBalanceModes</h3>
+<p>The WhiteBalanceModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;WhiteBalanceMode&gt;. It stores an OR combination of WhiteBalanceMode values.</p>
+<hr />
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="state-prop"></a>state : const <a href="qcamera.html#State-enum">QCamera::State</a></h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b>state</b> () const</td></tr>
+</table>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QCamera"></a>QCamera::QCamera ( <a href="qabstractmediaservice.html">QAbstractMediaService</a> * <i>service</i> = createCameraService(), <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Construct a <a href="qcamera.html">QCamera</a> from <i>service</i> with <i>parent</i>.</p>
+<h3 class="fn"><a name="QCamera-2"></a>QCamera::QCamera ( const <a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a> &amp; <i>device</i>, <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="dtor.QCamera"></a>QCamera::~QCamera ()</h3>
+<p>Destroys the camera object.</p>
+<h3 class="fn"><a name="aperture"></a>double QCamera::aperture () const</h3>
+<h3 class="fn"><a name="deviceDescription"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QCamera::deviceDescription ( const <a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a> &amp; <i>device</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="deviceList"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a>&gt; QCamera::deviceList ()</h3>
+<h3 class="fn"><a name="exposureCompensation"></a>double QCamera::exposureCompensation () const</h3>
+<p>See also <a href="qcamera.html#setExposureCompensation">setExposureCompensation</a>().</p>
+<h3 class="fn"><a name="exposureLocked"></a>void QCamera::exposureLocked ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="exposureMode"></a><a href="qcamera.html#ExposureMode-enum">ExposureMode</a> QCamera::exposureMode () const</h3>
+<p>See also <a href="qcamera.html#setExposureMode">setExposureMode</a>().</p>
+<h3 class="fn"><a name="flashMode"></a><a href="qcamera.html#FlashMode-enum">FlashMode</a> QCamera::flashMode () const</h3>
+<p>See also <a href="qcamera.html#setFlashMode">setFlashMode</a>().</p>
+<h3 class="fn"><a name="flashReady"></a>void QCamera::flashReady ( bool )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="focusLocked"></a>void QCamera::focusLocked ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="focusMode"></a><a href="qcamera.html#FocusMode-enum">FocusMode</a> QCamera::focusMode () const</h3>
+<p>See also <a href="qcamera.html#setFocusMode">setFocusMode</a>().</p>
+<h3 class="fn"><a name="focusStatus"></a><a href="qcamera.html#FocusStatus-enum">FocusStatus</a> QCamera::focusStatus () const</h3>
+<h3 class="fn"><a name="focusStatusChanged"></a>void QCamera::focusStatusChanged ( <a href="qcamera.html#FocusStatus-enum">FocusStatus</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="isExposureLocked"></a>bool QCamera::isExposureLocked () const</h3>
+<h3 class="fn"><a name="isFlashReady"></a>bool QCamera::isFlashReady () const</h3>
+<h3 class="fn"><a name="isFocusLocked"></a>bool QCamera::isFocusLocked () const</h3>
+<h3 class="fn"><a name="isMacroFocusingSupported"></a>bool QCamera::isMacroFocusingSupported () const</h3>
+<h3 class="fn"><a name="isValid"></a>bool QCamera::isValid () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="isoSensitivity"></a>int QCamera::isoSensitivity () const</h3>
+<h3 class="fn"><a name="lockExposure"></a>void QCamera::lockExposure ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="lockFocus"></a>void QCamera::lockFocus ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="macroFocusingEnabled"></a>bool QCamera::macroFocusingEnabled () const</h3>
+<p>See also <a href="qcamera.html#setMacroFocusingEnabled">setMacroFocusingEnabled</a>().</p>
+<h3 class="fn"><a name="manualWhiteBalance"></a>int QCamera::manualWhiteBalance () const</h3>
+<p>See also <a href="qcamera.html#setManualWhiteBalance">setManualWhiteBalance</a>().</p>
+<h3 class="fn"><a name="maximumDigitalZoom"></a>double QCamera::maximumDigitalZoom () const</h3>
+<h3 class="fn"><a name="maximumOpticalZoom"></a>double QCamera::maximumOpticalZoom () const</h3>
+<h3 class="fn"><a name="meteringMode"></a><a href="qcamera.html#MeteringMode-enum">MeteringMode</a> QCamera::meteringMode () const</h3>
+<p>See also <a href="qcamera.html#setMeteringMode">setMeteringMode</a>().</p>
+<h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QCamera::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qabstractmediaobject.html#service">QAbstractMediaObject::service</a>().</p>
+<p>Returns the session object being controlled by this recorder.</p>
+<h3 class="fn"><a name="setAutoAperture"></a>void QCamera::setAutoAperture ()</h3>
+<h3 class="fn"><a name="setAutoIsoSensitivity"></a>void QCamera::setAutoIsoSensitivity ()</h3>
+<h3 class="fn"><a name="setAutoShutterSpeed"></a>void QCamera::setAutoShutterSpeed ()</h3>
+<h3 class="fn"><a name="setDevice"></a>void QCamera::setDevice ( const <a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a> &amp; <i>device</i> )</h3>
+<h3 class="fn"><a name="setExposureCompensation"></a>void QCamera::setExposureCompensation ( double <i>ev</i> )</h3>
+<p>See also <a href="qcamera.html#exposureCompensation">exposureCompensation</a>().</p>
+<h3 class="fn"><a name="setExposureMode"></a>void QCamera::setExposureMode ( <a href="qcamera.html#ExposureMode-enum">ExposureMode</a> <i>mode</i> )</h3>
+<p>See also <a href="qcamera.html#exposureMode">exposureMode</a>().</p>
+<h3 class="fn"><a name="setFlashMode"></a>void QCamera::setFlashMode ( <a href="qcamera.html#FlashMode-enum">FlashMode</a> <i>mode</i> )</h3>
+<p>See also <a href="qcamera.html#flashMode">flashMode</a>().</p>
+<h3 class="fn"><a name="setFocusMode"></a>void QCamera::setFocusMode ( <a href="qcamera.html#FocusMode-enum">FocusMode</a> <i>mode</i> )</h3>
+<p>See also <a href="qcamera.html#focusMode">focusMode</a>().</p>
+<h3 class="fn"><a name="setMacroFocusingEnabled"></a>void QCamera::setMacroFocusingEnabled ( bool )</h3>
+<p>See also <a href="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</a>().</p>
+<h3 class="fn"><a name="setManualAperture"></a>void QCamera::setManualAperture ( double <i>aperture</i> )</h3>
+<h3 class="fn"><a name="setManualIsoSensitivity"></a>void QCamera::setManualIsoSensitivity ( int <i>iso</i> )</h3>
+<h3 class="fn"><a name="setManualShutterSpeed"></a>void QCamera::setManualShutterSpeed ( double <i>seconds</i> )</h3>
+<h3 class="fn"><a name="setManualWhiteBalance"></a>void QCamera::setManualWhiteBalance ( int <i>colorTemperature</i> )</h3>
+<p>See also <a href="qcamera.html#manualWhiteBalance">manualWhiteBalance</a>().</p>
+<h3 class="fn"><a name="setMeteringMode"></a>void QCamera::setMeteringMode ( <a href="qcamera.html#MeteringMode-enum">MeteringMode</a> <i>mode</i> )</h3>
+<p>See also <a href="qcamera.html#meteringMode">meteringMode</a>().</p>
+<h3 class="fn"><a name="setWhiteBalanceMode"></a>void QCamera::setWhiteBalanceMode ( <a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> )</h3>
+<p>See also <a href="qcamera.html#whiteBalanceMode">whiteBalanceMode</a>().</p>
+<h3 class="fn"><a name="shutterSpeed"></a>double QCamera::shutterSpeed () const</h3>
+<h3 class="fn"><a name="start"></a>void QCamera::start ()</h3>
+<p>Start camera.</p>
+<h3 class="fn"><a name="stateChanged"></a>void QCamera::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stop"></a>void QCamera::stop ()</h3>
+<p>Stop camera.</p>
+<h3 class="fn"><a name="supportedApertureRange"></a><a href="http://doc.qtsoftware.com/4.5/qpair.html">QPair</a>&lt;double, double&gt; QCamera::supportedApertureRange () const</h3>
+<h3 class="fn"><a name="supportedExposureModes"></a><a href="qcamera.html#ExposureMode-enum">ExposureModes</a> QCamera::supportedExposureModes () const</h3>
+<h3 class="fn"><a name="supportedFlashModes"></a><a href="qcamera.html#FlashMode-enum">FlashModes</a> QCamera::supportedFlashModes () const</h3>
+<h3 class="fn"><a name="supportedFocusModes"></a><a href="qcamera.html#FocusMode-enum">FocusModes</a> QCamera::supportedFocusModes () const</h3>
+<h3 class="fn"><a name="supportedIsoSensitivityRange"></a><a href="http://doc.qtsoftware.com/4.5/qpair.html">QPair</a>&lt;int, int&gt; QCamera::supportedIsoSensitivityRange () const</h3>
+<h3 class="fn"><a name="supportedMeteringModes"></a><a href="qcamera.html#MeteringMode-enum">MeteringModes</a> QCamera::supportedMeteringModes () const</h3>
+<h3 class="fn"><a name="supportedShutterSpeedRange"></a><a href="http://doc.qtsoftware.com/4.5/qpair.html">QPair</a>&lt;double, double&gt; QCamera::supportedShutterSpeedRange () const</h3>
+<h3 class="fn"><a name="supportedWhiteBalanceModes"></a><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceModes</a> QCamera::supportedWhiteBalanceModes () const</h3>
+<h3 class="fn"><a name="unlockExposure"></a>void QCamera::unlockExposure ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="unlockFocus"></a>void QCamera::unlockFocus ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="whiteBalanceMode"></a><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> QCamera::whiteBalanceMode () const</h3>
+<p>See also <a href="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</a>().</p>
+<h3 class="fn"><a name="zoomTo"></a>void QCamera::zoomTo ( int <i>value</i> )</h3>
+<h3 class="fn"><a name="zoomValue"></a>double QCamera::zoomValue () const</h3>
+<h3 class="fn"><a name="zoomValueChanged"></a>void QCamera::zoomValueChanged ( double )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Multimedia API</div></td>
+</tr></table></div></address></body>
+</html>

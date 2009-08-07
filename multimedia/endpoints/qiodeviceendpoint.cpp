@@ -36,30 +36,6 @@
 
 #include <private/qobject_p.h>
 
-/*!
-    \class QIODeviceEndpointInterface
-    \preliminary
-    \internal
-    \brief The QIODeviceEndpointInterface provides an interface for media endpoints that read or
-    write a QIODevice.
-
-    \sa QIODeviceEndpoint
-*/
-
-/*!
-*/
-QIODeviceEndpointInterface::~QIODeviceEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QIODeviceEndpointInterface::direction() const
-{
-    return InputOutput;
-}
-
 class QIODeviceEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -75,10 +51,25 @@ public:
     \class QIODeviceEndpoint
     \preliminary
     \brief The QIODeviceEndpoint class provides a media endpoint that reads or writes a QIODevice.
+
+    The interface name of QIODeviceEndpoint is \c com.nokia.Qt.QIODeviceEndpoint/1.0 as
+    defined in QIODeviceEndpoint_iid.
+
+    \sa QAbstractMediaService::setDataInput(), QAbstractMediaService::setDataOutput()
 */
 
 /*!
-    Contructs a new I/O device media end point.
+    \macro QIODeviceEndpoint_iid
+
+    \c com.nokia.Qt.QIODeviceEndpoint/1.0
+
+    Defines the interface name of QIODeviceEndpoint.
+
+    \relates QIODeviceEndpoint
+*/
+
+/*!
+    Contructs a new I/O device media end point with the given \a parent.
 */
 QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
     : QObject(*new QIODeviceEndpointPrivate, parent)
@@ -91,6 +82,20 @@ QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
 QIODeviceEndpoint::~QIODeviceEndpoint()
 {
 }
+
+/*!
+    \reimp
+*/
+QMediaEndpointInterface::Direction QIODeviceEndpoint::direction() const
+{
+    return InputOutput;
+}
+
+/*!
+    \property QIODeviceEndpoint::device
+
+    The I/O device written to or read from.
+*/
 
 /*!
     Returns the I/O device.

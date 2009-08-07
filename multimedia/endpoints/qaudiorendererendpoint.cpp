@@ -36,30 +36,6 @@
 
 #include <private/qobject_p.h>
 
-/*!
-    \class QAudioRendererEndpointInterface
-    \preliminary
-    \internal
-    \brief The QAudioRendererEndpointInterface class provides an interface for audio renderer
-    media end points.
-
-    \sa QAudioRendererEndpoint
-*/
-
-/*!
-*/
-QAudioRendererEndpointInterface::~QAudioRendererEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QAudioRendererEndpointInterface::direction() const
-{
-    return Output;
-}
-
 class QAudioRendererEndpointPrivate : public QObjectPrivate
 {
 public:
@@ -82,6 +58,21 @@ public:
     \preliminary
     \brief The QAudioRendererEndpoint class provides a media end point that renders audio to a
     QIODevice
+
+    The interface name of QAudioRendererEndpoint is \c com.nokia.Qt.QAudioRendererEndpoint/1.0 as
+    defined in QAudioRendererEndpoint_iid.
+
+    \sa QAbstractMediaService::setAudioOutput()
+*/
+
+/*!
+    \macro QAudioRendererEndpoint_iid
+
+    \c com.nokia.Qt.QAudioRendererEndpoint/1.0
+
+    Defines the interface name of QAudioRendererEndpoint.
+
+    \relates QAudioRendererEndpoint
 */
 
 /*!
@@ -100,70 +91,12 @@ QAudioRendererEndpoint::~QAudioRendererEndpoint()
 }
 
 /*!
-    Returns the frequency of the rendered audio.
+    \reimp
 */
-int QAudioRendererEndpoint::frequency() const
+QMediaEndpointInterface::Direction QAudioRendererEndpoint::direction() const
 {
-    return d_func()->frequency;
+    return Output;
 }
-
-/*!
-    Sets the \a frequency of the rendered audio.
-*/
-void QAudioRendererEndpoint::setFrequency(int frequency)
-{
-    d_func()->frequency = frequency;
-}
-
-/*!
-    \fn QAudioRendererEndpoint::supportedFrequencies() const
-
-    Returns a list of frequencies supported by an audio renderer.
-*/
-
-/*!
-    Returns the number of channels in the renderered audio.
-*/
-int QAudioRendererEndpoint::channels() const
-{
-    return d_func()->channels;
-}
-
-/*!
-    Sets the number of \a channels in the renderered audio.
-*/
-void QAudioRendererEndpoint::setChannels(int channels)
-{
-    d_func()->channels = channels;
-}
-
-/*!
-    \fn QAudioRendererEndpoint::supportedChannels() const
-
-    Returns a list of the numbers of channels supported by an audio renderer.
-*/
-
-/*!
-    Returns the sample size of the rendered audio.
-*/
-int QAudioRendererEndpoint::sampleSize() const
-{
-    return d_func()->sampleSize;
-}
-
-/*!
-    Sets the sample \a size of the rendered audio.
-*/
-void QAudioRendererEndpoint::setSampleSize(int size)
-{
-    d_func()->sampleSize = size;
-}
-
-/*!
-    \fn QList<int> QAudioRendererEndpoint::supportedSampleSizes() const
-
-    Returns a list of sample sizes supported by an audio renderer.
-*/
 
 /*!
     Returns the I/O device audio is rendered to.

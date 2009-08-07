@@ -35,9 +35,9 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-#include "qmediasource.h"
-#include <QtCore/qobject.h>
+#include "qmediaresource.h"
 
+#include <QtCore/qobject.h>
 
 class QMediaPlaylistSource;
 
@@ -49,17 +49,19 @@ public:
     QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
-    QMediaSource itemAt(int position) const;
+    QMediaResource resource(int index) const;
+    QMediaResourceList resources(int position) const;
 
     int size() const;
     bool isEmpty() const;
     bool isReadOnly() const;
 
-    bool append(const QMediaSource &source);
-    bool append(const QList<QMediaSource> &sources);
-    bool insert(int pos, const QMediaSource &source);
-    bool remove(int pos);
-    bool remove(int start, int end);
+    bool appendItem(const QMediaResource &resource);
+    bool appendItem(const QMediaResourceList &resources);
+    bool insertItem(int index, const QMediaResource &resource);
+    bool insertItem(int index, const QMediaResourceList &resources);
+    bool removeItem(int pos);
+    bool removeItems(int start, int end);
     bool clear();
 
     bool load(const QString &location, const char *format = 0);
@@ -72,15 +74,20 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void itemsAboutToBeInserted(int start, int end);
-    void itemsInserted();
+    void itemsInserted(int start, int end);
     void itemsAboutToBeRemoved(int start, int end);
-    void itemsRemoved();
+    void itemsRemoved(int start, int end);
     void itemsChanged(int start, int end);
 
 protected:
     QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);
 
 private:
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeInserted(int start, int end));
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted());
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeRemoved(int start, int end));
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved());
+
     Q_DECLARE_PRIVATE(QMediaPlaylist)
 };
 

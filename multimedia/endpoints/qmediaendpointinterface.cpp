@@ -36,20 +36,43 @@
 
 /*!
     \class QMediaEndpointInterface
+    \brief The QMediaEndpointInterface class provides a common interface for media service inputs and
+    outputs.
+
+    A media end point is an object that can be set as an input or output of a QAbstractMediaService.
+    End points inherit from both QObject, and QMediaEndpointInterface and are not instantiated
+    directly, instead they are constructed using the QAbstractMediaService::createEndpoint()
+    function of the service they intended to be used with.
 */
 
 /*!
-    \enum Direction
+    \enum QMediaEndpointInterface::Direction
 
-    \value Input
-    \value Output
-    \value InputOutput
+    Identifies if an end point can be used as a media service input or output.
+
+    \value Input The end point can be used as a media service input.
+    \value Output The end point can be used as a media service output.
+    \value InputOutput The end point can be used as both a media service input and output.
 */
 
+/*!
+    Destroys a media end point.
+*/
 QMediaEndpointInterface::~QMediaEndpointInterface()
 {
 }
 
 /*!
     \fn QMediaEndpointInterface::direction() const
+
+    Returns whether an end point is an input, output or both.
+*/
+
+
+/*!
+    \macro Q_MEDIA_DECLARE_ENDPOINT(Type, IId)
+
+    Declares \a Type as a media end point with the given \a IId.
+
+    \relates QMediaEndpointInterface
 */

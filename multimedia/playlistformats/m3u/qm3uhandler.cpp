@@ -33,11 +33,12 @@
 ****************************************************************************/
 
 #include "qm3uhandler.h"
-#include "qmediasource.h"
+#include "qmediaresource.h"
 #include <QtCore/qiodevice.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qtextstream.h>
 #include <QFile>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 
@@ -77,24 +78,27 @@ public:
     {
         //we can't just use m_textStream->atEnd(),
         //for files with empty lines/comments at end
-        return nextSource.isNull();
+        return nextResource.isNull();
     }
 
-    virtual QMediaSource readItem()
+    virtual QMediaResourceList readItem()
     {
-        QMediaSource res = nextSource;
-        nextSource = QMediaSource();
+        QMediaResourceList resources;
+        if (!nextResource.isNull())
+            resources.append(nextResource);
+
+        nextResource = QMediaResource();
 
         while (m_textStream && !m_textStream->atEnd()) {
             QString line = m_textStream->readLine();
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            nextSource = QMediaSource(QString(), line);
+            nextResource = QMediaResource(QUrl(line));
             break;
         }
 
-        return res;
+        return resources;
     }
 
     virtual void close()
@@ -105,7 +109,7 @@ private:
     bool m_ownDevice;
     QIODevice *m_device;
     QTextStream *m_textStream;
-    QMediaSource nextSource;
+    QMediaResource nextResource;
 };
 
 class QM3uPlaylistWritter : public QMediaPlaylistWritter
@@ -121,10 +125,15 @@ public:
         delete m_textStream;
     }
 
-    virtual bool writeItem(const QMediaSource& item)
+    virtual bool writeItem(const QMediaResource& item)
     {
-        *m_textStream << item.dataLocation().toString() << endl;
+        *m_textStream << item.uri().toString() << endl;
         return true;
+    }
+
+    virtual bool writeItem(const QMediaResourceList &resources)
+    {
+        return writeItem(resources[0]);
     }
 
     virtual void close()

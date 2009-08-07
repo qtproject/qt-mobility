@@ -16,6 +16,7 @@
 <p>This is the complete list of members for <a href="qmediawidgetendpoint.html">QMediaWidgetEndpoint</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
+<li><div class="fn">enum <b><a href="qmediawidgetendpoint.html#AspectRatio-enum">AspectRatio</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmediaendpointinterface.html#Direction-enum">Direction</a></b></div></li>
 <li><div class="fn">enum <b><a href="http://doc.qtsoftware.com/4.5/qpaintdevice.html#PaintDeviceMetric-enum">PaintDeviceMetric</a></b></div></li>
 <li><div class="fn">enum <b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#RenderFlag-enum">RenderFlag</a></b></div></li>
@@ -31,6 +32,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#addAction">addAction</a></b> ( QAction * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#addActions">addActions</a></b> ( QList&lt;QAction *&gt; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#adjustSize">adjustSize</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#aspectRatio-prop">aspectRatio</a></b> () const : AspectRatio</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#autoFillBackground-prop">autoFillBackground</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#backgroundRole">backgroundRole</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#baseSize-prop">baseSize</a></b> () const</div></li>
@@ -54,6 +56,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#contextMenuPolicy-prop">contextMenuPolicy</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#create">create</a></b> ( WId, bool, bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#cursor-prop">cursor</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#customAspectRatio-prop">customAspectRatio</a></b> () const : QSize</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#customContextMenuRequested">customContextMenuRequested</a></b> ( const QPoint &amp; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
@@ -61,7 +64,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qpaintdevice.html#depth">depth</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#destroy">destroy</a></b> ( bool, bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qmediaendpointinterface.html#direction">direction</a></b> () const : Direction</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#direction">direction</a></b> () const : Direction</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#disconnect-2">disconnect</a></b> ( const char *, const QObject *, const char * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#disconnect-3">disconnect</a></b> ( const QObject *, const char * )</div></li>
@@ -181,8 +184,8 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#overrideWindowFlags">overrideWindowFlags</a></b> ( QFlags&lt;Qt::WindowType&gt; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#paintEngine">paintEngine</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#paintEvent">paintEvent</a></b> ( QPaintEvent * )</div></li>
-<li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qpaintdevice.html#painters-var">painters</a></b> : </div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qpaintdevice.html#painters-var">painters</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qpaintdevice.html#paintingActive">paintingActive</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#palette-prop">palette</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#parent">parent</a></b> () const</div></li>
@@ -218,6 +221,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#acceptDrops-prop">setAcceptDrops</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#accessibleDescription-prop">setAccessibleDescription</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#accessibleName-prop">setAccessibleName</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#aspectRatio-prop">setAspectRatio</a></b> ( AspectRatio )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#setAttribute">setAttribute</a></b> ( Qt::WidgetAttribute, bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#autoFillBackground-prop">setAutoFillBackground</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#setBackgroundRole">setBackgroundRole</a></b> ( QPalette::ColorRole )</div></li>
@@ -226,6 +230,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#setContentsMargins">setContentsMargins</a></b> ( int, int, int, int )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#contextMenuPolicy-prop">setContextMenuPolicy</a></b> ( Qt::ContextMenuPolicy )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#cursor-prop">setCursor</a></b> ( const QCursor &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#customAspectRatio-prop">setCustomAspectRatio</a></b> ( const QSize &amp; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#setDisabled">setDisabled</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#setEditFocus">setEditFocus</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qwidget.html#enabled-prop">setEnabled</a></b> ( bool )</div></li>

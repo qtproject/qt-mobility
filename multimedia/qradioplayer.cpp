@@ -64,8 +64,20 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     Q_D(QRadioPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QRadioTuner *>(service->control());
-    d->control->setNotifyObject(this);
+    d->control = qobject_cast<QRadioTuner *>(service->control("com.nokia.qt.RadioPlayerControl"));
+
+    if(d->control) {
+        connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
+        connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
+        connect(d->control,SIGNAL(stereoStatusChanged(bool)),this,SIGNAL(stereoStatusChanged(bool)));
+        connect(d->control,SIGNAL(searchingStatusChanged(bool)),this,SIGNAL(searchingStatusChanged(bool)));
+        connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
+        connect(d->control,SIGNAL(durationChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
+        connect(d->control,SIGNAL(volumeChanged(int)),this,SIGNAL(volumeChanged(int)));
+        connect(d->control,SIGNAL(mutingChanged(bool)),this,SIGNAL(mutingChanged(bool)));
+    }
+
+    addPropertyWatch("duration");
 }
 
 QRadioPlayer::~QRadioPlayer()
@@ -89,6 +101,11 @@ int QRadioPlayer::frequency() const
 bool QRadioPlayer::isStereo() const
 {
     return d_func()->control->isStereo();
+}
+
+bool QRadioPlayer::isSupportedBand(int b) const
+{
+    return d_func()->control->isSupportedBand(b);
 }
 
 int QRadioPlayer::signalStrength() const
@@ -141,6 +158,16 @@ void QRadioPlayer::setMuted(bool muted)
     d_func()->control->setMuted(muted);
 }
 
+bool QRadioPlayer::isValid() const
+{
+    return d_func()->control != NULL;
+}
+
+bool QRadioPlayer::isSearching() const
+{
+    return d_func()->control->isSearching();
+}
+
 void QRadioPlayer::searchForward()
 {
     d_func()->control->searchForward();
@@ -151,7 +178,22 @@ void QRadioPlayer::searchBackward()
     d_func()->control->searchBackward();
 }
 
+void QRadioPlayer::cancelSearch()
+{
+    d_func()->control->cancelSearch();
+}
+
 QRadioService* createRadioService(QMediaServiceProvider *provider)
 {
-    return qobject_cast<QRadioService*>(provider->createObject("com.nokia.qt.RadioService/1.0"));
+    QObject *object = provider ? provider->createObject("com.nokia.qt.RadioService/1.0") : 0;
+
+    if (object) {
+        QRadioService *service = qobject_cast<QRadioService *>(object);
+
+        if (service)
+            return service;
+
+        delete object;
+    }
+    return 0;
 }

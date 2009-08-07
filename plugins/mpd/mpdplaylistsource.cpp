@@ -55,9 +55,8 @@ MpdPlaylistSource::MpdPlaylistSource(MpdDaemon *daemon, QObject *parent):
     d->entries = 0;
     d->daemon = daemon;
 
+    connect(d->daemon, SIGNAL(connected()), SLOT(loadPlaylist()));
     connect(d->daemon, SIGNAL(playlistChanged()), SLOT(playlistChanged()));
-
-    loadPlaylist();
 }
 
 MpdPlaylistSource::~MpdPlaylistSource()
@@ -89,10 +88,10 @@ int MpdPlaylistSource::size() const
     return d_func()->entries;
 }
 
-QMediaSource MpdPlaylistSource::itemAt(int pos) const
+QMediaResourceList MpdPlaylistSource::resources(int pos) const
 {
     Q_ASSERT(size() >= pos);
-    return QMediaSource(QString(), QVariant(pos));
+    return QMediaResourceList();
 }
 
 bool MpdPlaylistSource::isReadOnly() const
@@ -100,35 +99,27 @@ bool MpdPlaylistSource::isReadOnly() const
     return false;
 }
 
-bool MpdPlaylistSource::append(const QMediaSource &source)
+bool MpdPlaylistSource::appendItem(const QMediaResourceList &resource)
 {
     return false;
 }
 
-bool MpdPlaylistSource::append(const QList<QMediaSource> &sources)
-{
-    foreach (QMediaSource const &source, sources)
-        append(source);
-
-    return true;
-}
-
-bool MpdPlaylistSource::insert(int pos, const QMediaSource &source)
+bool MpdPlaylistSource::insertItem(int pos, const QMediaResourceList &resource)
 {
     return false;
 }
 
-bool MpdPlaylistSource::remove(int pos)
+bool MpdPlaylistSource::removeItem(int pos)
 {
     bool    ok = false;
     d_func()->daemon->send(QString("delete %1").arg(pos), &ok);
     return ok;
 }
 
-bool MpdPlaylistSource::remove(int start, int end)
+bool MpdPlaylistSource::removeItems(int start, int end)
 {
     for (int i = start; i < end; ++i)
-        remove(i);
+        removeItem(i);
 
     return true;
 }
@@ -157,7 +148,13 @@ void MpdPlaylistSource::loadPlaylist()
     bool ok = false;
     QStringList r = d->daemon->send("playlist", &ok);
 
-    d->entries = ok ? r.size() : 0;
+    if (ok) {
+        d->entries = r.size();
+        emit itemsAboutToBeInserted(0, d->entries);
+        emit itemsInserted();
+    }
+    else
+        d->entries = 0;
 }
 
 //Q_SIGNALS:

@@ -1,59 +1,64 @@
 TEMPLATE = lib
 
-#DEFINES += AUDIOSERVICES
-
+# QT += multimedia
+# DEFINES += AUDIOSERVICES
+# DEFINES += VIDEOSERVICES
 # distinct from QtMultimedia
 TARGET = QtMedia
 
-DESTDIR = $$OUT_PWD/../lib
-DLLDESTDIR = $$OUT_PWD/../bin
+include (../common.pri)
+
+videosurface: QT += multimedia
 
 !static:DEFINES += QT_MAKEDLL
-
 DEFINES += QT_BUILD_MEDIA_LIB
-
-HEADERS = \
-    qabstractmediacontrol.h \
+HEADERS = qabstractmediacontrol.h \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \
     qlocalmediaplaylistsource.h \
     qmediaimageviewer.h \
     qmediametadata.h \
-    qmetadataprovider.h \
+    qmetadataprovidercontrol.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
     qmediaplayerservice.h \
     qmediaplaylist.h \
+    qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistmodel.h \
     qmediaplaylistsource.h \
     qmediaplaylistioplugin.h \
     qmediaproviderfactory_p.h \
+    qmediaresource.h \
     qmediarecorder.h \
     qmediarecordercontrol.h \
-    qmediarecorderservice.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
-    qmediasource.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
     qradiotuner.h \
     qsharedmediaplaylist.h \
-    qaudioencodercontrol.h \
-    qaudioencoderservice.h \
-    qaudioencoder.h
+    qvideowidget.h \
+    qmediastreams.h \
+    qmediastreamscontrol.h \
+    qaudioencodecontrol.h \
+    qvideoencodecontrol.h \
+    qimageencodecontrol.h \
+    qcamera.h \
+    qcameracontrol.h \
+    qcameraservice.h \
+    qmediaformatcontrol.h
 
-SOURCES = \
-    qabstractmediacontrol.cpp \
+SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
     qlocalmediaplaylistsource.cpp \
     qmediaimageviewer.cpp \
     qmediametadata.cpp \
-    qmetadataprovider.cpp \
+    qmetadataprovidercontrol.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
     qmediaplayerservice.cpp \
@@ -65,18 +70,21 @@ SOURCES = \
     qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
     qmediarecordercontrol.cpp \
-    qmediarecorderservice.cpp \
+    qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmediasink.cpp \
-    qmediasource.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradiotuner.cpp \
     qsharedmediaplaylist.cpp \
-    qaudioencodercontrol.cpp \
-    qaudioencoderservice.cpp \
-    qaudioencoder.cpp
-
+    qvideowidget.cpp \
+    qmediastreams.cpp \
+    qmediastreamscontrol.cpp \
+    qaudioencodecontrol.cpp \
+    qvideoencodecontrol.cpp \
+    qimageencodecontrol.cpp \
+    qcamera.cpp \
+    qcameracontrol.cpp \
+    qcameraservice.cpp \
+    qmediaformatcontrol.cpp
 include (endpoints/endpoints.pri)
-
-

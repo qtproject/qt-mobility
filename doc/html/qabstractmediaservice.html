@@ -42,7 +42,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">audioInput</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioOutput-prop">audioOutput</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaControl * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#control">control</a></b> ( const char * <i>name</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#control-2">control</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a></b> ( const char * <i>interface</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#createEndpoint-2">createEndpoint</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataInput-prop">dataInput</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataOutput-prop">dataOutput</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">setAudioInput</a></b> ( QObject * <i>input</i> )</td></tr>
@@ -81,36 +83,42 @@
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="audioInput-prop"></a>audioInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The input that a media service source audio from.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioInput</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioInput</b> ( QObject * <i>input</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="audioOutput-prop"></a>audioOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The output that a media service renders audio to.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioOutput</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioOutput</b> ( QObject * <i>output</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="dataInput-prop"></a>dataInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The input that a media service reads data from.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataInput</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataInput</b> ( QObject * <i>input</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="dataOutput-prop"></a>dataOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The output that a media service writes data to.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataOutput</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataOutput</b> ( QObject * <i>output</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="videoInput-prop"></a>videoInput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The input that a media service source video data from.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoInput</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setVideoInput</b> ( QObject * <i>input</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="videoOutput-prop"></a>videoOutput : <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> *</h3>
+<p>The output that a media service renders video to.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoOutput</b> () const</td></tr>
@@ -119,12 +127,16 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAbstractMediaService"></a>QAbstractMediaService::QAbstractMediaService ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<h3 class="fn"><a name="control"></a>QAbstractMediaControl * QAbstractMediaService::control ( const char * <i>name</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="control"></a><a href="qabstractmediacontrol.html">QAbstractMediaControl</a> * QAbstractMediaService::control ( const char * <i>name</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="control-2"></a>T QAbstractMediaService::control () const</h3>
 <h3 class="fn"><a name="createEndpoint"></a><a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * QAbstractMediaService::createEndpoint ( const char * <i>interface</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Creates a new media end point object from the given <i>interface</i>.</p>
+<p>Creates a new media end point object from the given <i>interface</i> name.</p>
 <p>An end point object may be an input or output to a media service and can only be used with the service object that created it.</p>
 <p>A list of supported end point interfaces can be queried using the <a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a>() function.</p>
-<p>See also supportedEndpointInterface(), <a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a>(), and <a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a>().</p>
+<p>See also <a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a>(), <a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a>(), and <a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a>().</p>
+<h3 class="fn"><a name="createEndpoint-2"></a>T QAbstractMediaService::createEndpoint ()</h3>
+<p>Creates a new media end point object of type <tt>T</tt>.</p>
+<p><tt>T</tt> must be a pointer to a class that inherits from <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> and has been declared as a media endpoint using Q_MEDIA_DECLARE_ENDPOINT.</p>
 <h3 class="fn"><a name="supportedEndpointInterfaces"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a>&gt; QAbstractMediaService::supportedEndpointInterfaces ( <a href="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Direction</a> <i>direction</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of interfaces for <i>direction</i> media end point objects that can be created by a media service.</p>
 <p>See also <a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a>().</p>

@@ -20,9 +20,17 @@
 <li><a href="qmediawidgetendpoint-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#AspectRatio-enum">AspectRatio</a></b> { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom }</td></tr>
+</table>
+<hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#aspectRatio-prop">aspectRatio</a></b> : AspectRatio</div></li>
+<li><div class="fn"><b><a href="qmediawidgetendpoint.html#customAspectRatio-prop">customAspectRatio</a></b> : QSize</div></li>
 <li><div class="fn"><b><a href="qmediawidgetendpoint.html#fullscreen-prop">fullscreen</a></b> : bool</div></li>
 </ul>
 <ul>
@@ -35,7 +43,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#QMediaWidgetEndpoint">QMediaWidgetEndpoint</a></b> ( QWidget * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#dtor.QMediaWidgetEndpoint">~QMediaWidgetEndpoint</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">AspectRatio </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#aspectRatio-prop">aspectRatio</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#customAspectRatio-prop">customAspectRatio</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#fullscreen-prop">isFullscreen</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual Direction </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#direction">direction</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>207 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qwidget.html#public-functions">QWidget</a></li>
@@ -47,12 +63,20 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#aspectRatio-prop">setAspectRatio</a></b> ( AspectRatio <i>ratio</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#customAspectRatio-prop">setCustomAspectRatio</a></b> ( const QSize &amp; <i>customRatio</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#fullscreen-prop">setFullscreen</a></b> ( bool <i>fullscreen</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>19 public slots inherited from <a href="http://doc.qtsoftware.com/4.5/qwidget.html#public-slots">QWidget</a></li>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediawidgetendpoint.html#QMediaWidgetEndpoint_iid">QMediaWidgetEndpoint_iid</a></b></td></tr>
+</table>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qwidget.html#signals">QWidget</a></li>
@@ -71,11 +95,38 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaWidgetEndpoint class provides a <a href="http://doc.qtsoftware.com/4.5/qwidget.html">QWidget</a> media output.</p>
-<p><font color="red"><b><code>\note</code></b></font>QMediaWidgetEndpoint must be created by a media service and cannot be instantiated directly.</p>
-<p>See also <a href="qabstractmediaservice.html#createEndpoint">QAbstractMediaService::createEndpoint</a>().</p>
+<p>The interface name of QMediaWidgetEndpoint is <tt>com.nokia.Qt.QMediaWidgetEndpoint/1.0</tt> as defined in <a href="qmediawidgetendpoint.html#QMediaWidgetEndpoint_iid">QMediaWidgetEndpoint_iid</a>.</p>
+<p>See also <a href="qabstractmediaservice.html#createEndpoint">QAbstractMediaService::createEndpoint</a>() and <a href="qabstractmediaservice.html#videoOutput-prop">QAbstractMediaService::setVideoOutput</a>().</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="AspectRatio-enum"></a>enum QMediaWidgetEndpoint::AspectRatio</h3>
+<p>Defines the width:height ratio to be used for the video.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMediaWidgetEndpoint::AspectRatioAuto</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Let the decoder find the aspect ratio automatically from the media file (this is the default).</td></tr>
+<tr><td valign="top"><tt>QMediaWidgetEndpoint::AspectRatioWidget</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Fits the video into the widget making the aspect ratio depend solely on the size of the widget. This way the aspect ratio is freely resizeable by the user.</td></tr>
+<tr><td valign="top"><tt>QMediaWidgetEndpoint::AspectRatioCustom</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The aspect ratio is defined by <a href="qmediawidgetendpoint.html#customAspectRatio-prop">QMediaWidgetEndpoint::customAspectRatio</a>()</td></tr>
+</table></p>
 <hr />
 <h2>Property Documentation</h2>
+<h3 class="fn"><a name="aspectRatio-prop"></a>aspectRatio : <a href="qmediawidgetendpoint.html#AspectRatio-enum">AspectRatio</a></h3>
+<p>The aspect ratio mode of a media output widget.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">AspectRatio </td><td class="memItemRight" valign="bottom"><b>aspectRatio</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAspectRatio</b> ( AspectRatio <i>ratio</i> )</td></tr>
+</table>
+<p>See also <a href="qmediawidgetendpoint.html#AspectRatio-enum">QMediaWidgetEndpoint::AspectRatio</a> and <a href="qmediawidgetendpoint.html#customAspectRatio-prop">QMediaWidgetEndpoint::customAspectRatio</a>.</p>
+<h3 class="fn"><a name="customAspectRatio-prop"></a>customAspectRatio : <a href="http://doc.qtsoftware.com/4.5/qsize.html">QSize</a></h3>
+<p>The aspect ratio value used when <a href="qmediawidgetendpoint.html#aspectRatio-prop">QMediaWidgetEndpoint::aspectRatio</a> == <a href="qmediawidgetendpoint.html#AspectRatio-enum">AspectRatioCustom</a>.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b>customAspectRatio</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setCustomAspectRatio</b> ( const QSize &amp; <i>customRatio</i> )</td></tr>
+</table>
+<p>See also <a href="qmediawidgetendpoint.html#aspectRatio-prop">QMediaWidgetEndpoint::aspectRatio</a>.</p>
 <h3 class="fn"><a name="fullscreen-prop"></a>fullscreen : bool</h3>
+<p>This property holds the full screen state of a media output widget.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isFullscreen</b> () const</td></tr>
@@ -87,6 +138,13 @@
 <p>Constructs a new media output widget with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaWidgetEndpoint"></a>QMediaWidgetEndpoint::~QMediaWidgetEndpoint ()</h3>
 <p>Destroys a media output widget.</p>
+<h3 class="fn"><a name="direction"></a><a href="qmediaendpointinterface.html#Direction-enum">Direction</a> QMediaWidgetEndpoint::direction () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaendpointinterface.html#direction">QMediaEndpointInterface::direction</a>().</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="QMediaWidgetEndpoint_iid"></a>QMediaWidgetEndpoint_iid</h3>
+<p><tt>com.nokia.Qt.QMediaWidgetEndpoint/1.0</tt></p>
+<p>Defines the interface name of <a href="qiodeviceendpoint.html">QIODeviceEndpoint</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

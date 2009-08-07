@@ -48,13 +48,18 @@ public:
 
     virtual int state() const = 0;
 
+    virtual int mediaStatus() const /* = 0*/;
+
     virtual QMediaPlaylist* mediaPlaylist() const = 0;
-    virtual void setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
+    virtual bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
 
     virtual qint64 duration() const = 0;
 
     virtual qint64 position() const = 0;
     virtual void setPosition(qint64 position) = 0;
+
+    virtual int playlistPosition() const = 0;
+    virtual void setPlaylistPosition(int position) = 0;
 
     virtual int volume() const = 0;
     virtual void setVolume(int volume) = 0;
@@ -68,23 +73,40 @@ public:
 
     virtual bool isVideoAvailable() const = 0;
 
+    virtual bool isSeekable() const = 0;
+
+    virtual float playbackRate() const = 0;
+    virtual void setPlaybackRate(float rate) = 0;
+
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
+    //playlist navigation
+    virtual void advance() = 0;
+    virtual void back() = 0;
+
 Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
+    void playlistPositionChanged(int position);
     void stateChanged(int newState);
+    void mediaStatusChanged(int state);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferStatusChanged(int percentFilled);
+    void seekableChanged(bool);
+    void error(int error, const QString &errorString);
+
 
 protected:
     QMediaPlayerControl(QObject* parent);
 };
+
+#define QMediaPlayerControl_iid "com.nokia.qt.MediaPlayerControl"
+Q_MEDIA_DECLARE_CONTROL(QMediaPlayerControl, QMediaPlayerControl_iid)
 
 #endif  // QMEDIAPLAYERCONTROL_H
 

@@ -40,21 +40,33 @@
 
 #include "qmultimediaglobal.h"
 
+#include <QList>
+#include <QSharedDataPointer>
+
 class QMediaSinkPrivate;
-class Q_MEDIA_EXPORT QMediaSink : public QObject
+class Q_MEDIA_EXPORT QMediaSink
 {
 public:
     QMediaSink();
+    QMediaSink(const QVariant &url);
     ~QMediaSink();
+    QMediaSink(const QMediaSink &other);
+    QMediaSink &operator =(const QMediaSink &other);
+
+    bool isNull() const;
 
     QString mimeType() const;
-    void setMimeType(QString const& mimeType);
+    void setMimeType(const QString &mimeType);
 
     QVariant dataLocation() const;
-    void setDataLocation(QVariant const& url);
+    void setDataLocation(const QVariant &url);
+
+    bool operator ==(const QMediaSink& other) const;
+    bool operator !=(const QMediaSink& other) const;
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSink)
+    QSharedDataPointer<QMediaSinkPrivate> d;
+
 };
 
 #endif  // QMEDIASINK_H

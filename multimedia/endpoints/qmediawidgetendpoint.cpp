@@ -35,37 +35,24 @@
 #include "qmediawidgetendpoint_p.h"
 
 /*!
-    \class QMediaWidgetEndpointInterface
-    \preliminary
-    \internal
-    \brief The QMediaWidgetEndpointInterface class provides an interface for widget media outputs.
-
-    \sa QMediaWidgetEndpoint
-*/
-
-/*!
-*/
-QMediaWidgetEndpointInterface::~QMediaWidgetEndpointInterface()
-{
-}
-
-/*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QMediaWidgetEndpointInterface::direction() const
-{
-    return Output;
-}
-
-/*!
     \class QMediaWidgetEndpoint
     \preliminary
     \brief The QMediaWidgetEndpoint class provides a QWidget media output.
 
-    \note QMediaWidgetEndpoint must be created by a media service and cannot be instantiated
-    directly.
+    The interface name of QMediaWidgetEndpoint is \c com.nokia.Qt.QMediaWidgetEndpoint/1.0 as
+    defined in QMediaWidgetEndpoint_iid.
 
-    \sa QAbstractMediaService::createEndpoint()
+    \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
+*/
+
+/*!
+    \macro QMediaWidgetEndpoint_iid
+
+    \c com.nokia.Qt.QMediaWidgetEndpoint/1.0
+
+    Defines the interface name of QIODeviceEndpoint.
+
+    \relates QMediaWidgetEndpoint
 */
 
 /*!
@@ -92,19 +79,78 @@ QMediaWidgetEndpoint::~QMediaWidgetEndpoint()
 }
 
 /*!
-    Identifies if a media output widget is in full screen mode.
-
-    Returns true if the widget is full screen, and false otherwise.
+    \reimp
 */
+QMediaEndpointInterface::Direction QMediaWidgetEndpoint::direction() const
+{
+    return Output;
+}
+
+/*!
+    \property QMediaWidgetEndpoint::fullscreen
+    \brief the full screen state of a media output widget.
+*/
+
 bool QMediaWidgetEndpoint::isFullscreen() const
 {
     return d_func()->fullscreen;
 }
 
-/*!
-    Sets the \a fullscreen mode of a media output widget.
-*/
 void QMediaWidgetEndpoint::setFullscreen(bool fullscreen)
 {
     d_func()->fullscreen = fullscreen;
+}
+
+/*!
+  \enum QMediaWidgetEndpoint::AspectRatio
+
+  Defines the width:height ratio to be used for the video.
+
+  \value AspectRatioAuto
+            Let the decoder find the aspect ratio automatically from
+            the media file (this is the default).
+
+  \value AspectRatioWidget
+            Fits the video into the widget making the aspect ratio depend solely on the size of the widget.
+            This way the aspect ratio is freely resizeable by the user.
+
+  \value AspectRatioCustom
+            The aspect ratio is defined by QMediaWidgetEndpoint::customAspectRatio()
+*/
+
+
+/*!
+    \property QMediaWidgetEndpoint::aspectRatio
+
+    The aspect ratio mode of a media output widget.
+
+    \sa QMediaWidgetEndpoint::AspectRatio, QMediaWidgetEndpoint::customAspectRatio
+*/
+
+QMediaWidgetEndpoint::AspectRatio QMediaWidgetEndpoint::aspectRatio() const
+{
+    return d_func()->aspectRatio;
+}
+
+void QMediaWidgetEndpoint::setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio)
+{
+    d_func()->aspectRatio = ratio;
+}
+
+/*!
+    \property QMediaWidgetEndpoint::customAspectRatio
+
+    The aspect ratio value used when QMediaWidgetEndpoint::aspectRatio == AspectRatioCustom.
+
+    \sa QMediaWidgetEndpoint::aspectRatio
+*/
+
+QSize QMediaWidgetEndpoint::customAspectRatio() const
+{
+    return d_func()->customAspectRatio;
+}
+
+void QMediaWidgetEndpoint::setCustomAspectRatio(const QSize &customRatio)
+{
+    d_func()->customAspectRatio = customRatio;
 }

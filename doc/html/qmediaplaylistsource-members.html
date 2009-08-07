@@ -19,8 +19,7 @@
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#QMediaPlaylistSource">QMediaPlaylistSource</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#QMediaPlaylistSource-2">QMediaPlaylistSource</a></b> ( QMediaPlaylistSourcePrivate &amp;, QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#dtor.QMediaPlaylistSource">~QMediaPlaylistSource</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#append">append</a></b> ( const QMediaSource &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#append-2">append</a></b> ( const QList&lt;QMediaSource&gt; &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylistsource.html#appendItem">appendItem</a></b> ( const QMediaResourceList &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#children">children</a></b> () const</div></li>
@@ -45,13 +44,12 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#insert">insert</a></b> ( int, const QMediaSource &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylistsource.html#insertItem">insertItem</a></b> ( int, const QMediaResourceList &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#isReadOnly">isReadOnly</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#itemAt">itemAt</a></b> ( int ) const : QMediaSource</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a></b> ( int, int )</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a></b> ( int, int )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#itemsChanged">itemsChanged</a></b> ( int, int )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#itemsInserted">itemsInserted</a></b> ()</div></li>
@@ -65,9 +63,10 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#remove">remove</a></b> ( int ) : bool</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistsource.html#remove-2">remove</a></b> ( int, int ) : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylistsource.html#removeItem">removeItem</a></b> ( int ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylistsource.html#removeItems">removeItems</a></b> ( int, int ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylistsource.html#resources">resources</a></b> ( int ) const : QMediaResourceList</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#save">save</a></b> ( const QString &amp;, const char * ) : bool</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistsource.html#save-2">save</a></b> ( QIODevice *, const char * ) : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#sender">sender</a></b> () const</div></li>

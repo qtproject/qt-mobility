@@ -38,7 +38,6 @@
 
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/qdebug.h>
-#include "qmediasource.h"
 
 class QMediaPlaylistNullSource : public QMediaPlaylistSource
 {
@@ -46,11 +45,7 @@ public:
     QMediaPlaylistNullSource() :QMediaPlaylistSource() {}
     virtual ~QMediaPlaylistNullSource() {}
     virtual int size() const {return 0;}
-    virtual QMediaSource itemAt(int pos) const
-    {
-        Q_UNUSED(pos);
-        return QMediaSource();
-    }
+    virtual QMediaResourceList resources(int) const { return QMediaResourceList(); }
 };
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource))
@@ -61,22 +56,19 @@ class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
 public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
-        currentPos(-1),        
+        currentPos(-1),
         playbackMode(QMediaPlaylistNavigator::Linear),
-        randomPositionsOffset(-1),
-        currentPosAfterListModifications(0)
+        randomPositionsOffset(-1)
     {
     }
 
     QMediaPlaylist *playlist;
     int currentPos;
     QMediaPlaylistNavigator::PlaybackMode playbackMode;
-    QMediaSource currentItem;
+    QMediaResourceList currentItem;
 
     mutable QList<int> randomModePositions;
     mutable int randomPositionsOffset;
-
-    int currentPosAfterListModifications;
 
     int nextItemPos(int steps = 1) const;
     int previousItemPos(int steps = 1) const;
@@ -84,7 +76,6 @@ public:
     void _q_itemsInserted(int start, int end);
     void _q_itemsRemoved(int start, int end);
     void _q_itemsChanged(int start, int end);
-    void _q_updateCurrentItemPos();
 };
 
 
@@ -96,7 +87,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {        
+    switch (playbackMode) {
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -141,7 +132,7 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
     if (steps == 0)
         return currentPos;
 
-    switch (playbackMode) {        
+    switch (playbackMode) {
         case QMediaPlaylistNavigator::CurrentItemOnce:
             return -1;
         case QMediaPlaylistNavigator::CurrentItemInLoop:
@@ -214,7 +205,7 @@ enum QMediaPlaylistNavigator::PlaybackMode
   */
 QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
     :QObject(*new QMediaPlaylistNavigatorPrivate, parent)
-{    
+{
     setPlaylist(playlist ? playlist : _q_nullMediaPlaylist());
 }
 
@@ -278,11 +269,8 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
         d->playlist = _q_nullMediaPlaylist();
     }
 
-    connect(d->playlist, SIGNAL(itemsAboutToBeInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
-    connect(d->playlist, SIGNAL(itemsInserted()), SLOT(_q_updateCurrentItemPos()));
-    connect(d->playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
-    connect(d->playlist, SIGNAL(itemsRemoved()), SLOT(_q_updateCurrentItemPos()));
-
+    connect(d->playlist, SIGNAL(itemsInserted(int,int)), SLOT(_q_itemsInserted(int,int)));
+    connect(d->playlist, SIGNAL(itemsRemoved(int,int)), SLOT(_q_itemsRemoved(int,int)));
     connect(d->playlist, SIGNAL(itemsChanged(int,int)), SLOT(_q_itemsChanged(int,int)));
 
     d->randomPositionsOffset = -1;
@@ -293,8 +281,8 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
         emit currentPositionChanged(-1);
     }
 
-    if (!d->currentItem.isNull()) {
-        d->currentItem = QMediaSource();        
+    if (!d->currentItem.isEmpty()) {
+        d->currentItem = QMediaResourceList();
         emit activated(d->currentItem); //stop playback
     }
 }
@@ -305,21 +293,21 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
 
   \sa currentPosition()
   */
-QMediaSource QMediaPlaylistNavigator::currentItem() const
+QMediaResourceList QMediaPlaylistNavigator::currentItem() const
 {
     return itemAt(d_func()->currentPos);
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
+QMediaResourceList QMediaPlaylistNavigator::nextItem(int steps) const
 {
     return itemAt(nextPosition(steps));
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
+QMediaResourceList QMediaPlaylistNavigator::previousItem(int steps) const
 {
     return itemAt(previousPosition(steps));
 }
@@ -328,12 +316,9 @@ QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
   Returns the media source at playlist position \a pos or
   invalid media source object if \a pos is out the playlist positions range.
   */
-QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
+QMediaResourceList QMediaPlaylistNavigator::itemAt(int pos) const
 {
-    if ( pos<0 || pos>=d_func()->playlist->size() )
-        return QMediaSource();
-    else
-        return d_func()->playlist->itemAt(pos);
+    return d_func()->playlist->resources(pos);
 }
 
 /*!
@@ -449,7 +434,7 @@ void QMediaPlaylistNavigator::jump(int pos)
         emit surroundingItemsChanged();
     }
 
-    QMediaSource src = d->playlist->itemAt(pos);
+    QMediaResourceList src = d->playlist->resources(pos);
     if (src != d->currentItem) {
         d->currentItem = src;
         emit activated(src);
@@ -460,10 +445,16 @@ void QMediaPlaylistNavigator::jump(int pos)
   \internal
   */
 void QMediaPlaylistNavigatorPrivate::_q_itemsInserted(int start, int end)
-{    
+{
+    Q_Q(QMediaPlaylistNavigator);
+
     if (currentPos >= start) {
-        currentPosAfterListModifications = end-start+1;
+        currentPos = end-start+1;
+        q->jump(currentPos);
     }
+
+    //TODO: check if they really changed
+    emit q->surroundingItemsChanged();
 }
 
 /*!
@@ -471,22 +462,15 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsInserted(int start, int end)
   */
 void QMediaPlaylistNavigatorPrivate::_q_itemsRemoved(int start, int end)
 {
+    Q_Q(QMediaPlaylistNavigator);
+
     if (currentPos > end) {
-        currentPosAfterListModifications = currentPos - end-start+1;
+        currentPos = currentPos - end-start+1;
+        q->jump(currentPos);
     } else if (currentPos >= start) {
         //current item was removed
-        currentPosAfterListModifications = qMin(start, playlist->size()-1);
-    }
-}
-
-/*!
-  \internal
-  */
-void QMediaPlaylistNavigatorPrivate::_q_updateCurrentItemPos()
-{    
-    Q_Q(QMediaPlaylistNavigator);
-    if (currentPos != currentPosAfterListModifications) {
-        q->jump(currentPosAfterListModifications);
+        currentPos = qMin(start, playlist->size()-1);
+        q->jump(currentPos);
     }
 
     //TODO: check if they really changed
@@ -501,7 +485,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
     Q_Q(QMediaPlaylistNavigator);
 
     if (currentPos >= start && currentPos<=end) {
-        QMediaSource src = playlist->itemAt(currentPos);
+        QMediaResourceList src = playlist->resources(currentPos);
         if (src != currentItem) {
             currentItem = src;
             emit q->activated(src);
@@ -513,7 +497,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 }
 
 /*!
-    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &source)
+    \fn void QMediaPlaylistNavigator::activated(const QMediaResourceList &source)
 
     Signal the playback of \a source should be started.
     it's usually related to change of the current item

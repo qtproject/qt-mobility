@@ -34,31 +34,25 @@
 
 #include "qwmpmetadata.h"
 
+#include "qwmpevents.h"
+#include "qwmpglobal.h"
+
+#include <QtCore/qdir.h>
+#include <QtCore/qfileinfo.h>
+#include <QtCore/qsize.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
-class QAutoBStr
-{
-public:
-    inline QAutoBStr(const QString &string)
-        : m_string(SysAllocString(reinterpret_cast<const wchar_t *>(string.unicode()))) 
-    {
-    }
-
-    inline ~QAutoBStr()
-    {
-        SysFreeString(m_string);
-    }
-
-    inline operator BSTR() const { return m_string; }
-
-private:
-    BSTR m_string;
-};
-
-QWmpMetaData::QWmpMetaData(QObject *parent)
-    : QMediaMetaData(parent)
+QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
+    : QMetadataProviderControl(parent)
     , m_media(0)
 {
+    player->get_currentMedia(&m_media);
+
+    connect(events, SIGNAL(CurrentItemChange(IDispatch*)),
+            this, SLOT(currentItemChangeEvent(IDispatch*)));
+    connect(events, SIGNAL(MediaChange(IDispatch*)), this, SLOT(mediaChangeEvent(IDispatch*)));
 }
 
 QWmpMetaData::~QWmpMetaData()
@@ -67,153 +61,238 @@ QWmpMetaData::~QWmpMetaData()
         m_media->Release();
 }
 
-QStringList QWmpMetaData::keys() const
+bool QWmpMetaData::metadataAvailable() const
+{
+    return m_media != 0;
+}
+
+bool QWmpMetaData::isReadOnly() const
+{
+    return false;
+}
+
+QList<QString> QWmpMetaData::availableMetadata() const
 {
     return keys(m_media);
 }
 
-int QWmpMetaData::valueCount(const QString &key) const
+QVariant QWmpMetaData::metadata(const QString &name) const
 {
-    return valueCount(m_media, key);
+    return value(m_media, name);
 }
 
-QVariant QWmpMetaData::value(const QString &key, int value) const
+void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
 {
-    return QWmpMetaData::value(m_media, key, value);
+    setValue(m_media, name, value);
 }
 
-QVariantList QWmpMetaData::values(const QString &key) const
+QMediaResourceList QWmpMetaData::resources() const
 {
-    return values(m_media, key);
+    return resources(m_media);
 }
 
-IWMPMedia *QWmpMetaData::media() const
+void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
 {
-    return m_media;
+    IWMPMedia *media = m_media;
+
+    m_media = 0;
+    if (dispatch)
+        dispatch->QueryInterface(__uuidof(IWMPMedia), reinterpret_cast<void **>(&m_media));
+
+    if (media) {
+        if (m_media)
+            emit metadataChanged();
+        else
+            emit metadataAvailabilityChanged(false);
+
+        media->Release();
+    } else {
+        if (m_media)
+            emit metadataAvailabilityChanged(false);
+    }
 }
 
-void QWmpMetaData::setMedia(IWMPMedia *media)
+void QWmpMetaData::mediaChangeEvent(IDispatch *dispatch)
 {
-    if (m_media)
-        m_media->Release();
-
-    m_media = media;
-
-    if (m_media)
-        m_media->AddRef();
-
-    emit changed();
+    IWMPMedia *media = 0;
+    if (dispatch &&  dispatch->QueryInterface(
+            __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
+        VARIANT_BOOL isEqual = VARIANT_FALSE;
+        if (media->get_isIdentical(m_media, &isEqual) == S_OK && isEqual)
+            emit metadataChanged();
+        media->Release();
+    }
 }
+
 
 QStringList QWmpMetaData::keys(IWMPMedia *media)
 {
     QStringList keys;
 
-    if (media) {
-        long count = 0;
+    long count = 0;
+    if (media && media->get_attributeCount(&count) == S_OK) {
+        for (long i = 0; i < count; ++i) {
+            BSTR string;
+            if (media->getAttributeName(i, &string) == S_OK) {
+                keys.append(QString::fromWCharArray(string, ::SysStringLen(string)));
 
-        if (media->get_attributeCount(&count) == S_OK) {
-            for (long i = 0; i < count; ++i) {
-                BSTR string;
-
-                if (media->getAttributeName(i, &string) == S_OK) {
-                    keys.append(QString::fromWCharArray(string, SysStringLen(string)));
-
-                    SysFreeString(string);
-                }
+                ::SysFreeString(string);
             }
         }
     }
     return keys;
-
 }
 
-int QWmpMetaData::valueCount(IWMPMedia *media, const QString &key)
+QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
 {
-    long count = 0;
+    const QAutoBStr bstrKey(key);
 
-    IWMPMedia3 *media3 = 0;
-
-    if (media && media->QueryInterface(
-            __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
-        media3->getAttributeCountByType(QAutoBStr(key), 0, &count);
-        media3->Release();
-    }
-
-    return count;
-}
-
-QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key, int index)
-{
-    QVariant value;
-
+    QVariantList values;
     IWMPMedia3 *media3 = 0;
     if (media && media->QueryInterface(
             __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
-        VARIANT var;
-        VariantInit(&var);
+        long count = 0;
+        media3->getAttributeCountByType(bstrKey, 0, &count);
 
-        if (media3->getItemInfoByType(QAutoBStr(key), 0, index, &var) == S_OK) {
-            switch (var.vt) {
-            case VT_I4:
-                value = var.lVal;
-                break;
-            case VT_INT:
-                value = var.intVal;
-                break;
-            case VT_BSTR:
-                value = QString::fromWCharArray(var.bstrVal, SysStringLen(var.bstrVal));
-                break;
-            case VT_DISPATCH:
-                {
-                    IWMPMetadataPicture *picture = 0;
-                    IWMPMetadataText *text = 0;
+        // The count appears to only be valid for static properties, dynamic properties like
+        // PlaylistIndex will have a count of zero but return a value for index 0.
+        if (count == 0)
+            count = 1;
 
-                    if (var.pdispVal->QueryInterface(
-                            __uuidof(IWMPMetadataPicture),
-                            reinterpret_cast<void **>(&picture)) == S_OK) {
-                        BSTR string;
-                        if (picture->get_URL(&string) == S_OK) {
-                            value = QString::fromWCharArray(string, SysStringLen(string));
+        for (long i = 0; i < count; ++i) {
+            VARIANT var;
+            VariantInit(&var);
 
-                            SysFreeString(string);
-                        }
-                        picture->Release();
-                    } else if (var.pdispVal->QueryInterface(
-                            __uuidof(IWMPMetadataText),
-                            reinterpret_cast<void **>(&text)) == S_OK) {
-                        BSTR string;
-                        if (text->get_description(&string) == S_OK) {
-                            value = QString::fromWCharArray(string, SysStringLen(string));
+            if (media3->getItemInfoByType(bstrKey, 0, i, &var) == S_OK) {
+                QVariant value = convertVariant(var);
 
-                            SysFreeString(string);
-                        }
-                        text->Release();
-                    }
-                }
-                break;
-            default:
-                break;
+                if (!value.isNull())
+                    values.append(value);
+
+                VariantClear(&var);
             }
-            VariantClear(&var);
         }
         media3->Release();
     }
-    return value;
+
+    switch (values.count()) {
+    case 0:
+        return QVariant();
+    case 1:
+        return values.first();
+    default:
+        return values;
+    }
 }
 
-QVariantList QWmpMetaData::values(IWMPMedia *media, const QString &key)
+void QWmpMetaData::setValue(IWMPMedia *media, const QString &key, const QVariant &value)
 {
-    QVariantList values;
+    if (qVariantCanConvert<QString>(value))
+        media->setItemInfo(QAutoBStr(key), QAutoBStr(value.toString()));
+}
 
-    const int count = valueCount(media, key);
+QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
+{
+    QMediaResourceList resources;
 
-    for (int i = 0; i < count; ++i) {
-        QVariant value = QWmpMetaData::value(media, key, i);
+    BSTR string = 0;
+    if (media->get_sourceURL(&string) == S_OK) {
+        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        ::SysFreeString(string);
 
-        if (!value.isNull())
-            values.append(value);
+        resources.append(QMediaResource(QUrl(uri)));
+
+        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
+            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            ::SysFreeString(string);
+
+            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
+            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
+
+            QDir dir = QFileInfo(uri).absoluteDir();
+
+            if (dir.exists(albumArtLarge)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtLarge)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(200, 200));
+
+                resources.append(resource);
+            }
+
+            if (dir.exists(albumArtSmall)) {
+                QMediaResource resource(
+                        QUrl(dir.absoluteFilePath(albumArtSmall)),
+                        QLatin1String("image/jpeg"),
+                        QMediaResource::CoverArtRole);
+                resource.setResolution(QSize(75, 75));
+
+                resources.append(resource);
+            }
+        }
     }
 
-    return values;
+    return resources;
+}
+
+QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
+{
+    switch (variant.vt) {
+    case VT_I2:
+        return variant.iVal;
+    case VT_I4:
+        return variant.lVal;
+    case VT_I8:
+        return variant.llVal;
+    case VT_UI2:
+        return variant.uiVal;
+    case VT_UI4:
+        return quint32(variant.ulVal);
+    case VT_UI8:
+        return variant.ullVal;
+    case VT_INT:
+        return variant.intVal;
+    case VT_UINT:
+        return variant.uintVal;
+    case VT_BSTR:
+        return QString::fromWCharArray(variant.bstrVal, ::SysStringLen(variant.bstrVal));
+    case VT_DISPATCH:
+        {
+            IWMPMetadataPicture *picture = 0;
+            IWMPMetadataText *text = 0;
+
+            if (variant.pdispVal->QueryInterface(
+                    __uuidof(IWMPMetadataPicture), reinterpret_cast<void **>(&picture)) == S_OK) {
+                QUrl uri;
+                BSTR string;
+                if (picture->get_URL(&string) == S_OK) {
+                    uri = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
+
+                    ::SysFreeString(string);
+                }
+                picture->Release();
+                return qVariantFromValue(uri);
+            } else if (variant.pdispVal->QueryInterface(
+                    __uuidof(IWMPMetadataText), reinterpret_cast<void **>(&text)) == S_OK) {
+                QString description;
+                BSTR string;
+                if (text->get_description(&string) == S_OK) {
+                    description = QString::fromWCharArray(string, SysStringLen(string));
+
+                    ::SysFreeString(string);
+                }
+                text->Release();
+                return description;
+            } else {
+                qWarning("Unknown dispatch type");
+            }
+        }
+        break;
+    default:
+        qWarning("Unsupported Type %d %x", variant.vt, variant.vt);
+        break;
+    }
+
+    return QVariant();
 }

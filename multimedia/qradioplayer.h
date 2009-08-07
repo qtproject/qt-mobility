@@ -57,16 +57,21 @@ class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
+    Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
 
     Q_ENUMS(Band)
 
 public:
-    enum Band { AM, FM, SW };
+    enum Band { AM, FM, SW, LW };
 
     QRadioPlayer(QRadioService *radioService = createRadioService(), QObject *parent = 0);
     ~QRadioPlayer();
 
+    bool isValid() const;
+
     Band band() const;
+
+    bool isSupportedBand(int b) const;
 
     int frequency() const;
 
@@ -79,11 +84,14 @@ public:
     int volume() const;
     bool isMuted() const;
 
+    bool isSearching() const;
+
     QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void searchForward();
     void searchBackward();
+    void cancelSearch();
 
     void setBand(Band band);
     void setFrequency(int frequency);
@@ -96,8 +104,9 @@ Q_SIGNALS:
     void bandChanged(QRadioPlayer::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
+    void searchingStatusChanged(bool searching);
     void signalStrengthChanged(int signalStrength);
-    void durationChanged(qint64 durattion);
+    void durationChanged(qint64 duration);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
 

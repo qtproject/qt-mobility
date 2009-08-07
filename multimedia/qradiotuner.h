@@ -37,37 +37,54 @@
 
 #include "qabstractmediacontrol.h"
 
+#include "qradioplayer.h"
+
 class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
-    QRadioTuner(QObject *parent = 0);
     ~QRadioTuner();
 
-    int band() const;
-    virtual void setBand(int b);
+    virtual int band() const = 0;
+    virtual void setBand(int b) = 0;
+    virtual bool isSupportedBand(int b) const = 0;
 
-    int frequency() const;
-    virtual void setFrequency(int frequency);
+    virtual int frequency() const = 0;
+    virtual void setFrequency(int frequency) = 0;
 
-    bool isStereo() const;
-    virtual void setStereo(bool stereo);
+    virtual bool isStereo() const = 0;
+    virtual void setStereo(bool stereo) = 0;
 
-    int signalStrength() const;
-    virtual void setSignalStrength(int strength);
+    virtual int signalStrength() const = 0;
 
-    qint64 duration() const;
-    virtual void setDuration(qint64 duration);
+    virtual qint64 duration() const = 0;
 
-    int volume() const;
-    virtual void setVolume(int volume);
+    virtual int volume() const = 0;
+    virtual void setVolume(int volume) = 0;
 
-    bool isMuted() const;
-    virtual void setMuted(bool muted);
+    virtual bool isMuted() const = 0;
+    virtual void setMuted(bool muted) = 0;
+
+    virtual bool isSearching() const = 0;
 
     virtual void searchForward() = 0;
     virtual void searchBackward() = 0;
+
+    virtual void cancelSearch() = 0;
+
+Q_SIGNALS:
+    void bandChanged(QRadioPlayer::Band band);
+    void frequencyChanged(int frequency);
+    void stereoStatusChanged(bool stereo);
+    void searchingStatusChanged(bool stereo);
+    void signalStrengthChanged(int signalStrength);
+    void durationChanged(qint64 durattion);
+    void volumeChanged(int volume);
+    void mutingChanged(bool muted);
+
+protected:
+    QRadioTuner(QObject *parent = 0);
 };
 
 #endif  // QRADIOTUNER_H

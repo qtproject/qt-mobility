@@ -35,23 +35,42 @@
 #ifndef QWMPGLOBAL_H
 #define QWMPGLOBAL_H
 
-#include <QtCore/qglobal.h>
+#include <wmp.h>
 
-#if defined(Q_OS_WIN) && defined(QT_MAKEDLL)
-#   if defined(QT_BUILD_WMP_LIB)
-#       define Q_WMP_EXPORT Q_DECL_EXPORT
-#   else
-#       define Q_WMP_EXPORT Q_DECL_IMPORT
-#   endif
-#elif defined(Q_OS_WIN) && defined(QT_DLL)
-#   define Q_WMP_EXPORT Q_DECL_IMPORT
-#endif
-#if !defined(Q_WMP_EXPORT)
-#   if defined(QT_SHARED)
-#       define Q_WMP_EXPORT Q_DECL_EXPORT
-#   else
-#       define Q_WMP_EXPORT
-#   endif
-#endif
+#include <QtCore/qstring.h>
+#include <QtCore/qurl.h>
+
+const char *qwmp_error_string(HRESULT hr);
+
+class QAutoBStr
+{
+public:
+    inline QAutoBStr(const QString &string)
+        : m_string(::SysAllocString(static_cast<const wchar_t *>(string.utf16())))
+    {
+    }
+
+    inline QAutoBStr(const QUrl &url)
+        : m_string(::SysAllocString(static_cast<const wchar_t *>(url.toString().utf16())))
+    {
+    }
+
+    inline QAutoBStr(const wchar_t *string)
+        : m_string(::SysAllocString(string))
+    {
+    }
+
+    inline ~QAutoBStr()
+    {
+        ::SysFreeString(m_string);
+    }
+
+    inline operator BSTR() const { return m_string; }
+
+private:
+    BSTR m_string;
+};
+
+
 
 #endif

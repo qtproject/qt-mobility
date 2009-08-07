@@ -39,21 +39,38 @@
 
 #include "qmultimediaglobal.h"
 
+
 class QAbstractMediaService;
 
-
 class QAbstractMediaObjectPrivate;
-
 class Q_MEDIA_EXPORT QAbstractMediaObject : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QAbstractMediaObject)
+    Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
+
 public:
+    ~QAbstractMediaObject();
+
     virtual QAbstractMediaService* service() const = 0;
 
+    virtual bool isValid() const = 0;
+
+    int notifyInterval() const;
+    void setNotifyInterval(int milliSeconds);
+
+Q_SIGNALS:
+    void notifyIntervalChanged(int milliSeconds);
+
 protected:
-    QAbstractMediaObject(QObject *parent);
+    QAbstractMediaObject(QObject *parent = 0);
     QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
+
+    void addPropertyWatch(QByteArray const &name);
+    void removePropertyWatch(QByteArray const &name);
+
+private:
+    Q_DECLARE_PRIVATE(QAbstractMediaObject)
+    Q_PRIVATE_SLOT(d_func(), void _q_notify())
 };
 
 

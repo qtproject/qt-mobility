@@ -26,17 +26,19 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaPlaylistSource * <i>source</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#append">append</a></b> ( const QMediaSource &amp; <i>source</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#append-2">append</a></b> ( const QList&lt;QMediaSource&gt; &amp; <i>sources</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItem">appendItem</a></b> ( const QMediaResource &amp; <i>resource</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItem-2">appendItem</a></b> ( const QMediaResourceList &amp; <i>resources</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#clear">clear</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insert">insert</a></b> ( int <i>pos</i>, const QMediaSource &amp; <i>source</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItem">insertItem</a></b> ( int <i>pos</i>, const QMediaResource &amp; <i>resource</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItem-2">insertItem</a></b> ( int <i>index</i>, const QMediaResourceList &amp; <i>resources</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemAt">itemAt</a></b> ( int <i>position</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#remove">remove</a></b> ( int <i>pos</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#remove-2">remove</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeItem">removeItem</a></b> ( int <i>pos</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeItems">removeItems</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#resource">resource</a></b> ( int <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResourceList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#resources">resources</a></b> ( int <i>position</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#save">save</a></b> ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#size">size</a></b> () const</td></tr>
@@ -60,8 +62,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsChanged">itemsChanged</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
@@ -78,44 +80,67 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylist class provides a list of media sources to play.</p>
-<p>See also <a href="qmediasource.html">QMediaSource</a>.</p>
+<p>Depending on playlist source implementation, most of playlist modifcation operations can be asynchronous.</p>
+<p>See also <a href="qmediaresource.html">QMediaResource</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( <a href="qmediaplaylistsource.html">QMediaPlaylistSource</a> * <i>source</i> = 0, <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Create a new playlist object for playlist <i>source</i>. If source is null, internal local memory playlist source will be created.</p>
+<p>Create a new playlist object for playlist <i>source</i> with the given <i>parent</i>. If source is null, internal local memory playlist source will be created.</p>
 <h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the playlist.</p>
-<h3 class="fn"><a name="append"></a>bool QMediaPlaylist::append ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )</h3>
+<h3 class="fn"><a name="appendItem"></a>bool QMediaPlaylist::appendItem ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>resource</i> )</h3>
 <p>Append the media <i>source</i> to the playlist.</p>
-<h3 class="fn"><a name="append-2"></a>bool QMediaPlaylist::append ( const <a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="qmediasource.html">QMediaSource</a>&gt; &amp; <i>sources</i> )</h3>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="appendItem-2"></a>bool QMediaPlaylist::appendItem ( const QMediaResourceList &amp; <i>resources</i> )</h3>
 <p>Append the list of media <i>sources</i> to the playlist.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
 <h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3>
 <p>Remove all the items from the playlist.</p>
-<h3 class="fn"><a name="insert"></a>bool QMediaPlaylist::insert ( int <i>pos</i>, const <a href="qmediasource.html">QMediaSource</a> &amp; <i>source</i> )</h3>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="insertItem"></a>bool QMediaPlaylist::insertItem ( int <i>pos</i>, const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>resource</i> )</h3>
 <p>Insert the media <i>source</i> to the playlist at position <i>pos</i>.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="insertItem-2"></a>bool QMediaPlaylist::insertItem ( int <i>index</i>, const QMediaResourceList &amp; <i>resources</i> )</h3>
 <h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3>
 <p>Returns true if the playlist contains no items; otherwise returns false.</p>
 <p>See also <a href="qmediaplaylist.html#size">size</a>().</p>
 <h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylist::isReadOnly () const</h3>
 <p>Returns true if the playlist can be modified; otherwise returns false.</p>
-<p>See also <a href="qmediaplaylist.html#size">size</a>() and ..</p>
-<h3 class="fn"><a name="itemAt"></a><a href="qmediasource.html">QMediaSource</a> QMediaPlaylist::itemAt ( int <i>position</i> ) const</h3>
-<p>Returns the media source at index <i>position</i> in the playlist.</p>
+<p>See also <a href="qmediaplaylist.html#size">size</a>().</p>
 <h3 class="fn"><a name="itemsAboutToBeInserted"></a>void QMediaPlaylist::itemsAboutToBeInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="itemsAboutToBeRemoved"></a>void QMediaPlaylist::itemsAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="itemsChanged"></a>void QMediaPlaylist::itemsChanged ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted after media sources have been changed in the playlist between start and end positions inclusive.</p>
-<h3 class="fn"><a name="itemsInserted"></a>void QMediaPlaylist::itemsInserted ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<h3 class="fn"><a name="itemsRemoved"></a>void QMediaPlaylist::itemsRemoved ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media sources have been changed in the playlist between <i>start</i> and <i>end</i> positions inclusive.</p>
+<h3 class="fn"><a name="itemsInserted"></a>void QMediaPlaylist::itemsInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media sources have been inserted into the playlist. The new items are those between <i>start</i> and <i>end</i> inclusive.</p>
+<h3 class="fn"><a name="itemsRemoved"></a>void QMediaPlaylist::itemsRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media sources have been removed from the playlist. The removed items are those between <i>start</i> and <i>end</i> inclusive.</p>
 <h3 class="fn"><a name="load"></a>bool QMediaPlaylist::load ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
+<p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
+<p>New items are appended to playlist.</p>
+<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
 <h3 class="fn"><a name="load-2"></a>bool QMediaPlaylist::load ( <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> = 0 )</h3>
-<h3 class="fn"><a name="remove"></a>bool QMediaPlaylist::remove ( int <i>pos</i> )</h3>
+<p>Load playlist from <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
+<p>New items are appended to playlist.</p>
+<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<h3 class="fn"><a name="removeItem"></a>bool QMediaPlaylist::removeItem ( int <i>pos</i> )</h3>
 <p>Remove the item from the playlist at position <i>pos</i>.</p>
-<h3 class="fn"><a name="remove-2"></a>bool QMediaPlaylist::remove ( int <i>start</i>, int <i>end</i> )</h3>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="removeItems"></a>bool QMediaPlaylist::removeItems ( int <i>start</i>, int <i>end</i> )</h3>
 <p>Remove the items from the playlist from position <i>start</i> to <i>end</i> inclusive.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="resource"></a><a href="qmediaresource.html">QMediaResource</a> QMediaPlaylist::resource ( int <i>index</i> ) const</h3>
+<p>Returns the primary resource for the media item at <i>index</i>.</p>
+<h3 class="fn"><a name="resources"></a>QMediaResourceList QMediaPlaylist::resources ( int <i>position</i> ) const</h3>
+<p>Returns the media source at index <i>position</i> in the playlist.</p>
 <h3 class="fn"><a name="save"></a>bool QMediaPlaylist::save ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
+<p>Save playlist to <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name.</p>
+<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
 <h3 class="fn"><a name="save-2"></a>bool QMediaPlaylist::save ( <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> )</h3>
+<p>Save playlist to <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> <i>device</i> using format <i>format</i>.</p>
+<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
 <h3 class="fn"><a name="shuffle"></a>void QMediaPlaylist::shuffle ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Shuffle items in the playlist.</p>
 <h3 class="fn"><a name="size"></a>int QMediaPlaylist::size () const</h3>
 <p>Returns the number of items in the playlist.</p>
 <p>See also <a href="qmediaplaylist.html#isEmpty">isEmpty</a>().</p>

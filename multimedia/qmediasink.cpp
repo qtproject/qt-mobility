@@ -33,29 +33,135 @@
 ****************************************************************************/
 
 #include "qmediasink.h"
+class QMediaSinkPrivate : public QSharedData
+{
+public:
+    QMediaSinkPrivate()
+        :QSharedData() { ref.ref(); }
 
+    QMediaSinkPrivate(const QString &mimeType, const QVariant &url)
+        :QSharedData(),
+         mimeType(mimeType),
+         url(url)
+    {}
+
+    QMediaSinkPrivate(const QMediaSinkPrivate &other)
+        :QSharedData(other),
+         mimeType(other.mimeType),
+         url(other.url)
+    {}
+
+    ~QMediaSinkPrivate() {}
+
+    QString mimeType;
+    QVariant url;
+};
+
+Q_GLOBAL_STATIC(QMediaSinkPrivate, qt_sharedMediaSink)
+
+/*!
+    \class QMediaSink
+    \ingroup multimedia
+
+    \preliminary
+    \brief The QMediaSink class provides an media sink location.
+
+    \sa
+*/
+
+/*!
+  Construct an empty media sink object.
+*/
 QMediaSink::QMediaSink()
+    :d(qt_sharedMediaSink())
 {
 }
 
+/*!
+  Construct a media sink by passing \a mimeType and \a url.
+*/
+QMediaSink::QMediaSink(const QVariant &url)
+    :d(new QMediaSinkPrivate(QString(), url))
+{
+}
+
+/*!
+  Constructs a copy of \a other.
+*/
+QMediaSink::QMediaSink(const QMediaSink &other)
+    :d(other.d)
+{
+}
+
+/*!
+  Assigns the specified media sink to this object.
+*/
+QMediaSink &QMediaSink::operator =(const QMediaSink &other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+  Destroys the media sink.
+*/
 QMediaSink::~QMediaSink()
 {
 }
 
+/*!
+  Returns true if this media sink is null; otherwise returns false.
+*/
+bool QMediaSink::isNull() const
+{
+    return d == qt_sharedMediaSink();
+}
+
+/*!
+  Returns the mime type of this media sink if available; otherwise returns an empty string.
+*/
 QString QMediaSink::mimeType() const
 {
-    return QString();
+    return d->mimeType;
 }
 
+/*!
+  Set the mime type of this media sink to \a mimeType.
+*/
 void QMediaSink::setMimeType(QString const& mimeType)
 {
+    d->mimeType = mimeType;
 }
 
+/*!
+  Returns the data location of this media sink.
+*/
 QVariant QMediaSink::dataLocation() const
 {
-    return QVariant();
+    return d->url;
 }
 
+/*!
+  Set the data location of this media sink to \a url.
+  \sa dataLocation()
+*/
 void QMediaSink::setDataLocation(QVariant const& url)
 {
+    d->url = url;
+}
+
+/*!
+  Returns true if this media sink and the given sink are equal; otherwise returns false.
+*/
+bool QMediaSink::operator ==(const QMediaSink& other) const
+{
+    return d->url == other.d->url;
+}
+
+/*!
+  Returns true if this media sink and the given sink are not equal; otherwise returns false.
+*/
+bool QMediaSink::operator !=(const QMediaSink& other) const
+{
+    return d->url != other.d->url;
 }

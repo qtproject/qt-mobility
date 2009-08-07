@@ -34,72 +34,102 @@
 
 #include "player.h"
 
+#include "playercontrols.h"
 #include "playlistmodel.h"
 
-#include <qmediaplayer.h>
+#include <qabstractmediaservice.h>
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
+#include <qmediawidgetendpoint.h>
+#include <qvideowidget.h>
 
 #include <QtGui>
 
+#define USE_VIDEOWIDGET
+
 Player::Player(QWidget *parent)
     : QWidget(parent)
+    , coverLabel(0)
     , slider(0)
 {
     player = new QMediaPlayer;
     metaData = new QMediaMetadata(player);
 
-    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
-    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    connect(metaData, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
+    connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
+    connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
+    connect(player, SIGNAL(bufferingChanged(bool)), this, SLOT(bufferingChanged(bool)));
+    connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    QWidget *videoWidget = 0; /*service->createWidget();
+#ifdef USE_VIDEOWIDGET
+    QWidget *videoWidget = new QVideoWidget(player->service());
+#else
+    QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
-    if (videoWidget)
-        service->setVideoOutput(videoWidget);
-    */
-    PlaylistModel *playlistModel = new PlaylistModel(this);
+    if (videoWidget) {
+        qDebug() << "service supports video widgets, nice";
+        player->service()->setVideoOutput(videoWidget);
+    } else {
+        coverLabel = new QLabel;
+    }
+#endif
+    playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(player->mediaPlaylist());
 
-    QTableView *playlistView = new QTableView;
+    playlistView = new QTableView;
     playlistView->setModel(playlistModel);
+    playlistView->setCurrentIndex(playlistModel->index(player->playlistPosition(), 0));
+
+    connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setRange(0, 0);
+    slider->setRange(0, player->duration() / 1000);
+
+    connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
     QPushButton *openButton = new QPushButton(tr("Open"));
+
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
-    QPushButton *playButton = new QPushButton(tr("Play"));
-    connect(playButton, SIGNAL(clicked()), player, SLOT(play()));
+    PlayerControls *controls = new PlayerControls;
+    controls->setState(player->state());
+    controls->setVolume(player->volume());
+    controls->setMuted(controls->isMuted());
 
-    QPushButton *pauseButton = new QPushButton(tr("Pause"));
-    connect(pauseButton, SIGNAL(clicked()), player, SLOT(pause()));
+    connect(controls, SIGNAL(play()), player, SLOT(play()));
+    connect(controls, SIGNAL(pause()), player, SLOT(pause()));
+    connect(controls, SIGNAL(stop()), player, SLOT(stop()));
+    connect(controls, SIGNAL(next()), player, SLOT(advance()));
+    connect(controls, SIGNAL(previous()), player, SLOT(back()));
+    connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
+    connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
 
-    QPushButton *stopButton = new QPushButton(tr("Stop"));
-    connect(stopButton, SIGNAL(clicked()), player, SLOT(stop()));
+    connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
+            controls, SLOT(setState(QMediaPlayer::State)));
+    connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
+    connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    QLabel *volumeLabel = new QLabel(tr("Volume"));
+    QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
+    fullscreenButton->setCheckable(true);
 
-    QSlider *volumeSlider = new QSlider(Qt::Horizontal);
-    volumeSlider->setRange(0, 100);
-    volumeSlider->setValue(player->volume());
-    connect(volumeSlider, SIGNAL(valueChanged(int)), player, SLOT(setVolume(int)));
-
-    QPushButton *muteButton = new QPushButton(tr("Mute"));
-    muteButton->setCheckable(true);
-    muteButton->setChecked(player->isMuted());
-    connect(muteButton, SIGNAL(clicked(bool)), player, SLOT(setMuted(bool)));
+    if (videoWidget) {
+        connect(fullscreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullscreen(bool)));
+        connect(videoWidget, SIGNAL(fullscreenChanged(bool)),
+                fullscreenButton, SLOT(setChecked(bool)));
+    } else {
+        fullscreenButton->setEnabled(false);
+    }
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
-    controlLayout->addWidget(playButton);
-    controlLayout->addWidget(pauseButton);
-    controlLayout->addWidget(stopButton);
-    controlLayout->addWidget(volumeLabel);
-    controlLayout->addWidget(volumeSlider);
-    controlLayout->addWidget(muteButton);
+    controlLayout->addStretch(1);
+    controlLayout->addWidget(controls);
+    controlLayout->addStretch(1);
+    controlLayout->addWidget(fullscreenButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     if (videoWidget) {
@@ -108,14 +138,22 @@ Player::Player(QWidget *parent)
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
 
+        /*
+        connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
+        videoWidget->setMinimumSize(64,64);
+        videoWidget->setVisible(false);*/
+
         layout->addWidget(splitter);
     } else {
+        layout->addWidget(coverLabel, 0, Qt::AlignCenter);
         layout->addWidget(playlistView);
     }
     layout->addWidget(slider);
     layout->addLayout(controlLayout);
 
     setLayout(layout);
+
+    metadataChanged();
 }
 
 Player::~Player()
@@ -125,10 +163,16 @@ Player::~Player()
 
 void Player::open()
 {
-    QString fileName = QFileDialog::getOpenFileName();
+    QStringList fileNames = QFileDialog::getOpenFileNames();
 
-    if (!fileName.isNull()) {
-        player->mediaPlaylist()->append(QMediaSource("", QLatin1String("file:///") + fileName));
+    foreach (QString const &fileName, fileNames) {
+#ifndef Q_OS_WIN
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file://") + fileName)));
+#else
+        player->mediaPlaylist()->appendItem(
+                QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
+#endif
     }
 }
 
@@ -142,7 +186,104 @@ void Player::positionChanged(qint64 progress)
     slider->setValue(progress / 1000);
 }
 
-void Player::metaDataChanged()
+void Player::metadataChanged()
 {
-    setWindowTitle(metaData->metadata(QLatin1String("Title")).toString());
+    qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
+    if (metaData->metadataAvailable()) {
+        setTrackInfo(QString("%1 - %2")
+                .arg(metaData->metadata(QLatin1String("Artist")).toString())
+                .arg(metaData->metadata(QLatin1String("Title")).toString()));
+
+        if (coverLabel) {
+            QMediaResource cover;
+            foreach (const QMediaResource &resource, metaData->resources()) {
+                if (resource.role() == QMediaResource::CoverArtRole
+                        && (cover.isNull()
+                        || resource.resolution().height() > cover.resolution().height())) {
+                    cover = resource;
+                }
+            }
+            coverLabel->setPixmap(!cover.isNull()
+                    ? QPixmap(cover.uri().toString())
+                    : QPixmap());
+        }
+    }
+}
+
+void Player::jump(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        player->setPlaylistPosition(index.row());
+    }
+}
+
+void Player::playlistPositionChanged(int currentItem)
+{
+    playlistView->setCurrentIndex(playlistModel->index(currentItem, 0));
+}
+
+void Player::seek(int seconds)
+{
+    player->setPosition(seconds * 1000);
+}
+
+void Player::statusChanged(QMediaPlayer::MediaStatus status)
+{
+    switch (status) {
+    case QMediaPlayer::UnknownMediaStatus:
+    case QMediaPlayer::NoMedia:
+    case QMediaPlayer::LoadedMedia:
+    case QMediaPlayer::PrimedMedia:
+        unsetCursor();
+        setStatusInfo(QString());
+        break;
+    case QMediaPlayer::LoadingMedia:
+        setCursor(QCursor(Qt::BusyCursor));
+        setStatusInfo(tr("Loading..."));
+        break;
+    case QMediaPlayer::StalledMedia:
+        setCursor(QCursor(Qt::BusyCursor));
+        break;
+    case QMediaPlayer::EndOfMedia:
+        unsetCursor();
+        setStatusInfo(QString());
+        QApplication::alert(this);
+        break;
+    case QMediaPlayer::InvalidMedia:
+        unsetCursor();
+        setStatusInfo(player->errorString());
+        break;
+    }
+}
+
+void Player::bufferingChanged(bool buffering)
+{
+    if (buffering)
+        statusChanged(player->mediaStatus());
+}
+
+void Player::bufferingProgress(int progress)
+{
+    setStatusInfo(tr("Buffering %4%%").arg(progress));
+}
+
+void Player::setTrackInfo(const QString &info)
+{
+    trackInfo = info;
+
+    if (!statusInfo.isEmpty())
+        setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
+    else
+        setWindowTitle(trackInfo);
+
+}
+
+void Player::setStatusInfo(const QString &info)
+{
+    statusInfo = info;
+
+    if (!statusInfo.isEmpty())
+        setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
+    else
+        setWindowTitle(trackInfo);
 }

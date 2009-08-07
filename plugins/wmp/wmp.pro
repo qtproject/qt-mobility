@@ -1,29 +1,40 @@
 TEMPLATE = lib
+CONFIG += plugin
 TARGET = qwmp
-CONFIG  += dll warn_on
 
-DESTDIR = ../bin
-!static:DEFINES += QT_MAKEDLL
+PLUGIN_SUBDIR = mediaservice
 
-DEFINES += QT_BUILD_WMP_LIB
+include(../../common.pri)
 
-DESTDIR = $$OUT_PWD/../../lib
+TMP_INCLUDE = $$quote($$(INCLUDE))
+TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
+for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
-LIBS += -levr -lstrmiids
+LIBS += -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
+
+INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 
 HEADERS = \
-    qevrwidget.h \
+    qevrvideooverlay.h \
     qmfactivate.h \
     qwmpevents.h \
     qwmpglobal.h \
     qwmpmetadata.h \
     qwmpplayercontrol.h \
-    qwmpplayerservice.h
+    qwmpplayerservice.h \
+    qwmpplaylist.h \
+    qwmpserviceprovider.h \
+    qwmpvideooverlay.h
 
 SOURCES = \
-    qevrwidget.cpp \
+    qevrvideooverlay.cpp \
     qmfactivate.cpp \
     qwmpevents.cpp \
+    qwmpglobal.cpp \
     qwmpmetadata.cpp \
     qwmpplayercontrol.cpp \
-    qwmpplayerservice.cpp
+    qwmpplayerservice.cpp \
+    qwmpplaylist.cpp \
+    qwmpserviceprovider.cpp \
+    qwmpvideooverlay.cpp
+

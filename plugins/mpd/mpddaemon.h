@@ -44,6 +44,8 @@ class MpdDaemon : public QObject
     Q_OBJECT
 
 public:
+    enum { Playing = 1, Paused, Stopped };
+
     MpdDaemon(QObject *parent);
     ~MpdDaemon();
 
@@ -52,24 +54,33 @@ public:
     int volume() const;
     bool muted() const;
     qint64 position() const;
+    int currentSongPos() const;
 
     QStringList send(QString const &command, bool *ok = 0);
 
 signals:
+    void connected();
     void disconnected();
     void notify();
     void playlistChanged();
-    void playerChanged();
+    void playerStateChanged(int state);
+    void playlistItemChanged(int item);
     void mixerChanged();
+    void volumeChanged(int volume);
+    void mutingChanged(bool muted);
+    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
 
 private slots:
     void readData();
     void checkStatus();
+    void setup();
+    void shutdown();
 
 private:
     MpdDaemonPrivate *d;
 
-    QStringList rawSend(QByteArray const &cmd, bool *ok = 0);
+    QStringList rawSend(QByteArray const &cmd, bool expect, bool *ok = 0);
     QStringList rawRecv(bool *ok = 0);
 };
 

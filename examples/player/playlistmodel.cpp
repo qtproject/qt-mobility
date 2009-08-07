@@ -34,7 +34,13 @@
 
 #include "playlistmodel.h"
 
+#include <QtCore/qfileinfo.h>
+#include <QtCore/qurl.h>
+
 #include <qmediaplaylist.h>
+#include <qmediametadata.h>
+
+
 
 PlaylistModel::PlaylistModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -71,12 +77,24 @@ QModelIndex PlaylistModel::parent(const QModelIndex &child) const
 QVariant PlaylistModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid() && role == Qt::DisplayRole) {
+        QVariant    value = m_data[index];
+        if (!value.isValid() && index.column() == Title) {
+            QUrl location = m_playlist->resource(index.row()).uri();
+            return QFileInfo(location.path()).fileName();
+        }
+
+        return value;
+        /*
         switch (index.column()) {
         case Track:
             return m_playlist->itemAt(index.row()).mimeType();
 //            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
         case Title:
-            return m_playlist->itemAt(index.row()).mimeType();
+            {
+                QVariant location = m_playlist->itemAt(index.row()).dataLocation();
+                return QFileInfo(location.toString()).fileName();
+            }
+            //return m_playlist->itemAt(index.row()).mimeType();
 //            return m_playlist->value(index.row(), QLatin1String("Title"));
         case Album:
             return m_playlist->itemAt(index.row()).mimeType();
@@ -87,7 +105,7 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
         case ContributingArtist:
             {
             return m_playlist->itemAt(index.row()).mimeType();
-            /*
+            *//*
                 QVariantList values = m_playlist->values(
                         index.row(), QLatin1String("Author"));
 
@@ -97,11 +115,12 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
                         artists += QLatin1String("; ") + values.at(i).toString();
                     return artists;
                 };
-            */}
+            *//*}
             break;
         case ColumnCount:
             break;
         }
+*/
     }
     return QVariant();
 }
@@ -134,18 +153,62 @@ QMediaPlaylist *PlaylistModel::playlist() const
 
 void PlaylistModel::setPlaylist(QMediaPlaylist *playlist)
 {
-    if (m_playlist)
-        disconnect(m_playlist, SIGNAL(changed()), this, SLOT(playlistChanged()));
+    if (m_playlist) {
+        disconnect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        disconnect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
+        disconnect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        disconnect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
+        disconnect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+    }
 
     m_playlist = playlist;
 
-    if (m_playlist)
-        connect(m_playlist, SIGNAL(changed()), this, SLOT(playlistChanged()));
+    if (m_playlist) {
+        connect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        connect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
+        connect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        connect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
+        connect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+    }
+
 
     reset();
 }
 
-void PlaylistModel::playlistChanged()
+bool PlaylistModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    reset();
+    Q_UNUSED(role);
+    m_data[index] = value;
+    emit dataChanged(index, index);
+	return true;
 }
+
+void PlaylistModel::beginInsertItems(int start, int end)
+{
+    m_data.clear();
+    beginInsertRows(QModelIndex(), start, end);
+}
+
+void PlaylistModel::endInsertItems()
+{
+    endInsertRows();
+}
+
+void PlaylistModel::beginRemoveItems(int start, int end)
+{
+    m_data.clear();
+    beginRemoveRows(QModelIndex(), start, end);
+}
+
+void PlaylistModel::endRemoveItems()
+{
+    endInsertRows();
+}
+
+void PlaylistModel::changeItems(int start, int end)
+{
+    m_data.clear();
+    emit dataChanged(index(start,0), index(end,ColumnCount));
+}
+
+

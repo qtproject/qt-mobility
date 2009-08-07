@@ -46,13 +46,24 @@
 // We mean it.
 //
 
-#include "qabstractmediaobject.h"
+#include <QtCore/qbytearray.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qtimer.h>
+#include <QtCore/private/qobject_p.h>
 
-#include <private/qobject_p.h>
+#include "qabstractmediaobject.h"
 
 class QAbstractMediaObjectPrivate : public QObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QAbstractMediaObject)
+
 public:
+    QAbstractMediaObjectPrivate() {}
+
+    void _q_notify();
+
+    QTimer* notifyTimer;
+    QList<QByteArray>   notifyProperties;
 };
 
 #endif
