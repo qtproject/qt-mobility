@@ -47,8 +47,8 @@
 
 #include <QSharedData>
 
-#include <pimstore.h>
 #include <windows.h>
+#include <pimstore.h>
 
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
@@ -83,6 +83,12 @@ public:
 
     QAtomicInt m_refCount;
     IPOutlookApp2* m_app;
+    IFolder* m_folder;
+    IPOutlookItemCollection* m_collection;
+    IPOlItems2* m_items2;
+
+    // List of ids (OIDs are equiv to unique ids, yay)
+    QList<QUniqueId> m_ids;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -120,6 +126,8 @@ public:
 
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
+
+    QContact convertContact(IItem *contact) const;
 };
 
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
