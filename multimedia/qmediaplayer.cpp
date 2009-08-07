@@ -521,6 +521,7 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
     \value FormatError The format of a media resource isn't (fully) supported.  Playback may still
     be possible, but without an audio or video component.
     \value NetworkError A network error occurred.
+    \value AccessDeniedError There are not the appropriate permissions to play a media resource
 */
 
 /*!

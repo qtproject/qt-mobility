@@ -94,7 +94,8 @@ public:
         NoError,
         ResourceError,
         FormatError,
-        NetworkError
+        NetworkError,
+        AccessDeniedError
     };
 
     QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
