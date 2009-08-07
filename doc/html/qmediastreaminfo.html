@@ -65,30 +65,30 @@
 <p>Constructs a copy of the <a href="qmediastreaminfo.html">QMediaStreamInfo</a> <i>other</i>, passed as the argument to this constructor.</p>
 <h3 class="fn"><a name="dtor.QMediaStreamInfo"></a>QMediaStreamInfo::~QMediaStreamInfo ()</h3>
 <p>Destroys the stream information object.</p>
-<h3 class="fn"><a name="clearProperty"></a>void QMediaStreamInfo::clearProperty ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>name</i> )</h3>
+<h3 class="fn"><a name="clearProperty"></a>void QMediaStreamInfo::clearProperty ( const QString &amp; <i>name</i> )</h3>
 <h3 class="fn"><a name="isNull"></a>bool QMediaStreamInfo::isNull () const</h3>
 <p>Returns true if this is a NULL tream information object, false otherwise.</p>
-<h3 class="fn"><a name="properties"></a><a href="http://doc.qtsoftware.com/4.5/qmap.html">QMap</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>, <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a>&gt; QMediaStreamInfo::properties () const</h3>
+<h3 class="fn"><a name="properties"></a>QMap&lt;QString, QVariant&gt; QMediaStreamInfo::properties () const</h3>
 <p>See also <a href="qmediastreaminfo.html#setProperties">setProperties</a>().</p>
-<h3 class="fn"><a name="property"></a><a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> QMediaStreamInfo::property ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>name</i> ) const</h3>
+<h3 class="fn"><a name="property"></a>QVariant QMediaStreamInfo::property ( const QString &amp; <i>name</i> ) const</h3>
 <p>See also <a href="qmediastreaminfo.html#setProperty">setProperty</a>().</p>
-<h3 class="fn"><a name="propertyNames"></a><a href="http://doc.qtsoftware.com/4.5/qstringlist.html">QStringList</a> QMediaStreamInfo::propertyNames () const</h3>
-<h3 class="fn"><a name="setProperties"></a>void QMediaStreamInfo::setProperties ( const <a href="http://doc.qtsoftware.com/4.5/qmap.html">QMap</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>, <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a>&gt; &amp; <i>properties</i> )</h3>
+<h3 class="fn"><a name="propertyNames"></a>QStringList QMediaStreamInfo::propertyNames () const</h3>
+<h3 class="fn"><a name="setProperties"></a>void QMediaStreamInfo::setProperties ( const QMap&lt;QString, QVariant&gt; &amp; <i>properties</i> )</h3>
 <p>See also <a href="qmediastreaminfo.html#properties">properties</a>().</p>
-<h3 class="fn"><a name="setProperty"></a>void QMediaStreamInfo::setProperty ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>name</i>, const <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setProperty"></a>void QMediaStreamInfo::setProperty ( const QString &amp; <i>name</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>See also <a href="qmediastreaminfo.html#property">property</a>().</p>
-<h3 class="fn"><a name="setStreamLanguage"></a>void QMediaStreamInfo::setStreamLanguage ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>language</i> )</h3>
+<h3 class="fn"><a name="setStreamLanguage"></a>void QMediaStreamInfo::setStreamLanguage ( const QString &amp; <i>language</i> )</h3>
 <p>Set the ISO 639 stream language code to <i>language</i>.</p>
 <p>See also <a href="qmediastreaminfo.html#streamLanguage">streamLanguage</a>().</p>
-<h3 class="fn"><a name="setStreamName"></a>void QMediaStreamInfo::setStreamName ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>name</i> )</h3>
+<h3 class="fn"><a name="setStreamName"></a>void QMediaStreamInfo::setStreamName ( const QString &amp; <i>name</i> )</h3>
 <p>Set the stream name to <i>name</i>.</p>
 <p>See also <a href="qmediastreaminfo.html#streamName">streamName</a>().</p>
 <h3 class="fn"><a name="streamId"></a>int QMediaStreamInfo::streamId () const</h3>
 <p>Returns identifier of stream.</p>
-<h3 class="fn"><a name="streamLanguage"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QMediaStreamInfo::streamLanguage () const</h3>
+<h3 class="fn"><a name="streamLanguage"></a>QString QMediaStreamInfo::streamLanguage () const</h3>
 <p>Returns the ISO 639 stream language code, if available.</p>
 <p>See also <a href="qmediastreaminfo.html#setStreamLanguage">setStreamLanguage</a>().</p>
-<h3 class="fn"><a name="streamName"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QMediaStreamInfo::streamName () const</h3>
+<h3 class="fn"><a name="streamName"></a>QString QMediaStreamInfo::streamName () const</h3>
 <p>Returns the stream name, if available.</p>
 <p>See also <a href="qmediastreaminfo.html#setStreamName">setStreamName</a>().</p>
 <h3 class="fn"><a name="type"></a><a href="qmediastreaminfo.html#StreamType-enum">StreamType</a> QMediaStreamInfo::type () const</h3>

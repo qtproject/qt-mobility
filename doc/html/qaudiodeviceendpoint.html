@@ -15,7 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAudioDeviceEndpoint Class Reference</h1>
 <p>The QAudioDeviceEndpoint class provides an audio device selector media end point. <a href="#details">More...</a></p>
 <pre>    #include &lt;QAudioDeviceEndpoint&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> and <a href="qmediaendpointinterface.html">QMediaEndpointInterface</a>.</p>
+<p>Inherits <a href="qmediaendpointinterface.html">QMediaEndpointInterface</a>.</p>
 <ul>
 <li><a href="qaudiodeviceendpoint-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -37,9 +37,6 @@
 <li><div class="fn"><b><a href="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</a></b> : FormFactors</div></li>
 <li><div class="fn"><b><a href="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</a></b> : Roles</div></li>
 <li><div class="fn"><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</a></b> : int</div></li>
-</ul>
-<ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -71,7 +68,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual Direction </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#direction">direction</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
 <li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediaendpointinterface.html#public-functions">QMediaEndpointInterface</a></li>
 </ul>
 <hr />
@@ -80,9 +76,6 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDevice-prop">setSelectedDevice</a></b> ( int <i>device</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -93,22 +86,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDeviceChanged">selectedDeviceChanged</a></b> ( int <i>index</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#selectedDeviceChanged-2">selectedDeviceChanged</a></b> ( const QString &amp; <i>deviceName</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
-</ul>
 <hr />
 <a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiodeviceendpoint.html#QAudioDeviceEndpoint_iid">QAudioDeviceEndpoint_iid</a></b></td></tr>
 </table>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -186,7 +169,7 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioDeviceEndpoint"></a>QAudioDeviceEndpoint::QAudioDeviceEndpoint ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QAudioDeviceEndpoint"></a>QAudioDeviceEndpoint::QAudioDeviceEndpoint ( QObject * <i>parent</i> = 0 )</h3>
 <p>Contructs a new audio device selector media end point with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QAudioDeviceEndpoint"></a>QAudioDeviceEndpoint::~QAudioDeviceEndpoint ()</h3>
 <p>Destroys an audio device end point.</p>
@@ -194,7 +177,7 @@
 <p>Returns the index of the default input device for a <i>role</i>.</p>
 <h3 class="fn"><a name="defaultOutputDevice"></a>int QAudioDeviceEndpoint::defaultOutputDevice ( <a href="qaudiodeviceendpoint.html#Role-enum">Role</a> <i>role</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the index of the default output device for a <i>role</i>.</p>
-<h3 class="fn"><a name="description"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QAudioDeviceEndpoint::description ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="description"></a>QString QAudioDeviceEndpoint::description ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a description of a <i>device</i>.</p>
 <h3 class="fn"><a name="deviceCount"></a>int QAudioDeviceEndpoint::deviceCount () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the number of available devices;</p>
@@ -210,15 +193,15 @@
 <p>Returns the direction of a <i>device</i></p>
 <h3 class="fn"><a name="formFactor"></a><a href="qaudiodeviceendpoint.html#FormFactor-enum">FormFactor</a> QAudioDeviceEndpoint::formFactor ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the form factor of a <i>device</i>.</p>
-<h3 class="fn"><a name="icon"></a><a href="http://doc.qtsoftware.com/4.5/qicon.html">QIcon</a> QAudioDeviceEndpoint::icon ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="icon"></a>QIcon QAudioDeviceEndpoint::icon ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns an icon for a <i>device</i>.</p>
-<h3 class="fn"><a name="name"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QAudioDeviceEndpoint::name ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="name"></a>QString QAudioDeviceEndpoint::name ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of a <i>device</i>.</p>
 <h3 class="fn"><a name="roles"></a><a href="qaudiodeviceendpoint.html#Role-enum">Roles</a> QAudioDeviceEndpoint::roles ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the roles of a <i>device</i>.</p>
 <h3 class="fn"><a name="selectedDeviceChanged"></a>void QAudioDeviceEndpoint::selectedDeviceChanged ( int <i>index</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>index</i> of the selected device has changed.</p>
-<h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QAudioDeviceEndpoint::selectedDeviceChanged ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>deviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QAudioDeviceEndpoint::selectedDeviceChanged ( const QString &amp; <i>deviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QAudioDeviceEndpoint_iid"></a>QAudioDeviceEndpoint_iid</h3>

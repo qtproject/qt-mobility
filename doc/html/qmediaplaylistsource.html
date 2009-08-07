@@ -14,7 +14,6 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistSource Class Reference</h1>
 <pre>    #include &lt;QMediaPlaylistSource&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediaplaylistsource-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -37,18 +36,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#size">size</a></b> () const = 0</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#shuffle">shuffle</a></b> ()</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -59,32 +52,19 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#itemsInserted">itemsInserted</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#itemsRemoved">itemsRemoved</a></b> ()</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
-</ul>
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsource.html#QMediaPlaylistSource-2">QMediaPlaylistSource</a></b> ( QMediaPlaylistSourcePrivate &amp; <i>dd</i>, QObject * <i>parent</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylistSource"></a>QMediaPlaylistSource::QMediaPlaylistSource ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<h3 class="fn"><a name="QMediaPlaylistSource-2"></a>QMediaPlaylistSource::QMediaPlaylistSource ( QMediaPlaylistSourcePrivate &amp; <i>dd</i>, <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QMediaPlaylistSource"></a>QMediaPlaylistSource::QMediaPlaylistSource ( QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaPlaylistSource-2"></a>QMediaPlaylistSource::QMediaPlaylistSource ( QMediaPlaylistSourcePrivate &amp; <i>dd</i>, QObject * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <h3 class="fn"><a name="dtor.QMediaPlaylistSource"></a>QMediaPlaylistSource::~QMediaPlaylistSource ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <h3 class="fn"><a name="appendItem"></a>bool QMediaPlaylistSource::appendItem ( const QMediaResourceList &amp; <i>resources</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Append <i>source</i> to the playlist.</p>
@@ -102,13 +82,13 @@
 <h3 class="fn"><a name="itemsChanged"></a>void QMediaPlaylistSource::itemsChanged ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="itemsInserted"></a>void QMediaPlaylistSource::itemsInserted ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="itemsRemoved"></a>void QMediaPlaylistSource::itemsRemoved ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<h3 class="fn"><a name="load"></a>bool QMediaPlaylistSource::load ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="load"></a>bool QMediaPlaylistSource::load ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
 <p>New items are appended to playlist.</p>
 <p><a href="qmediaplaylist.html">QMediaPlaylist</a> uses <a href="qmediaplaylistsource.html">QMediaPlaylistSource</a> to load/save playlists first, than it tries available playlist I/O plugins.</p>
 <p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
-<h3 class="fn"><a name="load-2"></a>bool QMediaPlaylistSource::load ( <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Load playlist from <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
+<h3 class="fn"><a name="load-2"></a>bool QMediaPlaylistSource::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Load playlist from QIODevice <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
 <p>New items are appended to playlist.</p>
 <p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
 <h3 class="fn"><a name="removeItem"></a>bool QMediaPlaylistSource::removeItem ( int <i>pos</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -118,11 +98,11 @@
 <p>Remove the items from the playlist from position <i>start</i> to <i>end</i> inclusive.</p>
 <p>Returns true if the operation is successfull, other wise return false.</p>
 <h3 class="fn"><a name="resources"></a>QMediaResourceList QMediaPlaylistSource::resources ( int <i>index</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<h3 class="fn"><a name="save"></a>bool QMediaPlaylistSource::save ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="save"></a>bool QMediaPlaylistSource::save ( const QString &amp; <i>location</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Save playlist to <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name.</p>
 <p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
-<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylistSource::save ( <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Save playlist to <a href="http://doc.qtsoftware.com/4.5/qiodevice.html">QIODevice</a> <i>device</i> using format <i>format</i>.</p>
+<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylistSource::save ( QIODevice * <i>device</i>, const char * <i>format</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Save playlist to QIODevice <i>device</i> using format <i>format</i>.</p>
 <p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
 <h3 class="fn"><a name="shuffle"></a>void QMediaPlaylistSource::shuffle ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <p>Shuffle items in the playlist.</p>

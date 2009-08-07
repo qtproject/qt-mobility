@@ -15,7 +15,6 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAbstractMediaObject Class Reference</h1>
 <p>The base Multimedia object. <a href="#details">More...</a></p>
 <pre>    #include &lt;QAbstractMediaObject&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
 <p>Inherited by <a href="qcamera.html">QCamera</a>, <a href="qmediaplayer.html">QMediaPlayer</a>, <a href="qmediarecorder.html">QMediaRecorder</a>, and <a href="qradioplayer.html">QRadioPlayer</a>.</p>
 <ul>
 <li><a href="qabstractmediaobject-members.html">List of all members, including inherited members</a></li>
@@ -25,9 +24,6 @@
 <h2>Properties</h2>
 <ul>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a></b> : int</div></li>
-</ul>
-<ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -39,18 +35,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaobject.html#service">service</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int <i>milliSeconds</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int <i>milliSeconds</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
-</ul>
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
@@ -59,16 +49,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; <i>name</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaobject.html#removePropertyWatch">removePropertyWatch</a></b> ( QByteArray const &amp; <i>name</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -77,20 +57,30 @@
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="notifyInterval-prop"></a>notifyInterval : int</h3>
+<p>The interval at which notifiable properties will update.</p>
+<p>The interval is expressed in milliseconds, the default value is 1000.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>notifyInterval</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setNotifyInterval</b> ( int <i>milliSeconds</i> )</td></tr>
 </table>
+<p>See also <a href="qabstractmediaobject.html#addPropertyWatch">addPropertyWatch</a>() and <a href="qabstractmediaobject.html#removePropertyWatch">removePropertyWatch</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAbstractMediaObject"></a>QAbstractMediaObject::QAbstractMediaObject ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QAbstractMediaObject"></a>QAbstractMediaObject::QAbstractMediaObject ( QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Construct a <a href="qabstractmediaobject.html">QAbstractMediaObject</a> with <i>parent</i>. This class is meant as a base class for Multimedia objects so this constructor is protected.</p>
 <h3 class="fn"><a name="dtor.QAbstractMediaObject"></a>QAbstractMediaObject::~QAbstractMediaObject ()</h3>
-<h3 class="fn"><a name="addPropertyWatch"></a>void QAbstractMediaObject::addPropertyWatch ( <a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a> const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Destroys the <a href="qabstractmediaobject.html">QAbstractMediaObject</a> object.</p>
+<h3 class="fn"><a name="addPropertyWatch"></a>void QAbstractMediaObject::addPropertyWatch ( QByteArray const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Watch the property <i>name</i>. The property's notify signal will be emitted once every <a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a> milliseconds.</p>
+<p>See also <a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a>.</p>
 <h3 class="fn"><a name="isValid"></a>bool QAbstractMediaObject::isValid () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns true if the concrete media object is capable of normal operation; false otherwise.</p>
 <h3 class="fn"><a name="notifyIntervalChanged"></a>void QAbstractMediaObject::notifyIntervalChanged ( int <i>milliSeconds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<h3 class="fn"><a name="removePropertyWatch"></a>void QAbstractMediaObject::removePropertyWatch ( <a href="http://doc.qtsoftware.com/4.5/qbytearray.html">QByteArray</a> const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Signal a change in the notify interval period to <i>milliSeconds</i>.</p>
+<h3 class="fn"><a name="removePropertyWatch"></a>void QAbstractMediaObject::removePropertyWatch ( QByteArray const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Remove property <i>name</i> from the list of properties whose changes are regularly signaled.</p>
+<p>See also <a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a>.</p>
 <h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QAbstractMediaObject::service () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the media service that provide the functionality for the Multimedia object.</p>
 <p /><address><hr /><div align="center">

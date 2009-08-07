@@ -22,7 +22,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#Error-enum">Error</a></b> { NoError, ResourceError, FormatError, NetworkError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#Error-enum">Error</a></b> { NoError, ResourceError, FormatError, NetworkError, AccessDeniedError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a></b> { UnknownMediaStatus, NoMedia, LoadingMedia, LoadedMedia, ..., InvalidMedia }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#State-enum">State</a></b> { PlayingState, PausedState, StoppedState }</td></tr>
 </table>
@@ -52,7 +52,6 @@
 </table></p>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -88,7 +87,6 @@
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
@@ -105,9 +103,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stop">stop</a></b> ()</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -130,15 +125,10 @@
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected functions inherited from <a href="qabstractmediaobject.html#protected-functions">QAbstractMediaObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -153,6 +143,7 @@
 <tr><td valign="top"><tt>QMediaPlayer::ResourceError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A media resource couldn't be resolved.</td></tr>
 <tr><td valign="top"><tt>QMediaPlayer::FormatError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The format of a media resource isn't (fully) supported. Playback may still be possible, but without an audio or video component.</td></tr>
 <tr><td valign="top"><tt>QMediaPlayer::NetworkError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A network error occurred.</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::AccessDeniedError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">There are not the appropriate permissions to play a media resource</td></tr>
 </table></p>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaPlayer::MediaStatus</h3>
 <p>Defines the status of a media player's current media.</p>
@@ -189,13 +180,13 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isBuffering</b> () const</td></tr>
 </table>
-<h3 class="fn"><a name="duration-prop"></a>duration : const <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint64-typedef">qint64</a></h3>
+<h3 class="fn"><a name="duration-prop"></a>duration : const qint64</h3>
 <p>This property holds the total playback time in milliseconds of the current source.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b>duration</b> () const</td></tr>
 </table>
-<h3 class="fn"><a name="error-prop"></a>error : const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a></h3>
+<h3 class="fn"><a name="error-prop"></a>error : const QString</h3>
 <p>This property holds a string describing the last error condition.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -244,7 +235,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>playlistPosition</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPlaylistPosition</b> ( int <i>playlistPosition</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="position-prop"></a>position : <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint64-typedef">qint64</a></h3>
+<h3 class="fn"><a name="position-prop"></a>position : qint64</h3>
 <p>This property holds the current playback position in milliseconds from the beginning.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -280,7 +271,7 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( QMediaPlayerService * <i>service</i> = createMediaPlayerService(), <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( QMediaPlayerService * <i>service</i> = createMediaPlayerService(), QObject * <i>parent</i> = 0 )</h3>
 <p>Construct a <a href="qmediaplayer.html">QMediaPlayer</a> to operate on the QMediaPlayerService <i>service</i>, parented to <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaPlayer"></a>QMediaPlayer::~QMediaPlayer ()</h3>
 <p>Destroys the player object.</p>
@@ -295,7 +286,7 @@
 <h3 class="fn"><a name="currentMediaResourcesChanged"></a>void QMediaPlayer::currentMediaResourcesChanged ( const QMediaResourceList &amp; <i>resources</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the current media <i>resources</i> have changed.</p>
 <p>See also <a href="qmediaplayer.html#playlistPositionChanged">playlistPositionChanged</a>().</p>
-<h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( qint64 <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the duration of the content has changed to <i>duration</i>, expressed in milliseconds.</p>
 <h3 class="fn"><a name="error"></a><a href="qmediaplayer.html#Error-enum">Error</a> QMediaPlayer::error () const</h3>
 <p>Returns the last error condition.</p>
@@ -303,7 +294,7 @@
 <h3 class="fn"><a name="error-2"></a>void QMediaPlayer::error ( <a href="qmediaplayer.html#Error-enum">QMediaPlayer::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> condition has occured.</p>
 <p>See also <a href="qmediaplayer.html#error-prop">errorString</a>().</p>
-<h3 class="fn"><a name="errorStringChanged"></a>void QMediaPlayer::errorStringChanged ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>string</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="errorStringChanged"></a>void QMediaPlayer::errorStringChanged ( const QString &amp; <i>string</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>string</i> describing the last error condition has changed.</p>
 <p>See also <a href="qmediaplayer.html#error-prop">errorString</a>().</p>
 <h3 class="fn"><a name="isValid"></a>bool QMediaPlayer::isValid () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -321,7 +312,7 @@
 <h3 class="fn"><a name="playlistPositionChanged"></a>void QMediaPlayer::playlistPositionChanged ( int <i>playlistPosition</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the current playing item as being changes to the item at index <i>playlistPosition</i>, in the players <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
 <p>See also <a href="qmediaplayer.html#playlistPosition-prop">playlistPosition</a>() and <a href="qmediaplayer.html#playlistPosition-prop">setPlaylistPosition</a>().</p>
-<h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( qint64 <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the position of the content has changed to <i>position</i>, expressed in milliseconds approximately every 1000milliseconds.</p>
 <h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayer::seekableChanged ( bool <i>seekable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QMediaPlayer::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
