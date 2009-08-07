@@ -279,9 +279,16 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
                 contact->setUrl(liveUrl);
             }
         }
+/*
+ *      
         else if (definition == QContactServiceId::DefinitionName) {
             QString account = det.value(QContactServiceId::FieldAccount);
             QString serviceName = det.value(QContactServiceId::FieldServiceName);
+*/      
+        // TODO replace when IMaccount is implemented by QtMobility team          
+        else if (definition == "ServiceId") {
+            QString account = det.value("Account");
+            QString serviceName = det.value("ServiceName");
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
             Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
             if (0 == liveIMAccount) {

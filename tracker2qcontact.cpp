@@ -183,13 +183,6 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactUrl& det
 }
 */
 
-void copyDetailData(const Live<nco::IMAccount>& imAccount, QContactServiceId& detail)
-{
-    detail.setAccount(imAccount->getImID());
-    detail.setServiceName(imAccount->getImAccountType());
-}
-
-
 bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContact, QContact& qcontact )
 {
     bool ok;
@@ -240,8 +233,10 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
 
     LiveNodes imAccounts = ncoContact->getHasIMAccounts();
     foreach (const Live<nco::IMAccount>& imAccount, imAccounts) {
-        QContactServiceId detail;
-        copyDetailData(imAccount, detail);
+        // TODo replace when QtMobility guys implement support for IMAccount
+        QContactDetail detail("ServiceId");
+        detail.setValue("Account", imAccount->getImID());
+        detail.setValue("ServiceName", imAccount->getImAccountType());
         qcontact.saveDetail(&detail);
     }
 

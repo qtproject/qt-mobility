@@ -33,6 +33,7 @@ using namespace SopranoLive;
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
+#include "qcontactmanagerenginefactory.h"
 
 namespace ContactContext {
     typedef enum Location {
