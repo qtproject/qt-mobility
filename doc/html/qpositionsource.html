@@ -14,45 +14,70 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QPositionSource Class Reference</h1>
 <p>The QPositionSource class is an abstract base class for the distribution of positional updates. <a href="#details">More...</a></p>
-<pre>    #include &lt;QPositionSource&gt;</pre><ul>
+<pre>    #include &lt;QPositionSource&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
+<ul>
 <li><a href="qpositionsource-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"/>enum <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethod</a></b> { SatellitePositioningMethods, NonSatellitePositioningMethods, AllPositioningMethods }</li>
-<li><div class="fn"/>flags <b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethods</a></b></li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethod</a></b> { SatellitePositioningMethods, NonSatellitePositioningMethods, AllPositioningMethods }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#PositioningMethod-enum">PositioningMethods</a></b></td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#QPositionSource">QPositionSource</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#dtor.QPositionSource">~QPositionSource</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPositionUpdate </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#minimumUpdateInterval">minimumUpdateInterval</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">PositioningMethods </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a></b> ( PositioningMethods <i>methods</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#setUpdateInterval">setUpdateInterval</a></b> ( int <i>msec</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual PositioningMethods </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#updateInterval">updateInterval</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"/><b><a href="qpositionsource.html#QPositionSource">QPositionSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"/>virtual <b><a href="qpositionsource.html#dtor.QPositionSource">~QPositionSource</a></b> ()</li>
-<li><div class="fn"/>virtual QPositionUpdate <b><a href="qpositionsource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const = 0</li>
-<li><div class="fn"/>virtual int <b><a href="qpositionsource.html#minimumUpdateInterval">minimumUpdateInterval</a></b> () const = 0</li>
-<li><div class="fn"/>PositioningMethods <b><a href="qpositionsource.html#preferredPositioningMethods">preferredPositioningMethods</a></b> () const</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a></b> ( PositioningMethods <i>methods</i> )</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#setUpdateInterval">setUpdateInterval</a></b> ( int <i>msec</i> )</li>
-<li><div class="fn"/>virtual PositioningMethods <b><a href="qpositionsource.html#supportedPositioningMethods">supportedPositioningMethods</a></b> () const = 0</li>
-<li><div class="fn"/>int <b><a href="qpositionsource.html#updateInterval">updateInterval</a></b> () const</li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 5000 ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#startUpdates">startUpdates</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#stopUpdates">stopUpdates</a></b> () = 0</td></tr>
+</table>
 <ul>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 5000 ) = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#startUpdates">startUpdates</a></b> () = 0</li>
-<li><div class="fn"/>virtual void <b><a href="qpositionsource.html#stopUpdates">stopUpdates</a></b> () = 0</li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#positionUpdated">positionUpdated</a></b> ( const QPositionUpdate &amp; <i>update</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#requestTimeout">requestTimeout</a></b> ()</td></tr>
+</table>
 <ul>
-<li><div class="fn"/>void <b><a href="qpositionsource.html#positionUpdated">positionUpdated</a></b> ( const QPositionUpdate &amp; <i>update</i> )</li>
-<li><div class="fn"/>void <b><a href="qpositionsource.html#requestTimeout">requestTimeout</a></b> ()</li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
 </ul>
+<hr />
 <a name="static-public-members"></a>
-<h3>Static Public Members</h3>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QPositionSource * </td><td class="memItemRight" valign="bottom"><b><a href="qpositionsource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+</table>
 <ul>
-<li><div class="fn"/>QPositionSource * <b><a href="qpositionsource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -70,7 +95,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="PositioningMethod-enum"></a>enum QPositionSource::PositioningMethod<br />flags QPositionSource::PositioningMethods</h3>
 <p>Defines the types of positioning methods.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QPositionSource::SatellitePositioningMethods</tt></td><td align="center" valign="top"><tt>0x000000ff</tt></td><td valign="top">Satellite-based positioning methods such as GPS.</td></tr>
 <tr><td valign="top"><tt>QPositionSource::NonSatellitePositioningMethods</tt></td><td align="center" valign="top"><tt>0xffffff00</tt></td><td valign="top">Other positioning methods.</td></tr>
@@ -79,11 +104,11 @@
 <p>The PositioningMethods type is a typedef for <a href="qflags.html">QFlags</a>&lt;PositioningMethod&gt;. It stores an OR combination of PositioningMethod values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QPositionSource"></a>QPositionSource::QPositionSource ( QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QPositionSource"></a>QPositionSource::QPositionSource ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Creates a position source with the specified <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QPositionSource"></a>QPositionSource::~QPositionSource ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the position source.</p>
-<h3 class="fn"><a name="createSource"></a>QPositionSource * QPositionSource::createSource ( QObject * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="createSource"></a>QPositionSource * QPositionSource::createSource ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a position source with the given <i>parent</i> that reads from the system's default sources of location data.</p>
 <p>Returns 0 if the system has no default position source.</p>
 <h3 class="fn"><a name="lastKnownPosition"></a><a href="qpositionupdate.html">QPositionUpdate</a> QPositionSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
