@@ -18,22 +18,24 @@
 <ul>
 <li><a href="qmessagefoldersortkey-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qmessagefoldersortkey.html#QMessageFolderSortKey">QMessageFolderSortKey</a></b> ()</li>
-<li><div class="fn"></div>bool <b><a href="qmessagefoldersortkey.html#isEmpty">isEmpty</a></b> () const</li>
-<li><div class="fn"></div>QMessageFolderSortKey <b><a href="qmessagefoldersortkey.html#operator-2b">operator+</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> ) const</li>
-<li><div class="fn"></div>QMessageFolderSortKey &amp; <b><a href="qmessagefoldersortkey.html#operator-2b-eq">operator+=</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</li>
-<li><div class="fn"></div>const QMessageFolderSortKey &amp; <b><a href="qmessagefoldersortkey.html#operator-eq">operator=</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagefoldersortkey.html#operator-eq-eq">operator==</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> ) const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#QMessageFolderSortKey">QMessageFolderSortKey</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#isEmpty">isEmpty</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageFolderSortKey </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#operator-2b">operator+</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageFolderSortKey &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#operator-2b-eq">operator+=</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QMessageFolderSortKey &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#operator-eq">operator=</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#operator-eq-eq">operator==</a></b> ( const QMessageFolderSortKey &amp; <i>other</i> ) const</td></tr>
+</table>
+<hr />
 <a name="static-public-members"></a>
-<h3>Static Public Members</h3>
-<ul>
-<li><div class="fn"></div>QMessageFolderSortKey <b><a href="qmessagefoldersortkey.html#displayName">displayName</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
-<li><div class="fn"></div>QMessageFolderSortKey <b><a href="qmessagefoldersortkey.html#path">path</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
-</ul>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMessageFolderSortKey </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#displayName">displayName</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageFolderSortKey </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefoldersortkey.html#path">path</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -47,12 +49,12 @@
 <p>A default-constructed key (one for which <a href="qmessagefoldersortkey.html#isEmpty">isEmpty</a>() returns true) sorts no folders.</p>
 <p>The result of combining an empty key with a non-empty key is the same as the original non-empty key.</p>
 <p>The result of combining two empty keys is an empty key.</p>
-<h3 class="fn"><a name="displayName"></a>QMessageFolderSortKey QMessageFolderSortKey::displayName ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="displayName"></a>QMessageFolderSortKey QMessageFolderSortKey::displayName ( <a href="http://doc.qtsoftware.com/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts folders by display name, according to <i>order</i>.</p>
 <p>See also <a href="qmessagefolder.html#displayName">QMessageFolder::displayName</a>().</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageFolderSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
-<h3 class="fn"><a name="path"></a>QMessageFolderSortKey QMessageFolderSortKey::path ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="path"></a>QMessageFolderSortKey QMessageFolderSortKey::path ( <a href="http://doc.qtsoftware.com/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by path according to <i>order</i>.</p>
 <p>See also <a href="qmessagefolder.html#path">QMessageFolder::path</a>().</p>
 <h3 class="fn"><a name="operator-2b"></a>QMessageFolderSortKey QMessageFolderSortKey::operator+ ( const QMessageFolderSortKey &amp; <i>other</i> ) const</h3>

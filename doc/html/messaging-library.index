@@ -724,7 +724,7 @@
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageStore" href="qmessagestore.html" location="draft-api.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageStore" href="qmessagestore.html" location="draft-api.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="RemovalOption" fullname="QMessageStore::RemovalOption" href="qmessagestore.html#RemovalOption-enum" location="draft-api.h">
                 <value name="NoRemovalRecord" value="1"/>
                 <value name="CreateRemovalRecord" value="2"/>
@@ -810,7 +810,7 @@
                 <parameter left="const QMessageFilterKey &amp;" right="" name="key" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageServiceAction" href="qmessageserviceaction.html" location="draft-api.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageServiceAction" href="qmessageserviceaction.html" location="draft-api.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Activity" fullname="QMessageServiceAction::Activity" href="qmessageserviceaction.html#Activity-enum" location="draft-api.h">
                 <value name="Pending" value="0"/>
                 <value name="InProgress" value="1"/>

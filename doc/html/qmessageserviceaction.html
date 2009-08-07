@@ -15,35 +15,57 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageServiceAction Class Reference</h1>
 <p>The QMessageServiceAction class provides the interface for requesting messaging services. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessageServiceAction&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmessageserviceaction-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qmessageserviceaction.html#Activity-enum">Activity</a></b> { Pending, InProgress, Successful, Failed }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#Activity-enum">Activity</a></b> { Pending, InProgress, Successful, Failed }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">Activity </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>Activity <b><a href="qmessageserviceaction.html#activity">activity</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ()</li>
-<li><div class="fn"></div>QString <b><a href="qmessageserviceaction.html#lastErrorString">lastErrorString</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#retrieve-2">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#send">send</a></b> ( const QMessage &amp; <i>message</i>, const QMessageAccountId &amp; <i>accountId</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#activityChanged">activityChanged</a></b> ( QMessageServiceAction::Activity <i>a</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#activityChanged">activityChanged</a></b> ( QMessageServiceAction::Activity <i>a</i> )</li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -58,7 +80,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Activity-enum"></a>enum QMessageServiceAction::Activity</h3>
 <p>This enum type is used to describe the activity state of the requested action.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageServiceAction::Pending</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The action has not yet begun execution.</td></tr>
 <tr><td valign="top"><tt>QMessageServiceAction::InProgress</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The action is currently executing.</td></tr>
@@ -82,7 +104,7 @@
 <h3 class="fn"><a name="exportUpdates"></a>void QMessageServiceAction::exportUpdates ()</h3>
 <p>Synchronize any changes that have been queued by message store operations with external servers.</p>
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
-<h3 class="fn"><a name="lastErrorString"></a>QString QMessageServiceAction::lastErrorString () const</h3>
+<h3 class="fn"><a name="lastErrorString"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QMessageServiceAction::lastErrorString () const</h3>
 <p>Returns a string indicating the last error condition reported by the action if any; otherwise returns a null string.</p>
 <h3 class="fn"><a name="retrieve"></a>void QMessageServiceAction::retrieve ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Retrieve meta data of the message identified by <i>id</i>.</p>
