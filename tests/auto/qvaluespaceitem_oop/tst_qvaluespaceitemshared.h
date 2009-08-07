@@ -31,57 +31,35 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespaceitemshared.h"
-
-#include <qvaluespace.h>
-
 #include <QObject>
-#include <QProcess>
-#include <QCoreApplication>
-#include <QTest>
 
-class ShutdownControl : public QObject
+class QValueSpaceObject;
+
+class tst_QValueSpaceItem : public QObject
 {
     Q_OBJECT
 
-public:
-    ShutdownControl(QProcess* process)
-    {
-        connect(process,SIGNAL(finished(int,QProcess::ExitStatus)),
-               this, SLOT(shutDown(int, QProcess::ExitStatus))); 
-    }
-
 private slots:
-    void shutDown(int, QProcess::ExitStatus)
-    {
-        qApp->quit();
-    }
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
 
+    void testConstructor();
+    void testConstructor_data();
+    void testAssignmentOperator();
+    void contentsChanged_data();
+    void contentsChanged();
+    void dataVersatility_data();
+    void dataVersatility();
+    void value();
+    void ipcTests();
+    void setValue();
+    void ipcSetValue();
+    void interestNotification_data();
+    void interestNotification();
+    void ipcInterestNotification();
+
+private:
+    QValueSpaceObject* root;
+    QValueSpaceObject* busy;
 };
-
-int main(int argc, char** argv)
-{
-    QCoreApplication app(argc, argv);
-    QStringList args = app.arguments();
-
-#if defined(QT_NO_PROCESS)
-        tst_QValueSpaceItem_oop test;
-        return QTest::qExec(&test, argc-1, argv);
-#else
-    if (args.contains("-vsClientMode")) {
-        tst_QValueSpaceItem test;
-        return QTest::qExec(&test, argc-1, argv);
-    } else {
-        QValueSpace::initValuespaceManager();
-        QProcess process;
-        ShutdownControl control(&process);
-        process.setProcessChannelMode(QProcess::ForwardedChannels);
-        args.removeAt(0); //don't pass the binary name
-        process.start("tst_qvaluespaceitem_oop", args << "-vsClientMode");
-        return app.exec();
-    }
-#endif
-}
-
-#include "tst_qvaluespaceitem_oop.moc"
-
