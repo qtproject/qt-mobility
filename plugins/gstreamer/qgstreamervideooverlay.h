@@ -61,9 +61,17 @@ public:
 
     QSize nativeSize() const;
 
+    void setBrightness(int brightness);
+    void setContrast(int contrast);
+    void setHue(int hue);
+    void setSaturation(int saturation);
+
     QAbstractVideoSurface *surface() const;
 
     GstElement *videoSink();
+
+private slots:
+    void surfaceFormatChanged();
 
 private:
     QX11VideoSurface *m_surface;

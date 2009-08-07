@@ -73,6 +73,7 @@ QStringList QGstreamerServicePlugin::keys() const
     return QStringList()
 #ifdef QMEDIA_GSTREAMER_PLAYER
             << QLatin1String("mediaplayer")
+            << QLatin1String("gstreamermediaplayer")
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
             << QLatin1String("audiorecorder")
@@ -86,6 +87,7 @@ QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
     if (false
 #ifdef QMEDIA_GSTREAMER_PLAYER
             || key == QLatin1String("mediaplayer")
+            || key == QLatin1String("gstreamermediaplayer")
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
             || key == QLatin1String("audiorecorder")

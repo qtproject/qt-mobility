@@ -195,6 +195,83 @@ void QX11VideoSurface::setDisplayRect(const QRect &rect)
     m_displayRect = rect;
 }
 
+int QX11VideoSurface::brightness() const
+{
+    return getAttribute("XV_BRIGHTNESS", m_brightnessRange.first, m_brightnessRange.second);
+}
+
+void QX11VideoSurface::setBrightness(int brightness)
+{
+    setAttribute("XV_BRIGHTNESS", brightness, m_brightnessRange.first, m_brightnessRange.second);
+}
+
+int QX11VideoSurface::contrast() const
+{
+    return getAttribute("XV_CONTRAST", m_contrastRange.first, m_contrastRange.second);
+}
+
+void QX11VideoSurface::setContrast(int contrast)
+{
+    setAttribute("XV_CONTRAST", contrast, m_contrastRange.first, m_contrastRange.second);
+}
+
+int QX11VideoSurface::hue() const
+{
+    return getAttribute("XV_HUE", m_hueRange.first, m_hueRange.second);
+}
+
+void QX11VideoSurface::setHue(int hue)
+{
+    setAttribute("XV_HUE", hue, m_hueRange.first, m_hueRange.second);
+}
+
+int QX11VideoSurface::saturation() const
+{
+    return getAttribute("XV_SATURATION", m_saturationRange.first, m_saturationRange.second);
+}
+
+void QX11VideoSurface::setSaturation(int saturation)
+{
+    setAttribute("XV_SATURATION", saturation, m_saturationRange.first, m_saturationRange.second);
+}
+
+int QX11VideoSurface::getAttribute(const char *attribute, int minimum, int maximum) const
+{
+    if (m_portId != 0) {
+        Display *display = QX11Info::display();
+
+        Atom atom = XInternAtom(display, attribute, True);
+
+        int value = 0;
+
+        XvGetPortAttribute(display, m_portId, atom, &value);
+
+        return redistribute(value, minimum, maximum, -100, 100);
+    } else {
+        return 0;
+    }
+}
+
+void QX11VideoSurface::setAttribute(const char *attribute, int value, int minimum, int maximum)
+{
+    if (m_portId != 0) {
+        Display *display = QX11Info::display();
+
+        Atom atom = XInternAtom(display, attribute, True);
+
+        XvSetPortAttribute(
+                display, m_portId, atom, redistribute(value, -100, 100, minimum, maximum));
+    }
+}
+
+int QX11VideoSurface::redistribute(
+        int value, int fromLower, int fromUpper, int toLower, int toUpper)
+{
+    return fromUpper != fromLower
+            ? ((value - fromLower) * (toUpper - toLower) / (fromUpper - fromLower)) + toLower
+            : 0;
+}
+
 QList<QVideoFrame::PixelFormat> QX11VideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
@@ -304,7 +381,6 @@ bool QX11VideoSurface::present(const QVideoFrame &frame)
 
             frameCopy.unmap();
 
-
             return presented;
         }
     }
@@ -363,5 +439,24 @@ void QX11VideoSurface::querySupportedFormats()
         }
         XFree(imageFormats);
     }
-}
 
+    m_brightnessRange = qMakePair(0, 0);
+    m_contrastRange = qMakePair(0, 0);
+    m_hueRange = qMakePair(0, 0);
+    m_saturationRange = qMakePair(0, 0);
+
+    if (XvAttribute *attributes = XvQueryPortAttributes(QX11Info::display(), m_portId, &count)) {
+        for (int i = 0; i < count; ++i) {
+            if (qstrcmp(attributes[i].name, "XV_BRIGHTNESS") == 0)
+                m_brightnessRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
+            else if (qstrcmp(attributes[i].name, "XV_CONTRAST") == 0)
+                m_contrastRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
+            else if (qstrcmp(attributes[i].name, "XV_HUE") == 0)
+                m_hueRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
+            else if (qstrcmp(attributes[i].name, "XV_SATURATION") == 0)
+                m_saturationRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
+        }
+
+        XFree(attributes);
+    }
+}

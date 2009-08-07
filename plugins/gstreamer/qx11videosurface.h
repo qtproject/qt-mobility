@@ -57,6 +57,18 @@ public:
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
 
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
 
@@ -65,7 +77,7 @@ public:
 
     bool present(const QVideoFrame &frame);
 
-private:
+private:   
     WId m_winId;
     XvPortID m_portId;
     GC m_gc;
@@ -74,9 +86,18 @@ private:
     QVector<int> m_formatIds;
     QRect m_viewport;
     QRect m_displayRect;
+    QPair<int, int> m_brightnessRange;
+    QPair<int, int> m_contrastRange;
+    QPair<int, int> m_hueRange;
+    QPair<int, int> m_saturationRange;
 
     bool findPort();
     void querySupportedFormats();
+
+    int getAttribute(const char *attribute, int minimum, int maximum) const;
+    void setAttribute(const char *attribute, int value, int minimum, int maximum);
+
+    static int redistribute(int value, int fromLower, int fromUpper, int toLower, int toUpper);
 };
 
 #endif

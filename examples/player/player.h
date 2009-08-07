@@ -45,6 +45,7 @@ class QMediaMetadata;
 class QModelIndex;
 class QSlider;
 class QTableView;
+class QVideoWidget;
 
 class PlaylistModel;
 
@@ -69,16 +70,20 @@ private slots:
     void bufferingChanged(bool buffering);
     void bufferingProgress(int progress);
 
+    void showColorDialog();
+
 private:
     void setTrackInfo(const QString &info);
     void setStatusInfo(const QString &info);
 
     QMediaPlayer *player;
     QMediaMetadata *metaData;
+    QVideoWidget *videoWidget;
     QLabel *coverLabel;
     QSlider *slider;
     PlaylistModel *playlistModel;
     QTableView *playlistView;
+    QDialog *colorDialog;
     QString trackInfo;
     QString statusInfo;
 };

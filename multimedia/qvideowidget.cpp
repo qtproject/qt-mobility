@@ -97,6 +97,15 @@ void QVideoWidgetPrivate::_q_fullscreenWindowDone()
 }
 
 /*!
+    \class QVideoWidget
+    \brief The QVideoWidget class provides a widget which displays video produced by a media
+    service.
+    \preliminary
+*/
+
+/*!
+    Constructs a new widget with the given \a parent which displays video produced by a media
+    \a service.
 */
 QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
     : QWidget(*new QVideoWidgetPrivate, parent, 0)
@@ -113,6 +122,15 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
                 this, SLOT(_q_overlayFullscreenChanged(bool)));
         connect(d->overlay, SIGNAL(nativeSizeChanged()),
                 this, SLOT(_q_dimensionsChanged()));
+        connect(d->overlay, SIGNAL(brightnessChanged(int)),
+                this, SIGNAL(brightnessChanged(int)));
+        connect(d->overlay, SIGNAL(contrastChanged(int)),
+                this, SIGNAL(contrastChanged(int)));
+        connect(d->overlay, SIGNAL(hueChanged(int)),
+                this, SIGNAL(hueChanged(int)));
+        connect(d->overlay, SIGNAL(saturationChanged(int)),
+                this, SIGNAL(saturationChanged(int)));
+
         d->service->setVideoOutput(d->overlay);
 #ifndef QT_NO_VIDEOSURFACE
     } else if ((d->renderer = service->createEndpoint<QVideoRendererEndpoint *>())) {
@@ -133,6 +151,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
 }
 
 /*!
+    Destroys a video widget.
 */
 QVideoWidget::~QVideoWidget()
 {
@@ -142,14 +161,15 @@ QVideoWidget::~QVideoWidget()
 }
 
 /*!
+    \property QVideoWidget::fullscreen
+    \brief whether video display consumes the entire screen.
 */
+
 bool QVideoWidget::isFullscreen() const
 {
     return d_func()->fullscreen;
 }
 
-/*!
-*/
 void QVideoWidget::setFullscreen(bool fullscreen)
 {
     Q_D(QVideoWidget);
@@ -187,6 +207,125 @@ void QVideoWidget::setFullscreen(bool fullscreen)
 }
 
 /*!
+    \fn QVideoWidget::fullscreenChanged(bool fullscreen)
+
+    Signals that the \a fullscreen mode of a video widget has changed.
+*/
+
+/*!
+    \property QVideoWidget::brightness
+    \brief an adjustment to the brightness of displayed video.
+
+    Valid brightness values range between -100 and 100, the default is 0.
+*/
+
+int QVideoWidget::brightness() const
+{
+    Q_D(const QVideoWidget);
+
+    return d->overlay ? d->overlay->brightness() : 0;
+}
+
+void QVideoWidget::setBrightness(int brightness)
+{
+    Q_D(QVideoWidget);
+
+    if (d->overlay)
+        d->overlay->setBrightness(brightness);
+}
+
+/*!
+    \fn QVideoWidget::brightnessChanged(int brightness)
+
+    Signals that a video widgets's \a brightness adjustment has changed.
+*/
+
+/*!
+    \property QVideoWidget::contrast
+    \brief an adjustment to the contrast of displayed video.
+
+    Valid contrast values range between -100 and 100, the default is 0.
+
+*/
+
+int QVideoWidget::contrast() const
+{
+    Q_D(const QVideoWidget);
+
+    return d->overlay ? d->overlay->contrast() : 0;
+}
+
+void QVideoWidget::setContrast(int contrast)
+{
+    Q_D(QVideoWidget);
+
+    if (d->overlay)
+        d->overlay->setContrast(contrast);
+}
+
+/*!
+    \fn QVideoWidget::contrastChanged(int contrast)
+
+    Signals that a video widgets's \a contrast adjustment has changed.
+*/
+
+/*!
+    \property QVideoWidget::hue
+    \brief an adjustment to the hue of displayed video.
+
+    Valid hue values range between -100 and 100, the default is 0.
+*/
+
+int QVideoWidget::hue() const
+{
+    Q_D(const QVideoWidget);
+
+    return d->overlay ? d->overlay->hue() : 0;
+}
+
+void QVideoWidget::setHue(int hue)
+{
+    Q_D(QVideoWidget);
+
+    if (d->overlay)
+        d->overlay->setHue(hue);
+}
+
+/*!
+    \fn QVideoWidget::hueChanged(int hue)
+
+    Signals that a video widgets's \a hue adjustment has changed.
+*/
+
+/*!
+    \property QVideoWidget::saturation
+    \brief an adjustment to the saturation of displayed video.
+
+    Valid saturation values range between -100 and 100, the default is 0.
+*/
+
+int QVideoWidget::saturation() const
+{
+    Q_D(const QVideoWidget);
+
+    return d->overlay ? d->overlay->saturation() : 0;
+}
+
+void QVideoWidget::setSaturation(int saturation)
+{
+    Q_D(QVideoWidget);
+
+    if (d->overlay)
+        d->overlay->setSaturation(saturation);
+}
+
+/*!
+    \fn QVideoWidget::saturationChanged(int saturation)
+
+    Signals that a video widgets's \a saturation adjustment has changed.
+*/
+
+/*!
     \reimp
 */
 QSize QVideoWidget::sizeHint() const
@@ -202,10 +341,6 @@ QSize QVideoWidget::sizeHint() const
     else
         return QSize();
 }
-
-/*!
-    \fn QVideoWidget::fullscreenChanged(bool fullscreen)
-*/
 
 /*!
     \reimp
