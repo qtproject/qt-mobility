@@ -68,7 +68,10 @@ public:
 */
 
 /*!
+    Construct a QAbstractMediaService with \a parent. This class is meant as a
+    base class for Multimedia services so this constructor is protected.
 */
+
 QAbstractMediaService::QAbstractMediaService(QObject *parent):
     QObject(*new QAbstractMediaServicePrivate, parent)
 {

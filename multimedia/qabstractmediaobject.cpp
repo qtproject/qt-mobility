@@ -71,16 +71,28 @@ void QAbstractMediaObjectPrivate::_q_notify()
     \sa QAbstractMediaService, QAbstractMediaControl
 */
 
+
+/*!
+    Destroys the QAbstractMediaObject object.
+*/
+
+QAbstractMediaObject::~QAbstractMediaObject()
+{
+}
+
 /*!
     \fn QAbstractMediaService* QAbstractMediaObject::service() const
 
     Returns the media service that provide the functionality for the Multimedia object.
 */
 
+/*!
+    \fn bool QAbstractMediaObject::isValid() const
 
-QAbstractMediaObject::~QAbstractMediaObject()
-{
-}
+    Returns true if the concrete media object is capable of normal operation;
+    false otherwise.
+*/
+
 
 int QAbstractMediaObject::notifyInterval() const
 {
@@ -125,6 +137,13 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
 }
 
+/*!
+    Watch the property \a name. The property's notify signal will be emitted
+    once every notifyInterval milliseconds.
+
+    \sa notifyInterval
+*/
+
 void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
 {
     Q_D(QAbstractMediaObject);
@@ -135,6 +154,13 @@ void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
         d->notifyTimer->start();
 }
 
+/*!
+    Remove property \a name from the list of properties whose changes are
+    regularly signaled.
+
+    \sa notifyInterval
+*/
+
 void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 {
     Q_D(QAbstractMediaObject);
@@ -144,5 +170,21 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
     if (d->notifyProperties.isEmpty())
         d->notifyTimer->stop();
 }
+
+/*!
+    \property QAbstractMediaObject::notifyInterval
+
+    The interval at which notifiable properties will update.
+
+    The interval is expressed in milliseconds, the default value is 1000.
+
+    \sa addPropertyWatch(), removePropertyWatch()
+*/
+
+/*!
+    \fn void QAbstractMediaObject::notifyIntervalChanged(int milliSeconds)
+
+    Signal a change in the notify interval period to \a milliSeconds.
+*/
 
 #include "moc_qabstractmediaobject.cpp"

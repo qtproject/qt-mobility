@@ -34,6 +34,11 @@
 
 #include "qmediarecordercontrol.h"
 
+
+/*!
+    \class QMediaRecorderControl
+*/
+
 QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
     : QAbstractMediaControl(parent)
 {

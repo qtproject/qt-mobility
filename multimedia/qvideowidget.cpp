@@ -97,7 +97,9 @@ void QVideoWidgetPrivate::_q_fullscreenWindowDone()
 }
 
 /*!
+    \class QVideoWidget
 */
+
 QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
     : QWidget(*new QVideoWidgetPrivate, parent, 0)
 {

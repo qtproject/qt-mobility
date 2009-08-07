@@ -35,6 +35,12 @@
 #include "qcameracontrol.h"
 #include  "qabstractmediacontrol_p.h"
 
+
+
+/*!
+    \class QCameraControl
+*/
+
 QCameraControl::~QCameraControl()
 {
 }

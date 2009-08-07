@@ -54,7 +54,7 @@
     \value PosterRole The resource refers to a still image to be displayed in place of an unloaded
     video.
     \value CoverArtRole The resource refers to cover art for a media item.
-    \value ThumnbnailRole The resource refers to a thumbnail image for a media item.
+    \value ThumbnailRole The resource refers to a thumbnail image for a media item.
 */
 
 /*!
