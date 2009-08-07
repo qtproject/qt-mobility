@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../messaging/draft-api.cpp -->
+<!-- ../../messaging/qmessagecontentcontainer.cpp -->
 <head>
   <title>List of All Members for QMessageContentContainer</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -17,45 +17,30 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer-2">QMessageContentContainer</a></b> ( const QMessageContentContainer &amp; )</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#appendContent">appendContent</a></b> ( const QMessageContentContainer &amp; ) : QMessageContentContainerId</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a></b> ( const QByteArray &amp;, const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#appendHeaderField-2">appendHeaderField</a></b> ( const QByteArray &amp;, const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#clearContents">clearContents</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId ) const : const QMessageContentContainer</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#container-2">container</a></b> ( const QMessageContentContainerId ) : QMessageContentContainer</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qmessagecontentcontainer.html#container">container</a></b> ( const QMessageContentContainerId &amp; ) const : QMessageContentContainer</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#containerId">containerId</a></b> () const : QMessageContentContainerId</div></li>
+<li><div class="fn"><b><a href="qmessagecontentcontainer.html#contains">contains</a></b> ( const QMessageContentContainerId &amp; ) const : bool</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentAvailable">contentAvailable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentIds">contentIds</a></b> () const : QMessageContentContainerIdList</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#contentType">contentType</a></b> () const : QByteArray</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#decodedContent">decodedContent</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#decodedTextContent">decodedTextContent</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#headerField">headerField</a></b> ( const QByteArray &amp; ) const : QString</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; ) const : QList&lt;QString&gt;</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const : QList&lt;QByteArray&gt;</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#indicativeSize">indicativeSize</a></b> () const : uint</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#messageId">messageId</a></b> () const : QMessageId</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</a></b> () : QList&lt;QByteArray&gt;</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#prependContent">prependContent</a></b> ( const QMessageContentContainer &amp; ) : QMessageContentContainerId</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a></b> ( QDataStream &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a></b> ( const QMessageContentContainerId &amp;, const QMessageContentContainer &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContent">setContent</a></b> ( const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContent-2">setContent</a></b> ( const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a></b> ( const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContentFileName">setContentFileName</a></b> ( const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a></b> ( const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a></b> ( const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setContentType">setContentType</a></b> ( const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a></b> ( const QByteArray &amp;, const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a></b> ( const QByteArray &amp;, const QByteArray &amp; )</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</a></b> ( const QList&lt;QByteArray&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qmessagecontentcontainer.html#size">size</a></b> () const : uint</div></li>
 <li><div class="fn"><b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; ) const</div></li>
+<li><div class="fn"><b><a href="qmessagecontentcontainer.html#operator-eq">operator=</a></b> ( const QMessageContentContainer &amp; ) : const QMessageContentContainer &amp;</div></li>
 </ul>
 </td></tr>
 </table></p>

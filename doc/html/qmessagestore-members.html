@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../messaging/draft-api.cpp -->
+<!-- ../../messaging/qmessagestore.cpp -->
 <head>
   <title>List of All Members for QMessageStore</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -27,7 +27,6 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilterKey &amp; ) const : int</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#countFolders">countFolders</a></b> ( const QMessageFolderFilterKey &amp; ) const : int</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; ) const : int</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
@@ -45,7 +44,6 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#folder">folder</a></b> ( const QMessageFolderId &amp; ) const : QMessageFolder</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#instance">instance</a></b> () : QMessageStore *</div></li>
@@ -53,7 +51,6 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmessagestore.html#lastError">lastError</a></b> () const : QMessageStore::ErrorCode</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#maximumWorkingIds">maximumWorkingIds</a></b> () : uint</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; ) const : QMessage</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#messagesAdded">messagesAdded</a></b> ( const QMessageIdList &amp; )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a></b> ( const QMessageIdList &amp; )</div></li>
@@ -64,14 +61,13 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp;, const QMessageAccountSortKey &amp;, uint, uint ) const : QMessageAccountIdList</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#queryFolders">queryFolders</a></b> ( const QMessageFolderFilterKey &amp;, const QMessageFolderSortKey &amp;, uint, uint ) const : QMessageFolderIdList</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp;, const QMessageSortKey &amp;, uint, uint ) const : QMessageIdList</div></li>
+<li><div class="fn"><b><a href="qmessagestore.html#queryMessages-2">queryMessages</a></b> ( const QString &amp;, const QMessageFilterKey &amp;, const QMessageSortKey &amp;, QMessageDataComparator::Options, uint, uint ) const : QMessageIdList</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp;, RemovalOption ) : bool</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp;, RemovalOption ) : bool</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#setMaximumWorkingIds">setMaximumWorkingIds</a></b> ( uint )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
@@ -80,7 +76,7 @@
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ( const QMessageFilterKey &amp; )</div></li>
+<li><div class="fn"><b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://doc.qtsoftware.com/4.5/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>

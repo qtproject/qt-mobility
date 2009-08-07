@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../messaging/draft-api.cpp -->
+<!-- ../../messaging/qmessagesortkey.cpp -->
 <head>
   <title>QMessageSortKey Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -23,6 +23,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortkey.html#QMessageSortKey">QMessageSortKey</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortkey.html#QMessageSortKey-2">QMessageSortKey</a></b> ( const QMessageSortKey &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortkey.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageSortKey </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortkey.html#operator-2b">operator+</a></b> ( const QMessageSortKey &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageSortKey &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortkey.html#operator-2b-eq">operator+=</a></b> ( const QMessageSortKey &amp; <i>other</i> )</td></tr>
@@ -59,6 +60,9 @@
 <p>A default-constructed key (one for which <a href="qmessagesortkey.html#isEmpty">isEmpty</a>() returns true) sorts no messages.</p>
 <p>The result of combining an empty key with a non-empty key is the same as the original non-empty key.</p>
 <p>The result of combining two empty keys is an empty key.</p>
+<h3 class="fn"><a name="QMessageSortKey-2"></a>QMessageSortKey::QMessageSortKey ( const QMessageSortKey &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessagesortkey.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
 <h3 class="fn"><a name="priority"></a>QMessageSortKey QMessageSortKey::priority ( <a href="http://doc.qtsoftware.com/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
