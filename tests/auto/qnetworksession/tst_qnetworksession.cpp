@@ -235,6 +235,7 @@ void tst_QNetworkSession::userChoiceSession()
                 QTRY_VERIFY(!stateChangedSpy.isEmpty());
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
 
             const QString userChoiceIdentifier =
                 session.property("UserChoiceConfigurationIdentifier").toString();
@@ -362,6 +363,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             }
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
         } else {
             QFAIL("Timeout waiting for session to open.");
         }
@@ -394,6 +396,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(session2.isActive());
         QVERIFY(session.state() == QNetworkSession::Connected);
         QVERIFY(session2.state() == QNetworkSession::Connected);
+        QVERIFY(session.interface().isValid());
+        QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
+        QCOMPARE(session.interface().index(), session2.interface().index());
     }
 
     sessionOpenedSpy2.clear();
@@ -524,6 +529,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QVERIFY(!session2.isActive());
             QVERIFY(session.state() == QNetworkSession::Connected);
             QVERIFY(session2.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
+            QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
+            QCOMPARE(session.interface().index(), session2.interface().index());
         }
 
         sessionClosedSpy2.clear();
