@@ -109,9 +109,15 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactTrackerEngine::contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const
+QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    Q_UNUSED(sortOrder)
+    Q_UNUSED(filter)
+    return contacts(sortOrders, error);
+}
+
+QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    Q_UNUSED(sortOrders)
 
     QList<QUniqueId> ids;
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
@@ -126,13 +132,6 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactSortOrder& sortOr
 
     error = QContactManager::NoError;
     return ids;
-}
-
-QList<QUniqueId> QContactTrackerEngine::contactsWithDetail(const QString& definitionId, const QVariant& value) const
-{
-    Q_UNUSED(definitionId)
-    Q_UNUSED(value)
-    return QList<QUniqueId>();
 }
 
 QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
@@ -160,10 +159,15 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
     return Tracker2QContact::copyContactData( ncoContacts->liveNode(0), contact ) ? contact : QContact();
 }
 
-bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
+
+
+bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     //::tracker()->setVerbosity(3);
-
+    groupsChanged.clear(); // TODO not yet supported
+    contactsAdded.clear();
+    contactsChanged.clear();
+    
     if(contact == 0) {
         error = QContactManager::BadArgumentError;
         return false;
@@ -186,8 +190,10 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
         contact->setId(d->m_lastUsedId);
         ncoContact->setContactUID(QString::number(d->m_lastUsedId));
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
+        contactsAdded << contact->id();
     }  else {
         ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contact->id())));
+        contactsChanged << contact->id();
     }
 
     // Iterate the contact details that are set for the contact. Save them.
@@ -299,6 +305,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
         }
     }
 
+/*! commented out as it is fired from QContactManager
     if(!batch) {
         QList<QUniqueId> emitList;
         emitList.append(contact->id());
@@ -308,13 +315,15 @@ bool QContactTrackerEngine::saveContact(QContact* contact, bool batch, QContactM
             emit contactsChanged(emitList);
         }
     }
-
+*/
     error = QContactManager::NoError;
     return true;
 }
 
-bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
+    Q_UNUSED(groupsChanged)
+    contactsRemoved.clear();
     error = QContactManager::NoError;
 
     // TODO: Do with LiveNodes when they support strict querying.
@@ -337,21 +346,16 @@ bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, bool batch
     }
     ncoContact->remove();
     
-    if (!batch) {
-        QList<QUniqueId> removed;
-        removed.append(contactId);
-        emit contactsRemoved(removed);
-    }
-    
+    contactsRemoved << contactId;
     return true;
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     QList<QContactManager::Error> errorList;
     QContactManager::Error functionError = QContactManager::NoError;
-    QList<QUniqueId> addedList;
-    QList<QUniqueId> changedList;
+    contactsAdded.clear();
+    contactsChanged.clear();
 
     if(contacts == 0) {
         error = QContactManager::BadArgumentError;
@@ -360,28 +364,26 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
 
     for(int i=0; i<contacts->count(); i++) {
         QContact contact = contacts->at(i);
-        QUniqueId old_id = contact.id();
 
-        if(!saveContact(&contact, true, error)) {
+        QSet<QUniqueId> added4One;
+        QSet<QUniqueId> changed4One;
+        QSet<QUniqueId> changedGroup4One;
+        
+        if(!saveContact(&contact, added4One, changed4One, changedGroup4One, error)) {
             functionError = error;
             errorList.append(functionError);
         } else {
-            if(old_id == 0) {
-                // Add info for new contact signal
-                addedList.append(contact.id());
-            } else {
-                // Or to the changed contact signal list.
-                changedList.append(contact.id());
-            }
-
             // No error while saving.
             errorList.append(QContactManager::NoError);
         }
-
+        groupsChanged += changedGroup4One;
+        contactsAdded += added4One;
+        contactsChanged += changed4One;
     }
 
     error = functionError;      // Last operation error is the batch error.
-
+/*
+    // commented as it is fired from manager
     if(!addedList.isEmpty()) {
         emit contactsAdded(addedList);
     }
@@ -389,14 +391,15 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
     if(!changedList.isEmpty()) {
         emit contactsChanged(changedList);
     }
-
+*/
     return errorList;
 
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
-    QList<QUniqueId> removed;
+    groupsChanged.clear();
+    contactsRemoved.clear();
     QList<QContactManager::Error> errors;
     error = QContactManager::NoError;
 
@@ -407,10 +410,13 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqu
 
     for (int i = 0; i < contactIds->count(); i++) {
         QContactManager::Error lastError;
-        removeContact(contactIds->at(i), true, lastError);
+        QSet<QUniqueId> removedCs;
+        QSet<QUniqueId> changedGs;
+        removeContact(contactIds->at(i),removedCs, changedGs, lastError);
         errors.append(lastError);
+        contactsRemoved += removedCs;
+        groupsChanged += changedGs;
         if (lastError == QContactManager::NoError) {
-            removed.append(contactIds->at(i));
             (*contactIds)[i] = 0;
         }
         else {
@@ -418,9 +424,7 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqu
         }
     }
 
-    if (!removed.isEmpty()) {
-        emit contactsRemoved(removed);
-    }
+    // emit signals removed as they are fired from QContactManager
     return errors;
 }
 

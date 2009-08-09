@@ -109,14 +109,18 @@ public:
     QContactManagerEngine* clone();
     void deref();
 
+    /* Filtering */
+    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QContactSortOrder& sortOrder, QContactManager::Error& error) const;
-    QList<QUniqueId> contactsWithDetail(const QString& definitionId, const QVariant& value) const;
-    bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
+    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
+    
+    bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    
+    bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
