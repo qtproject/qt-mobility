@@ -48,7 +48,7 @@ QMessageAccountId addAccount(const Parameters &params)
 
     return QMessageAccountId();
 }
-#ifdef QMESSAGE_OPTIONAL_FOLDER
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId addFolder(const Parameters &params)
 {
     Q_UNUSED(params)

@@ -1,12 +1,17 @@
+include(../common.pri)
+
 TEMPLATE = lib
 
 TARGET = QtMessaging
+target.path += $$LIBRARIES_INSTALL_ROOT
+INSTALLS += target
+
+
 INCLUDEPATH += .
 
 #Input
 
 DEFINES += QT_BUILD_MESSAGING_LIB
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
 HEADERS += qmessageglobal.h \
            qmessageid.h \

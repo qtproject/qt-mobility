@@ -58,11 +58,17 @@ public:
     MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
     MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id();
+#endif
     bool isValid() { return _valid; }
     LPMAPIFOLDER folder() { return _folder; }
     MapiRecordKey recordKey() { return _key; }
+    MapiRecordKey storeKey() { return _parentStoreKey; }
     QString name() const { return _name; }
+    MapiEntryId entryId() { return _entryId; }
+    bool hasSubFolders() { return _hasSubFolders; }
+    uint messageCount() { return _messageCount; }
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
 
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
@@ -94,8 +100,10 @@ public:
     bool isValid();
     MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError);
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError);
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
+#endif
     QMessageAccountId id();
     QString name() { return _name; }
 

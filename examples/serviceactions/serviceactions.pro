@@ -1,7 +1,7 @@
 include(../../common.pri)
 
 TEMPLATE = app
-TARGET = sendmessage
+TARGET = serviceactions 
 target.path += $$EXAMPLES_INSTALL_ROOT
 INSTALLS += target
 
@@ -15,15 +15,11 @@ symbian|win32 {
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-
-
 DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_\\\"
 }
 
-HEADERS += \
-    messagesender.h
+HEADERS +=
 
 SOURCES += \
-    messagesender.cpp\
     main.cpp
 
