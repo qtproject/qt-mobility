@@ -12,7 +12,7 @@ SOURCES += qcontacttrackerbackend.cpp \
     tracker2qcontact.cpp
 
 # QT += contacts
-INCLUDEPATH += $TARGET/usr/include/qt4/QtContacts
+INCLUDEPATH += $$(TARGET)/usr/include/qt4/QtContacts
 
 target.path = /usr/lib/qt4/plugins/qtcontacts-tracker
 INSTALLS += target
