@@ -16,4 +16,9 @@
         <customproperty key="testkey">testvalue for B</customproperty>
         <customproperty key="additionalkey">custom</customproperty>
     </interface>
+    <interface>
+        <name>com.nokia.qt.TestInterfaceC</name>
+        <version>1.0</version>
+        <description>tst_QServiceManager test interface C 1.0</description>
+    </interface>
 </service>

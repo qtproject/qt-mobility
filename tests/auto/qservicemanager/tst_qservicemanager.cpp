@@ -284,6 +284,12 @@ void tst_QServiceManager::cleanupTestCase()
 {
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
+
+    //use QEventLopp::DeferredDeletion
+    //QServiceManager::loadInterface makes use of deleteLater() when
+    //cleaning up service objects and their respective QPluginLoader
+    //we want to force the testcase to run the cleanup code
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
 void tst_QServiceManager::constructor()
@@ -696,6 +702,8 @@ void tst_QServiceManager::loadInterface_string()
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
+    delete obj;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 
     // add second service
     QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice2.xml")), PRINT_ERR(mgr));
@@ -705,12 +713,16 @@ void tst_QServiceManager::loadInterface_string()
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceAClassName);
+    delete obj;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 
     // if second service is set as default, it should be returned
     QVERIFY(mgr.setInterfaceDefault(serviceB, commonInterface));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
     QCOMPARE(QString(obj->metaObject()->className()), serviceBClassName);
+    delete obj;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
 void tst_QServiceManager::loadInterface_descriptor()
@@ -731,6 +743,7 @@ void tst_QServiceManager::loadInterface_descriptor()
     QVERIFY(obj != 0);
 
     delete obj;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
 void tst_QServiceManager::loadInterface_descriptor_data()
@@ -820,6 +833,7 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
     QVERIFY(!invokeOk);
 
     delete obj;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
 void tst_QServiceManager::getInterface()
@@ -849,6 +863,7 @@ void tst_QServiceManager::getInterface()
 
     delete plugin;
     plugin = 0;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 
     //use database descriptor
     QFile file1(xmlTestDataPath("sampleservice.xml"));
@@ -857,18 +872,36 @@ void tst_QServiceManager::getInterface()
 
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceA"), QStringList("SampleService"));
     QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceB"), QStringList("SampleService"));
+    QCOMPARE(mgr.findServices("com.nokia.qt.TestInterfaceC"), QStringList("SampleService"));
     QList<QServiceInterfaceDescriptor> ifaces = mgr.findInterfaces("SampleService");
-    QVERIFY(ifaces.count() == 2);
+    QList<SampleServicePluginClass*> serviceObjects;
+    QVERIFY(ifaces.count() == 3);
     for (int i = 0; i<ifaces.count(); i++) {
         plugin = mgr.getInterface<SampleServicePluginClass>(ifaces.at(i), &context, &session);
 
-        QVERIFY(plugin != 0);
-        QCOMPARE(plugin->context(), (QServiceContext *)&context);
-        QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
-
-        delete plugin;
-        plugin = 0;
+        if (ifaces.at(i).interfaceName() == "com.nokia.qt.TestInterfaceC") {
+            QVERIFY(plugin == 0);
+        } else {
+            QVERIFY(plugin != 0);
+            QCOMPARE(plugin->context(), (QServiceContext *)&context);
+            QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
+            plugin->testSlotOne();
+            serviceObjects.append(plugin);
+        }
     }
+
+    //test for a bug where two service instances from same plugin
+    //caused a crash when the first instance was deleted and 
+    //the second instance called
+    QVERIFY(serviceObjects.count() == 2);
+    delete serviceObjects.takeFirst();
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
+
+    plugin = serviceObjects.takeFirst();
+    plugin->testSlotOne();
+    delete plugin;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
+
 
     //use default lookup
     plugin = mgr.getInterface<SampleServicePluginClass>("com.nokia.qt.TestInterfaceA", &context, &session);
@@ -877,6 +910,7 @@ void tst_QServiceManager::getInterface()
     QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
 
     delete plugin;
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
     plugin = 0;
 
     //use totally wrong but QObject based template class type
