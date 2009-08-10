@@ -1,6 +1,5 @@
 #include "qgstreamercaptureservice.h"
-#include "qaudiodeviceendpoint.h"
-#include "qalsaaudiodeviceendpoint.h"
+#include "qgstaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediaformatcontrol.h"
@@ -58,7 +57,7 @@ QList<QByteArray> QGstreamerCaptureService::supportedEndpointInterfaces(
 QObject *QGstreamerCaptureService::createEndpoint(const char *interface)
 {
     if (qstrcmp(interface, QAudioDeviceEndpoint_iid) == 0) {
-        return new QAlsaAudioDeviceEndpoint(this);
+        return new QGstAudioDeviceEndpoint(this);
     }
 
     if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
@@ -77,10 +76,10 @@ QObject *QGstreamerCaptureService::createEndpoint(const char *interface)
 
 void QGstreamerCaptureService::setAudioInput(QObject *input)
 {
-    QAlsaAudioDeviceEndpoint *endPoint = qobject_cast<QAlsaAudioDeviceEndpoint*>(input);
+    QGstAudioDeviceEndpoint *endPoint = qobject_cast<QGstAudioDeviceEndpoint*>(input);
 
     if (endPoint) {
-        endPoint->setDirectionFilter(QAlsaAudioDeviceEndpoint::InputDevice);
+        endPoint->setDirectionFilter(QGstAudioDeviceEndpoint::InputDevice);
 
         if (audioInput())
             disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));

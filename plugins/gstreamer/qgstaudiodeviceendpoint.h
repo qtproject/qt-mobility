@@ -32,18 +32,18 @@
 **
 ****************************************************************************/
 
-#ifndef QALSAAUDIODEVICEENDPOINT_H
-#define QALSAAUDIODEVICEENDPOINT_H
+#ifndef QGSTAUDIODEVICEENDPOINT_H
+#define QGSTAUDIODEVICEENDPOINT_H
 
 #include "qaudiodeviceendpoint.h"
 #include <QStringList>
 
-class QAlsaAudioDeviceEndpoint : public QAudioDeviceEndpoint
+class QGstAudioDeviceEndpoint : public QAudioDeviceEndpoint
 {
 Q_OBJECT
 public:
-    QAlsaAudioDeviceEndpoint(QObject *parent);
-    virtual ~QAlsaAudioDeviceEndpoint();
+    QGstAudioDeviceEndpoint(QObject *parent);
+    virtual ~QGstAudioDeviceEndpoint();
 
     void setDirectionFilter(DeviceDirection direction);
     void setRoleFilter(Roles roles);
@@ -64,6 +64,8 @@ public:
 
 private:
     void update();
+    void updateAlsaDevices();
+    void updateOssDevices();
 
     QStringList m_names;
     QStringList m_descriptions;
@@ -72,4 +74,4 @@ private:
     QList<FormFactor> m_formFactors;
 };
 
-#endif // QALSAAUDIODEVICEENDPOINT_H
+#endif // QGSTAUDIODEVICEENDPOINT_H

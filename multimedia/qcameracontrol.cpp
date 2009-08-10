@@ -198,6 +198,7 @@ bool QCameraControl::isMacroFocusingSupported() const
 
 void QCameraControl::setMacroFocusingEnabled(bool enable)
 {
+    Q_UNUSED(enable);
 }
 
 /*!

@@ -144,11 +144,26 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     GstElement *audioSrc = 0;
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
-    else
-        audioSrc = gst_element_factory_make("osssrc", "audio_src");
+    else {
+        QString elementName = "alsasrc";
+        QString device;
 
-    if (audioSrc && !m_captureDevice.isEmpty())
-        g_object_set(G_OBJECT(audioSrc), "device", m_captureDevice.toLocal8Bit().constData(), NULL);
+        if (m_captureDevice.startsWith("alsa:")) {
+            device = m_captureDevice.mid(QString("alsa:").length());
+        } else if (m_captureDevice.startsWith("oss:")) {
+            elementName = "osssrc";
+            device = m_captureDevice.mid(QString("oss:").length());
+        }
+
+        audioSrc = gst_element_factory_make(elementName.toAscii().constData(), "audio_src");
+        if (audioSrc && !device.isEmpty())
+            g_object_set(G_OBJECT(audioSrc), "device", device.toLocal8Bit().constData(), NULL);
+    }
+
+    if (!audioSrc) {
+        emit error(int(QMediaRecorder::ResourceError), tr("Could not create an audio source element"));
+        audioSrc = gst_element_factory_make("fakesrc", NULL);
+    }
 
     return audioSrc;
 }
@@ -330,7 +345,7 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
 {
     _gst_debug_bin_to_dot_file(GST_BIN(m_pipeline),
-                               GstDebugGraphDetails(GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
+                               GstDebugGraphDetails(/*GST_DEBUG_GRAPH_SHOW_ALL |*/ GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
                                fileName.toAscii());
 }
 

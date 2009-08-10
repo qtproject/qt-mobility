@@ -55,7 +55,6 @@ class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QAbstractMediaService* service;
-    QMediaRecorderControl* media;
     QCameraControl* control;
 };
 
@@ -71,12 +70,10 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
-        d->media   = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
-        //connect(d->media,SIGNAL(stateChanged(QCamera::State)),this,SLOT(statusChange(int)));
+        //connect(d->control,SIGNAL(stateChanged(QCamera::State)),this,SLOT(stateChange(int)));
     } else {
         d->service = 0;
         d->control = 0;
-        d->media   = 0;
     }
 }
 
@@ -96,8 +93,8 @@ void QCamera::start()
 {
     Q_D(QCamera);
 
-    if(d->media)
-        d->media->record();
+    if(d->control)
+        d->control->start();
 }
 
 /*!
@@ -108,8 +105,8 @@ void QCamera::stop()
 {
     Q_D(QCamera);
 
-    if(d->media)
-        d->media->stop();
+    if(d->control)
+        d->control->stop();
 }
 
 /*!
@@ -203,8 +200,8 @@ QString QCamera::deviceDescription(const QByteArray &device)
 
 QCamera::State QCamera::state() const
 {
-    if(d_func()->media)
-        return (QCamera::State)d_func()->media->state();
+    if(d_func()->control)
+        return (QCamera::State)d_func()->control->state();
 
     return QCamera::StoppedState;
 }
@@ -640,6 +637,12 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 }
 
 /*!
+    \enum QCamera::State
+    \value ActiveState  The camera has been started and can produce data.
+    \value StoppedState The camera has been stopped and is not producing any data.
+*/
+
+/*!
     \enum QCamera::FlashMode
 
     \value FlashOff             Flash is Off.
@@ -713,15 +716,6 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
     \value WhiteBalanceIncandescent ?
     \value WhiteBalanceFlash        ?
     \value WhiteBalanceSunset       ?
-*/
-
-/*!
-    \enum QCamera::State
-
-    \value LoadingState The camera has been started but has not started producing data yet.
-    \value ActiveState  The camera has been started and is producing data.
-    \value PausedState  The camera is in a suspended state.
-    \value StoppedState The camera has been stopped and is not producing any data.
 */
 
 /*!

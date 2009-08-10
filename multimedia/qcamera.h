@@ -59,7 +59,7 @@ class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 
     Q_ENUMS(State)
 public:
-    enum State { LoadingState, ActiveState, PausedState, StoppedState };
+    enum State { ActiveState, StoppedState };
 
     enum FlashMode {
         FlashOff = 0x1,
@@ -133,6 +133,8 @@ public:
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
     //QCamera(const QByteArray &device, QObject *parent = 0);
     ~QCamera();
+
+    //static QAbstractMediaService * createCameraService(const QByteArray &device);
 
     QList<QByteArray> deviceList();
     void setDevice(const QByteArray& device);

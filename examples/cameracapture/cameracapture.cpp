@@ -114,6 +114,20 @@ CameraCapture::CameraCapture(QWidget *parent) :
         }
 
         ui->videoQualitySlider->setValue(qRound(videoEncodeControl->quality()));
+
+        ui->videoResolutionBox->addItem(tr("Default"));
+        QList<QSize> supportedResolutions = videoEncodeControl->supportedResolutions();
+        foreach(const QSize &resolution, supportedResolutions) {
+            ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()));
+        }
+
+        ui->videoFramerateBox->addItem(tr("Default"));
+        QList< QPair<int,int> > supportedFrameRates = videoEncodeControl->supportedFrameRates();
+        QPair<int,int> rate;
+        foreach(rate, supportedFrameRates) {
+            ui->videoFramerateBox->addItem(QString("%1/%2").arg(rate.first).arg(rate.second));
+        }
+
     } else {
         ui->videoCodecBox->setEnabled(false);
         ui->videoQualitySlider->setEnabled(false);
@@ -203,6 +217,30 @@ void CameraCapture::setContainerFormat(int idx)
 {
     if (formatControl)
         formatControl->setFormat(formatControl->supportedFormats()[idx]);
+}
+
+void CameraCapture::setVideoResolution()
+{
+    QSize resolution;
+    QStringList resolutionParts = ui->videoResolutionBox->currentText().split('x');
+    if (resolutionParts.size() == 2) {
+        resolution.setWidth(resolutionParts[0].toInt());
+        resolution.setHeight(resolutionParts[1].toInt());
+    }
+
+    videoEncodeControl->setResolution(resolution);
+}
+
+void CameraCapture::setVideoFramerate()
+{
+    QPair<int,int> frameRate = qMakePair<int,int>(-1,-1);
+    QStringList rateParts = ui->videoFramerateBox->currentText().split('/');
+    if (rateParts.size() == 2) {
+        frameRate.first = rateParts[0].toInt();
+        frameRate.second = rateParts[1].toInt();
+    }
+
+    videoEncodeControl->setFrameRate(frameRate);
 }
 
 void CameraCapture::record()

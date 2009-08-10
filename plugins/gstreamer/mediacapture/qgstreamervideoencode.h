@@ -19,11 +19,13 @@ public:
     QSize resolution() const;
     QSize minimumResolution() const;
     QSize maximumResolution() const;
+    QList<QSize> supportedResolutions() const;
     void setResolution(const QSize &);
 
     QPair<int,int> frameRate() const;
     QPair<int,int> minumumFrameRate() const;
     QPair<int,int> maximumFrameRate() const;
+    QList< QPair<int,int> > supportedFrameRates() const;
     void setFrameRate(QPair<int,int>);
 
     QStringList supportedVideoCodecs() const;

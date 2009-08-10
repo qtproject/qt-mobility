@@ -49,7 +49,7 @@ public:
 
     void setDevice(const QByteArray &device);
 
-    QCamera::State state() const;
+    int state() const;
 
     GstElement *buildElement();
 

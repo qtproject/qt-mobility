@@ -52,6 +52,19 @@ QSize QGstreamerVideoEncode::maximumResolution() const
     return QSize(4096,4096);
 }
 
+QList<QSize> QGstreamerVideoEncode::supportedResolutions() const
+{
+    QList<QSize> res;
+    res << QSize(160, 120);
+    res << QSize(320, 240);
+    res << QSize(640, 480);
+    res << QSize(800, 600);
+    res << QSize(960, 720);
+    res << QSize(1600, 1200);
+
+    return res;
+}
+
 void QGstreamerVideoEncode::setResolution(const QSize &r)
 {
     m_resolution = r;
@@ -69,7 +82,20 @@ QPair<int,int> QGstreamerVideoEncode::minumumFrameRate() const
 
 QPair<int,int> QGstreamerVideoEncode::maximumFrameRate() const
 {
-    return qMakePair<int,int>(1024,1);
+    return qMakePair<int,int>(30,1);
+}
+
+QList< QPair<int,int> > QGstreamerVideoEncode::supportedFrameRates() const
+{
+    QList< QPair<int,int> > res;
+    res << qMakePair<int,int>(30,1);
+    res << qMakePair<int,int>(25,1);
+    res << qMakePair<int,int>(20,1);
+    res << qMakePair<int,int>(15,1);
+    res << qMakePair<int,int>(10,1);
+    res << qMakePair<int,int>(5,1);
+
+    return res;
 }
 
 void QGstreamerVideoEncode::setFrameRate(QPair<int,int> rate)
@@ -144,8 +170,8 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     GstBin *encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
     Q_ASSERT(encoderBin);
 
-    GstElement *capsfilter = gst_element_factory_make("capsfilter", "capsfilter-video");
-    gst_bin_add(encoderBin, capsfilter);
+    GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-video");
+    gst_bin_add(encoderBin, capsFilter);
 
     GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
     gst_bin_add(encoderBin, colorspace);
@@ -155,10 +181,10 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     GstElement *encoderElement = gst_element_factory_make(m_codec.toAscii(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
 
-    gst_element_link_many(capsfilter, colorspace, encoderElement, NULL);
+    gst_element_link_many(capsFilter, colorspace, encoderElement, NULL);
 
     // add ghostpads
-    GstPad *pad = gst_element_get_static_pad(capsfilter, "sink");
+    GstPad *pad = gst_element_get_static_pad(capsFilter, "sink");
     gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("sink", pad));
     gst_object_unref(GST_OBJECT(pad));
 
@@ -207,6 +233,32 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             }
         }
     }
+
+    if (!m_resolution.isEmpty() || m_frameRate.first > 0) {
+        GstCaps *caps = gst_caps_new_empty();
+        QStringList structureTypes;
+        structureTypes << "video/x-raw-yuv" << "video/x-raw-rgb";
+
+        foreach(const QString &structureType, structureTypes) {
+            GstStructure *structure = gst_structure_new(structureType.toAscii().constData(), NULL);
+
+            if (!m_resolution.isEmpty()) {
+                gst_structure_set(structure, "width", G_TYPE_INT, m_resolution.width(), NULL);
+                gst_structure_set(structure, "height", G_TYPE_INT, m_resolution.height(), NULL);
+            }
+
+            if (m_frameRate.first > 0) {
+                gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, m_frameRate.first, m_frameRate.second, NULL);
+            }
+
+            gst_caps_append_structure(caps,structure);
+        }
+
+        qDebug() << "set video caps filter:" << gst_caps_to_string(caps);
+
+        g_object_set(G_OBJECT(capsFilter), "caps", caps, NULL);
+    }
+
 
     //TODO: set caps filter, if necessary
 

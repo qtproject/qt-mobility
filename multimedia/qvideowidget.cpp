@@ -34,6 +34,7 @@
 
 #include "qvideowidget.h"
 
+#include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
 #include "qvideooverlayendpoint.h"
 
@@ -99,26 +100,25 @@ void QVideoWidgetPrivate::_q_fullscreenWindowDone()
 /*!
     \class QVideoWidget
     \brief The QVideoWidget class provides a widget which displays video produced by a media
-    service.
+    object.
     \preliminary
 */
 
 /*!
     Constructs a new widget with the given \a parent which displays video produced by a media
-    \a service.
+    \a object.
 */
-
-QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
+QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     : QWidget(*new QVideoWidgetPrivate, parent, 0)
 {
     Q_D(QVideoWidget);
 
-    d->service = service;
+    d->service = object->service();
 
     if (!d->service)
         return;
 
-    if ((d->overlay = service->createEndpoint<QVideoOverlayEndpoint *>())) {
+    if ((d->overlay = d->service->createEndpoint<QVideoOverlayEndpoint *>())) {
         connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
                 this, SLOT(_q_overlayFullscreenChanged(bool)));
         connect(d->overlay, SIGNAL(nativeSizeChanged()),
@@ -134,7 +134,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaService *service, QWidget *parent)
 
         d->service->setVideoOutput(d->overlay);
 #ifndef QT_NO_VIDEOSURFACE
-    } else if ((d->renderer = service->createEndpoint<QVideoRendererEndpoint *>())) {
+    } else if ((d->renderer = d->service->createEndpoint<QVideoRendererEndpoint *>())) {
         d->surface = new QPainterVideoSurface;
 
         d->renderer->setSurface(d->surface);

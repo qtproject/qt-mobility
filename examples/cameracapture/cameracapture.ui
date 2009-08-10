@@ -82,7 +82,7 @@
         </widget>
        </item>
        <item row="3" column="0" colspan="2">
-        <widget class="QComboBox" name="comboBox"/>
+        <widget class="QComboBox" name="videoResolutionBox"/>
        </item>
        <item row="4" column="0" colspan="2">
         <widget class="QLabel" name="label_9">
@@ -92,7 +92,7 @@
         </widget>
        </item>
        <item row="5" column="0" colspan="2">
-        <widget class="QComboBox" name="comboBox_2"/>
+        <widget class="QComboBox" name="videoFramerateBox"/>
        </item>
        <item row="6" column="0" colspan="2">
         <widget class="QLabel" name="label_6">
@@ -396,6 +396,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>videoResolutionBox</sender>
+   <signal>activated(int)</signal>
+   <receiver>CameraCapture</receiver>
+   <slot>setVideoResolution()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>404</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>445</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>videoFramerateBox</sender>
+   <signal>activated(int)</signal>
+   <receiver>CameraCapture</receiver>
+   <slot>setVideoFramerate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>381</x>
+     <y>203</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>446</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>record()</slot>
@@ -409,5 +441,7 @@
   <slot>setVideoCodec(int)</slot>
   <slot>setVideoQuality(int)</slot>
   <slot>enablePreview(bool)</slot>
+  <slot>setVideoResolution()</slot>
+  <slot>setVideoFramerate()</slot>
  </slots>
 </ui>
