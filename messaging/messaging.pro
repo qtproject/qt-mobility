@@ -3,6 +3,10 @@ include(../common.pri)
 TEMPLATE = lib
 
 TARGET = QtMessaging
+target.path += $$LIBRARIES_INSTALL_ROOT
+INSTALLS += target
+
+
 INCLUDEPATH += .
 
 #Input

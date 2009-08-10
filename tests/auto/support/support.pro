@@ -2,6 +2,8 @@ include(../../../common.pri)
 
 TEMPLATE = lib
 TARGET = support
+target.path += $$LIBRARIES_INSTALL_ROOT
+INSTALLS += target
 
 HEADERS += \
     support.h

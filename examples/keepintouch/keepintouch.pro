@@ -2,6 +2,8 @@ include(../../common.pri)
 
 TEMPLATE = app
 TARGET = keepintouch
+target.path += $$EXAMPLES_INSTALL_ROOT
+INSTALLS += target
 
 QT += gui
 

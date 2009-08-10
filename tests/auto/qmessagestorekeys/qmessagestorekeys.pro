@@ -2,6 +2,9 @@ include(../../../common.pri)
 
 TEMPLATE = app
 TARGET = tst_qmessagestorekeys
+target.path += $$TESTS_INSTALL_ROOT
+INSTALLS += target
+
 
 CONFIG += testcase
 QT += testlib
