@@ -131,7 +131,7 @@ public:
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
 
     QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
-    QCamera(const QByteArray &device, QObject *parent = 0);
+    //QCamera(const QByteArray &device, QObject *parent = 0);
     ~QCamera();
 
     QList<QByteArray> deviceList();

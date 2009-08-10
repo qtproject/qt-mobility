@@ -112,6 +112,10 @@ void QCamera::stop()
         d->media->stop();
 }
 
+/*!
+    Lock the exposure.
+*/
+
 void QCamera::lockExposure()
 {
     Q_D(QCamera);
@@ -119,6 +123,10 @@ void QCamera::lockExposure()
     if(d->control)
         d->control->lockExposure();
 }
+
+/*!
+    Unlock the exposure.
+*/
 
 void QCamera::unlockExposure()
 {
@@ -128,6 +136,10 @@ void QCamera::unlockExposure()
         d->control->unlockExposure();
 }
 
+/*!
+    Lock the focus.
+*/
+
 void QCamera::lockFocus()
 {
     Q_D(QCamera);
@@ -136,6 +148,10 @@ void QCamera::lockFocus()
         d->control->lockFocus();
 }
 
+/*!
+    Unlock the focus.
+*/
+
 void QCamera::unlockFocus()
 {
     Q_D(QCamera);
@@ -143,6 +159,10 @@ void QCamera::unlockFocus()
     if(d->control)
         d->control->unlockFocus();
 }
+
+/*!
+    Returns a list of camera device's available.
+*/
 
 QList<QByteArray> QCamera::deviceList()
 {
@@ -159,6 +179,10 @@ QList<QByteArray> QCamera::deviceList()
     return list;
 }
 
+/*!
+    Set the camera device being used to \a device
+*/
+
 void QCamera::setDevice(const QByteArray& device)
 {
     Q_D(QCamera);
@@ -166,6 +190,10 @@ void QCamera::setDevice(const QByteArray& device)
     if(d->control)
         d->control->setDevice(device);
 }
+
+/*!
+    Returns the description of the \a device.
+*/
 
 QString QCamera::deviceDescription(const QByteArray &device)
 {
@@ -181,15 +209,27 @@ QCamera::State QCamera::state() const
     return QCamera::StoppedState;
 }
 
+/*!
+    Returns true if camera device available.
+*/
+
 bool QCamera::isValid() const
 {
     return d_func()->control != NULL;
 }
 
+/*!
+    Returns the flash mode being used.
+*/
+
 QCamera::FlashMode QCamera::flashMode() const
 {
     return d_func()->control ? d_func()->control->flashMode() : QCamera::FlashOff;
 }
+
+/*!
+    Set the flash mode to \a mode
+*/
 
 void QCamera::setFlashMode(QCamera::FlashMode mode)
 {
@@ -197,20 +237,36 @@ void QCamera::setFlashMode(QCamera::FlashMode mode)
         d_func()->control->setFlashMode(mode);
 }
 
+/*!
+    Returns the flash modes available.
+*/
+
 QCamera::FlashModes QCamera::supportedFlashModes() const
 {
     return d_func()->control ? d_func()->control->supportedFlashModes() : QCamera::FlashOff;
 }
+
+/*!
+    Returns true if flash is charged.
+*/
 
 bool QCamera::isFlashReady() const
 {
     return d_func()->control ? d_func()->control->isFlashReady() : true;
 }
 
+/*!
+    Returns the focus mode being used.
+*/
+
 QCamera::FocusMode QCamera::focusMode() const
 {
     return d_func()->control ? d_func()->control->focusMode() : QCamera::AutoFocus;
 }
+
+/*!
+    Set the focus mode to \a mode
+*/
 
 void QCamera::setFocusMode(QCamera::FocusMode mode)
 {
@@ -218,25 +274,45 @@ void QCamera::setFocusMode(QCamera::FocusMode mode)
         d_func()->control->setFocusMode(mode);
 }
 
+/*!
+    Returns the focus modes available.
+*/
+
 QCamera::FocusModes QCamera::supportedFocusModes() const
 {
     return d_func()->control ? d_func()->control->supportedFocusModes() : QCamera::AutoFocus;
 }
+
+/*!
+    Returns the focus status
+*/
 
 QCamera::FocusStatus QCamera::focusStatus() const
 {
     return d_func()->control ? d_func()->control->focusStatus() : QCamera::FocusDisabled;
 }
 
+/*!
+    Returns true if macro focusing enabled.
+*/
+
 bool QCamera::macroFocusingEnabled() const
 {
     return d_func()->control ? d_func()->control->macroFocusingEnabled() : false;
 }
 
+/*!
+    Returns true if macro focusing is supported.
+*/
+
 bool QCamera::isMacroFocusingSupported() const
 {
     return d_func()->control ? d_func()->control->isMacroFocusingSupported() : false;
 }
+
+/*!
+    Set macro focusing to \a enabled.
+*/
 
 void QCamera::setMacroFocusingEnabled(bool enabled)
 {
@@ -244,10 +320,18 @@ void QCamera::setMacroFocusingEnabled(bool enabled)
         d_func()->control->setMacroFocusingEnabled(enabled);
 }
 
+/*!
+    Returns the exposure mode being used.
+*/
+
 QCamera::ExposureMode QCamera::exposureMode() const
 {
     return d_func()->control ? d_func()->control->exposureMode() : QCamera::ExposureAuto;
 }
+
+/*!
+    Set exposure mode to \a mode
+*/
 
 void QCamera::setExposureMode(QCamera::ExposureMode mode)
 {
@@ -255,15 +339,27 @@ void QCamera::setExposureMode(QCamera::ExposureMode mode)
         d_func()->control->setExposureMode(mode);
 }
 
+/*!
+    Return the exposure modes available.
+*/
+
 QCamera::ExposureModes QCamera::supportedExposureModes() const
 {
     return d_func()->control ? d_func()->control->supportedExposureModes() : QCamera::ExposureAuto;
 }
 
+/*!
+    Returns the exposure compensation.
+*/
+
 double QCamera::exposureCompensation() const
 {
     return d_func()->control ? d_func()->control->exposureCompensation() : 0;
 }
+
+/*!
+    Sets the exposure compensation to \a ev
+*/
 
 void QCamera::setExposureCompensation(double ev)
 {
@@ -271,10 +367,18 @@ void QCamera::setExposureCompensation(double ev)
         d_func()->control->setExposureCompensation(ev);
 }
 
+/*!
+    Returns the metering mode being used.
+*/
+
 QCamera::MeteringMode QCamera::meteringMode() const
 {
     return d_func()->control ? d_func()->control->meteringMode() : QCamera::MeteringMatrix;
 }
+
+/*!
+    Sets the metering mode to \a mode.
+*/
 
 void QCamera::setMeteringMode(QCamera::MeteringMode mode)
 {
@@ -282,15 +386,27 @@ void QCamera::setMeteringMode(QCamera::MeteringMode mode)
         d_func()->control->setMeteringMode(mode);
 }
 
+/*!
+    Returns the metering modes available.
+*/
+
 QCamera::MeteringModes QCamera::supportedMeteringModes() const
 {
     return d_func()->control ? d_func()->control->supportedMeteringModes() : QCamera::MeteringMatrix;
 }
 
+/*!
+    Returns the white balance mode being used.
+*/
+
 QCamera::WhiteBalanceMode QCamera::whiteBalanceMode() const
 {
     return d_func()->control ? d_func()->control->whiteBalanceMode() : QCamera::WhiteBalanceAuto;
 }
+
+/*!
+    Sets the white balance to \a mode.
+*/
 
 void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
@@ -298,15 +414,27 @@ void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
         d_func()->control->setWhiteBalanceMode(mode);
 }
 
+/*!
+    Returns the white balance modes available.
+*/
+
 QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
 {
     return d_func()->control ? d_func()->control->supportedWhiteBalanceModes() : QCamera::WhiteBalanceAuto;
 }
 
+/*!
+    Returns ?
+*/
+
 int QCamera::manualWhiteBalance() const
 {
     return d_func()->control ? d_func()->control->manualWhiteBalance() : -1;
 }
+
+/*!
+    Sets manual white balance to \a colorTemperature
+*/
 
 void QCamera::setManualWhiteBalance(int colorTemperature)
 {
@@ -314,14 +442,27 @@ void QCamera::setManualWhiteBalance(int colorTemperature)
         d_func()->control->setManualWhiteBalance(colorTemperature);
 }
 
+/*!
+    Returns the sensitivity
+*/
+
 int QCamera::isoSensitivity() const
 {
     return d_func()->control ? d_func()->control->isoSensitivity() : -1;
 }
+
+/*!
+    Returns the sensitivity ranges available.
+*/
+
 QPair<int, int> QCamera::supportedIsoSensitivityRange() const
 {
     return d_func()->control ? d_func()->control->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
 }
+
+/*!
+    Sets the manual sensitivity to \a iso
+*/
 
 void QCamera::setManualIsoSensitivity(int iso)
 {
@@ -329,20 +470,37 @@ void QCamera::setManualIsoSensitivity(int iso)
         d_func()->control->setManualIsoSensitivity(iso);
 }
 
+/*!
+     Turn on auto sensitivity
+*/
+
 void QCamera::setAutoIsoSensitivity()
 {
     if (d_func()->control)
         d_func()->control->setAutoIsoSensitivity();
 }
 
+/*!
+    Returns the current aperture.
+*/
+
 double QCamera::aperture() const
 {
     return d_func()->control ? d_func()->control->aperture() : -1.0;
 }
+
+/*!
+    Returns the supported aperture ranges available.
+*/
+
 QPair<double, double> QCamera::supportedApertureRange() const
 {
     return d_func()->control ? d_func()->control->supportedApertureRange() : qMakePair<double,double>(-1,-1);
 }
+
+/*!
+    Sets the aperture to \a aperture
+*/
 
 void QCamera::setManualAperture(double aperture)
 {
@@ -350,21 +508,37 @@ void QCamera::setManualAperture(double aperture)
         d_func()->control->setManualAperture(aperture);
 }
 
+/*!
+    Turn on auto aperture
+*/
+
 void QCamera::setAutoAperture()
 {
     if (d_func()->control)
         d_func()->control->setAutoAperture();
 }
 
+/*!
+    Return the current shutter speed.
+*/
+
 double QCamera::shutterSpeed() const
 {
     return d_func()->control ? d_func()->control->shutterSpeed() : -1;
 }
 
+/*!
+    Return the shutter speed ranges available.
+*/
+
 QPair<double, double> QCamera::supportedShutterSpeedRange() const
 {
     return d_func()->control ? d_func()->control->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
 }
+
+/*!
+    Set the shutter speed to \a seconds
+*/
 
 void QCamera::setManualShutterSpeed(double seconds)
 {
@@ -372,26 +546,46 @@ void QCamera::setManualShutterSpeed(double seconds)
         d_func()->control->setManualShutterSpeed(seconds);
 }
 
+/*!
+    Turn on auto shutter speed
+*/
+
 void QCamera::setAutoShutterSpeed()
 {
     if (d_func()->control)
         d_func()->control->setAutoShutterSpeed();
 }
 
+/*!
+    Returns the maximum optical zoom
+*/
+
 double QCamera::maximumOpticalZoom() const
 {
     return d_func()->control ? d_func()->control->maximumOpticalZoom() : 1.0;
 }
+
+/*!
+    Returns the maximum digital zoom
+*/
 
 double QCamera::maximumDigitalZoom() const
 {
     return d_func()->control ? d_func()->control->maximumDigitalZoom() : 1.0;
 }
 
+/*!
+    Returns the current zoom.
+*/
+
 double QCamera::zoomValue() const
 {
     return d_func()->control ? d_func()->control->zoomValue() : 1.0;
 }
+
+/*!
+    Set the zoom to \a value.
+*/
 
 void QCamera::zoomTo(int value)
 {
@@ -399,16 +593,23 @@ void QCamera::zoomTo(int value)
         d_func()->control->zoomTo(value);
 }
 
+/*!
+    Return true if exposure locked.
+*/
+
 bool QCamera::isExposureLocked() const
 {
     return d_func()->control ? d_func()->control->isExposureLocked() : true;
 }
 
+/*!
+    Return true if focus locked.
+*/
+
 bool QCamera::isFocusLocked() const
 {
     return d_func()->control ? d_func()->control->isFocusLocked() : true;
 }
-
 
 /*!
     Returns the session object being controlled by this recorder.
@@ -418,6 +619,10 @@ QAbstractMediaService *QCamera::service() const
 {
     return d_func()->service;
 }
+
+/*!
+    Creates a camera service with parent \a provider
+*/
 
 QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 {
@@ -433,4 +638,118 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
     }
     return 0;
 }
+
+/*!
+    \enum QCamera::FlashMode
+
+    \value FlashOff             Flash is Off.
+    \value FlashOn              Flash is On.
+    \value FlashAuto            Automatic flash.
+    \value FlashRedEyeReduction ?
+    \value FlashFill            ?
+*/
+
+/*!
+    \enum QCamera::FocusMode
+
+    \value ManualFocus          ?
+    \value AutoFocus            ?
+    \value ContinuousFocus      ?
+*/
+
+/*!
+    \enum QCamera::FocusStatus
+
+    \value FocusDisabled        ?
+    \value FocusRequested       ?
+    \value FocusReached         ?
+    \value FocusLost            ?
+    \value FocusUnableToReach   ?
+*/
+
+/*!
+    \enum QCamera::ExposureMode
+
+    \value ExposureManual        Manual mode.
+    \value ExposureAuto          Automatic mode.
+    \value ExposureNight         Night mode.
+    \value ExposureBacklight     ?
+    \value ExposureSpotlight     ?
+    \value ExposureSports        ?
+    \value ExposureSnow          ?
+    \value ExposureBeach         ?
+    \value ExposureLargeAperture ?
+    \value ExposureSmallAperture ?
+    \value ExposurePortrait      ?
+    \value ExposureNightPortrait ?
+*/
+
+/*!
+    \enum QCamera::ExposureStatus
+
+    \value CorrectExposure       ?
+    \value UnderExposure         ?
+    \value OverExposure          ?
+*/
+
+/*!
+    \enum QCamera::MeteringMode
+
+    \value MeteringAverage       ?
+    \value MeteringSpot          ?
+    \value MeteringMatrix        ?
+*/
+
+/*!
+    \enum QCamera::WhiteBalanceMode
+
+    \value WhiteBalanceManual       ?
+    \value WhiteBalanceAuto         ?
+    \value WhiteBalanceSunlight     ?
+    \value WhiteBalanceCloudy       ?
+    \value WhiteBalanceShade        ?
+    \value WhiteBalanceTungsten     ?
+    \value WhiteBalanceFluorescent  ?
+    \value WhiteBalanceIncandescent ?
+    \value WhiteBalanceFlash        ?
+    \value WhiteBalanceSunset       ?
+*/
+
+/*!
+    \enum QCamera::State
+
+    \value LoadingState The camera has been started but has not started producing data yet.
+    \value ActiveState  The camera has been started and is producing data.
+    \value PausedState  The camera is in a suspended state.
+    \value StoppedState The camera has been stopped and is not producing any data.
+*/
+
+/*!
+    \property QCamera::state
+    \brief The current state of the camera object.
+*/
+
+/*!
+    \fn void QCamera::stateChanged(State state)
+
+    Signal emitted when \a state of the Camera object has changed.
+*/
+
+/*!
+    \fn void QCamera::exposureLocked()
+
+    Signal emitted when exposure locked.
+*/
+
+/*!
+    \fn void QCamera::focusLocked()
+
+    Signal emitted when focus is locked.
+*/
+
+/*!
+    \fn void QCamera::focusStatusChanged(FocusStatus status)
+
+    Signal emitted when focus \a status changed.
+*/
 
