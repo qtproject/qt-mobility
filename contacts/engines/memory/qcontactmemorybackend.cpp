@@ -78,19 +78,23 @@ QMap<QString, QContactMemoryEngine*> QContactMemoryEngine::engines;
  */
 QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QString, QString>& parameters)
 {
+    bool anonymous = false;
     QString idValue = parameters.value(QLatin1String("id"));
     if (idValue.isNull() || idValue.isEmpty()) {
         // no store given?  new, anonymous store.
         idValue = QUuid::createUuid().toString();
+        anonymous = true;
     }
 
     if (engines.contains(idValue)) {
         QContactMemoryEngine *engine = engines.value(idValue);
         engine->d->m_refCount.ref();
+        engine->d->m_anonymous = anonymous;
         return engine;
     } else {
         QContactMemoryEngine *engine = new QContactMemoryEngine(parameters);
         engine->d->m_id = idValue;
+        engine->d->m_anonymous = anonymous;
         engines.insert(idValue, engine);
         return engine;
     }
@@ -768,6 +772,9 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
         case QContactManagerInfo::MutableDefinitions:
         case QContactManagerInfo::Synchronous:
             return true;
+        case QContactManagerInfo::ExternalNotifications:
+            return !d->m_anonymous;
+
         default:
             return false;
     }
