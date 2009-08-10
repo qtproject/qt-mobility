@@ -118,6 +118,9 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     emit q->errorStringChanged(this->errorString);
 }
 
+/*!
+    Construct a media recorder object with \a service and \a parent.
+*/
 
 QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
     :QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
@@ -130,6 +133,10 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
     }
 }
 
+/*!
+    Construct a media recorder object with \a mediaObject and \a parent.
+*/
+
 QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent)
     :QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
 {
@@ -141,25 +148,45 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *paren
     }
 }
 
+/*!
+    Destruct the media recorder object.
+*/
+
 QMediaRecorder::~QMediaRecorder()
 {
     stop();
 }
+
+/*!
+    Returns true if a valid recording device is available.
+*/
 
 bool QMediaRecorder::isValid() const
 {
     return d_func()->control != 0;
 }
 
+/*!
+    Returns the media service being used.
+*/
+
 QAbstractMediaService* QMediaRecorder::service() const
 {
     return d_func()->service;
 }
 
+/*!
+    Returns the sink being used.
+*/
+
 QMediaSink QMediaRecorder::sink() const
 {
     return d_func()->control ? d_func()->control->sink() : QMediaSink();
 }
+
+/*!
+    Returns true if set of sink being used to \a sink is successful.
+*/
 
 bool QMediaRecorder::setSink(const QMediaSink &sink)
 {
@@ -167,20 +194,36 @@ bool QMediaRecorder::setSink(const QMediaSink &sink)
     return d->control ? d->control->setSink(sink) : false;
 }
 
+/*!
+    Return the current state.
+*/
+
 QMediaRecorder::State QMediaRecorder::state() const
 {
     return d_func()->control ? QMediaRecorder::State(d_func()->control->state()) : StoppedState;
 }
+
+/*!
+    Return the current error state.
+*/
 
 QMediaRecorder::Error QMediaRecorder::error() const
 {
     return d_func()->error;
 }
 
+/*!
+    Return the current error string.
+*/
+
 QString QMediaRecorder::errorString() const
 {
     return d_func()->errorString;
 }
+
+/*!
+    Clear the current error.
+*/
 
 void QMediaRecorder::unsetError()
 {
@@ -190,16 +233,32 @@ void QMediaRecorder::unsetError()
     d->errorString = QString();
 }
 
+/*!
+    \property QMediaRecorder::position
+    \brief Current position in milliseconds.
+*/
+
+/*!
+    Return the current position in milliseconds.
+*/
+
 qint64 QMediaRecorder::position() const
 {
     return d_func()->control ? d_func()->control->position() : 0;
 }
+
+/*!
+    Set the position update period to \a ms in milliseconds.
+*/
 
 void QMediaRecorder::setPositionUpdatePeriod(int ms)
 {
     setNotifyInterval(ms);
 }
 
+/*!
+    Start recording.
+*/
 
 void QMediaRecorder::record()
 {
@@ -208,6 +267,10 @@ void QMediaRecorder::record()
         d->control->record();
 }
 
+/*!
+    Pause recording.
+*/
+
 void QMediaRecorder::pause()
 {
     Q_D(QMediaRecorder);
@@ -215,11 +278,56 @@ void QMediaRecorder::pause()
         d->control->pause();
 }
 
+/*!
+    Stop recording.
+*/
+
 void QMediaRecorder::stop()
 {
     Q_D(QMediaRecorder);
     if (d->control)
         d->control->stop();
 }
+
+/*!
+    \enum QMediaRecorder::State
+
+    \value StoppedState    The recorder is not active.
+    \value RecordingState  The recorder is currently active and producing data.
+    \value PausedState     The recorder is paused.
+*/
+
+/*!
+    \enum QMediaRecorder::Error
+
+    \value NoError         No Errors.
+    \value ResourceError   Device is not ready or not available.
+    \value FormatError     Current format is not supported.
+    \value NetworkError    ?
+*/
+
+/*!
+    \fn QMediaRecorder::stateChanged(State state)
+
+    Signal emitted when \a state changed.
+*/
+
+/*!
+    \fn QMediaRecorder::positionChanged(qint64 position)
+
+    Signal emitted when \a position changed.
+*/
+
+/*!
+    \fn QMediaRecorder::error(QMediaRecorder::Error error)
+
+    Signal emitted when \a error changed.
+*/
+
+/*!
+    \fn QMediaRecorder::errorStringChanged(const QString &error)
+
+    Signal emitted when \a error changed.
+*/
 
 #include "moc_qmediarecorder.cpp"

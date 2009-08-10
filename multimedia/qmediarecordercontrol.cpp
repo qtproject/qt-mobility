@@ -39,11 +39,89 @@
     \class QMediaRecorderControl
 */
 
+/*!
+    Construct a media recorder control.
+*/
+
 QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
     : QAbstractMediaControl(parent)
 {
 }
 
+/*!
+    Destruct media recorder control object.
+*/
+
 QMediaRecorderControl::~QMediaRecorderControl()
 {
 }
+
+/*!
+    \fn QMediaSink QMediaRecorderControl::sink() const
+
+    Return the current sink being used.
+*/
+
+/*!
+    \fn bool QMediaRecorderControl::setSink(const QMediaSink &sink)
+
+    Returns true if set of sink being used to \a sink is successful.
+*/
+
+/*!
+    \fn int QMediaRecorderControl::state() const
+
+    Return the current state.
+*/
+
+/*!
+    \property position
+    \brief Current position in milliseconds.
+*/
+
+/*!
+    \fn qint64 QMediaRecorderControl::position() const
+
+    Return the current position in milliseconds.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::record()
+
+    Start recording.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::pause()
+
+    Pause recording.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::stop()
+
+    Stop recording.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::stateChanged(int state)
+
+    Signal emitted when \a state changed.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::positionChanged(qint64 position)
+
+    Signal emitted when \a position changed.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::error(int error, const QString &errorString)
+
+    Signal emitted when \a error, \a errorString changed.
+*/
+
+
+
+
+
