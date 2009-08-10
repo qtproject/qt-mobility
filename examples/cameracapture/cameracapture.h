@@ -68,6 +68,8 @@ private slots:
     void setContainerFormat(int idx);
     void setAudioQuality(int value);
     void setVideoQuality(int value);
+    void setVideoResolution();
+    void setVideoFramerate();
 
     void displayErrorMessage();
 
