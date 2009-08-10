@@ -124,8 +124,6 @@ int QGstAudioDeviceEndpoint::defaultOutputDevice(QAudioDeviceEndpoint::Role role
 
 void QGstAudioDeviceEndpoint::update()
 {
-    qDebug() << "QGstAudioDeviceEndpoint::update()";
-
     m_names.clear();
     m_descriptions.clear();
     m_directions.clear();
