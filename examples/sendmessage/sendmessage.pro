@@ -15,8 +15,6 @@ win32:debug {
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../messaging
 LIBS += -L$$OUT_PWD/../../messaging/$$OUTPREFIX -lQtMessaging
 
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
-
 symbian|win32 {
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)

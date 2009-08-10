@@ -8,7 +8,6 @@ HEADERS += \
 
 
 INCLUDEPATH += ../../../messaging
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
 symbian|win32 {
 symbian {
