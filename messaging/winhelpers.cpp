@@ -57,14 +57,23 @@ QString QStringFromLpctstr(LPCTSTR lpszValue)
 MapiFolder::MapiFolder()
     :_valid(false),
      _folder(0),
-     _subFolders(0)
+     _subFolders(0),
+     _hasSubFolders(false),
+     _messageCount(0),
+     _init(true)
 {
 }
 
 void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
 {
-    LPMAPITABLE subFolders(0);
+    if (_init)
+        return;
+    _init = true;
 
+    if (!_hasSubFolders)
+        return;
+
+    LPMAPITABLE subFolders(0);
     if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK)) {
         Q_ASSERT(_folder);
         *lastError = QMessageStore::ContentInaccessible;
@@ -78,18 +87,21 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         _subFolders = subFolders;
 }
 
-MapiFolder::MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId)
+MapiFolder::MapiFolder(LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
     :_valid(true),
      _folder(folder),
      _key(key),
      _parentStoreKey(parentStoreKey),
      _name(name),
      _subFolders(0),
-     _entryId(entryId)
+     _entryId(entryId),
+     _hasSubFolders(hasSubFolders),
+     _messageCount(messageCount),
+     _init(false)
 {
     if (!folder)
         _valid = false;
-    findSubFolders(lastError);
+    qDebug() << "MapiFolder::MapiFolder, name" << name << "hasSubfolders" << _hasSubFolders << "messageCount" << messageCount; //TODO remove debug
 }
 
 MapiFolder::~MapiFolder()
@@ -107,6 +119,12 @@ MapiFolder::~MapiFolder()
 
 MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
 {
+    if (!_init)
+        findSubFolders(lastError);
+
+    if (!_hasSubFolders)
+        return MapiFolder::null();
+
     if (!_valid || !_folder || !_subFolders) {
         Q_ASSERT(_valid && _folder && _subFolders);
         *lastError = QMessageStore::FrameworkFault;
@@ -119,6 +137,8 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     MapiRecordKey folderKey;
     QString name;
     MapiEntryId entryId;
+    bool subHasSubFolders;
+    uint subMessageCount;
 
     if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
         if (rows->cRows == 1) {
@@ -130,7 +150,8 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
             entryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = QStringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
-                // TODO: Make a copy of message count, and hasSubFolders property values.
+                subHasSubFolders = rows->aRow[0].lpProps[subFoldersColumn].Value.b;
+                subMessageCount = rows->aRow[0].lpProps[countColumn].Value.ul;
             } else {
                 *lastError = QMessageStore::ContentInaccessible;
                 subFolder = 0;
@@ -143,7 +164,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     MAPIFreeBuffer(rows);
     if (!subFolder)
         return MapiFolder::null();
-    return MapiFolderPtr(new MapiFolder(lastError, subFolder, folderKey, _parentStoreKey, name, entryId));
+    return MapiFolderPtr(new MapiFolder(subFolder, folderKey, _parentStoreKey, name, entryId, subHasSubFolders, subMessageCount));
 }
 
 QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
@@ -338,8 +359,22 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
     }
 
     MAPIFreeBuffer(rgProps);
-    if (mapiFolder)
-        result = MapiFolderPtr(new MapiFolder(lastError, mapiFolder, QByteArray(), _key, QString(), entryId)); /// TODO Try to find a better record key for the root folder
+    if (mapiFolder) {
+        const int nCols(4);
+        enum { displayNameColumn = 0, recordKeyColumn, countColumn, subFoldersColumn };
+        SizedSPropTagArray(nCols, columns) = {nCols, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+        SPropValue *properties(0);
+        ULONG count;
+
+        if (mapiFolder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
+            LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
+            MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+            QString name(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
+            bool hasSubFolders = properties[subFoldersColumn].Value.b;
+            uint messageCount = properties[countColumn].Value.ul;
+            result = MapiFolderPtr(new MapiFolder(mapiFolder, recordKey, _key, QString(), entryId, hasSubFolders, messageCount));
+        }
+    }
     return result;
 }
 

@@ -53,7 +53,7 @@ QString QStringFromLpctstr(LPCTSTR lpszValue);
 class MapiFolder {
 public:
     MapiFolder();
-    MapiFolder(QMessageStore::ErrorCode *lastError, LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name,  const MapiEntryId &entryId);
+    MapiFolder(LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
     ~MapiFolder();
     MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
@@ -63,7 +63,7 @@ public:
     LPMAPIFOLDER folder() { return _folder; }
     MapiRecordKey recordKey() { return _key; }
     QString name() const { return _name; }
-    LPMAPITABLE subFolders() { return _subFolders; }
+    LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
 
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
@@ -78,8 +78,11 @@ private:
     LPMAPITABLE _subFolders;
     uint _itemCount;
     MapiEntryId _entryId;
+    bool _hasSubFolders;
+    uint _messageCount;
+    bool _init;
 
-    enum columnOrder { entryIdColumn = 0, nameColumn, recordKeyColumn };
+    enum columnOrder { entryIdColumn = 0, nameColumn, recordKeyColumn, countColumn, subFoldersColumn };
 };
 
 class MapiStore {
