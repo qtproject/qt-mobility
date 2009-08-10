@@ -65,14 +65,18 @@ public:
     QContactWinCEEngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-        m_app(0)
+        m_app(0),
+        m_phonemeta(PIMPR_INVALID_ID),
+        m_emailmeta(PIMPR_INVALID_ID)
     {
     }
 
     QContactWinCEEngineData(const QContactWinCEEngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-        m_app(0)
+        m_app(0),
+        m_phonemeta(PIMPR_INVALID_ID),
+        m_emailmeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -86,6 +90,10 @@ public:
     IFolder* m_folder;
     IPOutlookItemCollection* m_collection;
     IPOlItems2* m_items2;
+
+    // The ID of our sekrit extra phone number and email metadata id
+    PROPID m_phonemeta;
+    PROPID m_emailmeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QUniqueId> m_ids;
@@ -114,15 +122,15 @@ public:
     //bool saveGroup(QContactGroup* group, QContactManager::Error& error);
     //bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
 
-    /* Definitions - Accessors and Mutators */
+    /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
 
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+    /* Synthesise the display label of a contact */
+    virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
