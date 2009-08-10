@@ -47,7 +47,6 @@
 #include <QPushButton>
 #include <QStringListModel>
 #include <QDebug>
-#include <QXmlStreamWriter>
 
 class EditableListWidgetGroup : public QWidget
 {

@@ -37,8 +37,8 @@
 
 #include <QTabWidget>
 #include <QByteArray>
+#include <QXmlStreamWriter>
 
-class QXmlStreamWriter;
 class InterfaceWidget;
 class ErrorCollector;
 class QServiceInterfaceDescriptor;
