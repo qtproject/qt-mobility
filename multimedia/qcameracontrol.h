@@ -47,6 +47,10 @@ class QCameraControl : public QAbstractMediaControl
 public:
     ~QCameraControl();
 
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual int state() const = 0;
+
     virtual QCamera::FlashMode flashMode() const;
     virtual void setFlashMode(QCamera::FlashMode mode);
     virtual QCamera::FlashModes supportedFlashModes() const;
@@ -111,6 +115,8 @@ public Q_SLOTS:
     virtual void unlockFocus();
 
 Q_SIGNALS:
+    void stateChanged(int);
+
     void flashReady(bool);
     void focusStatusChanged(int);
     void zoomValueChanged(double);
