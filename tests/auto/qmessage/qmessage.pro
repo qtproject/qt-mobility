@@ -1,3 +1,5 @@
+include(../../../common.pri)
+
 TEMPLATE = app
 TARGET = tst_qmessage
 
