@@ -144,11 +144,26 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     GstElement *audioSrc = 0;
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
-    else
-        audioSrc = gst_element_factory_make("osssrc", "audio_src");
+    else {
+        QString elementName = "alsasrc";
+        QString device;
 
-    if (audioSrc && !m_captureDevice.isEmpty())
-        g_object_set(G_OBJECT(audioSrc), "device", m_captureDevice.toLocal8Bit().constData(), NULL);
+        if (m_captureDevice.startsWith("alsa:")) {
+            device = m_captureDevice.mid(QString("alsa:").length());
+        } else if (m_captureDevice.startsWith("oss:")) {
+            elementName = "osssrc";
+            device = m_captureDevice.mid(QString("oss:").length());
+        }
+
+        audioSrc = gst_element_factory_make(elementName.toAscii().constData(), "audio_src");
+        if (audioSrc && !device.isEmpty())
+            g_object_set(G_OBJECT(audioSrc), "device", device.toLocal8Bit().constData(), NULL);
+    }
+
+    if (!audioSrc) {
+        emit error(int(QMediaRecorder::ResourceError), tr("Could not create an audio source element"));
+        audioSrc = gst_element_factory_make("fakesrc", NULL);
+    }
 
     return audioSrc;
 }

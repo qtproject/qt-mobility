@@ -32,7 +32,7 @@ HEADERS += \
     qgstreamervideowidget.h \
     qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
-    qalsaaudiodeviceendpoint.h
+    qgstaudiodeviceendpoint.h
 
 SOURCES += \
     qgstreamermessage.cpp \
@@ -40,7 +40,7 @@ SOURCES += \
     qgstreamervideowidget.cpp \
     qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \
-    qalsaaudiodeviceendpoint.cpp
+    qgstaudiodeviceendpoint.cpp
 
 videosurface {
     QT += multimedia

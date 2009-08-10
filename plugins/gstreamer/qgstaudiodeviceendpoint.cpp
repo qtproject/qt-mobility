@@ -32,24 +32,25 @@
 **
 ****************************************************************************/
 
-#include "qalsaaudiodeviceendpoint.h"
+#include "qgstaudiodeviceendpoint.h"
 
 #include <QtGui/QIcon>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 
 #include <alsa/asoundlib.h>
 
-QAlsaAudioDeviceEndpoint::QAlsaAudioDeviceEndpoint(QObject *parent)
+QGstAudioDeviceEndpoint::QGstAudioDeviceEndpoint(QObject *parent)
     :QAudioDeviceEndpoint(parent)
 {
     update();
 }
 
-QAlsaAudioDeviceEndpoint::~QAlsaAudioDeviceEndpoint()
+QGstAudioDeviceEndpoint::~QGstAudioDeviceEndpoint()
 {
 }
 
-void QAlsaAudioDeviceEndpoint::setDirectionFilter(QAudioDeviceEndpoint::DeviceDirection direction)
+void QGstAudioDeviceEndpoint::setDirectionFilter(QAudioDeviceEndpoint::DeviceDirection direction)
 {
     if (direction != directionFilter()) {
         QAudioDeviceEndpoint::setDirectionFilter(direction);
@@ -57,7 +58,7 @@ void QAlsaAudioDeviceEndpoint::setDirectionFilter(QAudioDeviceEndpoint::DeviceDi
     }
 }
 
-void QAlsaAudioDeviceEndpoint::setRoleFilter(QAudioDeviceEndpoint::Roles roles)
+void QGstAudioDeviceEndpoint::setRoleFilter(QAudioDeviceEndpoint::Roles roles)
 {
     if (roles != roleFilter()) {
         QAudioDeviceEndpoint::setRoleFilter(roles);
@@ -65,7 +66,7 @@ void QAlsaAudioDeviceEndpoint::setRoleFilter(QAudioDeviceEndpoint::Roles roles)
     }
 }
 
-void QAlsaAudioDeviceEndpoint::setFormFactorFilter(QAudioDeviceEndpoint::FormFactors forms)
+void QGstAudioDeviceEndpoint::setFormFactorFilter(QAudioDeviceEndpoint::FormFactors forms)
 {
     if (forms != formFactorFilter()) {
         QAudioDeviceEndpoint::setFormFactorFilter(forms);
@@ -73,62 +74,70 @@ void QAlsaAudioDeviceEndpoint::setFormFactorFilter(QAudioDeviceEndpoint::FormFac
     }
 }
 
-int QAlsaAudioDeviceEndpoint::deviceCount() const
+int QGstAudioDeviceEndpoint::deviceCount() const
 {
     return m_names.count();
 }
 
-int QAlsaAudioDeviceEndpoint::direction(int index) const
+int QGstAudioDeviceEndpoint::direction(int index) const
 {
     return m_directions[index];
 }
 
-QAudioDeviceEndpoint::Roles QAlsaAudioDeviceEndpoint::roles(int index) const
+QAudioDeviceEndpoint::Roles QGstAudioDeviceEndpoint::roles(int index) const
 {
     return m_roles[index];
 }
 
-QAudioDeviceEndpoint::FormFactor QAlsaAudioDeviceEndpoint::formFactor(int index) const
+QAudioDeviceEndpoint::FormFactor QGstAudioDeviceEndpoint::formFactor(int index) const
 {
     return m_formFactors[index];
 }
 
-QString QAlsaAudioDeviceEndpoint::name(int index) const
+QString QGstAudioDeviceEndpoint::name(int index) const
 {
     return m_names[index];
 }
 
-QString QAlsaAudioDeviceEndpoint::description(int index) const
+QString QGstAudioDeviceEndpoint::description(int index) const
 {
     return m_descriptions[index];
 }
 
-QIcon QAlsaAudioDeviceEndpoint::icon(int index) const
+QIcon QGstAudioDeviceEndpoint::icon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();
 }
 
-int QAlsaAudioDeviceEndpoint::defaultInputDevice(QAudioDeviceEndpoint::Role role) const
+int QGstAudioDeviceEndpoint::defaultInputDevice(QAudioDeviceEndpoint::Role role) const
 {
     Q_UNUSED(role);
     return 0;
 }
 
-int QAlsaAudioDeviceEndpoint::defaultOutputDevice(QAudioDeviceEndpoint::Role role) const
+int QGstAudioDeviceEndpoint::defaultOutputDevice(QAudioDeviceEndpoint::Role role) const
 {
     Q_UNUSED(role);
     return 0;
 }
 
-void QAlsaAudioDeviceEndpoint::update()
+void QGstAudioDeviceEndpoint::update()
 {
+    qDebug() << "QGstAudioDeviceEndpoint::update()";
+
     m_names.clear();
     m_descriptions.clear();
     m_directions.clear();
     m_roles.clear();
     m_formFactors.clear();
 
+    updateAlsaDevices();
+    updateOssDevices();
+}
+
+void QGstAudioDeviceEndpoint::updateAlsaDevices()
+{
     void **hints, **n;
     if (snd_device_name_hint(-1, "pcm", &hints) < 0) {
         qWarning()<<"no alsa devices available";
@@ -136,7 +145,7 @@ void QAlsaAudioDeviceEndpoint::update()
     }
     n = hints;
 
-    while (*n != NULL) {        
+    while (*n != NULL) {
         char *name = snd_device_name_get_hint(*n, "NAME");
         char *descr = snd_device_name_get_hint(*n, "DESC");
         char *io = snd_device_name_get_hint(*n, "IOID");
@@ -152,7 +161,7 @@ void QAlsaAudioDeviceEndpoint::update()
                 direction = OutputDevice;
 
             if ( direction == InputOutputDevice || directionFilter() == direction ) {
-                m_names.append(QString::fromUtf8(name));
+                m_names.append(QLatin1String("alsa:")+QString::fromUtf8(name));
                 m_descriptions.append(QString::fromUtf8(descr));
                 m_directions.append(direction);
                 m_roles.append(AllRoles);
@@ -169,4 +178,23 @@ void QAlsaAudioDeviceEndpoint::update()
         n++;
     }
     snd_device_name_free_hint(hints);
+}
+
+void QGstAudioDeviceEndpoint::updateOssDevices()
+{
+    QDir devDir("/dev");
+
+    QStringList entries = QString("dsp dsp0 dsp1 dsp2 dsp3 dsp4 dsp5 dsp6 dsp7 dsp8 dsp9").split(' ');
+
+    foreach (const QString &entry, entries) {
+        if (devDir.exists(entry)) {
+            QString device = devDir.absoluteFilePath(entry);
+
+            m_names.append(QLatin1String("oss:")+device);
+            m_descriptions.append(QString("OSS device %1").arg(device));
+            m_directions.append(InputOutputDevice);
+            m_roles.append(AllRoles);
+            m_formFactors.append(UnknownFormFactor);
+        }
+    }
 }
