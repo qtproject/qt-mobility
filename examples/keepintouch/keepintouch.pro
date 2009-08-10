@@ -1,3 +1,5 @@
+include(../../common.pri)
+
 TEMPLATE = app
 TARGET = keepintouch
 
@@ -17,9 +19,6 @@ symbian|win32 {
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
-
 DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_\\\"
 }
 
