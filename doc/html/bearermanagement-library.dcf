@@ -97,6 +97,17 @@
         <section ref="qnetworksession-members.html" title="List of all members"/>
     </section>
 </section>
-<section ref="overviews.html" title="Overviews"/>
-<section ref="examples.html" title="Tutorial &amp; Examples"/>
+<section ref="overviews.html" title="Overviews">
+    <section ref="index.html" title="Bearer Management Library Developer Resources">
+        <keyword ref="index.html">Bearer Management Library Developer Resources</keyword>
+    </section>
+</section>
+<section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="bearercloud.html" title="Bearer Cloud Example">
+        <keyword ref="bearercloud.html">Bearer Cloud Example</keyword>
+    </section>
+    <section ref="bearermonitor.html" title="Bearer Monitor Example">
+        <keyword ref="bearermonitor.html">Bearer Monitor Example</keyword>
+    </section>
+</section>
 </DCF>

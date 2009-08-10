@@ -6,10 +6,12 @@ imagedirs = images
 headerdirs = ../../bearer
 
 sourcedirs = ../../bearer \
+             .
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
 outputdir               = ../html
+
 indexes                 = $QTDIR/doc/html/qt.index
 
 extraimages.HTML        = qtlogo \
