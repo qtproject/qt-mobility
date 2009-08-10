@@ -50,7 +50,7 @@ QString QStringFromLpctstr(LPCTSTR lpszValue)
     if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
         return QString::null;
     if (lpszValue)
-        return QString::fromUtf16(lpszValue);
+        return QString::fromUtf16(reinterpret_cast<const ushort*>(lpszValue));
     return QString::null;
 }
 
