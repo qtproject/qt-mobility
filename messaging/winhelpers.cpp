@@ -289,10 +289,12 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId MapiFolder::id()
 {
     return QMessageFolderIdPrivate::from(_key, _parentStoreKey, _entryId);
 }
+#endif
 
 MapiStore::MapiStore()
     :_valid(false),
@@ -404,6 +406,7 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, const M
     return MapiFolder::null();
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList MapiStore::folderIds(QMessageStore::ErrorCode *lastError)
 {
     QMessageFolderIdList folderIds;
@@ -454,6 +457,7 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
 
     return result;
 }
+#endif
 
 QMessageAccountId MapiStore::id()
 {
