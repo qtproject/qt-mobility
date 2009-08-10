@@ -7,3 +7,7 @@ SUBDIRS = \
     plugins \
     examples \
     tests
+
+plugins.depends = multimedia
+examples.depends = multimedia
+test.depends = multimedia
