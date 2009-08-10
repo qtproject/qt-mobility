@@ -31,34 +31,37 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifdef AUDIOSERVICES
-#include <QtMultimedia/qaudiodeviceinfo.h>
-#endif
+#include <QDebug>
 
 #include "audiocaptureservice.h"
 #include "qaudiodeviceendpoint.h"
 #include "audiodeviceendpoint.h"
 #include "audiocapturesession.h"
-#include "audioencode.h"
+#include "audioencodecontrol.h"
+#include "audiomediacontrol.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent)
     :QAbstractMediaService(parent)
 {
     m_session = new AudioCaptureSession(this);
+    m_encode  = new AudioEncodeControl(m_session);
+    m_media   = new AudioMediaControl(m_session);
 }
 
 AudioCaptureService::~AudioCaptureService()
 {
+    delete m_encode;
+    delete m_media;
+    delete m_session;
 }
 
 QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 {
-    if (qstrcmp(name,"com.nokia.qt.MediaCaptureControl") == 0)
-        return m_session;
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        return m_media;
 
-    if (qstrcmp(name,"com.nokia.qt.AudioEncodeControl") == 0)
-        return m_session->audioEncodeControl();
+    if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
+        return m_encode;
 
     return 0;
 }
@@ -85,16 +88,18 @@ QObject *AudioCaptureService::createEndpoint(const char *interface)
 
 void AudioCaptureService::setAudioInput(QObject *input)
 {
+    return;
+
     AudioDeviceEndpoint *endPoint = qobject_cast<AudioDeviceEndpoint*>(input);
 
     if (endPoint) {
         endPoint->setDirectionFilter(AudioDeviceEndpoint::InputDevice);
-
+/*
         if (audioInput())
             disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
 
         connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
-
+*/
     }
     QAbstractMediaService::setAudioInput(endPoint);
 }

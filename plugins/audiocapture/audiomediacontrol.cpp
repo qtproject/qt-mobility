@@ -32,34 +32,52 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOCAPTURESERVICE_H
-#define AUDIOCAPTURESERVICE_H
+#include "audiocapturesession.h"
+#include "audiomediacontrol.h"
 
-#include <QtCore/qobject.h>
+#include <QtCore/qdebug.h>
 
-#include "qabstractmediaservice.h"
-#include "qmediarecorder.h"
-
-class AudioCaptureSession;
-class AudioEncodeControl;
-class AudioMediaControl;
-
-class AudioCaptureService : public QAbstractMediaService
+AudioMediaControl::AudioMediaControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-    Q_OBJECT
-public:
-    AudioCaptureService(QObject *parent = 0);
-    ~AudioCaptureService();
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+}
 
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    void setAudioInput(QObject *input);
-    QObject *createEndpoint(const char *interface);
+AudioMediaControl::~AudioMediaControl()
+{
+}
 
-    QAbstractMediaControl *control(const char *name) const;
-private:
-    AudioCaptureSession *m_session;
-    AudioEncodeControl  *m_encode;
-    AudioMediaControl   *m_media;
-};
+QMediaSink AudioMediaControl::sink() const
+{
+    return m_session->sink();
+}
 
-#endif
+bool AudioMediaControl::setSink(const QMediaSink& sink)
+{
+    return m_session->setSink(sink);
+}
+
+int AudioMediaControl::state() const
+{
+    return m_session->state();
+}
+
+qint64 AudioMediaControl::position() const
+{
+    return m_session->position();
+}
+
+void AudioMediaControl::record()
+{
+    m_session->record();
+}
+
+void AudioMediaControl::pause()
+{
+    m_session->stop();
+}
+
+void AudioMediaControl::stop()
+{
+    m_session->stop();
+}

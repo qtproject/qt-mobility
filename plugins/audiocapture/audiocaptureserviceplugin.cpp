@@ -47,7 +47,7 @@ class AudioCaptureProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioCapture/1.0"))
+        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0"))
             return new AudioCaptureService;
 
         return 0;
@@ -56,12 +56,12 @@ public:
 
 QStringList AudioCaptureServicePlugin::keys() const
 {
-    return QStringList() << "audiocapture";
+    return QStringList() << "audiorecorder";
 }
 
 QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
 {
-    if (key == "audiocapture")
+    if (key == "audiorecorder")
         return new AudioCaptureProvider;
 
     qDebug() << "unsupported key:" << key;
@@ -70,5 +70,5 @@ QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
 
 #include "audiocaptureserviceplugin.moc"
 
-Q_EXPORT_PLUGIN2(audiocaptureserviceplugin, AudioCaptureServicePlugin);
+Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
 

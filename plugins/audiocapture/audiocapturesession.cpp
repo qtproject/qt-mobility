@@ -33,22 +33,24 @@
 ****************************************************************************/
 
 #include "audiocapturesession.h"
-#include "audioencode.h"
 #include "qmediastreams.h"
-#include "qmediacapture.h"
+#include "qmediarecorder.h"
 
 #include <QDebug>
 #include <QUrl>
 
+#include <QtMultimedia/qaudiodeviceid.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 AudioCaptureSession::AudioCaptureSession(QObject *parent)
-    :QMediaCaptureControl(parent),
-    m_state(QMediaCapture::StoppedState)
 {
     m_audioInput = 0;
+    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
     m_position = 0;
-    m_audioEncodeControl = new AudioEncode(this);
+    m_state = QMediaRecorder::StoppedState;
+    m_format.setFrequency(8000);
+    m_format.setChannels(1);
+    m_format.setSampleSize(8);
 }
 
 AudioCaptureSession::~AudioCaptureSession()
@@ -57,6 +59,116 @@ AudioCaptureSession::~AudioCaptureSession()
 
     if(m_audioInput)
         delete m_audioInput;
+}
+
+QAudioFormat AudioCaptureSession::format() const
+{
+    return m_format;
+}
+
+bool AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
+{
+    if(m_deviceInfo) {
+        return m_deviceInfo->isFormatSupported(format);
+    }
+    return false;
+}
+
+bool AudioCaptureSession::setFormat(const QAudioFormat &format)
+{
+    if(m_deviceInfo) {
+        if(m_deviceInfo->isFormatSupported(format)) {
+            m_format = format;
+            if(m_audioInput) delete m_audioInput;
+            m_audioInput = 0;
+            QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+            for(int i=0;i<devices.size();i++) {
+                if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
+                            QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData()) == 0) {
+                    m_audioInput = new QAudioInput(devices.at(i),m_format);
+                    break;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+QStringList AudioCaptureSession::supportedAudioCodecs() const
+{
+    QStringList list;
+    if(m_deviceInfo) {
+        list = m_deviceInfo->supportedCodecs();
+    }
+    return list;
+}
+
+QString AudioCaptureSession::codecDescription(const QString &codecName)
+{
+    if(m_deviceInfo) {
+        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm") == 0)
+            return QString(tr("Pulse Code Modulation"));
+    }
+    return QString();
+}
+
+bool AudioCaptureSession::setAudioCodec(const QString &codecName)
+{
+    if(m_deviceInfo) {
+        QStringList codecs = m_deviceInfo->supportedCodecs();
+        if(codecs.contains(codecName)) {
+            m_format.setCodec(codecName);
+            return true;
+        }
+    }
+    return false;
+}
+
+QString AudioCaptureSession::audioCodec() const
+{
+    return m_format.codec();
+}
+
+int AudioCaptureSession::bitrate() const
+{
+    if(m_format.frequency() > 0 && m_format.channels() > 0 && m_format.sampleSize() > 0)
+        return m_format.frequency()*m_format.channels()*(m_format.sampleSize()/8);
+
+    return 0;
+}
+
+void AudioCaptureSession::setBitrate(int b)
+{
+    //TODO
+}
+
+qreal AudioCaptureSession::quality() const
+{
+    //TODO
+    return 0;
+}
+
+void AudioCaptureSession::setQuality(qreal q)
+{
+    //TODO
+}
+
+QStringList AudioCaptureSession::supportedEncodingOptions()
+{
+    //TODO
+    QStringList list;
+    return list;
+}
+
+QVariant AudioCaptureSession::encodingOption(const QString &name)
+{
+    //TODO
+    return QVariant();
+}
+
+void AudioCaptureSession::setEncodingOption(const QString &name, const QVariant &value)
+{
+    //TODO
 }
 
 QMediaSink AudioCaptureSession::sink() const
@@ -71,26 +183,31 @@ bool AudioCaptureSession::setSink(const QMediaSink& sink)
     return true;
 }
 
-int AudioCaptureSession::state() const
-{
-    return int(m_state);
-}
-
 qint64 AudioCaptureSession::position() const
 {
     return m_position;
 }
 
+int AudioCaptureSession::state() const
+{
+    return int(m_state);
+}
+
 void AudioCaptureSession::record()
 {
+    qWarning()<<m_audioInput;
+    if(!m_audioInput) {
+        setFormat(m_format);
+    }
+
     if(m_audioInput) {
-        if(m_state == QMediaCapture::StoppedState)
+        if(m_state == QMediaRecorder::StoppedState)
             file.open(QIODevice::WriteOnly);
 
         m_audioInput->start(qobject_cast<QIODevice*>(&file));
     }
 
-    m_state = QMediaCapture::RecordingState;
+    m_state = QMediaRecorder::RecordingState;
 }
 
 void AudioCaptureSession::pause()
@@ -98,7 +215,7 @@ void AudioCaptureSession::pause()
     if(m_audioInput)
         m_audioInput->stop();
 
-    m_state = QMediaCapture::PausedState;
+    m_state = QMediaRecorder::PausedState;
 }
 
 void AudioCaptureSession::stop()
@@ -108,31 +225,18 @@ void AudioCaptureSession::stop()
         file.close();
         m_position = 0;
     }
-    m_state = QMediaCapture::StoppedState;
-}
-
-void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
-{
-    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
-    for(int i=0;i<devices.size();i++) {
-        if(QAudioDeviceInfo(devices.at(i),this).deviceName().contains(deviceName)) {
-            m_audioInput = new QAudioInput(devices.at(i),m_audioEncodeControl->format(),this);
-            connect(m_audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(stateChanged(QAudio::State)));
-            connect(m_audioInput,SIGNAL(notify()),this,SLOT(notify()));
-            return;
-        }
-    }
+    m_state = QMediaRecorder::StoppedState;
 }
 
 void AudioCaptureSession::stateChanged(QAudio::State state)
 {
     switch(state) {
         case QAudio::ActiveState:
-            emit stateChanged(QMediaCapture::RecordingState);
+            emit stateChanged(QMediaRecorder::RecordingState);
             break;
         default:
-            if(!((m_state == QMediaCapture::PausedState)||(m_state == QMediaCapture::StoppedState)))
-                m_state = QMediaCapture::StoppedState;
+            if(!((m_state == QMediaRecorder::PausedState)||(m_state == QMediaRecorder::StoppedState)))
+                m_state = QMediaRecorder::StoppedState;
 
             emit stateChanged(m_state);
             break;
@@ -143,4 +247,11 @@ void AudioCaptureSession::notify()
 {
     m_position += m_audioInput->notifyInterval();
     emit positionChanged(m_position);
+}
+
+void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
+{
+    qWarning()<<"device="<<deviceName;
+
+    m_captureDevice = deviceName;
 }

@@ -58,9 +58,16 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
     camera = new QCamera;
 
-    mediaRecorder = new QMediaRecorder(camera->service());
+    if(camera->service())
+        mediaRecorder = new QMediaRecorder(camera->service());
+    else
+        mediaRecorder = new QMediaRecorder();
+
     mediaRecorder->setSink(QMediaSink(QUrl("test.ogg")));
-    audioDevice = mediaRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
+    if(mediaRecorder->service())
+        audioDevice = mediaRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
+    else
+        audioDevice = 0;
 
     connect(mediaRecorder, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
@@ -74,7 +81,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
     } else
         ui->audioInputDeviceBox->setEnabled(false);
 
-    audioEncodeControl = mediaRecorder->service()->control<QAudioEncodeControl*>();
+    if(mediaRecorder->service())
+        audioEncodeControl = mediaRecorder->service()->control<QAudioEncodeControl*>();
+    else
+        audioEncodeControl = 0;
 
     if (audioEncodeControl) {
         foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
@@ -90,7 +100,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->audioQualitySlider->setEnabled(false);
     }
 
-    videoEncodeControl = mediaRecorder->service()->control<QVideoEncodeControl*>();
+    if(mediaRecorder->service())
+        videoEncodeControl = mediaRecorder->service()->control<QVideoEncodeControl*>();
+    else
+        videoEncodeControl = 0;
 
     if (videoEncodeControl) {
         foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
@@ -106,7 +119,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->videoQualitySlider->setEnabled(false);
     }
 
-    formatControl = mediaRecorder->service()->control<QMediaFormatControl*>();
+    if(mediaRecorder->service())
+        formatControl = mediaRecorder->service()->control<QMediaFormatControl*>();
+    else
+        formatControl = 0;
 
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {
@@ -119,14 +135,15 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->containerFormatBox->setEnabled(false);
     }
 
-    QWidget *videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint*>();
+    QWidget *videoWidget = 0;
+    if(mediaRecorder->service())
+        videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint*>();
 
     if (videoWidget) {
         qDebug() << "service supports video widgets, nice";
         mediaRecorder->service()->setVideoOutput(videoWidget);
+        videoWidget->show();
     }
-
-    videoWidget->show();
 }
 
 CameraCapture::~CameraCapture()

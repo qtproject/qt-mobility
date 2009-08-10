@@ -37,51 +37,69 @@
 
 #include <QFile>
 
-#include "audioencode.h"
-#include "qmediacapturecontrol.h"
+#include "audioencodecontrol.h"
+#include "qmediarecordercontrol.h"
 #include "qmediasink.h"
-#include "qmediacapture.h"
+#include "qmediarecorder.h"
 
+#include <QtMultimedia/qaudioformat.h>
 #include <QtMultimedia/qaudioinput.h>
 
-class AudioCaptureSession : public QMediaCaptureControl
+class QAudioDeviceInfo;
+
+class AudioCaptureSession : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
 public:
     AudioCaptureSession(QObject *parent = 0);
     ~AudioCaptureSession();
 
+    // encode controls
+
+    QAudioFormat format() const;
+    bool isFormatSupported(const QAudioFormat &format) const;
+    bool setFormat(const QAudioFormat &format);
+    QStringList supportedAudioCodecs() const;
+    QString codecDescription(const QString &codecName);
+    bool setAudioCodec(const QString &codecName);
+    QString audioCodec() const;
+    int bitrate() const;
+    void setBitrate(int);
+    qreal quality() const;
+    void setQuality(qreal);
+    QStringList supportedEncodingOptions();
+    QVariant encodingOption(const QString &name);
+    void setEncodingOption(const QString &name, const QVariant &value);
+
+    // media controls
+
     QMediaSink sink() const;
     bool setSink(const QMediaSink& sink);
-
-    int state() const;
-
     qint64 position() const;
-
-    AudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
-
-signals:
-    void stateChanged(int state);
-    void positionChanged(qint64 position);
-
-public slots:
+    int state() const;
     void record();
     void pause();
     void stop();
 
+public slots:
     void setCaptureDevice(const QString &deviceName);
 
+signals:
+    void stateChanged(QMediaRecorder::State state);
+    void positionChanged(qint64 position);
+
 private slots:
-    void stateChanged(QAudio::State);
+    void stateChanged(QAudio::State state);
     void notify();
 
 private:
     QFile file;
+    QString m_captureDevice;
     QMediaSink m_sink;
-    QMediaCapture::State m_state;
-    AudioEncode *m_audioEncodeControl;
+    QMediaRecorder::State m_state;
     QAudioInput *m_audioInput;
+    QAudioDeviceInfo *m_deviceInfo;
+    QAudioFormat m_format;
     qint64 m_position;
 };
 

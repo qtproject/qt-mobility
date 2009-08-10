@@ -51,12 +51,14 @@ Camera::Camera()
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
 
-    QWidget *videoWidget = capture->service()->createEndpoint<QMediaWidgetEndpoint*>();
-    if(videoWidget) {
-        videoWidget->setBaseSize(QSize(320,240));
-        capture->service()->setVideoOutput(videoWidget);
-        layout->addWidget(videoWidget);
-        videoWidget->show();
+    if(capture->service()) {
+        QWidget *videoWidget = capture->service()->createEndpoint<QMediaWidgetEndpoint*>();
+        if(videoWidget) {
+            videoWidget->setBaseSize(QSize(320,240));
+            capture->service()->setVideoOutput(videoWidget);
+            layout->addWidget(videoWidget);
+            videoWidget->show();
+        }
     }
 
     deviceBox = new QComboBox(this);

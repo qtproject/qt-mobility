@@ -1,5 +1,5 @@
-#ifndef AUDIOENCODE_H
-#define AUDIOENCODE_H
+#ifndef AUDIOENCODECONTROL_H
+#define AUDIOENCODECONTROL_H
 
 #include "qaudioencodecontrol.h"
 class AudioCaptureSession;
@@ -9,12 +9,12 @@ class AudioCaptureSession;
 
 #include <QtMultimedia/qaudioformat.h>
 
-class AudioEncode : public QAudioEncodeControl
+class AudioEncodeControl : public QAudioEncodeControl
 {
     Q_OBJECT
 public:
-    AudioEncode(QObject *parent);
-    virtual ~AudioEncode();
+    AudioEncodeControl(QObject *parent);
+    virtual ~AudioEncodeControl();
 
     QAudioFormat format() const;
     bool isFormatSupported(const QAudioFormat &format) const;

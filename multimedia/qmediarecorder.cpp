@@ -89,7 +89,10 @@ QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
      service(service),
      error(QMediaRecorder::NoError)
 {
-    control = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
+    if(service)
+        control = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
+    else
+        control = 0;
 }
 
 void QMediaRecorderPrivate::_q_stateChanged(int state)

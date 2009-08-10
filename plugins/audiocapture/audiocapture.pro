@@ -1,24 +1,28 @@
 TEMPLATE = lib
 CONFIG += plugin
+TARGET = audioengine
 
-#QT += multimedia
-#DEFINES += AUDIOSERVICES
+PLUGIN_SUBDIR = mediaservice
 
-TARGET = audiocapture
-DESTDIR = $$OUT_PWD/../../lib/mediaservice
+include (../../common.pri)
+
+DEFINES += AUDIOSERVICES
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \
     ../../multimedia/endpoints
 
 # Input
-HEADERS += audioencode.h \
+HEADERS += audioencodecontrol.h \
+    audiomediacontrol.h \
     audiodeviceendpoint.h \
     audiocaptureservice.h \
     audiocaptureserviceplugin.h \
     audiocapturesession.h
 
-SOURCES += audioencode.cpp \
+SOURCES += audioencodecontrol.cpp \
+    audiomediacontrol.cpp \
     audiodeviceendpoint.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
