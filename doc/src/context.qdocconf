@@ -12,6 +12,7 @@ sourcedirs = ../../context \
 sources.fileextensions  = "*.qdoc *.cpp"
 
 exampledirs = ../../examples
+indexes                 = $QTDIR/doc/html/qt.index
 
 outputdir               = ../html
 

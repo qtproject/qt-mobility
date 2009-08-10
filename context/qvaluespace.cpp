@@ -357,9 +357,9 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
   Space layer implementors.
 
   Value Space layers that are available at link time can be automatically
-  installed using \c {QVALUESPACE_AUTO_INSTALL_LAYER(name)} macro.  The method
+  installed using QVALUESPACE_AUTO_INSTALL_LAYER() macro.  The method
   \c {QAbstractValueSpaceLayer * name::instance()} must exist and return a pointer to
-  the layer to install.  The \c {QVALUESPACE_AUTO_INSTALL_LAYER(name)} macro
+  the layer to install.  The QVALUESPACE_AUTO_INSTALL_LAYER() macro
   will only invoke this method \i {after} QApplication has been constructed,
   making it safe to use any Qt class in your layer's constructor.
  */

@@ -2,355 +2,372 @@
 <!DOCTYPE QDOCINDEX>
 <INDEX url="" title="Qt Context Framework Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
-        <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceObject" href="qvaluespaceobject.html" location="qvaluespaceobject.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceObject" href="qvaluespaceobject.html" location="qvaluespaceobject.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceObject" fullname="QValueSpaceObject::QValueSpaceObject" href="qvaluespaceobject.html#QValueSpaceObject-2" location="qvaluespaceobject.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QValueSpaceObject(const char * objectPath, const QUuid &amp; layer, QObject * parent)">
-                <parameter left="const char *" right="" name="objectPath" default=""></parameter>
-                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const char *" right="" name="objectPath" default=""/>
+                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceObject" fullname="QValueSpaceObject::QValueSpaceObject" href="qvaluespaceobject.html#QValueSpaceObject-3" location="qvaluespaceobject.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceObject(const QString &amp; objectPath, const QUuid &amp; layer, QObject * parent)">
-                <parameter left="const QString &amp;" right="" name="objectPath" default=""></parameter>
-                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QString &amp;" right="" name="objectPath" default=""/>
+                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceObject" fullname="QValueSpaceObject::QValueSpaceObject" href="qvaluespaceobject.html#QValueSpaceObject" location="qvaluespaceobject.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QValueSpaceObject(const QByteArray &amp; objectPath, const QUuid &amp; layer, QObject * parent)">
-                <parameter left="const QByteArray &amp;" right="" name="objectPath" default=""></parameter>
-                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="objectPath" default=""/>
+                <parameter left="const QUuid &amp;" right="" name="layer" default="QUuid()"/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QValueSpaceObject" fullname="QValueSpaceObject::~QValueSpaceObject" href="qvaluespaceobject.html#dtor.QValueSpaceObject" location="qvaluespaceobject.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QValueSpaceObject()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="objectPath" fullname="QValueSpaceObject::objectPath" href="qvaluespaceobject.html#objectPath" location="qvaluespaceobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="objectPath() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QValueSpaceObject::isValid" href="qvaluespaceobject.html#isValid" location="qvaluespaceobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QValueSpaceObject::sync" href="qvaluespaceobject.html#sync" location="qvaluespaceobject.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="sync()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QValueSpaceObject" fullname="QValueSpaceObject::~QValueSpaceObject" href="qvaluespaceobject.html#dtor.QValueSpaceObject" location="qvaluespaceobject.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QValueSpaceObject()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="objectPath" fullname="QValueSpaceObject::objectPath" href="qvaluespaceobject.html#objectPath" location="qvaluespaceobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="objectPath() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QValueSpaceObject::isValid" href="qvaluespaceobject.html#isValid" location="qvaluespaceobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportsRequests" fullname="QValueSpaceObject::supportsRequests" href="qvaluespaceobject.html#supportsRequests" location="qvaluespaceobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="supportsRequests() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QValueSpaceObject::sync" href="qvaluespaceobject.html#sync" location="qvaluespaceobject.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="sync()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="itemRemove" fullname="QValueSpaceObject::itemRemove" href="qvaluespaceobject.html#itemRemove" location="qvaluespaceobject.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemRemove(const QByteArray &amp; attribute)">
-                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="itemSetValue" fullname="QValueSpaceObject::itemSetValue" href="qvaluespaceobject.html#itemSetValue" location="qvaluespaceobject.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemSetValue(const QByteArray &amp; attribute, const QVariant &amp; value)">
-                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="itemNotify" fullname="QValueSpaceObject::itemNotify" href="qvaluespaceobject.html#itemNotify" location="qvaluespaceobject.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemNotify(const QByteArray &amp; attribute, bool interested)">
+                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""/>
+                <parameter left="bool" right="" name="interested" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QValueSpaceObject::setAttribute" href="qvaluespaceobject.html#setAttribute-2" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="true" overload-number="2" type="void" signature="setAttribute(const char * attribute, const QVariant &amp; data)">
-                <parameter left="const char *" right="" name="attribute" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="data" default=""></parameter>
+                <parameter left="const char *" right="" name="attribute" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QValueSpaceObject::removeAttribute" href="qvaluespaceobject.html#removeAttribute-2" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="true" overload-number="2" type="void" signature="removeAttribute(const char * attribute)">
-                <parameter left="const char *" right="" name="attribute" default=""></parameter>
+                <parameter left="const char *" right="" name="attribute" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QValueSpaceObject::setAttribute" href="qvaluespaceobject.html#setAttribute-3" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="true" overload-number="3" type="void" signature="setAttribute(const QString &amp; attribute, const QVariant &amp; data)">
-                <parameter left="const QString &amp;" right="" name="attribute" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="data" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="attribute" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QValueSpaceObject::removeAttribute" href="qvaluespaceobject.html#removeAttribute-3" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="true" overload-number="3" type="void" signature="removeAttribute(const QString &amp; attribute)">
-                <parameter left="const QString &amp;" right="" name="attribute" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="attribute" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QValueSpaceObject::setAttribute" href="qvaluespaceobject.html#setAttribute" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="setAttribute(const QByteArray &amp; attribute, const QVariant &amp; data)">
-                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="data" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QValueSpaceObject::removeAttribute" href="qvaluespaceobject.html#removeAttribute" location="qvaluespaceobject.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="removeAttribute(const QByteArray &amp; attribute)">
-                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="attribute" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="connectNotify" fullname="QValueSpaceObject::connectNotify" href="qvaluespaceobject.html#connectNotify" location="qvaluespaceobject.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="connectNotify(const char * member)">
-                <parameter left="const char *" right="" name="member" default=""></parameter>
+                <parameter left="const char *" right="" name="member" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMallocPool" href="qmallocpool.html" location="qmallocpool.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="PoolType" fullname="QMallocPool::PoolType" href="qmallocpool.html#PoolType-enum" location="qmallocpool.h">
-                <value name="Owned" value="0"></value>
-                <value name="NewShared" value="1"></value>
-                <value name="Shared" value="2"></value>
+                <value name="Owned" value="0"/>
+                <value name="NewShared" value="1"/>
+                <value name="Shared" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMallocPool" fullname="QMallocPool::QMallocPool" href="qmallocpool.html#QMallocPool" location="qmallocpool.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMallocPool()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMallocPool" fullname="QMallocPool::QMallocPool" href="qmallocpool.html#QMallocPool" location="qmallocpool.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMallocPool()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMallocPool" fullname="QMallocPool::QMallocPool" href="qmallocpool.html#QMallocPool-2" location="qmallocpool.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMallocPool(void * poolBase, unsigned int poolLength, PoolType type, const QString &amp; name)">
-                <parameter left="void *" right="" name="poolBase" default=""></parameter>
-                <parameter left="unsigned int" right="" name="poolLength" default=""></parameter>
-                <parameter left="PoolType" right="" name="type" default="Owned"></parameter>
-                <parameter left="const QString &amp;" right="" name="name" default="QString()"></parameter>
+                <parameter left="void *" right="" name="poolBase" default=""/>
+                <parameter left="unsigned int" right="" name="poolLength" default=""/>
+                <parameter left="PoolType" right="" name="type" default="Owned"/>
+                <parameter left="const QString &amp;" right="" name="name" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMallocPool" fullname="QMallocPool::~QMallocPool" href="qmallocpool.html#dtor.QMallocPool" location="qmallocpool.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMallocPool()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMallocPool" fullname="QMallocPool::~QMallocPool" href="qmallocpool.html#dtor.QMallocPool" location="qmallocpool.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMallocPool()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="size_of" fullname="QMallocPool::size_of" href="qmallocpool.html#size_of" location="qmallocpool.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="size_t" signature="size_of(void * mem)">
-                <parameter left="void *" right="" name="mem" default=""></parameter>
+                <parameter left="void *" right="" name="mem" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="calloc" fullname="QMallocPool::calloc" href="qmallocpool.html#calloc" location="qmallocpool.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void *" signature="calloc(size_t nmemb, size_t size)">
-                <parameter left="size_t" right="" name="nmemb" default=""></parameter>
-                <parameter left="size_t" right="" name="size" default=""></parameter>
+                <parameter left="size_t" right="" name="nmemb" default=""/>
+                <parameter left="size_t" right="" name="size" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="malloc" fullname="QMallocPool::malloc" href="qmallocpool.html#malloc" location="qmallocpool.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void *" signature="malloc(size_t size)">
-                <parameter left="size_t" right="" name="size" default=""></parameter>
+                <parameter left="size_t" right="" name="size" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="free" fullname="QMallocPool::free" href="qmallocpool.html#free" location="qmallocpool.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="free(void * ptr)">
-                <parameter left="void *" right="" name="ptr" default=""></parameter>
+                <parameter left="void *" right="" name="ptr" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="realloc" fullname="QMallocPool::realloc" href="qmallocpool.html#realloc" location="qmallocpool.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void *" signature="realloc(void * ptr, size_t size)">
-                <parameter left="void *" right="" name="ptr" default=""></parameter>
-                <parameter left="size_t" right="" name="size" default=""></parameter>
+                <parameter left="void *" right="" name="ptr" default=""/>
+                <parameter left="size_t" right="" name="size" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMallocPool::isValid" href="qmallocpool.html#isValid" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMallocPool::isValid" href="qmallocpool.html#isValid" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
             <class access="public" threadsafety="unspecified" status="commendable" name="MemoryStats" fullname="QMallocPool::MemoryStats" href="qmallocpool-memorystats.html" location="qmallocpool.h" bases="" module="">
-                <variable access="public" threadsafety="unspecified" status="commendable" name="poolSize" fullname="QMallocPool::MemoryStats::poolSize" href="qmallocpool-memorystats.html#poolSize-var" location="qmallocpool.h" type="unsigned long" static="false"></variable>
-                <variable access="public" threadsafety="unspecified" status="commendable" name="maxSystemBytes" fullname="QMallocPool::MemoryStats::maxSystemBytes" href="qmallocpool-memorystats.html#maxSystemBytes-var" location="qmallocpool.h" type="unsigned long" static="false"></variable>
-                <variable access="public" threadsafety="unspecified" status="commendable" name="systemBytes" fullname="QMallocPool::MemoryStats::systemBytes" href="qmallocpool-memorystats.html#systemBytes-var" location="qmallocpool.h" type="unsigned long" static="false"></variable>
-                <variable access="public" threadsafety="unspecified" status="commendable" name="inuseBytes" fullname="QMallocPool::MemoryStats::inuseBytes" href="qmallocpool-memorystats.html#inuseBytes-var" location="qmallocpool.h" type="unsigned long" static="false"></variable>
-                <variable access="public" threadsafety="unspecified" status="commendable" name="keepCost" fullname="QMallocPool::MemoryStats::keepCost" href="qmallocpool-memorystats.html#keepCost-var" location="qmallocpool.h" type="unsigned long" static="false"></variable>
+                <variable access="public" threadsafety="unspecified" status="commendable" name="poolSize" fullname="QMallocPool::MemoryStats::poolSize" href="qmallocpool-memorystats.html#poolSize-var" location="qmallocpool.h" type="unsigned long" static="false"/>
+                <variable access="public" threadsafety="unspecified" status="commendable" name="maxSystemBytes" fullname="QMallocPool::MemoryStats::maxSystemBytes" href="qmallocpool-memorystats.html#maxSystemBytes-var" location="qmallocpool.h" type="unsigned long" static="false"/>
+                <variable access="public" threadsafety="unspecified" status="commendable" name="systemBytes" fullname="QMallocPool::MemoryStats::systemBytes" href="qmallocpool-memorystats.html#systemBytes-var" location="qmallocpool.h" type="unsigned long" static="false"/>
+                <variable access="public" threadsafety="unspecified" status="commendable" name="inuseBytes" fullname="QMallocPool::MemoryStats::inuseBytes" href="qmallocpool-memorystats.html#inuseBytes-var" location="qmallocpool.h" type="unsigned long" static="false"/>
+                <variable access="public" threadsafety="unspecified" status="commendable" name="keepCost" fullname="QMallocPool::MemoryStats::keepCost" href="qmallocpool-memorystats.html#keepCost-var" location="qmallocpool.h" type="unsigned long" static="false"/>
             </class>
-            <function access="public" threadsafety="unspecified" status="commendable" name="memoryStatistics" fullname="QMallocPool::memoryStatistics" href="qmallocpool.html#memoryStatistics" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MemoryStats" signature="memoryStatistics() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="dumpStats" fullname="QMallocPool::dumpStats" href="qmallocpool.html#dumpStats" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="void" signature="dumpStats() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="memoryStatistics" fullname="QMallocPool::memoryStatistics" href="qmallocpool.html#memoryStatistics" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MemoryStats" signature="memoryStatistics() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="dumpStats" fullname="QMallocPool::dumpStats" href="qmallocpool.html#dumpStats" location="qmallocpool.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="void" signature="dumpStats() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QPacketProtocol" href="qpacketprotocol.html" location="qpacketprotocol.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QPacketProtocol" href="qpacketprotocol.html" location="qpacketprotocol.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QPacketProtocol" fullname="QPacketProtocol::QPacketProtocol" href="qpacketprotocol.html#QPacketProtocol" location="qpacketprotocol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPacketProtocol(QIODevice * dev, QObject * parent)">
-                <parameter left="QIODevice *" right="" name="dev" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="QIODevice *" right="" name="dev" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QPacketProtocol" fullname="QPacketProtocol::~QPacketProtocol" href="qpacketprotocol.html#dtor.QPacketProtocol" location="qpacketprotocol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPacketProtocol()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="maximumPacketSize" fullname="QPacketProtocol::maximumPacketSize" href="qpacketprotocol.html#maximumPacketSize" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint32" signature="maximumPacketSize() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QPacketProtocol" fullname="QPacketProtocol::~QPacketProtocol" href="qpacketprotocol.html#dtor.QPacketProtocol" location="qpacketprotocol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPacketProtocol()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maximumPacketSize" fullname="QPacketProtocol::maximumPacketSize" href="qpacketprotocol.html#maximumPacketSize" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint32" signature="maximumPacketSize() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMaximumPacketSize" fullname="QPacketProtocol::setMaximumPacketSize" href="qpacketprotocol.html#setMaximumPacketSize" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qint32" signature="setMaximumPacketSize(qint32 max)">
-                <parameter left="qint32" right="" name="max" default=""></parameter>
+                <parameter left="qint32" right="" name="max" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="send" fullname="QPacketProtocol::send" href="qpacketprotocol.html#send" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPacketAutoSend" signature="send()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="send" fullname="QPacketProtocol::send" href="qpacketprotocol.html#send" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPacketAutoSend" signature="send()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="send" fullname="QPacketProtocol::send" href="qpacketprotocol.html#send-2" location="qpacketprotocol.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="send(const QPacket &amp; packet)">
-                <parameter left="const QPacket &amp;" right="" name="packet" default=""></parameter>
+                <parameter left="const QPacket &amp;" right="" name="packet" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="packetsAvailable" fullname="QPacketProtocol::packetsAvailable" href="qpacketprotocol.html#packetsAvailable" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="packetsAvailable() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="read" fullname="QPacketProtocol::read" href="qpacketprotocol.html#read" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPacket" signature="read()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QPacketProtocol::clear" href="qpacketprotocol.html#clear" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QPacketProtocol::device" href="qpacketprotocol.html#device" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QIODevice *" signature="device()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="readyRead" fullname="QPacketProtocol::readyRead" href="qpacketprotocol.html#readyRead" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readyRead()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="invalidPacket" fullname="QPacketProtocol::invalidPacket" href="qpacketprotocol.html#invalidPacket" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="invalidPacket()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="packetWritten" fullname="QPacketProtocol::packetWritten" href="qpacketprotocol.html#packetWritten" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="packetWritten()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="packetsAvailable" fullname="QPacketProtocol::packetsAvailable" href="qpacketprotocol.html#packetsAvailable" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="packetsAvailable() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="read" fullname="QPacketProtocol::read" href="qpacketprotocol.html#read" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPacket" signature="read()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QPacketProtocol::clear" href="qpacketprotocol.html#clear" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QPacketProtocol::device" href="qpacketprotocol.html#device" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QIODevice *" signature="device()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="readyRead" fullname="QPacketProtocol::readyRead" href="qpacketprotocol.html#readyRead" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readyRead()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="invalidPacket" fullname="QPacketProtocol::invalidPacket" href="qpacketprotocol.html#invalidPacket" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="invalidPacket()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="packetWritten" fullname="QPacketProtocol::packetWritten" href="qpacketprotocol.html#packetWritten" location="qpacketprotocol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="packetWritten()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QPacket" href="qpacket.html" location="qpacketprotocol.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QPacket" fullname="QPacket::QPacket" href="qpacket.html#QPacket" location="qpacketprotocol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPacket()"></function>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QPacket" href="qpacket.html" location="qpacketprotocol.h" bases="QDataStream" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QPacket" fullname="QPacket::QPacket" href="qpacket.html#QPacket" location="qpacketprotocol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QPacket()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QPacket" fullname="QPacket::QPacket" href="qpacket.html#QPacket-2" location="qpacketprotocol.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QPacket(const QPacket &amp; other)">
-                <parameter left="const QPacket &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QPacket &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QPacket" fullname="QPacket::~QPacket" href="qpacket.html#dtor.QPacket" location="qpacketprotocol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPacket()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QPacket::clear" href="qpacket.html#clear" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QPacket::isEmpty" href="qpacket.html#isEmpty" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"></function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="b" fullname="QPacket::b" href="qpacket.html#b-var" location="qpacketprotocol.h" type="QByteArray" static="false"></variable>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="buf" fullname="QPacket::buf" href="qpacket.html#buf-var" location="qpacketprotocol.h" type="QBuffer *" static="false"></variable>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QPacket" fullname="QPacket::~QPacket" href="qpacket.html#dtor.QPacket" location="qpacketprotocol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QPacket()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QPacket::clear" href="qpacket.html#clear" location="qpacketprotocol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QPacket::isEmpty" href="qpacket.html#isEmpty" location="qpacketprotocol.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="b" fullname="QPacket::b" href="qpacket.html#b-var" location="qpacketprotocol.h" type="QByteArray" static="false"/>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="buf" fullname="QPacket::buf" href="qpacket.html#buf-var" location="qpacketprotocol.h" type="QBuffer *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemReadWriteLock" href="qsystemreadwritelock.html" location="qsystemlock.h" bases="" module="">
-            <contents name="algorithm" title="Algorithm" level="1"></contents>
-            <contents name="algorithm" title="Algorithm" level="2"></contents>
+            <contents name="algorithm" title="Algorithm" level="1"/>
+            <contents name="algorithm" title="Algorithm" level="2"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemReadWriteLock" fullname="QSystemReadWriteLock::QSystemReadWriteLock" href="qsystemreadwritelock.html#QSystemReadWriteLock" location="qsystemlock.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemReadWriteLock(unsigned int id, bool owner)">
-                <parameter left="unsigned int" right="" name="id" default=""></parameter>
-                <parameter left="bool" right="" name="owner" default=""></parameter>
+                <parameter left="unsigned int" right="" name="id" default=""/>
+                <parameter left="bool" right="" name="owner" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemReadWriteLock" fullname="QSystemReadWriteLock::~QSystemReadWriteLock" href="qsystemreadwritelock.html#dtor.QSystemReadWriteLock" location="qsystemlock.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemReadWriteLock()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QSystemReadWriteLock::isNull" href="qsystemreadwritelock.html#isNull" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QSystemReadWriteLock::id" href="qsystemreadwritelock.html#id" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="unsigned int" signature="id() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemReadWriteLock" fullname="QSystemReadWriteLock::~QSystemReadWriteLock" href="qsystemreadwritelock.html#dtor.QSystemReadWriteLock" location="qsystemlock.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemReadWriteLock()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QSystemReadWriteLock::isNull" href="qsystemreadwritelock.html#isNull" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QSystemReadWriteLock::id" href="qsystemreadwritelock.html#id" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="unsigned int" signature="id() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="lockForRead" fullname="QSystemReadWriteLock::lockForRead" href="qsystemreadwritelock.html#lockForRead" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="lockForRead(int milliSec)">
-                <parameter left="int" right="" name="milliSec" default=""></parameter>
+                <parameter left="int" right="" name="milliSec" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="lockForWrite" fullname="QSystemReadWriteLock::lockForWrite" href="qsystemreadwritelock.html#lockForWrite" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="lockForWrite(int milliSec)">
-                <parameter left="int" right="" name="milliSec" default=""></parameter>
+                <parameter left="int" right="" name="milliSec" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemReadWriteLock::unlock" href="qsystemreadwritelock.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemReadWriteLock::unlock" href="qsystemreadwritelock.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMutex" href="qsystemmutex.html" location="qsystemlock.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemMutex" fullname="QSystemMutex::QSystemMutex" href="qsystemmutex.html#QSystemMutex" location="qsystemlock.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemMutex(unsigned int id, bool owner)">
-                <parameter left="unsigned int" right="" name="id" default=""></parameter>
-                <parameter left="bool" right="" name="owner" default=""></parameter>
+                <parameter left="unsigned int" right="" name="id" default=""/>
+                <parameter left="bool" right="" name="owner" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemMutex" fullname="QSystemMutex::~QSystemMutex" href="qsystemmutex.html#dtor.QSystemMutex" location="qsystemlock.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemMutex()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QSystemMutex::isNull" href="qsystemmutex.html#isNull" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QSystemMutex::id" href="qsystemmutex.html#id" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="unsigned int" signature="id() const"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemMutex" fullname="QSystemMutex::~QSystemMutex" href="qsystemmutex.html#dtor.QSystemMutex" location="qsystemlock.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemMutex()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QSystemMutex::isNull" href="qsystemmutex.html#isNull" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QSystemMutex::id" href="qsystemmutex.html#id" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="unsigned int" signature="id() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="lock" fullname="QSystemMutex::lock" href="qsystemmutex.html#lock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="lock(int milliSec)">
-                <parameter left="int" right="" name="milliSec" default=""></parameter>
+                <parameter left="int" right="" name="milliSec" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemMutex::unlock" href="qsystemmutex.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemMutex::unlock" href="qsystemmutex.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractValueSpaceLayer" href="qabstractvaluespacelayer.html" location="qvaluespace.h" bases="" module="">
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="Handle" fullname="QAbstractValueSpaceLayer::Handle" href="qabstractvaluespacelayer.html#Handle-typedef" location="qvaluespace.h"></typedef>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAbstractValueSpaceLayer::name" href="qabstractvaluespacelayer.html#name" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QString" signature="name()"></function>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractValueSpaceLayer" href="qabstractvaluespacelayer.html" location="qvaluespace.h" bases="QObject" module="">
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="Handle" fullname="QAbstractValueSpaceLayer::Handle" href="qabstractvaluespacelayer.html#Handle-typedef" location="qvaluespace.h"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAbstractValueSpaceLayer::name" href="qabstractvaluespacelayer.html#name" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QString" signature="name()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QAbstractValueSpaceLayer::Type" href="qabstractvaluespacelayer.html#Type-enum" location="qvaluespace.h">
-                <value name="Server" value="0"></value>
-                <value name="Client" value="1"></value>
+                <value name="Server" value="0"/>
+                <value name="Client" value="1"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="startup" fullname="QAbstractValueSpaceLayer::startup" href="qabstractvaluespacelayer.html#startup" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="startup(Type type)">
-                <parameter left="Type" right="" name="type" default=""></parameter>
+                <parameter left="Type" right="" name="type" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="restart" fullname="QAbstractValueSpaceLayer::restart" href="qabstractvaluespacelayer.html#restart" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="restart()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="shutdown" fullname="QAbstractValueSpaceLayer::shutdown" href="qabstractvaluespacelayer.html#shutdown" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="shutdown()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QAbstractValueSpaceLayer::id" href="qabstractvaluespacelayer.html#id" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QUuid" signature="id()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="order" fullname="QAbstractValueSpaceLayer::order" href="qabstractvaluespacelayer.html#order" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="unsigned int" signature="order()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="restart" fullname="QAbstractValueSpaceLayer::restart" href="qabstractvaluespacelayer.html#restart" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="restart()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="shutdown" fullname="QAbstractValueSpaceLayer::shutdown" href="qabstractvaluespacelayer.html#shutdown" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="shutdown()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QAbstractValueSpaceLayer::id" href="qabstractvaluespacelayer.html#id" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QUuid" signature="id()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="order" fullname="QAbstractValueSpaceLayer::order" href="qabstractvaluespacelayer.html#order" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="unsigned int" signature="order()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Properties" fullname="QAbstractValueSpaceLayer::Properties" href="qabstractvaluespacelayer.html#Properties-enum" location="qvaluespace.h">
-                <value name="Publish" value="0x00000001"></value>
+                <value name="Publish" value="0x00000001"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="item" fullname="QAbstractValueSpaceLayer::item" href="qabstractvaluespacelayer.html#item" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="Handle" signature="item(Handle parent, const QByteArray &amp; subPath)">
-                <parameter left="Handle" right="" name="parent" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="Handle" right="" name="parent" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeHandle" fullname="QAbstractValueSpaceLayer::removeHandle" href="qabstractvaluespacelayer.html#removeHandle" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="removeHandle(Handle handle)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="QAbstractValueSpaceLayer::setProperty" href="qabstractvaluespacelayer.html#setProperty" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(Handle handle, Properties property)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="Properties" right="" name="property" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="Properties" right="" name="property" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QAbstractValueSpaceLayer::value" href="qabstractvaluespacelayer.html#value" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="value(Handle handle, QVariant * data)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="QVariant *" right="" name="data" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="QVariant *" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QAbstractValueSpaceLayer::value" href="qabstractvaluespacelayer.html#value-2" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="value(Handle handle, const QByteArray &amp; subPath, QVariant * data)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="QVariant *" right="" name="data" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
+                <parameter left="QVariant *" right="" name="data" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="QAbstractValueSpaceLayer::children" href="qabstractvaluespacelayer.html#children" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QByteArray&gt;" signature="children(Handle handle)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportsRequests" fullname="QAbstractValueSpaceLayer::supportsRequests" href="qabstractvaluespacelayer.html#supportsRequests" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="supportsRequests()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportsRequests" fullname="QAbstractValueSpaceLayer::supportsRequests" href="qabstractvaluespacelayer.html#supportsRequests" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="supportsRequests()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestSetValue" fullname="QAbstractValueSpaceLayer::requestSetValue" href="qabstractvaluespacelayer.html#requestSetValue" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="requestSetValue(Handle handle, const QVariant &amp; value)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestSetValue" fullname="QAbstractValueSpaceLayer::requestSetValue" href="qabstractvaluespacelayer.html#requestSetValue-2" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="requestSetValue(Handle handle, const QByteArray &amp; subPath, const QVariant &amp; value)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestRemoveValue" fullname="QAbstractValueSpaceLayer::requestRemoveValue" href="qabstractvaluespacelayer.html#requestRemoveValue" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="requestRemoveValue(Handle handle, const QByteArray &amp; subPath)">
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default="QByteArray()"></parameter>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default="QByteArray()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="syncRequests" fullname="QAbstractValueSpaceLayer::syncRequests" href="qabstractvaluespacelayer.html#syncRequests" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="syncRequests()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="notifyInterest" fullname="QAbstractValueSpaceLayer::notifyInterest" href="qabstractvaluespacelayer.html#notifyInterest" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="notifyInterest(Handle handle, bool interested)">
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="bool" right="" name="interested" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="syncRequests" fullname="QAbstractValueSpaceLayer::syncRequests" href="qabstractvaluespacelayer.html#syncRequests" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="syncRequests()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QAbstractValueSpaceLayer::setValue" href="qabstractvaluespacelayer.html#setValue" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setValue(QValueSpaceObject * creator, Handle handle, const QByteArray &amp; subPath, const QVariant &amp; value)">
-                <parameter left="QValueSpaceObject *" right="" name="creator" default=""></parameter>
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="creator" default=""/>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeValue" fullname="QAbstractValueSpaceLayer::removeValue" href="qabstractvaluespacelayer.html#removeValue" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeValue(QValueSpaceObject * creator, Handle handle, const QByteArray &amp; subPath)">
-                <parameter left="QValueSpaceObject *" right="" name="creator" default=""></parameter>
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="creator" default=""/>
+                <parameter left="Handle" right="" name="handle" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeSubTree" fullname="QAbstractValueSpaceLayer::removeSubTree" href="qabstractvaluespacelayer.html#removeSubTree" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeSubTree(QValueSpaceObject * creator, Handle handle)">
-                <parameter left="QValueSpaceObject *" right="" name="creator" default=""></parameter>
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="creator" default=""/>
+                <parameter left="Handle" right="" name="handle" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="addWatch" fullname="QAbstractValueSpaceLayer::addWatch" href="qabstractvaluespacelayer.html#addWatch" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="addWatch(QValueSpaceObject * creator, Handle handle)">
-                <parameter left="QValueSpaceObject *" right="" name="creator" default=""></parameter>
-                <parameter left="Handle" right="" name="handle" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="creator" default=""/>
+                <parameter left="Handle" right="" name="handle" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="removeWatches" fullname="QAbstractValueSpaceLayer::removeWatches" href="qabstractvaluespacelayer.html#removeWatches" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="removeWatches(QValueSpaceObject * creator, Handle parent)">
-                <parameter left="QValueSpaceObject *" right="" name="creator" default=""></parameter>
-                <parameter left="Handle" right="" name="parent" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="creator" default=""/>
+                <parameter left="Handle" right="" name="parent" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QAbstractValueSpaceLayer::sync" href="qabstractvaluespacelayer.html#sync" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="sync()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QAbstractValueSpaceLayer::sync" href="qabstractvaluespacelayer.html#sync" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="sync()"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="emitItemRemove" fullname="QAbstractValueSpaceLayer::emitItemRemove" href="qabstractvaluespacelayer.html#emitItemRemove" location="qvaluespace.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="emitItemRemove(QValueSpaceObject * object, const QByteArray &amp; path)">
-                <parameter left="QValueSpaceObject *" right="" name="object" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="path" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="object" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="path" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="emitItemSetValue" fullname="QAbstractValueSpaceLayer::emitItemSetValue" href="qabstractvaluespacelayer.html#emitItemSetValue" location="qvaluespace.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="emitItemSetValue(QValueSpaceObject * object, const QByteArray &amp; path, const QVariant &amp; data)">
-                <parameter left="QValueSpaceObject *" right="" name="object" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="path" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="data" default=""></parameter>
+                <parameter left="QValueSpaceObject *" right="" name="object" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="path" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="data" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="emitItemNotify" fullname="QAbstractValueSpaceLayer::emitItemNotify" href="qabstractvaluespacelayer.html#emitItemNotify" location="qvaluespace.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="emitItemNotify(QValueSpaceObject * object, const QByteArray &amp; path, bool interested)">
+                <parameter left="QValueSpaceObject *" right="" name="object" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="path" default=""/>
+                <parameter left="bool" right="" name="interested" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="handleChanged" fullname="QAbstractValueSpaceLayer::handleChanged" href="qabstractvaluespacelayer.html#handleChanged" location="qvaluespace.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="handleChanged(quintptr handle)">
-                <parameter left="quintptr" right="" name="handle" default=""></parameter>
+                <parameter left="quintptr" right="" name="handle" default=""/>
             </function>
         </class>
         <namespace access="public" threadsafety="unspecified" status="commendable" name="QValueSpace" href="qvaluespace.html" location="qvaluespace.h" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="initValuespaceManager" fullname="QValueSpace::initValuespaceManager" href="qvaluespace.html#initValuespaceManager" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespaceManager()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="initValuespace" fullname="QValueSpace::initValuespace" href="qvaluespace.html#initValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespace()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="reinitValuespace" fullname="QValueSpace::reinitValuespace" href="qvaluespace.html#reinitValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="reinitValuespace()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="initValuespaceManager" fullname="QValueSpace::initValuespaceManager" href="qvaluespace.html#initValuespaceManager" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespaceManager()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="initValuespace" fullname="QValueSpace::initValuespace" href="qvaluespace.html#initValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespace()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="reinitValuespace" fullname="QValueSpace::reinitValuespace" href="qvaluespace.html#reinitValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="reinitValuespace()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="installLayer" fullname="QValueSpace::installLayer" href="qvaluespace.html#installLayer" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="installLayer(QAbstractValueSpaceLayer * layer)">
-                <parameter left="QAbstractValueSpaceLayer *" right="" name="layer" default=""></parameter>
+                <parameter left="QAbstractValueSpaceLayer *" right="" name="layer" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableLayers" fullname="QValueSpace::availableLayers" href="qvaluespace.html#availableLayers" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QUuid&gt;" signature="availableLayers()"/>
         </namespace>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" href="qvaluespaceitem.html" location="qvaluespace.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" href="qvaluespaceitem.html" location="qvaluespace.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QValueSpaceItem(const QValueSpaceItem &amp; base, const QByteArray &amp; path, QObject * parent)">
-                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""></parameter>
-                <parameter left="const QByteArray &amp;" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""/>
+                <parameter left="const QByteArray &amp;" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-5" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QValueSpaceItem(const QValueSpaceItem &amp; base, const QString &amp; path, QObject * parent)">
-                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""></parameter>
-                <parameter left="const QString &amp;" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""/>
+                <parameter left="const QString &amp;" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-6" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QValueSpaceItem(const QValueSpaceItem &amp; base, const char * path, QObject * parent)">
-                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""></parameter>
-                <parameter left="const char *" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""/>
+                <parameter left="const char *" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-2" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QValueSpaceItem(const QValueSpaceItem &amp; other, QObject * parent)">
-                <parameter left="const QValueSpaceItem &amp;" right="" name="other" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QValueSpaceItem &amp;" right="" name="other" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-3" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceItem(const QByteArray &amp; path, QObject * parent)">
-                <parameter left="const QByteArray &amp;" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-7" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="7" type="" signature="QValueSpaceItem(const QString &amp; path, QObject * parent)">
-                <parameter left="const QString &amp;" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const QString &amp;" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-8" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="8" type="" signature="QValueSpaceItem(const char * path, QObject * parent)">
-                <parameter left="const char *" right="" name="path" default=""></parameter>
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="const char *" right="" name="path" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem-4" location="qvaluespace.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QValueSpaceItem(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"></parameter>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QValueSpaceItem" fullname="QValueSpaceItem::~QValueSpaceItem" href="qvaluespaceitem.html#dtor.QValueSpaceItem" location="qvaluespace.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QValueSpaceItem()"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemName" fullname="QValueSpaceItem::itemName" href="qvaluespaceitem.html#itemName" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="itemName() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="subPaths" fullname="QValueSpaceItem::subPaths" href="qvaluespaceitem.html#subPaths" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="subPaths() const"></function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="remove()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QValueSpaceItem" fullname="QValueSpaceItem::~QValueSpaceItem" href="qvaluespaceitem.html#dtor.QValueSpaceItem" location="qvaluespace.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QValueSpaceItem()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="itemName" fullname="QValueSpaceItem::itemName" href="qvaluespaceitem.html#itemName" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="itemName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subPaths" fullname="QValueSpaceItem::subPaths" href="qvaluespaceitem.html#subPaths" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="subPaths() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="remove()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove-2" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="remove(const QByteArray &amp; subPath)">
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove-3" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="remove(const char * subPath)">
-                <parameter left="const char *" right="" name="subPath" default=""></parameter>
+                <parameter left="const char *" right="" name="subPath" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove-4" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="bool" signature="remove(const QString &amp; subPath)">
-                <parameter left="const QString &amp;" right="" name="subPath" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="subPath" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setValue(const QVariant &amp; value)">
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-2" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setValue(const QByteArray &amp; subPath, const QVariant &amp; value)">
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-3" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="setValue(const char * subPath, const QVariant &amp; value)">
-                <parameter left="const char *" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="const char *" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-4" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="bool" signature="setValue(const QString &amp; subPath, const QVariant &amp; value)">
-                <parameter left="const QString &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""></parameter>
+                <parameter left="const QString &amp;" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QValueSpaceItem::sync" href="qvaluespaceitem.html#sync" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="sync()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QValueSpaceItem::sync" href="qvaluespaceitem.html#sync" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="sync()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(const QByteArray &amp; subPath, const QVariant &amp; def) const">
-                <parameter left="const QByteArray &amp;" right="" name="subPath" default="QByteArray()"></parameter>
-                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"></parameter>
+                <parameter left="const QByteArray &amp;" right="" name="subPath" default="QByteArray()"/>
+                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-3" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QVariant" signature="value(const char * subPath, const QVariant &amp; def) const">
-                <parameter left="const char *" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"></parameter>
+                <parameter left="const char *" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-2" location="qvaluespace.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QVariant" signature="value(const QString &amp; subPath, const QVariant &amp; def) const">
-                <parameter left="const QString &amp;" right="" name="subPath" default=""></parameter>
-                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"></parameter>
+                <parameter left="const QString &amp;" right="" name="subPath" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QValueSpaceItem::operator=" href="qvaluespaceitem.html#operator=" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QValueSpaceItem &amp;" signature="operator=(const QValueSpaceItem &amp; other)">
-                <parameter left="const QValueSpaceItem &amp;" right="" name="other" default=""></parameter>
+                <parameter left="const QValueSpaceItem &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contentsChanged" fullname="QValueSpaceItem::contentsChanged" href="qvaluespaceitem.html#contentsChanged" location="qvaluespace.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contentsChanged()"></function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contentsChanged" fullname="QValueSpaceItem::contentsChanged" href="qvaluespaceitem.html#contentsChanged" location="qvaluespace.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contentsChanged()"/>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Context Framework Developer Resources" fulltitle="Qt Context Framework Developer Resources" subtitle="" location="index.qdoc">
-            <contents name="qt-value-space" title="Qt Value Space" level="1"></contents>
-            <contents name="architecture" title="Architecture" level="2"></contents>
-            <contents name="application-object-layer" title="Application Object layer" level="3"></contents>
-            <contents name="building-and-compiling" title="Building and compiling" level="1"></contents>
-            <contents name="reference-documentation" title="Reference documentation" level="1"></contents>
-            <contents name="main-classes" title="Main classes" level="2"></contents>
+            <contents name="qt-value-space" title="Qt Value Space" level="1"/>
+            <contents name="architecture" title="Architecture" level="2"/>
+            <contents name="application-object-layer" title="Application Object layer" level="3"/>
+            <contents name="building-and-compiling" title="Building and compiling" level="1"/>
+            <contents name="reference-documentation" title="Reference documentation" level="1"/>
+            <contents name="main-classes" title="Main classes" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_AUTO_INSTALL_LAYER" href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER" location="registrylayer_win.cpp" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QAbstractValueSpaceLayer" type="" signature="QVALUESPACE_AUTO_INSTALL_LAYER( className)">
-            <parameter left="" right="" name="className" default=""></parameter>
+            <parameter left="" right="" name="className" default=""/>
         </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_APPLICATION_LAYER" href="qvaluespace.html#QVALUESPACE_APPLICATION_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_APPLICATION_LAYER()"/>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_REGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_REGISTRY_LAYER()"/>
     </namespace>
 </INDEX>
