@@ -2,7 +2,7 @@
 <!DOCTYPE QDOCINDEX>
 <INDEX url="" title="System Information Library Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemInfo" href="qsysteminfo.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemInfo" href="qsysteminfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemInfo" fullname="QSystemInfo::QSystemInfo" href="qsysteminfo.html#QSystemInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -49,7 +49,7 @@
                 <parameter left="QSystemInfo::Feature" right="" name="feature" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" href="qsystemnetworkinfo.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" href="qsystemnetworkinfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" fullname="QSystemNetworkInfo::QSystemNetworkInfo" href="qsystemnetworkinfo.html#QSystemNetworkInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemNetworkInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -87,7 +87,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isWLANAccessible" fullname="QSystemNetworkInfo::isWLANAccessible" href="qsystemnetworkinfo.html#isWLANAccessible" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isWLANAccessible() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operatorName" fullname="QSystemNetworkInfo::operatorName" href="qsystemnetworkinfo.html#operatorName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="operatorName()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" href="qsystemdisplayinfo.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" href="qsystemdisplayinfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" fullname="QSystemDisplayInfo::QSystemDisplayInfo" href="qsystemdisplayinfo.html#QSystemDisplayInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDisplayInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -98,7 +98,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isScreenLockOn" fullname="QSystemDisplayInfo::isScreenLockOn" href="qsystemdisplayinfo.html#isScreenLockOn" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isScreenLockOn()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" href="qsystemmemoryinfo.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" href="qsystemmemoryinfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" fullname="QSystemMemoryInfo::QSystemMemoryInfo" href="qsystemmemoryinfo.html#QSystemMemoryInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemMemoryInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -131,7 +131,7 @@
                 <parameter left="const QString &amp;" right="" name="driveVolume" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" href="qsystemdeviceinfo.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" href="qsystemdeviceinfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" fullname="QSystemDeviceInfo::QSystemDeviceInfo" href="qsystemdeviceinfo.html#QSystemDeviceInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDeviceInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -194,7 +194,7 @@
                 <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemScreenSaver" href="qsystemscreensaver.html" location="qsysteminfo.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemScreenSaver" href="qsystemscreensaver.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemScreenSaver" fullname="QSystemScreenSaver::QSystemScreenSaver" href="qsystemscreensaver.html#QSystemScreenSaver" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemScreenSaver(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
