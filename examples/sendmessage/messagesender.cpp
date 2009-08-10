@@ -168,6 +168,7 @@ void MessageSender::send()
     message.setTo(QMessageAddress(to, QMessageAddress::Email));
     message.setSubject(subject);
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (attachmentsList->count()) {
         QMessageContentContainer textPart;
         textPart.setContentType("text");
@@ -186,6 +187,7 @@ void MessageSender::send()
     } else {
         message.setContent(text);
     }
+#endif
 
     if (service.send(message)) {
         sendButton->setEnabled(false);
