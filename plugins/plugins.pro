@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
-DEPENDPATH += $$PWD/../multimedia
-
 SUBDIRS = mpd
 
 contains(QT_CONFIG, phonon): SUBDIRS += phonon
