@@ -62,7 +62,6 @@ public:
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-    QString getDetailOfFeature(QSystemInfo::Feature feature);
 private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);

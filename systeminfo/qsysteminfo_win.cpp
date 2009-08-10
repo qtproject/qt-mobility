@@ -205,12 +205,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
-QString QSystemInfoPrivate::getDetailOfFeature(QSystemInfo::Feature feature)
-{
-    Q_UNUSED(feature);
-    return "No other features";
-}
-
 //////// QSystemNetworkInfo
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent)
