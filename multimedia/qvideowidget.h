@@ -39,7 +39,7 @@
 
 #include "qmultimediaglobal.h"
 
-class QAbstractMediaService;
+class QAbstractMediaObject;
 
 class QVideoWidgetPrivate;
 
@@ -53,7 +53,7 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
     Q_PROPERTY(int saturation READ saturation WRITE setSaturation NOTIFY saturationChanged)
     Q_DECLARE_PRIVATE(QVideoWidget)
 public:
-    QVideoWidget(QAbstractMediaService *service, QWidget *parent = 0);
+    QVideoWidget(QAbstractMediaObject *object, QWidget *parent = 0);
     ~QVideoWidget();
 
     bool isFullscreen() const;

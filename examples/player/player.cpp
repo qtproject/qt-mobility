@@ -67,7 +67,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
 #ifdef USE_VIDEOWIDGET
-    videoWidget = new QVideoWidget(player->service());
+    videoWidget = new QVideoWidget(player);
 #else
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
