@@ -257,11 +257,6 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-bool QSystemNetworkInfoPrivate::isLocationEnabled() const
-{
-    return false;
-}
-
 bool QSystemNetworkInfoPrivate::isWLANAccessible() const
 {
     HANDLE phClientHandle = NULL;
@@ -341,15 +336,6 @@ QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 {
 }
 
-bool QSystemMemoryInfoPrivate::hasRamMemoryLevel()
-{
-    return true;
-}
-
-qint64 QSystemMemoryInfoPrivate::freeMemoryLevel() const
-{
-}
-
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
 }
@@ -370,18 +356,6 @@ QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 void QSystemMemoryInfoPrivate::getMountEntries()
 {
 }
-
-
-bool QSystemMemoryInfoPrivate::isCriticalMemory() const
-{
-    return false;
-}
-
-//bool  QSystemMemoryInfoPrivate::isDiskSpaceCritical(const QString &driveVolume)
-// {
-//    Q_UNUSED(driveVolume);
-//    return false;
-// }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)

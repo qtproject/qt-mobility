@@ -90,7 +90,6 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    bool isLocationEnabled() const;
     bool isWLANAccessible() const;
     QString operatorName();
 
@@ -127,15 +126,8 @@ public:
     QStringList listOfVolumes();
     QSystemMemoryInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
 
-Q_SIGNALS:
-    void memoryCritical(qint32);
-    void diskSpaceCritical(QString &driveVolume, qint32);
-    void newMemoryCardAdded(const QString &driveVolume);
-
 private:
 #if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
-    virtual bool isCriticalMemory() const;
-//    virtual bool isDiskSpaceCritical(const QString &driveVolume);
     QHash<QString, QString> mountEntries;
     void getMountEntries();
 #endif

@@ -470,11 +470,6 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-bool QSystemNetworkInfoPrivate::isLocationEnabled() const
-{
-    return false;
-}
-
 bool QSystemNetworkInfoPrivate::isWLANAccessible() const
 {
     return false;
@@ -689,69 +684,6 @@ void QSystemMemoryInfoPrivate::getMountEntries()
     endmntent(mntfp);
 }
 
-
-bool QSystemMemoryInfoPrivate::isCriticalMemory() const
-{
-    QFile file("/proc/meminfo");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/meminfo";
-        return false;
-    }
-
-    QTextStream meminfo(&file);
-    QString line;
-    quint64 total = 0;
-    quint64 memfree = 0;
-    quint64 buffers = 0;
-    quint64 cached = 0;
-
-    bool ok = false;
-    static QRegExp kernel24HeaderLine("\\s+total:\\s+used:\\s+free:\\s+shared:\\s+buffers:\\s+cached:");
-
-    line = meminfo.readLine();
-    if(kernel24HeaderLine.indexIn(line) > -1) {
-        static QRegExp kernel24DataLine("Mem:\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
-        line = meminfo.readLine();
-        if(kernel24DataLine.indexIn(line) > -1) {
-            total = kernel24DataLine.cap(1).toULongLong(&ok);
-            memfree = kernel24DataLine.cap(3).toULongLong();
-            buffers = kernel24DataLine.cap(5).toULongLong();
-            cached = kernel24DataLine.cap(6).toULongLong();
-        }
-    }  else {
-        static QRegExp kernel26MemTotalLine("MemTotal:\\s+(\\d+)\\s+kB");
-        static QRegExp kernel26MemFreeLine("MemFree:\\s+(\\d+)\\s+kB");
-        static QRegExp kernel26BuffersLine("Buffers:\\s+(\\d+)\\s+kB");
-        static QRegExp kernel26CachedLine("Cached:\\s+(\\d+)\\s+kB");
-        while (!meminfo.atEnd()) {
-            if (kernel26MemTotalLine.indexIn(line) > -1)
-                total = kernel26MemTotalLine.cap(1).toULongLong(&ok);
-            else if (kernel26MemFreeLine.indexIn(line) > -1)
-                memfree = kernel26MemFreeLine.cap(1).toULongLong();
-            else if (kernel26BuffersLine.indexIn(line) > -1)
-                buffers = kernel26BuffersLine.cap(1).toULongLong();
-            else if (kernel26CachedLine.indexIn(line) > -1) {
-                cached = kernel26CachedLine.cap(1).toULongLong();
-                break; //last entry to read
-            }
-            line = meminfo.readLine();
-        }
-    }
-
-    if (!ok)
-        qWarning() << "Meminfo cannot monitor available memory";
-    quint64 percentAvailable = total ? (100 * ( buffers + cached + memfree) / total) : 0;
-if(percentAvailable < 4) //3% is critical
-    return true;
-else
-    return false;
-}
-
-//bool  QSystemMemoryInfoPrivate::isDiskSpaceCritical(const QString &driveVolume)
-// {
-//    Q_UNUSED(driveVolume);
-//    return false;
-// }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
