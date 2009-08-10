@@ -116,24 +116,6 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-#if 0
-    // Qt translations
-    QDir localeDir(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    if(localeDir.exists()) {
-        QStringList langList;
-        QFileInfoList localeList = localeDir.entryInfoList(QStringList() << "qt_*.qm", QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(QFileInfo trFileInfo, localeList) {
-            QString lang = trFileInfo.baseName();
-            if(!lang.contains("help")) {
-                lang = lang.mid(lang.indexOf("_")+1,2);
-                if(!langList.contains(lang)) {
-                    langList << lang;
-                }
-            }
-        }
-        return langList;
-    }
-#endif
     QDir localeDir("/usr/lib/locale");
     if(localeDir.exists()) {
         QStringList langList;
@@ -150,7 +132,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString &parameter) const
+/*QPair< int,double >*/ QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
@@ -244,7 +226,7 @@ QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString
 
 
 //2 letter ISO 3166-1
-QString QSystemInfoPrivate::countryCode() const
+QString QSystemInfoPrivate::currentCountryCode() const
 {
     return QString(setlocale(LC_ALL,"")).mid(3,2);
 }
@@ -457,17 +439,17 @@ QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::getCellNetworkS
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
-qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     return -1;
 }
 
-qint32 QSystemNetworkInfoPrivate::cellId()
+int QSystemNetworkInfoPrivate::cellId()
 {
     return -1;
 }
 
-qint32 QSystemNetworkInfoPrivate::locationAreaCode()
+int QSystemNetworkInfoPrivate::locationAreaCode()
 {
     return -1;
 }
@@ -520,7 +502,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-qint32 QSystemDisplayInfoPrivate::displayBrightness()
+int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -606,7 +588,7 @@ qint32 QSystemDisplayInfoPrivate::displayBrightness()
     return -1;
 }
 
-qint32 QSystemDisplayInfoPrivate::colorDepth(qint32 screen)
+int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
     Q_UNUSED(screen);
 #ifdef Q_WS_X11
@@ -632,28 +614,6 @@ QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
 
 QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 {
-}
-
-bool QSystemMemoryInfoPrivate::hasRamMemoryLevel()
-{
-    return true;
-}
-
-qint64 QSystemMemoryInfoPrivate::freeMemoryLevel() const
-{
-    QFile file("/proc/meminfo");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/meminfo";
-        return -1;
-    }
-    QTextStream meminfo(&file);
-    QString line;
-    line = meminfo.readLine();
-    if(line.contains("MemTotal")) {
-        QString ls = line.section(' ',-2, -2);
-        return ls.toInt();
-    }
-    return 0;
 }
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
@@ -726,6 +686,7 @@ void QSystemMemoryInfoPrivate::getMountEntries()
             long totalBlocks = fs.f_blocks;
             double total = (double)totalBlocks * blockSize;
             if(total > 0 && !mountEntries.keys().contains(me->mnt_dir)) {
+                qWarning() << me->mnt_type;
                 mountEntries[me->mnt_fsname] = me->mnt_dir;
             }
         }
@@ -897,7 +858,7 @@ QString QSystemDeviceInfoPrivate::imsi()
         return "Sim Not Available";
 }
 
-QString QSystemDeviceInfoPrivate::manufacturer() const
+QString QSystemDeviceInfoPrivate::manufacturer()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -937,7 +898,7 @@ QString QSystemDeviceInfoPrivate::manufacturer() const
     return QString();
 }
 
-QString QSystemDeviceInfoPrivate::model() const
+QString QSystemDeviceInfoPrivate::model()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -969,7 +930,7 @@ QString QSystemDeviceInfoPrivate::model() const
     return QString();
 }
 
-QString QSystemDeviceInfoPrivate::productName() const
+QString QSystemDeviceInfoPrivate::productName()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1153,6 +1114,41 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     return false;
 }
+
+ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
+ {
+#if !defined(QT_NO_DBUS)
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("ac_adapter");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                qWarning() <<"AC" << dev;
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    if(ifaceDevice.getPropertyBool("ac_adapter.present")) {
+                        return QSystemDeviceInfo::WallPower;
+                    }
+                }
+            }
+        }
+
+        list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                qWarning() <<"battery"<< dev;
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    if(ifaceDevice.getPropertyBool("battery.present") ){
+                        return QSystemDeviceInfo::BatteryPower;
+                    }
+                }
+            }
+        }
+#endif
+
+        return QSystemDeviceInfo::UnknownPower;
+ }
+
 
 //////////////
 ///////

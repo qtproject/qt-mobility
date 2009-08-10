@@ -42,8 +42,6 @@ class tst_QSystemMemoryInfo : public QObject
 private slots:
     void initTestCase();
 
-    void tst_hasRamMemoryLevel();
-    void tst_freeMemoryLevel();
     void tst_totalDiskSpace();
     void tst_availableDiskSpace();
     void tst_listOfVolumes();
@@ -54,18 +52,6 @@ private slots:
 void tst_QSystemMemoryInfo::initTestCase()
 {
     qRegisterMetaType<QSystemMemoryInfo::VolumeType>("QSystemMemoryInfo::VolumeType");
-}
-
-void tst_QSystemMemoryInfo::tst_hasRamMemoryLevel()
-{
-    QSystemMemoryInfo mi;
-    mi.hasRamMemoryLevel();
-}
-
-void tst_QSystemMemoryInfo::tst_freeMemoryLevel()
-{
-    QSystemMemoryInfo mi;
-    QVERIFY(mi.freeMemoryLevel() > 0);
 }
 
 void tst_QSystemMemoryInfo::tst_totalDiskSpace()

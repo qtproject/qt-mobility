@@ -47,7 +47,7 @@ private slots:
 void tst_QSystemDisplayInfo::tst_displayBrightness()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.displayBrightness() > -2);
+    QVERIFY(di.displayBrightness(0) > -2);
 }
 
 void tst_QSystemDisplayInfo::tst_colorDepth()

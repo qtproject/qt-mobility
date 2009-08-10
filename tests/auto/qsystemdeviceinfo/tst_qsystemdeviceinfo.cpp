@@ -81,6 +81,13 @@ private slots:
 //    void tst_powerState();
 
 };
+/*
+signal todo:
+//    void profileChanged(QSystemDeviceInfo::Profile);
+    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
+    void batteryLevelCritical(qint32);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
+  */
 
 void tst_QSystemDeviceInfo::initTestCase()
 {

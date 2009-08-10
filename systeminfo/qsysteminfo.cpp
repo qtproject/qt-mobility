@@ -237,36 +237,6 @@ QT_BEGIN_NAMESPACE
 
   */
 
-
-/*!
-  \fn void QSystemDeviceInfo::profileChanged(QSystemDeviceInfo::Profile profile)
-
-  This signal is emitted when user changes the current operating profile.
-\a profile is the new profile.
- */
-
-
-/*!
-  \fn void QSystemDeviceInfo::batteryLevelChanged(QSystemDeviceInfo::BatteryLevel level)
-
-  This signal is emitted when battery level has changed.
-  \a level is the new level.
- */
-
-/*!
-  \fn void QSystemDeviceInfo::batteryLevelCritical(qint32 level)
-
-  This signal is emitted when the level of the battery charge as become critical or 3% or less.
-  \a level New battery level
- */
-
-/*!
-  \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
-
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
-  \a state is the new power state.
- */
-
  /*!
    Constructs a QSystemInfo with the given \a parent.
  */
@@ -283,16 +253,18 @@ QSystemInfo::~QSystemInfo()
 /*!
     Returns the current language in 2 letter ISO 639-1 format.
  */
-QString QSystemInfo::currentLanguage() const
+QString QSystemInfo::currentLanguage()
 {
-    return d->currentLanguage();
+    QSystemInfoPrivate dp;
+    return dp.currentLanguage();
 }
 /*!
     Returns a QStringList of available languages in 2 letter ISO 639-1 format.
   */
-QStringList QSystemInfo::availableLanguages() const
+QStringList QSystemInfo::availableLanguages()
 {
-    return d->availableLanguages();
+    QSystemInfoPrivate dp;
+    return dp.availableLanguages();
 }
 
 /*!
@@ -311,11 +283,12 @@ QString QSystemInfo::getVersion(QSystemInfo::Version type, const QString &parame
 }
 
 /*!
-    Returns the  2 letter ISO 3166-1 country code.
+    Returns the 2 letter ISO 3166-1 for the current country code.
 */
-QString QSystemInfo::countryCode() const
+QString QSystemInfo::currentCountryCode()
 {
-    return d->countryCode();
+    QSystemInfoPrivate dp;
+    return dp.currentCountryCode();
 }
 
 /*!
@@ -325,14 +298,6 @@ QString QSystemInfo::countryCode() const
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     return d->hasFeatureSupported(feature);
-}
-
-/*!
-    Returns further detail of Feature \a feature.
-  */
-QString QSystemInfo::getDetailOfFeature(QSystemInfo::Feature feature)
-{
-    return d->getDetailOfFeature(feature);
 }
 
  /*!
@@ -356,27 +321,31 @@ QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfo::getCellNetworkStatus()
 }
 
 /*!
-    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling
+    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling,
+    or -1 in the case of unknown network mode or error.
 */
-qint32 QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    return d->networkSignalStrength(mode);
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.networkSignalStrength(mode);
 }
 
 /*!
     Returns the Cell ID of the connected tower or based station.
 */
-qint32 QSystemNetworkInfo::cellId()
+int QSystemNetworkInfo::cellId()
 {
-    return d->cellId();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.cellId();
 }
 
 /*!
-    Returns the Location Area Code, in the range of 0 to 65,535.
+    Returns the Location Area Code.
 */
-qint32 QSystemNetworkInfo::locationAreaCode()
+int QSystemNetworkInfo::locationAreaCode()
 {
-    return d->locationAreaCode();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.locationAreaCode();
 }
 
  /*!
@@ -384,7 +353,8 @@ qint32 QSystemNetworkInfo::locationAreaCode()
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
-    return d->currentMobileCountryCode();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.currentMobileCountryCode();
 }
 
 /*!
@@ -392,7 +362,8 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
-    return d->currentMobileNetworkCode();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.currentMobileNetworkCode();
 }
 
 /*!
@@ -400,7 +371,8 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
-    return d->homeMobileCountryCode();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.homeMobileCountryCode();
 }
 
 /*!
@@ -408,23 +380,17 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
-    return d->homeMobileNetworkCode();
-}
-
-/*!
-    Returns true if the system has location services, otherwise false.
-*/
-bool QSystemNetworkInfo::isLocationEnabled() const
-{
-    return d->isLocationEnabled();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.homeMobileNetworkCode();
 }
 
 /*!
     Returns true if the system has an accessab;e WLan, otherwise false.
 */
-bool QSystemNetworkInfo::isWLANAccessible() const
+bool QSystemNetworkInfo::isWLANAccessible()
 {
-    return d->isWLANAccessible();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.isWLANAccessible();
 }
 
 /*!
@@ -432,36 +398,37 @@ bool QSystemNetworkInfo::isWLANAccessible() const
 */
 QString QSystemNetworkInfo::operatorName()
 {
-    return d->operatorName();
+    QSystemNetworkInfoPrivate dnp;
+    return dnp.operatorName();
 }
 
 // display
  /*!
    Constructs a QSystemDisplayInfo with the given \a parent.
  */
-QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
+QSystemDisplayInfo::QSystemDisplayInfo()
 {
-    d = new QSystemDisplayInfoPrivate(parent);
 }
 QSystemDisplayInfo::~QSystemDisplayInfo()
 {
-    delete d;
 }
 
 /*!
     Returns the display brightness in %, 1 - 100 scale
 */
-qint32 QSystemDisplayInfo::displayBrightness()
+int QSystemDisplayInfo::displayBrightness(int screen)
 {
-    return d->displayBrightness();
+    QSystemDisplayInfoPrivate dp;
+    return dp.displayBrightness(screen);
 }
 
 /*!
     Returns the color depth of the screen \a screenNumber, in bits per pixel.
 */
-qint32 QSystemDisplayInfo::colorDepth(qint32 screenNumber)
+int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
-    return d->colorDepth(screenNumber);
+    QSystemDisplayInfoPrivate dp;
+    return dp.colorDepth(screenNumber);
 }
 
 /*!
@@ -469,7 +436,8 @@ qint32 QSystemDisplayInfo::colorDepth(qint32 screenNumber)
 */
 bool QSystemDisplayInfo::isScreenLockOn()
 {
-    return d->isScreenLockOn();
+    QSystemDisplayInfoPrivate dp;
+    return dp.isScreenLockOn();
 }
 
 
@@ -479,28 +447,12 @@ bool QSystemDisplayInfo::isScreenLockOn()
 QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
 {
     d = new QSystemMemoryInfoPrivate(parent);
-    connect(d,SIGNAL(newMemoryCardAdded(QString)),this,SIGNAL(newMemoryCard(QString)));
+  //  connect(d,SIGNAL(newMemoryCardAdded(QString)),this,SIGNAL(newMemoryCard(QString)));
 }
 
 QSystemMemoryInfo::~QSystemMemoryInfo()
 {
     delete d;
-}
-
-/*!
-    Returns true, if the system can present RAM mempry levels, otherwise false.
-*/
-bool QSystemMemoryInfo::hasRamMemoryLevel()
-{
-    return d->hasRamMemoryLevel();
-}
-
-/*!
-    Returns the amount of free RAM memory in kilobytes.
-*/
-quint64 QSystemMemoryInfo::freeMemoryLevel() const
-{
-    return d->freeMemoryLevel();
 }
 
 /*!
@@ -524,7 +476,8 @@ qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
 */
 QStringList QSystemMemoryInfo::listOfVolumes()
 {
-    return d->listOfVolumes();
+    QSystemMemoryInfoPrivate dp;
+    return dp.listOfVolumes();
 }
 
 /*!
@@ -559,41 +512,46 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfo::getInputMethodType()
 /*!
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
 */
-QString QSystemDeviceInfo::imei() const
+QString QSystemDeviceInfo::imei()
 {
-    return d->imei();
+    QSystemDeviceInfoPrivate dip;
+    return dip.imei();
 }
 
 /*!
     Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.
 */
-QString QSystemDeviceInfo::imsi() const
+QString QSystemDeviceInfo::imsi()
 {
-    return d->imsi();
+    QSystemDeviceInfoPrivate dip;
+    return dip.imsi();
 }
 
 /*!
     Returns the name of the manufacturer.
 */
-QString QSystemDeviceInfo::manufacturer() const
+QString QSystemDeviceInfo::manufacturer()
 {
-    return d->manufacturer();
+    QSystemDeviceInfoPrivate dip;
+    return dip.manufacturer();
 }
 
 /*!
     Returns the model of the device, 0r in the case of desktops, the CPU.
 */
-QString QSystemDeviceInfo::model() const
+QString QSystemDeviceInfo::model()
 {
-    return d->model();
+    QSystemDeviceInfoPrivate dip;
+    return dip.model();
 }
 
 /*!
     Returns the product name of the device.
 */
-QString QSystemDeviceInfo::productName() const
+QString QSystemDeviceInfo::productName()
 {
-    return d->productName();
+    QSystemDeviceInfoPrivate dip;
+    return dip.productName();
 }
 /*!
     Returns the battery charge level as percentage 1 - 100 scale
@@ -633,6 +591,15 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::getCurrentProfile()
 {
     return d->getCurrentProfile();
 }
+
+/*!
+  Gets the current device power state
+*/
+QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
+{
+return d->currentPowerState();
+}
+
 
 /////
  /*!

@@ -57,9 +57,9 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
-    QString getVersion(QSystemInfo::Version,  const QString &parameter = QString()) const;
+    QString getVersion(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString countryCode() const; //2 letter ISO 3166-1
+    QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
     QString getDetailOfFeature(QSystemInfo::Feature feature);
@@ -82,8 +82,8 @@ public:
 
     QSystemNetworkInfo::CellNetworkStatus getCellNetworkStatus();
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    qint32 cellId();
-    qint32 locationAreaCode();
+    int cellId();
+    int locationAreaCode();
 
     QString currentMobileCountryCode(); // Mobile Country Code
     QString currentMobileNetworkCode(); // Mobile Network Code
@@ -108,8 +108,8 @@ public:
 
 
 // display
-    qint32 displayBrightness();
-    qint32 colorDepth(qint32 screen);
+    int displayBrightness(int screen);
+    int colorDepth(int screen);
     bool isScreenLockOn();
 };
 
@@ -123,8 +123,6 @@ public:
     virtual ~QSystemMemoryInfoPrivate();
 
     // memory
-    bool hasRamMemoryLevel();
-    qint64 freeMemoryLevel() const;
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
@@ -155,11 +153,11 @@ public:
 
 // device
 
-    QString imei();
-    QString imsi();
-    QString manufacturer() const;
-    QString model() const;
-    QString productName() const;
+    static QString imei();
+    static QString imsi();
+    static QString manufacturer();
+    static QString model();
+    static QString productName();
 
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
@@ -170,18 +168,13 @@ public:
     QSystemDeviceInfo::Profile getCurrentProfile();
     bool isBatteryCharging();
 
+    QSystemDeviceInfo::PowerState currentPowerState();
 
-Q_SIGNALS:
-
-    void profileChanged(QSystemDeviceInfo::Profile);
-    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
-    void batteryLevelCritical(qint32);
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
 
 };
-//    QSystemInfo::Error error() const;
+
 
 class QSystemScreenSaverPrivate : public QSystemScreenSaver
 {

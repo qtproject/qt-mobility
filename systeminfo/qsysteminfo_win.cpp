@@ -86,7 +86,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         }
     }
     return lgList;
-    return QStringList() << currentLanguage();
 }
 
 // "major.minor.build" format.

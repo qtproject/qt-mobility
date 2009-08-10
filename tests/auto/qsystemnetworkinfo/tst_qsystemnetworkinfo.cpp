@@ -57,7 +57,6 @@ private slots:
     void tst_homeMobileCountryCode();
     void tst_homeMobileNetworkCode();
 
-    void tst_isLocationEnabled();
     void tst_isWLANAccessible();
 
     void tst_operatorName();
@@ -148,15 +147,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
     QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
-}
-
-
-void  tst_QSystemNetworkInfo::tst_isLocationEnabled()
-{
-    QSystemNetworkInfo ni;
-    bool enabled = ni.isLocationEnabled();
-    QVERIFY(enabled == false
-            || enabled== true);
 }
 
 void  tst_QSystemNetworkInfo::tst_isWLANAccessible()

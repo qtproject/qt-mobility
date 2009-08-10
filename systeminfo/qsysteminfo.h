@@ -35,6 +35,8 @@
 
 #include <QObject>
 #include <QSize>
+#include <QPair>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -50,16 +52,17 @@ class QSystemDisplayInfoPrivate;
 class QSystemInfo : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(Version)
+    Q_ENUMS(Feature)
 
 public:
 
     QSystemInfo(QObject *parent = 0);
      virtual ~QSystemInfo();
-//    QSystemInfo::Error error() const;
 
 // general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    static QString currentLanguage(); // 2 letter ISO 639-1
+    static QStringList availableLanguages();	 // 2 letter ISO 639-1
 
     enum Version {
         Os = 1,
@@ -75,12 +78,13 @@ public:
     };
 
     QString getVersion(QSystemInfo::Version type, const QString &parameter = QString());
+//    QPair<int,float> getVersion(QSystemInfo::Version type, const QString &parameter = QString());
 
-    QString countryCode() const; //2 letter ISO 3166-1
+    static QString currentCountryCode(); //2 letter ISO 3166-1
 
 // features
     enum Feature {
-        UnknownFeature = -1,
+        UnknownFeature = 0,
         BluetoothFeature,
         CameraFeature,
         FmradioFeature,
@@ -97,7 +101,6 @@ public:
 	};
 	
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-    QString getDetailOfFeature(QSystemInfo::Feature feature);
 
 private:
     QSystemInfoPrivate *d;
@@ -107,6 +110,8 @@ private:
 class QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(CellNetworkStatus)
+    Q_ENUMS(NetworkMode)
 
 public:
 
@@ -114,8 +119,8 @@ public:
     ~QSystemNetworkInfo();
 
     enum CellNetworkStatus {
-        UndefinedStatus = -1,
-        NoNetworkAvailable = 1,
+        UndefinedStatus = 0,
+        NoNetworkAvailable,
         EmergencyOnly,
         Searching,
         Busy,
@@ -136,41 +141,38 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode);
-    qint32 cellId();
-    qint32 locationAreaCode();
+    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode);
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    static int cellId();
+    static int locationAreaCode();
 
-    QString homeMobileCountryCode();
-    QString homeMobileNetworkCode();
+    static QString currentMobileCountryCode();
+    static QString currentMobileNetworkCode();
 
-    bool isLocationEnabled() const;
-    bool isWLANAccessible() const;
+    static QString homeMobileCountryCode();
+    static QString homeMobileNetworkCode();
 
-    QString operatorName();
+    static bool isWLANAccessible();
+
+    static QString operatorName();
 
 private:
     QSystemNetworkInfoPrivate *d;
 };
 
 ////////
-class QSystemDisplayInfo : public QObject
+class QSystemDisplayInfo
 {
-    Q_OBJECT
 
 public:
 
-    QSystemDisplayInfo(QObject *parent = 0);
+    QSystemDisplayInfo();
     ~QSystemDisplayInfo();
 
-    qint32 displayBrightness();
-    qint32 colorDepth(qint32 screen);
-    bool isScreenLockOn();
+    static int displayBrightness(int screen);
+    static int colorDepth(int screen);
+    static bool isScreenLockOn();
 
-private:
-    QSystemDisplayInfoPrivate *d;
 };
 
 
@@ -178,28 +180,26 @@ private:
 class QSystemMemoryInfo : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(VolumeType)
 
 public:
 
     QSystemMemoryInfo(QObject *parent = 0);
     ~QSystemMemoryInfo();
+
     enum VolumeType {
         NoVolume = 0,
         Internal,
         Removable
 	};
 
-    bool hasRamMemoryLevel();
-    quint64 freeMemoryLevel() const;
     qlonglong totalDiskSpace(const QString &driveVolume);
     qlonglong availableDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
+    static QStringList listOfVolumes();
+
     QSystemMemoryInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
 
-Q_SIGNALS:
-    void memoryCritical(qint32);
-    void diskSpaceCritical(QString &driveVolume, qint32);
-    void newMemoryCard(const QString &driveVolume);
+    //bool isDiskSpaceCritical(const QString &driveVolume);
 
 private:
     QSystemMemoryInfoPrivate *d;
@@ -209,6 +209,9 @@ private:
 class QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(BatteryLevel)
+    Q_ENUMS(PowerState)
+    Q_ENUMS(InputMethod)
 
 public:
 
@@ -217,20 +220,18 @@ public:
 
     enum BatteryLevel {
         NoBatteryLevel = 0,
-        BatteryCritical = 1,
+        BatteryCritical,
         BatteryVeryLow,
         BatteryLow,
         BatteryNormal
     };
 
-//    Q_DECLARE_FLAGS(BatteryLevels, BatteryLevel)
 
     enum PowerState {
-        UnknownPower = -1,
-        BatteryPower = 1,
+        UnknownPower = 0,
+        BatteryPower,
         WallPower
     };
-//    Q_DECLARE_FLAGS(PowerStates, PowerState)
 
 
     enum InputMethod {
@@ -245,19 +246,19 @@ public:
 
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
-    QString imei() const; //International Mobile Equipment Identity
-    QString imsi() const; //International Mobile Subscriber Identity
-    QString manufacturer() const;
-    QString model() const; //external
-    QString productName() const; //internal name
+    static QString imei();
+    static QString imsi();
+    static QString manufacturer();
+    static QString model(); //external
+    static QString productName(); //internal name
 
 // ????
     QSystemDeviceInfo::BatteryLevel batteryLevel() const;
     bool isBatteryCharging();
 
     enum Profile {
-        UnknownProfile = -1,
-        SilentProfile = 0,
+        UnknownProfile = 0,
+        SilentProfile,
         NormalProfile,
         LoudProfile,
         VibProfile,
@@ -276,12 +277,7 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile getCurrentProfile();
 
-Q_SIGNALS:
-
-//    void profileChanged(QSystemDeviceInfo::Profile);
-    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
-    void batteryLevelCritical(qint32);
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
+    QSystemDeviceInfo::PowerState currentPowerState();
 
 private:
     QSystemDeviceInfoPrivate *d;
