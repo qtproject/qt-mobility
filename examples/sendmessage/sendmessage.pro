@@ -1,3 +1,5 @@
+include(../../common.pri)
+
 TEMPLATE = app
 TARGET = sendmessage
 
@@ -12,8 +14,6 @@ win32:debug {
 # Build against the messaging library
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../messaging
 LIBS += -L$$OUT_PWD/../../messaging/$$OUTPREFIX -lQtMessaging
-
-DEFINES += QMESSAGING_OPTIONAL QMESSAGING_OPTIONAL_FOLDER
 
 symbian|win32 {
 } else {
