@@ -114,6 +114,8 @@ public:
     bool isValid();
 
     HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message);
+    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMAPIFOLDER *folder);
+    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown);
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId());
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
     static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }

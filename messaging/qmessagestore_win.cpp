@@ -350,6 +350,73 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
+    LPMAPIFOLDER folder;
+    QMessageStore::ErrorCode ignoredError;
+    MapiEntryId entryId(QMessageFolderIdPrivate::entryId(id));
+#if 0 // force lookup using record keys, TODO remove
+    if (false) {
+#else
+    // Try to quickly retrieve the folder based on its EntryId.
+    if (mapiSession->openEntry(&ignoredError, entryId, &folder) == S_OK) {
+#endif
+        const int nCols(3);
+        enum { displayNameColumn = 0, recordKeyColumn, parentEntryIdColumn };
+        SizedSPropTagArray(nCols, columns) = {nCols, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_PARENT_ENTRYID}};
+        SPropValue *properties(0);
+        ULONG count;
+
+        if (folder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
+            LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
+            MapiRecordKey folderKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+            LPSPropValue entryIdProp(&properties[parentEntryIdColumn]);
+            MapiEntryId parentEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            QString displayName(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
+            QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
+            QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
+            QStringList path;
+            qDebug() << "QMessageStore::folder fast finding path for" << displayName; // TODO remove debug
+
+            LPMAPIFOLDER ancestorFolder;
+            MapiEntryId ancestorEntryId(parentEntryId);
+            MapiRecordKey previousRecordKey(folderKey);
+            QMessageFolderId parentId;
+            SPropValue *ancestorProperties(0);
+            folder->Release();
+            // Iterate through ancestors towards the root
+            while (mapiSession->openEntry(&ignoredError, ancestorEntryId, &ancestorFolder) == S_OK) {
+                if (ancestorFolder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &ancestorProperties) == S_OK) {
+                    LPSPropValue ancestorRecordKeyProp(&ancestorProperties[recordKeyColumn]);
+                    MapiRecordKey ancestorRecordKey(reinterpret_cast<const char*>(ancestorRecordKeyProp->Value.bin.lpb), ancestorRecordKeyProp->Value.bin.cb);
+                    qDebug() << "ancestorRecordKey" << ancestorRecordKey.toBase64(); // TODO remove debug
+                    if (ancestorEntryId == parentEntryId) { 
+                        // This ancestor is the parent of the folder being retrieved, create a QMessageFolderId for the parent
+                        parentId = QMessageFolderIdPrivate::from(ancestorRecordKey, storeRecordKey, parentEntryId);
+                    }
+
+                    // Reached the root and have a complete path for the folder being retrieved
+                    if (ancestorRecordKey == previousRecordKey) { // root
+                        path.removeFirst();
+                        path.removeFirst();
+                        qDebug() << "Fast found folder path" << path; // TODO remove debug
+                        ancestorFolder->Release();
+                        return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));
+                    }
+
+                    // Prepare to consider next ancestor
+                    LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);                    
+                    ancestorEntryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+                    previousRecordKey = ancestorRecordKey;
+                    path.prepend(QStringFromLpctstr(ancestorProperties[displayNameColumn].Value.LPSZ));
+                    ancestorFolder->Release();
+                } else {
+                    ancestorFolder->Release();
+                    break;
+                }
+            }
+        }
+    }
+
+    // Failed to quickly retrieve the folder, fallback to an exhaustive search of all folders
     result = mapiStore->folderFromId(&d_ptr->p_ptr->lastError, id);
     return result;
 }

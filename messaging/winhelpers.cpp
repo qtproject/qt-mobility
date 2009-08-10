@@ -468,6 +468,16 @@ bool MapiSession::isValid()
 
 HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message)
 {
+    return openEntry(lastError, entryId, reinterpret_cast<LPUNKNOWN*>(message));
+}
+
+HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMAPIFOLDER *folder)
+{
+    return openEntry(lastError, entryId, reinterpret_cast<LPUNKNOWN*>(folder));
+}
+
+HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown)
+{
     if (!_valid || !_mapiSession) {
         Q_ASSERT(_valid && _mapiSession);
         *lastError = QMessageStore::FrameworkFault;
@@ -475,7 +485,7 @@ HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId 
     }
 
     ULONG FAR ulObjectType;
-    return _mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, reinterpret_cast<LPUNKNOWN*>(message));
+    return _mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, unknown);
 }
 
 MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id)
