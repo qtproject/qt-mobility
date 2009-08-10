@@ -4,5 +4,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     keepintouch\
-    sendmessage
+    sendmessage\
+    serviceactions
 
