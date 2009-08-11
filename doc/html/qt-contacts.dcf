@@ -634,6 +634,17 @@
         <keyword ref="qcontactname.html#FieldSuffix-var">FieldSuffix</keyword>
         <section ref="qcontactname-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactonlineaccount.html" title="QContactOnlineAccount Class Reference">
+        <keyword ref="qcontactonlineaccount.html">QContactOnlineAccount</keyword>
+        <keyword ref="qcontactonlineaccount.html#localAccountUri">localAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#remoteAccountUri">remoteAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#setLocalAccountUri">setLocalAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#setRemoteAccountUri">setRemoteAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldLocalAccountUri-var">FieldLocalAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldRemoteAccountUri-var">FieldRemoteAccountUri</keyword>
+        <section ref="qcontactonlineaccount-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactorganisation.html" title="QContactOrganisation Class Reference">
         <keyword ref="qcontactorganisation.html">QContactOrganisation</keyword>
         <keyword ref="qcontactorganisation.html#displayLabel">displayLabel</keyword>
@@ -662,6 +673,26 @@
         <keyword ref="qcontactphonenumber.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactphonenumber.html#FieldNumber-var">FieldNumber</keyword>
         <section ref="qcontactphonenumber-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactpresence.html" title="QContactPresence Class Reference">
+        <keyword ref="qcontactpresence.html">QContactPresence</keyword>
+        <keyword ref="qcontactpresence.html#nickname">nickname</keyword>
+        <keyword ref="qcontactpresence.html#presence">presence</keyword>
+        <keyword ref="qcontactpresence.html#providerAvailability">providerAvailability</keyword>
+        <keyword ref="qcontactpresence.html#remoteAccountUri">remoteAccountUri</keyword>
+        <keyword ref="qcontactpresence.html#setNickname">setNickname</keyword>
+        <keyword ref="qcontactpresence.html#setPresence">setPresence</keyword>
+        <keyword ref="qcontactpresence.html#setProviderAvailability">setProviderAvailability</keyword>
+        <keyword ref="qcontactpresence.html#setRemoteAccountUri">setRemoteAccountUri</keyword>
+        <keyword ref="qcontactpresence.html#setStatusMessage">setStatusMessage</keyword>
+        <keyword ref="qcontactpresence.html#statusMessage">statusMessage</keyword>
+        <keyword ref="qcontactpresence.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactpresence.html#FieldNickname-var">FieldNickname</keyword>
+        <keyword ref="qcontactpresence.html#FieldPresence-var">FieldPresence</keyword>
+        <keyword ref="qcontactpresence.html#FieldProviderAvailability-var">FieldProviderAvailability</keyword>
+        <keyword ref="qcontactpresence.html#FieldRemoteAccountUri-var">FieldRemoteAccountUri</keyword>
+        <keyword ref="qcontactpresence.html#FieldStatusMessage-var">FieldStatusMessage</keyword>
+        <section ref="qcontactpresence-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationship.html" title="QContactRelationship Class Reference">
         <keyword ref="qcontactrelationship.html">QContactRelationship</keyword>

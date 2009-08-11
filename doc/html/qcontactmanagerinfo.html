@@ -63,7 +63,7 @@
 <p>Note: In some cases, the behaviour of an unsupported filter cannot be emulated. For example, a filter that requests contacts that have changed since a given time depends on having that information available. In these cases, the filter will fail.</p>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactManagerInfo::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const</h3>
 <p>Returns true if the given <i>feature</i> is supported by the manager from whom this information object was received.</p>
-<h3 class="fn"><a name="supportedDataTypes"></a><a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManagerInfo::supportedDataTypes () const</h3>
+<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManagerInfo::supportedDataTypes () const</h3>
 <p>Returns the list of data types supported by the manager associated with this object.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

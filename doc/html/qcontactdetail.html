@@ -14,7 +14,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactDetail Class Reference</h1>
 <p>The QContactDetail class provides access to a single, complete detail about a contact. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactgeolocation.html">QContactGeolocation</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactorganisation.html">QContactOrganisation</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactrelationship.html">QContactRelationship</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
+<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactgeolocation.html">QContactGeolocation</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactonlineaccount.html">QContactOnlineAccount</a>, <a href="qcontactorganisation.html">QContactOrganisation</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactpresence.html">QContactPresence</a>, <a href="qcontactrelationship.html">QContactRelationship</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
 <ul>
 <li><a href="qcontactdetail-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -124,80 +124,80 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QContactDetail"></a>QContactDetail::QContactDetail ()</h3>
 <p>Constructs a new, empty detail</p>
-<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>thisDefinitionId</i> )</h3>
+<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const QString &amp; <i>thisDefinitionId</i> )</h3>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i></p>
 <h3 class="fn"><a name="QContactDetail-3"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i> )</h3>
 <p>Constructs a detail that is a copy of <i>other</i></p>
-<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Frees the memory used by this detail</p>
-<h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
-<h3 class="fn"><a name="attribute"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QContactDetail::attribute ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>attribute</i> ) const</h3>
+<h3 class="fn"><a name="attribute"></a>QString QContactDetail::attribute ( const QString &amp; <i>attribute</i> ) const</h3>
 <p>Returns the value of the attribute identified by the key <i>attribute</i>. Detail attributes may include things like the context for which this detail is valid, detail type metadata, or user defined metadata</p>
 <p>See also <a href="qcontactdetail.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="attributes"></a><a href="http://doc.qtsoftware.com/4.5/qmap.html">QMap</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>, <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>&gt; QContactDetail::attributes () const</h3>
+<h3 class="fn"><a name="attributes"></a>QMap&lt;QString, QString&gt; QContactDetail::attributes () const</h3>
 <p>Returns the attributes of this detail</p>
 <p>See also <a href="qcontactdetail.html#setAttributes">setAttributes</a>().</p>
-<h3 class="fn"><a name="contextAttribute"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QContactDetail::contextAttribute () const</h3>
+<h3 class="fn"><a name="contextAttribute"></a>QString QContactDetail::contextAttribute () const</h3>
 <p>This is a convenience function to return the <tt>Context</tt> attribute of this detail.</p>
 <p>It is equivalent to the following code:</p>
 <pre>    attribute(QContactDetail::AttributeContext);</pre>
 <p>See also <a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a>().</p>
-<h3 class="fn"><a name="definitionName"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QContactDetail::definitionName () const</h3>
+<h3 class="fn"><a name="definitionName"></a>QString QContactDetail::definitionName () const</h3>
 <p>Returns the (unique) name of the definition which defines the semantics and structure of this detail</p>
 <h3 class="fn"><a name="error"></a><a href="qcontactdetail.html#Error-enum">QContactDetail::Error</a> QContactDetail::error () const</h3>
 <p>Returns the error code of the error resulting from the most recent state-modifying operation</p>
-<h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note: even if attributes have been set on this detail, this function will return true if no values are contained in this detail</p>
-<h3 class="fn"><a name="removeAttribute"></a>bool QContactDetail::removeAttribute ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>attribute</i> )</h3>
+<h3 class="fn"><a name="removeAttribute"></a>bool QContactDetail::removeAttribute ( const QString &amp; <i>attribute</i> )</h3>
 <p>Removes the attribute identified by the key <i>attribute</i> from the detail's list of attributes. Returns true if the attribute was removed successfully, otherwise returns false</p>
-<h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> )</h3>
+<h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const QString &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
-<h3 class="fn"><a name="setAttribute"></a>bool QContactDetail::setAttribute ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>attribute</i>, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setAttribute"></a>bool QContactDetail::setAttribute ( const QString &amp; <i>attribute</i>, const QString &amp; <i>value</i> )</h3>
 <p>Sets the value of the attribute identified by the key <i>attribute</i> to be the given <i>value</i>. The value associated with any key in the attribute map may be a comma-separated list of valid values, or user-defined values. Returns true if the attribute was set successfully, otherwise returns false</p>
 <p>See also <a href="qcontactdetail.html#attribute">attribute</a>().</p>
-<h3 class="fn"><a name="setAttributes"></a>bool QContactDetail::setAttributes ( const <a href="http://doc.qtsoftware.com/4.5/qmap.html">QMap</a>&lt;<a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>, <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>&gt; &amp; <i>attributes</i> )</h3>
+<h3 class="fn"><a name="setAttributes"></a>bool QContactDetail::setAttributes ( const QMap&lt;QString, QString&gt; &amp; <i>attributes</i> )</h3>
 <p>Sets the attributes of this detail to <i>attributes</i>. Returns true if the operation succeeded.</p>
 <p>See also <a href="qcontactdetail.html#attributes">attributes</a>().</p>
-<h3 class="fn"><a name="setContextAttribute"></a>void QContactDetail::setContextAttribute ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>context</i> )</h3>
+<h3 class="fn"><a name="setContextAttribute"></a>void QContactDetail::setContextAttribute ( const QString &amp; <i>context</i> )</h3>
 <p>This is a convenience function that sets the <tt>Context</tt> attribute of this detail to <i>context</i>.</p>
 <p>Not all details have meaningful values for the <tt>Context</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
 <p>It is equivalent to the following code:</p>
 <pre>    setAttribute(QContactDetail::AttributeContext, context);</pre>
 <p>See also <a href="qcontactdetail.html#contextAttribute">contextAttribute</a>().</p>
-<h3 class="fn"><a name="setSubTypeAttribute"></a>void QContactDetail::setSubTypeAttribute ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>subType</i> )</h3>
+<h3 class="fn"><a name="setSubTypeAttribute"></a>void QContactDetail::setSubTypeAttribute ( const QString &amp; <i>subType</i> )</h3>
 <p>This is a convenience function that sets the <tt>SubType</tt> attribute of this detail to <i>subType</i>.</p>
 <p>Not all details have meaningful values for the <tt>SubType</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
 <p>It is equivalent to the following code:</p>
 <pre>    setAttribute(QContactDetail::AttributeSubType, subType);</pre>
 <p>See also <a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a>().</p>
-<h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i>. Returns true if the operation succeeded</p>
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="setValues"></a>bool QContactDetail::setValues ( const <a href="http://doc.qtsoftware.com/4.5/qvariant.html#QVariantMap-typedef">QVariantMap</a> &amp; <i>values</i> )</h3>
+<h3 class="fn"><a name="setValues"></a>bool QContactDetail::setValues ( const QVariantMap &amp; <i>values</i> )</h3>
 <p>Sets the values stored in this detail to <i>values</i>. Returns true if the operation succeeded, otherwise false</p>
 <p>See also <a href="qcontactdetail.html#values">values</a>().</p>
-<h3 class="fn"><a name="subTypeAttribute"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QContactDetail::subTypeAttribute () const</h3>
+<h3 class="fn"><a name="subTypeAttribute"></a>QString QContactDetail::subTypeAttribute () const</h3>
 <p>This is a convenience function to return the <tt>SubType</tt> attribute of this detail.</p>
 <p>Not all details have meaningful values for the <tt>SubType</tt> attribute - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
 <p>It is equivalent to the following code:</p>
 <pre>    attribute(QContactDetail::AttributeSubType);</pre>
 <p>See also <a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a>().</p>
-<h3 class="fn"><a name="value"></a>T QContactDetail::value ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a>, or an empty <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="value"></a>T QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QContactDetail::value ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-2"></a>QString QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3>
 <p>This is an overloaded function.</p>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
-<h3 class="fn"><a name="values"></a><a href="http://doc.qtsoftware.com/4.5/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactDetail::values () const</h3>
+<h3 class="fn"><a name="values"></a>QVariantMap QContactDetail::values () const</h3>
 <p>Returns the values stored in this detail</p>
 <p>See also <a href="qcontactdetail.html#setValues">setValues</a>().</p>
-<h3 class="fn"><a name="variantValue"></a><a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> QContactDetail::variantValue ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a>, or an invalid <a href="http://doc.qtsoftware.com/4.5/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="variantValue"></a>QVariant QContactDetail::variantValue ( const QString &amp; <i>key</i> ) const</h3>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QVariant, or an invalid QVariant if no value for the given <i>key</i> exists</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetail::operator!= ( const QContactDetail &amp; <i>other</i> ) const</h3>
 <p>Returns true if the values, attributes or id of this detail is different to those of the <i>other</i> detail</p>
 <h3 class="fn"><a name="operator-eq"></a>QContactDetail &amp; QContactDetail::operator= ( const QContactDetail &amp; <i>other</i> )</h3>
