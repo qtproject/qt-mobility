@@ -101,6 +101,7 @@
 /*!
  * \class QContactPresence
  * \brief Presence information relating to a QContactOnlineAccount of the contact
+ *
  * Details containing presence information are linked to a particular online account detail.
  * The backend should update the presence information relating to an online account when it
  * is available, and delete the presence information detail if its corresponding online account
