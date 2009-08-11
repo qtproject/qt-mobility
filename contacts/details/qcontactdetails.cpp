@@ -426,16 +426,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldSpeed, "Speed");
 Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
 
 /*!
- * \variable QContactOnlineAccount::FieldRemoteAccountUri
+ * \variable QContactOnlineAccount::FieldAccountUri
  * The constant key for which the remote account uri value is stored in details of the QContactOnlineAccount type
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldRemoteAccountUri, "RemoteAccountUri");
-
-/*!
- * \variable QContactOnlineAccount::FieldLocalAccountUri
- * The constant key for which the local account uri value is stored in details of the QContactOnlineAccount type
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldLocalAccountUri, "LocalAccountUri");
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
 
 /*!
  * \variable QContactOrganisation::FieldDisplayLabel
@@ -450,10 +444,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldDisplayLabel, "DisplayLabel")
 Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldLogo, "Logo");
 
 /*!
- * \variable QContactPresence::FieldRemoteAccountUri
+ * \variable QContactPresence::FieldAccountUri
  * The constant key for which the remote account uri value is stored in details of the QContactPresence type
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldRemoteAccountUri, "RemoteAccountUri");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldAccountUri, "AccountUri");
 
 /*!
  * \variable QContactPresence::FieldNickname
@@ -472,12 +466,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
  * The constant key for which the status message value is stored in details of the QContactPresence type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
-
-/*!
- * \variable QContactPresence::FieldProviderAvailability
- * The constant key for which the provider availability value is stored in details of the QContactPresence type
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldProviderAvailability, "ProviderAvailability");
 
 /*!
  * \variable QContactDisplayLabel::FieldLabel
@@ -1146,25 +1134,13 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactOnlineAccount::setRemoteAccountUri(const QString& remoteAccountUri)
- * Sets the universal resource identifier of the contact's online account to \a remoteAccountUri
+ * \fn QContactOnlineAccount::setAccountUri(const QString& accountUri)
+ * Sets the universal resource identifier of the contact's online account to \a accountUri
  */
 
 /*!
- * \fn QContactOnlineAccount::remoteAccountUri() const
+ * \fn QContactOnlineAccount::accountUri() const
  * Returns the universal resource identifier of the online account of the contact
- */
-
-/*!
- * \fn QContactOnlineAccount::setLocalAccountUri(const QString& localAccountUri)
- * Sets the universal resource identifier of the local account which is used to connect to the service which
- * allows communication with the remote account to \a localAccountUri
- */
-
-/*!
- * \fn QContactOnlineAccount::localAccountUri() const
- * Returns the universal resource identifier of the local account which is used to connect to the service which
- * allows communication with the remote account
  */
 
 /*!
@@ -1188,27 +1164,15 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactPresence::setRemoteAccountUri(const QString& remoteAccountUri)
+ * \fn QContactPresence::setAccountUri(const QString& accountUri)
  * Sets the universal resource identifier of the contact's online account about which
- * this detail stores presence information to \a remoteAccountUri
+ * this detail stores presence information to \a accountUri
  */
 
 /*!
- * \fn QContactPresence::remoteAccountUri() const
+ * \fn QContactPresence::accountUri() const
  * Returns the universal resource identifier of the online account of the contact about which
  * this detail stores presence information
- */
-
-/*!
- * \fn QContactPresence::setProviderAvailability(const QString& providerAvailability)
- * Sets the current availability of the provider of status information about the online account
- * about which this detail stores presence information to \a providerAvailability
- */
-
-/*!
- * \fn QContactPresence::providerAvailability() const
- * Returns the current availability of the provider of presence information about the online account
- * about which this detail stores presence information
  */
 
 /*!

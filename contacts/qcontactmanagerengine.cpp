@@ -448,6 +448,37 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.name(), d);
 
+    // online account
+    fields.clear();
+    f.dataType = QVariant::String;
+    d.setName(QContactOnlineAccount::DefinitionName);
+    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::Any);
+    retn.insert(d.name(), d);
+
+    // presence
+    fields.clear();
+    f.dataType = QVariant::String;
+    d.setName(QContactPresence::DefinitionName);
+    fields.insert(QContactPresence::FieldAccountUri, f);
+    fields.insert(QContactPresence::FieldNickname, f);
+    fields.insert(QContactPresence::FieldStatusMessage, f);
+    QVariantList presenceValues;
+    presenceValues << QString(QLatin1String("Available"));
+    presenceValues << QString(QLatin1String("Busy"));
+    presenceValues << QString(QLatin1String("Away"));
+    presenceValues << QString(QLatin1String("Extended Away"));
+    presenceValues << QString(QLatin1String("Unknown"));
+    presenceValues << QString(QLatin1String("Offline"));
+    f.allowableValues = presenceValues;
+    fields.insert(QContactPresence::FieldAccountUri, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+    retn.insert(d.name(), d);
+
     // relationship
     fields.clear();
     QVariantList relationshipTypes;

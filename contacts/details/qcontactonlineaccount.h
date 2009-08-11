@@ -47,18 +47,14 @@ class QTCONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldRemoteAccountUri;
-    const char* FieldLocalAccountUri;
+    const char* FieldAccountUri;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
-    Q_DECLARE_LATIN1_LITERAL(FieldRemoteAccountUri, "RemoteAccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocalAccountUri, "LocalAccountUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
 #endif
 
-    void setRemoteAccountUri(const QString& remoteAccountUri) {setValue(FieldRemoteAccountUri, remoteAccountUri);}
-    QString remoteAccountUri() const {return value(FieldRemoteAccountUri);}
-    void setLocalAccountUri(const QString& localAccountUri) {setValue(FieldLocalAccountUri, localAccountUri);}
-    QString localAccountUri() const {return value(FieldLocalAccountUri);}
+    void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
+    QString accountUri() const {return value(FieldAccountUri);}
 };
 
 #endif

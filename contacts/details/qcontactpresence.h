@@ -47,24 +47,20 @@ class QTCONTACTS_EXPORT QContactPresence : public QContactDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldRemoteAccountUri;
-    const char* FieldProviderAvailability;
+    const char* FieldAccountUri;
     const char* FieldNickname;
     const char* FieldPresence;
     const char* FieldStatusMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
-    Q_DECLARE_LATIN1_LITERAL(FieldRemoteAccountUri, "RemoteAccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldProviderAvailability, "ProviderAvailability");
+    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
 #endif
 
-    void setRemoteAccountUri(const QString& remoteAccountUri) {setValue(FieldRemoteAccountUri, remoteAccountUri);}
-    QString remoteAccountUri() const {return value(FieldRemoteAccountUri);}
-    void setProviderAvailability(const QString& providerAvailability) {setValue(FieldProviderAvailability, providerAvailability);}
-    QString providerAvailability() const {return value(FieldProviderAvailability);}
+    void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
+    QString accountUri() const {return value(FieldAccountUri);}
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
     QString nickname() const {return value(FieldNickname);}
     void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
