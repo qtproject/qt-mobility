@@ -1,8 +1,8 @@
 TEMPLATE = app
 CONFIG += example
 
-# Qt += multimedia
-# DEFINES += AUDIOSERVICES
+contains(QT_CONFIG, multimedia): QT += multimedia
+
 include(../../common.pri)
 
 INCLUDEPATH += $$PWD/../../multimedia \

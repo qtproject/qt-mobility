@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += example
 
-QT += multimedia
+contains(QT_CONFIG, multimedia): QT += multimedia
 
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 include (../../common.pri)
