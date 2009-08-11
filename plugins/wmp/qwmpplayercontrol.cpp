@@ -94,7 +94,7 @@ QMediaPlayer::State QWmpPlayerControl::state() const
     return m_state;
 }
 
-void QWmpPlayerControl::setState(int state)
+void QWmpPlayerControl::setState(QMediaPlayer::State state)
 {
     emit stateChanged(m_state = state);
 }
