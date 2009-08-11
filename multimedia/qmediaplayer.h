@@ -169,7 +169,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
-    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_bufferingChanged(bool));

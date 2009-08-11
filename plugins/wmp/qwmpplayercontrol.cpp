@@ -89,7 +89,7 @@ QWmpPlayerControl::~QWmpPlayerControl()
     if (m_network) m_network->Release();
 }
 
-int QWmpPlayerControl::state() const
+QMediaPlayer::State QWmpPlayerControl::state() const
 {
     return m_state;
 }

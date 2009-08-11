@@ -36,6 +36,7 @@
 #define QMEDIARECORDERCONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include "qmediarecorder.h"
 
 class QMediaSink;
 
@@ -48,12 +49,12 @@ public:
     virtual QMediaSink sink() const = 0;
     virtual bool setSink(const QMediaSink &sink) = 0;
 
-    virtual int state() const = 0;
+    virtual QMediaRecorder::State state() const = 0;
 
     virtual qint64 position() const = 0;
 
 signals:
-    void stateChanged(int state);
+    void stateChanged(QMediaRecorder::State state);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
 

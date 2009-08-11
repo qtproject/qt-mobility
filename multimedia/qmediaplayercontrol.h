@@ -36,6 +36,7 @@
 #define QMEDIAPLAYERCONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include "qmediaplayer.h"
 
 class QMediaPlaylist;
 
@@ -46,7 +47,7 @@ class Q_MEDIA_EXPORT QMediaPlayerControl : public QAbstractMediaControl
 public:
     ~QMediaPlayerControl();
 
-    virtual int state() const = 0;
+    virtual QMediaPlayer::State state() const = 0;
 
     virtual int mediaStatus() const /* = 0*/;
 
@@ -90,7 +91,7 @@ Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void playlistPositionChanged(int position);
-    void stateChanged(int newState);
+    void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(int state);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);

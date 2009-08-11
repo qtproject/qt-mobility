@@ -63,9 +63,9 @@ MpdPlayerControl::~MpdPlayerControl()
 {
 }
 
-int MpdPlayerControl::state() const
+QMediaPlayer::State MpdPlayerControl::state() const
 {
-    return 0;
+    return QMediaPlayer::StoppedState;
 }
 
 QMediaPlaylist* MpdPlayerControl::mediaPlaylist() const

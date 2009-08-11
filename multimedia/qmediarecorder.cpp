@@ -80,7 +80,7 @@ public:
     QMediaRecorder::Error error;
     QString errorString;
 
-    void _q_stateChanged(int state);
+    void _q_stateChanged(QMediaRecorder::State state);
     void _q_error(int error, const QString &errorString);
 };
 
@@ -95,11 +95,9 @@ QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
         control = 0;
 }
 
-void QMediaRecorderPrivate::_q_stateChanged(int state)
+void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
-
-    const QMediaRecorder::State ps = QMediaRecorder::State(state);
 
     if (ps == QMediaRecorder::RecordingState)
         q->addPropertyWatch("position");
@@ -131,7 +129,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
     Q_D(QMediaRecorder);
 
     if (d->control) {
-        connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
+        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
     }
 }
@@ -146,7 +144,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *paren
     Q_D(QMediaRecorder);
 
     if (d->control) {
-        connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
+        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
     }
 }

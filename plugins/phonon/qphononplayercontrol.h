@@ -59,7 +59,7 @@ public:
     QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent = 0);
     ~QPhononPlayerControl();
 
-    int state() const;
+    QMediaPlayer::State state() const;
 
     qint64 position() const;
     qint64 duration() const;
@@ -75,7 +75,7 @@ public:
     QMediaPlaylist *mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *);
 
-    bool isVideoAvailable() const;    
+    bool isVideoAvailable() const;
 
     bool isSeekable() const;
 
@@ -104,11 +104,11 @@ private slots:
     void updateState(Phonon::State newState, Phonon::State oldState);
     void updateVolume();
 
-private:    
+private:
     Phonon::MediaObject *m_session;
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlaylistNavigator *m_navigator;
-    int m_state;
+    QMediaPlayer::State m_state;
 };
 
 #endif

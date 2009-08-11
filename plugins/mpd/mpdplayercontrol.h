@@ -48,7 +48,7 @@ public:
     MpdPlayerControl(MpdDaemon *mpd, QObject *parent);
     ~MpdPlayerControl();
 
-    int state() const;
+    QMediaPlayer::State state() const;
 
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);

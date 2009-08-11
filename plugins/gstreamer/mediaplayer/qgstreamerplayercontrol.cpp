@@ -51,7 +51,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
    :QMediaPlayerControl(parent), m_session(session)
 {
     QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);    
+    m_navigator = new QMediaPlaylistNavigator(playlist,this);
     m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
     connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
@@ -71,7 +71,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     connect(m_session, SIGNAL(volumeChanged(int)),
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
-            this, SLOT(updateState(QMediaPlayer::State)));
+            this, SIGNAL(stateChanged(QMediaPlayer::State)));
     connect(m_session,SIGNAL(bufferingChanged(bool)),
             this, SIGNAL(bufferingChanged(bool)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
@@ -101,9 +101,9 @@ qint64 QGstreamerPlayerControl::duration() const
     return m_session->duration();
 }
 
-int QGstreamerPlayerControl::state() const
+QMediaPlayer::State QGstreamerPlayerControl::state() const
 {
-    return int(m_session->state());
+    return m_session->state();
 }
 
 bool QGstreamerPlayerControl::isBuffering() const
@@ -183,7 +183,7 @@ void QGstreamerPlayerControl::setVolume(int volume)
 
 void QGstreamerPlayerControl::setMuted(bool muted)
 {
-    m_session->setMuted(muted);    
+    m_session->setMuted(muted);
 }
 
 void QGstreamerPlayerControl::play(const QMediaResourceList &resources)
@@ -196,7 +196,7 @@ void QGstreamerPlayerControl::play(const QMediaResourceList &resources)
     if (url.isValid()) {
         m_session->stop();
         m_session->load(url);
-        m_session->play();        
+        m_session->play();
     } else {
         m_navigator->advance();
     }
@@ -223,7 +223,3 @@ bool QGstreamerPlayerControl::isVideoAvailable() const
     return m_session->isVideoAvailable();
 }
 
-void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
-{
-    emit stateChanged(int(state));
-}

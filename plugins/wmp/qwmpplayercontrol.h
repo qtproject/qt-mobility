@@ -50,7 +50,7 @@ public:
             IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpPlayerControl();
 
-    int state() const;
+    QMediaPlayer::State state() const;
     void setState(int state);
 
     QMediaPlaylist* mediaPlaylist() const;

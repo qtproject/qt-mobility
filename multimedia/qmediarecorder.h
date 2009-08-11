@@ -63,8 +63,7 @@ public:
     {
         NoError,
         ResourceError,
-        FormatError,
-        NetworkError
+        FormatError
     };
 
     QMediaRecorder(QAbstractMediaService *service = createMediaCaptureService(), QObject *parent = 0);
@@ -93,7 +92,7 @@ public slots:
     void stop();
 
 signals:
-    void stateChanged(State state);
+    void stateChanged(QMediaRecorder::State state);
     void positionChanged(qint64 position);
     void error(QMediaRecorder::Error error);
     void errorStringChanged(const QString &error);
@@ -102,7 +101,7 @@ signals:
 private:
     Q_DISABLE_COPY(QMediaRecorder)
     Q_DECLARE_PRIVATE(QMediaRecorder)
-    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
 

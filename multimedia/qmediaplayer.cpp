@@ -63,17 +63,15 @@ public:
     QMediaPlayer::Error error;
     QString errorString;
 
-    void _q_stateChanged(int state);
+    void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(int status);
     void _q_error(int error, const QString &errorString);
     void _q_bufferingChanged(bool buffering);
 };
 
-void QMediaPlayerPrivate::_q_stateChanged(int state)
+void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
 {
     Q_Q(QMediaPlayer);
-
-    const QMediaPlayer::State ps = QMediaPlayer::State(state);
 
     if (ps == QMediaPlayer::PlayingState)
         q->addPropertyWatch("position");
@@ -123,7 +121,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
-    connect(d->control, SIGNAL(stateChanged(int)), SLOT(_q_stateChanged(int)));
+    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
     connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
     connect(d->control, SIGNAL(bufferingChanged(bool)), this, SLOT(_q_bufferingChanged(bool)));

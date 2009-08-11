@@ -56,7 +56,7 @@ public:
     QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
     ~QGstreamerPlayerControl();
 
-    int state() const;
+    QMediaPlayer::State state() const;
 
     qint64 position() const;
     qint64 duration() const;
@@ -99,9 +99,8 @@ signals:
 
 private slots:
     void play(const QMediaResourceList &);
-    void updateState(QMediaPlayer::State state);    
 
-private:    
+private:
     QGstreamerPlayerSession *m_session;
     QMediaPlaylistNavigator *m_navigator;
 };

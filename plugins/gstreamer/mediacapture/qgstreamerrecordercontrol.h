@@ -50,12 +50,12 @@ public:
     virtual QMediaSink sink() const;
     virtual bool setSink(const QMediaSink &sink);
 
-    virtual int state() const;
+    virtual QMediaRecorder::State state() const;
 
     virtual qint64 position() const;
 
 signals:
-    void stateChanged(int state);
+    void stateChanged(QMediaRecorder::State state);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
 

@@ -59,19 +59,19 @@ bool QGstreamerRecorderControl::setSink(const QMediaSink &sink)
 }
 
 
-int QGstreamerRecorderControl::state() const
+QMediaRecorder::State QGstreamerRecorderControl::state() const
 {
     switch ( m_session->state() ) {
         case QGstreamerCaptureSession::RecordingState:
-            return int(QMediaRecorder::RecordingState);
+            return QMediaRecorder::RecordingState;
         case QGstreamerCaptureSession::PausedState:
-            return int(QMediaRecorder::PausedState);
+            return QMediaRecorder::PausedState;
         case QGstreamerCaptureSession::PreviewState:
         case QGstreamerCaptureSession::StoppedState:
-            return int(QMediaRecorder::StoppedState);
+            return QMediaRecorder::StoppedState;
     }
 
-    return QGstreamerCaptureSession::StoppedState;
+    return QMediaRecorder::StoppedState;
 
 }
 

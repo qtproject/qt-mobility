@@ -70,11 +70,11 @@ void QGstreamerCameraControl::setDevice(const QByteArray &device)
     m_device = device;
 }
 
-int QGstreamerCameraControl::state() const
+QCamera::State QGstreamerCameraControl::state() const
 {
     if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        return int(QCamera::StoppedState);
+        return QCamera::StoppedState;
     else
-        return int(QCamera::ActiveState);
+        return QCamera::ActiveState;
 }
 

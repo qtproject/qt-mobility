@@ -104,7 +104,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
-    \fn void QMediaRecorderControl::stateChanged(int state)
+    \fn void QMediaRecorderControl::stateChanged(QMediaRecorder::State state)
 
     Signal emitted when \a state changed.
 */

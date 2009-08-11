@@ -43,7 +43,7 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
    :QMediaPlayerControl(parent), m_session(session), m_state(QMediaPlayer::StoppedState)
 {
     QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);    
+    m_navigator = new QMediaPlaylistNavigator(playlist,this);
     m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
 
     m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
@@ -70,7 +70,7 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
             this, SLOT(updateVolume()));
 
     connect(m_session, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
-            this, SLOT(updateState()));
+            this, SLOT(updateState(Phonon::State,Phonon::State)));
     connect(m_session, SIGNAL(hasVideoChanged(bool)),
             this, SIGNAL(videoAvailabilityChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
@@ -96,7 +96,7 @@ qint64 QPhononPlayerControl::duration() const
     return m_session->totalTime();
 }
 
-int QPhononPlayerControl::state() const
+QMediaPlayer::State QPhononPlayerControl::state() const
 {
     return m_state;
 }
@@ -208,7 +208,7 @@ void QPhononPlayerControl::play(const QMediaResourceList &resources)
     if (url.isValid()) {
         m_session->stop();
         m_session->setCurrentSource(url);
-        m_session->play();        
+        m_session->play();
     } else {
         m_navigator->advance();
     }
