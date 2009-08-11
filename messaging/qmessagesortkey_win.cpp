@@ -32,6 +32,13 @@
 ****************************************************************************/
 #include "qmessagesortkey.h"
 #include "qmessagesortkey_p.h"
+#include "qmessage.h"
+
+bool QMessageSortKeyPrivate::lessThan(const QMessageSortKey &key, const QMessage &left, const QMessage &right)
+{
+    QMessageSortKeyPrivate *d(key.d_ptr);
+    return left.subject() < right.subject(); //TODO implement this
+}
 
 QMessageSortKey::QMessageSortKey()
 {

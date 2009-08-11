@@ -37,9 +37,121 @@
 #include "qmessageaccountid_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
+#include "qmessagesortkey_p.h"
 #include "winhelpers_p.h"
 
 #include <qdebug.h>
+
+struct FolderHeapNode {
+    LPMAPIFOLDER folder;
+    MapiRecordKey key;
+    MapiRecordKey parentStoreKey;
+    QString name;
+    MapiEntryId entryId;
+    bool hasSubFolders;
+    uint messageCount;
+    uint offset; // TODO replace this with LPMAPITABLE for efficiency
+    QMessage front;
+};
+
+typedef QSharedPointer<FolderHeapNode> FolderHeapNodePtr;
+
+class FolderHeap {
+public:
+    FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilterKey &filterKey, const QMessageSortKey &sortKey);
+    QMessage takeFront(QMessageStore::ErrorCode *lastError);
+    bool isEmpty() const { return _heap.count() == 0; }
+
+private:
+    void sink(int i);
+    QMessageFilterKey _filterKey;
+    QMessageSortKey _sortKey;
+    QList<FolderHeapNodePtr> _heap;
+    MapiSessionPtr _mapiSession;
+};
+
+FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilterKey &filterKey, const QMessageSortKey &sortKey)
+{
+    _heap = protoHeap;
+    _filterKey = filterKey;
+    _sortKey = sortKey;
+    _mapiSession = mapiSession;
+
+    int i(0);
+    while (i < _heap.count()) {
+        FolderHeapNodePtr node(_heap[i]);
+        if (mapiSession->openEntry(lastError, node->entryId, &node->folder) != S_OK)
+            *lastError = QMessageStore::ContentInaccessible;
+        if (*lastError != QMessageStore::NoError)
+            return; //TODO consider just removing the bad folder
+
+        MapiFolder mapiFolder(node->folder, node->key, node->parentStoreKey, node->name, node->entryId, node->hasSubFolders, node->messageCount);
+        node->offset = 0;
+        // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
+        QMessageIdList messageIdList(mapiFolder.queryMessages(lastError, filterKey, sortKey, 1));
+        if (*lastError != QMessageStore::NoError)
+            return; //TODO consider just removing the bad folder
+        if (messageIdList.isEmpty()) {
+            _heap.removeAt(i);
+        } else {
+            node->front = mapiSession->message(lastError, messageIdList.front());
+            if (*lastError != QMessageStore::NoError)
+            return; //TODO consider just removing the bad folder
+            ++i;
+        }
+    }
+
+    for (int i = _heap.count()/2 - 1; i >= 0; --i)
+        sink(i);
+}
+
+QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
+{
+    QMessage result(_heap[0]->front);
+    FolderHeapNodePtr node(_heap[0]);
+    if (_mapiSession->openEntry(lastError, node->entryId, &node->folder) != S_OK)
+        *lastError = QMessageStore::ContentInaccessible;
+    if (*lastError != QMessageStore::NoError) {
+        node->folder->Release();
+        return result;
+    }
+
+    MapiFolder mapiFolder(node->folder, node->key, node->parentStoreKey, node->name, node->entryId, node->hasSubFolders, node->messageCount);
+    ++node->offset;
+    QMessageIdList messageIdList(mapiFolder.queryMessages(lastError, _filterKey, _sortKey, 1, node->offset));
+
+    if (messageIdList.isEmpty()) {
+        if (_heap.count() > 1) {
+            _heap[0] = _heap.takeLast();
+        } else {
+            _heap.pop_back();
+        }
+    } else {
+        node->front = QMessageStore::instance()->message(messageIdList.front());
+    }
+    sink(0);
+    return result;
+}
+
+void FolderHeap::sink(int i)
+{
+    while (true) {
+        int left(2*i + 1);
+        if (left >= _heap.count())
+            return;
+        int right(left + 1);
+        int minimum(left);
+        if ((right < _heap.count())
+            && (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[left]->front, _heap[right]->front)))
+            minimum = right;
+        if (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[0]->front, _heap[minimum]->front))
+            return;
+        FolderHeapNodePtr temp(_heap[minimum]);
+        _heap[minimum] = _heap[0];
+        _heap[0] = temp;
+        i = minimum;
+    }
+}
 
 class QMessageStorePrivatePlatform
 {
@@ -138,42 +250,53 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
-    uint workingLimit(offset + limit); // TODO: Improve this it's horribly inefficient
-    QStringList path;
     QList<MapiFolderPtr> folders; // depth first search;
-
+    QList<FolderHeapNodePtr> folderNodes;
     folders.append(mapiStore->rootFolder(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
-    path.append(folders.back()->name());
-    while (!folders.isEmpty() && (!limit || workingLimit)) {
+    while (!folders.isEmpty()) {
         if (!folders.back()->isValid()) {
             folders.pop_back();
-            path.pop_back();
             continue;
         }
 
         MapiFolderPtr folder(folders.back()->nextSubFolder(&d_ptr->p_ptr->lastError));
         if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
             return result;
-        if (folder->isValid() && (!limit || workingLimit)) {
-            uint oldCount(result.count());
+        if (folder->isValid()) {
+            FolderHeapNodePtr node(new FolderHeapNode);
+            node->folder = folder->folder();
+            node->key = folder->recordKey();
+            node->parentStoreKey = folder->storeKey();
+            node->name = folder->name();
+            node->entryId = folder->entryId();
+            node->hasSubFolders = folder->hasSubFolders();
+            node->messageCount = folder->messageCount();
+            folderNodes.append(node);
             folders.append(folder);
-            path.append(folder->name());
-            qDebug() << "Path: " << path; // TODO remove debug;
-            result.append(folder->queryMessages(&d_ptr->p_ptr->lastError, QMessageFilterKey(), QMessageSortKey(), workingLimit, 0));
             if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
                 return result;
-            if (limit)
-                workingLimit -= (result.count() - oldCount);
         } else {
             folders.pop_back();
-            path.pop_back();
         }
     }
     folders.clear();
 
-    return result.mid(offset); // stub
+    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, key, sortKey);
+    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+        return result;
+    uint workingLimit(offset + limit); // TODO: Improve this it's inefficient
+    while (!folderHeap.isEmpty()) {
+        if (!workingLimit)
+            break;
+        result.append(folderHeap.takeFront(&d_ptr->p_ptr->lastError).id());
+        if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+            return result;
+        --workingLimit;
+    }
+
+    return result.mid(offset);
 }
 
 QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey,  QMessageDataComparator::Options options, uint limit, uint offset) const
@@ -277,60 +400,13 @@ bool QMessageStore::updateMessage(QMessage *m)
 QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
-    QMessageId newId(id);
-    QMessageStore::ErrorCode ignoredError;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
     MapiSessionPtr mapiSession(new MapiSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
-    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
-    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
-    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
-    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
-    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-        return result;
-
-    LPMESSAGE message;
-#if 0 // force lookup using record keys, TODO remove
-    if (true) {
-#else
-    if (mapiSession->openEntry(&ignoredError, entryId, &message) != S_OK) {
-#endif
-        MapiFolderPtr parentFolder(mapiStore->findFolder(&d_ptr->p_ptr->lastError, folderRecordKey));
-        if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-            return result;
-
-        qDebug() << "parentFolder" << parentFolder->name(); // TODO remove this
-        entryId = parentFolder->messageEntryId(&d_ptr->p_ptr->lastError, messageRecordKey);
-        if (!entryId.count() || (mapiSession->openEntry(&d_ptr->p_ptr->lastError, entryId, &message) != S_OK)) {
-            d_ptr->p_ptr->lastError = InvalidId;
-            return result;
-        }
-
-        newId = QMessageIdPrivate::from(messageRecordKey, folderRecordKey, storeRecordKey, entryId);
-    }
-
-    const int nCols(4);
-    enum { recordKeyColumn = 0, flagsColumn, senderColumn, subjectColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
-    ULONG count;
-    LPSPropValue properties;
-    if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-        QString sender(QStringFromLpctstr(properties[senderColumn].Value.LPSZ));
-        QMessageAddress from(sender, QMessageAddress::Email);
-        QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
-        QMessage::StatusFlags status;
-        if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
-            status |= QMessage::Read;
-        result = QMessagePrivate::from(newId, status, from, subject);
-    } else {
-        d_ptr->p_ptr->lastError = InvalidId;
-    }
-    message->Release();
-    return result;
+    return mapiSession->message(&d_ptr->p_ptr->lastError, id);
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER

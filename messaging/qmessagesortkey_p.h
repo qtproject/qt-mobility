@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "qmessagesortkey.h"
+#include "qmessage.h"
 
 class QMessageSortKeyPrivate
 {
@@ -43,4 +44,7 @@ public:
     }
 
     QMessageSortKey *q_ptr;
+#if defined(Q_OS_WIN)
+    static bool lessThan(const QMessageSortKey &key, const QMessage &left, const QMessage &right);
+#endif
 };

@@ -153,7 +153,8 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
                 subHasSubFolders = rows->aRow[0].lpProps[subFoldersColumn].Value.b;
                 subMessageCount = rows->aRow[0].lpProps[countColumn].Value.ul;
             } else {
-                *lastError = QMessageStore::ContentInaccessible;
+                // When offline opening a subfolder may simply fail, so we ignore any error.
+                // TODO: Discriminate between differnt types of errors, e.g. critical and non-critical
                 subFolder = 0;
             }
         }
@@ -199,6 +200,12 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
     uint workingLimit(limit);
 
     HRESULT hres;
+    LONG ignored;
+    if (messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored) != S_OK) {
+        *lastError = QMessageStore::ContentInaccessible;
+        return QMessageIdList();
+    }
+
     while ((hres = messagesTable->QueryRows(1, 0, &rows)) == S_OK) {
         ULONG cRows(rows->cRows);
         if (cRows == 1) {
@@ -505,17 +512,17 @@ bool MapiSession::isValid()
     return _valid;
 }
 
-HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message)
+HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message) const
 {
     return openEntry(lastError, entryId, reinterpret_cast<LPUNKNOWN*>(message));
 }
 
-HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMAPIFOLDER *folder)
+HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMAPIFOLDER *folder) const
 {
     return openEntry(lastError, entryId, reinterpret_cast<LPUNKNOWN*>(folder));
 }
 
-HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown)
+HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown) const
 {
     if (!_valid || !_mapiSession) {
         Q_ASSERT(_valid && _mapiSession);
@@ -527,7 +534,7 @@ HRESULT MapiSession::openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId 
     return _mapiSession->OpenEntry(entryId.count(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MAPI_BEST_ACCESS, &ulObjectType, unknown);
 }
 
-MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id)
+MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id) const
 {
     MapiStorePtr result(MapiStore::null());
     if (!_valid || !_mapiSession) {
@@ -573,12 +580,8 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
             SPropValue storeEntryKey;
             PropCopyMore(&storeEntryKey, &(rows->aRow[0].lpProps[entryIdColumn]), MAPIAllocateMore, 0);
             PropCopyMore(&storeRecordKey, &(rows->aRow[0].lpProps[recordKeyColumn]), MAPIAllocateMore, 0);
-            qDebug() << "rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb" << rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb;
-            qDebug() << "storeRecordKey.Value.bin.cb" << storeRecordKey.Value.bin.cb;
             QByteArray storeRecordKeyA((const char*)rows->aRow[0].lpProps[recordKeyColumn].Value.bin.lpb, rows->aRow[0].lpProps[recordKeyColumn].Value.bin.cb);
             QByteArray storeRecordKeyB((const char*)storeRecordKey.Value.bin.lpb, storeRecordKey.Value.bin.cb);
-            qDebug() << "pre  copy key" << storeRecordKeyA.toHex();
-            qDebug() << "post copy key" << storeRecordKeyB.toHex();
             /**** Test copy end ****/
             if (_mapiSession->OpenMsgStore(0, cbEntryId, lpEntryId, 0, flags, &mapiStore) == S_OK)
                 result = MapiStorePtr(new MapiStore(mapiStore, storeKey, name));
@@ -592,5 +595,64 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     }
     MAPIFreeBuffer(rows);
     mapiMessageStoresTable->Release();
+    return result;
+}
+
+QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
+{
+    QMessage result;
+    QMessageId newId(id);
+    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
+    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
+    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
+    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    LPMESSAGE message;
+    QMessageStore::ErrorCode ignoredError;
+#if 0 // force lookup using record keys, TODO remove
+    if (true) {
+#else
+    if (openEntry(&ignoredError, entryId, &message) != S_OK) {
+#endif
+        MapiFolderPtr parentFolder(mapiStore->findFolder(lastError, folderRecordKey));
+        if (*lastError != QMessageStore::NoError)
+            return result;
+
+        qDebug() << "parentFolder" << parentFolder->name(); // TODO remove this
+        entryId = parentFolder->messageEntryId(lastError, messageRecordKey);
+        if (!entryId.count() || (openEntry(lastError, entryId, &message) != S_OK)) {
+            *lastError = QMessageStore::InvalidId;
+            return result;
+        }
+
+        newId = QMessageIdPrivate::from(messageRecordKey, folderRecordKey, storeRecordKey, entryId);
+    }
+
+    const int nCols(3);
+    enum { recordKeyColumn = 0, flagsColumn, subjectColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SUBJECT}};
+    ULONG count;
+    LPSPropValue properties;
+    if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
+        QString sender;
+        QMessageAddress from(sender, QMessageAddress::Email);
+        QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
+        QMessage::StatusFlags status;
+        if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
+            status |= QMessage::Read;
+
+        const int nCols(1);
+        enum { senderColumn = 0 };
+        SizedSPropTagArray(nCols, columns) = {nCols, {PR_SENDER_NAME}};
+        if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK)
+            sender = QStringFromLpctstr(properties[senderColumn].Value.LPSZ);
+        result = QMessagePrivate::from(newId, status, from, subject);
+    } else {
+        *lastError = QMessageStore::ContentInaccessible;
+    }
+    message->Release();
     return result;
 }
