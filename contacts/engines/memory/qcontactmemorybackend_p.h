@@ -55,6 +55,7 @@
 #include <QSet>
 #include <QDateTime>
 #include <QString>
+#include <QObject>
 
 #include "qcontact.h"
 #include "qcontactmanager.h"

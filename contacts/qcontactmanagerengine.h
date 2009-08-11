@@ -41,6 +41,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QVariant>
+#include <QObject>
 
 #include "qcontact.h"
 #include "qcontactdetaildefinition.h"
