@@ -93,12 +93,12 @@ Recorder::Recorder(QWidget *parent) :
     if (formatControl) {
         foreach(const QString &formatName, formatControl->supportedFormats()) {
             QString description = formatControl->formatDescription(formatName);
-            ui->containerFormatBox->addItem(formatName+": "+description);
-            if (formatName == formatControl->format())
-                ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
+            //ui->containerFormatBox->addItem(formatName+": "+description);
+            //if (formatName == formatControl->format())
+            //    ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
         }
-    } else {
-        ui->containerFormatBox->setEnabled(false);
+    //} else {
+    //    ui->containerFormatBox->setEnabled(false);
     }
 
     QWidget *videoWidget = audioRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();

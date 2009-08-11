@@ -35,6 +35,10 @@
 #include "camera.h"
 
 #include <qabstractmediaservice.h>
+#include <qmediarecorder.h>
+#include <qaudiodeviceendpoint.h>
+#include <qaudioencodecontrol.h>
+#include <qvideoencodecontrol.h>
 #include <qcameracontrol.h>
 #include "qmediawidgetendpoint.h"
 
@@ -43,15 +47,18 @@
 Camera::Camera()
 {
     camera = new QCamera;
-    capture = new QMediaRecorder(camera);
+    if(camera->service())
+        capture = new QMediaRecorder(camera);
+    else
+        capture = new QMediaRecorder;
 
-    destination.setDataLocation("file:///tmp/test.avi");
-    capture->setSink(destination);
+    capture->setSink(QMediaSink(QUrl("test.tmp")));
 
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
 
     if(capture->service()) {
+        // Video Input
         QWidget *videoWidget = capture->service()->createEndpoint<QMediaWidgetEndpoint*>();
         if(videoWidget) {
             videoWidget->setBaseSize(QSize(320,240));
@@ -59,6 +66,18 @@ Camera::Camera()
             layout->addWidget(videoWidget);
             videoWidget->show();
         }
+        // Audio Input
+        audioDevice = capture->service()->createEndpoint<QAudioDeviceEndpoint*>();
+        if(audioDevice) {
+            capture->service()->setAudioInput(audioDevice);
+            audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
+        }
+        // Audio Encode Control
+        audioEncodeControl = capture->service()->control<QAudioEncodeControl*>();
+
+        connect(capture, SIGNAL(positionChanged(qint64)), this, SLOT(updateProgress(qint64)));
+        connect(capture,SIGNAL(stateChanged(QMediaRecorder::State)),this,SLOT(stateChanged(QMediaRecorder::State)));
+        //connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
     }
 
     deviceBox = new QComboBox(this);
@@ -91,36 +110,24 @@ Camera::~Camera()
 {
 }
 
-void Camera::stateChanged(QCamera::State state)
+void Camera::updateProgress(qint64 pos)
+{
+    currentTime = pos;
+    if(currentTime == 0) currentTime = 1;
+    QString text = QString("%1 secs").arg(currentTime/1000);
+    recTime->setText(text);
+}
+
+void Camera::stateChanged(QMediaRecorder::State state)
 {
     qWarning()<<"stateChanged() "<<state;
 }
-/*
-void Camera::frameReady(QVideoFrame const &frame)
-{
-    qWarning()<<"frameReady";
 
-    currentTime++;
-    QString str = QString("%1 sec").arg(currentTime/framerate);
-    recTime->setText(str);
-}
-*/
 void Camera::deviceChanged(int idx)
 {
     QByteArray device;
     device = deviceBox->itemText(idx).toLocal8Bit().constData();
     camera->setDevice(device);
-    /*
-    QList<QVideoFrame::Type> fmts = camera->supportedColorFormats();
-    qWarning()<<"fmts = "<<fmts;
-    QList<QSize> sizes = camera->supportedResolutions(fmts.first());
-    qWarning()<<"sizes = "<<sizes;
-    format = QVideoFormat(sizes.first(),fmts.first());
-    camera->setFormat(format);
-*/
-
-    connect(camera,SIGNAL(stateChanged(QCamera::State)),this,SLOT(stateChanged(QCamera::State)));
-    //connect(camera,SIGNAL(frameReady(QVideoFrame const&)),this,SLOT(frameReady(QVideoFrame const&)));
 }
 
 void Camera::togglePlay()

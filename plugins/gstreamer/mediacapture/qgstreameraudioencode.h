@@ -9,6 +9,10 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
+#ifdef AUDIOSERVICES
+#include <QtMultimedia/qaudioformat.h>
+#endif
+
 class QGstreamerAudioEncode : public QAudioEncodeControl
 {
     Q_OBJECT

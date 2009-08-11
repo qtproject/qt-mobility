@@ -70,4 +70,6 @@ for(p, QMAKE_INCDIR_QT) {
 }
 !contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
 
+contains(QT_CONFIG, multimedia): DEFINES += AUDIOSERVICES
+
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR

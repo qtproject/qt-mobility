@@ -88,18 +88,15 @@ QObject *AudioCaptureService::createEndpoint(const char *interface)
 
 void AudioCaptureService::setAudioInput(QObject *input)
 {
-    return;
-
     AudioDeviceEndpoint *endPoint = qobject_cast<AudioDeviceEndpoint*>(input);
 
     if (endPoint) {
         endPoint->setDirectionFilter(AudioDeviceEndpoint::InputDevice);
-/*
+
         if (audioInput())
             disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
 
         connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
-*/
     }
     QAbstractMediaService::setAudioInput(endPoint);
 }
