@@ -88,7 +88,7 @@ public:
     void setALREnabled(bool enabled);
 
     void open();
-    void close(bool signalWhenCloseIsReady = true);
+    void close(bool allowSignals = true);
     void stop();
     void migrate();
     void accept();
@@ -125,6 +125,7 @@ private: // MConnectionMonitorObserver
     void EventL(const CConnMonEventBase& aEvent);
     
 private:
+    TUint iapClientCount(TUint aIAPId) const;
     quint64 transferredData(TUint dataType) const;
     bool newState(QNetworkSession::State newState, TUint accessPointId = 0);
     void handleSymbianConnectionStatusChange(TInt aConnectionStatus, TInt aError, TUint accessPointId = 0);

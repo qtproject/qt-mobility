@@ -32,12 +32,13 @@
 ****************************************************************************/
 #include "qnetworksession_s60_p.h"
 #include "qnetworkconfiguration_s60_p.h"
+#include "qnetworkconfigmanager_s60_p.h"
 #include <es_enum.h>
 #include <stdapis/sys/socket.h>
 #include <stdapis/net/if.h>
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
-    : CActive(CActive::EPriorityStandard), state(QNetworkSession::Disconnected),
+    : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
       isActive(false), ipConnectionNotifier(0), iError(QNetworkSession::UnknownSessionError),
       iALREnabled(0)
 {
@@ -54,8 +55,29 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
 
 QNetworkSessionPrivate::~QNetworkSessionPrivate()
 {
-    close(false);
+    isActive = false;
+
+    // Cancel Connection Progress Notifications first.
+    // Note: ConnectionNotifier must be destroyed before Canceling RConnection::Start()
+    //       => deleting ipConnectionNotifier results RConnection::CancelProgressNotification()
     delete ipConnectionNotifier;
+    ipConnectionNotifier = NULL;
+
+    // Cancel possible RConnection::Start()
+    Cancel();
+    
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    if (iMobility) {
+        delete iMobility;
+        iMobility = NULL;
+    }
+#endif
+
+    iConnection.Close();
+    iSocketServ.Close();
+    if (iDynamicSetdefaultif) {
+        iDynamicSetdefaultif(0);
+    }
 
     iConnectionMonitor.CancelNotifications();
     iConnectionMonitor.Close();
@@ -65,6 +87,10 @@ QNetworkSessionPrivate::~QNetworkSessionPrivate()
 
 void QNetworkSessionPrivate::syncStateWithInterface()
 {
+    if (!publicConfig.d) {
+        return;
+    }
+
     // Start monitoring changes in IAP states
     TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
 
@@ -91,8 +117,10 @@ void QNetworkSessionPrivate::syncStateWithInterface()
                 iConnectionMonitor.GetIntAttribute(connectionId, 0, KConnectionStatus, connectionStatus, status);
                 User::WaitForRequest(status);
                 if (connectionStatus == KLinkLayerOpen) {
-                    if (newState(QNetworkSession::Connected, apId)) {
-                        return;
+                    if (state != QNetworkSession::Closing) {
+                        if (newState(QNetworkSession::Connected, apId)) {
+                            return;
+                        }
                     }
                 }
             }
@@ -116,7 +144,7 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return QNetworkInterface();
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& key)
+QVariant QNetworkSessionPrivate::property(const QString& /*key*/)
 {
     return QVariant();
 }
@@ -135,7 +163,7 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 
 void QNetworkSessionPrivate::open()
 {
-    if (isActive) {
+    if (isActive || !publicConfig.d || (state == QNetworkSession::Connecting)) {
         return;
     }
 
@@ -186,6 +214,7 @@ void QNetworkSessionPrivate::open()
                 if (iConnection.GetConnectionInfo(i, connInfo) == KErrNone) {
                     if (connInfo().iIapId == publicConfig.d.data()->numericId) {
                         if (iConnection.Attach(connInfo, RConnection::EAttachTypeNormal) == KErrNone) {
+                            activeConfig = publicConfig;
                             connected = ETrue;
                             startTime = QDateTime::currentDateTime();
                             if (iDynamicSetdefaultif) {
@@ -197,6 +226,8 @@ void QNetworkSessionPrivate::open()
                                 error = iDynamicSetdefaultif(&ifr);
                             }
                             isActive = true;
+                            // Make sure that state will be Connected
+                            newState(QNetworkSession::Connected);
                             emit quitPendingWaitsForOpened();
                             break;
                         }
@@ -209,7 +240,6 @@ void QNetworkSessionPrivate::open()
             pref.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
             pref.SetIapId(publicConfig.d.data()->numericId);
             iConnection.Start(pref, iStatus);
-            isActive = true;
             if (!IsActive()) {
                 SetActive();
             }
@@ -218,7 +248,12 @@ void QNetworkSessionPrivate::open()
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
         TConnSnapPref snapPref(publicConfig.d.data()->numericId);
         iConnection.Start(snapPref, iStatus);
-        isActive = true;
+        if (!IsActive()) {
+            SetActive();
+        }
+        newState(QNetworkSession::Connecting);
+    } else if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+        iConnection.Start(iStatus);
         if (!IsActive()) {
             SetActive();
         }
@@ -236,13 +271,44 @@ void QNetworkSessionPrivate::open()
     }
 }
 
-void QNetworkSessionPrivate::close(bool signalWhenCloseIsReady)
+TUint QNetworkSessionPrivate::iapClientCount(TUint aIAPId) const
+{
+    TRequestStatus status;
+    TUint connectionCount;
+    iConnectionMonitor.GetConnectionCount(connectionCount, status);
+    User::WaitForRequest(status);
+    if (status.Int() == KErrNone) {
+        for (TUint i = 1; i <= connectionCount; i++) {
+            TUint connectionId;
+            TUint subConnectionCount;
+            iConnectionMonitor.GetConnectionInfo(i, connectionId, subConnectionCount);
+            TUint apId;
+            iConnectionMonitor.GetUintAttribute(connectionId, subConnectionCount, KIAPId, apId, status);
+            User::WaitForRequest(status);
+            if (apId == aIAPId) {
+                TConnMonClientEnumBuf buf;
+                iConnectionMonitor.GetPckgAttribute(connectionId, 0, KClientInfo, buf, status);
+                User::WaitForRequest(status);
+                if (status.Int() == KErrNone) {
+                    return buf().iCount;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+void QNetworkSessionPrivate::close(bool allowSignals)
 {
     if (!isActive) {
         return;
     }
-    isActive = false;
 
+    TUint activeIap = activeConfig.d.data()->numericId;
+    isActive = false;
+    activeConfig = QNetworkConfiguration();
+    serviceConfig = QNetworkConfiguration();
+    
     Cancel();
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     if (iMobility) {
@@ -254,14 +320,27 @@ void QNetworkSessionPrivate::close(bool signalWhenCloseIsReady)
     if (ipConnectionNotifier) {
         ipConnectionNotifier->StopNotifications();
     }
+    
     iConnection.Close();
     iSocketServ.Close();
     if (iDynamicSetdefaultif) {
         iDynamicSetdefaultif(0);
     }
 
+#ifdef Q_CC_NOKIAX86
+    if ((allowSignals && iapClientCount(activeIap) <= 0) ||
+#else
+    if ((allowSignals && iapClientCount(activeIap) <= 1) ||
+#endif
+        (publicConfig.type() == QNetworkConfiguration::UserChoice)) {
+        newState(QNetworkSession::Closing);
+    }
+    
     syncStateWithInterface();
-    if (signalWhenCloseIsReady) {
+    if (allowSignals) {
+        if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+            newState(QNetworkSession::Disconnected);
+        }
         emit q->sessionClosed();
     }
 }
@@ -272,9 +351,11 @@ void QNetworkSessionPrivate::stop()
         return;
     }
     isActive = false;
+    newState(QNetworkSession::Closing);
     iConnection.Stop(RConnection::EStopAuthoritative);
-    newState(QNetworkSession::Disconnected);
-    close();
+    isActive = true;
+    close(false);
+    emit q->sessionClosed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -359,13 +440,21 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
 {
     if (isActive) {
         isActive = false;
+        activeConfig = QNetworkConfiguration();
+        serviceConfig = QNetworkConfiguration();
         iError = QNetworkSession::RoamingError;
         emit q->error(iError);
         Cancel();
         if (ipConnectionNotifier) {
             ipConnectionNotifier->StopNotifications();
         }
-        syncStateWithInterface();    
+        syncStateWithInterface();
+        // In some cases IAP is still in Connected state when
+        // syncStateWithInterface(); is called
+        // => Following call makes sure that Session state
+        //    changes immediately to Disconnected.
+        newState(QNetworkSession::Disconnected);
+        emit q->sessionClosed();
     }
 }
 #endif
@@ -408,7 +497,12 @@ QString QNetworkSessionPrivate::bearerName() const
         } else {
             config = bestConfigFromSNAP(publicConfig);
         }
+    } else if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+        if (activeConfig.isValid()) {
+            config = activeConfig;
+        }
     }
+
     if (!config.isValid()) {
         return QString();
     }
@@ -442,6 +536,23 @@ quint64 QNetworkSessionPrivate::transferredData(TUint dataType) const
         return 0;
     }
     
+    QNetworkConfiguration config;
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+        if (serviceConfig.isValid()) {
+            config = serviceConfig;
+        } else {
+            if (activeConfig.isValid()) {
+                config = activeConfig;
+            }
+        }
+    } else {
+        config = publicConfig;
+    }
+
+    if (!config.isValid()) {
+        return 0;
+    }
+    
     TUint count;
     TRequestStatus status;
     iConnectionMonitor.GetConnectionCount(count, status);
@@ -462,15 +573,15 @@ quint64 QNetworkSessionPrivate::transferredData(TUint dataType) const
             User::WaitForRequest(status);
             if (status.Int() == KErrNone) {
                 configFound = false;
-                if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                    QList<QNetworkConfiguration> configs = publicConfig.children();
+                if (config.type() == QNetworkConfiguration::ServiceNetwork) {
+                    QList<QNetworkConfiguration> configs = config.children();
                     for (int i=0; i < configs.count(); i++) {
                         if (configs[i].d.data()->numericId == apId) {
                             configFound = true;
                             break;
                         }
                     }
-                } else if (publicConfig.d.data()->numericId == apId) {
+                } else if (config.d.data()->numericId == apId) {
                     configFound = true;
                 }
                 if (configFound) {
@@ -512,6 +623,17 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         }
         return QNetworkConfiguration();
     }
+    
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+        if (publicConfig.d.data()->manager) {
+            QNetworkConfiguration pt;
+            pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
+            if (pt.d) {
+                return pt;
+            }
+        }
+        return QNetworkConfiguration();
+    }
 
     return publicConfig;
 }
@@ -522,17 +644,18 @@ void QNetworkSessionPrivate::RunL()
 
     switch (statusCode) {
         case KErrNone: // Connection created succesfully
-            activeConfig = activeConfiguration();
-            startTime = QDateTime::currentDateTime();
-
+            {
+            QNetworkConfiguration newActiveConfig = activeConfiguration(); 
+            
             if (iDynamicSetdefaultif) {
                 // Use name of the IAP to set default IAP
-                QByteArray nameAsByteArray = activeConfig.name().toUtf8();
+                QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
                 ifreq ifr;
                 strcpy(ifr.ifr_name, nameAsByteArray.constData());
 
                 TInt error = iDynamicSetdefaultif(&ifr);
                 if (error != KErrNone) {
+                    isActive = false;
                     iError = QNetworkSession::UnknownSessionError;
                     emit q->error(iError);
                     Cancel();
@@ -549,14 +672,27 @@ void QNetworkSessionPrivate::RunL()
                 iMobility = CActiveCommsMobilityApiExt::NewL(iConnection, *this);
             }
 #endif
+            isActive = true;
+            activeConfig = newActiveConfig;
+            if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+                QNetworkConfiguration pt;
+                pt.d = activeConfig.d.data()->serviceNetworkPtr;
+                serviceConfig = pt;
+            }
+            
+            startTime = QDateTime::currentDateTime();
+
             newState(QNetworkSession::Connected);
             emit quitPendingWaitsForOpened();
+            }
             break;
         case KErrNotFound: // Connection failed
         case KErrCancel: // Connection attempt cancelled
         case KErrAlreadyExists: // Connection already exists
         default:
             isActive = false;
+            activeConfig = QNetworkConfiguration();
+            serviceConfig = QNetworkConfiguration();
             iError = QNetworkSession::UnknownSessionError;
             emit q->error(iError);
             Cancel();
@@ -592,8 +728,15 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
         return false;
     }
 
+    bool emitSessionClosed = false;
     if (isActive && state == QNetworkSession::Connected && newState == QNetworkSession::Disconnected) {
+        // Active & Connected state should change directly to Disconnected state
+        // only when something forces connection to close (eg. when another
+        // application or session stops connection or when network drops
+        // unexpectedly).
         isActive = false;
+        activeConfig = QNetworkConfiguration();
+        serviceConfig = QNetworkConfiguration();
         iError = QNetworkSession::SessionAbortedError;
         emit q->error(iError);
         Cancel();
@@ -602,51 +745,63 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
         }
         // Start monitoring changes in IAP states
         TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
+        emitSessionClosed = true; // Emit SessionClosed after state change has been reported
     }
 
+    bool retVal = false;
     if (accessPointId == 0) {
         state = newState;
         emit q->stateChanged(state);
-        return true;
-    }
-
-    if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-        if (publicConfig.d.data()->numericId == accessPointId) {
-            state = newState;
-            emit q->stateChanged(state);
-            return true;
-        }
-    } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-        QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
-        for (int i = 0; i < subConfigurations.count(); i++) {
-            if (subConfigurations[i].d.data()->numericId == accessPointId) {
-                if (newState == QNetworkSession::Connected) {
-                    // Make sure that when AccessPoint is reported to be Connected
-                    // also state of the related configuration changes to Active.
-                    subConfigurations[i].d.data()->state = QNetworkConfiguration::Active;
-
-                    state = newState;
-                    emit q->stateChanged(state);
-                    return true;
-                } else {
-                    if (newState == QNetworkSession::Disconnected) {
-                        // Make sure that when AccessPoint is reported to be disconnected
-                        // also state of the related configuration changes from Active to Defined.
-                        subConfigurations[i].d.data()->state = QNetworkConfiguration::Defined;
-                    }
-                    QNetworkConfiguration config = bestConfigFromSNAP(publicConfig);
-                    if ((config.state() == QNetworkConfiguration::Defined) ||
-                        (config.state() == QNetworkConfiguration::Discovered)) {
+        retVal = true;
+    } else {
+        if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
+            if (publicConfig.d.data()->numericId == accessPointId) {
+                state = newState;
+                emit q->stateChanged(state);
+                retVal = true;
+            }
+        } else if (publicConfig.type() == QNetworkConfiguration::UserChoice && isActive) {
+            if (activeConfig.d.data()->numericId == accessPointId) {
+                state = newState;
+                emit q->stateChanged(state);
+                retVal = true;
+            }
+        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+            QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
+            for (int i = 0; i < subConfigurations.count(); i++) {
+                if (subConfigurations[i].d.data()->numericId == accessPointId) {
+                    if (newState == QNetworkSession::Connected) {
+                        // Make sure that when AccessPoint is reported to be Connected
+                        // also state of the related configuration changes to Active.
+                        subConfigurations[i].d.data()->state = QNetworkConfiguration::Active;
+    
                         state = newState;
                         emit q->stateChanged(state);
-                        return true;
+                        retVal = true;
+                    } else {
+                        if (newState == QNetworkSession::Disconnected) {
+                            // Make sure that when AccessPoint is reported to be disconnected
+                            // also state of the related configuration changes from Active to Defined.
+                            subConfigurations[i].d.data()->state = QNetworkConfiguration::Defined;
+                        }
+                        QNetworkConfiguration config = bestConfigFromSNAP(publicConfig);
+                        if ((config.state() == QNetworkConfiguration::Defined) ||
+                            (config.state() == QNetworkConfiguration::Discovered)) {
+                            state = newState;
+                            emit q->stateChanged(state);
+                            retVal = true;
+                        }
                     }
                 }
             }
         }
     }
+    
+    if (emitSessionClosed) {
+        emit q->sessionClosed();
+    }
 
-    return false;
+    return retVal;
 }
 
 void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectionStatus,
