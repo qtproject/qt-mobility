@@ -10,8 +10,10 @@ HEADERS += details/qcontactaddress.h \
     details/qcontactgeolocation.h \
     details/qcontactguid.h \
     details/qcontactname.h \
+    details/qcontactonlineaccount.h \
     details/qcontactorganisation.h \
     details/qcontactphonenumber.h \
+    details/qcontactpresence.h \
     details/qcontactrelationship.h \
     details/qcontactsynctarget.h \
     details/qcontacttimestamp.h \

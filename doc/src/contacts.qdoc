@@ -153,8 +153,10 @@ they may offer their own which provide similar functionality.
     \o \l{QContactGeolocation}
     \o \l{QContactGuid}
     \o \l{QContactName}
+    \o \l{QContactOnlineAccount}
     \o \l{QContactOrganisation}
     \o \l{QContactPhoneNumber}
+    \o \l{QContactPresence}
     \o \l{QContactSyncTarget}
     \o \l{QContactRelationship}
     \o \l{QContactTimestamp}

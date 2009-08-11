@@ -84,6 +84,11 @@
  */
 
 /*!
+ * \class QContactOnlineAccount
+ * \brief An online account which the contact uses to communicate with friends and family
+ */
+
+/*!
  * \class QContactOrganisation
  * \brief Details about the organisation of which the contact is either a part of, or stands for
  */
@@ -91,6 +96,15 @@
 /*!
  * \class QContactPhoneNumber
  * \brief A phone number of a contact
+ */
+
+/*!
+ * \class QContactPresence
+ * \brief Presence information relating to a QContactOnlineAccount of the contact
+ * Details containing presence information are linked to a particular online account detail.
+ * The backend should update the presence information relating to an online account when it
+ * is available, and delete the presence information detail if its corresponding online account
+ * detail is deleted.
  */
 
 /*!
@@ -136,6 +150,13 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "StreetAddress");
  * The constant string which identifies the definition of details which are phone numbers
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
+
+/*!
+ * \variable QContactPresence::DefinitionName
+ * The constant string which identifies the definition of details which contain presence information related
+ * to an online account
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::DefinitionName, "Presence");
 
 /*!
  * \variable QContactSyncTarget::DefinitionName
@@ -190,6 +211,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
  * The constant string which identifies the definition of details which describe a location associated with a contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
+
+/*!
+ * \variable QContactOnlineAccount::DefinitionName
+ * The constant string which identifies the definition of details which identify the organisation to which a contact belongs in a given context
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
 
 /*!
  * \variable QContactOrganisation::DefinitionName
@@ -398,6 +425,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldSpeed, "Speed");
 Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
 
 /*!
+ * \variable QContactOnlineAccount::FieldRemoteAccountUri
+ * The constant key for which the remote account uri value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldRemoteAccountUri, "RemoteAccountUri");
+
+/*!
+ * \variable QContactOnlineAccount::FieldLocalAccountUri
+ * The constant key for which the local account uri value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldLocalAccountUri, "LocalAccountUri");
+
+/*!
  * \variable QContactOrganisation::FieldDisplayLabel
  * The constant key for which the display label value is stored in details of the QContactOrganisation type
  */
@@ -408,6 +447,36 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldDisplayLabel, "DisplayLabel")
  * The constant key for which the logo path value is stored in details of the QContactOrganisation type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldLogo, "Logo");
+
+/*!
+ * \variable QContactPresence::FieldRemoteAccountUri
+ * The constant key for which the remote account uri value is stored in details of the QContactPresence type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldRemoteAccountUri, "RemoteAccountUri");
+
+/*!
+ * \variable QContactPresence::FieldNickname
+ * The constant key for which the nickname value is stored in details of the QContactPresence type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldNickname, "Nickname");
+
+/*!
+ * \variable QContactPresence::FieldPresence
+ * The constant key for which the presence value is stored in details of the QContactPresence type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
+
+/*!
+ * \variable QContactPresence::FieldStatusMessage
+ * The constant key for which the status message value is stored in details of the QContactPresence type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
+
+/*!
+ * \variable QContactPresence::FieldProviderAvailability
+ * The constant key for which the provider availability value is stored in details of the QContactPresence type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldProviderAvailability, "ProviderAvailability");
 
 /*!
  * \variable QContactDisplayLabel::FieldLabel
@@ -1076,8 +1145,35 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactOnlineAccount::setRemoteAccountUri(const QString& remoteAccountUri)
+ * Sets the universal resource identifier of the contact's online account to \a remoteAccountUri
+ */
+
+/*!
+ * \fn QContactOnlineAccount::remoteAccountUri() const
+ * Returns the universal resource identifier of the online account of the contact
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setLocalAccountUri(const QString& localAccountUri)
+ * Sets the universal resource identifier of the local account which is used to connect to the service which
+ * allows communication with the remote account to \a localAccountUri
+ */
+
+/*!
+ * \fn QContactOnlineAccount::localAccountUri() const
+ * Returns the universal resource identifier of the local account which is used to connect to the service which
+ * allows communication with the remote account
+ */
+
+/*!
  * \fn QContactOrganisation::setDisplayLabel(const QString& displayLabel)
  * Sets the display label of the organisation stored in this detail to \a displayLabel
+ */
+
+/*!
+ * \fn QContactOrganisation::displayLabel() const
+ * Returns the display label of the organisation stored in this detail
  */
 
 /*!
@@ -1088,5 +1184,63 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactOrganisation::logo() const
  * Returns the logo of the organisation stored in this detail
+ */
+
+/*!
+ * \fn QContactPresence::setRemoteAccountUri(const QString& remoteAccountUri)
+ * Sets the universal resource identifier of the contact's online account about which
+ * this detail stores presence information to \a remoteAccountUri
+ */
+
+/*!
+ * \fn QContactPresence::remoteAccountUri() const
+ * Returns the universal resource identifier of the online account of the contact about which
+ * this detail stores presence information
+ */
+
+/*!
+ * \fn QContactPresence::setProviderAvailability(const QString& providerAvailability)
+ * Sets the current availability of the provider of status information about the online account
+ * about which this detail stores presence information to \a providerAvailability
+ */
+
+/*!
+ * \fn QContactPresence::providerAvailability() const
+ * Returns the current availability of the provider of presence information about the online account
+ * about which this detail stores presence information
+ */
+
+/*!
+ * \fn QContactPresence::setNickname(const QString& nickname)
+ * Sets the last-known nickname used by the contact during communications via the online account
+ * about which this detail stores presence information to \a nickname
+ */
+
+/*!
+ * \fn QContactPresence::nickname() const
+ * Returns the last-known nickname used by the contact during communications via the online account
+ * about which this detail stores presence information
+ */
+
+/*!
+ * \fn QContactPresence::setPresence(const QString& presence)
+ * Sets the presence of the online account according to the presence information provider to \a presence
+ */
+
+/*!
+ * \fn QContactPresence::presence() const
+ * Returns the presence of the online account according to the presence provider
+ */
+
+/*!
+ * \fn QContactPresence::setStatusMessage(const QString& statusMessage)
+ * Sets the last-known status message of the contact which was communicated via the online account about
+ * which this detail stores presence information to \a statusMessage
+ */
+
+/*!
+ * \fn QContactPresence::statusMessage() const
+ * Returns the last-known status message of the contact which was communicated via the online account about
+ * which this detail stores presence information
  */
 
