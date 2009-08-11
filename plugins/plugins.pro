@@ -12,5 +12,5 @@ win32 {
 }
 
 mac: SUBDIRS += qt7
-unix:contains(QT_CONFIG, gstreamer): SUBDIRS += gstreamer
+unix: system(pkg-config --exists 'gstreamer-audio-0.10 gstreamer-video-0.10'): SUBDIRS += gstreamer
 
