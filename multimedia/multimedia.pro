@@ -5,11 +5,8 @@ TEMPLATE = lib
 # DEFINES += VIDEOSERVICES
 # distinct from QtMultimedia
 TARGET = QtMedia
-
 include (../common.pri)
-
-videosurface: QT += multimedia
-
+videosurface:QT += multimedia
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 HEADERS = qabstractmediacontrol.h \
@@ -50,8 +47,8 @@ HEADERS = qabstractmediacontrol.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraservice.h \
-    qmediaformatcontrol.h
-
+    qmediaformatcontrol.h \
+    qmediaplaylistcontrol.h
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
@@ -86,5 +83,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraservice.cpp \
-    qmediaformatcontrol.cpp
+    qmediaformatcontrol.cpp \
+    qmediaplaylistcontrol.cpp
 include (endpoints/endpoints.pri)
