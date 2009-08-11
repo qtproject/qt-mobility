@@ -1,14 +1,17 @@
 TEMPLATE = lib
 
-# QT += multimedia
-# DEFINES += AUDIOSERVICES
-# DEFINES += VIDEOSERVICES
 # distinct from QtMultimedia
 TARGET = QtMedia
+
 include (../common.pri)
-videosurface:QT += multimedia
+
+contains(QT_CONFIG, multimedia): QT += multimedia
+
+videosurface: QT += multimedia
+
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
+
 HEADERS = qabstractmediacontrol.h \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
@@ -40,6 +43,7 @@ HEADERS = qabstractmediacontrol.h \
     qsharedmediaplaylist.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
+    qvideowindowcontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qaudioencodecontrol.h \
@@ -50,6 +54,7 @@ HEADERS = qabstractmediacontrol.h \
     qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h
+
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
@@ -77,6 +82,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qsharedmediaplaylist.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
+    qvideowindowcontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qaudioencodecontrol.cpp \
@@ -87,4 +93,15 @@ SOURCES = qabstractmediacontrol.cpp \
     qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp
+
+videosurface {
+    HEADERS += \
+        qpaintervideosurface_p.h \
+        qvideorenderercontrol.h
+
+    SOURCES += \
+        qpaintervideosurface.cpp \
+        qvideorenderercontrol.cpp
+}
+
 include (endpoints/endpoints.pri)

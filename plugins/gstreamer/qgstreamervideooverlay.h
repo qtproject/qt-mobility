@@ -37,7 +37,7 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include "qvideooverlayendpoint.h"
+#include "qvideowindowcontrol.h"
 #include "qgstreamerplayersession.h"
 
 class QAbstractVideoSurface;

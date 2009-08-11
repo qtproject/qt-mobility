@@ -37,11 +37,11 @@
 #include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
 #include "qvideooutputcontrol.h"
-#include "qvideooverlayendpoint.h"
+#include "qvideowindowcontrol.h"
 
 #ifndef QT_NO_VIDEOSURFACE
 #include "qpaintervideosurface_p.h"
-#include "qvideorendererendpoint.h"
+#include "qvideorenderercontrol.h"
 #include "qvideosurfaceformat.h"
 #include <qpainter.h>
 #endif

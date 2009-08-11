@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qvideooverlayendpoint.h"
+#include "qvideowindowcontrol.h"
 
 #include "qabstractmediacontrol_p.h"
 

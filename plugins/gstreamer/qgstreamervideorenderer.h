@@ -3,7 +3,7 @@
 
 #ifndef QT_NO_VIDEOSURFACE
 
-#include "qvideorendererendpoint.h"
+#include "qvideorenderercontrol.h"
 #include "qvideosurfacegstsink.h"
 #include "qgstreamerplayersession.h"
 

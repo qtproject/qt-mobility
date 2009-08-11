@@ -35,7 +35,7 @@
 #ifndef QEVRVIDEOOVERLAY_H
 #define QEVRVIDEOOVERLAY_H
 
-#include "qvideooverlayendpoint.h"
+#include "qvideowindowcontrol.h"
 
 #include "qmfactivate.h"
 
