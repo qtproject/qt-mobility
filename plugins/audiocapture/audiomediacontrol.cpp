@@ -41,6 +41,8 @@ AudioMediaControl::AudioMediaControl(QObject *parent)
     :QMediaRecorderControl(parent)
 {
     m_session = qobject_cast<AudioCaptureSession*>(parent);
+    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(positionChanged(qint64)));
+    connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
 }
 
 AudioMediaControl::~AudioMediaControl()

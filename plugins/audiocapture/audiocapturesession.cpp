@@ -44,13 +44,16 @@
 
 AudioCaptureSession::AudioCaptureSession(QObject *parent)
 {
-    m_audioInput = 0;
     m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
+    m_audioInput = 0;
     m_position = 0;
     m_state = QMediaRecorder::StoppedState;
+
     m_format.setFrequency(8000);
     m_format.setChannels(1);
     m_format.setSampleSize(8);
+    m_format.setSampleType(QAudioFormat::UnSignedInt);
+    m_format.setCodec("audio/pcm");
 }
 
 AudioCaptureSession::~AudioCaptureSession()
@@ -86,6 +89,8 @@ bool AudioCaptureSession::setFormat(const QAudioFormat &format)
                 if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
                             QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData()) == 0) {
                     m_audioInput = new QAudioInput(devices.at(i),m_format);
+                    connect(m_audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(stateChanged(QAudio::State)));
+                    connect(m_audioInput,SIGNAL(notify()),this,SLOT(notify()));
                     break;
                 }
             }
@@ -195,16 +200,20 @@ int AudioCaptureSession::state() const
 
 void AudioCaptureSession::record()
 {
-    qWarning()<<m_audioInput;
     if(!m_audioInput) {
         setFormat(m_format);
     }
 
     if(m_audioInput) {
-        if(m_state == QMediaRecorder::StoppedState)
-            file.open(QIODevice::WriteOnly);
-
-        m_audioInput->start(qobject_cast<QIODevice*>(&file));
+        if(m_state == QMediaRecorder::StoppedState) {
+            if(file.open(QIODevice::WriteOnly)) {
+                m_audioInput->start(qobject_cast<QIODevice*>(&file));
+            } else {
+                qWarning()<<"can't open source, failed";
+                m_state = QMediaRecorder::StoppedState;
+                emit stateChanged(m_state);
+            }
+        }
     }
 
     m_state = QMediaRecorder::RecordingState;
@@ -230,6 +239,7 @@ void AudioCaptureSession::stop()
 
 void AudioCaptureSession::stateChanged(QAudio::State state)
 {
+    qWarning()<<"stateChanged state="<<state;
     switch(state) {
         case QAudio::ActiveState:
             emit stateChanged(QMediaRecorder::RecordingState);
@@ -245,13 +255,12 @@ void AudioCaptureSession::stateChanged(QAudio::State state)
 
 void AudioCaptureSession::notify()
 {
+    qWarning()<<"notify() pos = "<<m_position;
     m_position += m_audioInput->notifyInterval();
     emit positionChanged(m_position);
 }
 
 void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 {
-    qWarning()<<"device="<<deviceName;
-
     m_captureDevice = deviceName;
 }

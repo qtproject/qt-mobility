@@ -1,7 +1,7 @@
 #include "audioencodecontrol.h"
 #include "audiocapturesession.h"
 
-//#include <QtMultimedia/qaudioformat.h>
+#include <QtMultimedia/qaudioformat.h>
 
 #include <QtCore/qdebug.h>
 
@@ -14,10 +14,10 @@ AudioEncodeControl::AudioEncodeControl(QObject *parent)
     if (!m_codecs.isEmpty())
         setAudioCodec(m_codecs[0]);
 
-    //m_format.setFrequency(8000);
-    //m_format.setChannels(1);
-    //m_format.setSampleSize(8);
-    //m_format.setCodec("audio/pcm");
+    m_format.setFrequency(8000);
+    m_format.setChannels(1);
+    m_format.setSampleSize(8);
+    m_format.setCodec("audio/pcm");
 }
 
 AudioEncodeControl::~AudioEncodeControl()

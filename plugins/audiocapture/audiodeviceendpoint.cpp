@@ -43,7 +43,6 @@
 AudioDeviceEndpoint::AudioDeviceEndpoint(QObject *parent)
     :QAudioDeviceEndpoint(parent)
 {
-    qWarning()<<"AudioDeviceEndpoint::AudioDeviceEndpoint";
     update();
 }
 
@@ -132,31 +131,23 @@ void AudioDeviceEndpoint::update()
     m_formFactors.clear();
 
     QList<QAudioDeviceId> devices;
-qWarning()<<"@";
     if(directionFilter() == InputDevice) {
-        qWarning()<<"1";
-        /*
         devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
         for(int i = 0; i < devices.size(); ++i) {
-            qWarning()<<QAudioDeviceInfo(devices.at(i)).deviceName();
             m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
             m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
             m_directions.append(InputDevice);
             m_roles.append(AllRoles);
             m_formFactors.append(UnknownFormFactor);
         }
-        */
     } else {
-        qWarning()<<"2";
-        //devices = QAudioDeviceInfo::deviceList(QAudio::AudioOutput);
-        //for(int i = 0; i < devices.size(); ++i) {
-            //qWarning()<<QAudioDeviceInfo(devices.at(i)).deviceName();
-            //m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            //m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            //m_directions.append(OutputDevice);
-            //m_roles.append(AllRoles);
-            //m_formFactors.append(UnknownFormFactor);
-            //qWarning()<<"!!!";
-        //}
+        devices = QAudioDeviceInfo::deviceList(QAudio::AudioOutput);
+        for(int i = 0; i < devices.size(); ++i) {
+            m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+            m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+            m_directions.append(OutputDevice);
+            m_roles.append(AllRoles);
+            m_formFactors.append(UnknownFormFactor);
+        }
     }
 }

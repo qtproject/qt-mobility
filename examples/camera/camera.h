@@ -42,6 +42,10 @@
 
 class QComboBox;
 class QLabel;
+class QAudioDeviceEndpoint;
+class QAudioEncodeControl;
+class QVideoEncodeControl;
+
 
 class Camera : public QMainWindow
 {
@@ -53,13 +57,15 @@ public:
 private slots:
     void deviceChanged(int idx);
     void togglePlay();
-    void stateChanged(QCamera::State);
-    //void frameReady(QVideoFrame const &frame);
+    void stateChanged(QMediaRecorder::State);
+    void updateProgress(qint64 pos);
 
 private:
     QMediaRecorder* capture;
     QCamera*       camera;
-    //QVideoFormat   format;
+    QAudioDeviceEndpoint *audioDevice;
+    QAudioEncodeControl *audioEncodeControl;
+    QVideoEncodeControl *videoEncodeControl;
     QComboBox*     deviceBox;
     QLabel*        recTime;
     QPushButton*   button;
