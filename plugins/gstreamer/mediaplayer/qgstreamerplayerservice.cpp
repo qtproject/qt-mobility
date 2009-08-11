@@ -40,7 +40,7 @@
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerplayersession.h"
 #include "qgstreamermetadataprovider.h"
-
+#include "qgstreamervideooutputcontrol.h"
 
 #include "qgstreamervideowidget.h"
 #include "qgstreamervideooverlay.h"
@@ -55,6 +55,16 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
     m_metadata = new QGstreamerMetadataProvider(m_session, this);
+    m_videoOutput = new QGstreamerVideoOutputControl(this);
+    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+#ifndef QT_NO_VIDEOSURFACE
+    m_videoRenderer = new QGstreamerVideoRenderer(this);
+    m_videoWindow = new QGstreamerVideoOverlay(this);
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+            << QVideoOutputControl::RendererOutput
+            << QVideoOutputControl::WindowOutput);
+#endif
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
@@ -68,6 +78,17 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 
     if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
         return m_metadata;
+
+    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
+        return m_videoOutput;
+
+#ifndef QT_NO_VIDEOSURFACE
+    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
+        return m_videoRenderer;
+
+    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+        return m_videoWindow;
+#endif
 
     return 0;
 }
@@ -85,10 +106,6 @@ QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
 
     if (direction == QMediaEndpointInterface::Output) {
         res << QMediaWidgetEndpoint_iid;
-#ifndef QT_NO_VIDEOSURFACE
-        res << QVideoOverlayEndpoint_iid;
-        res << QVideoRendererEndpoint_iid;
-#endif
     }
 
     return res;
@@ -101,16 +118,28 @@ QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
         return new QGstreamerVideoWidget;
     }
 
-#ifndef QT_NO_VIDEOSURFACE
-    if (qstrcmp(interface, QVideoOverlayEndpoint_iid) == 0) {
-        qDebug("new Gstreamer video overlay");
-        return new QGstreamerVideoOverlay;
-    }
-
-    if (qstrcmp(interface,QVideoRendererEndpoint_iid) == 0) {
-        return new QGstreamerVideoRenderer;
-    }
-#endif
-
     return 0;
 }
+
+void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
+{
+#ifdef QT_NO_VIDEOSURFACE
+    Q_UNUSED(output);
+#else
+    switch (output) {
+    case QVideoOutputControl::NoOutput:
+        m_control->setVideoOutput(videoOutput());
+        break;
+    case QVideoOutputControl::RendererOutput:
+        m_control->setVideoOutput(m_videoRenderer);
+        break;
+    case QVideoOutputControl::WindowOutput:
+        m_control->setVideoOutput(m_videoWindow);
+        break;
+    default:
+        qWarning("Invalid video output selection");
+        break;
+    }
+#endif
+}
+

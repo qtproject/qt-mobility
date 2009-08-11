@@ -34,33 +34,27 @@
 
 #include "qevrvideooverlay.h"
 
+#include <d3d9.h>
 
-QEvrVideoOverlay::QEvrVideoOverlay(QObject *parent)
-    : QVideoOverlayEndpoint(parent)
+QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
+    : m_ref(1)
+    , m_evrHwnd(evrHwnd)
+    , ptrMFCreateVideoPresenter(0)
+    , m_presenter(0)
     , m_displayControl(0)
 {
+    ptrMFCreateVideoPresenter = reinterpret_cast<PtrMFCreateVideoPresenter>(
+            GetProcAddress(m_evrHwnd, "MFCreateVideoPresenter"));
 }
 
 QEvrVideoOverlay::~QEvrVideoOverlay()
 {
-}
-
-void QEvrVideoOverlay::setEnabled(bool enabled)
-{
-    if (m_displayControl && enabled && winId()) {
-        m_displayControl->SetVideoWindow(winId());
-
-        QRect rect = displayRect();
-
-        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-
-        m_displayControl->SetVideoPosition(0, &displayRect);
-    }
+    FreeLibrary(m_evrHwnd);
 }
 
 void QEvrVideoOverlay::setWinId(WId id)
 {
-    if (m_displayControl && isEnabled()) {
+    if (m_displayControl) {
         m_displayControl->SetVideoWindow(id);
 
         QRect rect = displayRect();
@@ -70,24 +64,24 @@ void QEvrVideoOverlay::setWinId(WId id)
         m_displayControl->SetVideoPosition(0, &displayRect);
     }
 
-    QVideoOverlayEndpoint::setWinId(id);
+    QVideoWindowControl::setWinId(id);
 }
 
 void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
 {
-    if (m_displayControl && isEnabled()) {
+    if (m_displayControl) {
         RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
 
         m_displayControl->SetVideoPosition(0, &displayRect);
     }
 
-    QVideoOverlayEndpoint::setDisplayRect(rect);
+    QVideoWindowControl::setDisplayRect(rect);
 }
 
 void QEvrVideoOverlay::setFullscreen(bool fullscreen)
 {
     if (m_displayControl && m_displayControl->SetFullscreen(fullscreen) == S_OK)
-        QVideoOverlayEndpoint::setFullscreen(fullscreen);
+        QVideoWindowControl::setFullscreen(fullscreen);
 }
 
 QSize QEvrVideoOverlay::nativeSize() const
@@ -108,6 +102,113 @@ void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)
 
     m_displayControl = control;
 
-    if (m_displayControl)
+    if (m_displayControl) {
+        QRect rect = displayRect();
+        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+
         m_displayControl->AddRef();
+        m_displayControl->SetVideoWindow(winId());
+        m_displayControl->SetVideoPosition(0, &displayRect);
+    }
+}
+
+// IUnknown
+HRESULT QEvrVideoOverlay::QueryInterface(REFIID riid, void **object)
+{
+    if (!object) {
+        return E_POINTER;
+    } else if (riid == __uuidof(IUnknown)
+            || riid == __uuidof(IMFAttributes)
+            || riid == __uuidof(IMFActivate)) {
+        *object = static_cast<IMFActivate *>(this);
+    } else {
+        return E_NOINTERFACE;
+    }
+
+    AddRef();
+
+    return S_OK;
+}
+
+ULONG QEvrVideoOverlay::AddRef()
+{
+    return InterlockedIncrement(&m_ref);
+}
+
+ULONG QEvrVideoOverlay::Release()
+{
+    ULONG ref = InterlockedDecrement(&m_ref);
+
+    Q_ASSERT(ref != 0);
+
+    return ref;
+}
+
+// IMFActivate
+HRESULT QEvrVideoOverlay::ActivateObject(REFIID riid, void **ppv)
+{
+    if (riid != __uuidof(IMFVideoPresenter)) {
+        return E_NOINTERFACE;
+    } else if (!ptrMFCreateVideoPresenter) {
+        return E_NOINTERFACE;
+    } else if (m_presenter) {
+        *ppv = m_presenter;
+
+        return S_OK;
+    } else {
+        IMFVideoDisplayControl *displayControl = 0;
+
+        IMFGetService *service;
+        HRESULT hr;
+        if ((hr = (*ptrMFCreateVideoPresenter)(
+                0,
+                __uuidof(IDirect3DDevice9),
+                __uuidof(IMFVideoPresenter),
+                reinterpret_cast<void **>(&m_presenter))) != S_OK) {
+            qWarning("failed to create video presenter");
+        } else if ((hr = m_presenter->QueryInterface(
+                __uuidof(IMFGetService), reinterpret_cast<void **>(&service))) != S_OK) {
+            qWarning("failed to query IMFGetService interface");
+        } else {
+            if ((hr = service->GetService(
+                    MR_VIDEO_RENDER_SERVICE,
+                    __uuidof(IMFVideoDisplayControl),
+                    reinterpret_cast<void **>(&displayControl))) != S_OK) {
+                qWarning("failed to get IMFVideoDisplayControl service");
+            }
+            service->Release();
+        }
+
+        setDisplayControl(displayControl);
+
+        if (m_presenter && hr != S_OK) {
+            m_presenter->Release();
+            m_presenter = 0;
+        }
+
+        *ppv = m_presenter;
+
+        return hr;
+    }
+}
+
+HRESULT QEvrVideoOverlay::ShutdownObject()
+{
+    setDisplayControl(0);
+
+    if (m_presenter) {
+        m_presenter->Release();
+        m_presenter = 0;
+    }
+    return S_OK;
+}
+
+HRESULT QEvrVideoOverlay::DetachObject()
+{
+    if (m_presenter) {
+        m_presenter->Release();
+        m_presenter = 0;
+    }
+
+    return S_OK;
 }

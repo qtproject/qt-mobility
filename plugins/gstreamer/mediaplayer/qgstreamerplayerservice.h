@@ -39,6 +39,7 @@
 
 #include "qmediaplayerservice.h"
 
+#include "qgstreamervideooutputcontrol.h"
 
 class QMediaMetaData;
 class QMediaPlayerControl;
@@ -48,6 +49,10 @@ class QGstreamerMetaData;
 class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
 class QGstreamerMetadataProvider;
+#ifndef QT_NO_VIDEOSURFACE
+class QGstreamerVideoRenderer;
+class QGstreamerVideoOverlay;
+#endif
 
 class QMediaPlaylistNavigator;
 
@@ -65,11 +70,20 @@ public:
 
     QObject *createEndpoint(const char *interface);
 
-    QAbstractMediaControl *control(const char *name) const;    
+    QAbstractMediaControl *control(const char *name) const;
+
+private slots:
+    void videoOutputChanged(QVideoOutputControl::Output output);
+
 private:
     QGstreamerPlayerControl *m_control;
     QGstreamerPlayerSession *m_session;
     QGstreamerMetadataProvider *m_metadata;
+    QGstreamerVideoOutputControl *m_videoOutput;
+#ifndef QT_NO_VIDEOSURFACE
+    QGstreamerVideoRenderer *m_videoRenderer;
+    QGstreamerVideoOverlay *m_videoWindow;
+#endif
 };
 
 #endif

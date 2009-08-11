@@ -34,14 +34,14 @@
 
 #include "qvideorendererendpoint.h"
 
-#include <private/qobject_p.h>
+#include "qabstractmediacontrol_p.h"
 
 #ifndef QT_NO_VIDEOSURFACE
 
-class QVideoRendererEndpointPrivate : public QObjectPrivate
+class QVideoRendererControlPrivate : public QAbstractMediaControlPrivate
 {
 public:
-    QVideoRendererEndpointPrivate()
+    QVideoRendererControlPrivate()
         : surface(0)
     {
     }
@@ -50,68 +50,54 @@ public:
 };
 
 /*!
-    \class QVideoRendererEndpoint
+    \class QVideoRendererControl
     \preliminary
-    \brief The QVideoRendererEndpoint class provides a media end point that renders to a video
+    \brief The QVideoRendererControl class provides a media end point that renders to a video
     surface.
 
-    The interface name of QVideoRendererEndpoint is \c com.nokia.Qt.QVideoRendererEndpoint/1.0 as
-    defined in QVideoRendererEndpoint_iid.
+    The interface name of QVideoRendererControl is \c com.nokia.Qt.QVideoRendererControl/1.0 as
+    defined in QVideoRendererControl_iid.
 
     \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
 */
 
 /*!
-    \macro QVideoRendererEndpoint_iid
+    \macro QVideoRendererControl_iid
 
-    \c com.nokia.Qt.QVideoRendererEndpoint/1.0
+    \c com.nokia.Qt.QVideoRendererControl/1.0
 
-    Defines the interface name of QVideoRendererEndpoint.
+    Defines the interface name of QVideoRendererControl.
 
-    \relates QVideoRendererEndpoint
+    \relates QVideoRendererControl
 */
 
 /*!
     Constructs a new video renderer media end point with the given \a parent.
 */
-QVideoRendererEndpoint::QVideoRendererEndpoint(QObject *parent)
-    : QObject(*new QVideoRendererEndpointPrivate, parent)
+QVideoRendererControl::QVideoRendererControl(QObject *parent)
+    : QAbstractMediaControl(*new QVideoRendererControlPrivate, parent)
 {
 }
 
 /*!
     Destroys a video renderer media end point.
 */
-QVideoRendererEndpoint::~QVideoRendererEndpoint()
+QVideoRendererControl::~QVideoRendererControl()
 {
 }
 
 /*!
-    \reimp
-*/
-QMediaEndpointInterface::Direction QVideoRendererEndpoint::direction() const
-{
-    return Output;
-}
+    \property QVideoRendererControl::surface
 
-/*!
-    \property QVideoRendererEndpoint::surface
-
-    The video surface a renderer renders to.
+    The surface a video producer renders to.
 */
 
-/*!
-    Returns the video surface a renderer renders to.
-*/
-QAbstractVideoSurface *QVideoRendererEndpoint::surface() const
+QAbstractVideoSurface *QVideoRendererControl::surface() const
 {
     return d_func()->surface;
 }
 
-/*!
-    Sets the video \a surface a renderer renders to.
-*/
-void QVideoRendererEndpoint::setSurface(QAbstractVideoSurface *surface)
+void QVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
 {
     d_func()->surface = surface;
 }

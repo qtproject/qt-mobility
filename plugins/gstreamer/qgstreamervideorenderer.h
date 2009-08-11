@@ -7,7 +7,7 @@
 #include "qvideosurfacegstsink.h"
 #include "qgstreamerplayersession.h"
 
-class QGstreamerVideoRenderer : public QVideoRendererEndpoint, public QGstreamerVideoRendererInterface
+class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
 {
     Q_OBJECT
     Q_INTERFACES(QGstreamerVideoRendererInterface)

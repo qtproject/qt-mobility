@@ -37,13 +37,19 @@
 
 #include "qvideooverlayendpoint.h"
 
+#include "qwmpplayerservice.h"
+
 #include <wmp.h>
 
-class QWmpVideoOverlay : public QVideoOverlayEndpoint
+
+class QWmpVideoOverlay
+    : public QVideoWindowControl
+    , public IOleInPlaceSite
+    , public IOleInPlaceFrame
 {
     Q_OBJECT
 public:
-    QWmpVideoOverlay(QObject *parent = 0);
+    QWmpVideoOverlay(IOleObject *object, QWmpPlayerService *service);
     ~QWmpVideoOverlay();
 
     void setEnabled(bool enabled);
@@ -54,14 +60,53 @@ public:
     QSize nativeSize() const;
     void setNativeSize(const QSize &size);
 
-    void setObject(IOleObject *object, IOleClientSite *site);
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IOleWindow
+    HRESULT STDMETHODCALLTYPE GetWindow(HWND *phwnd);
+    HRESULT STDMETHODCALLTYPE ContextSensitiveHelp(BOOL fEnterMode);
+
+    // IOleInPlaceSite
+    HRESULT STDMETHODCALLTYPE CanInPlaceActivate();
+    HRESULT STDMETHODCALLTYPE OnInPlaceActivate();
+    HRESULT STDMETHODCALLTYPE OnUIActivate();
+    HRESULT STDMETHODCALLTYPE GetWindowContext(
+            IOleInPlaceFrame **ppFrame,
+            IOleInPlaceUIWindow **ppDoc,
+            LPRECT lprcPosRect,
+            LPRECT lprcClipRect,
+            LPOLEINPLACEFRAMEINFO lpFrameInfo);
+    HRESULT STDMETHODCALLTYPE Scroll(SIZE scrollExtant);
+    HRESULT STDMETHODCALLTYPE OnUIDeactivate(BOOL fUndoable);
+    HRESULT STDMETHODCALLTYPE OnInPlaceDeactivate();
+    HRESULT STDMETHODCALLTYPE DiscardUndoState();
+    HRESULT STDMETHODCALLTYPE DeactivateAndUndo();
+    HRESULT STDMETHODCALLTYPE OnPosRectChange(LPCRECT lprcPosRect);
+
+    // IOleInPlaceUIWindow
+    HRESULT STDMETHODCALLTYPE GetBorder(LPRECT lprectBorder);
+    HRESULT STDMETHODCALLTYPE RequestBorderSpace(LPCBORDERWIDTHS pborderwidths);
+    HRESULT STDMETHODCALLTYPE SetBorderSpace(LPCBORDERWIDTHS pborderwidths);
+    HRESULT STDMETHODCALLTYPE SetActiveObject(
+            IOleInPlaceActiveObject *pActiveObject, LPCOLESTR pszObjName);
+
+    // IOleInPlaceFrame
+    HRESULT STDMETHODCALLTYPE InsertMenus(HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths);
+    HRESULT STDMETHODCALLTYPE SetMenu(HMENU hmenuShared, HOLEMENU holemenu, HWND hwndActiveObject);
+    HRESULT STDMETHODCALLTYPE RemoveMenus(HMENU hmenuShared);
+    HRESULT STDMETHODCALLTYPE SetStatusText(LPCOLESTR pszStatusText);
+    HRESULT STDMETHODCALLTYPE EnableModeless(BOOL fEnable);
+    HRESULT STDMETHODCALLTYPE TranslateAccelerator(LPMSG lpmsg, WORD wID);
 
 private:
-    QSize m_sizeHint;
-
+    QWmpPlayerService *m_service;
     IOleObject *m_object;
     IOleInPlaceObject *m_inPlaceObject;
-    IOleClientSite *m_clientSite;
+    QSize m_sizeHint;
+    bool m_enabled;
 };
 
 #endif

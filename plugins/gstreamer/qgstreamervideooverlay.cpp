@@ -40,7 +40,7 @@
 #include "qx11videosurface.h"
 
 QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
-    : QVideoOverlayEndpoint(parent)
+    : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
 {
@@ -61,56 +61,51 @@ QGstreamerVideoOverlay::~QGstreamerVideoOverlay()
     delete m_surface;
 }
 
-void QGstreamerVideoOverlay::setEnabled(bool enabled)
-{
-    QVideoOverlayEndpoint::setEnabled(enabled);
-}
-
 void QGstreamerVideoOverlay::setWinId(WId id)
 {
     m_surface->setWinId(id);
 
-    QVideoOverlayEndpoint::setWinId(id);
+    QVideoWindowControl::setWinId(id);
 }
 
 void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
 {
     m_surface->setDisplayRect(rect);
 
-    QVideoOverlayEndpoint::setDisplayRect(rect);
+    QVideoWindowControl::setDisplayRect(rect);
 }
 
 void QGstreamerVideoOverlay::setBrightness(int brightness)
 {
     m_surface->setBrightness(brightness);
 
-    QVideoOverlayEndpoint::setBrightness(brightness);
+    QVideoWindowControl::setBrightness(brightness);
 }
 
 void QGstreamerVideoOverlay::setContrast(int contrast)
 {
     m_surface->setContrast(contrast);
 
-    QVideoOverlayEndpoint::setContrast(contrast);
+    QVideoWindowControl::setContrast(contrast);
 }
 
 void QGstreamerVideoOverlay::setHue(int hue)
 {
     m_surface->setHue(hue);
 
-    QVideoOverlayEndpoint::setHue(hue);
+    QVideoWindowControl::setHue(hue);
 }
 
 void QGstreamerVideoOverlay::setSaturation(int saturation)
 {
     m_surface->setSaturation(saturation);
 
-    QVideoOverlayEndpoint::setSaturation(saturation);
+    QVideoWindowControl::setSaturation(saturation);
 }
 
 void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
 {
-    QVideoOverlayEndpoint::setFullscreen(fullscreen);
+    QVideoWindowControl::setFullscreen(fullscreen);
 }
 
 QSize QGstreamerVideoOverlay::nativeSize() const
@@ -130,10 +125,10 @@ GstElement *QGstreamerVideoOverlay::videoSink()
 
 void QGstreamerVideoOverlay::surfaceFormatChanged()
 {
-    QVideoOverlayEndpoint::setBrightness(m_surface->brightness());
-    QVideoOverlayEndpoint::setContrast(m_surface->contrast());
-    QVideoOverlayEndpoint::setHue(m_surface->hue());
-    QVideoOverlayEndpoint::setSaturation(m_surface->saturation());
+    QVideoWindowControl::setBrightness(m_surface->brightness());
+    QVideoWindowControl::setContrast(m_surface->contrast());
+    QVideoWindowControl::setHue(m_surface->hue());
+    QVideoWindowControl::setSaturation(m_surface->saturation());
 
     emit nativeSizeChanged();
 }

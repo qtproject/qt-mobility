@@ -37,11 +37,6 @@
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/qtimer.h>
 
-#ifndef QT_NO_VIDEOSURFACE
-#include "qvideorendererendpoint.h"
-#include "qvideorendererwidget_p.h"
-#endif
-
 class QAbstractMediaServicePrivate : public QObjectPrivate
 {
 public:

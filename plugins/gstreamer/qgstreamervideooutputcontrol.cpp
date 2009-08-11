@@ -32,59 +32,34 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOVERLAYENDPOINT_H
-#define QVIDEOOVERLAYENDPOINT_H
+#include "qgstreamervideooutputcontrol.h"
 
-#include "qabstractmediacontrol.h"
-
-#include <QtGui/qwidget.h>
-
-class QVideoWindowControlPrivate;
-
-class Q_MEDIA_EXPORT QVideoWindowControl : public QAbstractMediaControl
+QGstreamerVideoOutputControl::QGstreamerVideoOutputControl(QObject *parent)
+    : QVideoOutputControl(parent)
+    , m_output(NoOutput)
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoWindowControl)
-public:
-    QVideoWindowControl(QObject *parent = 0);
-    ~QVideoWindowControl();
+}
 
-    WId winId() const;
-    virtual void setWinId(WId id);
+QList<QVideoOutputControl::Output> QGstreamerVideoOutputControl::availableOutputs() const
+{
+    return m_outputs;
+}
 
-    QRect displayRect() const;
-    virtual void setDisplayRect(const QRect &rect);
+void QGstreamerVideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
+{
+    emit availableOutputsChanged(m_outputs = outputs);
+}
 
-    bool isFullscreen() const;
-    virtual void setFullscreen(bool fullscreen);
+QVideoOutputControl::Output QGstreamerVideoOutputControl::output() const
+{
+    return m_output;
+}
 
-    virtual void repaint();
+void QGstreamerVideoOutputControl::setOutput(Output output)
+{
+    if (!m_outputs.contains(output))
+        output = NoOutput;
 
-    virtual QSize nativeSize() const = 0;
-
-    int brightness() const;
-    virtual void setBrightness(int brightness);
-
-    int contrast() const;
-    virtual void setContrast(int contrast);
-
-    int hue() const;
-    virtual void setHue(int hue);
-
-    int saturation() const;
-    virtual void setSaturation(int saturation);
-
-Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
-    void brightnessChanged(int brightness);
-    void contrastChanged(int contrast);
-    void hueChanged(int hue);
-    void saturationChanged(int saturation);
-    void nativeSizeChanged();
-};
-
-#define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
-
-Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
-
-#endif
+    if (m_output != output)
+        emit outputChanged(m_output = output);
+}

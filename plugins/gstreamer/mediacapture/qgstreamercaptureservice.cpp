@@ -47,7 +47,7 @@ QList<QByteArray> QGstreamerCaptureService::supportedEndpointInterfaces(
     if (direction == QMediaEndpointInterface::Output) {
         res << QMediaWidgetEndpoint_iid;
 #ifndef QT_NO_VIDEOSURFACE
-        res << QVideoRendererEndpoint_iid;
+        res << QVideoRendererControl_iid;
 #endif
     }
 
@@ -65,7 +65,7 @@ QObject *QGstreamerCaptureService::createEndpoint(const char *interface)
     }
 
 #ifndef QT_NO_VIDEOSURFACE
-    if (qstrcmp(interface,QVideoRendererEndpoint_iid) == 0) {
+    if (qstrcmp(interface,QVideoRendererControl_iid) == 0) {
         return new QGstreamerVideoRenderer;
     }
 #endif

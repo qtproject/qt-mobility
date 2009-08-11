@@ -36,45 +36,52 @@
 
 #include "qwmpglobal.h"
 
-
-QWmpVideoOverlay::QWmpVideoOverlay(QObject *parent)
-    : QVideoOverlayEndpoint(parent)
-    , m_object(0)
+QWmpVideoOverlay::QWmpVideoOverlay(IOleObject *object, QWmpPlayerService *service)
+    : m_service(service)
+    , m_object(object)
     , m_inPlaceObject(0)
-    , m_clientSite(0)
+    , m_enabled(false)
 {
+    HRESULT hr;
+
+    if ((hr = m_object->QueryInterface(
+            __uuidof(IOleInPlaceObject),
+            reinterpret_cast<void **>(&m_inPlaceObject))) != S_OK) {
+        qWarning("No IOleInPlaceObject interface, %x: %s", hr, qwmp_error_string(hr));
+    }
 }
 
 QWmpVideoOverlay::~QWmpVideoOverlay()
 {
+    if (m_inPlaceObject)
+        m_inPlaceObject->Release();
 }
 
 void QWmpVideoOverlay::setEnabled(bool enabled)
 {
-    if (m_inPlaceObject && enabled && winId()) {
+    m_enabled = enabled;
+
+    if (m_inPlaceObject && winId()) {
         QRect rect = displayRect();
 
         RECT rcPos = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-        m_object->DoVerb(
-                OLEIVERB_INPLACEACTIVATE, 0, m_clientSite, 0, winId(), &rcPos);
-
-        QVideoOverlayEndpoint::setEnabled(true);
-    } else {
-        QVideoOverlayEndpoint::setEnabled(false);
+        m_object->DoVerb(OLEIVERB_INPLACEACTIVATE, 0, m_service, 0, winId(), &rcPos);
     }
 }
 
 void QWmpVideoOverlay::setWinId(WId id)
 {
-    if (m_inPlaceObject && isEnabled()) {
+    if (m_inPlaceObject && m_enabled) {
         QRect rect = displayRect();
 
         RECT rcPos = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-        m_object->DoVerb(
-                OLEIVERB_INPLACEACTIVATE, 0, m_clientSite, 0, id, &rcPos);
+        m_object->DoVerb(OLEIVERB_INPLACEACTIVATE, 0, m_service, 0, id, &rcPos);
     }
 
-    QVideoOverlayEndpoint::setWinId(id);
+    if (!id)
+        m_enabled = false;
+
+    QVideoWindowControl::setWinId(id);
 }
 
 extern HDC Q_GUI_EXPORT qt_win_display_dc();
@@ -85,7 +92,7 @@ extern HDC Q_GUI_EXPORT qt_win_display_dc();
 
 void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
 {
-    if (m_inPlaceObject && isEnabled()) {
+    if (m_inPlaceObject && m_enabled) {
         HDC gdc = qt_win_display_dc();
 
         SIZEL hmSize = {
@@ -98,7 +105,7 @@ void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
         m_inPlaceObject->SetObjectRects(&rcPos, &rcPos);
     }
 
-    QVideoOverlayEndpoint::setDisplayRect(rect);
+    QVideoWindowControl::setDisplayRect(rect);
 }
 
 void QWmpVideoOverlay::setFullscreen(bool fullscreen)
@@ -119,34 +126,201 @@ void QWmpVideoOverlay::setNativeSize(const QSize &size)
     }
 }
 
-void QWmpVideoOverlay::setObject(IOleObject *object, IOleClientSite *site)
+// IUnknown
+HRESULT QWmpVideoOverlay::QueryInterface(REFIID riid, void **object)
 {
-    if (m_inPlaceObject) {
-        m_inPlaceObject->Release();
-        m_inPlaceObject = 0;
+    return m_service->QueryInterface(riid, object);
+}
+
+ULONG QWmpVideoOverlay::AddRef()
+{
+    return m_service->AddRef();
+}
+
+ULONG QWmpVideoOverlay::Release()
+{
+    return m_service->Release();
+}
+
+// IOleWindow
+HRESULT QWmpVideoOverlay::GetWindow(HWND *phwnd)
+{
+    if (!phwnd) {
+        return E_POINTER;
+    } else if (!m_enabled) {
+        *phwnd = 0;
+        return E_UNEXPECTED;
+    } else {
+        *phwnd = winId();
+        return S_OK;
+    }
+}
+
+HRESULT QWmpVideoOverlay::ContextSensitiveHelp(BOOL fEnterMode)
+{
+    Q_UNUSED(fEnterMode);
+
+    return E_NOTIMPL;
+}
+
+// IOleInPlaceSite
+HRESULT QWmpVideoOverlay::CanInPlaceActivate()
+{
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::OnInPlaceActivate()
+{
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::OnUIActivate()
+{
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::GetWindowContext(
+        IOleInPlaceFrame **ppFrame,
+        IOleInPlaceUIWindow **ppDoc,
+        LPRECT lprcPosRect,
+        LPRECT lprcClipRect,
+        LPOLEINPLACEFRAMEINFO lpFrameInfo)
+{
+    if (!ppFrame || !ppDoc || !lprcPosRect || !lprcClipRect || !lpFrameInfo)
+        return E_POINTER;
+
+    QueryInterface(IID_IOleInPlaceFrame, reinterpret_cast<void **>(ppFrame));
+    QueryInterface(IID_IOleInPlaceUIWindow, reinterpret_cast<void **>(ppDoc));
+
+    if (m_enabled) {
+        QRect rect = displayRect();
+
+        SetRect(lprcPosRect, rect.left(), rect.top(), rect.right(), rect.bottom());
+        SetRect(lprcClipRect, rect.left(), rect.top(), rect.right(), rect.bottom());
+    } else {
+        SetRectEmpty(lprcPosRect);
+        SetRectEmpty(lprcClipRect);
     }
 
-    if (m_object)
-        m_object->Release();
+    lpFrameInfo->cb = sizeof(OLEINPLACEFRAMEINFO);
+    lpFrameInfo->fMDIApp = false;
+    lpFrameInfo->haccel = 0;
+    lpFrameInfo->cAccelEntries = 0;
+    lpFrameInfo->hwndFrame = m_enabled ? winId() : 0;
 
-    if (m_clientSite)
-        m_clientSite->Release();
+    return S_OK;
+}
 
-    m_object = object;
-    m_clientSite = site;
+HRESULT QWmpVideoOverlay::Scroll(SIZE scrollExtant)
+{
+    Q_UNUSED(scrollExtant);
 
-    if (m_object) {
-        m_object->AddRef();
+    return S_FALSE;
+}
 
-        HRESULT hr;
+HRESULT QWmpVideoOverlay::OnUIDeactivate(BOOL fUndoable)
+{
+    Q_UNUSED(fUndoable);
 
-        if ((hr = m_object->QueryInterface(
-                __uuidof(IOleInPlaceObject),
-                reinterpret_cast<void **>(&m_inPlaceObject))) != S_OK) {
-            qWarning("No IOleInnPlaceObject interface, %x: %s", hr, qwmp_error_string(hr));
-        }
-    }
+    return S_OK;
+}
 
-    if (m_clientSite)
-        m_clientSite->AddRef();
+HRESULT QWmpVideoOverlay::OnInPlaceDeactivate()
+{
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::DiscardUndoState()
+{
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::DeactivateAndUndo()
+{
+    if (m_inPlaceObject)
+        m_inPlaceObject->UIDeactivate();
+
+    return S_OK;
+}
+
+HRESULT QWmpVideoOverlay::OnPosRectChange(LPCRECT lprcPosRect)
+{
+    Q_UNUSED(lprcPosRect);
+
+    return S_OK;
+}
+
+// IOleInPlaceUIWindow
+HRESULT QWmpVideoOverlay::GetBorder(LPRECT lprectBorder)
+{
+    Q_UNUSED(lprectBorder);
+
+    return INPLACE_E_NOTOOLSPACE;
+}
+
+HRESULT QWmpVideoOverlay::RequestBorderSpace(LPCBORDERWIDTHS pborderwidths)
+{
+    Q_UNUSED(pborderwidths);
+
+    return INPLACE_E_NOTOOLSPACE;
+}
+
+HRESULT QWmpVideoOverlay::SetBorderSpace(LPCBORDERWIDTHS pborderwidths)
+{
+    Q_UNUSED(pborderwidths);
+
+    return OLE_E_INVALIDRECT;
+}
+
+HRESULT QWmpVideoOverlay::SetActiveObject(
+        IOleInPlaceActiveObject *pActiveObject, LPCOLESTR pszObjName)
+{
+    Q_UNUSED(pActiveObject);
+    Q_UNUSED(pszObjName);
+
+    return  S_OK;
+}
+
+// IOleInPlaceFrame
+HRESULT QWmpVideoOverlay::InsertMenus(HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths)
+{
+    Q_UNUSED(hmenuShared);
+    Q_UNUSED(lpMenuWidths);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpVideoOverlay::SetMenu(HMENU hmenuShared, HOLEMENU holemenu, HWND hwndActiveObject)
+{
+    Q_UNUSED(hmenuShared);
+    Q_UNUSED(holemenu);
+    Q_UNUSED(hwndActiveObject);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpVideoOverlay::RemoveMenus(HMENU hmenuShared)
+{
+    Q_UNUSED(hmenuShared);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpVideoOverlay::SetStatusText(LPCOLESTR pszStatusText)
+{
+    Q_UNUSED(pszStatusText);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpVideoOverlay::EnableModeless(BOOL fEnable)
+{
+    Q_UNUSED(fEnable);
+
+    return E_NOTIMPL;
+}
+
+HRESULT QWmpVideoOverlay::TranslateAccelerator(LPMSG lpmsg, WORD wID)
+{
+    return TranslateAccelerator(lpmsg, static_cast<DWORD>(wID));
 }

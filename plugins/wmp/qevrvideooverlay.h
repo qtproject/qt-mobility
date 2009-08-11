@@ -37,16 +37,17 @@
 
 #include "qvideooverlayendpoint.h"
 
+#include "qmfactivate.h"
+
 #include <evr.h>
 
-class QEvrVideoOverlay : public QVideoOverlayEndpoint
+class QEvrVideoOverlay : public QVideoWindowControl, public QMFActivate
 {
     Q_OBJECT
 public:
-    QEvrVideoOverlay(QObject *parent = 0);
+    QEvrVideoOverlay(HINSTANCE evrHwnd);
     ~QEvrVideoOverlay();
 
-    void setEnabled(bool enabled);
     void setWinId(WId id);
     void setDisplayRect(const QRect &rect);
     void setFullscreen(bool fullscreen);
@@ -55,9 +56,25 @@ public:
 
     void setDisplayControl(IMFVideoDisplayControl *control);
 
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IMFActivate
+    HRESULT STDMETHODCALLTYPE ActivateObject(REFIID riid, void **ppv);
+    HRESULT STDMETHODCALLTYPE ShutdownObject();
+    HRESULT STDMETHODCALLTYPE DetachObject();
+
 private:
-    QSize m_sizeHint;
+    typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
+
+    volatile LONG m_ref;
+    HINSTANCE m_evrHwnd;
+    PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
+    IMFVideoPresenter *m_presenter;
     IMFVideoDisplayControl *m_displayControl;
+    QSize m_sizeHint;
 };
 
 #endif

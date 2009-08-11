@@ -36,6 +36,7 @@
 
 #include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
+#include "qvideooutputcontrol.h"
 #include "qvideooverlayendpoint.h"
 
 #ifndef QT_NO_VIDEOSURFACE
@@ -57,6 +58,7 @@ class QVideoWidgetPrivate : public QWidgetPrivate
 public:
     QVideoWidgetPrivate()
         : service(0)
+        , output(0)
         , overlay(0)
 #ifndef QT_NO_VIDEOSURFACE
         , renderer(0)
@@ -68,9 +70,10 @@ public:
     }
 
     QAbstractMediaService *service;
-    QVideoOverlayEndpoint *overlay;
+    QVideoOutputControl *output;
+    QVideoWindowControl *overlay;
 #ifndef QT_NO_VIDEOSURFACE
-    QVideoRendererEndpoint *renderer;
+    QVideoRendererControl *renderer;
     QPainterVideoSurface *surface;
 #endif
     QDialog *fullscreenWindow;
@@ -118,7 +121,9 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     if (!d->service)
         return;
 
-    if ((d->overlay = d->service->createEndpoint<QVideoOverlayEndpoint *>())) {
+    d->output = d->service->control<QVideoOutputControl *>();
+
+    if ((d->overlay = d->service->control<QVideoWindowControl *>())) {
         connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
                 this, SLOT(_q_overlayFullscreenChanged(bool)));
         connect(d->overlay, SIGNAL(nativeSizeChanged()),
@@ -131,10 +136,9 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
                 this, SIGNAL(hueChanged(int)));
         connect(d->overlay, SIGNAL(saturationChanged(int)),
                 this, SIGNAL(saturationChanged(int)));
-
-        d->service->setVideoOutput(d->overlay);
+    }
 #ifndef QT_NO_VIDEOSURFACE
-    } else if ((d->renderer = d->service->createEndpoint<QVideoRendererEndpoint *>())) {
+    if ((d->renderer = d->service->control<QVideoRendererControl *>())) {
         d->surface = new QPainterVideoSurface;
 
         d->renderer->setSurface(d->surface);
@@ -143,10 +147,8 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 
         connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
                 this, SLOT(_q_dimensionsChanged()));
-
-        d->service->setVideoOutput(d->renderer);
-#endif
     }
+#endif
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 }
@@ -352,9 +354,14 @@ void QVideoWidget::showEvent(QShowEvent *event)
 
     QWidget::showEvent(event);
 
-    if (d->overlay) {
-        d->overlay->setWinId(effectiveWinId());
-        d->overlay->setEnabled(true);
+    if (d->output) {
+        if (d->overlay) {
+            d->overlay->setWinId(effectiveWinId());
+
+            d->output->setOutput(QVideoOutputControl::WindowOutput);
+        } else {
+            d->output->setOutput(QVideoOutputControl::RendererOutput);
+        }
     }
 }
 
@@ -365,8 +372,8 @@ void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
 
-    if (d->overlay)
-        d->overlay->setEnabled(false);
+    if (d->output)
+        d->output->setOutput(QVideoOutputControl::NoOutput);
 
     QWidget::hideEvent(event);
 }
@@ -410,7 +417,7 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
 
-    if (d->overlay && d->overlay->isEnabled()) {
+    if (d->overlay) {
         d->overlay->repaint();
 #ifndef QT_NO_VIDEOSURFACE
     } else if (d->surface) {

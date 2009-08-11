@@ -32,59 +32,29 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOVERLAYENDPOINT_H
-#define QVIDEOOVERLAYENDPOINT_H
+#ifndef QWMPVIDEOOUTPUTCONTROL_H
+#define QWMPVIDEOOUTPUTCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include "qvideooutputcontrol.h"
 
-#include <QtGui/qwidget.h>
-
-class QVideoWindowControlPrivate;
-
-class Q_MEDIA_EXPORT QVideoWindowControl : public QAbstractMediaControl
+class QWmpVideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoWindowControl)
 public:
-    QVideoWindowControl(QObject *parent = 0);
-    ~QVideoWindowControl();
+    QWmpVideoOutputControl(QObject *parent = 0);
 
-    WId winId() const;
-    virtual void setWinId(WId id);
+    QList<Output> availableOutputs() const;
+    void setAvailableOutputs(const QList<Output> &outputs);
 
-    QRect displayRect() const;
-    virtual void setDisplayRect(const QRect &rect);
-
-    bool isFullscreen() const;
-    virtual void setFullscreen(bool fullscreen);
-
-    virtual void repaint();
-
-    virtual QSize nativeSize() const = 0;
-
-    int brightness() const;
-    virtual void setBrightness(int brightness);
-
-    int contrast() const;
-    virtual void setContrast(int contrast);
-
-    int hue() const;
-    virtual void setHue(int hue);
-
-    int saturation() const;
-    virtual void setSaturation(int saturation);
+    Output output() const;
+    void setOutput(Output output);
 
 Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
-    void brightnessChanged(int brightness);
-    void contrastChanged(int contrast);
-    void hueChanged(int hue);
-    void saturationChanged(int saturation);
-    void nativeSizeChanged();
+    void outputChanged(QVideoOutputControl::Output output);
+
+private:
+    QList<Output> m_outputs;
+    Output m_output;
 };
-
-#define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
-
-Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
 
 #endif

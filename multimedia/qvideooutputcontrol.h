@@ -32,59 +32,38 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOVERLAYENDPOINT_H
-#define QVIDEOOVERLAYENDPOINT_H
+#ifndef QVIDEOOUTPUTCONTROL_H
+#define QVIDEOOUTPUTCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
-#include <QtGui/qwidget.h>
-
-class QVideoWindowControlPrivate;
-
-class Q_MEDIA_EXPORT QVideoWindowControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoOutputControl : public QAbstractMediaControl
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoWindowControl)
 public:
-    QVideoWindowControl(QObject *parent = 0);
-    ~QVideoWindowControl();
+    enum Output
+    {
+        NoOutput,
+        WindowOutput,
+        RendererOutput,
+        UserOutput = 100,
+        MaxUserOutput = 1000
+    };
 
-    WId winId() const;
-    virtual void setWinId(WId id);
+    QVideoOutputControl(QObject *parent = 0);
+    ~QVideoOutputControl();
 
-    QRect displayRect() const;
-    virtual void setDisplayRect(const QRect &rect);
+    virtual QList<Output> availableOutputs() const = 0;
 
-    bool isFullscreen() const;
-    virtual void setFullscreen(bool fullscreen);
-
-    virtual void repaint();
-
-    virtual QSize nativeSize() const = 0;
-
-    int brightness() const;
-    virtual void setBrightness(int brightness);
-
-    int contrast() const;
-    virtual void setContrast(int contrast);
-
-    int hue() const;
-    virtual void setHue(int hue);
-
-    int saturation() const;
-    virtual void setSaturation(int saturation);
+    virtual Output output() const = 0;
+    virtual void setOutput(Output output) = 0;
 
 Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
-    void brightnessChanged(int brightness);
-    void contrastChanged(int contrast);
-    void hueChanged(int hue);
-    void saturationChanged(int saturation);
-    void nativeSizeChanged();
+    void availableOutputsChanged(const QList<QVideoOutputControl::Output>  &outputs);
 };
 
-#define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
+#define QVideoOutputControl_iid "com.nokia.Qt.QVideoOutputControl/1.0"
 
-Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
+Q_MEDIA_DECLARE_CONTROL(QVideoOutputControl, QVideoOutputControl_iid)
 
 #endif

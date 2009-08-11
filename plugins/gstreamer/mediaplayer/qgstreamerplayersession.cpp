@@ -144,6 +144,8 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
     m_renderer = qobject_cast<QGstreamerVideoRendererInterface*>(videoOutput);
     if (m_renderer)
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_renderer->videoSink(), NULL);
+    else
+        g_object_set(G_OBJECT(m_playbin), "video-sink", 0, NULL);
 }
 
 bool QGstreamerPlayerSession::isVideoAvailable() const

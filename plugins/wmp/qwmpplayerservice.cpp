@@ -58,14 +58,12 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     , m_player(0)
     , m_oleObject(0)
     , m_events(0)
-    , m_oleVideoOverlay(0)
     , m_control(0)
     , m_metaData(0)
+    , m_videoOutputControl(0)
+    , m_oleVideoOverlay(0)
 #ifdef QWMP_EVR
     , m_evrVideoOverlay(0)
-    , m_presenter(0)
-    , m_evrHwnd(LoadLibrary(L"evr"))
-    , ptrMFCreateVideoPresenter(0)
 #endif
 {
     HRESULT hr;
@@ -85,6 +83,25 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             qWarning("Failed to set site, %x: %s", hr, qwmp_error_string(hr));
         }
 
+        if (m_embedMode == LocalEmbed) {
+            m_videoOutputControl = new QWmpVideoOutputControl;
+            m_videoOutputControl->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+                    << QVideoOutputControl::WindowOutput);
+
+            connect(m_videoOutputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+#ifdef QWMP_EVR
+            if (HINSTANCE evrHwnd = LoadLibrary(L"evr")) {
+                m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
+            } else {
+#else
+            {
+#endif
+                m_oleVideoOverlay = new QWmpVideoOverlay(m_oleObject, this);
+                m_player->put_uiMode(QAutoBStr(L"none"));
+            }
+        }
+
         m_events = new QWmpEvents(m_player);
         m_metaData = new QWmpMetaData(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
@@ -93,91 +110,49 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
 
 QWmpPlayerService::~QWmpPlayerService()
 {
-    if (m_oleVideoOverlay)
-        m_oleVideoOverlay->setObject(0, 0);
-
-#ifdef QWMP_EVR
-    if (m_evrVideoOverlay)
-        m_evrVideoOverlay->setDisplayControl(0);
-
-    if (m_presenter) {
-        m_presenter->Release();
-        m_presenter = 0;
-    }
-#endif
-
     delete m_control;
     delete m_metaData;
+    delete m_videoOutputControl;
     delete m_events;
+
+#ifdef QWMP_EVR
+    delete m_evrVideoOverlay;
+#endif
 
     if (m_oleObject) {
         m_oleObject->SetClientSite(0);
-        m_oleObject->Release();
+        m_oleObject->Release();    
+        delete m_oleVideoOverlay;
     }
 
     if (m_player)
         m_player->Release();
-
-    FreeLibrary(m_evrHwnd);
 
     Q_ASSERT(m_ref == 1);
 }
 
 QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
 {
-    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0) {
         return m_control;
-    else if (qstrcmp(name, QMetadataProviderControl_iid) == 0)
+    } else if (qstrcmp(name, QMetadataProviderControl_iid) == 0) {
         return m_metaData;
-    else
+    } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
+        return m_videoOutputControl;
+    } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+#ifdef QWMP_EVR
+        if (m_evrVideoOverlay)
+            return m_evrVideoOverlay;
+#endif
+        return m_oleVideoOverlay;
+    } else {
         return 0;
+    }
 }
 
 void QWmpPlayerService::setVideoOutput(QObject *output)
 {
     QAbstractMediaService::setVideoOutput(output);
-
-    if (m_embedMode == RemoteEmbed)
-        return;
-
-    if (m_oleVideoOverlay) {
-        m_oleVideoOverlay->setObject(0, 0);
-        m_oleVideoOverlay = 0;
-    }
-
-    if ((m_oleVideoOverlay = qobject_cast<QWmpVideoOverlay *>(output))) {
-        m_oleVideoOverlay->setObject(m_oleObject, this);
-
-        m_player->put_uiMode(QAutoBStr(L"none"));
-    }
-
-#ifdef QWMP_EVR
-    if (m_evrVideoOverlay) {
-        IWMPVideoRenderConfig *config = 0;
-        if (m_player->QueryInterface(
-                __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-            config->put_presenterActivate(0);
-            config->Release();
-        }
-
-        if (m_presenter) {
-            m_presenter->Release();
-            m_presenter = 0;
-        }
-
-        m_evrVideoOverlay->setDisplayControl(0);
-        m_evrVideoOverlay = 0;
-    }
-
-    if ((m_evrVideoOverlay = qobject_cast<QEvrVideoOverlay *>(output))) {
-        IWMPVideoRenderConfig *config = 0;
-        if (m_player->QueryInterface(
-                __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-            config->put_presenterActivate(static_cast<IMFActivate *>(this));
-            config->Release();
-        }
-    }
-#endif
 }
 
 QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
@@ -185,21 +160,36 @@ QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
 {
     QList<QByteArray> interfaces;
     if (direction == QMediaEndpointInterface::Output && m_embedMode == LocalEmbed)
-        interfaces << QVideoOverlayEndpoint_iid;
+        interfaces << QVideoWindowControl_iid;
 
     return interfaces;
 }
 
 QObject *QWmpPlayerService::createEndpoint(const char *iid)
 {
-    if (m_oleObject && m_embedMode == LocalEmbed && strcmp(iid, QVideoOverlayEndpoint_iid) == 0)
-        return new QWmpVideoOverlay;
-#ifdef QWMP_EVR
-    if (m_evrHwnd && m_embedMode == LocalEmbed && strcmp(iid, QVideoOverlayEndpoint_iid) == 0)
-        return new QEvrVideoOverlay;
-#endif
+    Q_UNUSED(iid);
 
     return 0;
+}
+
+void QWmpPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
+{
+    if (m_oleVideoOverlay) {
+        m_oleVideoOverlay->setEnabled(output == QVideoOutputControl::WindowOutput);
+#ifdef QWMP_EVR
+    } else if (m_evrVideoOverlay) {
+        IWMPVideoRenderConfig *config = 0;
+        if (m_player->QueryInterface(
+                __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
+            if (output == QVideoOutputControl::WindowOutput)
+                config->put_presenterActivate(static_cast<IMFActivate *>(m_evrVideoOverlay));
+            else
+                config->put_presenterActivate(0);
+
+            config->Release();
+        }
+#endif
+    }
 }
 
 // IUnknown
@@ -207,31 +197,30 @@ HRESULT QWmpPlayerService::QueryInterface(REFIID riid, void **object)
 {
     if (!object) {
         return E_POINTER;
-#ifdef QWMP_EVR
-    } else if (riid == __uuidof(IMFAttributes)
-            || riid == __uuidof(IMFActivate)) {
-        *object = static_cast<IMFActivate *>(this);
-#endif
     } else if (riid == __uuidof(IUnknown)
             || riid == __uuidof(IOleClientSite)) {
         *object = static_cast<IOleClientSite *>(this);
-    } else if (riid == __uuidof(IOleWindow)
-            || riid == __uuidof(IOleInPlaceSite)) {
-        *object = static_cast<IOleInPlaceSite *>(this);
-    } else if (riid == __uuidof(IOleInPlaceUIWindow)
-            || riid == __uuidof(IOleInPlaceFrame)) {
-        *object = static_cast<IOleInPlaceFrame *>(this);
     } else if (riid == __uuidof(IServiceProvider)) {
         *object = static_cast<IServiceProvider *>(this);
     } else if (riid == __uuidof(IWMPRemoteMediaServices)) {
         *object = static_cast<IWMPRemoteMediaServices *>(this);
+    } else if (riid == __uuidof(IOleWindow)
+            || riid == __uuidof(IOleInPlaceSite)) {
+        *object = static_cast<IOleInPlaceSite *>(m_oleVideoOverlay);
+    } else if (riid == __uuidof(IOleInPlaceUIWindow)
+            || riid == __uuidof(IOleInPlaceFrame)) {
+        *object = static_cast<IOleInPlaceFrame *>(m_oleVideoOverlay);
+    } else {
+        *object = 0;
+    }
+
+    if (*object) {
+        AddRef();
+
+        return S_OK;
     } else {
         return E_NOINTERFACE;
     }
-
-    AddRef();
-
-    return S_OK;
 }
 
 ULONG QWmpPlayerService::AddRef()
@@ -247,81 +236,6 @@ ULONG QWmpPlayerService::Release()
 
     return ref;
 }
-
-
-#ifdef QWMP_EVR
-// IMFActivate
-HRESULT QWmpPlayerService::ActivateObject(REFIID riid, void **ppv)
-{
-    if (riid != __uuidof(IMFVideoPresenter)) {
-        return E_NOINTERFACE;
-    } else if (!ptrMFCreateVideoPresenter) {
-        return E_NOINTERFACE;
-    } else if (!m_evrVideoOverlay) {
-        return E_NOINTERFACE;
-    } else if (m_presenter) {
-        *ppv = m_presenter;
-
-        return S_OK;
-    } else {
-        IMFVideoDisplayControl *displayControl = 0;
-
-        IMFGetService *service;
-        HRESULT hr;
-        if ((hr = (*ptrMFCreateVideoPresenter)(
-                0,
-                __uuidof(IDirect3DDevice9),
-                __uuidof(IMFVideoPresenter),
-                reinterpret_cast<void **>(&m_presenter))) != S_OK) {
-            qWarning("failed to create video presenter");
-        } else if ((hr = m_presenter->QueryInterface(
-                __uuidof(IMFGetService), reinterpret_cast<void **>(&service))) != S_OK) {
-            qWarning("failed to query IMFGetService interface");
-        } else {
-            if ((hr = service->GetService(
-                    MR_VIDEO_RENDER_SERVICE,
-                    __uuidof(IMFVideoDisplayControl),
-                    reinterpret_cast<void **>(&displayControl))) != S_OK) {
-                qWarning("failed to get IMFVideoDisplayControl service");
-            }
-            service->Release();
-        }
-
-        m_evrVideoOverlay->setDisplayControl(displayControl);
-
-        if (m_presenter && hr != S_OK) {
-            m_presenter->Release();
-            m_presenter = 0;
-        }
-
-        *ppv = m_presenter;
-
-        return hr;
-    }
-}
-
-HRESULT QWmpPlayerService::ShutdownObject()
-{
-    if (m_evrVideoOverlay)
-        m_evrVideoOverlay->setDisplayControl(0);
-
-    if (m_presenter) {
-        m_presenter->Release();
-        m_presenter = 0;
-    }
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::DetachObject()
-{
-    if (m_presenter) {
-        m_presenter->Release();
-        m_presenter = 0;
-    }
-
-    return S_OK;
-}
-#endif
 
 // IOleClientSite
 HRESULT QWmpPlayerService::SaveObject()
@@ -364,195 +278,6 @@ HRESULT QWmpPlayerService::OnShowWindow(BOOL fShow)
 HRESULT QWmpPlayerService::RequestNewObjectLayout()
 {
     return E_NOTIMPL;
-}
-
-// IOleWindow
-HRESULT QWmpPlayerService::GetWindow(HWND *phwnd)
-{
-    if (!phwnd) {
-        return E_POINTER;
-    } else if (!m_oleVideoOverlay) {
-        *phwnd = 0;
-        return E_UNEXPECTED;
-    } else {
-        *phwnd = m_oleVideoOverlay->winId();
-        return *phwnd ? S_OK : E_UNEXPECTED;
-    }
-}
-
-HRESULT QWmpPlayerService::ContextSensitiveHelp(BOOL fEnterMode)
-{
-    Q_UNUSED(fEnterMode);
-
-    return E_NOTIMPL;
-}
-
-// IOleInPlaceSite
-HRESULT QWmpPlayerService::CanInPlaceActivate()
-{
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::OnInPlaceActivate()
-{
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::OnUIActivate()
-{
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::GetWindowContext(
-        IOleInPlaceFrame **ppFrame,
-        IOleInPlaceUIWindow **ppDoc,
-        LPRECT lprcPosRect,
-        LPRECT lprcClipRect,
-        LPOLEINPLACEFRAMEINFO lpFrameInfo)
-{
-    if (!ppFrame || !ppDoc || !lprcPosRect || !lprcClipRect || !lpFrameInfo)
-        return E_POINTER;
-
-    QueryInterface(IID_IOleInPlaceFrame, reinterpret_cast<void **>(ppFrame));
-    QueryInterface(IID_IOleInPlaceUIWindow, reinterpret_cast<void **>(ppDoc));
-
-    HWND winId = m_oleVideoOverlay ? m_oleVideoOverlay->winId() : 0;
-
-    if (winId) {
-        QRect rect = m_oleVideoOverlay->displayRect();
-
-        SetRect(lprcPosRect, rect.left(), rect.top(), rect.right(), rect.bottom());
-        SetRect(lprcClipRect, rect.left(), rect.top(), rect.right(), rect.bottom());
-    } else {
-        SetRectEmpty(lprcPosRect);
-        SetRectEmpty(lprcClipRect);
-    }
-
-    lpFrameInfo->cb = sizeof(OLEINPLACEFRAMEINFO);
-    lpFrameInfo->fMDIApp = false;
-    lpFrameInfo->haccel = 0;
-    lpFrameInfo->cAccelEntries = 0;
-    lpFrameInfo->hwndFrame = winId;
-
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::Scroll(SIZE scrollExtant)
-{
-    Q_UNUSED(scrollExtant);
-
-    return S_FALSE;
-}
-
-HRESULT QWmpPlayerService::OnUIDeactivate(BOOL fUndoable)
-{
-    Q_UNUSED(fUndoable);
-
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::OnInPlaceDeactivate()
-{
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::DiscardUndoState()
-{
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::DeactivateAndUndo()
-{
-    IOleInPlaceObject *object = 0;
-    if (m_player && m_player->QueryInterface(
-            __uuidof(IOleInPlaceObject), reinterpret_cast<void **>(&object))) {
-        object->UIDeactivate();
-        object->Release();
-    }
-
-    return S_OK;
-}
-
-HRESULT QWmpPlayerService::OnPosRectChange(LPCRECT lprcPosRect)
-{
-    Q_UNUSED(lprcPosRect);
-
-    return S_OK;
-}
-
-// IOleInPlaceUIWindow
-HRESULT QWmpPlayerService::GetBorder(LPRECT lprectBorder)
-{
-    Q_UNUSED(lprectBorder);
-
-    return INPLACE_E_NOTOOLSPACE;
-}
-
-HRESULT QWmpPlayerService::RequestBorderSpace(LPCBORDERWIDTHS pborderwidths)
-{
-    Q_UNUSED(pborderwidths);
-
-    return INPLACE_E_NOTOOLSPACE;
-}
-
-HRESULT QWmpPlayerService::SetBorderSpace(LPCBORDERWIDTHS pborderwidths)
-{
-    Q_UNUSED(pborderwidths);
-
-    return OLE_E_INVALIDRECT;
-}
-
-HRESULT QWmpPlayerService::SetActiveObject(
-        IOleInPlaceActiveObject *pActiveObject, LPCOLESTR pszObjName)
-{
-    Q_UNUSED(pActiveObject);
-    Q_UNUSED(pszObjName);
-
-    return  S_OK;
-}
-
-// IOleInPlaceFrame
-HRESULT QWmpPlayerService::InsertMenus(HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths)
-{
-    Q_UNUSED(hmenuShared);
-    Q_UNUSED(lpMenuWidths);
-
-    return E_NOTIMPL;
-}
-
-HRESULT QWmpPlayerService::SetMenu(HMENU hmenuShared, HOLEMENU holemenu, HWND hwndActiveObject)
-{
-    Q_UNUSED(hmenuShared);
-    Q_UNUSED(holemenu);
-    Q_UNUSED(hwndActiveObject);
-
-    return E_NOTIMPL;
-}
-
-HRESULT QWmpPlayerService::RemoveMenus(HMENU hmenuShared)
-{
-    Q_UNUSED(hmenuShared);
-
-    return E_NOTIMPL;
-}
-
-HRESULT QWmpPlayerService::SetStatusText(LPCOLESTR pszStatusText)
-{
-    Q_UNUSED(pszStatusText);
-
-    return E_NOTIMPL;
-}
-
-HRESULT QWmpPlayerService::EnableModeless(BOOL fEnable)
-{
-    Q_UNUSED(fEnable);
-
-    return E_NOTIMPL;
-}
-
-HRESULT QWmpPlayerService::TranslateAccelerator(LPMSG lpmsg, WORD wID)
-{
-    return TranslateAccelerator(lpmsg, static_cast<DWORD>(wID));
 }
 
 // IServiceProvider

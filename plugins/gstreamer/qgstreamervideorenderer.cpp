@@ -9,7 +9,7 @@
 #include <gst/gst.h>
 
 QGstreamerVideoRenderer::QGstreamerVideoRenderer(QObject *parent)
-    :QVideoRendererEndpoint(parent),m_videoSink(0)
+    :QVideoRendererControl(parent),m_videoSink(0)
 {
 }
 

@@ -10,8 +10,7 @@ HEADERS += \
     $$PWD/qmediawidgetendpoint_p.h \
     $$PWD/qpaintervideosurface_p.h \
     $$PWD/qvideooverlayendpoint.h \
-    $$PWD/qvideorendererendpoint.h \
-    $$PWD/qvideorendererwidget_p.h
+    $$PWD/qvideorendererendpoint.h
 
 SOURCES += \
     $$PWD/qaudiodeviceendpoint.cpp \
@@ -21,5 +20,4 @@ SOURCES += \
     $$PWD/qmediawidgetendpoint.cpp \
     $$PWD/qpaintervideosurface.cpp \
     $$PWD/qvideooverlayendpoint.cpp \
-    $$PWD/qvideorendererendpoint.cpp \
-    $$PWD/qvideorendererwidget.cpp
+    $$PWD/qvideorendererendpoint.cpp

@@ -32,46 +32,55 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEORENDERERWIDGET_P_H
-#define QVIDEORENDERERWIDGET_P_H
+#include "qvideooutputcontrol.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+/*!
+    \enum QVideoOutputControl::Output
 
-#include "qmediawidgetendpoint.h"
+    Identifies the possible render targets of a video output.
 
-#ifndef QT_NO_VIDEOSURFACE
+    \value NoOutput Video is not rendered.
+    \value WindowOutput Video is rendered to the target of a QVideoWindowControl.
+    \value RendererOutput Video is rendered to the target of a QVideoRendererControl.
+    \value UserOutput Start value for user defined video targets.
+    \value MaxUserOutput End value for user defined video targets.
+*/
 
-class QVideoRendererEndpoint;
-
-class QVideoRendererWidgetPrivate;
-
-class Q_MEDIA_EXPORT QVideoRendererWidget : public QMediaWidgetEndpoint
+/*!
+    Constructs a new video output control with the given \a parent.
+*/
+QVideoOutputControl::QVideoOutputControl(QObject *parent)
+    : QAbstractMediaControl(parent)
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoRendererWidget)
-public:
-    QVideoRendererWidget(QVideoRendererEndpoint *renderer);
-    ~QVideoRendererWidget();
+}
 
-    QVideoRendererEndpoint *rendererOutput() const;
+/*!
+    Destroys a video output control.
+*/
+QVideoOutputControl::~QVideoOutputControl()
+{
+}
 
-public Q_SLOTS:
-    void setFullscreen(bool fullscreen);
+/*!
+    QList<QVideoOutputControl::Output> QVideoOutputControl::availableOutputs() const
 
-protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
-};
+    Returns a list of available video output targets.
+*/
 
-#endif
+/*!
+    \fn QVideoOutputControl::output() const
 
-#endif
+    Returns the current video output target.
+*/
+
+/*!
+    \fn QVideoOutputControl::setOutput(Output output)
+
+    Sets the current video \a output target.
+*/
+
+/*!
+    \fn QVideoOutputControl::availableOutputsChanged(const QList<QVideoOutputControl::Output>  &outputs)
+
+    Signals that available set of video \a outputs has changed.
+*/

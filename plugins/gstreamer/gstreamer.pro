@@ -29,6 +29,7 @@ PKGCONFIG += \
 HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
+    qgstreamervideooutputcontrol.h \
     qgstreamervideowidget.h \
     qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
@@ -37,6 +38,7 @@ HEADERS += \
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
+    qgstreamervideooutputcontrol.cpp \
     qgstreamervideowidget.cpp \
     qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \

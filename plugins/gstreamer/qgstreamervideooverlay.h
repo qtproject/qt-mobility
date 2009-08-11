@@ -43,15 +43,13 @@
 class QAbstractVideoSurface;
 class QX11VideoSurface;
 
-class QGstreamerVideoOverlay : public QVideoOverlayEndpoint, public QGstreamerVideoRendererInterface
+class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface
 {
     Q_OBJECT
     Q_INTERFACES(QGstreamerVideoRendererInterface)
 public:
     QGstreamerVideoOverlay(QObject *parent = 0);
     ~QGstreamerVideoOverlay();
-
-    void setEnabled(bool enabled);
 
     void setWinId(WId id);
 
