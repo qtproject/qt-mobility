@@ -74,6 +74,7 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
+    Q_UNUSED(id)
     return 0; // stub
 }
 

@@ -43,6 +43,10 @@ QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &oth
     Q_UNUSED(other)
 }
 
+QMessageAccountSortKey::~QMessageAccountSortKey()
+{
+}
+
 bool QMessageAccountSortKey::isEmpty() const
 {
     return false; // stub
