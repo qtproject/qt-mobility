@@ -37,6 +37,7 @@
 #include "qmessage_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
+#include "qmessagesortkey_p.h"
 #include <qdebug.h>
 
 // TODO Retrieve message count, and hasSubfolders flag for message folders.
@@ -196,11 +197,9 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return QMessageIdList();
     }
 
-    SizedSSortOrderSet(1, sortOrderSet) = { 1, 0, 0, { PR_SUBJECT, TABLE_SORT_ASCEND } };
-    if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&sortOrderSet), 0) != S_OK) {
-        *lastError = QMessageStore::NotYetImplemented;
+    QMessageSortKeyPrivate::sortTable(lastError, sortKey, messagesTable);
+    if (*lastError != QMessageStore::NoError)
         return QMessageIdList();
-    }
 
     LPSRowSet rows(0);
     uint workingLimit(limit);

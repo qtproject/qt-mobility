@@ -31,20 +31,25 @@
 **
 ****************************************************************************/
 #include "qmessagesortkey.h"
-#include "qmessage.h"
+#if defined(Q_OS_WIN)
+#include "qmessagestore.h"
+#include <qpair.h>
+#include "winhelpers_p.h"
+#endif
 
 class QMessageSortKeyPrivate
 {
     Q_DECLARE_PUBLIC(QMessageSortKey)
 
 public:
-    QMessageSortKeyPrivate(QMessageSortKey *messageSortKey)
-        :q_ptr(messageSortKey)
-    {
-    }
+    QMessageSortKeyPrivate(QMessageSortKey *messageSortKey);
 
     QMessageSortKey *q_ptr;
 #if defined(Q_OS_WIN)
-    static bool lessThan(const QMessageSortKey &key, const QMessage &left, const QMessage &right);
+    enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size };
+    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
+    static bool compare(const QMessageSortKey &key, const QMessage &left, const QMessage &right);
+    static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageSortKey &key, LPMAPITABLE);
+    static QMessageSortKey from(QMessageSortKeyPrivate::Field field, Qt::SortOrder order);
 #endif
 };
