@@ -34,9 +34,7 @@
 
 #include "qaudiorendererendpoint.h"
 
-#include <private/qobject_p.h>
-
-class QAudioRendererEndpointPrivate : public QObjectPrivate
+class QAudioRendererEndpointPrivate
 {
 public:
     QAudioRendererEndpointPrivate()
@@ -79,7 +77,8 @@ public:
     Constructs a new audio renderer end point with the given \a parent.
 */
 QAudioRendererEndpoint::QAudioRendererEndpoint(QObject *parent)
-    : QObject(*new QAudioRendererEndpointPrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QAudioRendererEndpointPrivate)
 {
 }
 
@@ -88,6 +87,7 @@ QAudioRendererEndpoint::QAudioRendererEndpoint(QObject *parent)
 */
 QAudioRendererEndpoint::~QAudioRendererEndpoint()
 {
+    delete d_ptr;
 }
 
 /*!

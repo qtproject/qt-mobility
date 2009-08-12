@@ -61,6 +61,9 @@ public:
 
     QIODevice *device() const;
     virtual void setDevice(QIODevice *device);
+
+protected:
+    QAudioRendererEndpointPrivate *d_ptr;
 };
 
 #define QAudioRendererEndpoint_iid "com.nokia.Qt.QAudioRendererEndpoint/1.0"

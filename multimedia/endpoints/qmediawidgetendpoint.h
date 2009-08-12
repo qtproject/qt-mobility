@@ -69,6 +69,8 @@ public Q_SLOTS:
 
 protected:
     QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWidget *parent);
+
+    QMediaWidgetEndpointPrivate *d_ptr;
 };
 
 #define QMediaWidgetEndpoint_iid "com.nokia.Qt.QMediaWidgetEndpoint/1.0"

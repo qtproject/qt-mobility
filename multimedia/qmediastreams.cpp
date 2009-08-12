@@ -188,9 +188,9 @@ void QMediaStreamInfo::setStreamLanguage(const QString &language)
 
 
 
-class QMediaStreamsPrivate : public QObjectPrivate
+class QMediaStreamsPrivate
 {
-Q_DECLARE_PUBLIC(QMediaStreams)
+    Q_DECLARE_PUBLIC(QMediaStreams)
 public:
     QAbstractMediaService* service;
     QMediaStreamsControl* control;
@@ -201,6 +201,8 @@ public:
 
     void _q_updateStreams();
     void _q_updateActiveStreams();
+
+    QMediaStreams *q_ptr;
 };
 
 void QMediaStreamsPrivate::_q_updateStreams()
@@ -236,9 +238,12 @@ void QMediaStreamsPrivate::_q_updateActiveStreams()
   Constructs the QMediaStreams object for \a mediaObject.
  */
 QMediaStreams::QMediaStreams(QAbstractMediaObject *mediaObject, QObject *parent)
-    :QObject( *new QMediaStreamsPrivate, parent )
+    : QObject(parent)
+    , d_ptr(new QMediaStreamsPrivate)
 {
     Q_D(QMediaStreams);
+
+    d->q_ptr = this;
 
     d->service = mediaObject->service();
     d->control = qobject_cast<QMediaStreamsControl*>(d->service->control("com.nokia.qt.MediaStreamsControl"));
@@ -256,6 +261,7 @@ QMediaStreams::QMediaStreams(QAbstractMediaObject *mediaObject, QObject *parent)
 */
 QMediaStreams::~QMediaStreams()
 {
+    delete d_ptr;
 }
 
 /*!

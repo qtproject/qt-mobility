@@ -49,7 +49,7 @@
     \brief Use this class to extract Metadata from a Multimedia object.
 */
 
-class QMediaMetadataPrivate : public QObjectPrivate
+class QMediaMetadataPrivate
 {
 public:
     QAbstractMediaService    *service;
@@ -60,8 +60,9 @@ public:
     Construct a QMediaMetadata to read and or write Metadata from the Mulitmedia object \a mediaObject.
 */
 
-QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
-    QObject(*new QMediaMetadataPrivate, mediaObject)
+QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject)
+    : QObject(mediaObject)
+    , d_ptr(new QMediaMetadataPrivate)
 {
     Q_D(QMediaMetadata);
 
@@ -83,6 +84,7 @@ QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject):
 
 QMediaMetadata::~QMediaMetadata()
 {
+    delete d_ptr;
 }
 
 bool QMediaMetadata::metadataAvailable() const

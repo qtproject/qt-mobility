@@ -46,14 +46,13 @@
 // We mean it.
 //
 
-#include <QtCore/private/qobject_p.h>
 #include "qmediaplaylist.h"
 
 class QMediaPlaylistSource;
 class QMediaPlaylistReader;
 class QMediaPlaylistWritter;
 
-class QMediaPlaylistPrivate : public QObjectPrivate
+class QMediaPlaylistPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
@@ -65,6 +64,8 @@ public:
         , endPendingRemove(-1)
     {
     }
+
+    virtual ~QMediaPlaylistPrivate() {}
 
     QMediaPlaylistSource *source;
 
@@ -80,6 +81,8 @@ public:
     void _q_itemsInserted();
     void _q_itemsAboutToBeRemoved(int start, int end);
     void _q_itemsRemoved();
+
+    QMediaPlaylist *q_ptr;
 
 };
 

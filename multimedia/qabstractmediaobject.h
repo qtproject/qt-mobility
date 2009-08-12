@@ -68,6 +68,8 @@ protected:
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
 
+    QAbstractMediaObjectPrivate *d_ptr;
+
 private:
     Q_DECLARE_PRIVATE(QAbstractMediaObject)
     Q_PRIVATE_SLOT(d_func(), void _q_notify())

@@ -59,7 +59,8 @@
     Constructs a new media output widget with the given \a parent.
 */
 QMediaWidgetEndpoint::QMediaWidgetEndpoint(QWidget *parent)
-    : QWidget(*new QMediaWidgetEndpointPrivate, parent, 0)
+    : QWidget(parent, 0)
+    , d_ptr(new QMediaWidgetEndpointPrivate)
 {
 }
 
@@ -67,7 +68,8 @@ QMediaWidgetEndpoint::QMediaWidgetEndpoint(QWidget *parent)
     \internal
 */
 QMediaWidgetEndpoint::QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWidget *parent)
-    : QWidget(dd, parent, 0)
+    : QWidget(parent, 0)
+    , d_ptr(&dd)
 {
 }
 
@@ -76,6 +78,7 @@ QMediaWidgetEndpoint::QMediaWidgetEndpoint(QMediaWidgetEndpointPrivate &dd, QWid
 */
 QMediaWidgetEndpoint::~QMediaWidgetEndpoint()
 {
+    delete d_ptr;
 }
 
 /*!

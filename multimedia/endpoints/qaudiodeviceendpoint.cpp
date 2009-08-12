@@ -34,9 +34,7 @@
 
 #include "qaudiodeviceendpoint.h"
 
-#include <private/qobject_p.h>
-
-class QAudioDeviceEndpointPrivate : public QObjectPrivate
+class QAudioDeviceEndpointPrivate
 {
 public:
     QAudioDeviceEndpointPrivate()
@@ -121,7 +119,8 @@ public:
     Contructs a new audio device selector media end point with the given \a parent.
 */
 QAudioDeviceEndpoint::QAudioDeviceEndpoint(QObject *parent)
-    : QObject(*new QAudioDeviceEndpointPrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QAudioDeviceEndpointPrivate)
 {
 }
 
@@ -130,6 +129,7 @@ QAudioDeviceEndpoint::QAudioDeviceEndpoint(QObject *parent)
 */
 QAudioDeviceEndpoint::~QAudioDeviceEndpoint()
 {
+    delete d_ptr;
 }
 
 /*!

@@ -50,7 +50,7 @@ public:
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource))
 
-class QMediaPlaylistNavigatorPrivate : public QObjectPrivate
+class QMediaPlaylistNavigatorPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlaylistNavigator)
 public:
@@ -76,6 +76,8 @@ public:
     void _q_itemsInserted(int start, int end);
     void _q_itemsRemoved(int start, int end);
     void _q_itemsChanged(int start, int end);
+    
+    QMediaPlaylistNavigator *q_ptr;
 };
 
 
@@ -204,8 +206,11 @@ enum QMediaPlaylistNavigator::PlaybackMode
   Create a new \a playlist navigator object.
   */
 QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
-    :QObject(*new QMediaPlaylistNavigatorPrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QMediaPlaylistNavigatorPrivate)
 {
+    d_ptr->q_ptr = this;
+
     setPlaylist(playlist ? playlist : _q_nullMediaPlaylist());
 }
 
@@ -214,6 +219,7 @@ QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObje
   */
 QMediaPlaylistNavigator::~QMediaPlaylistNavigator()
 {
+    delete d_ptr;
 }
 
 

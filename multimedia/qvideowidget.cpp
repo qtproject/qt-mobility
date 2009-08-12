@@ -52,7 +52,7 @@
 
 #include <private/qwidget_p.h>
 
-class QVideoWidgetPrivate : public QWidgetPrivate
+class QVideoWidgetPrivate
 {
     Q_DECLARE_PUBLIC(QVideoWidget)
 public:
@@ -82,6 +82,8 @@ public:
     void _q_overlayFullscreenChanged(bool fullscreen);
     void _q_dimensionsChanged();
     void _q_fullscreenWindowDone();
+
+    QVideoWidget *q_ptr;
 };
 
 void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
@@ -112,9 +114,12 @@ void QVideoWidgetPrivate::_q_fullscreenWindowDone()
     \a object.
 */
 QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
-    : QWidget(*new QVideoWidgetPrivate, parent, 0)
+    : QWidget(parent, 0)
+    , d_ptr(new QVideoWidgetPrivate)
 {
     Q_D(QVideoWidget);
+
+    d->q_ptr = this;
 
     d->service = object->service();
 
@@ -158,9 +163,8 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 */
 QVideoWidget::~QVideoWidget()
 {
-    Q_D(QVideoWidget);
-
-    delete d->fullscreenWindow;
+    delete d_ptr->fullscreenWindow;
+    delete d_ptr;
 }
 
 /*!

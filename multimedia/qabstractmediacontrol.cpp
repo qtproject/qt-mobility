@@ -52,10 +52,12 @@
 
 QAbstractMediaControl::~QAbstractMediaControl()
 {
+    delete d_ptr;
 }
 
-QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
-    QObject(*new QAbstractMediaControlPrivate, parent)
+QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QAbstractMediaControlPrivate)
 {
 }
 
@@ -63,8 +65,10 @@ QAbstractMediaControl::QAbstractMediaControl(QObject *parent):
     \internal
 */
 
-QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent):
-    QObject(dd, parent)
+QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
+
 {
 }
 

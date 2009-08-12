@@ -42,6 +42,8 @@
 #include "qmediaserviceprovider.h"
 #include "qmediaplaylist.h"
 
+#include <stdlib.h>
+
 
 /*!
     \class QMediaPlayer

@@ -40,8 +40,6 @@
 #include "qmediaresource.h"
 
 
-class QMediaImageViewerPrivate;
-
 class Q_MEDIA_EXPORT QMediaImageViewer : public QWidget
 {
     Q_OBJECT
@@ -79,7 +77,6 @@ Q_SIGNALS:
     void stateChanged(QMediaImageViewer::State state);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaImageViewer)
     Q_DISABLE_COPY(QMediaImageViewer)
 };
 

@@ -82,6 +82,8 @@ Q_SIGNALS:
 protected:
     QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);
 
+    QMediaPlaylistPrivate *d_ptr;
+
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeInserted(int start, int end));
     Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted());

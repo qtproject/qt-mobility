@@ -62,6 +62,9 @@ Q_SIGNALS:
     void streamsChanged();
     void activeStreamsChanged();
 
+protected:
+    QMediaStreamsPrivate *d_ptr;
+
 private:
     Q_DECLARE_PRIVATE(QMediaStreams)
     Q_DISABLE_COPY(QMediaStreams)

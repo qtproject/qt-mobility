@@ -86,6 +86,9 @@ protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
 
+protected:
+    QVideoWidgetPrivate *d_ptr;
+
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());

@@ -126,6 +126,9 @@ Q_SIGNALS:
     void devicesInserted(int index, int count);
     void devicesRemoved(int index, int count);
     void devicesChanged(int index, int count);
+
+protected:
+    QAudioDeviceEndpointPrivate *d_ptr;
 };
 
 #define QAudioDeviceEndpoint_iid "com.nokia.Qt.QAudioDeviceEndpoint/1.0"

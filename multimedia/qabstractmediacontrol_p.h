@@ -46,13 +46,10 @@
 // We mean it.
 //
 
-#include <QtCore/private/qobject_p.h>
-#include <QtCore/qtimer.h>
-#include <QtCore/qlist.h>
-
-class QAbstractMediaControlPrivate : public QObjectPrivate
+class QAbstractMediaControlPrivate
 {
 public:
+    virtual ~QAbstractMediaControlPrivate() {}
 };
 
-#endif  // QABSTRACTMEDIACONTROLP_H
+#endif

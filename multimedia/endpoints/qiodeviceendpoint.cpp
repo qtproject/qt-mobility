@@ -34,9 +34,7 @@
 
 #include "qiodeviceendpoint.h"
 
-#include <private/qobject_p.h>
-
-class QIODeviceEndpointPrivate : public QObjectPrivate
+class QIODeviceEndpointPrivate
 {
 public:
     QIODeviceEndpointPrivate()
@@ -72,7 +70,8 @@ public:
     Contructs a new I/O device media end point with the given \a parent.
 */
 QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
-    : QObject(*new QIODeviceEndpointPrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QIODeviceEndpointPrivate)
 {
 }
 
@@ -81,6 +80,7 @@ QIODeviceEndpoint::QIODeviceEndpoint(QObject *parent)
 */
 QIODeviceEndpoint::~QIODeviceEndpoint()
 {
+    delete d_ptr;
 }
 
 /*!

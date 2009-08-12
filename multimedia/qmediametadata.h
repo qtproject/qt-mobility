@@ -67,6 +67,9 @@ Q_SIGNALS:
     void metadataAvailabilityChanged(bool available);
     void readOnlyChanged(bool readOnly);
 
+protected:
+    QMediaMetadataPrivate *d_ptr;
+
 private:
     Q_DECLARE_PRIVATE(QMediaMetadata)
     Q_DISABLE_COPY(QMediaMetadata)

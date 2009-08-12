@@ -10,7 +10,9 @@ contains(QT_CONFIG, multimedia): QT += multimedia
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 
-HEADERS = qabstractmediacontrol.h \
+HEADERS = \
+    qabstractmediacontrol.h \
+    qabstractmediacontrol_p.h \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \

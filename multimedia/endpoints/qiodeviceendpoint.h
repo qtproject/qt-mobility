@@ -55,6 +55,9 @@ public:
 
     QIODevice *device() const;
     virtual void setDevice(QIODevice *device);
+
+protected:
+    QIODeviceEndpointPrivate *d_ptr;
 };
 
 #define QIODeviceEndpoint_iid "com.nokia.Qt.QIODeviceEndpoint/1.0"

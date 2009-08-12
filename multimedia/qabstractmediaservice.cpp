@@ -34,10 +34,9 @@
 
 #include "qabstractmediaservice.h"
 
-#include <QtCore/private/qobject_p.h>
 #include <QtCore/qtimer.h>
 
-class QAbstractMediaServicePrivate : public QObjectPrivate
+class QAbstractMediaServicePrivate
 {
 public:
     QAbstractMediaServicePrivate()
@@ -67,9 +66,15 @@ public:
     base class for Multimedia services so this constructor is protected.
 */
 
-QAbstractMediaService::QAbstractMediaService(QObject *parent):
-    QObject(*new QAbstractMediaServicePrivate, parent)
+QAbstractMediaService::QAbstractMediaService(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QAbstractMediaServicePrivate)
 {
+}
+
+QAbstractMediaService::~QAbstractMediaService()
+{
+    delete d_ptr;
 }
 
 /*!

@@ -117,9 +117,12 @@ void QMediaPlaylistPrivate::_q_itemsRemoved()
   If source is null, internal local memory playlist source will be created.
   */
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
-    :QObject(*new QMediaPlaylistPrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QMediaPlaylistPrivate)
 {
     Q_D(QMediaPlaylist);
+
+    d->q_ptr = this;
 
     if (source) {
         d->source = source;
@@ -138,7 +141,8 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistSource *source, QObject *parent)
 \internal
   */
 QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
-    :QObject(dd, parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
 }
 
@@ -147,6 +151,7 @@ QMediaPlaylist::QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent)
   */
 QMediaPlaylist::~QMediaPlaylist()
 {
+    delete d_ptr;
 }
 
 /*!

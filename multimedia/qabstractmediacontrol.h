@@ -54,6 +54,7 @@ protected:
     QAbstractMediaControl(QObject *parent = 0);
     QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent = 0);
 
+    QAbstractMediaControlPrivate *d_ptr;
 private:
     Q_DECLARE_PRIVATE(QAbstractMediaControl)
 };

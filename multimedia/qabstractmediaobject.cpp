@@ -78,6 +78,7 @@ void QAbstractMediaObjectPrivate::_q_notify()
 
 QAbstractMediaObject::~QAbstractMediaObject()
 {
+    delete d_ptr;
 }
 
 /*!
@@ -115,10 +116,15 @@ void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
     base class for Multimedia objects so this constructor is protected.
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
-    QObject(*new QAbstractMediaObjectPrivate, parent)
+QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QAbstractMediaObjectPrivate)
+
 {
     Q_D(QAbstractMediaObject);
+
+    d->q_ptr = this;
+
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
@@ -128,8 +134,9 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent):
     \internal
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent):
-    QObject(dd, parent)
+QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
     Q_D(QAbstractMediaObject);
     d->notifyTimer = new QTimer(this);

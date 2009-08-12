@@ -48,9 +48,7 @@
 
 #include "qmediawidgetendpoint.h"
 
-#include <QtGui/private/qwidget_p.h>
-
-class QMediaWidgetEndpointPrivate : public QWidgetPrivate
+class QMediaWidgetEndpointPrivate
 {
 public:
     QMediaWidgetEndpointPrivate()
@@ -58,6 +56,8 @@ public:
           aspectRatio(QMediaWidgetEndpoint::AspectRatioAuto)
     {
     }
+
+    virtual ~QMediaWidgetEndpointPrivate() {}
 
     bool fullscreen;
     QMediaWidgetEndpoint::AspectRatio aspectRatio;

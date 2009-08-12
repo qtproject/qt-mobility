@@ -47,14 +47,8 @@
     \sa
 */
 
-class QMediaImageViewerPrivate : public QWidgetPrivate
-{
-public:
-};
-
-
 QMediaImageViewer::QMediaImageViewer(QWidget* parent):
-    QWidget(*new QMediaImageViewerPrivate, parent, 0)
+    QWidget(parent, 0)
 {
 }
 

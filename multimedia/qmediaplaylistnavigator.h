@@ -84,6 +84,9 @@ Q_SIGNALS:
 
     void surroundingItemsChanged();
 
+protected:
+    QMediaPlaylistNavigatorPrivate *d_ptr;
+
 private:
     Q_DISABLE_COPY(QMediaPlaylistNavigator)
     Q_DECLARE_PRIVATE(QMediaPlaylistNavigator)
