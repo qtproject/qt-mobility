@@ -84,6 +84,12 @@ QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
     this->operator=(other);
 }
 
+QMessageSortKey::~QMessageSortKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageSortKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

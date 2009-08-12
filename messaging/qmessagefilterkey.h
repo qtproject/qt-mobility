@@ -53,6 +53,7 @@ public:
 
     QMessageFilterKey();
     QMessageFilterKey(const QMessageFilterKey &other);
+    virtual ~QMessageFilterKey();
     bool isEmpty() const;
 
     QMessageFilterKey operator~() const;

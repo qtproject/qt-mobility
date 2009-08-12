@@ -43,6 +43,7 @@ class Q_MESSAGING_EXPORT QMessageSortKey {
 public:
     QMessageSortKey();
     QMessageSortKey(const QMessageSortKey &other);
+    virtual ~QMessageSortKey();
     bool isEmpty() const;
 
     QMessageSortKey operator+(const QMessageSortKey &other) const;

@@ -112,6 +112,12 @@ QMessageFilterKey::QMessageFilterKey(const QMessageFilterKey &other)
     this->operator=(other);
 }
 
+QMessageFilterKey::~QMessageFilterKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageFilterKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

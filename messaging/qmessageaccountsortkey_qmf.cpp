@@ -80,6 +80,12 @@ QMessageAccountSortKey::QMessageAccountSortKey(const QMessageAccountSortKey &oth
     this->operator=(other);
 }
 
+QMessageAccountSortKey::~QMessageAccountSortKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageAccountSortKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

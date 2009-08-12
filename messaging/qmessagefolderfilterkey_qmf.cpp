@@ -99,6 +99,12 @@ QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &
     this->operator=(other);
 }
 
+QMessageFolderFilterKey::~QMessageFolderFilterKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageFolderFilterKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

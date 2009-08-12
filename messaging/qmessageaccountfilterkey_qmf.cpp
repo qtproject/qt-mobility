@@ -96,6 +96,12 @@ QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKe
     this->operator=(other);
 }
 
+QMessageAccountFilterKey::~QMessageAccountFilterKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageAccountFilterKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

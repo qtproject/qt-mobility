@@ -44,6 +44,7 @@ class Q_MESSAGING_EXPORT QMessageFolderSortKey {
 public:
     QMessageFolderSortKey();
     QMessageFolderSortKey(const QMessageFolderSortKey &other);
+    virtual ~QMessageFolderSortKey();
     bool isEmpty() const;
 
     QMessageFolderSortKey operator+(const QMessageFolderSortKey &other) const;

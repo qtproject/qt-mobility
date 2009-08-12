@@ -81,6 +81,12 @@ QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
     this->operator=(other);
 }
 
+QMessageFolderSortKey::~QMessageFolderSortKey()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
 bool QMessageFolderSortKey::isEmpty() const
 {
     return d_ptr->_key.isEmpty();

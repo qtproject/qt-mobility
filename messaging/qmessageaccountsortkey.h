@@ -43,6 +43,7 @@ class Q_MESSAGING_EXPORT QMessageAccountSortKey {
 public:
     QMessageAccountSortKey();
     QMessageAccountSortKey(const QMessageAccountSortKey &other);
+    virtual ~QMessageAccountSortKey();
     bool isEmpty() const;
 
     bool operator==(const QMessageAccountSortKey &other) const;

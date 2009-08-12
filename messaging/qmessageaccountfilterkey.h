@@ -48,6 +48,7 @@ public:
 
     QMessageAccountFilterKey();
     QMessageAccountFilterKey(const QMessageAccountFilterKey &other);
+    virtual ~QMessageAccountFilterKey();
     bool isEmpty() const;
 
     QMessageAccountFilterKey operator~() const;
