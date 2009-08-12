@@ -70,6 +70,12 @@
 */
 
 /*!
+    \fn QMessageAccountSortKey::~QMessageAccountSortKey()
+    
+    Destroys the key.
+*/
+
+/*!
     \fn QMessageAccountSortKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false.

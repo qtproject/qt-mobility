@@ -71,6 +71,12 @@
 */
 
 /*!
+    \fn QMessageFolderSortKey::~QMessageFolderSortKey()
+    
+    Destroys the key.
+*/
+
+/*!
     \fn QMessageFolderSortKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false.

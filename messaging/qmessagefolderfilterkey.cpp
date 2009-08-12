@@ -90,6 +90,12 @@
 */
 
 /*!
+    \fn QMessageFolderFilterKey::~QMessageFolderFilterKey()
+    
+    Destroys the key.
+*/
+
+/*!
     \fn QMessageFolderFilterKey::isEmpty() const
   
     Returns true if the key remains empty after default construction; otherwise returns false. 
