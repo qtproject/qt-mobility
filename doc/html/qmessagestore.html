@@ -15,82 +15,60 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageStore Class Reference</h1>
 <p>The QMessageStore class represents the main interface for storage and retrieval of messages, folders and accounts in the messaging store. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessageStore&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmessagestore-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingMemoryOverflow }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { RemoveLocalCopyOnly, RemoveOnOriginatingServer }</td></tr>
-</table>
-<hr />
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingMemoryOverflow }</li>
+<li><div class="fn"></div>enum <b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { RemoveLocalCopyOnly, RemoveOnOriginatingServer }</li>
+</ul>
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMessageAccount </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#account">account</a></b> ( const QMessageAccountId &amp; <i>id</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * <i>m</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> = QMessageAccountFilterKey() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageStore::ErrorCode </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#lastError">lastError</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageAccountIdList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> = QMessageAccountFilterKey(), const QMessageAccountSortKey &amp; <i>sortKey</i> = QMessageAccountSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageIdList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageIdList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#queryMessages-2">queryMessages</a></b> ( const QString &amp; <i>body</i>, const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), QMessageDataComparator::Options <i>options</i> = 0, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</td></tr>
-</table>
+<h3>Public Functions</h3>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div class="fn"></div>QMessageAccount <b><a href="qmessagestore.html#account">account</a></b> ( const QMessageAccountId &amp; <i>id</i> ) const</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * <i>m</i> )</li>
+<li><div class="fn"></div>int <b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> = QMessageAccountFilterKey() ) const</li>
+<li><div class="fn"></div>int <b><a href="qmessagestore.html#countFolders">countFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i> = QMessageFolderFilterKey() ) const</li>
+<li><div class="fn"></div>int <b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey() ) const</li>
+<li><div class="fn"></div>QMessageFolder <b><a href="qmessagestore.html#folder">folder</a></b> ( const QMessageFolderId &amp; <i>id</i> ) const</li>
+<li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessagestore.html#lastError">lastError</a></b> () const</li>
+<li><div class="fn"></div>QMessage <b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; <i>id</i> ) const</li>
+<li><div class="fn"></div>QMessageAccountIdList <b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilterKey &amp; <i>key</i> = QMessageAccountFilterKey(), const QMessageAccountSortKey &amp; <i>sortKey</i> = QMessageAccountSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>QMessageFolderIdList <b><a href="qmessagestore.html#queryFolders">queryFolders</a></b> ( const QMessageFolderFilterKey &amp; <i>key</i> = QMessageFolderFilterKey(), const QMessageFolderSortKey &amp; <i>sortKey</i> = QMessageFolderSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>QMessageIdList <b><a href="qmessagestore.html#queryMessages-2">queryMessages</a></b> ( const QString &amp; <i>body</i>, const QMessageFilterKey &amp; <i>key</i> = QMessageFilterKey(), const QMessageSortKey &amp; <i>sortKey</i> = QMessageSortKey(), QMessageDataComparator::Options <i>options</i> = 0, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessage">removeMessage</a></b> ( const QMessageId &amp; <i>id</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#removeMessages">removeMessages</a></b> ( const QMessageFilterKey &amp; <i>key</i>, RemovalOption <i>option</i> = RemoveOnOriginatingServer )</li>
+<li><div class="fn"></div>bool <b><a href="qmessagestore.html#updateMessage">updateMessage</a></b> ( QMessage * <i>m</i> )</li>
 </ul>
-<hr />
 <a name="public-slots"></a>
-<h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#startNotifications">startNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ()</td></tr>
-</table>
+<h3>Public Slots</h3>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#startNotifications">startNotifications</a></b> ( const QMessageFilterKey &amp; <i>key</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#stopNotifications">stopNotifications</a></b> ()</li>
 </ul>
-<hr />
 <a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#messagesAdded">messagesAdded</a></b> ( const QMessageIdList &amp; <i>ids</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a></b> ( const QMessageIdList &amp; <i>ids</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a></b> ( const QMessageIdList &amp; <i>ids</i> )</td></tr>
-</table>
+<h3>Signals</h3>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesAdded">messagesAdded</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesRemoved">messagesRemoved</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessagestore.html#messagesUpdated">messagesUpdated</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
 </ul>
-<hr />
 <a name="static-public-members"></a>
-<h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMessageStore * </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#instance">instance</a></b> ()</td></tr>
-</table>
+<h3>Static Public Members</h3>
 <ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>QMessageStore * <b><a href="qmessagestore.html#instance">instance</a></b> ()</li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessageStore class represents the main interface for storage and retrieval of messages, folders and accounts in the messaging store.</p>
 <p>The QMessageStore class is accessed through a singleton interface and provides functions for adding, updating and deleting messages in the messaging store.</p>
-<p>QMessageStore also provides <a href="qmessagestore.html#queryMessages">queryMessages</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>() functions for querying and counting of <a href="qmessage.html">QMessage</a>, QMessageFolder and <a href="qmessageaccount.html">QMessageAccount</a> objects by using the <a href="qmessagefilterkey.html">QMessageFilterKey</a>, QMessageFolderFilterKey, <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> classes respectively.</p>
+<p>QMessageStore also provides <a href="qmessagestore.html#queryMessages">queryMessages</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>() functions for querying and counting of <a href="qmessage.html">QMessage</a>, <a href="qmessagefolder.html">QMessageFolder</a> and <a href="qmessageaccount.html">QMessageAccount</a> objects by using the <a href="qmessagefilterkey.html">QMessageFilterKey</a>, <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a>, <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> classes respectively.</p>
 <p>If a QMessageStore operation fails, the <a href="qmessagestore.html#lastError">lastError</a>() function will return an error code value indicating the failure mode encountered. A successful operation will set the <a href="qmessagestore.html#lastError">lastError</a>() result to <a href="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</a>.</p>
-<p>Messages in the messaging store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>(). Likewise a folder is retrieved in the form of a QMessageFolder object using folder(), and an account is retrieved in the form of a <a href="qmessageaccount.html">QMessageAccount</a> object using <a href="qmessagestore.html#account">account</a>().</p>
+<p>Messages in the messaging store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>(). Likewise a folder is retrieved in the form of a <a href="qmessagefolder.html">QMessageFolder</a> object using <a href="qmessagestore.html#folder">folder</a>(), and an account is retrieved in the form of a <a href="qmessageaccount.html">QMessageAccount</a> object using <a href="qmessagestore.html#account">account</a>().</p>
 <p>Messages can be inserted into the store using the <a href="qmessagestore.html#addMessage">addMessage</a>() function, messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function ,and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
 <p>Messaging store manipulations involving messages are reported via the <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesUpdated">messagesUpdated</a>() and <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>() signals.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessageid.html">QMessageId</a>, <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>, <a href="qmessagefilterkey.html">QMessageFilterKey</a>, and <a href="qmessagesortkey.html">QMessageSortKey</a>.</p>
@@ -98,7 +76,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="ErrorCode-enum"></a>enum QMessageStore::ErrorCode</h3>
 <p>Defines the result of attempting to perform a messaging store operation.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageStore::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The operation was successfully performed.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::InvalidId</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The operation failed due to the specification of an invalid identifier.</td></tr>
@@ -110,7 +88,7 @@
 </table></p>
 <h3 class="fn"><a name="RemovalOption-enum"></a>enum QMessageStore::RemovalOption</h3>
 <p>Defines whether or not a message will be removed from the originating server.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageStore::RemoveLocalCopyOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Do not remove the message from the originating server.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::RemoveOnOriginatingServer</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remove the message both from the local store and from the originating server if any.</td></tr>
@@ -126,10 +104,15 @@
 <h3 class="fn"><a name="countAccounts"></a>int QMessageStore::countAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> = QMessageAccountFilterKey() ) const</h3>
 <p>Returns the number of messages which match the filtering criteria defined in <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
+<h3 class="fn"><a name="countFolders"></a>int QMessageStore::countFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i> = QMessageFolderFilterKey() ) const</h3>
+<p>Returns the number of messages which match the filtering criteria defined in <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>int QMessageStore::countMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey() ) const</h3>
 <p>WARNING: This function will be removed and replaced by <a href="qmessageserviceaction.html#queryMessages">QMessageServiceAction::queryMessages</a>().</p>
 <p>Returns the number of messages which match the filtering criteria defined in <a href="qmessagefilterkey.html">QMessageFilterKey</a> <i>key</i>. If key is empty a count of all messages is returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#queryMessages">queryMessages</a>().</p>
+<h3 class="fn"><a name="folder"></a><a href="qmessagefolder.html">QMessageFolder</a> QMessageStore::folder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> ) const</h3>
+<p>Returns the <a href="qmessagefolder.html">QMessageFolder</a> identified by <i>id</i> from the store.</p>
 <h3 class="fn"><a name="instance"></a>QMessageStore * QMessageStore::instance ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the single instance of the <a href="qmessagestore.html">QMessageStore</a> class.</p>
 <p>If necessary, the store will be instantiated and initialized.</p>
@@ -146,14 +129,17 @@
 <h3 class="fn"><a name="messagesUpdated"></a>void QMessageStore::messagesUpdated ( const QMessageIdList &amp; <i>ids</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when the messages in the list <i>ids</i> are updated within the messaging store.</p>
 <p>See also <a href="qmessagestore.html#messagesAdded">messagesAdded</a>(), <a href="qmessagestore.html#messagesRemoved">messagesRemoved</a>(), and <a href="qmessagestore.html#startNotifications">startNotifications</a>().</p>
-<h3 class="fn"><a name="queryAccounts"></a>QMessageAccountIdList QMessageStore::queryAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> = QMessageAccountFilterKey(), const <a href="qmessageaccountsortkey.html">QMessageAccountSortKey</a> &amp; <i>sortKey</i> = QMessageAccountSortKey(), <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
+<h3 class="fn"><a name="queryAccounts"></a>QMessageAccountIdList QMessageStore::queryAccounts ( const <a href="qmessageaccountfilterkey.html">QMessageAccountFilterKey</a> &amp; <i>key</i> = QMessageAccountFilterKey(), const <a href="qmessageaccountsortkey.html">QMessageAccountSortKey</a> &amp; <i>sortKey</i> = QMessageAccountSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageaccountid.html">QMessageAccountId</a>s of messages in the messaging store. If <i>key</i> is not empty only accounts matching the parameters set by <i>key</i> will be returned, otherwise identifiers for all accounts will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
-<h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
+<h3 class="fn"><a name="queryFolders"></a>QMessageFolderIdList QMessageStore::queryFolders ( const <a href="qmessagefolderfilterkey.html">QMessageFolderFilterKey</a> &amp; <i>key</i> = QMessageFolderFilterKey(), const <a href="qmessagefoldersortkey.html">QMessageFolderSortKey</a> &amp; <i>sortKey</i> = QMessageFolderSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
+<p>Returns the <a href="qmessagefolderid.html">QMessageFolderId</a>s of folders in the messaging store. If <i>key</i> is not empty only folders matching the parameters set by <i>key</i> will be returned, otherwise identifiers for all folders will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
+<h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>WARNING: This function will be removed and replaced by <a href="qmessageserviceaction.html#queryMessages">QMessageServiceAction::queryMessages</a>().</p>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> will be returned, otherwise identifiers for all messages will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
-<h3 class="fn"><a name="queryMessages-2"></a>QMessageIdList QMessageStore::queryMessages ( const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>body</i>, const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> = 0, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://doc.qtsoftware.com/4.5/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
+<h3 class="fn"><a name="queryMessages-2"></a>QMessageIdList QMessageStore::queryMessages ( const QString &amp; <i>body</i>, const <a href="qmessagefilterkey.html">QMessageFilterKey</a> &amp; <i>key</i> = QMessageFilterKey(), const <a href="qmessagesortkey.html">QMessageSortKey</a> &amp; <i>sortKey</i> = QMessageSortKey(), <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> = 0, uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</h3>
 <p>WARNING: This function will be removed and replaced by <a href="qmessageserviceaction.html#queryMessages">QMessageServiceAction::queryMessages</a>().</p>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>key</i> is not empty only messages matching the parameters set by <i>key</i> and with a body containing the string <i>body</i> will be returned, otherwise identifiers for all messages with a body containing <i>body</i> will be returned. If <i>sortKey</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortKey</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned. <i>options</i> specifies the search optons to use.</p>
 <p>See also <a href="qmessagestore.html#lastError">lastError</a>() and <a href="qmessagestore.html#countMessages">countMessages</a>().</p>
