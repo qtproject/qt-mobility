@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 
-SUBDIRS += qmediaplaylist \
-           qmediaplaylistnavigator \
-           qmediametadata
+SUBDIRS += \
+        qabstractmediaobject \
+        qmediametadata \
+        qmediaplaylist \
+        qmediaplaylistnavigator
 
