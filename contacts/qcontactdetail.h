@@ -90,8 +90,6 @@ public:
     bool removeAttribute(const QString& attribute);
 
     QVariantMap values() const;
-    bool setValues(const QVariantMap& values);
-
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
     bool removeValue(const QString& key);

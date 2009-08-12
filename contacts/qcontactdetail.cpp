@@ -334,10 +334,14 @@ bool QContactDetail::hasValue(const QString& key) const
     }
 }
 
-/*! Inserts \a value into the detail for the given \a key.  Returns true if the operation succeeded */
+/*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
+    removes the field with the given \a key from the detail.  Returns true if the operation succeeded */
 bool QContactDetail::setValue(const QString& key, const QVariant& value)
 {
     QContactDetailPrivate::setError(d, QContactDetail::NoError);
+    if (!value.isValid())
+        return removeValue(key);
+
     d->m_values.insert(key, value);
     return true;
 }
@@ -358,14 +362,6 @@ bool QContactDetail::removeValue(const QString& key)
 QVariantMap QContactDetail::values() const
 {
     return d.constData()->m_values;
-}
-
-/*! Sets the values stored in this detail to \a values.  Returns true if the operation succeeded, otherwise false */
-bool QContactDetail::setValues(const QVariantMap& values)
-{
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
-    d->m_values = values;
-    return true;
 }
 
 /*!

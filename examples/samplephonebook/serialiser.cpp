@@ -325,7 +325,9 @@ QContactDetail Serialiser::convertCustomString(const QString& customString)
 
     // having parsed the definitionName, values, attributes, and preferences we build the detail.
     QContactDetail retn(definitionName);
-    retn.setValues(values);
+    QStringList keys = values.keys();
+    foreach (const QString& key, keys)
+        retn.setValue(key, values.value(key));
     retn.setAttributes(attrs);
     return retn;
 }
