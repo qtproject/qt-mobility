@@ -53,6 +53,10 @@ QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &
     Q_UNUSED(other)
 }
 
+QMessageFolderFilterKey::~QMessageFolderFilterKey()
+{
+}
+
 bool QMessageFolderFilterKey::isEmpty() const
 {
     return false; // stub

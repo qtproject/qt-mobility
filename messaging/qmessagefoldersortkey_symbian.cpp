@@ -41,6 +41,11 @@ QMessageFolderSortKey::QMessageFolderSortKey()
 
 QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
 {
+    Q_UNUSED(other)
+}
+
+QMessageFolderSortKey::~QMessageFolderSortKey()
+{
 }
 
 bool QMessageFolderSortKey::isEmpty() const

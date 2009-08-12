@@ -42,6 +42,10 @@ QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
     Q_UNUSED(other)
 }
 
+QMessageSortKey::~QMessageSortKey()
+{
+}
+
 bool QMessageSortKey::isEmpty() const
 {
     return false; // stub
