@@ -1,0 +1,11 @@
+TARGET = tst_qabstractmediaservice
+CONFIG += testcase
+
+include (../../../common.pri)
+
+SOURCES += tst_qabstractmediaservice.cpp
+
+INCLUDEPATH += ../../../multimedia ../../../multimedia/endpoints
+
+LIBS += -lQtMedia
+
