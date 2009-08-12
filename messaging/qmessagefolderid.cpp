@@ -119,9 +119,4 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
     Qt-style synonym for QList<QMessageFolderId>
 */
 
-/*! 
-    \fn uint qHash(const QMessageFolderId&);
-
-    \internal
-*/
 #endif

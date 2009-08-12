@@ -118,9 +118,3 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     Qt-style synonym for QList<QMessageAccountId>
 */
 
-/*! 
-    \fn uint qHash(const QMessageAccountId&);
-
-    \internal
-*/
-    
