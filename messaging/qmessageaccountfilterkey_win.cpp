@@ -53,6 +53,10 @@ QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKe
     Q_UNUSED(other)
 }
 
+QMessageAccountFilterKey::~QMessageAccountFilterKey()
+{
+}
+
 bool QMessageAccountFilterKey::isEmpty() const
 {
     return false; // stub
