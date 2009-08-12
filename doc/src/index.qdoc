@@ -106,7 +106,7 @@ Classes to assist with sorting and filtering messages:
 
 \section1 Messaging Services
 
-The library provides the QMessageServiceAction class, which provides an interface to communicate with the system's native messaging services, including sending messages and retrieving message data, and composing, replying to, forwarding and showing a message using a native application.
+The library provides the QMessageServiceAction class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
