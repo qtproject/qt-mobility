@@ -491,7 +491,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     relationshipTypes << QString(QLatin1String("Daughter"));
     relationshipTypes << QString(QLatin1String("Sibling"));
     relationshipTypes << QString(QLatin1String("Brother"));
-    relationshipTypes << QString(QLatin1String("Daughter"));
+    relationshipTypes << QString(QLatin1String("Sister"));
     relationshipTypes << QString(QLatin1String("Cousin"));
     relationshipTypes << QString(QLatin1String("Friend"));
     relationshipTypes << QString(QLatin1String("Spouse"));

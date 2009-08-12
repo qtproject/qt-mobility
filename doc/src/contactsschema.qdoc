@@ -290,6 +290,13 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o Yes
     \o Any
 \row
+    \o QContactDisplayLabel
+    \o QContactDisplayLabel::DefinitionId
+    \o "DisplayLabel"
+    \o Details of this definition contain the formatted display label of the contact
+    \o yes
+    \o Any
+\row
     \o QContactEmailAddress
     \o QContactEmailAddress::DefinitionId
     \o "EmailAddress"
@@ -304,6 +311,13 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o No
     \o Any
 \row
+    \o QContactGeolocation
+    \o QContactGeolocation::DefinitionId
+    \o "Geolocation"
+    \o Details of this definition contain a timestamped location update
+    \o No
+    \o Any
+\row
     \o QContactGuid
     \o QContactGuid::DefinitionId
     \o "Guid"
@@ -315,7 +329,21 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o QContactName::DefinitionId
     \o "Name"
     \o Details of this definition contain the full name information of a contact
-    \o Yes
+    \o No
+    \o Any
+\row
+    \o QContactOnlineAccount
+    \o QContactOnlineAccount::DefinitionId
+    \o "OnlineAccount"
+    \o Details of this definition contain the URI of an online account of the contact
+    \o No
+    \o Any
+\row
+    \o QContactOrganisation
+    \o QContactOrganisation::DefinitionId
+    \o "Organisation"
+    \o Details of this definition contain details of an organisation with which the contact is associated
+    \o No
     \o Any
 \row
     \o QContactPhoneNumber
@@ -325,12 +353,33 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o No
     \o Any
 \row
+    \o QContactPresence
+    \o QContactPresence::DefinitionId
+    \o "Presence"
+    \o Details of this definition contain presence information regarding a particular online account
+    \o No
+    \o ReadOnly
+\row
+    \o QContactRelationship
+    \o QContactRelationship::DefinitionId
+    \o "Relationship"
+    \o Details of this definition contain information about which other contacts this contact is related to and in what way
+    \o No
+    \o Any
+\row
     \o QContactSyncTarget
     \o QContactSyncTarget::DefinitionId
     \o "SyncTarget"
     \o Details of this definition contain the id of a storage backend to which the contact should be synchronised
     \o Yes
     \o CreateOnly
+\row
+    \o QContactTimestamp
+    \o QContactTimestamp::DefinitionId
+    \o "Timestamp"
+    \o Details of this definition contain a creation and modification timestamp of the contact
+    \o Yes
+    \o ReadOnly
 \row
     \o QContactUrl
     \o QContactUrl::DefinitionId
@@ -401,6 +450,12 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o \list \o Any \endlist
     \o \list \o The date of the birthday associated with a contact \endlist
 \row
+    \o QContactDisplayLabel
+    \o \list \o DisplayLabel \o Synthesised \endlist
+    \o \list \o String \o bool \endlist
+    \o \list \o Any \o Any \endlist
+    \o \list \o The display label of a contact \o Whether the display label was synthesised automatically or set manually \endlist
+\row
     \o QContactEmailAddress
     \o \list \o EmailAddress \endlist
     \o \list \o String \endlist
@@ -413,6 +468,20 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o \list \o "Male", "Female", "Unspecified" \endlist
     \o \list \o The gender of a contact in a particular context \endlist
 \row
+    \o QContactGeolocation
+    \o \list \o Latitude \o Longitude \o Accuracy \o Altitude \o AltitudeAccuracy \o Heading \o Speed \o Timestamp \endlist
+    \o \list \o double \o double \o double \o double \o double \o double \o double \o DateTime \endlist
+    \o \list \o Any \o Any \o Any \o Any \o Any \o Any \o Any \o Any \endlist
+    \o \list
+            \o The latitude coordinate of the location
+            \o The longitude coordinate of the location
+            \o The accuracy (in metres) of the latitude and longitude coordinates
+            \o The altitude (in metres) of the location
+            \o The accuracy (in metres) of the altitude coordinate of the location
+            \o The heading of the location aware device at the time of measurement, in degrees from true north
+            \o The speed of the location aware device at the time of measurement, in metres per second
+       \endlist
+\row
     \o QContactGuid
     \o \list \o Guid \endlist
     \o \list \o String \endlist
@@ -421,7 +490,6 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
 \row
     \o QContactName
     \o \list
-            \o DisplayName
             \o Prefix
             \o First
             \o Middle
@@ -434,7 +502,6 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
             \o String
             \o String
             \o String
-            \o String
        \endlist
     \o \list
             \o Any
@@ -442,15 +509,28 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
             \o Any
             \o Any
             \o Any
-            \o Any
        \endlist
     \o \list
-            \o The formatted name of a contact
             \o The prefix segment of the name of a contact (e.g., "Mr", "Mrs", "Dr")
             \o The first (given) name segment of the name of a contact
             \o The middle (additional) name segment of the name of a contact
             \o The last (surname) name segment of the name of a contact
             \o The suffix segment of the name of a contact (e.g., "Esq.", "Ph.D")
+       \endlist
+\row
+    \o QContactOnlineAccount
+    \o \list \o AccountUri \endlist
+    \o \list \o String \endlist
+    \o \list \o Any \endlist
+    \o \list \o The URI of an online account communication endpoint associated with the contact \endlist
+\row
+    \o QContactOrganisation
+    \o \list \o DisplayLabel \o Logo \endlist
+    \o \list \o String \o String \endlist
+    \o \list \o Any \o Any \endlist
+    \o \list
+            \o The display label of an organisation associated with the contact
+            \o The location of a logo of an organisation associated with the contact
        \endlist
 \row
     \o QContactPhoneNumber
@@ -459,11 +539,66 @@ the allowable Context-attribute values.  For example, "Home,Work" is a valid val
     \o \list \o Any \endlist
     \o \list \o A phone number associated with a contact \endlist
 \row
+    \o QContactPresence
+    \o \list \o AccountUri \o Nickname \o Presence \o StatusMessage \endlist
+    \o \list \o String \o String \o String \o String \endlist
+    \o \list \o Any \o Any \o "Available", "Busy, "Away", "Extended Away", "Unknown", "Offline" \o Any \endlist
+    \o \list
+            \o The URI of an online account communication endpoint associated with the contact
+            \o The last-known nickname that the contact used while communicating via the associated online account
+            \o The presence of the contact as reported by the provider of the associated online account
+            \o The last-known status message of the contact sent from the online account communication endpoint
+       \endlist
+\row
+    relationshipTypes << QString(QLatin1String("Is"));
+    relationshipTypes << QString(QLatin1String("Was"));
+    relationshipTypes << QString(QLatin1String("Father"));
+    relationshipTypes << QString(QLatin1String("Mother"));
+    relationshipTypes << QString(QLatin1String("Child"));
+    relationshipTypes << QString(QLatin1String("Son"));
+    relationshipTypes << QString(QLatin1String("Daughter"));
+    relationshipTypes << QString(QLatin1String("Sibling"));
+    relationshipTypes << QString(QLatin1String("Brother"));
+    relationshipTypes << QString(QLatin1String("Sister"));
+    relationshipTypes << QString(QLatin1String("Cousin"));
+    relationshipTypes << QString(QLatin1String("Friend"));
+    relationshipTypes << QString(QLatin1String("Spouse"));
+    relationshipTypes << QString(QLatin1String("Fiancee"));
+    relationshipTypes << QString(QLatin1String("Husband"));
+    relationshipTypes << QString(QLatin1String("Wife"));
+    relationshipTypes << QString(QLatin1String("Employer"));
+    relationshipTypes << QString(QLatin1String("Employee"));
+    relationshipTypes << QString(QLatin1String("Other"));
+    relationshipTypes << QString(QLatin1String("Unknown"));
+    \o QContactRelationship
+    \o \list \o RelationshipType \o ContactLabel \o ContactUid \o ContactManagerUri \endlist
+    \o \list \o String \o String \o String \o String \endlist
+    \o \list \o "Is", "Was", "Father", "Mother", "Child", "Son", "Daughter", "Sibling", "Brother", "Sister", "Cousin", "Friend", "Spouse", "Fiancee", "Husband", "Wife", "Employer", "Employee", "Other", "Unknown"
+             \o Any
+             \o Any
+             \o Any
+       \endlist
+    \o \list
+            \o The way in which this contact is related to the contact about which this detail stores information.  To be read as: "This contact is the <RelationshipType> of the contact linked in this detail".
+            \o The display label of the contact to which this contact is related
+            \o The unique identifier of the contact to which this contact is related, as used to identify the contact by the manager which stores the related contact
+            \o The URI of the manager which stores the related contact
+       \endlist
+\row
     \o QContactSyncTarget
     \o \list \o SyncTarget \endlist
     \o \list \o String \endlist
     \o \list \o Any \endlist
     \o \list \o The identifier of a backend store to which the contact containing this detail should be synchronised \endlist
+\row
+    \o QContactTimestamp
+    \o \list \o CreationTimestamp \o ModificationTimestamp \endlist
+    \o \list \o DateTime \o DateTime \endlist
+    \o \list \o Any \o Any \endlist
+    \o \list
+            \o The date and time of creation of the contact
+            \o The date and time of the last modification of the contact
+       \endlist
 \row
     \o QContactUrl
     \o \list \o Url \endlist
