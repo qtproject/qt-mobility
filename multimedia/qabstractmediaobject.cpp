@@ -139,6 +139,8 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     , d_ptr(&dd)
 {
     Q_D(QAbstractMediaObject);
+    d->q_ptr = this;
+
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
