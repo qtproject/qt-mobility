@@ -62,14 +62,16 @@ DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += . $$SOURCE_DIR
 #For some reason the default include path doesn't include MOC_DIR on symbian
 symbian {
-	INCLUDEPATH += $$MOC_DIR
+    INCLUDEPATH += $$MOC_DIR
 }
 
-for(p, QMAKE_INCDIR_QT) {
-    exists("$${p}/QtMultimedia/qabstractvideosurface.h"): CONFIG *= videosurface
-}
-!contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
+contains(QT_CONFIG, multimedia) {
+    for(p, QMAKE_INCDIR_QT) {
+        exists("$${p}/QtMultimedia/qabstractvideosurface.h"): CONFIG *= videosurface
+    }
 
-contains(QT_CONFIG, multimedia): DEFINES += AUDIOSERVICES
+    !contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
+    DEFINES += AUDIOSERVICES
+}
 
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR

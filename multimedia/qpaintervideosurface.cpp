@@ -34,8 +34,6 @@
 
 #include "qpaintervideosurface_p.h"
 
-#ifndef QT_NO_VIDEOSURFACE
-
 #include <qpainter.h>
 #include <qvideosurfaceformat.h>
 
@@ -183,4 +181,3 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
     \fn QPainterVideoSurface::frameChanged()
 */
 
-#endif

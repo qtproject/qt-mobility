@@ -36,8 +36,6 @@
 
 #include "qabstractmediacontrol_p.h"
 
-#ifndef QT_NO_VIDEOSURFACE
-
 class QVideoRendererControlPrivate : public QAbstractMediaControlPrivate
 {
 public:
@@ -102,4 +100,3 @@ void QVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
     d_func()->surface = surface;
 }
 
-#endif

@@ -7,8 +7,6 @@ include (../common.pri)
 
 contains(QT_CONFIG, multimedia): QT += multimedia
 
-videosurface: QT += multimedia
-
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 

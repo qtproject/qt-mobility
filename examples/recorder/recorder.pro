@@ -1,14 +1,14 @@
 TEMPLATE = app
 CONFIG += example
 
-contains(QT_CONFIG, multimedia): QT += multimedia
-
 include(../../common.pri)
+
+contains(QT_CONFIG, multimedia): QT += multimedia
 
 INCLUDEPATH += $$PWD/../../multimedia \
     $$PWD/../../multimedia/endpoints
+
 LIBS += -lQtMedia
-QMAKE_RPATHDIR += $$OUT_PWD/../../lib
 
 HEADERS = recorder.h
 

@@ -10,8 +10,6 @@ include(../../common.pri)
 
 LIBS += -lQtMedia
 
-QMAKE_RPATHDIR += $$OUT_PWD/../../lib
-
 HEADERS = cameracapture.h
 
 SOURCES = \

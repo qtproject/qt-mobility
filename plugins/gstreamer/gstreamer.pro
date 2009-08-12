@@ -12,11 +12,11 @@ DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia \
     ../../multimedia/endpoints
+
 LIBS += \
     -lasound
 
 CONFIG += link_pkgconfig
-
 
 PKGCONFIG += \
     gstreamer-0.10 \
