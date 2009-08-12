@@ -155,13 +155,20 @@
 <tr valign="top" class="even"><td><a href="qcontactanniversary.html">QContactAnniversary</a></td><td>QContactAnniversary::DefinitionId</td><td>&quot;Anniversary&quot;</td><td>Details of this definition contain the (annually recurring) date of an important event</td><td>No</td><td>Any</td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactavatar.html">QContactAvatar</a></td><td>QContactAvatar::DefinitionId</td><td>&quot;Avatar&quot;</td><td>Details of this definition contain the URI of an avatar of the contact</td><td>No</td><td>Any</td></tr>
 <tr valign="top" class="even"><td><a href="qcontactbirthday.html">QContactBirthday</a></td><td>QContactBirthday::DefinitionId</td><td>&quot;Birthday&quot;</td><td>Details of this definition contain the date of a contact's birthday</td><td>Yes</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td>QContactEmailAddress::DefinitionId</td><td>&quot;EmailAddress&quot;</td><td>Details of this definition contain an email address of a contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactgender.html">QContactGender</a></td><td>QContactGender::DefinitionId</td><td>&quot;Gender&quot;</td><td>Details of this definition contain the gender of a contact within a given context</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></td><td>QContactDisplayLabel::DefinitionId</td><td>&quot;DisplayLabel&quot;</td><td>Details of this definition contain the formatted display label of the contact</td><td>yes</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td>QContactEmailAddress::DefinitionId</td><td>&quot;EmailAddress&quot;</td><td>Details of this definition contain an email address of a contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactgender.html">QContactGender</a></td><td>QContactGender::DefinitionId</td><td>&quot;Gender&quot;</td><td>Details of this definition contain the gender of a contact within a given context</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactgeolocation.html">QContactGeolocation</a></td><td>QContactGeolocation::DefinitionId</td><td>&quot;Geolocation&quot;</td><td>Details of this definition contain a timestamped location update</td><td>No</td><td>Any</td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td>QContactGuid::DefinitionId</td><td>&quot;Guid&quot;</td><td>Details of this definition contain a globally unique identifier for a contact</td><td>Yes</td><td>ReadOnly</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td>QContactName::DefinitionId</td><td>&quot;Name&quot;</td><td>Details of this definition contain the full name information of a contact</td><td>Yes</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td>QContactName::DefinitionId</td><td>&quot;Name&quot;</td><td>Details of this definition contain the full name information of a contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></td><td>QContactOnlineAccount::DefinitionId</td><td>&quot;OnlineAccount&quot;</td><td>Details of this definition contain the URI of an online account of the contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactorganisation.html">QContactOrganisation</a></td><td>QContactOrganisation::DefinitionId</td><td>&quot;Organisation&quot;</td><td>Details of this definition contain details of an organisation with which the contact is associated</td><td>No</td><td>Any</td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td>QContactPhoneNumber::DefinitionId</td><td>&quot;PhoneNumber&quot;</td><td>Details of this definition contain a telephony endpoint associated with a contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactpresence.html">QContactPresence</a></td><td>QContactPresence::DefinitionId</td><td>&quot;Presence&quot;</td><td>Details of this definition contain presence information regarding a particular online account</td><td>No</td><td>ReadOnly</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactrelationship.html">QContactRelationship</a></td><td>QContactRelationship::DefinitionId</td><td>&quot;Relationship&quot;</td><td>Details of this definition contain information about which other contacts this contact is related to and in what way</td><td>No</td><td>Any</td></tr>
 <tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td>QContactSyncTarget::DefinitionId</td><td>&quot;SyncTarget&quot;</td><td>Details of this definition contain the id of a storage backend to which the contact should be synchronised</td><td>Yes</td><td>CreateOnly</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontacturl.html">QContactUrl</a></td><td>QContactUrl::DefinitionId</td><td>&quot;Url&quot;</td><td>Details of this definition contain a universal resource location related to the contact</td><td>No</td><td>Any</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontacttimestamp.html">QContactTimestamp</a></td><td>QContactTimestamp::DefinitionId</td><td>&quot;Timestamp&quot;</td><td>Details of this definition contain a creation and modification timestamp of the contact</td><td>Yes</td><td>ReadOnly</td></tr>
+<tr valign="top" class="even"><td><a href="qcontacturl.html">QContactUrl</a></td><td>QContactUrl::DefinitionId</td><td>&quot;Url&quot;</td><td>Details of this definition contain a universal resource location related to the contact</td><td>No</td><td>Any</td></tr>
 </table></p>
 <a name="field-schema"></a>
 <h4>Field Schema</h4>
@@ -247,7 +254,24 @@
 <li>The date of the birthday associated with a contact</li>
 </ul>
 </td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td><ul>
+<tr valign="top" class="odd"><td><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></td><td><ul>
+<li>DisplayLabel</li>
+<li>Synthesised</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>bool</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The display label of a contact</li>
+<li>Whether the display label was synthesised automatically or set manually</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td><ul>
 <li>EmailAddress</li>
 </ul>
 </td><td><ul>
@@ -260,7 +284,7 @@
 <li>The email address URL associated with a contact</li>
 </ul>
 </td></tr>
-<tr valign="top" class="even"><td><a href="qcontactgender.html">QContactGender</a></td><td><ul>
+<tr valign="top" class="odd"><td><a href="qcontactgender.html">QContactGender</a></td><td><ul>
 <li>Gender</li>
 </ul>
 </td><td><ul>
@@ -271,6 +295,46 @@
 </ul>
 </td><td><ul>
 <li>The gender of a contact in a particular context</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactgeolocation.html">QContactGeolocation</a></td><td><ul>
+<li>Latitude</li>
+<li>Longitude</li>
+<li>Accuracy</li>
+<li>Altitude</li>
+<li>AltitudeAccuracy</li>
+<li>Heading</li>
+<li>Speed</li>
+<li>Timestamp</li>
+</ul>
+</td><td><ul>
+<li>double</li>
+<li>double</li>
+<li>double</li>
+<li>double</li>
+<li>double</li>
+<li>double</li>
+<li>double</li>
+<li>DateTime</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The latitude coordinate of the location</li>
+<li>The longitude coordinate of the location</li>
+<li>The accuracy (in metres) of the latitude and longitude coordinates</li>
+<li>The altitude (in metres) of the location</li>
+<li>The accuracy (in metres) of the altitude coordinate of the location</li>
+<li>The heading of the location aware device at the time of measurement, in degrees from true north</li>
+<li>The speed of the location aware device at the time of measurement, in metres per second</li>
 </ul>
 </td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td><ul>
@@ -287,7 +351,6 @@
 </ul>
 </td></tr>
 <tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td><ul>
-<li>DisplayName</li>
 <li>Prefix</li>
 <li>First</li>
 <li>Middle</li>
@@ -300,7 +363,6 @@
 <li>String</li>
 <li>String</li>
 <li>String</li>
-<li>String</li>
 </ul>
 </td><td><ul>
 <li>Any</li>
@@ -308,15 +370,43 @@
 <li>Any</li>
 <li>Any</li>
 <li>Any</li>
-<li>Any</li>
 </ul>
 </td><td><ul>
-<li>The formatted name of a contact</li>
 <li>The prefix segment of the name of a contact (e.g&#x2e;, &quot;Mr&quot;, &quot;Mrs&quot;, &quot;Dr&quot;)</li>
 <li>The first (given) name segment of the name of a contact</li>
 <li>The middle (additional) name segment of the name of a contact</li>
 <li>The last (surname) name segment of the name of a contact</li>
 <li>The suffix segment of the name of a contact (e.g&#x2e;, &quot;Esq.&quot;, &quot;Ph.D&quot;)</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></td><td><ul>
+<li>AccountUri</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The URI of an online account communication endpoint associated with the contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontactorganisation.html">QContactOrganisation</a></td><td><ul>
+<li>DisplayLabel</li>
+<li>Logo</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The display label of an organisation associated with the contact</li>
+<li>The location of a logo of an organisation associated with the contact</li>
 </ul>
 </td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td><ul>
@@ -332,6 +422,57 @@
 <li>A phone number associated with a contact</li>
 </ul>
 </td></tr>
+<tr valign="top" class="even"><td><a href="qcontactpresence.html">QContactPresence</a></td><td><ul>
+<li>AccountUri</li>
+<li>Nickname</li>
+<li>Presence</li>
+<li>StatusMessage</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>&quot;Available&quot;, &quot;Busy, &quot;Away&quot;, &quot;Extended Away&quot;, &quot;Unknown&quot;, &quot;Offline&quot;</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The URI of an online account communication endpoint associated with the contact</li>
+<li>The last-known nickname that the contact used while communicating via the associated online account</li>
+<li>The presence of the contact as reported by the provider of the associated online account</li>
+<li>The last-known status message of the contact sent from the online account communication endpoint</li>
+</ul>
+</td></tr>
+<tr valign="top" class="odd"><p>relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Is&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Was&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Father&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Mother&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Child&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Son&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Daughter&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Sibling&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Brother&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Sister&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Cousin&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Friend&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Spouse&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Fiancee&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Husband&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Wife&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Employer&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Employee&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Other&quot;)); relationshipTypes &lt;&lt; QString(QLatin1String(&quot;Unknown&quot;));</p>
+<td><a href="qcontactrelationship.html">QContactRelationship</a></td><td><ul>
+<li>RelationshipType</li>
+<li>ContactLabel</li>
+<li>ContactUid</li>
+<li>ContactManagerUri</li>
+</ul>
+</td><td><ul>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
+</ul>
+</td><td><ul>
+<li>&quot;Is&quot;, &quot;Was&quot;, &quot;Father&quot;, &quot;Mother&quot;, &quot;Child&quot;, &quot;Son&quot;, &quot;Daughter&quot;, &quot;Sibling&quot;, &quot;Brother&quot;, &quot;Sister&quot;, &quot;Cousin&quot;, &quot;Friend&quot;, &quot;Spouse&quot;, &quot;Fiancee&quot;, &quot;Husband&quot;, &quot;Wife&quot;, &quot;Employer&quot;, &quot;Employee&quot;, &quot;Other&quot;, &quot;Unknown&quot;</li>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The way in which this contact is related to the contact about which this detail stores information. To be read as: &quot;This contact is the &lt;RelationshipType&gt; of the contact linked in this detail&quot;.</li>
+<li>The display label of the contact to which this contact is related</li>
+<li>The unique identifier of the contact to which this contact is related, as used to identify the contact by the manager which stores the related contact</li>
+<li>The URI of the manager which stores the related contact</li>
+</ul>
+</td></tr>
 <tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td><ul>
 <li>SyncTarget</li>
 </ul>
@@ -345,7 +486,24 @@
 <li>The identifier of a backend store to which the contact containing this detail should be synchronised</li>
 </ul>
 </td></tr>
-<tr valign="top" class="odd"><td><a href="qcontacturl.html">QContactUrl</a></td><td><ul>
+<tr valign="top" class="odd"><td><a href="qcontacttimestamp.html">QContactTimestamp</a></td><td><ul>
+<li>CreationTimestamp</li>
+<li>ModificationTimestamp</li>
+</ul>
+</td><td><ul>
+<li>DateTime</li>
+<li>DateTime</li>
+</ul>
+</td><td><ul>
+<li>Any</li>
+<li>Any</li>
+</ul>
+</td><td><ul>
+<li>The date and time of creation of the contact</li>
+<li>The date and time of the last modification of the contact</li>
+</ul>
+</td></tr>
+<tr valign="top" class="even"><td><a href="qcontacturl.html">QContactUrl</a></td><td><ul>
 <li>Url</li>
 </ul>
 </td><td><ul>
