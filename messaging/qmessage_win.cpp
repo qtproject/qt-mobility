@@ -40,13 +40,14 @@
 //TODO: be appropriate for many messages (as it may exhaust system resources
 //TODO: and crash the OS).
 
-QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject)
+QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject, const QDateTime &dt)
 {
     QMessage result;
     result.d_ptr->_id = id;
     result.d_ptr->_status = status;
     result.d_ptr->_from = from;
     result.d_ptr->_subject = subject;
+    result.d_ptr->_date = dt;
     return result;
 }
 
@@ -176,13 +177,13 @@ void QMessage::setSubject(const QString &s)
 
 QDateTime QMessage::date() const
 {
-    return date(); // stub
+    return d_ptr->_date;
 }
 
 void QMessage::setDate(const QDateTime &d)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(d)
+    d_ptr->_date = d;
 }
 
 QDateTime QMessage::receivedDate() const

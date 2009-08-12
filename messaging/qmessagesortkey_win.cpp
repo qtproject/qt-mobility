@@ -80,7 +80,7 @@ bool QMessageSortKeyPrivate::compare(const QMessageSortKey &key, const QMessage 
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
-        case Sender: COMPARE(left->from().recipient(), right->from().recipient())
+        case Sender: COMPARE(left->from().recipient(), right->from().recipient()) //TODO strip email only use name PR_SENDER_NAME
         case Recipients: {
             QString leftStr;
             QString rightStr;
@@ -108,8 +108,27 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
     ULONG order(TABLE_SORT_ASCEND);
 
     QMessageSortKeyPrivate *d(key.d_ptr);
-    if (d && !d->_fieldOrderList.isEmpty() && (d->_fieldOrderList.first().first == Qt::DescendingOrder)) {
-        order = TABLE_SORT_DESCEND;
+    if (d && !d->_fieldOrderList.isEmpty()) {
+        if (d->_fieldOrderList.first().first == Qt::DescendingOrder)
+            order = TABLE_SORT_DESCEND;
+        switch (d->_fieldOrderList.first().first)
+        {
+        case Subject:
+                propTag = PR_SUBJECT;
+                break;
+            case TimeStamp: // fall through
+            case ReceptionTimeStamp:
+                propTag = PR_MESSAGE_DELIVERY_TIME;
+                break;
+            case Sender:
+                propTag = PR_SENDER_NAME;
+                break;
+            case Size:
+                propTag = PR_CONTENT_LENGTH;
+                break;
+            default:
+                propTag = PR_SUBJECT; // TODO handle all cases
+        }
     }
 
     SizedSSortOrderSet(1, sortOrderSet) = { 1, 0, 0, { propTag, order } };

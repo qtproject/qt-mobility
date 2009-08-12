@@ -637,24 +637,30 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
     const int nCols(3);
     enum { recordKeyColumn = 0, flagsColumn, subjectColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SUBJECT}};
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SUBJECT }};
     ULONG count;
     LPSPropValue properties;
     if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
         QString sender;
+        QDateTime deliveryTime;
         QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
         QMessage::StatusFlags status;
         if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
             status |= QMessage::Read;
 
-        const int nCols(1);
-        enum { senderColumn = 0 };
-        SizedSPropTagArray(nCols, columns) = {nCols, {PR_SENDER_NAME}};
-        if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK)
+        const int nCols(2);
+        enum { senderColumn = 0, deliveryColumn };
+        SizedSPropTagArray(nCols, columns) = {nCols, {PR_SENDER_NAME, PR_MESSAGE_DELIVERY_TIME }};
+        if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
             sender = QStringFromLpctstr(properties[senderColumn].Value.LPSZ);
+            SYSTEMTIME st = {0};
+            FileTimeToSystemTime(&properties[deliveryColumn].Value.ft, &st);
+            QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds)); 
+            deliveryTime = QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z");
+        }
 
         QMessageAddress from(sender, QMessageAddress::Email);
-        result = QMessagePrivate::from(newId, status, from, subject);
+        result = QMessagePrivate::from(newId, status, from, subject, deliveryTime);
     } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
