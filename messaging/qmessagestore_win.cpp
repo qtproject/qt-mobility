@@ -111,10 +111,8 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
     FolderHeapNodePtr node(_heap[0]);
     if (_mapiSession->openEntry(lastError, node->entryId, &node->folder) != S_OK)
         *lastError = QMessageStore::ContentInaccessible;
-    if (*lastError != QMessageStore::NoError) {
-        node->folder->Release();
+    if (*lastError != QMessageStore::NoError)
         return result;
-    }
 
     MapiFolder mapiFolder(node->folder, node->key, node->parentStoreKey, node->name, node->entryId, node->hasSubFolders, node->messageCount);
     ++node->offset;
@@ -127,7 +125,9 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
             _heap.pop_back();
         }
     } else {
-        node->front = QMessageStore::instance()->message(messageIdList.front());
+        node->front = _mapiSession->message(lastError, messageIdList.front());
+        if (*lastError != QMessageStore::NoError)
+            return result;
     }
     sink(0);
     return result;
@@ -142,13 +142,13 @@ void FolderHeap::sink(int i)
         int right(left + 1);
         int minimum(left);
         if ((right < _heap.count())
-            && (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[left]->front, _heap[right]->front)))
+            && (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[right]->front, _heap[left]->front)))
             minimum = right;
-        if (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[0]->front, _heap[minimum]->front))
+        if (QMessageSortKeyPrivate::lessThan(_sortKey, _heap[i]->front, _heap[minimum]->front))
             return;
         FolderHeapNodePtr temp(_heap[minimum]);
-        _heap[minimum] = _heap[0];
-        _heap[0] = temp;
+        _heap[minimum] = _heap[i];
+        _heap[i] = temp;
         i = minimum;
     }
 }
@@ -290,9 +290,10 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     while (!folderHeap.isEmpty()) {
         if (!workingLimit)
             break;
-        result.append(folderHeap.takeFront(&d_ptr->p_ptr->lastError).id());
+        QMessage front(folderHeap.takeFront(&d_ptr->p_ptr->lastError));
         if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
             return result;
+        result.append(front.id());
         --workingLimit;
     }
 

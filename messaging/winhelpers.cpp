@@ -196,9 +196,14 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return QMessageIdList();
     }
 
+    SizedSSortOrderSet(1, sortOrderSet) = { 1, 0, 0, { PR_SUBJECT, TABLE_SORT_ASCEND } };
+    if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&sortOrderSet), 0) != S_OK) {
+        *lastError = QMessageStore::NotYetImplemented;
+        return QMessageIdList();
+    }
+
     LPSRowSet rows(0);
     uint workingLimit(limit);
-
     HRESULT hres;
     LONG ignored;
     if (messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored) != S_OK) {
@@ -638,7 +643,6 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     LPSPropValue properties;
     if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
         QString sender;
-        QMessageAddress from(sender, QMessageAddress::Email);
         QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
         QMessage::StatusFlags status;
         if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
@@ -649,6 +653,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         SizedSPropTagArray(nCols, columns) = {nCols, {PR_SENDER_NAME}};
         if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK)
             sender = QStringFromLpctstr(properties[senderColumn].Value.LPSZ);
+
+        QMessageAddress from(sender, QMessageAddress::Email);
         result = QMessagePrivate::from(newId, status, from, subject);
     } else {
         *lastError = QMessageStore::ContentInaccessible;
