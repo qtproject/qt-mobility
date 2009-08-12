@@ -26,15 +26,12 @@ CONFIG(debug, debug|release) {
 # Figure out the root of where stuff should go (this could be done via configure)
 example|plugin {
     OUTPUT_DIR = $$OUT_PWD/../..
-    SOURCE_DIR = $$PWD/../..
 } else: testcase {
     OUTPUT_DIR = $$OUT_PWD/../../..
-    SOURCE_DIR = $$PWD/../../..
 } else {
     OUTPUT_DIR = $$OUT_PWD/..
-    SOURCE_DIR = $$PWD/..
 }
-
+SOURCE_DIR = $$PWD
 
 #test whether we have a unit test
 !testcase {
