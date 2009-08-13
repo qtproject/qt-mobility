@@ -101,6 +101,10 @@ QString QMessageAccount::signature() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
+    //TODO Implement this correctly. For MAPI desktop there is only one account so just return it
     Q_UNUSED(type)
+    QMessageAccountIdList accounts(QMessageStore::instance()->queryAccounts());
+    if (!accounts.isEmpty())
+        return accounts.first();
     return QMessageAccountId(); // stub
 }
