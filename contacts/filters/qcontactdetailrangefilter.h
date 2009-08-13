@@ -49,7 +49,7 @@ public:
         ExcludeLower = 2, // (
         ExcludeUpper = 0  // ) - Default is [)
     };
-    Q_DECLARE_FLAGS(RangeFlags, RangeFlag);
+    Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
 
     /* Mutators */
     void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
@@ -68,7 +68,7 @@ public:
     RangeFlags rangeFlags() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter)
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetailRangeFilter::RangeFlags)
 

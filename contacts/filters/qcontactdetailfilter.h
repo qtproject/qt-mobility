@@ -58,7 +58,7 @@ public:
     QVariant value() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailFilter)
 };
 
 #endif

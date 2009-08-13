@@ -56,7 +56,7 @@ public:
     QList<QContactFilter> filters() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactUnionFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactUnionFilter)
 };
 
 #endif

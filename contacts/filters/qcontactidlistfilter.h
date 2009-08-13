@@ -50,7 +50,7 @@ public:
     QList<QUniqueId> ids() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter)
 };
 
 #endif

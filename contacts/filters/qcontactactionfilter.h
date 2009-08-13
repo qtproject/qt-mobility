@@ -54,7 +54,7 @@ public:
     int vendorVersion() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter)
 };
 
 #endif

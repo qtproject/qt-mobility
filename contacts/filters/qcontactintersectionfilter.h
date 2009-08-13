@@ -56,7 +56,7 @@ public:
     QList<QContactFilter> filters() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIntersectionFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIntersectionFilter)
 };
 
 #endif

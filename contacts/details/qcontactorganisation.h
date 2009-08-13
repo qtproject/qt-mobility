@@ -49,7 +49,7 @@ public:
     const char* FieldDisplayLabel;
     const char* FieldLogo;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation")
     Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
 #endif

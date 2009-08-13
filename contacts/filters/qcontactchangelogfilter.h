@@ -56,7 +56,7 @@ public:
     ChangeType changeType() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter)
 };
 
 #endif

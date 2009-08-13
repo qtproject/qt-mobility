@@ -47,7 +47,7 @@ public:
     QUniqueId groupId() const;
 
 private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter)
 };
 
 #endif
