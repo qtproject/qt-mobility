@@ -116,7 +116,6 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
         case Subject:
                 propTag = PR_SUBJECT;
                 break;
-            case TimeStamp: // fall through
             case ReceptionTimeStamp:
                 propTag = PR_MESSAGE_DELIVERY_TIME;
                 break;
