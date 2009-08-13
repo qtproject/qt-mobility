@@ -137,7 +137,7 @@ Q_DECLARE_INTERFACE(BoringInterface, "REALLYBORING!");
 class BoringFactory : public QObject, public BoringInterface
 {
     Q_OBJECT
-    Q_INTERFACES(BoringInterface);
+    Q_INTERFACES(BoringInterface)
 };
 
 Q_EXPORT_PLUGIN2(contacts_testboring, BoringFactory);

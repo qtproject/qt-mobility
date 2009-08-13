@@ -45,6 +45,10 @@
  * difficult!
  */
 
+Q_DECLARE_METATYPE(QVariant);
+Q_DECLARE_METATYPE(QContactManager*);
+Q_DECLARE_METATYPE(QList<QUniqueId>);
+
 class tst_QContactManagerFiltering : public QObject
 {
 Q_OBJECT
@@ -215,7 +219,6 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     delete cm;
 }
-
 
 void tst_QContactManagerFiltering::detailVariantFiltering_data()
 {
@@ -1931,8 +1934,6 @@ void tst_QContactManagerFiltering::allFiltering()
     delete cm;
 }
 
-Q_DECLARE_METATYPE(QContactManager*);
-Q_DECLARE_METATYPE(QList<QUniqueId>);
 void tst_QContactManagerFiltering::changelogFiltering_data()
 {
     // Clean out the cleanup stack
