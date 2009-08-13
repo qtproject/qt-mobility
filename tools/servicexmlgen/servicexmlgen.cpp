@@ -186,7 +186,7 @@ void ServiceXmlGenerator::serviceDataChanged()
     refreshPreview();
 }
 
-void ServiceXmlGenerator::loadFromXml() 
+void ServiceXmlGenerator::loadFromXml()
 {
     loadFromXml(QString());
 }
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     ServiceXmlGenerator win;
-    if (2==argc)
+    if (argc == 2)
         win.loadFromXml(app.arguments().at(1));
     win.show();
 

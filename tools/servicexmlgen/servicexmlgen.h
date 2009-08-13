@@ -48,9 +48,12 @@ public:
     ServiceXmlGenerator(QWidget *parent = 0);
     ~ServiceXmlGenerator();
 
+    void loadFromXml(const QString &);
+
 protected:
     void showEvent(QShowEvent *event);
     void closeEvent(QCloseEvent *event);
+    bool eventFilter(QObject* watched, QEvent* event);
 
 private slots:
     void serviceDataChanged();
