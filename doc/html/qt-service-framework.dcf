@@ -7,26 +7,37 @@
     </section>
     <section ref="qabstractvaluespacelayer.html" title="QAbstractValueSpaceLayer Class Reference">
         <keyword ref="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#HANDLE-typedef">HANDLE</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#Handle-typedef">Handle</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">Properties</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">QAbstractValueSpaceLayer::Publish</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">Type</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">QAbstractValueSpaceLayer::Server</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">QAbstractValueSpaceLayer::Client</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#addWatch">addWatch</keyword>
         <keyword ref="qabstractvaluespacelayer.html#children">children</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#emitItemNotify">emitItemNotify</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#handleChanged">handleChanged</keyword>
         <keyword ref="qabstractvaluespacelayer.html#id">id</keyword>
         <keyword ref="qabstractvaluespacelayer.html#item">item</keyword>
         <keyword ref="qabstractvaluespacelayer.html#name">name</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#notifyInterest">notifyInterest</keyword>
         <keyword ref="qabstractvaluespacelayer.html#order">order</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#remHandle">remHandle</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#remove">remove</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#removeHandle">removeHandle</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#removeValue">removeValue</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#removeWatches">removeWatches</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#restart">restart</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setProperty">setProperty</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setValue">setValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#shutdown">shutdown</keyword>
         <keyword ref="qabstractvaluespacelayer.html#startup">startup</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#syncChanges">syncChanges</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#supportsRequests">supportsRequests</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#sync">sync</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#syncRequests">syncRequests</keyword>
         <keyword ref="qabstractvaluespacelayer.html#value">value</keyword>
         <keyword ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
@@ -86,10 +97,13 @@
     </section>
     <section ref="qvaluespace.html" title="QValueSpace Namespace Reference">
         <keyword ref="qvaluespace.html">QValueSpace</keyword>
+        <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValuespace">initValuespace</keyword>
         <keyword ref="qvaluespace.html#initValuespaceManager">initValuespaceManager</keyword>
         <keyword ref="qvaluespace.html#installLayer">installLayer</keyword>
         <keyword ref="qvaluespace.html#reinitValuespace">reinitValuespace</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_APPLICATION_LAYER">QVALUESPACE_APPLICATION_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</keyword>
     </section>
     <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
         <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
@@ -105,11 +119,15 @@
     </section>
     <section ref="qvaluespaceobject.html" title="QValueSpaceObject Class Reference">
         <keyword ref="qvaluespaceobject.html">QValueSpaceObject</keyword>
+        <keyword ref="qvaluespaceobject.html#connectNotify">connectNotify</keyword>
+        <keyword ref="qvaluespaceobject.html#isValid">isValid</keyword>
+        <keyword ref="qvaluespaceobject.html#itemNotify">itemNotify</keyword>
         <keyword ref="qvaluespaceobject.html#itemRemove">itemRemove</keyword>
         <keyword ref="qvaluespaceobject.html#itemSetValue">itemSetValue</keyword>
         <keyword ref="qvaluespaceobject.html#objectPath">objectPath</keyword>
         <keyword ref="qvaluespaceobject.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qvaluespaceobject.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qvaluespaceobject.html#supportsRequests">supportsRequests</keyword>
         <keyword ref="qvaluespaceobject.html#sync">sync</keyword>
         <section ref="qvaluespaceobject-members.html" title="List of all members"/>
     </section>
