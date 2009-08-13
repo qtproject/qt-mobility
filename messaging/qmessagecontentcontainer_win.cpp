@@ -31,97 +31,105 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
+#include "qmessagecontentcontainer_p.h"
 
 QMessageContentContainer::QMessageContentContainer()
+    : d_ptr(new QMessageContentContainerPrivate(this))
 {
 }
 
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
+    : d_ptr(new QMessageContentContainerPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        *d_ptr = *other.d_ptr;
+    }
+
+    return *this;
 }
 
 QMessageContentContainer::~QMessageContentContainer()
 {
+    delete d_ptr;
 }
 
 QMessageContentContainerId QMessageContentContainer::containerId() const
 {
-    return QMessageContentContainerId();
+    return d_ptr->_id;
 }
 
 QMessageId QMessageContentContainer::messageId() const
 {
-    return QMessageId(); // stub
+    return d_ptr->_messageId;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentType(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    clearContents();
+    d_ptr->_type = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentType() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_type;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentSubType(const QByteArray &data)
 {
-    Q_UNUSED(data);
+    d_ptr->_subType = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentSubType() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_subType;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentCharset(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_charset = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentCharset() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_charset;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::setContentFileName(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_name = data;
 }
 #endif
 
 QByteArray QMessageContentContainer::contentFileName() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_name;
 }
 
 bool QMessageContentContainer::contentAvailable() const
 {
-    return false;
+    return d_ptr->_available;
 }
 
 uint QMessageContentContainer::size() const
 {
-    return 0;
+    return d_ptr->_size;
 }
 
 QString QMessageContentContainer::decodedTextContent() const
 {
-    return QString::null;
+    return QString::null; // stub
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
@@ -142,100 +150,166 @@ void QMessageContentContainer::writeContentTo(QDataStream& out) const
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::clearContents()
 {
+    d_ptr->clearContents();
 }
 
 void QMessageContentContainer::setContent(const QString &text)
 {
-    Q_UNUSED(text)
+    d_ptr->_type = "text";
+    d_ptr->_subType = "plain";
+    d_ptr->_textContent = text;
+    //d_ptr->_charset = charsetFor(text);
+
+    if (!d_ptr->_content.isEmpty()) {
+        d_ptr->_content = QByteArray();
+    }
+    if (!d_ptr->_filename.isEmpty()) {
+        d_ptr->_filename = QString();
+    }
 }
 
 void QMessageContentContainer::setContent(const QByteArray &data)
 {
-    Q_UNUSED(data)
+    d_ptr->_content = data;
+
+    if (!d_ptr->_textContent.isEmpty()) {
+        d_ptr->_textContent = QString();
+    }
+    if (!d_ptr->_filename.isEmpty()) {
+        d_ptr->_filename = QString();
+    }
 }
 
 void QMessageContentContainer::setContentFromFile(const QString &fileName)
 {
-    Q_UNUSED(fileName)
+    d_ptr->_filename = fileName;
+
+    if (!d_ptr->_content.isEmpty()) {
+        d_ptr->_content = QByteArray();
+    }
+    if (!d_ptr->_textContent.isEmpty()) {
+        d_ptr->_textContent = QString();
+    }
 }
 
 void QMessageContentContainer::readContentFrom(QDataStream &in)
 {
-    Q_UNUSED(in)
+    QByteArray content;
+    while (!in.atEnd()) {
+        char buffer[1024];
+        int len = in.readRawData(buffer, 1024);
+        content.append(QByteArray(buffer, len));
+    }
+
+    setContent(content);
 }
 
 QMessageContentContainerId QMessageContentContainer::appendContent(const QMessageContentContainer & content)
 {
-    Q_UNUSED(content)
-    return QMessageContentContainerId(); // stub
+    if (d_ptr->isMessage()) {
+        d_ptr->_attachments->append(content);
+
+        QMessageContentContainer &container(d_ptr->_attachments->last());
+        container.d_ptr->_id = QMessageContentContainerId(QString::number(d_ptr->_attachments->count()));
+        return container.d_ptr->_id;
+    }
+
+    return QMessageContentContainerId();
 }
 
 void QMessageContentContainer::replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer & content)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(content)
+    if (d_ptr->isMessage()) {
+        if (QMessageContentContainer *container = d_ptr->attachment(id)) {
+            *container = content;
+            return;
+        }
+    }
 }
 #endif
 
 QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
-    return QMessageContentContainerIdList(); // stub
+    QMessageContentContainerIdList ids;
+
+    if (d_ptr->isMessage()) {
+        foreach (const QMessageContentContainer &container, *d_ptr->_attachments) {
+            ids.append(container.containerId());
+        }
+    }
+
+    return ids;
 }
 
 QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
+    if (d_ptr->isMessage()) {
+        if (const QMessageContentContainer *container = d_ptr->attachment(id)) {
+            return *container;
+        }
+    }
+
+    return QMessageContentContainer();
 }
 
 bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->isMessage()) {
+        return (d_ptr->attachment(id) != 0);
+    }
+
+    return false;
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QString &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    d_ptr->_header.insert(name, value);
 }
 
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QString &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    d_ptr->_header.replace(name, value);
 }
 #endif
 
 QString QMessageContentContainer::headerField(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QString(); // stub
+    QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
+    if (it != d_ptr->_header.end()) {
+        return it.value();
+    }
+
+    return QString();
 }
 
 QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QList<QString>(); // stub
+    QList<QString> values;
+
+    QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
+    while ((it != d_ptr->_header.end()) && (it.key() == name)) {
+        values.append(it.value());
+        ++it;
+    }
+
+    return values;
 }
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
-    return QList<QByteArray>(); // stub
+    return d_ptr->_header.keys();
 }
 
 #ifdef QMESSAGING_OPTIONAL
 void QMessageContentContainer::appendHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    appendHeaderField(name, QString(value));
 }
 
 void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByteArray &value)
 {
-    Q_UNUSED(name)
-    Q_UNUSED(value)    
+    setHeaderField(name, QString(value));
 }
 #endif
 
@@ -257,13 +331,23 @@ bool QMessageContentContainer::containerDataModified() const
 
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
 {
-    Q_UNUSED(content);
-    return QMessageContentContainerId(); // stub
+    if (d_ptr->isMessage()) {
+        d_ptr->_attachments->prepend(content);
+
+        int n = 1;
+        foreach (const QMessageContentContainer &container, *d_ptr->_attachments) {
+            container.d_ptr->_id = QMessageContentContainerId(QString::number(n));
+        }
+
+        return QMessageContentContainerId(QString::number(1));
+    }
+
+    return QMessageContentContainerId();
 }
 
 void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
-    Q_UNUSED(derived)
+    d_ptr->setDerivedMessage(derived);
 }
 
 void QMessageContentContainer::applyPendingChanges() const

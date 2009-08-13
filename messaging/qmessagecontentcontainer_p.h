@@ -32,15 +32,93 @@
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
 
+#include <QList>
+#include <QMultiMap>
+
 class QMessageContentContainerPrivate
 {
     Q_DECLARE_PUBLIC(QMessageContentContainer)
 
 public:
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
-        :q_ptr(contentContainer)
+        : q_ptr(contentContainer),
+	  _available(false),
+	  _size(0),
+          _attachments(0)
     {
     }
 
     QMessageContentContainer *q_ptr;
+
+    QByteArray _type;
+    QByteArray _subType;
+    QByteArray _charset;
+    QByteArray _name;
+    QByteArray _content;
+    QString _textContent;
+    QString _filename;
+    QMessageId _messageId;
+    QMessageContentContainerId _id;
+    bool _available;
+    uint _size;
+    QList<QMessageContentContainer> *_attachments;
+    QMultiMap<QByteArray, QString> _header;
+
+    bool isMessage() const
+    {
+        return (_attachments != 0);
+    }
+
+    void setDerivedMessage(QMessage *derived)
+    {
+        _attachments = new QList<QMessageContentContainer>;
+
+        Q_UNUSED(derived)
+    }
+
+    void clearContents()
+    {
+        _type = QByteArray("text");
+        _subType = QByteArray("plain");
+        _charset = QByteArray();
+        _name = QByteArray();
+        _content = QByteArray();
+        _textContent = QString();
+        _filename = QString();
+        _messageId = QMessageId();
+        _id = QMessageContentContainerId();
+        _available = false;
+        _size = 0;
+	_header.clear();
+
+        if (_attachments) {
+            _attachments->clear();
+        }
+    }
+
+    QMessageContentContainer *attachment(const QMessageContentContainerId &id)
+    {
+        if (_attachments != 0) {
+            foreach (const QMessageContentContainer &container, *_attachments) {
+                if (container.containerId() == id) {
+                    return const_cast<QMessageContentContainer*>(&container);
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
+    {
+        if (_attachments != 0) {
+            foreach (const QMessageContentContainer &container, *_attachments) {
+                if (container.containerId() == id) {
+                    return &container;
+                }
+            }
+        }
+
+        return 0;
+    }
 };
