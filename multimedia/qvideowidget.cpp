@@ -65,7 +65,7 @@ public:
         , surface(0)
 #endif
         , fullscreenWindow(0)
-        , fullscreen(false)
+        , displayMode(QVideoWidget::WindowedDisplay)
     {
     }
 
@@ -77,7 +77,7 @@ public:
     QPainterVideoSurface *surface;
 #endif
     QDialog *fullscreenWindow;
-    bool fullscreen;
+    QVideoWidget::DisplayMode displayMode;
 
     void _q_overlayFullscreenChanged(bool fullscreen);
     void _q_dimensionsChanged();
@@ -88,7 +88,10 @@ public:
 
 void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
 {
-    emit q_func()->fullscreenChanged(this->fullscreen = fullscreen);
+    if (fullscreen && displayMode != QVideoWidget::FullscreenDisplay)
+        emit q_func()->displayModeChanged(displayMode = QVideoWidget::FullscreenDisplay);
+    else if (!fullscreen && displayMode != QVideoWidget::WindowedDisplay)
+        emit q_func()->displayModeChanged(displayMode = QVideoWidget::WindowedDisplay);
 }
 
 void QVideoWidgetPrivate::_q_dimensionsChanged()
@@ -98,8 +101,8 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
 
 void QVideoWidgetPrivate::_q_fullscreenWindowDone()
 {
-    if (fullscreen)
-        q_func()->setFullscreen(false);
+    if (displayMode == QVideoWidget::FullscreenDisplay)
+        q_func()->setDisplayMode(QVideoWidget::WindowedDisplay);
 }
 
 /*!
@@ -121,7 +124,8 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 
     d->q_ptr = this;
 
-    d->service = object->service();
+    if (object)
+        d->service = object->service();
 
     if (!d->service)
         return;
@@ -168,20 +172,20 @@ QVideoWidget::~QVideoWidget()
 }
 
 /*!
-    \property QVideoWidget::fullscreen
-    \brief whether video display consumes the entire screen.
+    \property QVideoWidget::displayMode
+    \brief whether video display is confined to a window or is fullscreen.
 */
 
-bool QVideoWidget::isFullscreen() const
+QVideoWidget::DisplayMode QVideoWidget::displayMode() const
 {
-    return d_func()->fullscreen;
+    return d_func()->displayMode;
 }
 
-void QVideoWidget::setFullscreen(bool fullscreen)
+void QVideoWidget::setDisplayMode(DisplayMode mode)
 {
     Q_D(QVideoWidget);
 
-    if (fullscreen) {
+    if (mode == FullscreenDisplay) {
         if (!d->fullscreenWindow) {
             d->fullscreenWindow = new QDialog;
 
@@ -195,8 +199,10 @@ void QVideoWidget::setFullscreen(bool fullscreen)
             d->overlay->setWinId(d->fullscreenWindow->winId());
             d->overlay->setFullscreen(true);
             d->overlay->setDisplayRect(d->fullscreenWindow->rect());
-        } else {
-            emit fullscreenChanged(d->fullscreen = true);
+#ifndef QT_NO_VIDEOSURFACE
+        } else if (d->surface) {
+            emit displayModeChanged(d->displayMode = mode);
+#endif
         }
     } else if (d->fullscreenWindow) {
         if (d->overlay) {
@@ -206,17 +212,19 @@ void QVideoWidget::setFullscreen(bool fullscreen)
             QRect displayRect = rect();
             displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
             d->overlay->setDisplayRect(displayRect);
-        } else {
-            emit fullscreenChanged(d->fullscreen = false);
+#ifndef QT_NO_VIDEOSURFACE
+        } else if (d->surface) {
+            emit displayModeChanged(d->displayMode = mode);
+#endif
         }
         d->fullscreenWindow->hide();
     }
 }
 
 /*!
-    \fn QVideoWidget::fullscreenChanged(bool fullscreen)
+    \fn QVideoWidget::displayModeChanged(QVideoWidget::DisplayMode mode)
 
-    Signals that the \a fullscreen mode of a video widget has changed.
+    Signals that the display \a mode of a video widget has changed.
 */
 
 /*!
@@ -238,7 +246,7 @@ void QVideoWidget::setBrightness(int brightness)
     Q_D(QVideoWidget);
 
     if (d->overlay)
-        d->overlay->setBrightness(brightness);
+        d->overlay->setBrightness(qBound(-100, brightness, 100));
 }
 
 /*!
@@ -267,7 +275,7 @@ void QVideoWidget::setContrast(int contrast)
     Q_D(QVideoWidget);
 
     if (d->overlay)
-        d->overlay->setContrast(contrast);
+        d->overlay->setContrast(qBound(-100, contrast, 100));
 }
 
 /*!
@@ -295,7 +303,7 @@ void QVideoWidget::setHue(int hue)
     Q_D(QVideoWidget);
 
     if (d->overlay)
-        d->overlay->setHue(hue);
+        d->overlay->setHue(qBound(-100, hue, 100));
 }
 
 /*!
@@ -323,7 +331,7 @@ void QVideoWidget::setSaturation(int saturation)
     Q_D(QVideoWidget);
 
     if (d->overlay)
-        d->overlay->setSaturation(saturation);
+        d->overlay->setSaturation(qBound(-100, saturation, 100));
 }
 
 /*!
@@ -391,7 +399,7 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
 
     QWidget::moveEvent(event);
 
-    if (d->overlay && !d->fullscreen) {
+    if (d->overlay && !d->displayMode != FullscreenDisplay) {
         QRect displayRect = rect();
         displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
         d->overlay->setDisplayRect(displayRect);
@@ -407,7 +415,7 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 
     QWidget::resizeEvent(event);
 
-    if (d->overlay && !d->fullscreen) {
+    if (d->overlay && !d->displayMode == FullscreenDisplay) {
         QRect displayRect = rect();
         displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
         d->overlay->setDisplayRect(displayRect);

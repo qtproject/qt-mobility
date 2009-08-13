@@ -175,7 +175,10 @@ int QVideoWindowControl::brightness() const
 */
 void QVideoWindowControl::setBrightness(int brightness)
 {
-    emit brightnessChanged(d_func()->brightness = brightness);
+    Q_D(QVideoWindowControl);
+
+    if (d->brightness != brightness)
+        emit brightnessChanged(d->brightness = brightness);
 }
 
 /*!
@@ -201,7 +204,10 @@ int QVideoWindowControl::contrast() const
 */
 void QVideoWindowControl::setContrast(int contrast)
 {
-    emit contrastChanged(d_func()->contrast = contrast);
+    Q_D(QVideoWindowControl);
+
+    if (d->contrast != contrast)
+        emit contrastChanged(d->contrast = contrast);
 }
 
 /*!
@@ -227,7 +233,10 @@ int QVideoWindowControl::hue() const
 */
 void QVideoWindowControl::setHue(int hue)
 {
-    emit hueChanged(d_func()->hue = hue);
+    Q_D(QVideoWindowControl);
+
+    if (d->hue != hue)
+        emit hueChanged(d->hue = hue);
 }
 
 /*!
@@ -253,7 +262,10 @@ int QVideoWindowControl::saturation() const
 */
 void QVideoWindowControl::setSaturation(int saturation)
 {
-    emit saturationChanged(d_func()->saturation = saturation);
+    Q_D(QVideoWindowControl);
+
+    if (d->saturation != saturation)
+        emit saturationChanged(d->saturation = saturation);
 }
 
 /*!

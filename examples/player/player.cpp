@@ -41,7 +41,6 @@
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
 #include <qmediawidgetendpoint.h>
-#include <qvideowidget.h>
 
 #include <QtGui>
 
@@ -68,6 +67,9 @@ Player::Player(QWidget *parent)
 
 #ifdef USE_VIDEOWIDGET
     videoWidget = new QVideoWidget(player);
+
+    connect(videoWidget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
+            this, SLOT(displayModeChanged(QVideoWidget::DisplayMode)));
 #else
     QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
@@ -117,13 +119,10 @@ Player::Player(QWidget *parent)
     QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
     fullscreenButton->setCheckable(true);
 
-    if (videoWidget) {
-        connect(fullscreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullscreen(bool)));
-        connect(videoWidget, SIGNAL(fullscreenChanged(bool)),
-                fullscreenButton, SLOT(setChecked(bool)));
-    } else {
-        fullscreenButton->setEnabled(false);
-    }
+    connect(fullscreenButton, SIGNAL(clicked(bool)), this, SLOT(setFullscreen(bool)));
+    connect(this, SIGNAL(fullscreenChanged(bool)), fullscreenButton, SLOT(setChecked(bool)));
+
+    fullscreenButton->setEnabled(videoWidget != 0);
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."));
     if (videoWidget)
@@ -295,6 +294,17 @@ void Player::setStatusInfo(const QString &info)
         setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
     else
         setWindowTitle(trackInfo);
+}
+
+void Player::setFullscreen(bool fullscreen)
+{
+    videoWidget->setDisplayMode(
+            fullscreen ? QVideoWidget::FullscreenDisplay : QVideoWidget::WindowedDisplay);
+}
+
+void Player::displayModeChanged(QVideoWidget::DisplayMode mode)
+{
+    emit fullscreenChanged(mode == QVideoWidget::FullscreenDisplay);
 }
 
 void Player::showColorDialog()

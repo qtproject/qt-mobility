@@ -38,6 +38,7 @@
 #include <QtGui/QWidget>
 
 #include "qmediaplayer.h"
+#include "qvideowidget.h"
 
 class QLabel;
 class QMediaPlayer;
@@ -56,6 +57,9 @@ public:
     Player(QWidget *parent = 0);
     ~Player();
 
+Q_SIGNALS:
+    void fullscreenChanged(bool fullscreen);
+
 private slots:
     void open();
     void durationChanged(qint64 duration);
@@ -69,6 +73,9 @@ private slots:
     void statusChanged(QMediaPlayer::MediaStatus status);
     void bufferingChanged(bool buffering);
     void bufferingProgress(int progress);
+
+    void setFullscreen(bool fullscreen);
+    void displayModeChanged(QVideoWidget::DisplayMode mode);
 
     void showColorDialog();
 

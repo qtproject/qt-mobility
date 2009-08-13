@@ -85,7 +85,7 @@ private:
 void tst_QAbstractMediaObject::propertyWatch()
 {
     QtTestMediaObject object;
-    object.setNotifyInterval(1);
+    object.setNotifyInterval(0);
 
     QSignalSpy aSpy(&object, SIGNAL(aChanged(int)));
     QSignalSpy bSpy(&object, SIGNAL(bChanged(int)));
