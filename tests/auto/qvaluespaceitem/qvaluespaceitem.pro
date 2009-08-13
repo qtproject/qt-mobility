@@ -1,26 +1,2 @@
-TARGET = tst_qvaluespaceitem
-INCLUDEPATH += ../../../context
-
-CONFIG+=testcase
-
-QT = core
-
-include(../../../common.pri)
-
-# Input
-SOURCES += tst_qvaluespaceitem.cpp tst_qvaluespaceitemshared.cpp
-HEADERS += tst_qvaluespaceitemshared.h
-
-DEFINES += QT_START_VALUESPACE
-
-LIBS += -lQtContextFramework
-
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
-
-wince*: {
-    externApp.sources = ../process/vsextern.exe
-    externApp.path = vsextern
-    DEPLOYMENT += externApp
-}
+TEMPLATE = subdirs
+SUBDIRS = lackey tst_qvaluespaceitem tst_qvaluespaceitem_oop

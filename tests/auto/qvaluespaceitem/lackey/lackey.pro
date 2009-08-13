@@ -1,10 +1,10 @@
 SOURCES += main.cpp
 TARGET = vsiTestLackey
-INCLUDEPATH += ../../../context
+INCLUDEPATH += ../../../../context
 QT = core
 
 CONFIG+= testcase
 
-include(../../../common.pri)
+include(../../../../common.pri)
 
 LIBS += -lQtContextFramework
