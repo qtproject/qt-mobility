@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS += demo \
-           voipdialer
-#gsmdialer \
-#           landlinedialer
+           voipdialer \
+           landlinedialer
+#gsmdialer 

@@ -102,7 +102,7 @@ void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
 
 QObject* ServiceWrapper::serviceObject()
 { 
-    qDebug() << "called serviceObject";
+    //qDebug() << "called serviceObject";
     if (serviceInstance) {
         return serviceInstance;
     }
@@ -132,9 +132,6 @@ ServiceRegister::ServiceRegister() {
         service->setNativeDescriptor(allImpl.at(i));
         m_services.append(service);
     }
-    /*ServiceWrapper* wrapper = new ServiceWrapper();
-    wrapper->setNativeDescriptor(QServiceInterfaceDescriptor());
-    m_services.append(wrapper);*/
 }
 
 ServiceRegister::~ServiceRegister() {
@@ -144,10 +141,10 @@ ServiceRegister::~ServiceRegister() {
 void ServiceRegister::registerExampleServices()
 {
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"voipdialerservice.xml";
+    exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-        bool s = serviceManager->addService(path);
+        serviceManager->addService(path);
     }
 }
 

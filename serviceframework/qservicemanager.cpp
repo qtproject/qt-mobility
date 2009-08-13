@@ -39,7 +39,7 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-#include <QDebug>
+//#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,23 +66,20 @@ class QServicePluginCleanup : public QObject
 {
     Q_OBJECT
 public:
-    QServicePluginCleanup(QPluginLoader *loader, QServicePluginInterface *pluginInterface, QObject *parent = 0)
+    QServicePluginCleanup(QPluginLoader *loader, QObject *parent = 0)
         : QObject(parent),
-          m_pluginInterface(pluginInterface),
           m_loader(loader)
     {
     }
 
     ~QServicePluginCleanup()
     {
-        delete m_pluginInterface;
         if (m_loader) {
             m_loader->unload();
             delete m_loader;
         }
     }
 
-    QServicePluginInterface *m_pluginInterface;
     QPluginLoader *m_loader;
 };
 
@@ -192,11 +189,11 @@ private slots:
 /*!
     \enum QServiceManager::Scope
 
-    \value UserScope When adding and removing services, use a storage location
-    specific to the current user (e.g. in the user's home directory). When
-    searching for services and interface implementations, first search in the
+    \value UserScope When adding and removing services, uses a storage location
+    specific to the current user.
+    When searching for services and interface implementations, first searches in the
     user-specific location; if the service or interface implementation
-    is not found, search in the system-wide storage location (if the user has
+    is not found, searches in the system-wide storage location (if the user has
     sufficient permissions to do so).
 
     \value SystemScope When adding and removing services, use a system-wide
@@ -383,16 +380,17 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     QPluginLoader *loader = new QPluginLoader(serviceFilePath);
+    //pluginIFace is same for all service instances of the same plugin
+    //calling loader->unload deletes pluginIFace automatically if now other 
+    //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
-
     if (pluginIFace) {
         QObject *obj = pluginIFace->createInstance(descriptor, context, session);
         if (obj) {
-            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader, pluginIFace);
+            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
             QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
             return obj;
         }
-        delete pluginIFace;
     }
 
     loader->unload();

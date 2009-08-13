@@ -129,6 +129,7 @@ ServiceXmlGenerator::ServiceXmlGenerator(QWidget *parent)
     setCentralWidget(main);
 
     m_previewEdit->setReadOnly(true);
+    m_previewEdit->installEventFilter(this);
     clickedNew();
 
     m_previewEdit->setWindowTitle(tr("XML Preview"));
@@ -138,6 +139,14 @@ ServiceXmlGenerator::ServiceXmlGenerator(QWidget *parent)
 ServiceXmlGenerator::~ServiceXmlGenerator()
 {
     delete m_previewEdit;
+}
+
+bool ServiceXmlGenerator::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == m_previewEdit && event->type() == QEvent::Hide ) {
+        m_buttonPreview->setText(tr("Show preview"));
+    }
+    return false;
 }
 
 void ServiceXmlGenerator::showEvent(QShowEvent *event)
@@ -177,12 +186,19 @@ void ServiceXmlGenerator::serviceDataChanged()
     refreshPreview();
 }
 
-void ServiceXmlGenerator::loadFromXml()
+void ServiceXmlGenerator::loadFromXml() 
+{
+    loadFromXml(QString());
+}
+
+void ServiceXmlGenerator::loadFromXml(const QString& f)
 {
     if (!shouldClearData())
         return;
 
-    QString fileName = QFileDialog::getOpenFileName(0, tr("Open XML file"), QString(), "*.xml");
+    QString fileName = f;
+    if (fileName.isEmpty())
+        fileName = QFileDialog::getOpenFileName(0, tr("Open XML file"), QString(), "*.xml");
     if (fileName.isEmpty())
         return;
 
@@ -310,6 +326,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     ServiceXmlGenerator win;
+    if (2==argc)
+        win.loadFromXml(app.arguments().at(1));
     win.show();
 
     return app.exec();

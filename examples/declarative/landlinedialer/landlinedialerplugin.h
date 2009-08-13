@@ -30,63 +30,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SAMPLESERVICEPLUGIN_H
-#define SAMPLESERVICEPLUGIN_H
 
-#include <QtTest/QtTest>
+#ifndef LANDLINEDIALERPLUGIN_H
+#define LANDLINEDIALERPLUGIN_H
+
 #include <QObject>
-#include <qserviceplugininterface.h>
-#include <qserviceinterfacedescriptor.h>
 
-class SampleServicePlugin : public QObject, public QServicePluginInterface
+#include <qserviceplugininterface.h>
+
+class LandlineDialerPlugin : public QObject,
+                                public QServicePluginInterface
 {
     Q_OBJECT
     Q_INTERFACES(QServicePluginInterface)
-
 public:
-    ~SampleServicePlugin();
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
                             QServiceContext* context,
                             QAbstractSecuritySession* session);
-
-    virtual void installService();
-    virtual void uninstallService();
-};
-
-
-class SampleServicePluginClass : public QObject
-{
-    Q_OBJECT
-public:
-    SampleServicePluginClass(const QServiceInterfaceDescriptor& descriptor,
-                             QServiceContext* context,
-                             QAbstractSecuritySession* session);
-    virtual ~SampleServicePluginClass() {}
-
-    QServiceInterfaceDescriptor descriptor() const;
-    QServiceContext *context() const { return m_context; }
-    QAbstractSecuritySession *securitySession() const { return m_security; }
-
-public slots:
-    void testSlotOne();
-    void testSlotTwo() {}
-
-protected:
-    QServiceInterfaceDescriptor m_descriptor;
-    QServiceContext *m_context;
-    QAbstractSecuritySession *m_security;
-};
-
-class DerivedSampleServicePluginClass : public SampleServicePluginClass
-{
-    Q_OBJECT
-public:
-    DerivedSampleServicePluginClass(const QServiceInterfaceDescriptor& descriptor,
-                             QServiceContext* context,
-                             QAbstractSecuritySession* session);
-    virtual ~DerivedSampleServicePluginClass() {}
-public slots:
-    void testSlotOne();
 };
 
 #endif

@@ -30,42 +30,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef INTERFACETABWIDGET_H
-#define INTERFACETABWIDGET_H
 
-#include <qserviceinterfacedescriptor.h>
+#ifndef LANDLINEDIALER_H
+#define LANDLINEDIALER_H
 
-#include <QTabWidget>
-#include <QByteArray>
-#include <QXmlStreamWriter>
+#include <QObject>
 
-class InterfaceWidget;
-class ErrorCollector;
-class QServiceInterfaceDescriptor;
-
-class InterfacesTabWidget : public QTabWidget
+class LandlineDialer : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(ConnectionState)
 public:
-    InterfacesTabWidget(QWidget *parent = 0);
-    void load(const QList<QServiceInterfaceDescriptor> &descriptors);
+    LandlineDialer(QObject *parent = 0);
+    
+    enum ConnectionState {
+        Disconnected = 0,
+        Connecting,
+        Connected,
+        Engaged
+    };
 
-    void validate(ErrorCollector *errors);
-    void writeXml(QXmlStreamWriter *device) const;
+    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
+    ConnectionState state() const;
 
-signals:
-    void dataChanged();
 
 public slots:
-    InterfaceWidget *addInterface(const QServiceInterfaceDescriptor &descriptor = QServiceInterfaceDescriptor());
+    void dialNumber(const QString& number);
+    void hangup();
+
+signals:
+    void stateChanged();
 
 protected:
-    virtual void tabInserted(int index);
-    virtual void tabRemoved(int index);
-
-private slots:
-    void tabCloseRequested(int index);
-    void interfaceTitleChanged(const QString &text);
+    void timerEvent(QTimerEvent* event);
+private:
+    void setNewState();
+    int timerId;
+    ConnectionState m_state;
 };
+
 
 #endif

@@ -35,10 +35,10 @@
 
 #include <QWidget>
 #include <QLineEdit>
+#include <QXmlStreamWriter>
 
 class QLabel;
 class ServiceMetaDataResults;
-class QXmlStreamWriter;
 class InterfacesTabWidget;
 class MandatoryLineEdit;
 class ErrorCollector;

@@ -65,8 +65,8 @@ protected:
     void timerEvent(QTimerEvent* event);
 private:
     void setNewState();
-    ConnectionState m_state;
     int timerId;
+    ConnectionState m_state;
 };
 
 

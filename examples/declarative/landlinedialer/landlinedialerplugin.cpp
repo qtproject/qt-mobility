@@ -30,42 +30,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef INTERFACETABWIDGET_H
-#define INTERFACETABWIDGET_H
 
 #include <qserviceinterfacedescriptor.h>
+#include <qabstractsecuritysession.h>
+#include <qservicecontext.h>
+#include <QDebug>
 
-#include <QTabWidget>
-#include <QByteArray>
-#include <QXmlStreamWriter>
+#include "landlinedialerplugin.h"
+#include "landlinedialer.h"
 
-class InterfaceWidget;
-class ErrorCollector;
-class QServiceInterfaceDescriptor;
-
-class InterfacesTabWidget : public QTabWidget
+QObject* LandlineDialerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
-    Q_OBJECT
-public:
-    InterfacesTabWidget(QWidget *parent = 0);
-    void load(const QList<QServiceInterfaceDescriptor> &descriptors);
+    Q_UNUSED(descriptor);
+    Q_UNUSED(context);
+    Q_UNUSED(session);
+    if (descriptor.majorVersion() == 1)
+        return new LandlineDialer(this);
+    else 
+        return 0;
+}
 
-    void validate(ErrorCollector *errors);
-    void writeXml(QXmlStreamWriter *device) const;
-
-signals:
-    void dataChanged();
-
-public slots:
-    InterfaceWidget *addInterface(const QServiceInterfaceDescriptor &descriptor = QServiceInterfaceDescriptor());
-
-protected:
-    virtual void tabInserted(int index);
-    virtual void tabRemoved(int index);
-
-private slots:
-    void tabCloseRequested(int index);
-    void interfaceTitleChanged(const QString &text);
-};
-
-#endif
+Q_EXPORT_PLUGIN2(serviceframework_landlinedialerservice, LandlineDialerPlugin)

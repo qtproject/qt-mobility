@@ -30,42 +30,68 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef INTERFACETABWIDGET_H
-#define INTERFACETABWIDGET_H
 
-#include <qserviceinterfacedescriptor.h>
+#include <QtCore>
 
-#include <QTabWidget>
-#include <QByteArray>
-#include <QXmlStreamWriter>
+#include "landlinedialer.h"
 
-class InterfaceWidget;
-class ErrorCollector;
-class QServiceInterfaceDescriptor;
-
-class InterfacesTabWidget : public QTabWidget
+LandlineDialer::LandlineDialer(QObject *parent)
+    : QObject(parent), timerId(0), m_state(Disconnected)
 {
-    Q_OBJECT
-public:
-    InterfacesTabWidget(QWidget *parent = 0);
-    void load(const QList<QServiceInterfaceDescriptor> &descriptors);
+    setObjectName("LandlineService");
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+}
 
-    void validate(ErrorCollector *errors);
-    void writeXml(QXmlStreamWriter *device) const;
+LandlineDialer::ConnectionState LandlineDialer::state() const
+{
+    return m_state;
+}
 
-signals:
-    void dataChanged();
+void LandlineDialer::dialNumber(const QString& number)
+{
+    qDebug() << "Dialing Landline number: " << number;
+    if (m_state != Disconnected)
+        return;
 
-public slots:
-    InterfaceWidget *addInterface(const QServiceInterfaceDescriptor &descriptor = QServiceInterfaceDescriptor());
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000);
+    m_state = Connecting;
+    emit stateChanged();
+}
 
-protected:
-    virtual void tabInserted(int index);
-    virtual void tabRemoved(int index);
+void LandlineDialer::timerEvent(QTimerEvent* /*event*/)
+{
+    setNewState();
+}
 
-private slots:
-    void tabCloseRequested(int index);
-    void interfaceTitleChanged(const QString &text);
-};
+void LandlineDialer::hangup()
+{
+    qDebug() << "Hangup on LandlineDialer";
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = Disconnected;
+    emit stateChanged();
+}
 
-#endif
+void LandlineDialer::setNewState()
+{
+
+    switch(m_state) {
+        case Disconnected:
+            break;
+        case Connecting:
+            if ((qrand() %2) == 0)
+                m_state = Connected;
+            else
+                m_state = Engaged;
+            emit stateChanged();
+            break;
+        case Connected:
+            break;
+        case Engaged:
+
+            break;
+    }
+}
