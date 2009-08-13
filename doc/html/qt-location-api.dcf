@@ -91,7 +91,14 @@
         <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::SimulationMode</keyword>
         <keyword ref="qnmeapositioninfosource.html#UpdateMode-enum">QNmeaPositionInfoSource::RealTimeMode</keyword>
         <keyword ref="qnmeapositioninfosource.html#device">device</keyword>
+        <keyword ref="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
+        <keyword ref="qnmeapositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</keyword>
+        <keyword ref="qnmeapositioninfosource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qnmeapositioninfosource.html#setDevice">setDevice</keyword>
+        <keyword ref="qnmeapositioninfosource.html#setUpdateInterval">setUpdateInterval</keyword>
+        <keyword ref="qnmeapositioninfosource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qnmeapositioninfosource.html#stopUpdates">stopUpdates</keyword>
+        <keyword ref="qnmeapositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>
