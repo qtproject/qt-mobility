@@ -1,12 +1,12 @@
 INCLUDEPATH += engines
 
 # invalid backend (nonoptional)
-HEADERS += engines/invalid/qcontactinvalidbackend_p.h
-SOURCES += engines/invalid/qcontactinvalidbackend.cpp
+HEADERS += engines/qcontactinvalidbackend_p.h
+SOURCES += engines/qcontactinvalidbackend.cpp
 
 # in memory backend
 contains(CONTACTS_BACKENDS, memory) {
-    HEADERS += engines/memory/qcontactmemorybackend_p.h
-    SOURCES += engines/memory/qcontactmemorybackend.cpp
+    HEADERS += engines/qcontactmemorybackend_p.h
+    SOURCES += engines/qcontactmemorybackend.cpp
 }
 

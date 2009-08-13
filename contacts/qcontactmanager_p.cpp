@@ -51,8 +51,8 @@
 
 #include <QApplication>
 
-#include "memory/qcontactmemorybackend_p.h"
-#include "invalid/qcontactinvalidbackend_p.h"
+#include "qcontactmemorybackend_p.h"
+#include "qcontactinvalidbackend_p.h"
 
 
 /* Shared QContactManager stuff here, default engine stuff below */
