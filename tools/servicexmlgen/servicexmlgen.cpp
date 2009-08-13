@@ -88,44 +88,6 @@ static const QString serviceMetaDataErrorString(int error)
     }
 }
 
-<<<<<<< HEAD:tools/servicexmlgen/servicexmlgen.cpp
-=======
-
-class ServiceXmlGenerator : public QMainWindow
-{
-    Q_OBJECT
-public:
-    ServiceXmlGenerator(QWidget *parent = 0);
-    ~ServiceXmlGenerator();
-    
-    void loadFromXml(const QString& fileName);
-    bool eventFilter(QObject* watched, QEvent* event);
-
-protected:
-    void showEvent(QShowEvent *event);
-    void closeEvent(QCloseEvent *event);
-
-private slots:
-    void serviceDataChanged();
-    void loadFromXml();
-    void togglePreview();
-    bool saveToXml();
-    void clickedNew();
-
-private:
-    bool shouldClearData();
-    void refreshPreview();
-    void getServiceXml(QIODevice *device);
-
-    bool m_firstShow;
-    bool m_unsavedData;
-    ServiceWidget *m_serviceInfo;
-
-    QPushButton *m_buttonPreview;
-    QPlainTextEdit *m_previewEdit;
-};
-
->>>>>>> 003a766e2444659a4262f3b874d3301f79f00847:tools/servicexmlgen/servicexmlgen.cpp
 ServiceXmlGenerator::ServiceXmlGenerator(QWidget *parent)
     : QMainWindow(parent),
       m_firstShow(true),
@@ -224,12 +186,7 @@ void ServiceXmlGenerator::serviceDataChanged()
     refreshPreview();
 }
 
-void ServiceXmlGenerator::loadFromXml() 
-{
-    loadFromXml(QString());
-}
-
-void ServiceXmlGenerator::loadFromXml(const QString& f)
+void ServiceXmlGenerator::loadFromXml()
 {
     loadFromXml(QString());
 }
