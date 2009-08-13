@@ -37,8 +37,11 @@
 #define DUMMYPLUGINTARGET contacts_testdummy
 #endif
 #ifndef DUMMYPLUGINNAME
-#define DUMMYPLUGINNAME "testdummy"
+#define DUMMYPLUGINNAME testdummy
 #endif
+
+#define makestr(x) (#x)
+#define makename(x) makestr(x)
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
@@ -83,7 +86,7 @@ QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& 
 
 QString DummyEngineFactory::managerName() const
 {
-    return QString(DUMMYPLUGINNAME);
+    return QString(makename(DUMMYPLUGINNAME));
 }
 Q_EXPORT_PLUGIN2(DUMMYPLUGINTARGET, DummyEngineFactory);
 

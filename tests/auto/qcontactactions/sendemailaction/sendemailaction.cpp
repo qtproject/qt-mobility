@@ -35,7 +35,7 @@
 #define ACTIONFACTORYPLUGINTARGET contacts_sendemailactionfactory
 #endif
 #ifndef ACTIONFACTORYPLUGINNAME
-#define ACTIONFACTORYPLUGINNAME "SendEmailActionFactory"
+#define ACTIONFACTORYPLUGINNAME SendEmailActionFactory
 #endif
 
 #include "sendemailaction_p.h"
@@ -44,6 +44,9 @@
 #include "qcontactfilters.h"
 
 #include <QMessageBox>
+
+#define makestr(x) (#x)
+#define makename(x) makestr(x)
 
 QContactSendEmailActionFactory::QContactSendEmailActionFactory()
 {
@@ -55,7 +58,7 @@ QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
 
 QString QContactSendEmailActionFactory::name() const
 {
-    return QString(ACTIONFACTORYPLUGINNAME);
+    return QString(makename(ACTIONFACTORYPLUGINNAME));
 }
 Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
 

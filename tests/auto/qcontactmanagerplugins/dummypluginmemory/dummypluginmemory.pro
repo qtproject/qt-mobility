@@ -13,7 +13,7 @@ PLUGIN_SUBDIR=dummyplugin/plugins
 include(../../../../common.pri)
 
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummymemory
-DEFINES += DUMMYPLUGINNAME=\\\"memory\\\"
+DEFINES += DUMMYPLUGINNAME=memory
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
 

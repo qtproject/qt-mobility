@@ -13,7 +13,7 @@ PLUGIN_SUBDIR=dummyplugin/plugins
 include(../../../../common.pri)
 
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummyinvalid
-DEFINES += DUMMYPLUGINNAME=\\\"invalid\\\"
+DEFINES += DUMMYPLUGINNAME=invalid
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
 
