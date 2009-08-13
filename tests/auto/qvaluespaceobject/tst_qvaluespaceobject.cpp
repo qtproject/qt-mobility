@@ -204,6 +204,8 @@ void tst_QValueSpaceObject::testConstructor()
 
         layer->removeHandle(handle);
     }
+
+    delete object;
 }
 
 void tst_QValueSpaceObject::testSignals_data()

@@ -109,6 +109,7 @@ private:
     bool createRegistryKey(RegistryHandle *handle);
     bool removeRegistryValue(RegistryHandle *handle, const QByteArray &path);
     void closeRegistryKey(RegistryHandle *handle);
+    void pruneEmptyKeys(RegistryHandle *handle);
 
     QHash<QByteArray, RegistryHandle *> handles;
 
@@ -536,7 +537,7 @@ static LONG qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
         TCHAR subKey[MAX_KEY_LENGTH];
         DWORD subKeySize = MAX_KEY_LENGTH;
 
-        long result = RegEnumKeyEx(key, 0, subKey, &subKeySize, 0, 0, 0, 0);
+        result = RegEnumKeyEx(key, 0, subKey, &subKeySize, 0, 0, 0, 0);
         if (result == ERROR_NO_MORE_ITEMS)
             break;
 
@@ -917,7 +918,60 @@ bool RegistryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
             paths.append(item);
     }
 
+    pruneEmptyKeys(rh);
+
     return true;
+}
+
+void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
+{
+    if (!children(Handle(handle)).isEmpty())
+        return;
+
+    QByteArray path = handle->path;
+
+    while (path != "/") {
+        int index = path.lastIndexOf('/', -1);
+
+        QString value =
+            QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
+
+        path.truncate(index);
+        if (path.isEmpty())
+            path.append('/');
+
+        RegistryHandle *rh = registryHandle(item(InvalidHandle, path));
+
+        openRegistryKey(rh);
+        if (!hKeys.contains(rh)) {
+            removeHandle(Handle(rh));
+            return;
+        }
+
+        HKEY key = hKeys.value(rh);
+
+        long result = RegDeleteKey(key, value.utf16());
+        if (result == ERROR_SUCCESS) {
+            const QByteArray rootPath = rh->path;
+
+            QList<QByteArray> paths = handles.keys();
+            while (!paths.isEmpty()) {
+                QByteArray p = paths.takeFirst();
+
+                if (p.startsWith(rootPath))
+                    closeRegistryKey(handles.value(p));
+            }
+        } else if (result != ERROR_FILE_NOT_FOUND) {
+            return;
+        }
+
+        bool hasChildren = !children(Handle(rh)).isEmpty();
+
+        removeHandle(Handle(rh));
+
+        if (hasChildren)
+            break;
+    }
 }
 
 bool RegistryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
