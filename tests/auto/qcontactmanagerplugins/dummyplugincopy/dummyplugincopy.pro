@@ -12,7 +12,7 @@ TARGET = $$qtLibraryTarget(contacts_testdummycopy)
 PLUGIN_SUBDIR=dummyplugin/plugins
 include(../../../../common.pri)
 
-DEFINES += DUMMYPLUGINTARGET=contacts_testdummycopy
+DEFINES += DUMMYPLUGINTARGET=contacts_testdummycopy DUMMYPLUGINNAME=testdummy
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
 

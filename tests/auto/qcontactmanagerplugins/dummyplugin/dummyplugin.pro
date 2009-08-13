@@ -14,6 +14,8 @@ include(../../../../common.pri)
 
 SOURCES += dummyplugin.cpp
 
+DEFINES += DUMMYPLUGINNAME=testdummy
+
 # We need to link against this for all sorts of reasons :)
 LIBS += -lQtContacts
 

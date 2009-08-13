@@ -36,9 +36,6 @@
 #ifndef DUMMYPLUGINTARGET
 #define DUMMYPLUGINTARGET contacts_testdummy
 #endif
-#ifndef DUMMYPLUGINNAME
-#define DUMMYPLUGINNAME testdummy
-#endif
 
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
@@ -86,7 +83,11 @@ QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& 
 
 QString DummyEngineFactory::managerName() const
 {
+#ifdef DUMMYPLUGINNAME
     return QString(makename(DUMMYPLUGINNAME));
+#else
+    return QString();
+#endif
 }
 Q_EXPORT_PLUGIN2(DUMMYPLUGINTARGET, DummyEngineFactory);
 
