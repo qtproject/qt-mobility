@@ -32,6 +32,8 @@
 ****************************************************************************/
 #include "qmessage.h"
 #include "qmessage_p.h"
+#include "qmessageid_p.h"
+#include "qmessageaccountid_p.h"
 #include "qmessagestore.h"
 
 //TODO: For the set* functions rather than updating shadowed MAPI structures, 
@@ -48,6 +50,7 @@ QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags
     result.d_ptr->_from = from;
     result.d_ptr->_subject = subject;
     result.d_ptr->_receivedDate = dt;
+    result.d_ptr->_parentAccountId = QMessageAccountIdPrivate::from(QMessageIdPrivate::storeRecordKey(id));
     return result;
 }
 
