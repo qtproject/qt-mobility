@@ -94,6 +94,7 @@ public:
 
     QSize resolution() const;
     void setResolution(const QSize &resolution);
+    void setResolution(int width, int height);
 
     int bitsPerPixel() const;
     void setBitsPerPixel(int bits);

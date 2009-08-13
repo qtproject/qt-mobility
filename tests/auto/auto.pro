@@ -5,5 +5,6 @@ SUBDIRS += \
         qabstractmediaservice \
         qmediametadata \
         qmediaplaylist \
-        qmediaplaylistnavigator
+        qmediaplaylistnavigator \
+        qmediaresource
 

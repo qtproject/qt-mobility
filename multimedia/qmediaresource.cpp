@@ -76,7 +76,7 @@ QMediaResource::QMediaResource()
 QMediaResource::QMediaResource(const QUrl &uri, ResourceRole role)
 {
     values.insert(Uri, qVariantFromValue(uri));
-    values.insert(Role, qVariantFromValue(role));
+    values.insert(Role, int(role));
 }
 
 /*!
@@ -86,7 +86,7 @@ QMediaResource::QMediaResource(const QUrl &uri, const QString &type, ResourceRol
 {
     values.insert(Uri, qVariantFromValue(uri));
     values.insert(MimeType, type);
-    values.insert(Role, qVariantFromValue(role));
+    values.insert(Role, int(role));
 }
 
 /*!
@@ -158,7 +158,7 @@ QUrl QMediaResource::uri() const
 */
 QMediaResource::ResourceRole QMediaResource::role() const
 {
-    return qvariant_cast<ResourceRole>(values.value(Role, ContentRole));
+    return ResourceRole(values.value(Role, int(ContentRole)).toInt());
 }
 
 /*!
@@ -187,7 +187,10 @@ QString QMediaResource::audioCodec() const
 */
 void QMediaResource::setAudioCodec(const QString &codec)
 {
-    values[AudioCodec] = codec;
+    if (!codec.isNull())
+        values.insert(AudioCodec, codec);
+    else
+        values.remove(AudioCodec);
 }
 
 /*!
@@ -206,7 +209,10 @@ QString QMediaResource::videoCodec() const
 */
 void QMediaResource::setVideoCodec(const QString &codec)
 {
-    values[VideoCodec] = codec;
+    if (!codec.isNull())
+        values.insert(VideoCodec, codec);
+    else
+        values.remove(VideoCodec);
 }
 
 /*!
@@ -224,7 +230,10 @@ qint64 QMediaResource::size() const
 */
 void QMediaResource::setSize(const qint64 size)
 {
-    values[Size] = size;
+    if (size != 0)
+        values.insert(Size, size);
+    else
+        values.remove(Size);
 }
 
 /*!
@@ -243,7 +252,10 @@ qint64 QMediaResource::duration() const
 */
 void QMediaResource::setDuration(qint64 duration)
 {
-    values[Duration] = duration;
+    if (duration != 0)
+        values.insert(Duration, duration);
+    else
+        values.remove(Duration);
 }
 
 /*!
@@ -262,7 +274,10 @@ int QMediaResource::bitRate() const
 */
 void QMediaResource::setBitRate(int rate)
 {
-    values[BitRate] = rate;
+    if (rate != 0)
+        values.insert(BitRate, rate);
+    else
+        values.remove(BitRate);
 }
 
 /*!
@@ -280,7 +295,10 @@ int QMediaResource::sampleSize() const
 */
 void QMediaResource::setSampleSize(int size)
 {
-    values[SampleSize] = size;
+    if (size != 0)
+        values.insert(SampleSize, size);
+    else
+        values.remove(SampleSize);
 }
 
 /*!
@@ -298,7 +316,10 @@ int QMediaResource::frequency() const
 */
 void QMediaResource::setFrequency(int frequency)
 {
-    values[Frequency] = frequency;
+    if (frequency != 0)
+        values.insert(Frequency, frequency);
+    else
+        values.remove(Frequency);
 }
 
 /*!
@@ -316,7 +337,10 @@ int QMediaResource::channels() const
 */
 void QMediaResource::setChannels(int channels)
 {
-    values[Channels] = channels;
+    if (channels != 0)
+        values.insert(Channels, channels);
+    else
+        values.remove(Channels);
 }
 
 /*!
@@ -335,7 +359,21 @@ QSize QMediaResource::resolution() const
 */
 void QMediaResource::setResolution(const QSize &resolution)
 {
-    values[Resolution] = resolution;
+    if (resolution.isValid())
+        values.insert(Resolution, resolution);
+    else
+        values.remove(Resolution);
+}
+
+/*!
+    Sets the \a width and \a height in pixels of a media resource.
+*/
+void QMediaResource::setResolution(int width, int height)
+{
+    if (width >= 0 && height >= 0)
+        values.insert(Resolution, QSize(width, height));
+    else
+        values.remove(Resolution);
 }
 
 /*!
@@ -354,6 +392,8 @@ int QMediaResource::bitsPerPixel() const
 */
 void QMediaResource::setBitsPerPixel(int bits)
 {
-    values[BitsPerPixel] = bits;
-
+    if (bits != 0)
+        values.insert(BitsPerPixel, bits);
+    else
+        values.remove(BitsPerPixel);
 }
