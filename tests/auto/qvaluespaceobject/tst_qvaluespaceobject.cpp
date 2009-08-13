@@ -178,7 +178,17 @@ void tst_QValueSpaceObject::testConstructor()
         layer->removeHandle(handle);
     }
 
-    object->setAttribute("value", 100);
+    switch (type) {
+    case CharStar:
+        object->setAttribute("value", 100);
+        break;
+    case String:
+        object->setAttribute(QString("value"), 100);
+        break;
+    case ByteArray:
+        object->setAttribute(QByteArray("value"), 100);
+        break;
+    };
     object->sync();
 
     if (layer) {
@@ -192,7 +202,17 @@ void tst_QValueSpaceObject::testConstructor()
         layer->removeHandle(handle);
     }
 
-    object->removeAttribute("value");
+    switch (type) {
+    case CharStar:
+        object->removeAttribute("value");
+        break;
+    case String:
+        object->removeAttribute(QString("value"));
+        break;
+    case ByteArray:
+        object->removeAttribute(QByteArray("value"));
+        break;
+    };
     object->sync();
 
     if (layer) {
