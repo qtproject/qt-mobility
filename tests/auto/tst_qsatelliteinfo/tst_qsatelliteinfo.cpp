@@ -43,6 +43,20 @@
 Q_DECLARE_METATYPE(QSatelliteInfo)
 Q_DECLARE_METATYPE(QSatelliteInfo::Property)
 
+QByteArray tst_qsatelliteinfo_debug;
+
+void tst_qsatelliteinfo_messageHandler(QtMsgType type, const char *msg)
+{
+    switch(type) {
+        case QtDebugMsg :
+            tst_qsatelliteinfo_debug = QByteArray(msg);
+            break;
+        default:
+            break;
+    }
+}
+
+
 QList<qreal> tst_qsatelliteinfo_qrealTestValues()
 {
     QList<qreal> values;
@@ -275,6 +289,48 @@ private slots:
     void removeProperty_data()
     {
         property_data();
+    }
+
+    void debug()
+    {
+        QFETCH(QSatelliteInfo, info);
+        QFETCH(QByteArray, debugString);
+
+        qInstallMsgHandler(tst_qsatelliteinfo_messageHandler);
+        qDebug() << info;
+        qInstallMsgHandler(0);
+        QCOMPARE(QString(tst_qsatelliteinfo_debug), QString(debugString));
+    }
+
+    void debug_data()
+    {
+        QTest::addColumn<QSatelliteInfo>("info");
+        QTest::addColumn<QByteArray>("debugString");
+
+        QSatelliteInfo info;
+
+        QTest::newRow("uninitialized") << info
+                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1)");
+
+        info = QSatelliteInfo();
+        info.setPrnNumber(1);
+        QTest::newRow("with PRN") << info
+                << QByteArray("QSatelliteInfo(PRN=1, signal-strength=-1)");
+
+        info = QSatelliteInfo();
+        info.setSignalStrength(1);
+        QTest::newRow("with PRN") << info
+                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=1)");
+
+        info = QSatelliteInfo();
+        info.setProperty(QSatelliteInfo::Elevation, 1.1);
+        QTest::newRow("with Elevation") << info
+                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1, Elevation=1.1)");
+
+        info = QSatelliteInfo();
+        info.setProperty(QSatelliteInfo::Azimuth, 1.1);
+        QTest::newRow("with Azimuth") << info
+                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1, Azimuth=1.1)");
     }
 };
 

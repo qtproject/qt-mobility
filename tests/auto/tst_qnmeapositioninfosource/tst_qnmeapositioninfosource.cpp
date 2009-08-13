@@ -183,6 +183,18 @@ private slots:
         QCOMPARE(source.parent(), &o);
     }
 
+    void supportedPositioningMethods()
+    {
+        QNmeaPositionInfoSource source(m_mode);
+        QCOMPARE(source.supportedPositioningMethods(), QNmeaPositionInfoSource::SatellitePositioningMethods);
+    }
+
+    void minimumUpdateInterval()
+    {
+        QNmeaPositionInfoSource source(m_mode);
+        QCOMPARE(source.minimumUpdateInterval(), 0);
+    }
+
     void testWithBufferedData()
     {
         // In SimulationMode, data stored in the QIODevice is read when
@@ -358,6 +370,7 @@ private slots:
         QTest::newRow("startUpdates(), bad second sentence") << bytes
                 << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
     }
+
 };
 
 Q_DECLARE_METATYPE(tst_QNmeaPositionInfoSource::UpdateTriggerMethod)
