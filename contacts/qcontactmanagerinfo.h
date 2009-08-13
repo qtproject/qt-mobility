@@ -68,7 +68,7 @@ public:
 private:
     /* Can't instantiate apart from through manager */
     QContactManagerInfo();
-    Q_DISABLE_COPY(QContactManagerInfo);
+    Q_DISABLE_COPY(QContactManagerInfo)
 
     /* Can't delete except via the manager either */
     ~QContactManagerInfo();

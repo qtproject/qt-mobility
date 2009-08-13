@@ -60,7 +60,7 @@ signals:
     void progress(QContactGroupFetchRequest* self, bool appendOnly);
 
 private:
-    Q_DISABLE_COPY(QContactGroupFetchRequest);
+    Q_DISABLE_COPY(QContactGroupFetchRequest)
     friend class QContactManagerEngine;
     Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactGroupFetchRequest)
 };

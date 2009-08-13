@@ -39,7 +39,6 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
 
 /* Leaf class */
 class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail

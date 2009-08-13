@@ -57,7 +57,7 @@ signals:
     void progress(QContactRemoveRequest* self);
 
 private:
-    Q_DISABLE_COPY(QContactRemoveRequest);
+    Q_DISABLE_COPY(QContactRemoveRequest)
     friend class QContactManagerEngine;
     Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactRemoveRequest)
 };

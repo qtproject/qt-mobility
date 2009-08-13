@@ -60,7 +60,7 @@ signals:
     void progress(QContactDetailDefinitionSaveRequest* self);
 
 private:
-    Q_DISABLE_COPY(QContactDetailDefinitionSaveRequest);
+    Q_DISABLE_COPY(QContactDetailDefinitionSaveRequest)
     friend class QContactManagerEngine;
     Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionSaveRequest)
 };

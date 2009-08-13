@@ -61,7 +61,7 @@ signals:
     void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);
 
 private:
-    Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest);
+    Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest)
     friend class QContactManagerEngine;
     Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionFetchRequest)
 };

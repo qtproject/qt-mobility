@@ -99,7 +99,7 @@ protected:
     QContactAbstractRequestPrivate* d_ptr;
 
 private:
-    Q_DISABLE_COPY(QContactAbstractRequest);
+    Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
 };
 

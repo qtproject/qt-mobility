@@ -105,7 +105,7 @@ public:
     static QHash<QString, int> m_vendormap;
 
 private:
-    Q_DISABLE_COPY(QContactManagerData);
+    Q_DISABLE_COPY(QContactManagerData)
 };
 
 #endif
