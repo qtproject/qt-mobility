@@ -9,7 +9,7 @@ QT += gui
 
 # Build against the messaging library
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../messaging
-LIBS += -L$$OUT_PWD/../../messaging/$$OUTPREFIX -lQtMessaging
+LIBS += -L$$OUT_PWD/../../messaging/$$CONFIGMODE -lQtMessaging
 
 symbian|win32 {
 } else {
@@ -18,8 +18,10 @@ LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_\\\"
 }
 
-HEADERS +=
+HEADERS += \
+    mainwindow.h
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    mainwindow.cpp
 

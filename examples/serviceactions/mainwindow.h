@@ -31,15 +31,24 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include "mainwindow.h"
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-int main(int argc, char** argv)
+#include <QMainWindow>
+
+class QComboBox;
+class QListView;
+class QMessageServiceAction;
+
+class MainWindow : public QMainWindow
 {
-    QApplication app(argc,argv);
+public:
+    MainWindow(QWidget* parent = 0, Qt::WindowFlags f = 0);
 
-    MainWindow mainwindow;
-    mainwindow.show();
+private:
+    QComboBox* m_accountsCombo;
+    QListView* m_messageList;
+    QMessageServiceAction* m_serviceAction;
+};
 
-    app.exec();
-}
+#endif

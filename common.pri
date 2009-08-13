@@ -7,9 +7,9 @@ win32 {
     TESTS_INSTALL_ROOT=$$MESSAGING_INSTALL_ROOT
 
     debug{
-        OUTPREFIX=Debug
+        CONFIGMODE = Debug
     } else {
-        OUTPREFIX=Release
+        CONFIGMODE = Release
     }
 
 } else {

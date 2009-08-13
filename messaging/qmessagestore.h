@@ -59,7 +59,7 @@ public:
     enum ErrorCode
     {
         NoError = 0,
-        InvalidId, 
+        InvalidId,
         ConstraintFailure,
         ContentInaccessible,
         NotYetImplemented,
