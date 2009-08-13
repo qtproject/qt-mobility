@@ -30,13 +30,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "servicexmlgen.h"
 #include "servicewidget.h"
 #include "errorcollector.h"
 
 #include <servicemetadata_p.h>
 
 #include <QDebug>
-#include <QMainWindow>
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QPushButton>
@@ -87,38 +87,6 @@ static const QString serviceMetaDataErrorString(int error)
             return QString();
     }
 }
-
-
-class ServiceXmlGenerator : public QMainWindow
-{
-    Q_OBJECT
-public:
-    ServiceXmlGenerator(QWidget *parent = 0);
-    ~ServiceXmlGenerator();
-
-protected:
-    void showEvent(QShowEvent *event);
-    void closeEvent(QCloseEvent *event);
-
-private slots:
-    void serviceDataChanged();
-    void loadFromXml();
-    void togglePreview();
-    bool saveToXml();
-    void clickedNew();
-
-private:
-    bool shouldClearData();
-    void refreshPreview();
-    void getServiceXml(QIODevice *device);
-
-    bool m_firstShow;
-    bool m_unsavedData;
-    ServiceWidget *m_serviceInfo;
-
-    QPushButton *m_buttonPreview;
-    QPlainTextEdit *m_previewEdit;
-};
 
 ServiceXmlGenerator::ServiceXmlGenerator(QWidget *parent)
     : QMainWindow(parent),
@@ -347,4 +315,3 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
-#include "servicexmlgen.moc"

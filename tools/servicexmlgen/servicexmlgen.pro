@@ -1,10 +1,10 @@
 TEMPLATE=app
 TARGET=servicexmlgen
-CONFIG+=console
 
 INCLUDEPATH += ../../serviceframework
 
-HEADERS = servicewidget.h \
+HEADERS = servicexmlgen.h \
+          servicewidget.h \
           interfacestabwidget.h \
           interfacewidget.h \
           mandatorylineedit.h \
