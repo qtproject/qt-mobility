@@ -19,6 +19,7 @@
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
+#include <QtTracker/ontologies/nie.h>
 
 #include "tracker2qcontact.h"
 
@@ -111,8 +112,37 @@ void QContactTrackerEngine::deref()
 
 QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    Q_UNUSED(filter)
-    return contacts(sortOrders, error);
+    // TODO Implement sorting for all the supported fields (only QContactName for now)
+    QList<QUniqueId> ids;
+    if (filter.type() == QContactFilter::ChangeLog) {
+        const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
+        RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
+        // Added since
+        if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+            rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+        }
+        // Changed since
+        else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+            rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+        }
+        // Removed since
+        else if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
+            // TODO This information has to be stored and fetched outside tracker
+        }
+        RDFSelect query;
+        query.addColumn("contact_uri", rdfContact);
+        query.addColumn("contactId", rdfContact.property<nco::contactUID>());
+        foreach (QContactSortOrder sort, sortOrders) {
+            query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
+                                            sort.direction() == Qt::AscendingOrder);
+        }
+        LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+        for (int i = 0; i < ncoContacts->rowCount(); i++) {
+            ids.append(ncoContacts->index(i, 1).data().toInt());
+        }
+    }
+    error = QContactManager::NoError;
+    return ids;
 }
 
 QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
@@ -189,10 +219,12 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
         contact->setId(d->m_lastUsedId);
         ncoContact->setContactUID(QString::number(d->m_lastUsedId));
+        ncoContact->setContentCreated(QDateTime::currentDateTime());
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
         contactsAdded << contact->id();
     }  else {
         ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contact->id())));
+        ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
     }
 
@@ -534,6 +566,65 @@ QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
     st.append(QVariant::DateTime);
 
     return st;
+}
+
+RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName,
+                                                      const QString& fieldName) const
+{
+    if (definitionName == QContactAddress::DefinitionName) {
+
+    }
+//    else if (definitionName == QContactAnniversary::DefinitionName) {
+//    }
+    else if (definitionName == QContactAvatar::DefinitionName) {
+    }
+//    else if (definitionName == QContactBirthday::DefinitionName) {
+//    }
+//    else if (definitionName == QContactDisplayLabel::DefinitionName) {
+//    }
+    else if (definitionName == QContactEmailAddress::DefinitionName) {
+    }
+//    else if (definitionName == QContactGender::DefinitionName) {
+//    }
+//    else if (definitionName == QContactGeolocation::DefinitionName) {
+//    }
+//    else if (definitionName == QContactGuid::DefinitionName) {
+//    }
+    else if (definitionName == QContactName::DefinitionName) {
+        if (fieldName == QContactName::FieldFirst) {
+            return rdfContact.property<nco::nameGiven>();
+        }
+        else if (fieldName == QContactName::FieldLast) {
+            return rdfContact.property<nco::nameFamily>();
+        }
+        else if (fieldName == QContactName::FieldMiddle) {
+            return rdfContact.property<nco::nameAdditional>();
+        }
+        else if (fieldName == QContactName::FieldPrefix) {
+            return rdfContact.property<nco::nameHonorificPrefix>();
+        }
+        else if (fieldName == QContactName::FieldSuffix) {
+            return rdfContact.property<nco::nameHonorificSuffix>();
+        }
+    }
+//    else if (definitionName == QContactOnlineAccount::DefinitionName) {
+//    }
+//    else if (definitionName == QContactOrganisation::DefinitionName) {
+//    }
+    else if (definitionName == QContactPhoneNumber::DefinitionName) {
+    }
+//    else if (definitionName == QContactPresence::DefinitionName) {
+//    }
+//    else if (definitionName == QContactRelationship::DefinitionName) {
+//    }
+//    else if (definitionName == QContactSyncTarget::DefinitionName) {
+//    }
+//    else if (definitionName == QContactTimestamp::DefinitionName) {
+//    }
+    else if (definitionName == QContactUrl::DefinitionName) {
+
+    }
+    return RDFVariable();
 }
 
 #if 0

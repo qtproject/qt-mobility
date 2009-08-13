@@ -141,6 +141,7 @@ public:
 
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
+    RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
 };
 
 class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
