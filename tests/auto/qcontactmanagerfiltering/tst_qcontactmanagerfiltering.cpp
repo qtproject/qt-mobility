@@ -104,6 +104,8 @@ private slots:
     void allFiltering();
 };
 
+Q_DECLARE_METATYPE(QVariant);
+
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 {
 }
@@ -214,7 +216,6 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     delete cm;
 }
 
-Q_DECLARE_METATYPE(QVariant);
 
 void tst_QContactManagerFiltering::detailVariantFiltering_data()
 {

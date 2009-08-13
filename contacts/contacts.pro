@@ -64,6 +64,8 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian {
+	TARGET.EPOCALLOWDLLDATA = 1
+    
     deploy.path = /
     headers.sources = $$PUBLIC_HEADERS
     headers.path = epoc32/include

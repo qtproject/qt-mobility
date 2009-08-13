@@ -21,3 +21,6 @@ LIBS += -lQtContacts
 HEADERS += sendemailaction_p.h
 SOURCES += sendemailaction.cpp
 
+symbian{
+	TARGET.EPOCALLOWDLLDATA = 1
+}
