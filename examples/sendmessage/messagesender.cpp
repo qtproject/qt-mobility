@@ -168,7 +168,7 @@ void MessageSender::send()
     message.setTo(QMessageAddress(to, QMessageAddress::Email));
     message.setSubject(subject);
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
+#ifdef QMESSAGING_OPTIONAL
     if (attachmentsList->count()) {
         QMessageContentContainer textPart;
         textPart.setContentType("text");

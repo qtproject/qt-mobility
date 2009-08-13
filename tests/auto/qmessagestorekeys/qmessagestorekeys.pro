@@ -11,10 +11,10 @@ QT += testlib
 
 # Build against the messaging library
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../../messaging
-LIBS += -L$$OUT_PWD/../../../messaging/$$OUTPREFIX -lQtMessaging
+LIBS += -L$$OUT_PWD/../../../messaging/$$CONFIGMODE -lQtMessaging
 
 # Link against the test support library
-LIBS += -L$$OUT_PWD/../support/$$OUTPREFIX -lsupport
+LIBS += -L$$OUT_PWD/../support/$$CONFIGMODE -lsupport
 
 symbian|win32 {
 } else {

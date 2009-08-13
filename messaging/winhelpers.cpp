@@ -216,7 +216,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             if (limit)
                 --workingLimit;
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            /* Begin test code TODO remove */
+            /* Begin test code TODO remove, and remove fetching flags, sender and subject properties */
             bool read(rows->aRow[0].lpProps[flagsColumn].Value.ul & MSGFLAG_READ);
             QString sender = QStringFromLpctstr(rows->aRow[0].lpProps[senderColumn].Value.LPSZ);
             QString subject = QStringFromLpctstr(rows->aRow[0].lpProps[subjectColumn].Value.LPSZ);
@@ -239,11 +239,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
     }
     MAPIFreeBuffer(rows);
 
-#if 0 // gets limit messages in each folder, useful for testing, TODO remove this line
-    return QMessageIdList(); }
-#else
     return result;
-#endif
 }
 
 MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messageKey)

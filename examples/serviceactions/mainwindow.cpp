@@ -31,15 +31,42 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
 #include "mainwindow.h"
+#include "qmessageserviceaction.h"
+#include <QComboBox>
+#include <QListView>
+#include <QVBoxLayout>
+#include <QLabel>
 
-int main(int argc, char** argv)
+static const QSize WindowGeometry(400,300);
+static const QString WindowTitle("QMessageServiceAction Example");
+
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
+:
+QMainWindow(parent,f),
+m_accountsCombo(0),
+m_messageList(0)
 {
-    QApplication app(argc,argv);
+    QWidget* c = new QWidget(this);
+    setCentralWidget(c);
+    QVBoxLayout* mainLayout = new QVBoxLayout(c);
 
-    MainWindow mainwindow;
-    mainwindow.show();
+    QHBoxLayout* accountsLayout = new QHBoxLayout();
+    accountsLayout->setSpacing(4);
+    mainLayout->addLayout(accountsLayout);
 
-    app.exec();
+    accountsLayout->addWidget(new QLabel("Account",this));
+
+    m_accountsCombo = new QComboBox(this);
+    m_accountsCombo->addItem("Balls");
+    accountsLayout->addWidget(m_accountsCombo,1);
+
+    m_messageList = new QListView(this);
+    mainLayout->addWidget(m_messageList);
+
+    m_serviceAction = new QMessageServiceAction(this);
+
+    setWindowTitle(WindowTitle);
+    resize(WindowGeometry);
 }
+

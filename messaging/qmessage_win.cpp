@@ -47,7 +47,7 @@ QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags
     result.d_ptr->_status = status;
     result.d_ptr->_from = from;
     result.d_ptr->_subject = subject;
-    result.d_ptr->_date = dt;
+    result.d_ptr->_receivedDate = dt;
     return result;
 }
 
@@ -182,24 +182,24 @@ void QMessage::setSubject(const QString &s)
 
 QDateTime QMessage::date() const
 {
-    return d_ptr->_date;
+    return QDateTime(); // stub
 }
 
 void QMessage::setDate(const QDateTime &d)
 {
     d_ptr->_modified = true;
-    d_ptr->_date = d;
+    Q_UNUSED(d)
 }
 
 QDateTime QMessage::receivedDate() const
 {
-    return QDateTime(); // stub
+    return d_ptr->_receivedDate;
 }
 
 void QMessage::setReceivedDate(const QDateTime &d)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(d)
+    d_ptr->_receivedDate = d;
 }
 
 QMessageAddressList QMessage::to() const

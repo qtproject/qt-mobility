@@ -12,7 +12,7 @@ HEADERS += \
 INCLUDEPATH += ../../../messaging
 
 
-LIBS += -L$$(OUT_PWD)../../../messaging/$$OUTPREFIX -lQtMessaging
+LIBS += -L$$(OUT_PWD)../../../messaging/$$CONFIGMODE -lQtMessaging
 
 symbian|win32 {
 symbian {
