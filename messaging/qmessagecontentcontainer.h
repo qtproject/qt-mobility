@@ -102,6 +102,9 @@ protected:
     virtual QMessageContentContainerId prependContent(const QMessageContentContainer &content);
 #endif
 
+protected:
+    virtual void removeContent(const QMessageContentContainerId &id);
+
 private:
     friend class QMessage;
     friend class QMessagePrivate;

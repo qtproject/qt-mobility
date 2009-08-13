@@ -490,3 +490,13 @@
 
     Returns an identifier for the prepended content.
 */
+
+/*!
+    \fn QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
+    
+    If the container contains content with the identifier \a id, either directly or recursively 
+    then removes that content element.
+
+    \sa container(), clearContents(), contentIds()
+*/
+

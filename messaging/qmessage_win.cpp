@@ -290,14 +290,22 @@ QMessageContentContainerIdList QMessage::attachments() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    // Implementation note, this should be platform independent.
     d_ptr->_modified = true;
-    Q_UNUSED(fileNames)
+
+    foreach (const QString &filename, fileNames) {
+        QMessageContentContainer content;
+        content.setContentFileName(filename.toAscii());
+        appendContent(content);
+    }
 }
 
 void QMessage::clearAttachments()
 {
-    // Implementation note, this should be platform independent.
+    d_ptr->_modified = true;
+
+    foreach (const QMessageContentContainerId &id, contentIds()) {
+        removeContent(id);
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL

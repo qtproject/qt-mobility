@@ -271,3 +271,8 @@ void QMessageContentContainer::applyPendingChanges() const
 }
 #endif
 
+void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
+{
+    Q_UNUSED(id)
+}
+

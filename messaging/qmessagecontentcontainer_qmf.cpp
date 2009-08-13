@@ -179,6 +179,28 @@ struct PartLocator
     }
 };
 
+struct PartRemover
+{
+    const QMailMessagePart::Location &_location;
+
+    PartRemover(const QMailMessagePart::Location &location)
+        : _location(location)
+    {
+    }
+
+    bool operator()(QMailMessagePart &part)
+    {
+        for (uint i = 0; i < part.partCount(); ++i) {
+            if (part.partAt(i).location() == _location) {
+                part.removePartAt(i);
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
+
 struct SizeAccumulator
 {
     uint _size;
@@ -594,5 +616,24 @@ void QMessageContentContainer::applyPendingChanges() const
 {
     d_ptr->applyPendingChanges();
 }
-
 #endif
+
+void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
+{
+    QMailMessagePart::Location location(convert(id));
+
+    if (location.isValid(false)) {
+        // See if this part is a direct descendant
+        for (uint i = 0; i < d_ptr->_container->partCount(); ++i) {
+            if (d_ptr->_container->partAt(i).location() == location) {
+                d_ptr->_container->removePartAt(i);
+                return;
+            }
+        }
+
+        // Otherwise, try to find it down the descendant tree
+        PartRemover remover(location);
+        d_ptr->_container->foreachPart<PartRemover&>(remover);
+    }
+}
+
