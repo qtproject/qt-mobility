@@ -195,19 +195,19 @@ void tst_QAbstractMediaObject::notifyInterval_data()
     QTest::newRow("single 50ms")
             << 50
             << 1
-            << 60;
+            << 100;
     QTest::newRow("single 100ms")
             << 100
             << 1
-            << 110;
+            << 200;
     QTest::newRow("x3 50ms")
             << 50
             << 3
-            << 160;
+            << 200;
     QTest::newRow("x3 100ms")
             << 100
             << 3
-            << 310;
+            << 400;
 }
 
 void tst_QAbstractMediaObject::notifyInterval()
@@ -229,7 +229,8 @@ void tst_QAbstractMediaObject::notifyInterval()
     timer.start(wait);
     loop.exec();
 
-    QCOMPARE(spy.count(), count);
+    QVERIFY(spy.count() >= count);
+    QVERIFY(spy.count() < count + 2);
 }
 
 QTEST_MAIN(tst_QAbstractMediaObject)
