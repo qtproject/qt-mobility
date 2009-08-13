@@ -141,7 +141,7 @@ public:
 
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    virtual bool filterSupported(const QContactFilter& filter) const;
+    bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 protected:
