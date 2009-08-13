@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFILTER_P_H
-#define QCONTACTDETAILFILTER_P_H
+#ifndef QCONTACTIDLISTFILTER_P_H
+#define QCONTACTIDLISTFILTER_P_H
 
 //
 //  W A R N I N G
