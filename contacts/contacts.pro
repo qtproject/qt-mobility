@@ -14,32 +14,37 @@ include(filters/filters.pri)
 include(requests/requests.pri)
 
 # Input
-HEADERS += qcontact.h \
-    qcontact_p.h \
+PUBLIC_HEADERS += \
+    qcontact.h \
     qcontactabstractrequest.h \
-    qcontactabstractrequest_p.h \
     qcontactaction.h \
     qcontactactionfactory.h \
     qcontactdetail.h \
-    qcontactdetail_p.h \
     qcontactdetaildefinition.h \
-    qcontactdetaildefinition_p.h \
     qcontactfilter.h \
-    qcontactfilter_p.h \
     qcontactgroup.h \
-    qcontactgroup_p.h \
     qcontactmanager.h \
-    qcontactmanager_p.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
     qcontactmanagerinfo.h \
-    qcontacts_p.h \
     qcontactsortorder.h \
-    qcontactsortorder_p.h \
     qtcontactsglobal.h \
     qtcontacts.h
 
-SOURCES += qcontact.cpp \
+# Private Headers
+PRIVATE_HEADERS += \
+    qcontact_p.h \
+    qcontactabstractrequest_p.h \
+    qcontactdetail_p.h \
+    qcontactdetaildefinition_p.h \
+    qcontactfilter_p.h \
+    qcontactgroup_p.h \
+    qcontactmanager_p.h \
+    qcontacts_p.h \
+    qcontactsortorder_p.h
+
+SOURCES += \
+    qcontact.cpp \
     qcontactabstractrequest.cpp \
     qcontactaction.cpp \
     qcontactactionfactory.cpp \
@@ -53,3 +58,18 @@ SOURCES += qcontact.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerinfo.cpp \
     qcontactsortorder.cpp
+
+HEADERS += \
+    $$PUBLIC_HEADERS \
+    $$PRIVATE_HEADERS
+
+symbian {
+    deploy.path = /
+    headers.sources = $$PUBLIC_HEADERS
+    headers.path = epoc32/include
+    DEPLOYMENT += exportheaders
+
+# This is for new exporting system coming in garden
+    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
+}
+

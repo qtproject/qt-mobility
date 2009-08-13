@@ -1,5 +1,7 @@
 INCLUDEPATH += requests
-HEADERS += requests/qcontactfetchrequest.h \
+
+PUBLIC_HEADERS += \
+    requests/qcontactfetchrequest.h \
     requests/qcontactidfetchrequest.h \
     requests/qcontactsaverequest.h \
     requests/qcontactremoverequest.h \
@@ -9,9 +11,13 @@ HEADERS += requests/qcontactfetchrequest.h \
     requests/qcontactdetaildefinitionfetchrequest.h \
     requests/qcontactdetaildefinitionsaverequest.h \
     requests/qcontactdetaildefinitionremoverequest.h \
-    requests/qcontactrequests.h \
+    requests/qcontactrequests.h
+
+PRIVATE_HEADERS += \
     requests/qcontactrequests_p.h
-SOURCES += requests/qcontactfetchrequest.cpp \
+
+SOURCES += \
+    requests/qcontactfetchrequest.cpp \
     requests/qcontactidfetchrequest.cpp \
     requests/qcontactsaverequest.cpp \
     requests/qcontactremoverequest.cpp \
