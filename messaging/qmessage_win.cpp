@@ -56,12 +56,14 @@ QMessage::QMessage()
 {
     d_ptr->_modified = false;
     d_ptr->_size = 0;
+    setDerivedMessage(this);
 }
 
 QMessage::QMessage(const QMessageId& id)
     :d_ptr(new QMessagePrivate(this))
 {
     *this = QMessageStore::instance()->message(id);
+    setDerivedMessage(this);
 }
 
 QMessage::QMessage(const QMessage &other)
@@ -69,12 +71,15 @@ QMessage::QMessage(const QMessage &other)
      d_ptr(new QMessagePrivate(this))
 {
     this->operator=(other);
+    setDerivedMessage(this);
 }
 
 const QMessage& QMessage::operator=(const QMessage& other)
 {
-    if (&other != this)
+    if (&other != this) {
         *d_ptr = *other.d_ptr;
+        setDerivedMessage(this);
+    }
 
     return *this;
 }
