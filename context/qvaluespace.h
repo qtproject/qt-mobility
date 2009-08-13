@@ -106,7 +106,7 @@ namespace QValueSpace {
 
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
     void installLayer(LayerCreateFunc func);
-    void installLayer(QAbstractValueSpaceLayer * layer);
+    Q_AUTOTEST_EXPORT void installLayer(QAbstractValueSpaceLayer * layer);
 
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }
