@@ -137,7 +137,7 @@ private:
 Q_GLOBAL_STATIC(RegistryLayer, registryLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(RegistryLayer);
 
-void CALLBACK qRegistryLayerCallback(PVOID lpParameter, BOOLEAN timedOut)
+void CALLBACK qRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
 {
     registryLayer()->emitHandleChanged(reinterpret_cast<HKEY>(lpParameter));
 }
@@ -183,17 +183,13 @@ QString RegistryLayer::name()
     return QLatin1String("Registry Layer");
 }
 
-bool RegistryLayer::startup(Type t)
+bool RegistryLayer::startup(Type)
 {
-    // connect to registry?
-
     return true;
 }
 
 bool RegistryLayer::restart()
 {
-    // reconnect to registry?
-
     return true;
 }
 
@@ -994,16 +990,12 @@ bool RegistryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const
     return true;
 }
 
-void RegistryLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+void RegistryLayer::addWatch(QValueSpaceObject *, Handle)
 {
 }
 
-void RegistryLayer::removeWatches(QValueSpaceObject *creator, Handle handle)
+void RegistryLayer::removeWatches(QValueSpaceObject *, Handle)
 {
-    RegistryHandle *rh = registryHandle(handle);
-
-    qDebug() << Q_FUNC_INFO << "Need to remove all watches created by" << creator
-                            << "and rooted at" << (rh ? rh->path : QByteArray("/"));
 }
 
 bool RegistryLayer::requestSetValue(Handle, const QVariant &)
@@ -1021,7 +1013,7 @@ bool RegistryLayer::requestRemoveValue(Handle, const QByteArray &)
     return false;
 }
 
-bool RegistryLayer::notifyInterest(Handle handle, bool interested)
+bool RegistryLayer::notifyInterest(Handle, bool)
 {
     return false;
 }
