@@ -359,7 +359,7 @@ void QMessageContentContainer::removeContent(const QMessageContentContainerId &i
 {
     if (d_ptr->isMessage()) {
         for (int i = 0; i < d_ptr->_attachments->count(); ++i) {
-            if (d_ptr->_attachments->at(i).id() == id) {
+            if (d_ptr->_attachments->at(i).containerId() == id) {
                 d_ptr->_attachments->removeAt(i);
 
                 // Adjust the identifiers for any trailing attachments
