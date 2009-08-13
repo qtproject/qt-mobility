@@ -62,6 +62,8 @@ symbian {
     INCLUDEPATH += $$MOC_DIR
 }
 
+unix: example|testcase: QMAKE_RPATHDIR += $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+
 contains(QT_CONFIG, multimedia) {
     for(p, QMAKE_INCDIR_QT) {
         exists("$${p}/QtMultimedia/qabstractvideosurface.h"): CONFIG *= videosurface
