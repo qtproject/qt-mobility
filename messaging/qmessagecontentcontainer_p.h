@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
+#include "qmessage.h"
 
 #include <QList>
 #include <QMultiMap>
@@ -48,7 +49,13 @@ public:
     {
     }
 
+    ~QMessageContentContainerPrivate()
+    {
+        delete _attachments;
+    }
+
     QMessageContentContainer *q_ptr;
+    QMessage *_message;
 
     QByteArray _type;
     QByteArray _subType;
@@ -66,14 +73,15 @@ public:
 
     bool isMessage() const
     {
-        return (_attachments != 0);
+        return (_message != 0);
     }
 
     void setDerivedMessage(QMessage *derived)
     {
-        _attachments = new QList<QMessageContentContainer>;
-
-        Q_UNUSED(derived)
+        _message = derived;
+        if (_message) {
+            _attachments = new QList<QMessageContentContainer>;
+        }
     }
 
     void clearContents()
@@ -98,10 +106,14 @@ public:
 
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
-        if (_attachments != 0) {
-            foreach (const QMessageContentContainer &container, *_attachments) {
-                if (container.containerId() == id) {
-                    return const_cast<QMessageContentContainer*>(&container);
+        if (isMessage()) {
+            if (id == _message->body()) {
+                return _message;
+            } else {
+                foreach (const QMessageContentContainer &container, *_attachments) {
+                    if (container.containerId() == id) {
+                        return const_cast<QMessageContentContainer*>(&container);
+                    }
                 }
             }
         }
@@ -111,10 +123,14 @@ public:
 
     const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
     {
-        if (_attachments != 0) {
-            foreach (const QMessageContentContainer &container, *_attachments) {
-                if (container.containerId() == id) {
-                    return &container;
+        if (isMessage()) {
+            if (id == _message->body()) {
+                return _message;
+            } else {
+                foreach (const QMessageContentContainer &container, *_attachments) {
+                    if (container.containerId() == id) {
+                        return &container;
+                    }
                 }
             }
         }

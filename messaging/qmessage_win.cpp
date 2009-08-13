@@ -270,37 +270,22 @@ uint QMessage::size() const
 
 QMessageContentContainerId QMessage::body() const
 {
-    // TODO: Example body finding algorithm.
-    // If the content type of the message is text, then that is the body
-    // otherwise if the first part of the body is text then that is the body.
-    
-    return QMessageContentContainerId(); // stub
+    return QMessageContentContainerId(QString::number(0));
 }
 
 void QMessage::setBody(const QString &body)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id, maybe should add protected setBodyId() and bodyId() methods to the API.
-    d_ptr->_modified = true;
-    Q_UNUSED(body)
+    setContent(body);
 }
 
 void QMessage::setBodyFromFile(const QString &fileName)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id. Will need to use prepend for multipart messages.
-    d_ptr->_modified = true;
-    Q_UNUSED(fileName)
+    setContentFileName(fileName.toAscii());
 }
 
 QMessageContentContainerIdList QMessage::attachments() const
 {
-    //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
-    //    have to recurse into them, somewhat ambiguous.
-    //    Don't recurse, just ignore any body part, see body() for body finding algorithm.
-    
-    // Implementation note, this should be platform independent.
-    return QMessageContentContainerIdList(); // stub
+    return contentIds();
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)

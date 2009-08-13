@@ -35,9 +35,11 @@
 class QMessageContentContainerIdPrivate
 {
 public:
+    enum { Invalid = -1, Body = 0 };
+
     int _number;
 
-    QMessageContentContainerIdPrivate() : _number(-1) {}
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
 };
 
 QMessageContentContainerId::QMessageContentContainerId()
@@ -85,5 +87,5 @@ QString QMessageContentContainerId::toString() const
 
 bool QMessageContentContainerId::isValid() const
 {
-    return (d_ptr->_number != -1);
+    return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
 }
