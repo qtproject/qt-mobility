@@ -70,7 +70,12 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
-        //connect(d->control,SIGNAL(stateChanged(QCamera::State)),this,SLOT(stateChange(int)));
+        connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+        connect(d->control, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+        connect(d->control, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
+        connect(d->control, SIGNAL(zoomValueChanged(double)), this, SIGNAL(zoomValueChanged(double)));
+        connect(d->control, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+        connect(d->control, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     } else {
         d->service = 0;
         d->control = 0;
@@ -639,7 +644,7 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 /*!
     \enum QCamera::State
     \value ActiveState  The camera has been started and can produce data.
-    \value StoppedState The camera has been stopped and is not producing any data.
+    \value StoppedState The camera has been stopped.
 */
 
 /*!
@@ -648,26 +653,26 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
     \value FlashOff             Flash is Off.
     \value FlashOn              Flash is On.
     \value FlashAuto            Automatic flash.
-    \value FlashRedEyeReduction ?
-    \value FlashFill            ?
+    \value FlashRedEyeReduction Red eye reduction flash.
+    \value FlashFill            Use flash to fillin shadows.
 */
 
 /*!
     \enum QCamera::FocusMode
 
-    \value ManualFocus          ?
-    \value AutoFocus            ?
-    \value ContinuousFocus      ?
+    \value ManualFocus          Manual focus mode.
+    \value AutoFocus            One-shot auto focus mode.
+    \value ContinuousFocus      Continuous auto focus mode.
 */
 
 /*!
     \enum QCamera::FocusStatus
 
-    \value FocusDisabled        ?
-    \value FocusRequested       ?
-    \value FocusReached         ?
-    \value FocusLost            ?
-    \value FocusUnableToReach   ?
+    \value FocusDisabled        Manual focus mode used or auto focus is not available.
+    \value FocusRequested       Focus request is in progress.
+    \value FocusReached         Focus has been reached.
+    \value FocusLost            Focus has been lost.
+    \value FocusUnableToReach   Unable to achieve focus.
 */
 
 /*!
@@ -676,46 +681,46 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
     \value ExposureManual        Manual mode.
     \value ExposureAuto          Automatic mode.
     \value ExposureNight         Night mode.
-    \value ExposureBacklight     ?
-    \value ExposureSpotlight     ?
-    \value ExposureSports        ?
-    \value ExposureSnow          ?
-    \value ExposureBeach         ?
-    \value ExposureLargeAperture ?
-    \value ExposureSmallAperture ?
-    \value ExposurePortrait      ?
-    \value ExposureNightPortrait ?
+    \value ExposureBacklight     Backlight exposure mode.
+    \value ExposureSpotlight     Spotlight exposure mode.
+    \value ExposureSports        Spots exposure mode.
+    \value ExposureSnow          Snow exposure mode.
+    \value ExposureBeach         Beach exposure mode.
+    \value ExposureLargeAperture Use larger aperture with small depth of field.
+    \value ExposureSmallAperture Use smaller aperture.
+    \value ExposurePortrait      Portrait exposure mode.
 */
 
 /*!
     \enum QCamera::ExposureStatus
 
-    \value CorrectExposure       ?
-    \value UnderExposure         ?
-    \value OverExposure          ?
+    \value CorrectExposure       The exposure is correct.
+    \value UnderExposure         The photo will be underexposed.
+    \value OverExposure          The photo will be overexposed.
 */
 
 /*!
     \enum QCamera::MeteringMode
 
-    \value MeteringAverage       ?
-    \value MeteringSpot          ?
-    \value MeteringMatrix        ?
+    \value MeteringAverage       Center weighted average metering mode.
+    \value MeteringSpot          Spot metering mode.
+    \value MeteringMatrix        Matrix metering mode.
 */
 
 /*!
     \enum QCamera::WhiteBalanceMode
 
-    \value WhiteBalanceManual       ?
-    \value WhiteBalanceAuto         ?
-    \value WhiteBalanceSunlight     ?
-    \value WhiteBalanceCloudy       ?
-    \value WhiteBalanceShade        ?
-    \value WhiteBalanceTungsten     ?
-    \value WhiteBalanceFluorescent  ?
-    \value WhiteBalanceIncandescent ?
-    \value WhiteBalanceFlash        ?
-    \value WhiteBalanceSunset       ?
+    \value WhiteBalanceManual       Manual white balance. In this mode the white balance should be set with
+                                    setManualWhiteBalance()
+    \value WhiteBalanceAuto         Auto white balance mode.
+    \value WhiteBalanceSunlight     Sunlight white balance mode.
+    \value WhiteBalanceCloudy       Cloudy white balance mode.
+    \value WhiteBalanceShade        Shade white balance mode.
+    \value WhiteBalanceTungsten     Tungsten white balance mode.
+    \value WhiteBalanceFluorescent  Fluorescent white balance mode.
+    \value WhiteBalanceIncandescent Incandescent white balance mode.
+    \value WhiteBalanceFlash        Flash white balance mode.
+    \value WhiteBalanceSunset       Sunset white balance mode.
 */
 
 /*!

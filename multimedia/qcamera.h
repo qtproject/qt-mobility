@@ -35,10 +35,9 @@
 #ifndef QCAMERA_H
 #define QCAMERA_H
 
-#include <QList>
-#include <QPair>
-#include <QSize>
-#include <QStringList>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qpair.h>
+#include <QtCore/qsize.h>
 
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
@@ -96,8 +95,7 @@ public:
         ExposureBeach  = 0x80,
         ExposureLargeAperture = 0x100,
         ExposureSmallAperture = 0x200,
-        ExposurePortrait = 0x400,
-        ExposureNightPortrait = 0x800
+        ExposurePortrait = 0x400
     };
     Q_DECLARE_FLAGS(ExposureModes, ExposureMode)
 
