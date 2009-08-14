@@ -74,6 +74,7 @@ public:
         updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
         updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
 
+        QContactManagerEngine::startRequest(req);
         return true;
     }
 
@@ -82,6 +83,7 @@ public:
         QContactManager::Error errorResult = QContactManager::NoError;
         QList<QContactManager::Error> errorsResult;
         updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Cancelled, false);
+        QContactManagerEngine::cancelRequest(req);
         return true;
     }
 };
