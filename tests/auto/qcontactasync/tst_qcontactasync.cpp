@@ -66,6 +66,8 @@ private slots:
     void definitionRemove();
     void definitionSave();
 
+    void maliciousManager();
+
 private:
     bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
     bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
@@ -1526,6 +1528,26 @@ QContactManager* tst_QContactAsync::prepareModel()
     return cm;
 }
 
+
+void tst_QContactAsync::maliciousManager()
+{
+    // use the invalid manager: passes all requests through to base class
+    QContactManager cm("invalid");
+    QContactFilter fil; // matches everything
+    QContactFetchRequest cfr;
+    cfr.setFilter(fil);
+    cfr.setManager(&cm);
+
+    QVERIFY(!cfr.start()); // invalid engine cannot handle async
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+    QVERIFY(!cfr.start());
+    QVERIFY(!cfr.waitForProgress());
+
+    // now use a malicious manager that deliberately calls
+    // incorrect "updateRequest" functions in base class:
+    //TODO
+}
 
 QTEST_MAIN(tst_QContactAsync)
 #include "tst_qcontactasync.moc"
