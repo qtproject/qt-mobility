@@ -45,9 +45,9 @@
  * difficult!
  */
 
-Q_DECLARE_METATYPE(QVariant);
-Q_DECLARE_METATYPE(QContactManager*);
-Q_DECLARE_METATYPE(QList<QUniqueId>);
+Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QContactManager*)
+Q_DECLARE_METATYPE(QList<QUniqueId>)
 
 class tst_QContactManagerFiltering : public QObject
 {
@@ -107,8 +107,6 @@ private slots:
     void invalidFiltering();
     void allFiltering();
 };
-
-Q_DECLARE_METATYPE(QVariant);
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 {
@@ -2621,8 +2619,8 @@ public:
 };
 
 /* Statically import it (and a duplicate copy of it, purely for testing purposes) */
-Q_EXPORT_PLUGIN2(contacts_testFilterActionFactory, FilterActionFactory);
-Q_IMPORT_PLUGIN(contacts_testFilterActionFactory);
+Q_EXPORT_PLUGIN2(contacts_testFilterActionFactory, FilterActionFactory)
+Q_IMPORT_PLUGIN(contacts_testFilterActionFactory)
 
 QTEST_MAIN(tst_QContactManagerFiltering)
 #include "tst_qcontactmanagerfiltering.moc"

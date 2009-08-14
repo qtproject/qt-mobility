@@ -38,6 +38,17 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+// to get QFETCH to work with the template expression...
+typedef QMap<QString,QString> tst_QContactManager_QStringMap;
+Q_DECLARE_METATYPE(tst_QContactManager_QStringMap)
+Q_DECLARE_METATYPE(QList<QUniqueId>)
+
+/* A class that no backend can support */
+class UnsupportedMetatype {
+    int foo;
+};
+Q_DECLARE_METATYPE(UnsupportedMetatype)
+
 class tst_QContactManager : public QObject
 {
 Q_OBJECT
@@ -94,12 +105,6 @@ private slots:
     void displayName_data() {addManagers();}
 };
 
-/* A class that no backend can support */
-class UnsupportedMetatype {
-    int foo;
-};
-Q_DECLARE_METATYPE(UnsupportedMetatype);
-
 tst_QContactManager::tst_QContactManager()
 {
 }
@@ -118,11 +123,6 @@ void tst_QContactManager::init()
 void tst_QContactManager::cleanup()
 {
 }
-
-// to get QFETCH to work with the template expression...
-typedef QMap<QString,QString> tst_QContactManager_QStringMap;
-Q_DECLARE_METATYPE(tst_QContactManager_QStringMap);
-Q_DECLARE_METATYPE(QList<QUniqueId>);
 
 void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QContact& cb)
 {

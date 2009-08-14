@@ -76,12 +76,12 @@ QContactManagerEngine* DummyStaticEngineFactory::engine(const QMap<QString, QStr
     return 0; // always fail, haha
 }
 
-Q_EXPORT_PLUGIN2(contacts_teststaticdummy, DummyStaticEngineFactory);
-Q_IMPORT_PLUGIN(contacts_teststaticdummy);
+Q_EXPORT_PLUGIN2(contacts_teststaticdummy, DummyStaticEngineFactory)
+Q_IMPORT_PLUGIN(contacts_teststaticdummy)
 
 /* And a copy */
-Q_EXPORT_PLUGIN2(contacts_teststaticdummycopy, DummyStaticEngineFactory);
-Q_IMPORT_PLUGIN(contacts_teststaticdummycopy);
+Q_EXPORT_PLUGIN2(contacts_teststaticdummycopy, DummyStaticEngineFactory)
+Q_IMPORT_PLUGIN(contacts_teststaticdummycopy)
 
 /* And test an impostor as well */
 class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactory
@@ -93,8 +93,8 @@ class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactor
         QString managerName() const {return "memory";}
 };
 
-Q_EXPORT_PLUGIN2(contacts_testimpostordummy, ImpostorEngineFactory);
-Q_IMPORT_PLUGIN(contacts_testimpostordummy);
+Q_EXPORT_PLUGIN2(contacts_testimpostordummy, ImpostorEngineFactory)
+Q_IMPORT_PLUGIN(contacts_testimpostordummy)
 
 /* And test another impostor as well */
 class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFactory
@@ -107,8 +107,8 @@ class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFacto
 };
 
 
-Q_EXPORT_PLUGIN2(contacts_testimpostordummy2, ImpostorEngineFactory2);
-Q_IMPORT_PLUGIN(contacts_testimpostordummy2);
+Q_EXPORT_PLUGIN2(contacts_testimpostordummy2, ImpostorEngineFactory2)
+Q_IMPORT_PLUGIN(contacts_testimpostordummy2)
 
 /* An empty interface name */
 class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
@@ -120,8 +120,8 @@ class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
         QString managerName() const {return QString();}
 };
 
-Q_EXPORT_PLUGIN2(contacts_teststaticemptydummy, EmptyEngineFactory);
-Q_IMPORT_PLUGIN(contacts_teststaticemptydummy);
+Q_EXPORT_PLUGIN2(contacts_teststaticemptydummy, EmptyEngineFactory)
+Q_IMPORT_PLUGIN(contacts_teststaticemptydummy)
 
 /* And a different interface one too */
 
@@ -132,7 +132,7 @@ class BoringInterface
 
 };
 
-Q_DECLARE_INTERFACE(BoringInterface, "REALLYBORING!");
+Q_DECLARE_INTERFACE(BoringInterface, "REALLYBORING!")
 
 class BoringFactory : public QObject, public BoringInterface
 {
@@ -140,8 +140,8 @@ class BoringFactory : public QObject, public BoringInterface
     Q_INTERFACES(BoringInterface)
 };
 
-Q_EXPORT_PLUGIN2(contacts_testboring, BoringFactory);
-Q_IMPORT_PLUGIN(contacts_testboring);
+Q_EXPORT_PLUGIN2(contacts_testboring, BoringFactory)
+Q_IMPORT_PLUGIN(contacts_testboring)
 
 
 tst_QContactManagerPlugins::tst_QContactManagerPlugins()
