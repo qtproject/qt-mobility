@@ -62,7 +62,7 @@ signals:
 private:
     Q_DISABLE_COPY(QContactGroupFetchRequest)
     friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE(QContactGroupFetchRequest)
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactGroupFetchRequest)
 };
 
 #endif
