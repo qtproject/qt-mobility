@@ -59,7 +59,7 @@ signals:
 private:
     Q_DISABLE_COPY(QContactRemoveRequest)
     friend class QContactManagerEngine;
-    Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactRemoveRequest)
+    Q_DECLARE_PRIVATE(QContactRemoveRequest)
 };
 
 #endif

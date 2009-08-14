@@ -51,10 +51,6 @@
 #include <QList>
 #include <QPointer>
 
-#define Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(Class) \
-    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr); } \
-    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr); } \
-
 class QContactAbstractRequestPrivate
 {
 public:

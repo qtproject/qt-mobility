@@ -57,8 +57,6 @@ QContactGroupRemoveRequest::~QContactGroupRemoveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactGroupRemoveRequest)
-
 /*! Sets the list of ids of the groups which will be removed by this request to \a ids */
 void QContactGroupRemoveRequest::setIds(const QList<QUniqueId>& ids)
 {

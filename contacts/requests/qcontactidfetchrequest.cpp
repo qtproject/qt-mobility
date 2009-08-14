@@ -58,8 +58,6 @@ QContactIdFetchRequest::~QContactIdFetchRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactIdFetchRequest)
-
 /*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
 void QContactIdFetchRequest::setFilter(const QContactFilter& filter)
 {

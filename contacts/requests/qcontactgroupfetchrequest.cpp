@@ -58,8 +58,6 @@ QContactGroupFetchRequest::~QContactGroupFetchRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactGroupFetchRequest)
-
 /*! Sets the list of ids of the groups which will be retrieved to \a ids */
 void QContactGroupFetchRequest::setIds(const QList<QUniqueId>& ids)
 {

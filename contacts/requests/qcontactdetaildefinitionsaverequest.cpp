@@ -57,8 +57,6 @@ QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionSaveRequest)
-
 /*! Sets the definitions to save to be \a definitions */
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {

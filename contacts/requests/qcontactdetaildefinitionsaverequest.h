@@ -62,7 +62,7 @@ signals:
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionSaveRequest)
     friend class QContactManagerEngine;
-    Q_DECLARE_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionSaveRequest)
+    Q_DECLARE_PRIVATE(QContactDetailDefinitionSaveRequest)
 };
 
 #endif

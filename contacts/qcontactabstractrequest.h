@@ -37,10 +37,6 @@
 #include "qcontactmanager.h"
 #include <QObject>
 
-#define Q_DECLARE_CONTACTREQUEST_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const;
-
 class QContactManagerEngine;
 class QContactAbstractRequestPrivate;
 class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject

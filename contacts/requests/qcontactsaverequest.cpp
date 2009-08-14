@@ -57,8 +57,6 @@ QContactSaveRequest::~QContactSaveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactSaveRequest)
-
 /*! Sets the list of contacts to be saved to \a contacts */
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
