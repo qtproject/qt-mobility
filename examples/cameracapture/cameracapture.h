@@ -43,7 +43,7 @@ namespace Ui {
 
 class QMediaRecorder;
 class QCamera;
-class QAudioDeviceEndpoint;
+class QAudioInputDeviceControl;
 class QAudioEncodeControl;
 class QVideoEncodeControl;
 class QMediaFormatControl;
@@ -80,7 +80,7 @@ private:
 
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
-    QAudioDeviceEndpoint *audioDevice;
+    QAudioInputDeviceControl *audioDevice;
     QAudioEncodeControl *audioEncodeControl;
     QVideoEncodeControl *videoEncodeControl;
     QMediaFormatControl *formatControl;

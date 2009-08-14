@@ -37,7 +37,7 @@
 
 #include <qabstractmediaservice.h>
 #include <qmediarecorder.h>
-#include <qaudiodeviceendpoint.h>
+#include <qaudioinputdevicecontrol.h>
 #include <qmediawidgetendpoint.h>
 #include <qaudioencodecontrol.h>
 #include <qvideoencodecontrol.h>
@@ -74,14 +74,12 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
     mediaRecorder->setSink(QMediaSink(QUrl("test.mkv")));
     if(mediaRecorder->service())
-        audioDevice = mediaRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
+        audioDevice = mediaRecorder->service()->control<QAudioInputDeviceControl*>();
 
     connect(mediaRecorder, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
     if (audioDevice) {
-        mediaRecorder->service()->setAudioInput(audioDevice);
-        audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
         for (int i=0; i<audioDevice->deviceCount(); i++) {
              ui->audioInputDeviceBox->addItem(audioDevice->description(i));
         }
