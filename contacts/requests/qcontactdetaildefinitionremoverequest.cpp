@@ -57,7 +57,7 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailDefinitionRemoveRequest)
+Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionRemoveRequest)
 
 /*! Sets the names of the detail definitions to remove from the manager to be \a names */
 void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)

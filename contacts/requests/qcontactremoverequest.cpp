@@ -57,7 +57,7 @@ QContactRemoveRequest::~QContactRemoveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRemoveRequest)
+Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactRemoveRequest)
 
 /*! Sets the filter which will be used to select the contacts to remove to \a filter */
 void QContactRemoveRequest::setFilter(const QContactFilter& filter)

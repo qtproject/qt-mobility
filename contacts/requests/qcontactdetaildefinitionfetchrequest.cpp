@@ -58,7 +58,7 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailDefinitionFetchRequest)
+Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactDetailDefinitionFetchRequest)
 
 /*! Sets the names of the detail definitions to retrieve to \a names */
 void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)

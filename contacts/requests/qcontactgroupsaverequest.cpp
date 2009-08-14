@@ -57,7 +57,7 @@ QContactGroupSaveRequest::~QContactGroupSaveRequest()
 {
 }
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupSaveRequest)
+Q_IMPLEMENT_CONTACTREQUEST_PRIVATE(QContactGroupSaveRequest)
 
 /*! Sets the groups which will be saved by this request to \a groups */
 void QContactGroupSaveRequest::setGroups(const QList<QContactGroup>& groups)
