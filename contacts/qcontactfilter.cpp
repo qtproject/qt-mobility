@@ -68,10 +68,12 @@
  * \sa operator==()
  */
 
+#if !defined(Q_CC_MWC)
 template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
 {
     return d->clone();
 }
+#endif
 
 /*! Constructs an empty filter */
 QContactFilter::QContactFilter()

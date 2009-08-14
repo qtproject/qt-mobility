@@ -80,6 +80,16 @@ public:
     static const QSharedDataPointer<QContactFilterPrivate>& extract_d(const QContactFilter& other) {return other.d_ptr;}
 };
 
+#if defined(Q_CC_MWC)
+// This results in multiple symbol definition errors on all other compilers
+// but not having a definition here results in an attempt to use the unspecialized
+// clone (which fails because of the pure virtuals above)
+template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+{
+    return d->clone();
+}
+#else
 template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone();
+#endif
 
 #endif
