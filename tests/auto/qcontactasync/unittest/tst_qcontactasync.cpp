@@ -1560,9 +1560,11 @@ void tst_QContactAsync::maliciousManager()
     cfr.setManager(&mcm);
     QVERIFY(cfr.start());
     QVERIFY(cfr.cancel());
+    QVERIFY(!cfr.waitForProgress(100));
     QVERIFY(!cfr.waitForFinished(100));
     QVERIFY(cfr.start());
     QVERIFY(!cfr.waitForProgress(100));
+    QVERIFY(!cfr.waitForFinished(100));
     QVERIFY(cfr.cancel());
 
     QContactIdFetchRequest cifr;
@@ -1570,9 +1572,11 @@ void tst_QContactAsync::maliciousManager()
     cifr.setManager(&mcm);
     QVERIFY(cifr.start());
     QVERIFY(cifr.cancel());
+    QVERIFY(!cifr.waitForProgress(100));
     QVERIFY(!cifr.waitForFinished(100));
     QVERIFY(cifr.start());
     QVERIFY(!cifr.waitForProgress(100));
+    QVERIFY(!cifr.waitForFinished(100));
     QVERIFY(cifr.cancel());
 
     QContactRemoveRequest crr;
@@ -1580,9 +1584,11 @@ void tst_QContactAsync::maliciousManager()
     crr.setManager(&mcm);
     QVERIFY(crr.start());
     QVERIFY(crr.cancel());
+    QVERIFY(!crr.waitForProgress(100));
     QVERIFY(!crr.waitForFinished(100));
     QVERIFY(crr.start());
     QVERIFY(!crr.waitForProgress(100));
+    QVERIFY(!crr.waitForFinished(100));
     QVERIFY(crr.cancel());
 
     QContactSaveRequest csr;
@@ -1590,9 +1596,11 @@ void tst_QContactAsync::maliciousManager()
     csr.setManager(&mcm);
     QVERIFY(csr.start());
     QVERIFY(csr.cancel());
+    QVERIFY(!csr.waitForProgress(100));
     QVERIFY(!csr.waitForFinished(100));
     QVERIFY(csr.start());
     QVERIFY(!csr.waitForProgress(100));
+    QVERIFY(!csr.waitForFinished(100));
     QVERIFY(csr.cancel());
 
     QContactGroupFetchRequest gfr;
@@ -1600,9 +1608,11 @@ void tst_QContactAsync::maliciousManager()
     gfr.setManager(&mcm);
     QVERIFY(gfr.start());
     QVERIFY(gfr.cancel());
+    QVERIFY(!gfr.waitForProgress(100));
     QVERIFY(!gfr.waitForFinished(100));
     QVERIFY(gfr.start());
     QVERIFY(!gfr.waitForProgress(100));
+    QVERIFY(!gfr.waitForFinished(100));
     QVERIFY(gfr.cancel());
 
     QContactGroupSaveRequest gsr;
@@ -1610,9 +1620,11 @@ void tst_QContactAsync::maliciousManager()
     gsr.setManager(&mcm);
     QVERIFY(gsr.start());
     QVERIFY(gsr.cancel());
+    QVERIFY(!gsr.waitForProgress(100));
     QVERIFY(!gsr.waitForFinished(100));
     QVERIFY(gsr.start());
     QVERIFY(!gsr.waitForProgress(100));
+    QVERIFY(!gsr.waitForFinished(100));
     QVERIFY(gsr.cancel());
 
     QContactGroupRemoveRequest grr;
@@ -1620,9 +1632,11 @@ void tst_QContactAsync::maliciousManager()
     grr.setManager(&mcm);
     QVERIFY(grr.start());
     QVERIFY(grr.cancel());
+    QVERIFY(!grr.waitForProgress(100));
     QVERIFY(!grr.waitForFinished(100));
     QVERIFY(grr.start());
     QVERIFY(!grr.waitForProgress(100));
+    QVERIFY(!grr.waitForFinished(100));
     QVERIFY(grr.cancel());
 
     QContactDetailDefinitionFetchRequest dfr;
@@ -1630,9 +1644,11 @@ void tst_QContactAsync::maliciousManager()
     dfr.setManager(&mcm);
     QVERIFY(dfr.start());
     QVERIFY(dfr.cancel());
+    QVERIFY(!dfr.waitForProgress(100));
     QVERIFY(!dfr.waitForFinished(100));
     QVERIFY(dfr.start());
     QVERIFY(!dfr.waitForProgress(100));
+    QVERIFY(!dfr.waitForFinished(100));
     QVERIFY(dfr.cancel());
 
     QContactDetailDefinitionSaveRequest dsr;
@@ -1640,9 +1656,11 @@ void tst_QContactAsync::maliciousManager()
     dsr.setManager(&mcm);
     QVERIFY(dsr.start());
     QVERIFY(dsr.cancel());
+    QVERIFY(!dsr.waitForProgress(100));
     QVERIFY(!dsr.waitForFinished(100));
     QVERIFY(dsr.start());
     QVERIFY(!dsr.waitForProgress(100));
+    QVERIFY(!dsr.waitForFinished(100));
     QVERIFY(dsr.cancel());
 
     QContactDetailDefinitionRemoveRequest drr;
@@ -1650,9 +1668,11 @@ void tst_QContactAsync::maliciousManager()
     drr.setManager(&mcm);
     QVERIFY(drr.start());
     QVERIFY(drr.cancel());
+    QVERIFY(!drr.waitForProgress(100));
     QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.start());
     QVERIFY(!drr.waitForProgress(100));
+    QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.cancel());
 }
 
