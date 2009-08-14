@@ -79,6 +79,6 @@ public:
 #endif
     bool _modified;
 #if defined(Q_OS_WIN)
-    static QMessage from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject, const QDateTime &dt);
+    static QMessage from(const QMessageId &id);
 #endif
 };

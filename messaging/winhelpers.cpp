@@ -598,6 +598,70 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     return result;
 }
 
+namespace {
+
+QDateTime fromFileTime(const FILETIME &ft)
+{
+    SYSTEMTIME st = {0};
+    FileTimeToSystemTime(&ft, &st);
+    QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds)); 
+    return QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z");
+}
+
+typedef QPair<QString, QString> StringPair;
+
+QList<StringPair> decomposeHeaders(const QString &headers)
+{
+    QList<StringPair> result;
+
+    if (!headers.isEmpty()) {
+        int lastIndex = 0;
+        int index = 0;
+
+        do {
+            lastIndex = index;
+
+            // Find CRLF not followed by whitespace
+            QRegExp lineSeparator("\r\n(?!\\s)");
+            index = headers.indexOf(lineSeparator, lastIndex);
+
+            QString line = headers.mid(lastIndex, (index == -1 ? -1 : (index - lastIndex)));
+            index += 2;
+
+            // Split the current line
+            QRegExp headerIdentifier("\\s*(\\w+)\\s*:");
+            if (line.indexOf(headerIdentifier) == 0) {
+                result.append(qMakePair(headerIdentifier.cap(1), line.mid(headerIdentifier.cap(0).length()).trimmed()));
+            } else {
+                // Assume the whole line is an identifier
+                result.append(qMakePair(line, QString()));
+            }
+        } while (index != -1);
+    }
+
+    return result;
+}
+
+QMessageAddress createAddress(const QString &name, const QString &address)
+{
+    QMessageAddress result;
+
+    if (!name.isEmpty() || !address.isEmpty()) {
+        QString from;
+        if (!name.isEmpty() && !address.isEmpty()) {
+            from = name + " <" + address + ">";
+        } else {
+            from = (!name.isEmpty() ? name : address);
+        }
+            
+        result = QMessageAddress(from, QMessageAddress::Email);
+    }
+
+    return result;
+}
+
+}
+
 QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
 {
     QMessage result;
@@ -631,35 +695,121 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         newId = QMessageIdPrivate::from(messageRecordKey, folderRecordKey, storeRecordKey, entryId);
     }
 
-    const int nCols(3);
-    enum { recordKeyColumn = 0, flagsColumn, subjectColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SUBJECT }};
+    result = QMessagePrivate::from(newId);
+
+    SizedSPropTagArray( 8, msgCols) = { 8, { PR_RECORD_KEY, 
+                                             PR_MESSAGE_FLAGS, 
+                                             PR_SENDER_NAME, 
+                                             PR_SENDER_EMAIL_ADDRESS, 
+                                             PR_CLIENT_SUBMIT_TIME, 
+                                             PR_MESSAGE_DELIVERY_TIME, 
+                                             PR_TRANSPORT_MESSAGE_HEADERS, 
+                                             PR_SUBJECT }};
     ULONG count;
     LPSPropValue properties;
-    if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-        QString sender;
-        QDateTime deliveryTime;
-        QString subject(QStringFromLpctstr(properties[subjectColumn].Value.LPSZ));
-        QMessage::StatusFlags status;
-        if (properties[flagsColumn].Value.ul & MSGFLAG_READ)
-            status |= QMessage::Read;
+    HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&msgCols), MAPI_UNICODE, &count, &properties);
+    if (HR_SUCCEEDED(rv)) {
+        QString senderName;
+        QString senderAddress;
+        QMessage::StatusFlags flags(0);
 
-        const int nCols(2);
-        enum { senderColumn = 0, deliveryColumn };
-        SizedSPropTagArray(nCols, columns) = {nCols, {PR_SENDER_NAME, PR_MESSAGE_DELIVERY_TIME }};
-        if (message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-            sender = QStringFromLpctstr(properties[senderColumn].Value.LPSZ);
-            SYSTEMTIME st = {0};
-            FileTimeToSystemTime(&properties[deliveryColumn].Value.ft, &st);
-            QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds)); 
-            deliveryTime = QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z");
+        for (ULONG n = 0; n < count; ++n) {
+            switch (properties[n].ulPropTag) {
+            case PR_MESSAGE_FLAGS:
+                if (properties[n].Value.ul & MSGFLAG_READ) {
+                    flags |= QMessage::Read;
+                }
+                result.setStatus(flags);
+                break;
+            case PR_SENDER_NAME:
+                senderName = QStringFromLpctstr(properties[n].Value.LPSZ);
+                break;
+            case PR_SENDER_EMAIL_ADDRESS:
+                senderAddress = QStringFromLpctstr(properties[n].Value.LPSZ);
+                break;
+            case PR_CLIENT_SUBMIT_TIME:
+                result.setDate(fromFileTime(properties[n].Value.ft));
+                break;
+            case PR_MESSAGE_DELIVERY_TIME:
+                result.setReceivedDate(fromFileTime(properties[n].Value.ft));
+                break;
+            case PR_TRANSPORT_MESSAGE_HEADERS:
+                foreach (const StringPair &pair, decomposeHeaders(QStringFromLpctstr(properties[n].Value.LPSZ))) {
+                    result.appendHeaderField(pair.first.toAscii(), pair.second);
+                }
+                break;
+            case PR_SUBJECT:
+                result.setSubject(QStringFromLpctstr(properties[n].Value.LPSZ));
+                break;
+            default:
+                break;
+            }
         }
 
-        QMessageAddress from(sender, QMessageAddress::Email);
-        result = QMessagePrivate::from(newId, status, from, subject, deliveryTime);
+        if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
+            result.setFrom(createAddress(senderName, senderAddress));
+        }
     } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
+
+    // Extract the recipients for the message
+    IMAPITable *recipientsTable(0);
+    rv = message->GetRecipientTable(0, &recipientsTable);
+    if (HR_SUCCEEDED(rv)) {
+        SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
+        LPSRowSet rows(0);
+
+        rv = HrQueryAllRows(recipientsTable, (SPropTagArray*)&rcpCols, NULL, NULL, 0, &rows);
+        if (HR_SUCCEEDED(rv)) {
+            QMessageAddressList to;
+            QMessageAddressList cc;
+            QMessageAddressList bcc;
+
+            for (uint n = 0; n < rows->cRows; ++n) {
+                QMessageAddressList *list = 0;
+                switch (rows->aRow[n].lpProps[2].Value.l) {
+                case MAPI_TO:
+                    list = &to;
+                    break;
+                case MAPI_CC:
+                    list = &cc;
+                    break;
+                case MAPI_BCC:
+                    list = &bcc;
+                    break;
+                default:
+                    break;
+                }
+
+                if (list) {
+                    QString name(QStringFromLpctstr(rows->aRow[n].lpProps[0].Value.LPSZ));
+                    QString address(QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ));
+
+                    list->append(createAddress(name, address));
+                }
+            }
+
+            if (!to.isEmpty()) {
+                result.setTo(to);
+            }
+            if (!cc.isEmpty()) {
+                result.setCc(cc);
+            }
+            if (!bcc.isEmpty()) {
+                result.setBcc(bcc);
+            }
+
+            FreeProws(rows);
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
+
+        recipientsTable->Release();
+    } else {
+        *lastError = QMessageStore::ContentInaccessible;
+    }
+
     message->Release();
     return result;
 }

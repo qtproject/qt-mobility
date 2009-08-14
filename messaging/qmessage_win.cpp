@@ -42,14 +42,10 @@
 //TODO: be appropriate for many messages (as it may exhaust system resources
 //TODO: and crash the OS).
 
-QMessage QMessagePrivate::from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject, const QDateTime &dt)
+QMessage QMessagePrivate::from(const QMessageId &id)
 {
     QMessage result;
     result.d_ptr->_id = id;
-    result.d_ptr->_status = status;
-    result.d_ptr->_from = from;
-    result.d_ptr->_subject = subject;
-    result.d_ptr->_receivedDate = dt;
     result.d_ptr->_parentAccountId = QMessageAccountIdPrivate::from(QMessageIdPrivate::storeRecordKey(id));
     return result;
 }
