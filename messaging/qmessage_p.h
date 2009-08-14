@@ -31,6 +31,9 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
+#include "qmessageaddress.h"
+
+#include <QMap>
 
 class QMessagePrivate
 {
@@ -38,13 +41,21 @@ class QMessagePrivate
 
 public:
     QMessagePrivate(QMessage *message)
-        :q_ptr(message)
+        :q_ptr(message),
+         _size(0),
+         _type(QMessage::None),
+         _status(0),
+         _priority(QMessage::Normal),
+#ifdef QMESSAGING_OPTIONAL
+         _originatorPort(0),
+         _destinationPort(0),
+#endif
+         _modified(false)
     {
     }
 
     QMessage *q_ptr;
 
-    bool _modified;
     QMessageId _id;
     uint _size;
     QMessageAccountId _parentAccountId;
@@ -53,9 +64,20 @@ public:
 #endif
     QMessage::Type _type;
     QMessageAddress _from;
+    QMessageAddressList _to;
+    QMessageAddressList _cc;
+    QMessageAddressList _bcc;
     QMessage::StatusFlags _status;
+    QMessage::Priority _priority;
     QString _subject;
+    QDateTime _date;
     QDateTime _receivedDate;
+#ifdef QMESSAGING_OPTIONAL
+    uint _originatorPort;
+    uint _destinationPort;
+    QMap<QString, QString> _customFields;
+#endif
+    bool _modified;
 #if defined(Q_OS_WIN)
     static QMessage from(const QMessageId &id, const QMessage::StatusFlags &status, const QMessageAddress &from, const QString &subject, const QDateTime &dt);
 #endif

@@ -185,13 +185,13 @@ void QMessage::setSubject(const QString &s)
 
 QDateTime QMessage::date() const
 {
-    return QDateTime(); // stub
+    return d_ptr->_date;
 }
 
 void QMessage::setDate(const QDateTime &d)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(d)
+    d_ptr->_date = d;
 }
 
 QDateTime QMessage::receivedDate() const
@@ -207,41 +207,41 @@ void QMessage::setReceivedDate(const QDateTime &d)
 
 QMessageAddressList QMessage::to() const
 {
-    return QMessageAddressList(); // stub
+    return d_ptr->_to;
 }
 
 void QMessage::setTo(const QMessageAddressList& toList)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(toList)
+    d_ptr->_to = toList;
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(address)
+    d_ptr->_to = QMessageAddressList() << address;
 }
 
 QMessageAddressList QMessage::cc() const
 {
-    return QMessageAddressList(); // stub
+    return d_ptr->_cc;
 }
 
 void QMessage::setCc(const QMessageAddressList& ccList)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(ccList)
+    d_ptr->_cc = ccList;
 }
 
 QMessageAddressList QMessage::bcc() const
 {
-    return QMessageAddressList(); // stub
+    return d_ptr->_bcc;
 }
 
 void QMessage::setBcc(const QMessageAddressList& bccList)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(bccList)
+    d_ptr->_bcc = bccList;
 }
 
 QMessage::StatusFlags QMessage::status() const
@@ -257,13 +257,13 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
 
 QMessage::Priority QMessage::priority() const
 {
-    return QMessage::Normal; // stub
+    return d_ptr->_priority;
 }
 
 void QMessage::setPriority(Priority newPriority)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(newPriority)
+    d_ptr->_priority = newPriority;
 }
 
 uint QMessage::size() const
@@ -315,41 +315,39 @@ void QMessage::clearAttachments()
 void QMessage::setOriginatorPort(uint port)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(port)
+    d_ptr->_originatorPort = port;
 }
 
 uint QMessage::originatorPort()
 {
-    return 0; // stub
+    return d_ptr->_originatorPort;
 }
 
 void QMessage::setDestinationPort(uint port)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(port)
+    d_ptr->_destinationPort = port;
 }
 
 uint QMessage::destinationPort()
 {
-    return 0; // stub
+    return d_ptr->_destinationPort;
 }
 
 QString QMessage::customField(const QString &name) const
 {
-    Q_UNUSED(name);
-    return QString(); // stub
+    return d_ptr->_customFields[name];
 }
 
 void QMessage::setCustomField(const QString &name, const QString &value)
 {
     d_ptr->_modified = true;
-    Q_UNUSED(name);
-    Q_UNUSED(value);
+    d_ptr->_customFields[name] = value;
 }
 
 QList<QString> QMessage::customFields() const
 {
-    return QList<QString>(); // stub
+    return d_ptr->_customFields.keys();
 }
 #endif
 
