@@ -1,4 +1,4 @@
-TARGET = tst_qmallocpool
+TARGET = tst_qvaluespace
 INCLUDEPATH += ../../../context
 
 CONFIG+=testcase
