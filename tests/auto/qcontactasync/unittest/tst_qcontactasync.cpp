@@ -1528,17 +1528,20 @@ QContactManager* tst_QContactAsync::prepareModel()
     return cm;
 }
 
-
 void tst_QContactAsync::maliciousManager()
 {
+    /* Add a path to our plugin path */
+    QString path = QApplication::applicationDirPath() + "/maliciousplugin";
+    QApplication::addLibraryPath(path);
+    QApplication::addLibraryPath("/"); // strictly to test a cdUp :/
+
     // use the invalid manager: passes all requests through to base class
     QContactManager cm("invalid");
     QContactFilter fil; // matches everything
     QContactFetchRequest cfr;
     cfr.setFilter(fil);
     cfr.setManager(&cm);
-
-    QVERIFY(!cfr.start()); // invalid engine cannot handle async
+    QVERIFY(!cfr.start());
     QVERIFY(!cfr.cancel());
     QVERIFY(!cfr.waitForFinished());
     QVERIFY(!cfr.start());
@@ -1546,7 +1549,15 @@ void tst_QContactAsync::maliciousManager()
 
     // now use a malicious manager that deliberately calls
     // incorrect "updateRequest" functions in base class:
-    //TODO
+    QContactManager mcm("maliciousplugin");
+    cfr.setFilter(fil);
+    cfr.setManager(&mcm);
+    QVERIFY(cfr.start());
+    QVERIFY(cfr.cancel());
+    QVERIFY(!cfr.waitForFinished(100));
+    QVERIFY(cfr.start());
+    QVERIFY(!cfr.waitForProgress(100));
+    QVERIFY(cfr.cancel());
 }
 
 QTEST_MAIN(tst_QContactAsync)
