@@ -68,6 +68,11 @@
  * \sa operator==()
  */
 
+template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+{
+    return d->clone();
+}
+
 /*! Constructs an empty filter */
 QContactFilter::QContactFilter()
     : d_ptr(0)

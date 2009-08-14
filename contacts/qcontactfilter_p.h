@@ -83,6 +83,6 @@ public:
     static const QSharedDataPointer<QContactFilterPrivate>& extract_d(const QContactFilter& other) {return other.d_ptr;}
 };
 
-template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone(){ return d->clone();}
+template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone();
 
 #endif
