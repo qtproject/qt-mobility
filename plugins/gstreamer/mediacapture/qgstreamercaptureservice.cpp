@@ -11,6 +11,7 @@
 #include "qgstreamercameracontrol.h"
 
 #include "qgstreamervideooutputcontrol.h"
+#include "qgstreameraudioinputdevicecontrol.h"
 
 #include "qgstreamervideowidget.h"
 #include "qgstreamervideooverlay.h"
@@ -108,6 +109,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
             << QVideoOutputControl::RendererOutput
             << QVideoOutputControl::WindowOutput);
 #endif
+
+    m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
+    connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
@@ -201,6 +205,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name, QVideoWindowControl_iid) == 0)
         return m_videoWindow;
 #endif
+
+    if (qstrcmp(name,QAudioInputDeviceControl_iid) == 0)
+        return m_audioInputDevice;
 
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_captureSession->recorderControl();

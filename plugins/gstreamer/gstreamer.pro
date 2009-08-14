@@ -33,6 +33,7 @@ HEADERS += \
     qgstreamervideowidget.h \
     qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
+    qgstreameraudioinputdevicecontrol.h \
     qgstaudiodeviceendpoint.h
 
 SOURCES += \
@@ -42,6 +43,7 @@ SOURCES += \
     qgstreamervideowidget.cpp \
     qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \
+    qgstreameraudioinputdevicecontrol.cpp \
     qgstaudiodeviceendpoint.cpp
 
 videosurface {

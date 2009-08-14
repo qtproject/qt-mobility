@@ -8,6 +8,7 @@
 
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
+class QAudioInputDeviceControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
@@ -42,6 +43,8 @@ private:
 
     QGstreamerCaptureSession *m_captureSession;
     QGstreamerCameraControl *m_cameraControl;
+
+    QAudioInputDeviceControl *m_audioInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
 #ifndef QT_NO_VIDEOSURFACE
