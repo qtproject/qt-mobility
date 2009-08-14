@@ -85,42 +85,54 @@ void tst_QMallocPool::testConstructor()
         alloc = pool.malloc(1024);
         QVERIFY(alloc != 0);
         QVERIFY(pool.size_of(alloc) >= 1024);
+        QVERIFY(pool.memoryStatistics().inuseBytes >= 1024);
         pool.free(alloc);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test big malloc
         alloc = pool.malloc(1048548);
         QVERIFY(alloc != 0);
         QVERIFY(pool.size_of(alloc) >= 1048548);
+        QVERIFY(pool.memoryStatistics().inuseBytes >= 1048548);
         pool.free(alloc);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test big malloc + 1, should fail.
         alloc = pool.malloc(1048549);
         QVERIFY(alloc == 0);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test malloc of poolLength, should fail.
         alloc = pool.malloc(poolLength);
         QVERIFY(alloc == 0);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test malloc of poolLength + 1, should fail.
         alloc = pool.malloc(poolLength + 1);
         QVERIFY(alloc == 0);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test calloc
         alloc = pool.calloc(1024, sizeof(char));
         QVERIFY(alloc != 0);
         QVERIFY(pool.size_of(alloc) >= 1024);
+        QVERIFY(pool.memoryStatistics().inuseBytes >= 1024);
         for (int i = 0; i < 1024; ++i)
             QVERIFY(reinterpret_cast<char *>(alloc)[i] == '\0');
         pool.free(alloc);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         // test realloc
         alloc = pool.malloc(1024);
         QVERIFY(alloc != 0);
         QVERIFY(pool.size_of(alloc) >= 1024);
+        QVERIFY(pool.memoryStatistics().inuseBytes >= 1024);
         alloc = pool.realloc(alloc, 2048);
         QVERIFY(alloc != 0);
         QVERIFY(pool.size_of(alloc) >= 2048);
+        QVERIFY(pool.memoryStatistics().inuseBytes >= 2048);
         pool.free(alloc);
+        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
         delete[] poolBase;
     }
