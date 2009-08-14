@@ -49,12 +49,9 @@
 #include <QSharedData>
 
 /* Boiler plate code */
-#define Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(Class) \
+#define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
     const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
-
-#define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
-    Q_IMPLEMENT_BASE_CONTACTFILTER_PRIVATE(Class) \
     Class::Class(const QContactFilter& other) : QContactFilter() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(Class, Type) \
