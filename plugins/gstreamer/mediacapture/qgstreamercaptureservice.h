@@ -2,6 +2,7 @@
 #define QGSTREAMERCAPTURESERVICE_H
 
 #include "qabstractmediaservice.h"
+#include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
 
@@ -9,6 +10,9 @@ class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
+class QGstreamerVideoRenderer;
+class QGstreamerVideoOverlay;
+class QGstreamerElementFactory;
 
 class QGstreamerCaptureService : public QAbstractMediaService
 {
@@ -17,6 +21,7 @@ public:
     QGstreamerCaptureService(const char *interface, QObject *parent = 0);
     virtual ~QGstreamerCaptureService();
 
+#ifdef USE_ENDPOINTS
     QList<QByteArray> supportedEndpointInterfaces(
             QMediaEndpointInterface::Direction direction) const;
 
@@ -24,14 +29,27 @@ public:
     void setVideoOutput(QObject *output);
 
     QObject *createEndpoint(const char *interface);
+#endif
+
 
     QAbstractMediaControl *control(const char *name) const;
+
+private slots:
+    void videoOutputChanged(QVideoOutputControl::Output output);
 
 private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
     QGstreamerCameraControl *m_cameraControl;
+
+    QGstreamerVideoOutputControl *m_videoOutput;
+#ifndef QT_NO_VIDEOSURFACE
+    QGstreamerVideoRenderer *m_videoRenderer;
+    QGstreamerElementFactory *m_videoRendererFactory;
+    QGstreamerVideoOverlay *m_videoWindow;
+    QGstreamerElementFactory *m_videoWindowFactory;
+#endif
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H

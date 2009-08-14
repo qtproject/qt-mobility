@@ -10,6 +10,70 @@
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
 
+#include "qgstreamervideooutputcontrol.h"
+
+#include "qgstreamervideowidget.h"
+#include "qgstreamervideooverlay.h"
+#include "qgstreamervideorenderer.h"
+
+
+class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
+{
+public:
+    QGstreamerVideoRendererWrapper(QGstreamerVideoRendererInterface *videoRenderer)
+        :m_videoRenderer(videoRenderer),
+         m_bin(0),
+         m_element(0),
+         m_colorspace(0)
+    {
+    }
+
+    virtual ~QGstreamerVideoRendererWrapper()
+    {
+        if (m_bin)
+            gst_object_unref(GST_OBJECT(m_bin));
+    }
+
+    GstElement *buildElement()
+    {
+        if (m_bin == NULL) {
+            GstBin * bin = GST_BIN(gst_bin_new(NULL));
+
+            m_colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
+            m_element = m_videoRenderer->videoSink();
+
+            gst_bin_add(bin, m_colorspace);
+            gst_bin_add(bin, m_element);
+            gst_element_link(m_colorspace, m_element);
+
+            // add ghostpads
+            GstPad *pad = gst_element_get_static_pad(m_colorspace, "sink");
+            gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("sink", pad));
+            gst_object_unref(GST_OBJECT(pad));
+
+            m_bin = GST_ELEMENT(bin);
+        }
+
+        m_videoRenderer->precessNewStream();
+
+        gst_object_ref(GST_OBJECT(m_bin));
+        return m_bin;
+    }
+
+    void prepareWinId()
+    {
+        m_videoRenderer->precessNewStream();
+    }
+
+private:
+    QGstreamerVideoRendererInterface *m_videoRenderer;
+
+    GstElement *m_bin;
+    GstElement *m_element;
+    GstElement *m_colorspace;
+};
+
+
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
     :QAbstractMediaService(parent)
@@ -30,11 +94,27 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
     }
+
+    m_videoOutput = new QGstreamerVideoOutputControl(this);
+    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+#ifndef QT_NO_VIDEOSURFACE
+    m_videoRenderer = new QGstreamerVideoRenderer(this);
+    m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
+    m_videoWindow = new QGstreamerVideoOverlay(this);
+    m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+            << QVideoOutputControl::RendererOutput
+            << QVideoOutputControl::WindowOutput);
+#endif
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
+
+#ifdef USE_ENDPOINTS
 
 QList<QByteArray> QGstreamerCaptureService::supportedEndpointInterfaces(
       QMediaEndpointInterface::Direction direction) const
@@ -90,38 +170,6 @@ void QGstreamerCaptureService::setAudioInput(QObject *input)
     QAbstractMediaService::setAudioInput(endPoint);
 }
 
-class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
-{
-public:
-    QGstreamerVideoRendererWrapper(QGstreamerVideoRendererInterface *videoRenderer)
-        :m_videoRenderer(videoRenderer)
-    {
-        m_element = videoRenderer->videoSink();
-    }
-
-    virtual ~QGstreamerVideoRendererWrapper()
-    {
-        gst_object_unref(GST_OBJECT(m_element));
-    }
-
-    GstElement *buildElement()
-    {
-        m_videoRenderer->precessNewStream();
-
-        gst_object_ref(GST_OBJECT(m_element));
-        return m_element;
-    }
-
-    void prepareWinId()
-    {
-        m_videoRenderer->precessNewStream();
-    }
-
-private:
-    QGstreamerVideoRendererInterface *m_videoRenderer;
-    GstElement *m_element;
-};
-
 void QGstreamerCaptureService::setVideoOutput(QObject *output)
 {
     QGstreamerVideoWidget *videoWidget = qobject_cast<QGstreamerVideoWidget*>(output);
@@ -139,8 +187,21 @@ void QGstreamerCaptureService::setVideoOutput(QObject *output)
     QAbstractMediaService::setVideoOutput(output);
 }
 
+#endif
+
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
+    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
+        return m_videoOutput;
+
+#ifndef QT_NO_VIDEOSURFACE
+    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
+        return m_videoRenderer;
+
+    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+        return m_videoWindow;
+#endif
+
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_captureSession->recorderControl();
 
@@ -158,3 +219,27 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 
     return 0;
 }
+
+void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output output)
+{
+#ifdef QT_NO_VIDEOSURFACE
+    Q_UNUSED(output);
+#else
+    switch (output) {
+    case QVideoOutputControl::NoOutput:
+        m_captureSession->setVideoPreview(0);
+        break;
+    case QVideoOutputControl::RendererOutput:
+        m_captureSession->setVideoPreview(m_videoRendererFactory);
+        break;
+    case QVideoOutputControl::WindowOutput:
+        m_captureSession->setVideoPreview(m_videoWindowFactory);
+        break;
+    default:
+        qWarning("Invalid video output selection");
+        m_captureSession->setVideoPreview(0);
+        break;
+    }
+#endif
+}
+
