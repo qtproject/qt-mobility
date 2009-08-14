@@ -1550,6 +1550,12 @@ void tst_QContactAsync::maliciousManager()
     // now use a malicious manager that deliberately calls
     // incorrect "updateRequest" functions in base class:
     QContactManager mcm("maliciousplugin");
+    QList<QContact> emptyCList;
+    QList<QUniqueId> emptyIList;
+    QList<QContactGroup> emptyGList;
+    QList<QContactDetailDefinition> emptyDList;
+    QStringList emptyDNList;
+    QMap<QString, QContactDetailDefinition> emptyDMap;
     cfr.setFilter(fil);
     cfr.setManager(&mcm);
     QVERIFY(cfr.start());
@@ -1558,6 +1564,96 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(cfr.start());
     QVERIFY(!cfr.waitForProgress(100));
     QVERIFY(cfr.cancel());
+
+    QContactIdFetchRequest cifr;
+    cifr.setFilter(fil);
+    cifr.setManager(&mcm);
+    QVERIFY(cifr.start());
+    QVERIFY(cifr.cancel());
+    QVERIFY(!cifr.waitForFinished(100));
+    QVERIFY(cifr.start());
+    QVERIFY(!cifr.waitForProgress(100));
+    QVERIFY(cifr.cancel());
+
+    QContactRemoveRequest crr;
+    crr.setFilter(fil);
+    crr.setManager(&mcm);
+    QVERIFY(crr.start());
+    QVERIFY(crr.cancel());
+    QVERIFY(!crr.waitForFinished(100));
+    QVERIFY(crr.start());
+    QVERIFY(!crr.waitForProgress(100));
+    QVERIFY(crr.cancel());
+
+    QContactSaveRequest csr;
+    csr.setContacts(emptyCList);
+    csr.setManager(&mcm);
+    QVERIFY(csr.start());
+    QVERIFY(csr.cancel());
+    QVERIFY(!csr.waitForFinished(100));
+    QVERIFY(csr.start());
+    QVERIFY(!csr.waitForProgress(100));
+    QVERIFY(csr.cancel());
+
+    QContactGroupFetchRequest gfr;
+    gfr.setIds(emptyIList);
+    gfr.setManager(&mcm);
+    QVERIFY(gfr.start());
+    QVERIFY(gfr.cancel());
+    QVERIFY(!gfr.waitForFinished(100));
+    QVERIFY(gfr.start());
+    QVERIFY(!gfr.waitForProgress(100));
+    QVERIFY(gfr.cancel());
+
+    QContactGroupSaveRequest gsr;
+    gsr.setGroups(emptyGList);
+    gsr.setManager(&mcm);
+    QVERIFY(gsr.start());
+    QVERIFY(gsr.cancel());
+    QVERIFY(!gsr.waitForFinished(100));
+    QVERIFY(gsr.start());
+    QVERIFY(!gsr.waitForProgress(100));
+    QVERIFY(gsr.cancel());
+
+    QContactGroupRemoveRequest grr;
+    grr.setIds(emptyIList);
+    grr.setManager(&mcm);
+    QVERIFY(grr.start());
+    QVERIFY(grr.cancel());
+    QVERIFY(!grr.waitForFinished(100));
+    QVERIFY(grr.start());
+    QVERIFY(!grr.waitForProgress(100));
+    QVERIFY(grr.cancel());
+
+    QContactDetailDefinitionFetchRequest dfr;
+    dfr.setNames(emptyDNList);
+    dfr.setManager(&mcm);
+    QVERIFY(dfr.start());
+    QVERIFY(dfr.cancel());
+    QVERIFY(!dfr.waitForFinished(100));
+    QVERIFY(dfr.start());
+    QVERIFY(!dfr.waitForProgress(100));
+    QVERIFY(dfr.cancel());
+
+    QContactDetailDefinitionSaveRequest dsr;
+    dsr.setDefinitions(emptyDList);
+    dsr.setManager(&mcm);
+    QVERIFY(dsr.start());
+    QVERIFY(dsr.cancel());
+    QVERIFY(!dsr.waitForFinished(100));
+    QVERIFY(dsr.start());
+    QVERIFY(!dsr.waitForProgress(100));
+    QVERIFY(dsr.cancel());
+
+    QContactDetailDefinitionRemoveRequest drr;
+    drr.setNames(emptyDNList);
+    drr.setManager(&mcm);
+    QVERIFY(drr.start());
+    QVERIFY(drr.cancel());
+    QVERIFY(!drr.waitForFinished(100));
+    QVERIFY(drr.start());
+    QVERIFY(!drr.waitForProgress(100));
+    QVERIFY(drr.cancel());
 }
 
 QTEST_MAIN(tst_QContactAsync)
