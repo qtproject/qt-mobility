@@ -152,6 +152,23 @@ void tst_QContactGroup::members()
     QVERIFY(!g.removeMember(QUniqueId(2)));
     QCOMPARE(g.error(), QContactGroup::ContactNotInGroupError);
     QCOMPARE(g.members().count(), 1);
+
+    // clear the list
+    QList<QUniqueId> members = g.members();
+    currentCount = members.size();
+    while (currentCount > 0) {
+        QVERIFY(g.removeMember(members.at(0)));
+        currentCount -= 1;
+        QCOMPARE(g.error(), QContactGroup::NoError);
+    }
+    QCOMPARE(g.members(), QList<QUniqueId>());
+
+    // set the member list manually.
+    members.append(QUniqueId(3));
+    members.append(QUniqueId(8));
+    members.append(QUniqueId(33));
+    QVERIFY(g.setMembers(members));
+    QCOMPARE(g.members(), members);
 }
 
 void tst_QContactGroup::id()
