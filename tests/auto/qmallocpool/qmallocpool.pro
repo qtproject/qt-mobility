@@ -1,17 +1,12 @@
 TARGET = tst_qmallocpool
 INCLUDEPATH += ../../../context
-
-CONFIG+=testcase
-
+CONFIG += testcase
 QT = core
-
 include(../../../common.pri)
 
-# Input 
-SOURCES += tst_qvaluespace.cpp
+# Input
+SOURCES += tst_qmallocpool.cpp
 
 LIBS += -lQtContextFramework
-
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
+symbian:TARGET.CAPABILITY = ALL \
+    -TCB
