@@ -53,7 +53,8 @@ HEADERS = \
     qcameracontrol.h \
     qcameraservice.h \
     qmediaformatcontrol.h \
-    qmediaplaylistcontrol.h
+    qmediaplaylistcontrol.h \
+    qaudioinputdevicecontrol.h
 
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
@@ -92,7 +93,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qcameracontrol.cpp \
     qcameraservice.cpp \
     qmediaformatcontrol.cpp \
-    qmediaplaylistcontrol.cpp
+    qmediaplaylistcontrol.cpp \
+    qaudioinputdevicecontrol.cpp
 
 videosurface {
     HEADERS += \
