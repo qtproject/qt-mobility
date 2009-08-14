@@ -288,25 +288,6 @@ bool QMallocPool::isValid() const
 }
 
 /*!
-  Outputs statistical information regarding the state of the malloc pool
-  using qLog().
- */
-void QMallocPool::dumpStats() const
-{
-    Q_ASSERT(d && "Cannot operate on a null malloc pool");
-    QMallocPtr p(d);
-
-    struct mallinfo info = dlmallinfo();
-
-/*    qLog(ILFramework) << "Info for malloc pool:"
-                      << (d->name.isEmpty()?"(unnamed)":d->name.toAscii());
-    qLog(ILFramework) << "    Max system bytes =" << (unsigned long)info.usmblks;
-    qLog(ILFramework) << "    System Bytes     =" << (unsigned long)info.arena;
-    qLog(ILFramework) << "    In use bytes     =" << (unsigned long)info.uordblks;
-    qLog(ILFramework) << "    Keep cost        =" << (unsigned long)info.keepcost;*/
-}
-
-/*!
   Returns a MemoryStats structure containing information about the memory use
   of this pool.
  */

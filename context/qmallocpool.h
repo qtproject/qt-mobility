@@ -65,7 +65,6 @@ public:
         unsigned long keepCost;
     };
     MemoryStats memoryStatistics() const;
-    void dumpStats() const;
 
 private:
     Q_DISABLE_COPY(QMallocPool)
