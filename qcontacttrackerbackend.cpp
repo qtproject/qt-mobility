@@ -20,6 +20,7 @@
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/ontologies/nie.h>
+#include <QRegExp>
 
 #include "tracker2qcontact.h"
 
@@ -79,12 +80,54 @@ QContactTrackerEngine::QContactTrackerEngine(const QMap<QString, QString>& param
     bool ok;
     QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
     d->m_lastUsedId = definitions.value("nextAvailableContactId", "1").toUInt(&ok);
+    connectToSignals();
 }
 
 QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
     : QContactManagerEngine(), d(other.d)
 {
     Q_UNUSED(other);
+    connectToSignals();
+}
+
+void QContactTrackerEngine::connectToSignals()
+{
+    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
+            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+                    nfo::Audio::iri());
+    // Note here that we are not using
+    // QAbstractItemModel signals from LiveNodes::model() because
+    // node list for which notification comes is fixed. Those are used for
+    // async implementation
+    if (signaler)
+    {
+        QObject::connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
+                this, SLOT(subjectsAdded(const QStringList &)));
+        QObject::connect(signaler,
+                SIGNAL(subjectsRemoved(const QStringList &)), this,
+                SLOT(subjectsRemoved(const QStringList &)));
+        QObject::connect(signaler,
+                SIGNAL(subjectsChanged(const QStringList &)), this,
+                SLOT(subjectsChanged(const QStringList &)));
+    }
+
+    // TODO other classes change notification
+
+    /* use this for async implementation TODO in few hours
+    if( d->allContactsModel.model() )
+    {
+        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsInserted(const QModelIndex &, int, int))
+                        , this, SLOT(rowsInserted(const QModelIndex &, int, int)));
+        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int))
+                        , this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
+        QObject::connect( d->allContactsModel.model(), SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &))
+                        , this, SLOT(dataChanged(const QModelIndex &, const QModelIndex &)));
+        QObject::connect( d->allContactsModel.model(), SIGNAL(modelUpdated())
+                        , this, SLOT(modelUpdated()));
+        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsUpdated(int, int, QModelIndex const &))
+                        , this, SLOT(rowsUpdated(int, int, QModelIndex const &)));
+    }
+    */
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -324,7 +367,8 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             QString serviceName = det.value(QContactServiceId::FieldServiceName);
 */      
         // TODO replace when IMaccount is implemented by QtMobility team          
-        else if (definition == "ServiceId") {
+        else if (definition == QContactOnlineAccount::DefinitionName) {
+            // TODO parse URI, once it is defined
             QString account = det.value("Account");
             QString serviceName = det.value("ServiceName");
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
@@ -647,4 +691,93 @@ QString QContactTrackerEngine::escaped(const QString& input) const
     return retn;
 }
 #endif
+
+void QContactTrackerEngine::modelUpdated()
+{
+    qDebug()<<Q_FUNC_INFO;
+}
+
+void QContactTrackerEngine::rowsUpdated(int row, int count, QModelIndex const &parent)
+{
+    qDebug()<<Q_FUNC_INFO;
+}
+
+void QContactTrackerEngine::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    qDebug()<<Q_FUNC_INFO;
+
+}
+
+void QContactTrackerEngine::rowsInserted(const QModelIndex &parent, int first, int last)
+{
+    QList<QUniqueId> added;
+    for(int i = first; i <= last; i++ )
+    {
+        added << d->allContactsModel->index(i, 1).data().toUInt();
+    }
+    qDebug()<<Q_FUNC_INFO<<first<<last<<"added contactids:"<<added;
+
+    emit contactsAdded(added);
+}
+
+void QContactTrackerEngine::rowsRemoved(const QModelIndex &parent, int first, int last)
+{
+    qDebug()<<Q_FUNC_INFO;
+
+}
+
+
+// TEMPORARY here we'll for now extract ids from tracker contact URI.
+// In future need nonblocking async way to get contact ids from tracker contact urls
+// let's see which signals will be used from libqttracker
+QUniqueId url2UniqueId(const QString &contactUrl)
+{
+    QRegExp rx("(\\d+)");
+    bool conversion = false;
+    QUniqueId id = 0;
+    if( rx.lastIndexIn(contactUrl) != -1 )
+    {
+        id = rx.cap(1).toUInt(&conversion, 10);
+    }
+    if( !conversion )
+        qWarning()<<Q_FUNC_INFO<<"unparsed uri to uniqueI:"<<contactUrl;
+    return id;
+
+}
+
+void QContactTrackerEngine::subjectsAdded(const QStringList &subjects)
+{
+    QList<QUniqueId> added;
+    foreach(const QString &uri, subjects)
+    {
+        added << url2UniqueId(uri);
+    }
+    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
+    emit contactsAdded(added);
+}
+
+void QContactTrackerEngine::subjectsRemoved(const QStringList &subjects)
+{
+    QList<QUniqueId> added;
+    foreach(const QString &uri, subjects)
+    {
+        added << url2UniqueId(uri);
+    }
+    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
+    emit contactsRemoved(added);
+}
+
+// TODO data changed for full query
+void QContactTrackerEngine::subjectsChanged(const QStringList &subjects)
+{
+    QList<QUniqueId> added;
+    foreach(const QString &uri, subjects)
+    {
+        added << url2UniqueId(uri);
+    }
+    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
+    emit contactsChanged(added);
+}
+
+
 

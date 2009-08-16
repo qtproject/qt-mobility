@@ -6,6 +6,10 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
 LIBS += -L/usr/lib \
     -lqttracker
+DEPENDPATH += .
+INCLUDEPATH += . 
+
+LIBS += -lqttracker
 HEADERS += qcontacttrackerbackend_p.h \
     tracker2qcontact.h
 SOURCES += qcontacttrackerbackend.cpp \
@@ -25,4 +29,4 @@ pluginlink.commands = ln \
     qtcontacts-tracker/libqtcontacts_tracker.so \
     "\$(INSTALL_ROOT)/usr/lib/qt4/plugins/libqtcontacts_tracker.so"
 INSTALLS += pluginlink
-LIBS += -lqttracker
+

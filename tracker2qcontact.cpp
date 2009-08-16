@@ -234,10 +234,14 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
     LiveNodes imAccounts = ncoContact->getHasIMAccounts();
     foreach (const Live<nco::IMAccount>& imAccount, imAccounts) {
         // TODo replace when QtMobility guys implement support for IMAccount
-        QContactDetail detail("ServiceId");
-        detail.setValue("Account", imAccount->getImID());
-        detail.setValue("ServiceName", imAccount->getImAccountType());
-        qcontact.saveDetail(&detail);
+        QContactOnlineAccount account;;
+        account.setValue("Account", imAccount->getImID());
+        account.setValue("ServiceName", imAccount->getImAccountType());
+        qcontact.saveDetail(&account);
+        QContactPresence presence;
+        presence.setValue(QContactPresence::FieldNickname, imAccount->getImNickname());
+        presence.setValue(QContactPresence::FieldPresence, imAccount->getImStatus());
+        presence.setValue(QContactPresence::FieldStatusMessage, imAccount->getImStatusMessage());
     }
 
     foreach( Live< rdfs::Resource > url, ncoContact->getUrls() ) { //Home homepage urls

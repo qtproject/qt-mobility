@@ -25,9 +25,9 @@
 #include <QSharedData>
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
+#include <QtTracker/QLive>
 
 using namespace SopranoLive;
-
 #include "qcontact.h"
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
@@ -43,6 +43,7 @@ namespace ContactContext {
     };
 }
 
+
 class QContactTrackerEngineData : public QSharedData
 {
 public:
@@ -54,15 +55,19 @@ public:
     QContactTrackerEngineData(const QContactTrackerEngineData& other)
         : QSharedData(other), m_refCount(QAtomicInt(1)),
         m_lastUsedId(other.m_lastUsedId),
-        m_definitions(other.m_definitions)
+        m_definitions(other.m_definitions),
+        allContactsModel(other.allContactsModel)
     {
     }
+
+    void init();
 
     ~QContactTrackerEngineData() {}
 
     QAtomicInt m_refCount;
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
+    LiveNodes allContactsModel;
 
     /**
      * Get a LiveNode from a list of nodes based on the type of the LiveNode.
@@ -94,12 +99,12 @@ public:
 
 private:
     ContactContext::Location locationContext(const QContactDetail& det) const;
+    // all contacts - query instantiated on start to receive signals about added, removed and changed contacts
 };
 
 class QTCONTACTS_EXPORT QContactTrackerEngine : public QContactManagerEngine
 {
-
-
+Q_OBJECT
 
 public:
     QContactTrackerEngine(const QMap<QString, QString>& parameters);
@@ -138,6 +143,22 @@ public:
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+private slots:
+    void modelUpdated();
+    void rowsUpdated(int row, int count, QModelIndex const &parent);
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void rowsInserted(const QModelIndex &parent, int first, int last);
+    void rowsRemoved(const QModelIndex &parent, int first, int last);
+
+    void subjectsAdded(const QStringList &subjects);
+    void subjectsRemoved(const QStringList &subjects);
+    void subjectsChanged(const QStringList &subjects);
+
+
+private:
+    //called from both constructors, connecting to all contact NodeList changes signals
+    void connectToSignals();
 
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
