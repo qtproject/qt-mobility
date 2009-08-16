@@ -111,23 +111,6 @@ void QContactTrackerEngine::connectToSignals()
                 SLOT(subjectsChanged(const QStringList &)));
     }
 
-    // TODO other classes change notification
-
-    /* use this for async implementation TODO in few hours
-    if( d->allContactsModel.model() )
-    {
-        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsInserted(const QModelIndex &, int, int))
-                        , this, SLOT(rowsInserted(const QModelIndex &, int, int)));
-        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int))
-                        , this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
-        QObject::connect( d->allContactsModel.model(), SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &))
-                        , this, SLOT(dataChanged(const QModelIndex &, const QModelIndex &)));
-        QObject::connect( d->allContactsModel.model(), SIGNAL(modelUpdated())
-                        , this, SLOT(modelUpdated()));
-        QObject::connect( d->allContactsModel.model(), SIGNAL(rowsUpdated(int, int, QModelIndex const &))
-                        , this, SLOT(rowsUpdated(int, int, QModelIndex const &)));
-    }
-    */
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -692,41 +675,6 @@ QString QContactTrackerEngine::escaped(const QString& input) const
 }
 #endif
 
-void QContactTrackerEngine::modelUpdated()
-{
-    qDebug()<<Q_FUNC_INFO;
-}
-
-void QContactTrackerEngine::rowsUpdated(int row, int count, QModelIndex const &parent)
-{
-    qDebug()<<Q_FUNC_INFO;
-}
-
-void QContactTrackerEngine::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
-{
-    qDebug()<<Q_FUNC_INFO;
-
-}
-
-void QContactTrackerEngine::rowsInserted(const QModelIndex &parent, int first, int last)
-{
-    QList<QUniqueId> added;
-    for(int i = first; i <= last; i++ )
-    {
-        added << d->allContactsModel->index(i, 1).data().toUInt();
-    }
-    qDebug()<<Q_FUNC_INFO<<first<<last<<"added contactids:"<<added;
-
-    emit contactsAdded(added);
-}
-
-void QContactTrackerEngine::rowsRemoved(const QModelIndex &parent, int first, int last)
-{
-    qDebug()<<Q_FUNC_INFO;
-
-}
-
-
 // TEMPORARY here we'll for now extract ids from tracker contact URI.
 // In future need nonblocking async way to get contact ids from tracker contact urls
 // let's see which signals will be used from libqttracker
@@ -778,6 +726,26 @@ void QContactTrackerEngine::subjectsChanged(const QStringList &subjects)
     qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
     emit contactsChanged(added);
 }
+
+/*! \reimp */
+void QContactTrackerEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    if( d->m_requests.contains(req) )
+    {
+        QTrackerContactAsyncRequest *request = d->m_requests.take(req);
+        delete request;
+    }
+}
+
+/*! \reimp */
+bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
+{
+    Q_ASSERT(req->status() == QContactAbstractRequest::Active);
+    QTrackerContactAsyncRequest *request = new QTrackerContactAsyncRequest(req, this);
+    d->m_requests[req] = request;
+    return true;
+}
+
 
 
 

@@ -34,6 +34,9 @@ using namespace SopranoLive;
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerenginefactory.h"
+#include "qtrackercontactasyncrequest.h"
+
+class QContactAbstractRequest;
 
 namespace ContactContext {
     typedef enum Location {
@@ -55,8 +58,7 @@ public:
     QContactTrackerEngineData(const QContactTrackerEngineData& other)
         : QSharedData(other), m_refCount(QAtomicInt(1)),
         m_lastUsedId(other.m_lastUsedId),
-        m_definitions(other.m_definitions),
-        allContactsModel(other.allContactsModel)
+        m_definitions(other.m_definitions)
     {
     }
 
@@ -67,7 +69,7 @@ public:
     QAtomicInt m_refCount;
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
-    LiveNodes allContactsModel;
+    mutable QMap<QContactAbstractRequest*, QTrackerContactAsyncRequest*> m_requests;
 
     /**
      * Get a LiveNode from a list of nodes based on the type of the LiveNode.
@@ -138,6 +140,10 @@ public:
     QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
     bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
+
+    /* Asynchronous Request Support */
+    void requestDestroyed(QContactAbstractRequest* req);
+    bool startRequest(QContactAbstractRequest* req);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
