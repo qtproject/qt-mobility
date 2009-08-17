@@ -696,16 +696,18 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     }
 
     result = QMessagePrivate::from(newId);
+    bool hasAttachments = false;
 
-    SizedSPropTagArray( 8, msgCols) = { 8, { PR_RECORD_KEY, 
+    SizedSPropTagArray( 9, msgCols) = { 9, { PR_RECORD_KEY, 
                                              PR_MESSAGE_FLAGS, 
                                              PR_SENDER_NAME, 
                                              PR_SENDER_EMAIL_ADDRESS, 
                                              PR_CLIENT_SUBMIT_TIME, 
                                              PR_MESSAGE_DELIVERY_TIME, 
                                              PR_TRANSPORT_MESSAGE_HEADERS, 
+                                             PR_HASATTACH,
                                              PR_SUBJECT }};
-    ULONG count;
+    ULONG count = 0;
     LPSPropValue properties;
     HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&msgCols), MAPI_UNICODE, &count, &properties);
     if (HR_SUCCEEDED(rv)) {
@@ -741,6 +743,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
             case PR_SUBJECT:
                 result.setSubject(QStringFromLpctstr(properties[n].Value.LPSZ));
                 break;
+            case PR_HASATTACH:
+                hasAttachments = (properties[n].Value.b != FALSE);
             default:
                 break;
             }
@@ -763,7 +767,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
         LPSRowSet rows(0);
 
-        rv = HrQueryAllRows(recipientsTable, (SPropTagArray*)&rcpCols, NULL, NULL, 0, &rows);
+        rv = HrQueryAllRows(recipientsTable, reinterpret_cast<LPSPropTagArray>(&rcpCols), NULL, NULL, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             QMessageAddressList to;
             QMessageAddressList cc;
@@ -863,6 +867,75 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
     if (*lastError != QMessageStore::NoError)
         return result;
+
+#ifndef PR_ATTACH_CONTENT_ID
+// This is not available in my SDK version...
+#define PR_ATTACH_CONTENT_ID PROP_TAG( PT_UNICODE, 0x3712 )
+#endif
+
+    if (hasAttachments) {
+        QMap<uint, QMessageContentContainer> attachments;
+
+        // Find any attachments for this message
+        IMAPITable *attachmentsTable(0);
+        rv = message->GetAttachmentTable(0, &attachmentsTable);
+        if (HR_SUCCEEDED(rv)) {
+            // Find the properties of these attachments
+            SizedSPropTagArray(6, attCols) = {6, { PR_ATTACH_NUM, 
+                                                   PR_ATTACH_EXTENSION, 
+                                                   PR_ATTACH_LONG_FILENAME, 
+                                                   PR_ATTACH_FILENAME, 
+                                                   PR_ATTACH_CONTENT_ID,
+                                                   PR_ATTACH_SIZE }};
+            LPSRowSet rows(0);
+
+            rv = HrQueryAllRows(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL, 0, &rows);
+            if (HR_SUCCEEDED(rv)) {
+                for (uint n = 0; n < rows->cRows; ++n) {
+                    uint number(0);
+                    QString extension;
+                    QString filename;
+                    QString contentId;
+                    LONG size(0);
+
+                    if (rows->aRow[n].lpProps[0].ulPropTag == PR_ATTACH_NUM) {
+                        number = rows->aRow[n].lpProps[0].Value.l;
+                    }
+                    if (rows->aRow[n].lpProps[1].ulPropTag == PR_ATTACH_EXTENSION) {
+                        extension = QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ);
+                    }
+                    if (rows->aRow[n].lpProps[2].ulPropTag == PR_ATTACH_LONG_FILENAME) {
+                        filename = QStringFromLpctstr(rows->aRow[n].lpProps[2].Value.LPSZ);
+                    } else if (rows->aRow[n].lpProps[3].ulPropTag == PR_ATTACH_FILENAME) {
+                        filename = QStringFromLpctstr(rows->aRow[n].lpProps[3].Value.LPSZ);
+                    }
+                    if (rows->aRow[n].lpProps[4].ulPropTag == PR_ATTACH_CONTENT_ID) {
+                        contentId = QStringFromLpctstr(rows->aRow[n].lpProps[4].Value.LPSZ);
+                    }
+                    if (rows->aRow[n].lpProps[5].ulPropTag == PR_ATTACH_SIZE) {
+                        size = rows->aRow[n].lpProps[5].Value.l;
+                    }
+
+                    QMessageContentContainer container;
+                    container.setContentFileName(filename.toAscii());
+                    // ...
+
+                    attachments.insert(number, container);
+                }
+
+                FreeProws(rows);
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
+
+        if (!attachments.isEmpty()) {
+            QMap<uint, QMessageContentContainer>::const_iterator it = attachments.begin(), end = attachments.end();
+            for ( ; it != end; ++it) {
+                result.appendContent(*it);
+            }
+        }
+    }
 
     message->Release();
     return result;
