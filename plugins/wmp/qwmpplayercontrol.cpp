@@ -245,11 +245,6 @@ void QWmpPlayerControl::setMuted(bool muted)
 
 }
 
-bool QWmpPlayerControl::isBuffering() const
-{
-    return m_buffering;
-}
-
 int QWmpPlayerControl::bufferStatus() const
 {
     long progress = 0;
@@ -421,37 +416,37 @@ void QWmpPlayerControl::playStateChangeEvent(long state)
         }
         break;
     case wmppsPaused:
-        if (m_state != QMediaPlayer::PausedState && m_status != QMediaPlayer::PrimedMedia) {
+        if (m_state != QMediaPlayer::PausedState && m_status != QMediaPlayer::BufferedMedia) {
             m_state = QMediaPlayer::PausedState;
-            m_status = QMediaPlayer::PrimedMedia;
+            m_status = QMediaPlayer::BufferedMedia;
 
             emit stateChanged(m_state);
             emit mediaStatusChanged(m_status);
         } else if (m_state != QMediaPlayer::PausedState) {
             emit stateChanged(m_state = QMediaPlayer::PausedState);
-        } else if (m_status != QMediaPlayer::PrimedMedia) {
-            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
+        } else if (m_status != QMediaPlayer::BufferedMedia) {
+            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
         }
         break;
     case wmppsPlaying:
     case wmppsScanForward:
     case wmppsScanReverse:
-        if (m_state != QMediaPlayer::PlayingState && m_status != QMediaPlayer::PrimedMedia) {
+        if (m_state != QMediaPlayer::PlayingState && m_status != QMediaPlayer::BufferedMedia) {
             m_state = QMediaPlayer::PlayingState;
-            m_status = QMediaPlayer::PrimedMedia;
+            m_status = QMediaPlayer::BufferedMedia;
 
             emit stateChanged(m_state);
             emit mediaStatusChanged(m_status);
         } else if (m_state != QMediaPlayer::PlayingState) {
             emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        } else if (m_status != QMediaPlayer::PrimedMedia) {
-            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
+        } else if (m_status != QMediaPlayer::BufferedMedia) {
+            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
         }
 
         if (m_state != QMediaPlayer::PlayingState)
             emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        if (m_status != QMediaPlayer::PrimedMedia)
-            emit mediaStatusChanged(m_status = QMediaPlayer::PrimedMedia);
+        if (m_status != QMediaPlayer::BufferedMedia)
+            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
         break;
     case wmppsBuffering:
     case wmppsWaiting:
