@@ -49,7 +49,7 @@ public:
 
     virtual QMediaPlayer::State state() const = 0;
 
-    virtual int mediaStatus() const /* = 0*/;
+    virtual QMediaPlayer::MediaStatus mediaStatus() const /* = 0*/;
 
     virtual QMediaPlaylist* mediaPlaylist() const = 0;
     virtual bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
