@@ -101,6 +101,7 @@ void Dialog::setupDisplay()
 void Dialog::setupMemory()
 {
     QSystemMemoryInfo mi;
+      ui->volumesComboBox->clear();
     ui->volumesComboBox->insertItems(0,mi.listOfVolumes());
 
 }
