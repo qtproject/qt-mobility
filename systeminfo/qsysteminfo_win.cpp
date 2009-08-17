@@ -64,6 +64,7 @@
 //#include <winsock2.h>
 #ifdef Q_OS_WINCE
 #include <vibrate.h>
+#include <Led_drvr.h>
 #endif
 //#include <Winsock2.h>
 
@@ -244,6 +245,14 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LedFeature :
         {
+#ifdef Q_OS_WINCE
+            NLED_COUNT_INFO info;
+            NLedDriverGetDeviceInfo(NLED_COUNT_INFO_ID,&info);
+            if(info > 0) {
+                    featureSupported = true;
+            }
+#else
+#endif
         }
         break;
     case QSystemInfo::MemcardFeature :
