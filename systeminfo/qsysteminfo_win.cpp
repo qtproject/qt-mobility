@@ -62,7 +62,9 @@
 //#include <mswsock.h>
 
 //#include <winsock2.h>
-
+#ifdef Q_OS_WINCE
+#include <vibrate.h>
+#endif
 //#include <Winsock2.h>
 
 #define _WCHAR_T_DEFINED
@@ -261,6 +263,15 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::VibFeature :
+        {
+#ifdef Q_OS_WINCE
+            VIBRATEDEVICECAPS caps;
+            if(VibrateGetDeviceCaps(&caps) != 0) {
+                featureSupported = true;
+            }
+#else
+#endif
+        }
         break;
     case QSystemInfo::WlanFeature :
         {
