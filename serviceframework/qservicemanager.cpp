@@ -39,7 +39,7 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-#include <QDebug>
+//#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,23 +66,20 @@ class QServicePluginCleanup : public QObject
 {
     Q_OBJECT
 public:
-    QServicePluginCleanup(QPluginLoader *loader, QServicePluginInterface *pluginInterface, QObject *parent = 0)
+    QServicePluginCleanup(QPluginLoader *loader, QObject *parent = 0)
         : QObject(parent),
-          m_pluginInterface(pluginInterface),
           m_loader(loader)
     {
     }
 
     ~QServicePluginCleanup()
     {
-        delete m_pluginInterface;
         if (m_loader) {
             m_loader->unload();
             delete m_loader;
         }
     }
 
-    QServicePluginInterface *m_pluginInterface;
     QPluginLoader *m_loader;
 };
 
@@ -125,8 +122,7 @@ public:
             case DBError::DatabaseNotOpen:
             case DBError::InvalidDatabaseConnection:
             case DBError::CannotCreateDbDir:
-            case DBError::CannotOpenSystemDb:
-            case DBError::CannotOpenUserDb:
+            case DBError::CannotOpenServiceDb:
             case DBError::NoWritePermissions:
             case DBError::InvalidDatabaseFile:
                 error = QServiceManager::StorageAccessError;
@@ -144,6 +140,8 @@ public:
                 error = QServiceManager::InvalidServiceInterfaceDescriptor;
                 break;
             case DBError::SqlError:
+            case DBError::IfaceIDNotExternal:
+            case DBError::ExternalIfaceIDFound:
             case DBError::UnknownError:
                 error = QServiceManager::UnknownError;
                 break;
@@ -191,11 +189,11 @@ private slots:
 /*!
     \enum QServiceManager::Scope
 
-    \value UserScope When adding and removing services, use a storage location
-    specific to the current user (e.g. in the user's home directory). When
-    searching for services and interface implementations, first search in the
+    \value UserScope When adding and removing services, uses a storage location
+    specific to the current user.
+    When searching for services and interface implementations, first searches in the
     user-specific location; if the service or interface implementation
-    is not found, search in the system-wide storage location (if the user has
+    is not found, searches in the system-wide storage location (if the user has
     sufficient permissions to do so).
 
     \value SystemScope When adding and removing services, use a system-wide
@@ -335,6 +333,11 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
     The caller takes ownership of the returned pointer.
     
     This function returns a null pointer if the requested service cannot be found.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -349,6 +352,11 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
     The caller takes ownership of the returned pointer.
 
     This function returns a null pointer if the requested service cannot be found.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -361,7 +369,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     const QStringList serviceCaps = descriptor.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
     if ( session && !session->isAllowed(serviceCaps) ) {
         d->setError(ServiceCapabilityDenied);
-        return 0;  //TODO set error state on context object, if it exists
+        return 0;
     }
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(
@@ -372,16 +380,17 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     QPluginLoader *loader = new QPluginLoader(serviceFilePath);
+    //pluginIFace is same for all service instances of the same plugin
+    //calling loader->unload deletes pluginIFace automatically if now other 
+    //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
-
     if (pluginIFace) {
         QObject *obj = pluginIFace->createInstance(descriptor, context, session);
         if (obj) {
-            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader, pluginIFace);
+            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
             QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
             return obj;
         }
-        delete pluginIFace;
     }
 
     loader->unload();
@@ -402,6 +411,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If \a interfaceName is not a known interface the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 
 
@@ -416,6 +430,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
+    
+    The security session object is not mandatory. If the session pointer is null,
+    the service manager will not perform any checks. Therefore it is assumed that
+    the service manager client is trusted as it controls whether service capabilities
+    are enforced during service loading.
 */
 
 /*!
@@ -466,24 +485,25 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 bool QServiceManager::addService(QIODevice *device)
 {
     d->setError(NoError);
-    ServiceMetaData data(device);
-    if (!data.extractMetadata()) {
+    ServiceMetaData parser(device);
+    if (!parser.extractMetadata()) {
         d->setError(InvalidServiceXml);
         return false;
     }
+    const ServiceMetaDataResults data = parser.parseResults();
 
     DatabaseManager::DbScope scope = d->scope == UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
-    bool result = d->dbManager->registerService(data, scope);
+    bool result = d->dbManager->registerService(parser, scope);
     if (result) {
-        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location()));
+        QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
         if (pluginIFace) {
             pluginIFace->installService();
         } else {
             d->setError(PluginLoadingFailed);
             result = false;
-            d->dbManager->unregisterService(data.name(), scope);
+            d->dbManager->unregisterService(data.name, scope);
         }
         loader->unload();
         delete loader;

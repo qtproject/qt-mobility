@@ -50,6 +50,8 @@ QObject* SampleServicePlugin::createInstance(const QServiceInterfaceDescriptor& 
         return new DerivedSampleServicePluginClass(descriptor, context, session);
     }
 
+    //As per service xml this plugin supports com.nokia.qt.TestInterfaceC as
+    //well but we deliberately return 0 to test behavior on null pointers
     return 0;
 }
 
@@ -73,9 +75,21 @@ SampleServicePluginClass::SampleServicePluginClass(const QServiceInterfaceDescri
 {
 }
 
+void SampleServicePluginClass::testSlotOne()
+{
+    //do something that accesses the internal data
+    m_descriptor.interfaceName();
+}
+
 DerivedSampleServicePluginClass::DerivedSampleServicePluginClass(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
     : SampleServicePluginClass(descriptor,context,session)
 {
+}
+
+void DerivedSampleServicePluginClass::testSlotOne()
+{
+    //do something that accesses the internal data
+    m_descriptor.serviceName();
 }
 
 

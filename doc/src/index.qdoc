@@ -8,7 +8,7 @@
 \section1 Qt Service Framework
 \section2 Introduction
 
-The Qt Service framework provides a set of APIs that allows clients to discover and instanciate arbitrary services. 
+The Qt Service framework provides a set of APIs that allows clients to discover and instantiate arbitrary services. 
 This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms.
 Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection
 it may even be used to unify and access multiple platform specific service implementations via the same Qt-based 
@@ -42,7 +42,7 @@ Future versions of this framework may also enable access to out-of-process servi
 This section assumes that the user wants to access the \i FileManager service which offers an implementation for the \i com.nokia.qt.examples.FileStorage interface
 The service framework enables multiple ways of accessing those implementations. 
 
-QServiceManager is the main class to lookup and instanciate services. Services can be found by constraining the search via service meta data or
+QServiceManager is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or
 by using the default lookup mechanism.
 
 \section3 Verbose lookup
@@ -50,14 +50,18 @@ by using the default lookup mechanism.
 The client code has precise knowledge of the service and its interfaces. 
 
 \code
-    QServiceManager* manager = new QServiceManager(this);
+    QServiceManager manager;
     QServiceFilter filter("com.nokia.qt.examples.FileStorage");
     filter.setServiceName("FileManager");
-    QList<QServiceInterfaceDescriptor> objs = manager->findInterfaces(filter);
-    Q_ASSERT(objs.count());
 
-    //instanciate the FileStorage object
-    QObject* service = manager->loadInterface(objs.at(0));
+    // find services complying with filter
+    QList<QServiceInterfaceDescriptor> foundServices
+    foundServices = manager.findInterfaces(filter);
+    Q_ASSERT(foundServices.count());
+
+    // instantiate the FileStorage object
+    QObject *fileStorage;
+    fileStorage = manager.loadInterface(foundServices.at(0));
 \endcode
 
 \section3 Default lookup
@@ -68,8 +72,9 @@ the same interface the latest version is returned. Therefore subsequent versions
 compatible to previous versions.
 
 \code
-    QServiceManager* manager = ...
-    QObject* storage = manager->loadInterface("com.nokia.qt.examples.FileStorage");
+    QServiceManager manager;
+    QObject *storage;
+    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
 \endcode
 
 \section3 Header lookup
@@ -83,26 +88,27 @@ The subsequent code snippet demonstrates how this may look like:
 #include <filestorage.h>
 ...
 QServiceManager manager;
-FileStorage* storage = 0;
-manager->setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager->getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
+FileStorage *storage = 0;
+...
+manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
+storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
 
 \endcode
 
 
-\section3 Database scope
+\section2 Service scope
 
-A QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are performed on the current user's services, system-wide services, or both.
+The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.
 
-\section4 User scope
+\section3 User scope
 
-In user scope, services are registered in a storage location specific to the current user; for example, in the user's home directory. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
+In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
 
 For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.
 
 The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a \c scope parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)
 
-\section4 System scope
+\section3 System scope
 
 In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.
 
@@ -220,7 +226,16 @@ An example for a valid XML service description could be the following \i TestSer
     </service>
 \endcode
 
-\section3 Installing the service at runtime
+\section2 Tools for XML generation
+
+The framework includes a GUI tool under \tt tools/servicexmlgen for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.
+
+Here is a screenshot of the application, loaded with the \i TestService XML description provided above.
+
+\image servicexmlgen.png
+
+
+\section2 Installing the service at runtime
 
 New services can be added and removed at any time via QServiceManager::addService() and QServiceManager::removeService().
 
@@ -232,16 +247,20 @@ by QServiceInterfaceDescriptor which can be used to request references to servic
 
 QServiceFilter simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example
 demonstrates the interaction between QServiceInterfaceDescriptor and QServiceFilter by creating references to all services that implement the 
-above \i com.nokia.qt.TestService interface:
+interface \i com.nokia.qt.ILocation:
 
 \code
     QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.TestService");
+    filter.setInterfaceName("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
-    for( int i = 0; i<list.size(); i++) {
-        QObject* obj = mgr.loadInterface(list[i]);
-        if (obj) obj.setParent(this); //returned object owned by client
+    for(int i = 0; i < list.size(); i++) {
+        QObject *serviceObject;
+        serviceObject = mgr.loadInterface(list[i]);
+
+        // returned object owned by client
+        if (serviceObject)
+            serviceObject->setParent(this);
     }
 \endcode
 

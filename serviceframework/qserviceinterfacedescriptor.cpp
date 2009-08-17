@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 
-#include "qserviceinterfacedescriptor.h"
 #include "qserviceinterfacedescriptor_p.h"
 #ifndef QT_NO_DATASTREAM
 #include <qdatastream.h>

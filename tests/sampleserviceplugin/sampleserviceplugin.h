@@ -68,10 +68,10 @@ public:
     QAbstractSecuritySession *securitySession() const { return m_security; }
 
 public slots:
-    void testSlotOne() {}
+    void testSlotOne();
     void testSlotTwo() {}
 
-private:
+protected:
     QServiceInterfaceDescriptor m_descriptor;
     QServiceContext *m_context;
     QAbstractSecuritySession *m_security;
@@ -85,7 +85,8 @@ public:
                              QServiceContext* context,
                              QAbstractSecuritySession* session);
     virtual ~DerivedSampleServicePluginClass() {}
-
+public slots:
+    void testSlotOne();
 };
 
 #endif

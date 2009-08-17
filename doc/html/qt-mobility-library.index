@@ -51,7 +51,6 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="ContextType" fullname="QServiceContext::ContextType" href="qservicecontext.html#ContextType-enum" location="qservicecontext.h">
                 <value name="DisplayContext" value="0"/>
                 <value name="ScriptContext" value="1"/>
-                <value name="ServiceFrameworkContext" value="2"/>
                 <value name="UserDefined" value="100"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceContext" fullname="QServiceContext::QServiceContext" href="qservicecontext.html#QServiceContext" location="qservicecontext.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceContext(QObject * parent)">
@@ -365,11 +364,11 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-69" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="69" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-70" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="70" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-67" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="67" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-68" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="68" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
@@ -390,12 +389,13 @@
             <contents name="verbose-lookup" title="Verbose lookup" level="3"/>
             <contents name="default-lookup" title="Default lookup" level="3"/>
             <contents name="header-lookup" title="Header lookup" level="3"/>
-            <contents name="database-scope" title="Database scope" level="3"/>
-            <contents name="user-scope" title="User scope" level="4"/>
-            <contents name="system-scope" title="System scope" level="4"/>
+            <contents name="service-scope" title="Service scope" level="2"/>
+            <contents name="user-scope" title="User scope" level="3"/>
+            <contents name="system-scope" title="System scope" level="3"/>
             <contents name="adding-and-removing-of-services" title="Adding and removing of services" level="2"/>
             <contents name="xml-format" title="XML format" level="3"/>
-            <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="3"/>
+            <contents name="tools-for-xml-generation" title="Tools for XML generation" level="2"/>
+            <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="2"/>
             <contents name="identifying-services" title="Identifying services" level="2"/>
             <contents name="upgrading-services" title="Upgrading services" level="2"/>
             <contents name="bearer-management" title="Bearer Management" level="1"/>

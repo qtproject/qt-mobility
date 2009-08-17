@@ -73,7 +73,6 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
     private:
         void initDbPath(DbScope scope);
         bool openDb(DbScope scope);
-        void close();
 
         ServiceDatabase *m_userDb;
         ServiceDatabase *m_systemDb;
@@ -82,6 +81,9 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         friend class DatabaseFileWatcher;
         DatabaseFileWatcher *m_fileWatcher;
         QServiceInterfaceDescriptor latestDescriptor(const QList<QServiceInterfaceDescriptor> &descriptors);
+
+        bool m_hasAccessedUserDb;
+        bool m_alreadyWarnedOpenError;
 };
 
 

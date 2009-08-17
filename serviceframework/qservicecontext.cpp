@@ -59,8 +59,6 @@ QT_BEGIN_NAMESPACE
                                         text such as an error message.
     \value  ScriptContext               The service provides a script which may 
                                         be executed by the client.
-    \value  ServiceFrameworkContext     Context information provided by the 
-                                        service framework itself.
     \value  UserDefined                 The first context type that can be used for service
                                         specific context information.
 */

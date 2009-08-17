@@ -64,6 +64,7 @@ private slots:
         void defaultServiceCornerCases();
 #endif
         void nonWritableSystemDb();
+        void CWRTXmlCompatability();
         void cleanupTestCase();
 private:
        bool compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -519,7 +520,7 @@ void DatabaseManagerUnitTest::permissions()
     QVERIFY(parser.extractMetadata());
     m_dbm = new DatabaseManager;
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //try to create a system scope database with no permission to
     //create the directory needed for the system db
@@ -528,7 +529,7 @@ void DatabaseManagerUnitTest::permissions()
     QVERIFY(QFile::setPermissions(systemDir, systemPermsSet));
 
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore directory permissions
     modifyPermissionSet(userPermsSet, QFile::ExeOwner);
@@ -543,7 +544,7 @@ void DatabaseManagerUnitTest::permissions()
     modifyPermissionSet(userPermsSet, ~QFile::WriteOwner);
     QVERIFY(QFile::setPermissions(userDir + "/Nokia/", userPermsSet));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore user directory permissions and create and populate a user database
     modifyPermissionSet(userPermsSet, QFile::WriteOwner);
@@ -563,7 +564,7 @@ void DatabaseManagerUnitTest::permissions()
     descriptors= m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QVERIFY(!m_dbm->m_userDb->isOpen());
     QVERIFY(!m_dbm->m_systemDb->isOpen());
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenUserDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore permissions
     modifyPermissionSet(userPermsSet, QFile::ReadOwner);
@@ -641,7 +642,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceOmni.xml")));
     QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
     
     QServiceFilter filter;
     filter.setServiceName("");
@@ -695,7 +696,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
 
     QVERIFY(!m_dbm->setInterfaceDefault("Primatech", "com.omni.device.accelerometer",
                                 DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //Use setInterfaceDefault(descriptor, scope)
     filter.setServiceName("Primatech");
@@ -728,7 +729,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QCOMPARE(descriptors.count(),0);
 
     QVERIFY(!m_dbm->unregisterService("primatech", DatabaseManager::SystemScope));
-    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenSystemDb);
+    QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore permissions so we can clean up the test directories
     modifyPermissionSet(systemPermsSet, QFile::WriteOwner);
@@ -1182,6 +1183,50 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     clean();
 }
 
+void DatabaseManagerUnitTest::CWRTXmlCompatability()
+{
+    m_dbm = new DatabaseManager;
+    ServiceMetaData parser("");
+
+    QStringList userServiceFiles;
+    userServiceFiles << "ServiceTest.xml" << "ServiceTest1.xml";
+    foreach (const QString &serviceFile, userServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    }
+
+    QString test("Test");
+    for(int i = 0; i <= 10; ++i) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(test + QString::number(i) + QLatin1String(".xml"))));
+        if (i == 6)
+            QVERIFY(parser.extractMetadata());
+        else
+            QVERIFY(!parser.extractMetadata());
+    }
+
+    QStringList systemServiceFiles;
+    systemServiceFiles << "ServiceTest2.xml" << "ServiceTest3.xml";
+    foreach (const QString &serviceFile, systemServiceFiles) {
+        parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
+        if (serviceFile == "ServiceTest3.xml") {
+            QVERIFY(!parser.extractMetadata());//versions less than 1.0 are not allowed
+            continue;
+        }
+        else
+            QVERIFY(parser.extractMetadata());
+        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    }
+
+    QServiceFilter filter;
+    filter.setInterface("com.nokia.ILocation");
+    QList<QServiceInterfaceDescriptor> descriptors;
+    descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
+    QVERIFY(compareDescriptor(descriptors[0], "com.nokia.ILocation", "TestService", 1,0));
+    QVERIFY(compareDescriptor(descriptors[1], "com.nokia.ILocation", "TestService1", 1,1));
+    QVERIFY(compareDescriptor(descriptors[2], "com.nokia.ILocation", "TestService2", 1,2));
+}
+
 void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
 {
@@ -1230,11 +1275,10 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
 void DatabaseManagerUnitTest::clean()
 {
     if (m_dbm != 0 ) {
-        m_dbm->close();
         delete m_dbm;
     }
     m_dbm = 0;
-    
+
     QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
 }
 
