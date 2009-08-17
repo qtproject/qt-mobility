@@ -87,11 +87,20 @@ void tst_QAbstractMediaObject::propertyWatch()
     QtTestMediaObject object;
     object.setNotifyInterval(0);
 
+    QEventLoop loop;
+    QTimer timer;
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    connect(&object, SIGNAL(aChanged(int)), &loop, SLOT(quit()));
+    connect(&object, SIGNAL(bChanged(int)), &loop, SLOT(quit()));
+    connect(&object, SIGNAL(cChanged(int)), &loop, SLOT(quit()));
+
     QSignalSpy aSpy(&object, SIGNAL(aChanged(int)));
     QSignalSpy bSpy(&object, SIGNAL(bChanged(int)));
     QSignalSpy cSpy(&object, SIGNAL(cChanged(int)));
 
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QCOMPARE(aSpy.count(), 0);
     QCOMPARE(bSpy.count(), 0);
@@ -102,7 +111,10 @@ void tst_QAbstractMediaObject::propertyWatch()
     int cCount = 0;
 
     object.addPropertyWatch("a");
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QVERIFY(aSpy.count() > aCount);
     QCOMPARE(bSpy.count(), 0);
@@ -114,7 +126,10 @@ void tst_QAbstractMediaObject::propertyWatch()
     object.setA(54);
     object.setB(342);
     object.setC(233);
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QVERIFY(aSpy.count() > aCount);
     QCOMPARE(bSpy.count(), 0);
@@ -127,7 +142,10 @@ void tst_QAbstractMediaObject::propertyWatch()
     object.setA(43);
     object.setB(235);
     object.setC(90);
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QVERIFY(aSpy.count() > aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -140,7 +158,10 @@ void tst_QAbstractMediaObject::propertyWatch()
 
     object.removePropertyWatch("a");
     object.addPropertyWatch("c");
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -153,7 +174,10 @@ void tst_QAbstractMediaObject::propertyWatch()
 
     object.setA(435);
     object.setC(9845);
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -168,7 +192,10 @@ void tst_QAbstractMediaObject::propertyWatch()
     object.setB(324);
     object.setC(443);
     object.removePropertyWatch("c");
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -179,7 +206,10 @@ void tst_QAbstractMediaObject::propertyWatch()
     bCount = bSpy.count();
 
     object.removePropertyWatch("b");
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+
+    timer.start(20);
+    loop.exec();
+    timer.stop();
 
     QCOMPARE(aSpy.count(), aCount);
     QCOMPARE(bSpy.count(), bCount);
