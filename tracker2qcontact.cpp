@@ -100,6 +100,7 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactName& na
     name.setMiddle     ( ncoContact->getNameAdditional() );
     name.setLast       ( ncoContact->getNameFamily() );
     name.setSuffix     ( ncoContact->getNameHonorificSuffix() );
+    qDebug()<<Q_FUNC_INFO<<name.values();
     setSubType( ncoContact, name );
 }
 

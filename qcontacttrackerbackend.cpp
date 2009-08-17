@@ -164,7 +164,7 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
         }
         LiveNodes ncoContacts = ::tracker()->modelQuery(query);
         for (int i = 0; i < ncoContacts->rowCount(); i++) {
-            ids.append(ncoContacts->index(i, 1).data().toInt());
+            ids.append(ncoContacts->index(i, 1).data().toUInt());
         }
     }
     error = QContactManager::NoError;
@@ -183,7 +183,7 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
     query.addColumn("contactId", RDFContact.property<nco::contactUID>());
     LiveNodes ncoContacts = ::tracker()->modelQuery(query);
     for(int i=0; i<ncoContacts->rowCount(); i++) {
-        ids.append(ncoContacts->index(i, 1).data().toInt());
+        ids.append(ncoContacts->index(i, 1).data().toUInt());
     }
 
     error = QContactManager::NoError;
