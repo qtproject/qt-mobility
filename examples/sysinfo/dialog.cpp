@@ -10,9 +10,12 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setupGeneral();
+    setupDevice();
+    setupDisplay();
     setupMemory();
+    setupNetwork();
 
-   connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
    connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
    connect(ui->diskComboBox,SIGNAL(activated(int)), this,SLOT(doVolumes(int)));
