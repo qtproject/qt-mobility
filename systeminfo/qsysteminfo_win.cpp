@@ -65,6 +65,8 @@
 #ifdef Q_OS_WINCE
 #include <vibrate.h>
 #include <Led_drvr.h>
+#include <simmgr.h>
+
 #endif
 //#include <Winsock2.h>
 
@@ -305,6 +307,16 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::SimFeature :
+        {
+#ifdef Q_OS_WINCE
+            HSIM handle;
+            HRESULT result = SimInitialize(0,NULL,NULL,&handle);
+            if(result == S_OK) {
+                featureSupported = true;
+            }
+#else
+#endif
+        }
         break;
     case QSystemInfo::LocationFeature :
         break;

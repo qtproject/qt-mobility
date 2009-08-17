@@ -13,7 +13,7 @@ win32 {
     LIBS += Wlanapi.lib Ole32.lib Strmiids.lib Bthprops.lib User32.lib Gdi32.lib Ws2_32.lib
     INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" "C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 
-    wince*:LIBS += aygshell.lib Nleddrv.lib
+    wince*:LIBS += aygshell.lib Nleddrv.lib cellcore.lib
 
 }
 
