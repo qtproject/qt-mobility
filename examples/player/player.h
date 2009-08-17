@@ -71,7 +71,6 @@ private slots:
     void playlistPositionChanged(int);
 
     void statusChanged(QMediaPlayer::MediaStatus status);
-    void bufferingChanged(bool buffering);
     void bufferingProgress(int progress);
 
     void setFullscreen(bool fullscreen);

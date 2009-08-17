@@ -62,7 +62,6 @@ Player::Player(QWidget *parent)
     connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
-    connect(player, SIGNAL(bufferingChanged(bool)), this, SLOT(bufferingChanged(bool)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
 #ifdef USE_VIDEOWIDGET
@@ -241,7 +240,8 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
     case QMediaPlayer::UnknownMediaStatus:
     case QMediaPlayer::NoMedia:
     case QMediaPlayer::LoadedMedia:
-    case QMediaPlayer::PrimedMedia:
+    case QMediaPlayer::BufferingMedia:
+    case QMediaPlayer::BufferedMedia:
 #ifndef QT_NO_CURSOR
         unsetCursor();
 #endif
@@ -272,12 +272,6 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         setStatusInfo(player->errorString());
         break;
     }
-}
-
-void Player::bufferingChanged(bool buffering)
-{
-    if (buffering)
-        statusChanged(player->mediaStatus());
 }
 
 void Player::bufferingProgress(int progress)

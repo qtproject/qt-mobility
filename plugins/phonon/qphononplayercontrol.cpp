@@ -101,12 +101,6 @@ QMediaPlayer::State QPhononPlayerControl::state() const
     return m_state;
 }
 
-bool QPhononPlayerControl::isBuffering() const
-{
-    return m_session->state() == Phonon::BufferingState;
-}
-
-
 int QPhononPlayerControl::bufferStatus() const
 {
     return 100;

@@ -4,7 +4,7 @@
 #include "qabstractmediacontrol.h"
 #include "qmediastreams.h"
 
-class QMediaStreamsControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaStreamsControl : public QAbstractMediaControl
 {
 Q_OBJECT
 public:

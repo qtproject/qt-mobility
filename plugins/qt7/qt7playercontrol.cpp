@@ -143,11 +143,6 @@ void Qt7PlayerControl::setMuted(bool muted)
     d->movie->setMuted(muted);
 }
 
-bool Qt7PlayerControl::isBuffering() const
-{
-    return false;
-}
-
 int Qt7PlayerControl::bufferStatus() const
 {
     return 0;
@@ -233,11 +228,10 @@ void Qt7PlayerControl::setSource(QMediaResourceList const &resources)
 
 void Qt7PlayerControl::update()
 {
-    const State state = QMediaPlayer::State(d->movie->state());
+    const QMediaPlayer::State state = QMediaPlayer::State(d->movie->state());
     if (d->state != state) {
         d->state = state;
-        if (d->state == QMediaPlayer::StoppedState
-                || QMediaPlayer::d->state == QMediaPlayer::PausedState)
+        if (d->state == QMediaPlayer::StoppedState || d->state == QMediaPlayer::PausedState)
             updateTimer->stop();
 
         emit stateChanged(d->state);

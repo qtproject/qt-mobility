@@ -59,7 +59,6 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
-    Q_PROPERTY(bool buffering READ isBuffering NOTIFY bufferingChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailablityChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
@@ -84,7 +83,8 @@ public:
         LoadingMedia,
         LoadedMedia,
         StalledMedia,
-        PrimedMedia,
+        BufferingMedia,
+        BufferedMedia,
         EndOfMedia,
         InvalidMedia
     };
@@ -115,7 +115,6 @@ public:
     int volume() const;
     bool isMuted() const;
 
-    bool isBuffering() const;
     int bufferStatus() const;
 
     bool isVideoAvailable() const;
@@ -172,7 +171,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
-    Q_PRIVATE_SLOT(d_func(), void _q_bufferingChanged(bool));
 };
 
 #endif  // QMEDIAPLAYER_H

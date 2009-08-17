@@ -68,8 +68,6 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMuted(bool muted) = 0;
 
-    virtual bool isBuffering() const = 0;
-
     virtual int bufferStatus() const = 0;
 
     virtual bool isVideoAvailable() const = 0;

@@ -65,7 +65,6 @@ public:
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(int status);
     void _q_error(int error, const QString &errorString);
-    void _q_bufferingChanged(bool buffering);
 };
 
 void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
@@ -82,7 +81,18 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
 
 void QMediaPlayerPrivate::_q_mediaStatusChanged(int status)
 {
-    emit q_func()->mediaStatusChanged(QMediaPlayer::MediaStatus(status));
+    Q_Q(QMediaPlayer);
+
+    switch (status) {
+    case QMediaPlayer::StalledMedia:
+    case QMediaPlayer::BufferingMedia:
+        q->addPropertyWatch("bufferStatus");
+        break;
+    default:
+        q->removePropertyWatch("bufferStatus");
+        break;
+    }
+    emit q->mediaStatusChanged(QMediaPlayer::MediaStatus(status));
 }
 
 void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
@@ -94,16 +104,6 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
     emit q->error(this->error);
     emit q->errorStringChanged(this->errorString);
-}
-
-void QMediaPlayerPrivate::_q_bufferingChanged(bool buffering)
-{
-    Q_Q(QMediaPlayer);
-
-    if (buffering)
-        q->addPropertyWatch("bufferStatus");
-    else
-        q->removePropertyWatch("bufferStatus");
 }
 
 /*!
@@ -137,7 +137,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     if (d->control->state() == PlayingState)
         addPropertyWatch("position");
 
-    if (d->control->isBuffering())
+    if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
         addPropertyWatch("bufferStatus");
 }
 
@@ -273,14 +273,6 @@ int QMediaPlayer::volume() const
 bool QMediaPlayer::isMuted() const
 {
     return d_func()->control->isMuted();
-}
-
-/*!
-  Returns true if the media player is currently buffering the input data.
-*/
-bool QMediaPlayer::isBuffering() const
-{
-    return d_func()->control->isBuffering();
 }
 
 /*!
@@ -503,8 +495,10 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
     \value LoadedMedia The current media has been loaded. The player is in the StoppedState.
     \value StalledMedia Playback of the current media has stalled due to insufficient buffering or
     some other temporary interruption.  The player is in the PlayingState or PausedState.
-    \value PrimedMedia The media has enough data buffered for playback to continue for the
-    immediate future.  The player is in the PlayingState or PausedState.
+    \value BufferingMedia The player is buffering data but has enough data buffered for playback to
+    continue for the immediate future.  The player is in the PlayingState or PausedState.
+    \value BufferedMedia The player has fully buffered the current media.  The player is in the
+    PlayingState or PausedState.
     \value EndOfMedia Playback has reached the end of the current media.  The player is in the
     StoppedState.
     \value InvalidMedia The current media cannot be played.  The player is in the StoppedState.
