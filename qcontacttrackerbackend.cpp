@@ -740,7 +740,6 @@ void QContactTrackerEngine::requestDestroyed(QContactAbstractRequest* req)
 /*! \reimp */
 bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
 {
-    Q_ASSERT(req->status() == QContactAbstractRequest::Active);
     QTrackerContactAsyncRequest *request = new QTrackerContactAsyncRequest(req, this);
     d->m_requests[req] = request;
     return true;

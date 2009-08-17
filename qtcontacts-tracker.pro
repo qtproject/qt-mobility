@@ -1,6 +1,10 @@
 # #####################################################################
 # Contacts Mobility API Tracker storage plugin
 # #####################################################################
+
+# include version number for the plugin
+include(../../version.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
