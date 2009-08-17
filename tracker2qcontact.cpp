@@ -54,9 +54,12 @@ void setSubType(Live<nco::PostalAddress> ncoPostalAddress, QContactAddress& deta
     // AttributeSubTypePostal;
     // AttributeSubTypeDomestic;
     // AttributeSubTypeInternational;
-    // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
-    Q_UNUSED( ncoPostalAddress );
-    Q_UNUSED( detail );
+
+    if( ncoPostalAddress.hasType<nco::PostalAddress>() ) {
+        detail.setAttribute(QContactAddress::AttributeSubType, QContactAddress::AttributeSubTypePostal);
+    } else {
+        detail.setAttribute(QContactAddress::AttributeSubType, QContactAddress::AttributeSubTypeDomestic);
+    }
 }
 
 /**
@@ -64,7 +67,7 @@ void setSubType(Live<nco::PostalAddress> ncoPostalAddress, QContactAddress& deta
  */
 void setSubType(Live<nco::PersonContact> ncoPersonContact, QContactName& detail)
 {
-    //TODO
+    //TODO: No subtypes specified in qcontactname
     Q_UNUSED( ncoPersonContact );
     Q_UNUSED( detail );
 }
@@ -79,9 +82,10 @@ void setSubType(Live<nco::EmailAddress> ncoEmail, QContactEmailAddress& detail)
     // AttributeSubTypePostal;
     // AttributeSubTypeDomestic;
     // AttributeSubTypeInternational;
-    // detail.setAttribute(QContactPhoneNumber::AttributeSubType, QContactPhoneNumber::AttributeSubType....);
-    Q_UNUSED( ncoEmail );
-    Q_UNUSED( detail );
+
+    if( ncoEmail.hasType<nco::EmailAddress>() ) {
+        detail.setAttribute(QContactEmailAddress::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
+    }
 }
 
 void setSubType(Live<nfo::FileDataObject> fdo, QContactAvatar& detail)
@@ -150,7 +154,6 @@ void copyDetailData(const Live< rdfs::Resource >& url, QContactUrl& detail)
     detail.setUrl(url.toString());
 }
 
-// TODO
 /*
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactAnniversary& detail)
 {
@@ -158,26 +161,33 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactAnnivers
     Q_UNUSED(detail);
     //detail.setDate (QDate());
 }
+*/
+
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactGender& detail)
 {
     Q_UNUSED(ncoContact);
     Q_UNUSED(detail);
-    //const Live< Gender > gender = ncoContact->getGender();
-    //detail.setGender (gender->);
+    const Live< nfo::Gender > gender = ncoContact->getGender();
+    detail.setGender(gender.toString());
 }
+
+/*
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactBirthday& detail)
 {
     detail.setDate (QDate());
 }
 
+
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactGuid& detail)
 {
     detail.setGuid (QString());
 }
+
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactSyncTarget& detail)
 {
     detail.setSyncTarget (QString());
 }
+
 void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactUrl& detail)
 {
     detail.setUrl (QString());
@@ -304,12 +314,17 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
         }
     }
 
-    /*{ //TODO
+    //TODO
+    /*LiveNodes genders = ncoContact->gethasGenders();
+    foreach( Live< nco::Gender > ncoGender, genders->getGenders() )
+        {
+            QContactGender detail;
+            copyDetailData(ncoGender, detail);
+
+            qcontact.saveDetail(&detail);
+        }
+    {
         QContactAnniversary detail;
-        copyDetailData(ncoContact, detail);
-        qcontact.saveDetail(&detail);
-    }{
-        QContactGender detail;
         copyDetailData(ncoContact, detail);
         qcontact.saveDetail(&detail);
     }{
