@@ -130,11 +130,13 @@ void QPainterVideoSurface::stop()
 bool QPainterVideoSurface::present(const QVideoFrame &frame)
 {
     if (!m_ready) {
-        setError(isStarted() ? StoppedError : NotReadyError);
+        if (!isStarted())
+            setError(StoppedError);
 
         return false;
     } else if (frame.pixelFormat() != m_pixelFormat || frame.size() != m_imageSize) {
         setError(IncorrectFormatError);
+        stop();
 
         return false;
     } else {

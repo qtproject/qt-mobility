@@ -51,12 +51,10 @@ class Qt7PlayerControl : public QMediaPlayerControl
     Q_OBJECT
 
 public:
-    enum State { PlayingState, PausedState, StoppedState };
-
     Qt7PlayerControl(QObject *parent);
     ~Qt7PlayerControl();
 
-    int state() const;
+    QMediaPlayer::State state() const;
 
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
