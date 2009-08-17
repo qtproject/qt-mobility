@@ -30,8 +30,7 @@
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::Locked</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
-        <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#batteryLevelCritical">batteryLevelCritical</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentPowerState">currentPowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</keyword>
         <keyword ref="qsystemdeviceinfo.html#getSimStatus">getSimStatus</keyword>
@@ -41,7 +40,6 @@
         <keyword ref="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
         <keyword ref="qsystemdeviceinfo.html#manufacturer">manufacturer</keyword>
         <keyword ref="qsystemdeviceinfo.html#model">model</keyword>
-        <keyword ref="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#productName">productName</keyword>
         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
     </section>
@@ -81,9 +79,8 @@
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::NetscapePlugin</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::WebApp</keyword>
         <keyword ref="qsysteminfo.html#availableLanguages">availableLanguages</keyword>
-        <keyword ref="qsysteminfo.html#countryCode">countryCode</keyword>
+        <keyword ref="qsysteminfo.html#currentCountryCode">currentCountryCode</keyword>
         <keyword ref="qsysteminfo.html#currentLanguage">currentLanguage</keyword>
-        <keyword ref="qsysteminfo.html#getDetailOfFeature">getDetailOfFeature</keyword>
         <keyword ref="qsysteminfo.html#getVersion">getVersion</keyword>
         <keyword ref="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</keyword>
         <section ref="qsysteminfo-members.html" title="List of all members"/>
@@ -95,13 +92,8 @@
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Removable</keyword>
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::NoVolume</keyword>
         <keyword ref="qsystemmemoryinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemmemoryinfo.html#diskSpaceCritical">diskSpaceCritical</keyword>
-        <keyword ref="qsystemmemoryinfo.html#freeMemoryLevel">freeMemoryLevel</keyword>
         <keyword ref="qsystemmemoryinfo.html#getVolumeType">getVolumeType</keyword>
-        <keyword ref="qsystemmemoryinfo.html#hasRamMemoryLevel">hasRamMemoryLevel</keyword>
         <keyword ref="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
-        <keyword ref="qsystemmemoryinfo.html#memoryCritical">memoryCritical</keyword>
-        <keyword ref="qsystemmemoryinfo.html#newMemoryCard">newMemoryCard</keyword>
         <keyword ref="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <section ref="qsystemmemoryinfo-members.html" title="List of all members"/>
     </section>
@@ -130,7 +122,6 @@
         <keyword ref="qsystemnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#isLocationEnabled">isLocationEnabled</keyword>
         <keyword ref="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
