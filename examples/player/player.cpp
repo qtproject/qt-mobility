@@ -242,23 +242,31 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
     case QMediaPlayer::NoMedia:
     case QMediaPlayer::LoadedMedia:
     case QMediaPlayer::PrimedMedia:
+#ifndef QT_NO_CURSOR
         unsetCursor();
+#endif
         setStatusInfo(QString());
         break;
     case QMediaPlayer::LoadingMedia:
+#ifndef QT_NO_CURSOR
         setCursor(QCursor(Qt::BusyCursor));
+#endif
         setStatusInfo(tr("Loading..."));
         break;
     case QMediaPlayer::StalledMedia:
         setCursor(QCursor(Qt::BusyCursor));
         break;
     case QMediaPlayer::EndOfMedia:
+#ifndef QT_NO_CURSOR
         unsetCursor();
+#endif
         setStatusInfo(QString());
         QApplication::alert(this);
         break;
     case QMediaPlayer::InvalidMedia:
+#ifndef QT_NO_CURSOR
         unsetCursor();
+#endif
         setStatusInfo(player->errorString());
         break;
     }
