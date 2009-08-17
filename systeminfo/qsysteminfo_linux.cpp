@@ -1044,6 +1044,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
  {
 #if !defined(QT_NO_DBUS)
+     qWarning() << Q_FUNC_INFO;
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("ac_adapter");
         if(!list.isEmpty()) {
@@ -1064,8 +1065,10 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 qWarning() <<"battery"<< dev;
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(ifaceDevice.getPropertyBool("battery.present") ){
+                    if(ifaceDevice.getPropertyBool("battery.rechargable.is_discharging") ){
                         return QSystemDeviceInfo::BatteryPower;
+                    } else {
+                        return QSystemDeviceInfo::WallPower;
                     }
                 }
             }
