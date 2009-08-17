@@ -254,7 +254,9 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         setStatusInfo(tr("Loading..."));
         break;
     case QMediaPlayer::StalledMedia:
+#ifndef QT_NO_CURSOR
         setCursor(QCursor(Qt::BusyCursor));
+#endif
         break;
     case QMediaPlayer::EndOfMedia:
 #ifndef QT_NO_CURSOR
