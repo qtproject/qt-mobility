@@ -67,6 +67,7 @@
 #include <Led_drvr.h>
 #include <simmgr.h>
 #include <Ifapi.h>
+#include <Winbase.h>
 #endif
 //#include <Winsock2.h>
 
@@ -830,12 +831,37 @@ QString QSystemDeviceInfoPrivate::productName()
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
 {
     bool isCharging = false;
+#ifdef Q_OS_WINCE
+    SYSTEM_POWER_STATUS_EX statusEx;
+    GetSystemPowerStatusEx(&statusEx, true);
+    if(statusEx.BatteryFlag == BATTERY_FLAG_CHARGING)
+        isCharging = true;
+#endif
     return isCharging;
 }
 
 QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
 {
-
+#ifdef Q_OS_WINCE
+    SYSTEM_POWER_STATUS_EX statusEx;
+    GetSystemPowerStatusEx(&statusEx, true);
+    switch(statusEx.BatteryFlag) {
+    case BATTERY_FLAG_HIGH:
+        return QSystemDeviceInfo::BatteryNormal;
+        break;
+    case BATTERY_FLAG_LOW:
+        return QSystemDeviceInfo::Low;
+        break;
+    case BATTERY_FLAG_CRITICAL:
+        return QSystemDeviceInfo::BatteryCritical;
+        break;
+    case BATTERY_FLAG_CHARGING:
+    case BATTERY_FLAG_UNKNOWN:
+    case BATTERY_FLAG_NO_BATTERY:
+        return QSystemDeviceInfo::NoBatteryLevel;
+        break;
+   };
+#endif
     return QSystemDeviceInfo::NoBatteryLevel;
 }
 
