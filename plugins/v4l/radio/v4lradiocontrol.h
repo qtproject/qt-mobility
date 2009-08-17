@@ -39,23 +39,23 @@
 #include <QtCore/qtimer.h>
 #include <QTime>
 
-#include "qradiotuner.h"
+#include "qradioplayercontrol.h"
 #include "qradioplayer.h"
 
 #include "linux/videodev2.h"
 
 class V4LRadioService;
 
-class V4LRadioControl : public QRadioTuner
+class V4LRadioControl : public QRadioPlayerControl
 {
     Q_OBJECT
 public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
 
-    int band() const;
-    void setBand(int b);
-    bool isSupportedBand(int b) const;
+    QRadioPlayer::Band band() const;
+    void setBand(QRadioPlayer::Band b);
+    bool isSupportedBand(QRadioPlayer::Band b) const;
 
     int frequency() const;
     void setFrequency(int frequency);

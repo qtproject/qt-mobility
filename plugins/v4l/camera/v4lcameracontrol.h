@@ -49,49 +49,72 @@ public:
     V4LCameraControl(V4LCameraService *service, QObject *parent = 0);
     ~V4LCameraControl();
 
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
+    void start();
+    void stop();
+    QCamera::State state() const;
 
-    int framerate() const;
-    void setFrameRate(int rate);
+    QCamera::FlashMode flashMode() const;
+    void setFlashMode(QCamera::FlashMode mode);
+    QCamera::FlashModes supportedFlashModes() const;
+    bool isFlashReady() const;
 
-    int brightness() const;
-    void setBrightness(int b);
+    QCamera::FocusMode focusMode() const;
+    void setFocusMode(QCamera::FocusMode mode);
+    QCamera::FocusModes supportedFocusModes() const;
+    QCamera::FocusStatus focusStatus() const;
 
-    int contrast() const;
-    void setContrast(int c);
+    bool macroFocusingEnabled() const;
+    bool isMacroFocusingSupported() const;
+    void setMacroFocusingEnabled(bool);
 
-    int saturation() const;
-    void setSaturation(int s);
+    QCamera::ExposureMode exposureMode() const;
+    void setExposureMode(QCamera::ExposureMode mode);
+    QCamera::ExposureModes supportedExposureModes() const;
 
-    int hue() const;
-    void setHue(int h);
+    double exposureCompensation() const;
+    void setExposureCompensation(double ev);
 
-    int sharpness() const;
-    void setSharpness(int s);
+    QCamera::MeteringMode meteringMode() const;
+    void setMeteringMode(QCamera::MeteringMode mode);
+    QCamera::MeteringModes supportedMeteringModes() const;
 
-    int zoom() const;
-    void setZoom(int z);
+    QCamera::WhiteBalanceMode whiteBalanceMode() const;
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
+    int manualWhiteBalance() const;
+    void setManualWhiteBalance(int colorTemperature);
 
-    bool backlightCompensation() const;
-    void setBacklightCompensation(bool);
+    int isoSensitivity() const;
+    QPair<int, int> supportedIsoSensitivityRange() const;
+    void setManualIsoSensitivity(int iso);
+    void setAutoIsoSensitivity();
 
-    int whitelevel() const;
-    void setWhitelevel(int w);
+    double aperture() const;
+    QPair<double, double> supportedApertureRange() const;
+    void setManualAperture(double aperture);
+    void setAutoAperture();
 
-    int rotation() const;
-    void setRotation(int r);
+    double shutterSpeed() const;
+    QPair<double, double> supportedShutterSpeedRange() const;
+    void setManualShutterSpeed(double seconds);
+    void setAutoShutterSpeed();
 
-    bool flash() const;
-    void setFlash(bool f);
-
-    bool autofocus() const;
-    void setAutofocus(bool f);
-
-    bool isValid() const;
+    double maximumOpticalZoom() const;
+    double maximumDigitalZoom() const;
+    double zoomValue() const;
+    void zoomTo(int value);
 
     void setDevice(const QByteArray &device);
-    QList<QSize> supportedResolutions();
+
+    bool isExposureLocked() const;
+    bool isFocusLocked() const;
+
+public Q_SLOTS:
+    void lockExposure();
+    void unlockExposure();
+
+    void lockFocus();
+    void unlockFocus();
 
 private:
     V4LCameraSession *m_session;

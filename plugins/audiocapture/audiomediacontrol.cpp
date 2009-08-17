@@ -41,7 +41,7 @@ AudioMediaControl::AudioMediaControl(QObject *parent)
     :QMediaRecorderControl(parent)
 {
     m_session = qobject_cast<AudioCaptureSession*>(parent);
-    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(positionChanged(qint64)));
+    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
     connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
 }
 
@@ -59,12 +59,12 @@ bool AudioMediaControl::setSink(const QMediaSink& sink)
     return m_session->setSink(sink);
 }
 
-int AudioMediaControl::state() const
+QMediaRecorder::State AudioMediaControl::state() const
 {
-    return m_session->state();
+    return (QMediaRecorder::State)m_session->state();
 }
 
-qint64 AudioMediaControl::position() const
+qint64 AudioMediaControl::duration() const
 {
     return m_session->position();
 }

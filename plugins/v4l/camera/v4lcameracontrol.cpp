@@ -55,139 +55,216 @@ V4LCameraControl::~V4LCameraControl()
 {
 }
 
-QList<QSize> V4LCameraControl::supportedResolutions()
+void V4LCameraControl::start()
 {
-    QList<QSize> list;
-
-    if(m_session->deviceReady())
-        list << m_session->supportedResolutions();
-
-    return list;
+    m_session->record();
 }
 
-int V4LCameraControl::framerate() const
+void V4LCameraControl::stop()
 {
-    return m_session->framerate();
+    m_session->stop();
 }
 
-void V4LCameraControl::setFrameRate(int rate)
+QCamera::State V4LCameraControl::state() const
 {
-    m_session->setFrameRate(rate);
+    return (QCamera::State)m_session->state();
 }
 
-int V4LCameraControl::brightness() const
+QCamera::FlashMode V4LCameraControl::flashMode() const
 {
-    return m_session->brightness();
+    return QCamera::FlashOff;
 }
 
-void V4LCameraControl::setBrightness(int b)
+void V4LCameraControl::setFlashMode(QCamera::FlashMode mode)
 {
-    m_session->setBrightness(b);
+    Q_UNUSED(mode)
 }
 
-int V4LCameraControl::contrast() const
+QCamera::FlashModes V4LCameraControl::supportedFlashModes() const
 {
-    return m_session->contrast();
+    return QCamera::FlashOff;
 }
 
-void V4LCameraControl::setContrast(int c)
+bool V4LCameraControl::isFlashReady() const
 {
-    m_session->setContrast(c);
+    return false;
 }
 
-int V4LCameraControl::saturation() const
+QCamera::FocusMode V4LCameraControl::focusMode() const
 {
-    return m_session->saturation();
+    return QCamera::AutoFocus;
 }
 
-void V4LCameraControl::setSaturation(int s)
+void V4LCameraControl::setFocusMode(QCamera::FocusMode mode)
 {
-    m_session->setSaturation(s);
+    Q_UNUSED(mode)
 }
 
-int V4LCameraControl::hue() const
+QCamera::FocusModes V4LCameraControl::supportedFocusModes() const
 {
-    return m_session->hue();
+    return QCamera::AutoFocus;
 }
 
-void V4LCameraControl::setHue(int h)
+QCamera::FocusStatus V4LCameraControl::focusStatus() const
 {
-    m_session->setHue(h);
+    return QCamera::FocusDisabled;
 }
 
-int V4LCameraControl::sharpness() const
+bool V4LCameraControl::macroFocusingEnabled() const
 {
-    return m_session->sharpness();
+    return false;
 }
 
-void V4LCameraControl::setSharpness(int s)
+bool V4LCameraControl::isMacroFocusingSupported() const
 {
-    m_session->setSharpness(s);
+    return false;
 }
 
-int V4LCameraControl::zoom() const
+void V4LCameraControl::setMacroFocusingEnabled(bool e)
 {
-    return m_session->zoom();
+    Q_UNUSED(e)
 }
 
-void V4LCameraControl::setZoom(int z)
+QCamera::ExposureMode V4LCameraControl::exposureMode() const
 {
-    m_session->setZoom(z);
+    return QCamera::ExposureManual;
 }
 
-bool V4LCameraControl::backlightCompensation() const
+void V4LCameraControl::setExposureMode(QCamera::ExposureMode mode)
 {
-    return m_session->backlightCompensation();
+    Q_UNUSED(mode)
 }
 
-void V4LCameraControl::setBacklightCompensation(bool b)
+QCamera::ExposureModes V4LCameraControl::supportedExposureModes() const
 {
-    m_session->setBacklightCompensation(b);
+    return QCamera::ExposureManual;
 }
 
-int V4LCameraControl::whitelevel() const
+double V4LCameraControl::exposureCompensation() const
 {
-    return m_session->whitelevel();
+    return 0;
 }
 
-void V4LCameraControl::setWhitelevel(int w)
+void V4LCameraControl::setExposureCompensation(double ev)
 {
-    m_session->setWhitelevel(w);
+    Q_UNUSED(ev)
 }
 
-int V4LCameraControl::rotation() const
+QCamera::MeteringMode V4LCameraControl::meteringMode() const
 {
-    return m_session->rotation();
+    return QCamera::MeteringAverage;
 }
 
-void V4LCameraControl::setRotation(int r)
+void V4LCameraControl::setMeteringMode(QCamera::MeteringMode mode)
 {
-    m_session->setRotation(r);
+    Q_UNUSED(mode)
 }
 
-bool V4LCameraControl::flash() const
+QCamera::MeteringModes V4LCameraControl::supportedMeteringModes() const
 {
-    return m_session->flash();
+    return QCamera::MeteringAverage;
 }
 
-void V4LCameraControl::setFlash(bool f)
+QCamera::WhiteBalanceMode V4LCameraControl::whiteBalanceMode() const
 {
-    m_session->setFlash(f);
+    return QCamera::WhiteBalanceManual;
 }
 
-bool V4LCameraControl::autofocus() const
+void V4LCameraControl::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
-    return m_session->autofocus();
+    Q_UNUSED(mode)
 }
 
-void V4LCameraControl::setAutofocus(bool f)
+QCamera::WhiteBalanceModes V4LCameraControl::supportedWhiteBalanceModes() const
 {
-    m_session->setAutofocus(f);
+    return QCamera::WhiteBalanceManual;
 }
 
-bool V4LCameraControl::isValid() const
+int V4LCameraControl::manualWhiteBalance() const
 {
-    return m_session->deviceReady();
+    return 0;
+}
+
+void V4LCameraControl::setManualWhiteBalance(int colorTemperature)
+{
+    Q_UNUSED(colorTemperature)
+}
+
+int V4LCameraControl::isoSensitivity() const
+{
+    return 0;
+}
+
+QPair<int, int> V4LCameraControl::supportedIsoSensitivityRange() const
+{
+    return qMakePair<int,int>(-1,-1);
+}
+
+void V4LCameraControl::setManualIsoSensitivity(int iso)
+{
+    Q_UNUSED(iso);
+}
+
+void V4LCameraControl::setAutoIsoSensitivity()
+{
+}
+
+double V4LCameraControl::aperture() const
+{
+    return -1.0;
+}
+
+QPair<double, double> V4LCameraControl::supportedApertureRange() const
+{
+    return qMakePair<double,double>(-1,-1);
+}
+
+void V4LCameraControl::setManualAperture(double aperture)
+{
+    Q_UNUSED(aperture);
+}
+
+void V4LCameraControl::setAutoAperture()
+{
+}
+
+double V4LCameraControl::shutterSpeed() const
+{
+    return -1;
+}
+
+QPair<double, double> V4LCameraControl::supportedShutterSpeedRange() const
+{
+    return qMakePair<double,double>(-1,-1);
+}
+
+void V4LCameraControl::setManualShutterSpeed(double seconds)
+{
+    Q_UNUSED(seconds);
+}
+
+void V4LCameraControl::setAutoShutterSpeed()
+{
+}
+
+double V4LCameraControl::maximumOpticalZoom() const
+{
+    return 1.0;
+}
+
+double V4LCameraControl::maximumDigitalZoom() const
+{
+    return 1.0;
+}
+
+double V4LCameraControl::zoomValue() const
+{
+    return 1.0;
+}
+
+void V4LCameraControl::zoomTo(int value)
+{
+    Q_UNUSED(value);
 }
 
 void V4LCameraControl::setDevice(const QByteArray &device)
@@ -195,14 +272,29 @@ void V4LCameraControl::setDevice(const QByteArray &device)
     m_session->setDevice(device);
 }
 
-QSize V4LCameraControl::frameSize() const
+bool V4LCameraControl::isExposureLocked() const
 {
-    return m_session->frameSize();
+    return true;
 }
 
-void V4LCameraControl::setFrameSize(const QSize& s)
+bool V4LCameraControl::isFocusLocked() const
 {
-    m_session->setFrameSize(s);
+    return true;
 }
 
+void V4LCameraControl::lockExposure()
+{
+}
+
+void V4LCameraControl::unlockExposure()
+{
+}
+
+void V4LCameraControl::lockFocus()
+{
+}
+
+void V4LCameraControl::unlockFocus()
+{
+}
 

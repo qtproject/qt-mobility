@@ -75,7 +75,7 @@ Camera::Camera()
         // Audio Encode Control
         audioEncodeControl = capture->service()->control<QAudioEncodeControl*>();
 
-        connect(capture, SIGNAL(positionChanged(qint64)), this, SLOT(updateProgress(qint64)));
+        connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
         connect(capture,SIGNAL(stateChanged(QMediaRecorder::State)),this,SLOT(stateChanged(QMediaRecorder::State)));
         //connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
     }

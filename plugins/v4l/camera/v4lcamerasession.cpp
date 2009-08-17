@@ -88,7 +88,7 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     }
     m_output = 0;
     m_windowSize = QSize(320,240);
-    pixelF = QVideoFrame::Format_RGB32;
+    pixelF = QVideoFrame::Format_RGB24;
 }
 
 V4LCameraSession::~V4LCameraSession()
@@ -102,9 +102,11 @@ bool V4LCameraSession::deviceReady()
 
 void V4LCameraSession::setVideoOutput(QWidget* widget)
 {
+    qWarning()<<"qqqqqqqqqqqqqqqqqqqqqq";
     m_output = qobject_cast<V4LVideoWidget*>(widget);
     m_output->setBaseSize(m_windowSize);
     m_output->setFrameSize(m_windowSize);
+    qWarning()<<widget->size();
 }
 
 int V4LCameraSession::framerate() const
@@ -492,7 +494,7 @@ void V4LCameraSession::pause()
         }
         ::close(sfd);
         sfd = -1;
-        m_state = QCamera::PausedState;
+        m_state = QCamera::StoppedState;
         emit stateChanged(m_state);
     }
 }

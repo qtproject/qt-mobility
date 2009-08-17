@@ -58,12 +58,12 @@ bool V4LMediaControl::setSink(const QMediaSink& sink)
     return m_session->setSink(sink);
 }
 
-int V4LMediaControl::state() const
+QMediaRecorder::State V4LMediaControl::state() const
 {
-    return m_session->state();
+    return (QMediaRecorder::State)m_session->state();
 }
 
-qint64 V4LMediaControl::position() const
+qint64 V4LMediaControl::duration() const
 {
     return m_session->position();
 }

@@ -50,7 +50,7 @@
 #include <unistd.h>
 
 V4LRadioControl::V4LRadioControl(QObject *parent)
-    :QRadioTuner(parent)
+    :QRadioPlayerControl(parent)
 {
     fd = -1;
     initRadio();
@@ -75,12 +75,12 @@ V4LRadioControl::~V4LRadioControl()
         ::close(fd);
 }
 
-int V4LRadioControl::band() const
+QRadioPlayer::Band V4LRadioControl::band() const
 {
     return currentBand;
 }
 
-bool V4LRadioControl::isSupportedBand(int b) const
+bool V4LRadioControl::isSupportedBand(QRadioPlayer::Band b) const
 {
     QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
     switch(bnd) {
@@ -102,7 +102,7 @@ bool V4LRadioControl::isSupportedBand(int b) const
     return false;
 }
 
-void V4LRadioControl::setBand(int b)
+void V4LRadioControl::setBand(QRadioPlayer::Band b)
 {
     if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioPlayer::FM) {
         // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz

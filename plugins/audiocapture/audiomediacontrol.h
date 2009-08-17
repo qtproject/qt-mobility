@@ -53,9 +53,9 @@ public:
     QMediaSink sink() const;
     bool setSink(const QMediaSink &sink);
 
-    int state() const;
+    QMediaRecorder::State state() const;
 
-    qint64 position() const;
+    qint64 duration() const;
 
 public slots:
     void record();
