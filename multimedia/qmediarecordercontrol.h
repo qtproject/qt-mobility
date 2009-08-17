@@ -51,11 +51,11 @@ public:
 
     virtual QMediaRecorder::State state() const = 0;
 
-    virtual qint64 position() const = 0;
+    virtual qint64 duration() const = 0;
 
 signals:
     void stateChanged(QMediaRecorder::State state);
-    void positionChanged(qint64 position);
+    void durationChanged(qint64 position);
     void error(int error, const QString &errorString);
 
 public slots:

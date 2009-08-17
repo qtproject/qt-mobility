@@ -40,7 +40,7 @@ QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *s
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
-    connect(m_session, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+    connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
 }
 
 QGstreamerRecorderControl::~QGstreamerRecorderControl()
@@ -80,9 +80,9 @@ void QGstreamerRecorderControl::updateState()
     emit stateChanged(state());
 }
 
-qint64 QGstreamerRecorderControl::position() const
+qint64 QGstreamerRecorderControl::duration() const
 {
-    return m_session->position();
+    return m_session->duration();
 }
 
 void QGstreamerRecorderControl::record()

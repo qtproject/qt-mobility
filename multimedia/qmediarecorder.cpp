@@ -100,9 +100,9 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
     Q_Q(QMediaRecorder);
 
     if (ps == QMediaRecorder::RecordingState)
-        q->addPropertyWatch("position");
+        q->addPropertyWatch("duration");
     else
-        q->removePropertyWatch("position");
+        q->removePropertyWatch("duration");
 
     emit q->stateChanged(ps);
 }
@@ -235,21 +235,21 @@ void QMediaRecorder::unsetError()
 }
 
 /*!
-    \property QMediaRecorder::position
-    \brief Current position in milliseconds.
+    \property QMediaRecorder::duration
+    \brief Recorded media duration in milliseconds.
 */
 
 /*!
-    Return the current position in milliseconds.
+    Return the current duration in milliseconds.
 */
 
-qint64 QMediaRecorder::position() const
+qint64 QMediaRecorder::duration() const
 {
-    return d_func()->control ? d_func()->control->position() : 0;
+    return d_func()->control ? d_func()->control->duration() : 0;
 }
 
 /*!
-    Set the position update period to \a ms in milliseconds.
+    Set the duration update period to \a ms in milliseconds.
 */
 
 void QMediaRecorder::setPositionUpdatePeriod(int ms)
@@ -314,9 +314,9 @@ void QMediaRecorder::stop()
 */
 
 /*!
-    \fn QMediaRecorder::positionChanged(qint64 position)
+    \fn QMediaRecorder::durationChanged(qint64 duration)
 
-    Signal emitted when \a position changed.
+    Signal emitted when \a duration changed.
 */
 
 /*!

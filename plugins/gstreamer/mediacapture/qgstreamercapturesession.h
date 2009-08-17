@@ -59,7 +59,7 @@ public:
 class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
@@ -82,13 +82,13 @@ public:
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
 
     State state() const;
-    qint64 position() const;
+    qint64 duration() const;
 
     bool isPreviewEnabled() const { return m_previewEnabled; }
 
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);
-    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
 
 public slots:

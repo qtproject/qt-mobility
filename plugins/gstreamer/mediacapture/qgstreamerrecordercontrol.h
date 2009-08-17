@@ -42,7 +42,7 @@
 class QGstreamerRecorderControl : public QMediaRecorderControl
 {
 Q_OBJECT
-Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
+Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 public:
     QGstreamerRecorderControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerRecorderControl();
@@ -52,11 +52,11 @@ public:
 
     virtual QMediaRecorder::State state() const;
 
-    virtual qint64 position() const;
+    virtual qint64 duration() const;
 
 signals:
     void stateChanged(QMediaRecorder::State state);
-    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
 
 public slots:

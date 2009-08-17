@@ -439,13 +439,13 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
 }
 
 
-qint64 QGstreamerCaptureSession::position() const
+qint64 QGstreamerCaptureSession::duration() const
 {
     GstFormat   format = GST_FORMAT_TIME;
-    gint64      position = 0;
+    gint64      duration = 0;
 
-    if ( m_encodeBin && gst_element_query_position(m_encodeBin, &format, &position))
-        return position / 1000000;
+    if ( m_encodeBin && gst_element_query_position(m_encodeBin, &format, &duration))
+        return duration / 1000000;
     else
         return 0;
 }

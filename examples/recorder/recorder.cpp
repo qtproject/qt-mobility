@@ -118,7 +118,7 @@ Recorder::~Recorder()
 
 void Recorder::updateRecordTime()
 {
-    QString str = QString("Recorded %1 sec").arg(audioRecorder->position()/1000);
+    QString str = QString("Recorded %1 sec").arg(audioRecorder->duration()/1000);
     ui->statusbar->showMessage(str);
 }
 

@@ -75,14 +75,14 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
-    \property position
-    \brief Current position in milliseconds.
+    \property duration
+    \brief Current duration in milliseconds.
 */
 
 /*!
-    \fn qint64 QMediaRecorderControl::position() const
+    \fn qint64 QMediaRecorderControl::duration() const
 
-    Return the current position in milliseconds.
+    Return the current duration in milliseconds.
 */
 
 /*!
@@ -110,9 +110,9 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
-    \fn void QMediaRecorderControl::positionChanged(qint64 position)
+    \fn void QMediaRecorderControl::durationChanged(qint64 duration)
 
-    Signal emitted when \a position changed.
+    Signal emitted when \a duration changed.
 */
 
 /*!

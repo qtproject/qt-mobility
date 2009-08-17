@@ -76,7 +76,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     if(mediaRecorder->service())
         audioDevice = mediaRecorder->service()->control<QAudioInputDeviceControl*>();
 
-    connect(mediaRecorder, SIGNAL(positionChanged(qint64)), this, SLOT(updateRecordTime()));
+    connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
     if (audioDevice) {
@@ -172,7 +172,7 @@ CameraCapture::~CameraCapture()
 
 void CameraCapture::updateRecordTime()
 {
-    QString str = QString("Recorded %1 sec").arg(mediaRecorder->position()/1000);
+    QString str = QString("Recorded %1 sec").arg(mediaRecorder->duration()/1000);
     ui->statusbar->showMessage(str);
 }
 

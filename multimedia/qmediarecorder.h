@@ -49,7 +49,7 @@ class QMediaRecorderPrivate;
 class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
     enum State
@@ -83,7 +83,7 @@ public:
     QString errorString() const;
     void unsetError();
 
-    qint64 position() const;
+    qint64 duration() const;
     void setPositionUpdatePeriod(int ms);
 
 public slots:
@@ -93,7 +93,7 @@ public slots:
 
 signals:
     void stateChanged(QMediaRecorder::State state);
-    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
     void error(QMediaRecorder::Error error);
     void errorStringChanged(const QString &error);
 
