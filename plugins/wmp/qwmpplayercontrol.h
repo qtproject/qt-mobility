@@ -70,9 +70,6 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    bool isBuffering() const;
-    void setBuffering(bool buffering);
-
     int bufferStatus() const;
 
     bool isVideoAvailable() const;

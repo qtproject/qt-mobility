@@ -106,12 +106,6 @@ QMediaPlayer::State QGstreamerPlayerControl::state() const
     return m_session->state();
 }
 
-bool QGstreamerPlayerControl::isBuffering() const
-{
-    return false;
-}
-
-
 int QGstreamerPlayerControl::bufferStatus() const
 {
     return 100;
