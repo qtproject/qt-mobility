@@ -58,6 +58,11 @@
 #include <Bthsdpdef.h>
 #include <BluetoothAPIs.h>
 #include <Dshow.h>
+#include <af_irda.h>
+//#include <mswsock.h>
+
+//#include <winsock2.h>
+
 //#include <Winsock2.h>
 
 #define _WCHAR_T_DEFINED
@@ -116,9 +121,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     switch(type) {
     case QSystemInfo::Os :
         {
-           OSVERSIONINFO versionInfo;
-           GetVersionEx(&versionInfo);
-           qWarning() << (int)versionInfo.dwMajorVersion << versionInfo.dwMinorVersion << versionInfo.dwBuildNumber << versionInfo.dwPlatformId;
+           OSVERSIONINFOEX versionInfo;
+          versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+           GetVersionEx((OSVERSIONINFO *) &versionInfo);
+           qWarning() << (quint32)versionInfo.dwMajorVersion << versionInfo.dwMinorVersion << versionInfo.dwBuildNumber << versionInfo.dwPlatformId;
         }
         break;
     case QSystemInfo::QtCore :
@@ -213,11 +220,25 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::FmradioFeature :
         {
+            //PageId.FMRadio?
         }
         break;
     case QSystemInfo::IrFeature :
         {
-    }
+            WORD      WSAVerReq = MAKEWORD(1,1);
+            WSADATA      WSAData;
+
+            if (WSAStartup(WSAVerReq, &WSAData) == 0) {
+                // wrong winsock dlls?
+
+                SOCKET ServSock;
+                if ((ServSock = socket(AF_IRDA, SOCK_STREAM, 0)) != INVALID_SOCKET) {
+                    featureSupported = true;
+                }  else {
+//                    qWarning() << WSAGetLastError();
+                }
+            }
+        }
         break;
     case QSystemInfo::LedFeature :
         {
@@ -225,16 +246,42 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::MemcardFeature :
         {
+            QSystemMemoryInfo mi;
+            QStringList drives = mi.listOfVolumes();
+            foreach(QString drive, drives) {
+                if(mi.getVolumeType(drive) == QSystemMemoryInfo::Removable) {
+                    featureSupported = true;
+                }
+            }
         }
         break;
     case QSystemInfo::UsbFeature :
         {
+            //IOCTL_INTERNAL_USB_GET_CONTROLLER_NAME
         }
         break;
     case QSystemInfo::VibFeature :
         break;
     case QSystemInfo::WlanFeature :
         {
+            qWarning() << "wlan";
+            DWORD clientVersion;
+            HANDLE handle;
+            DWORD result = WlanOpenHandle(1, 0, &clientVersion, &handle);
+            if (result == ERROR_SUCCESS) {
+                WLAN_INTERFACE_INFO_LIST *interfaceList;
+                DWORD result = WlanEnumInterfaces(handle, 0, &interfaceList);
+                if (result == ERROR_SUCCESS) {
+                    qWarning() << interfaceList->dwNumberOfItems;
+                    if(interfaceList->dwNumberOfItems > 1) {
+                        featureSupported = true;
+                    }
+                } else {
+                    qWarning()  <<"2 not success" << result;
+                }
+            } else {
+                qWarning() << "1 not success"<< result;
+            }
         }
         break;
     case QSystemInfo::SimFeature :
@@ -613,7 +660,6 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QStr
 {
     Q_UNUSED(driveVolume);
     uint result =   GetDriveType(driveVolume.utf16());
-    qWarning() << result;
     switch(result) {
     case 0:
     case 1: //unknown
@@ -628,7 +674,7 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QStr
     case 4: //remote:
         break;
     case 5: //cdrom
-        return QSystemMemoryInfo::Removable;
+        return QSystemMemoryInfo::Cdrom;
         break;
     case 6: //ramdisk
         break;

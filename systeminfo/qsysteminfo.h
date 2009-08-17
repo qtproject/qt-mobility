@@ -191,7 +191,9 @@ public:
     enum VolumeType {
         NoVolume = 0,
         Internal,
-        Removable
+        Removable,
+        Remote,
+        Cdrom
 	};
 
     qlonglong totalDiskSpace(const QString &driveVolume);

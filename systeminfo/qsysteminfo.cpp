@@ -142,9 +142,11 @@ QT_BEGIN_NAMESPACE
     \enum QSystemMemoryInfo::VolumeType
     This enum describes the type of drive or volume
 
-    \value NoVolume                Volume type undetermined.
-    \value Internal                Is internal drive
-    \value Removable               Is removable
+    \value NoVolume               Volume type undetermined.
+    \value Internal                   Is internal drive.
+    \value Removable              Is removable.
+    \value Remote                     Is a network drive.
+    \value Cdrom                      Is a cd rom drive.
 */
 
 

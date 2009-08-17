@@ -223,6 +223,9 @@ void Dialog::doVolumes(int /*index*/)
         if(volType == QSystemMemoryInfo::Removable) {
                 ui->diskSpaceLineEdit->setText( "Removable");
         }
+        if(volType == QSystemMemoryInfo::Cdrom) {
+                ui->diskSpaceLineEdit->setText( "Cdrom");
+        }
         break;
     };
 

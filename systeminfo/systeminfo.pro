@@ -10,7 +10,7 @@ DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 win32 {
     SOURCES += qsysteminfo_win.cpp
-LIBS += Wlanapi.lib Ole32.lib Strmiids.lib Bthprops.lib User32.lib Gdi32.lib
+LIBS += Wlanapi.lib Ole32.lib Strmiids.lib Bthprops.lib User32.lib Gdi32.lib Ws2_32.lib
 INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" "C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 }
 
