@@ -22,7 +22,7 @@ public:
     bool isNull() const;
 
     StreamType type() const;
-    int streamId() const;    
+    int streamId() const;
 
     QString streamName() const;
     void setStreamName(const QString &name);
@@ -53,7 +53,10 @@ public:
 
     bool isStreamsInformationAvailable() const;
 
-    QList<QMediaStreamInfo> streams(QMediaStreamInfo::StreamType streamType) const;    
+    QString defaultLanguage(QMediaStreamInfo::StreamType streamType) const;
+    void setDefaultLanguage(QMediaStreamInfo::StreamType streamType, const QString& language);
+
+    QList<QMediaStreamInfo> streams(QMediaStreamInfo::StreamType streamType) const;
 
     QMediaStreamInfo activeStream(QMediaStreamInfo::StreamType streamType) const;
     void setActiveStream(const QMediaStreamInfo &stream);

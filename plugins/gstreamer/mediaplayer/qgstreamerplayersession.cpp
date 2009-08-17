@@ -81,7 +81,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
 {
     if (m_playbin) {
-        stop();        
+        stop();
 
         delete m_busHelper;
         gst_object_unref(GST_OBJECT(m_bus));
@@ -250,7 +250,7 @@ static void addTagToMap(const GstTagList *list,
 
 void QGstreamerPlayerSession::setSeekable(bool seekable)
 {
-    if (seekable != m_seekable) {        
+    if (seekable != m_seekable) {
         m_seekable = seekable;
         emit seekableChanged(m_seekable);
     }

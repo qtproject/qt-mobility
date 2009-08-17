@@ -16,9 +16,9 @@ int QGstreamerStreamsControl::streamCount()
     return m_session->streamCount();
 }
 
-int QGstreamerStreamsControl::streamType(int streamNumber)
+QMediaStreamInfo::StreamType QGstreamerStreamsControl::streamType(int streamNumber)
 {
-    return m_session->streamProperties(streamNumber).value("Type").toInt();
+    return QMediaStreamInfo::StreamType(m_session->streamProperties(streamNumber).value("Type").toInt());
 }
 
 QMap<QString,QVariant> QGstreamerStreamsControl::streamProperties(int streamNumber)

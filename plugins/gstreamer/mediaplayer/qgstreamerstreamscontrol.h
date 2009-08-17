@@ -7,12 +7,13 @@ class QGstreamerPlayerSession;
 
 class QGstreamerStreamsControl : public QMediaStreamsControl
 {
+    Q_OBJECT
 public:
     QGstreamerStreamsControl(QGstreamerPlayerSession *session, QObject *parent);
     virtual ~QGstreamerStreamsControl();
 
     virtual int streamCount();
-    virtual int streamType(int streamNumber);
+    virtual QMediaStreamInfo::StreamType streamType(int streamNumber);
     virtual QMap<QString,QVariant> streamProperties(int streamNumber);
     virtual bool isActive(int streamNumber);
     virtual void setActive(int streamNumber, bool state);

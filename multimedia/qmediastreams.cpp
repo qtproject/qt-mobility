@@ -25,14 +25,14 @@ public:
     QMediaStreamInfoPrivate(const QMediaStreamInfoPrivate &other)
         :QSharedData(other),
          streamId(other.streamId),
-         type(other.type),         
+         type(other.type),
          properties(other.properties)
     {}
 
     ~QMediaStreamInfoPrivate() {}
 
     int streamId;
-    QMediaStreamInfo::StreamType type;    
+    QMediaStreamInfo::StreamType type;
     QMap<QString,QVariant> properties;
 };
 
@@ -198,6 +198,7 @@ public:
     QMap<QMediaStreamInfo::StreamType, QList<QMediaStreamInfo> > streams;
     QList<QMediaStreamInfo> allStreams;
     QMap<QMediaStreamInfo::StreamType, QMediaStreamInfo> activeStreams;
+    QMap<QMediaStreamInfo::StreamType, QString> defaultLanguages;
 
     void _q_updateStreams();
     void _q_updateActiveStreams();
@@ -219,6 +220,20 @@ void QMediaStreamsPrivate::_q_updateStreams()
     }
 
     emit q_func()->streamsChanged();
+
+    QMapIterator<QMediaStreamInfo::StreamType, QString> languages(defaultLanguages);
+    while (languages.hasNext()) {
+        languages.next();
+        QMediaStreamInfo::StreamType streamType = languages.key();
+        const QString language = languages.value();
+
+        if (activeStreams[streamType].streamLanguage() != language) {
+            foreach ( const QMediaStreamInfo &streamInfo, allStreams ) {
+                if (streamInfo.type() == streamType && streamInfo.streamLanguage() == language)
+                    control->setActive(streamInfo.streamId(), true);
+            }
+        }
+    }
 }
 
 void QMediaStreamsPrivate::_q_updateActiveStreams()
@@ -248,7 +263,7 @@ QMediaStreams::QMediaStreams(QAbstractMediaObject *mediaObject, QObject *parent)
     d->service = mediaObject->service();
     d->control = qobject_cast<QMediaStreamsControl*>(d->service->control("com.nokia.qt.MediaStreamsControl"));
     if (d->control != 0) {
-        connect(d->control, SIGNAL(streamsChanged()), this, SLOT(_q_updateStreams()));        
+        connect(d->control, SIGNAL(streamsChanged()), this, SLOT(_q_updateStreams()));
         connect(d->control, SIGNAL(activeStreamsChanged()), this, SLOT(_q_updateActiveStreams()));
 
         d->_q_updateStreams();
@@ -298,6 +313,31 @@ void QMediaStreams::setActiveStream(const QMediaStreamInfo &stream)
     if (d->control) {
         d->control->setActive(stream.streamId(), true);
     }
+}
+
+/*!
+  Returns the default \a language code for stream of type \a streamType
+  or null string if no default language was set.
+
+  \sa QMediaStreamInfo::streamLanguage()
+*/
+QString QMediaStreams::defaultLanguage(QMediaStreamInfo::StreamType streamType) const
+{
+    return d_func()->defaultLanguages.value(streamType);
+}
+
+/*!
+  Set the default \a language code for stream of type \a streamType.
+  Next time the set of streams is changed, the stream with the same language code
+  will be automaticaly activated.
+*/
+void QMediaStreams::setDefaultLanguage(QMediaStreamInfo::StreamType streamType, const QString &language)
+{
+    Q_D(QMediaStreams);
+    if (language.isEmpty())
+        d->defaultLanguages.remove(streamType);
+    else
+        d->defaultLanguages.insert(streamType, language);
 }
 
 #include "moc_qmediastreams.cpp"
