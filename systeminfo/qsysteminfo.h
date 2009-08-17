@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QSYSTEMINFO_H
 #define QSYSTEMINFO_H
+#include "qsysinfoglobal.h"
 
 #include <QObject>
 #include <QSize>
@@ -49,7 +50,7 @@ class QSystemMemoryInfoPrivate;
 class QSystemDeviceInfoPrivate;
 class QSystemDisplayInfoPrivate;
 
-class QSystemInfo : public QObject
+class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Version)
@@ -99,7 +100,7 @@ public:
         VideoOutFeature,
         HapticsFeature
 	};
-	
+
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 
 private:
@@ -107,7 +108,7 @@ private:
 };
 
 ////////
-class QSystemNetworkInfo : public QObject
+class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(CellNetworkStatus)
@@ -141,7 +142,7 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode);
+    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();
     static int locationAreaCode();
@@ -161,7 +162,7 @@ private:
 };
 
 ////////
-class QSystemDisplayInfo
+class  Q_SYSINFO_EXPORT QSystemDisplayInfo
 {
 
 public:
@@ -177,7 +178,7 @@ public:
 
 
 ////////
-class QSystemMemoryInfo : public QObject
+class  Q_SYSINFO_EXPORT QSystemMemoryInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(VolumeType)
@@ -206,7 +207,7 @@ private:
 };
 
 ////////
-class QSystemDeviceInfo : public QObject
+class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(BatteryLevel)
@@ -281,17 +282,18 @@ public:
 
 Q_SIGNALS:
     void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
-//    void batteryLevelCritical(qint32);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
     QSystemDeviceInfoPrivate *d;
+
+
 };
 
 
 ////////
 class QSystemScreenSaverPrivate;
-class QSystemScreenSaver : public QObject
+class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
 
