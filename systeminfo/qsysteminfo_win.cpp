@@ -875,6 +875,25 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
 {
+#ifdef Q_OS_WINCE
+    HSIM handle;
+    DWORD lockedState;
+    HRESULT result = SimInitialize(0,NULL,NULL,&handle);
+    if(result == S_OK) {
+        SimGetPhoneLockedState(handle,&lockedState);
+        if(lockedState == SIM_LOCKEDSTATE_READY) {
+            return QSystemDeviceInfo::SingleAvailable;
+        } else {
+            return QSystemDeviceInfo::SimLocked;
+        }
+
+
+    } else if(result == SIM_E_NOSIM) {
+        return QSystemDeviceInfo::SimNotAvailable;
+    }
+    SimDeinitialize(handle);
+
+#else
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
