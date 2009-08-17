@@ -35,7 +35,7 @@
 #include "qradioplayer.h"
 
 #include "qabstractmediaobject_p.h"
-#include "qradiotuner.h"
+#include "qradioplayercontrol.h"
 #include "qradioservice.h"
 
 /*!
@@ -68,7 +68,7 @@ class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
     QRadioService*  service;
-    QRadioTuner*    control;
+    QRadioPlayerControl* control;
 };
 
 /*!
@@ -83,7 +83,7 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     Q_D(QRadioPlayer);
 
     d->service = service;
-    d->control = qobject_cast<QRadioTuner *>(service->control("com.nokia.qt.RadioPlayerControl"));
+    d->control = service->control<QRadioPlayerControl*>();
 
     if(d->control) {
         connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
@@ -107,7 +107,6 @@ QRadioPlayer::~QRadioPlayer()
 {
     Q_D(QRadioPlayer);
 
-    delete d->control;
     delete d->service;
 }
 
@@ -334,7 +333,7 @@ QRadioService* createRadioService(QMediaServiceProvider *provider)
     QObject *object = provider ? provider->createObject("com.nokia.qt.RadioService/1.0") : 0;
 
     if (object) {
-        QRadioService *service = qobject_cast<QRadioService *>(object);
+        QRadioService *service = qobject_cast<QRadioService*>(object);
 
         if (service)
             return service;

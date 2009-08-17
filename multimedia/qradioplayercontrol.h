@@ -32,23 +32,23 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOTUNER_H
-#define QRADIOTUNER_H
+#ifndef QRADIOPLAYERCONTROL_H
+#define QRADIOPLAYERCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
 #include "qradioplayer.h"
 
-class Q_MEDIA_EXPORT QRadioTuner : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QRadioPlayerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QRadioTuner();
+    ~QRadioPlayerControl();
 
-    virtual int band() const = 0;
-    virtual void setBand(int b) = 0;
-    virtual bool isSupportedBand(int b) const = 0;
+    virtual QRadioPlayer::Band band() const = 0;
+    virtual void setBand(QRadioPlayer::Band b) = 0;
+    virtual bool isSupportedBand(QRadioPlayer::Band b) const = 0;
 
     virtual int frequency() const = 0;
     virtual void setFrequency(int frequency) = 0;
@@ -70,7 +70,6 @@ public:
 
     virtual void searchForward() = 0;
     virtual void searchBackward() = 0;
-
     virtual void cancelSearch() = 0;
 
 Q_SIGNALS:
@@ -84,7 +83,10 @@ Q_SIGNALS:
     void mutingChanged(bool muted);
 
 protected:
-    QRadioTuner(QObject *parent = 0);
+    QRadioPlayerControl(QObject *parent = 0);
 };
 
-#endif  // QRADIOTUNER_H
+#define QRadioPlayerControl_iid "com.nokia.qt.RadioPlayerControl"
+Q_MEDIA_DECLARE_CONTROL(QRadioPlayerControl, QRadioPlayerControl_iid)
+
+#endif  // QRADIOPLAYERCONTROL_H

@@ -44,7 +44,7 @@ class Q_MEDIA_EXPORT QRadioService : public QAbstractMediaService
 public:
     ~QRadioService();
 
-    virtual QAbstractMediaControl* control(const char* name) const = 0;
+    //virtual QAbstractMediaControl* control(const char* name) const = 0;
 
 protected:
     QRadioService(QObject *parent = 0);

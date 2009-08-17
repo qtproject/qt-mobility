@@ -32,12 +32,12 @@
 **
 ****************************************************************************/
 
-#include "qradiotuner.h"
+#include "qradioplayercontrol.h"
 #include "qabstractmediacontrol_p.h"
 
 
 /*!
-    \class QRadioTuner
+    \class QRadioPlayerControl
     \ingroup multimedia
 
     \preliminary
@@ -47,169 +47,169 @@
 */
 
 /*!
-    Construct a radio tuner class.
+    Construct a radio player control class.
 */
 
-QRadioTuner::QRadioTuner(QObject *parent):
+QRadioPlayerControl::QRadioPlayerControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
 }
 
 /*!
-    Destruct the radio tuner class.
+    Destruct the radio player control class.
 */
 
-QRadioTuner::~QRadioTuner()
+QRadioPlayerControl::~QRadioPlayerControl()
 {
 }
 
 /*!
-    \fn int QRadioTuner::band() const
+    \fn QRadioPlayer::Band QRadioPlayerControl::band() const
 
     Returns the current band being used.
 */
 
 /*!
-    \fn void QRadioTuner::bandChanged(QRadioPlayer::Band band)
+    \fn void QRadioPlayerControl::bandChanged(QRadioPlayer::Band band)
 
     Signal emitted when \a band changed.
 */
 
 /*!
-    \fn void QRadioTuner::setBand(int band)
+    \fn void QRadioPlayerControl::setBand(QRadioPlayer::Band band)
 
     Set current band to \a band.
 */
 
 /*!
-    \fn bool QRadioTuner::isSupportedBand(int band) const
+    \fn bool QRadioPlayerControl::isSupportedBand(QRadioPlayer::Band band) const
 
     Return true if \a band is available.
 */
 
 /*!
-    \fn int QRadioTuner::frequency() const
+    \fn int QRadioPlayerControl::frequency() const
 
     Returns the current frequency being used.
 */
 
 /*!
-    \fn void QRadioTuner::setFrequency(int frequency)
+    \fn void QRadioPlayerControl::setFrequency(int frequency)
 
     Set the frequency to \a frequency.
 */
 
 /*!
-    \fn bool QRadioTuner::isStereo() const
+    \fn bool QRadioPlayerControl::isStereo() const
 
     Return true if in stereo mode.
 */
 
 /*!
-    \fn void QRadioTuner::setStereo(bool stereo)
+    \fn void QRadioPlayerControl::setStereo(bool stereo)
 
     Set to stereo mode if \a stereo is true.
 */
 
 /*!
-    \fn int QRadioTuner::signalStrength() const
+    \fn int QRadioPlayerControl::signalStrength() const
 
     Return the current signal strength as a percentage.
 */
 
 /*!
-    \fn qint64 QRadioTuner::duration() const
+    \fn qint64 QRadioPlayerControl::duration() const
 
     Returns the time in milliseconds at this frequency.
 */
 
 /*!
-    \fn int QRadioTuner::volume() const
+    \fn int QRadioPlayerControl::volume() const
 
     Returns the volume as a percentage.
 */
 
 /*!
-    \fn void QRadioTuner::setVolume(int volume)
+    \fn void QRadioPlayerControl::setVolume(int volume)
 
     Set the volume to \a volume (percentage)
 */
 
 /*!
-    \fn bool QRadioTuner::isMuted() const
+    \fn bool QRadioPlayerControl::isMuted() const
 
     Returns true if muted.
 */
 
 /*!
-    \fn void QRadioTuner::setMuted(bool muted)
+    \fn void QRadioPlayerControl::setMuted(bool muted)
 
     Set mute state to \a muted.
 */
 
 /*!
-    \fn bool QRadioTuner::isSearching() const
+    \fn bool QRadioPlayerControl::isSearching() const
 
     Returns true if currently scanning.
 */
 
 /*!
-    \fn  void QRadioTuner::searchForward()
+    \fn  void QRadioPlayerControl::searchForward()
 
     Start scanning, ascending freqeuncy.
 */
 
 /*!
-    \fn void QRadioTuner::searchBackward()
+    \fn void QRadioPlayerControl::searchBackward()
 
     Start scanning, descending frequency.
 */
 
 /*!
-    \fn void QRadioTuner::cancelSearch()
+    \fn void QRadioPlayerControl::cancelSearch()
 
     Stop any scanning being done.
 */
 
 
 /*!
-    \fn void QRadioTuner::frequencyChanged(int frequency)
+    \fn void QRadioPlayerControl::frequencyChanged(int frequency)
 
     Signal emitted when \a frequency changed.
 */
 
 /*!
-    \fn void QRadioTuner::stereoStatusChanged(bool stereo)
+    \fn void QRadioPlayerControl::stereoStatusChanged(bool stereo)
 
     Signal emitted when \a stereo mode changed.
 */
 
 /*!
-    \fn void QRadioTuner::searchingStatusChanged(bool searching)
+    \fn void QRadioPlayerControl::searchingStatusChanged(bool searching)
 
     Signal emitted when \a searching status changed.
 */
 
 /*!
-    \fn void QRadioTuner::signalStrengthChanged(int signalStrength)
+    \fn void QRadioPlayerControl::signalStrengthChanged(int signalStrength)
 
     Signal emitted when \a signalStrength changed (percentage).
 */
 
 /*!
-    \fn void QRadioTuner::durationChanged(qint64 duration)
+    \fn void QRadioPlayerControl::durationChanged(qint64 duration)
 
     Signal emitted when \a duration changed.
 */
 
 /*!
-    \fn void QRadioTuner::volumeChanged(int volume)
+    \fn void QRadioPlayerControl::volumeChanged(int volume)
 
     Signal emitted when \a volume changed (percentage).
 */
 
 /*!
-    \fn void QRadioTuner::mutingChanged(bool muted)
+    \fn void QRadioPlayerControl::mutingChanged(bool muted)
 
     Signal emitted when \a muted state changed.
 */

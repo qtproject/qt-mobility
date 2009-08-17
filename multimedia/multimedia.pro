@@ -39,7 +39,7 @@ HEADERS = \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
-    qradiotuner.h \
+    qradioplayercontrol.h \
     qsharedmediaplaylist.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
@@ -79,7 +79,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediasink.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
-    qradiotuner.cpp \
+    qradioplayercontrol.cpp \
     qsharedmediaplaylist.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
