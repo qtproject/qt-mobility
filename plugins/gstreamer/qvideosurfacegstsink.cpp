@@ -117,7 +117,7 @@ void QVideoSurfaceGstDelegate::queuedRender()
         m_renderReturn = GST_FLOW_OK;
     } else {
         switch (m_surface->error()) {
-        case QAbstractVideoSurface::NotReadyError:
+        case QAbstractVideoSurface::NoError:
             m_renderReturn = GST_FLOW_OK;
             break;
         case QAbstractVideoSurface::StoppedError:
