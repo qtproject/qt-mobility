@@ -170,22 +170,22 @@ void Dialog::getFeature(int index)
         feature = QSystemInfo::LedFeature;
         break;
     case 5:
-        feature = QSystemInfo::LocationFeature;
-        break;
-    case 6:
         feature = QSystemInfo::MemcardFeature;
         break;
-    case 7:
+    case 6:
         feature = QSystemInfo::UsbFeature;
         break;
-    case 8:
+    case 7:
         feature = QSystemInfo::VibFeature;
         break;
-    case 9:
+    case 8:
         feature = QSystemInfo::WlanFeature;
         break;
-    case 10:
+    case 9:
         feature = QSystemInfo::SimFeature;
+        break;
+    case 10:
+        feature = QSystemInfo::LocationFeature;
         break;
     case 11:
         feature = QSystemInfo::VideoOutFeature;
