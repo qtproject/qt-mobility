@@ -7,13 +7,16 @@
 
 class QPhononVideoWidget : public QMediaWidgetEndpoint
 {
-    Q_OBJECT    
+    Q_OBJECT
     Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
 public:
     QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QWidget *parent = 0);
     virtual ~QPhononVideoWidget();
 
     Phonon::VideoWidget *videoWidget() { return m_videoWidget; }
+
+protected:
+    virtual void resizeEvent(QResizeEvent*);
 
 protected slots:
     virtual void setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio);

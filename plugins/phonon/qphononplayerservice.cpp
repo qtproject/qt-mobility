@@ -89,7 +89,7 @@ QList<QByteArray> QPhononPlayerService::supportedEndpointInterfaces(
 
 QObject *QPhononPlayerService::createEndpoint(const char *interface)
 {
-    //qDebug() << "request for endpoint" << interface;
+    qDebug() << "request for endpoint" << interface;
     if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
         return new QPhononVideoWidget(m_videoWidget);
     }
