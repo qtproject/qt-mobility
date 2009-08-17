@@ -231,8 +231,7 @@ void Qt7PlayerControl::update()
     const QMediaPlayer::State state = QMediaPlayer::State(d->movie->state());
     if (d->state != state) {
         d->state = state;
-        if (d->state == QMediaPlayer::StoppedState
-                || QMediaPlayer::d->state == QMediaPlayer::PausedState)
+        if (d->state == QMediaPlayer::StoppedState || d->state == QMediaPlayer::PausedState)
             updateTimer->stop();
 
         emit stateChanged(d->state);
