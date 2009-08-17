@@ -106,9 +106,9 @@ QRadioTuner::~QRadioTuner()
 */
 
 /*!
-    \fn void QRadioTuner::setStereo() const
+    \fn void QRadioTuner::setStereo(bool stereo)
 
-    Set to stereo mode.
+    Set to stereo mode if \a stereo is true.
 */
 
 /*!

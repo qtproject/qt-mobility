@@ -40,12 +40,28 @@
 
 /*!
     \class QRadioPlayer
+    \brief The QRadioPlayer class provides an interface to the systems radio device.
+
     \ingroup multimedia
 
-    \preliminary
-    \brief
+    You can control the systems radio device using this interface, for example:
 
-    \sa
+    \code
+        player = new QRadioPlayer;
+        connect(player,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
+        if(player->isSupportedBand(QRadioPlayer::FM))
+            player->setBand(QRadioPlayer::FM);
+        player->setFrequency(yourRadioStationFrequency);
+        player->setVolume(100);
+    \endcode
+
+    The player object will emit signals for any changes in state such as:
+    bandChanged(), frequencyChanged(), stereoStatusChanged(), searchingStatusChanged(),
+    signalStrengthChanged(), durationChanged(), volumeChanged(), mutingChanged().
+
+    You can change between the frequency bands using setBand() however it is recommended
+    that you check to make sure the band is available first using isSupportedBand().
+
 */
 
 class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
@@ -368,6 +384,15 @@ QRadioService* createRadioService(QMediaServiceProvider *provider)
     \fn void QRadioPlayer::durationChanged(qint64 duration)
 
     Signal the change in the \a duration of the current frequency playback in milliseconds.
+*/
+
+/*!
+    \enum QRadioPlayer::Band
+
+    \value AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
+    \value FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
+    \value SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
+    \value LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
 */
 
 
