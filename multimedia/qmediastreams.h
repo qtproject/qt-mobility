@@ -9,7 +9,7 @@
 
 class QMediaStreams;
 class QMediaStreamInfoPrivate;
-class QMediaStreamInfo
+class Q_MEDIA_EXPORT QMediaStreamInfo
 {
 public:
     enum StreamType { UnknownStream, VideoStream, AudioStream, SubPictureStream, DataStream };
@@ -44,7 +44,7 @@ private:
 
 
 class QMediaStreamsPrivate;
-class QMediaStreams : public QObject
+class Q_MEDIA_EXPORT QMediaStreams : public QObject
 {
 Q_OBJECT
 public:
