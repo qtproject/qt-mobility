@@ -3,7 +3,7 @@
 
 #include <qabstractmediacontrol.h>
 
-class QAudioInputDeviceControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QAudioInputDeviceControl : public QAbstractMediaControl
 {
     Q_OBJECT
     Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)

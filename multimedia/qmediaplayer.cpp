@@ -42,9 +42,6 @@
 #include "qmediaserviceprovider.h"
 #include "qmediaplaylist.h"
 
-#include <stdlib.h>
-
-
 /*!
     \class QMediaPlayer
     \ingroup multimedia
@@ -462,9 +459,11 @@ void QMediaPlayer::setPlaybackRate(float rate)
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {
     if (!provider) {
-        const char *providerKey = getenv("QT_MEDIAPLAYER_PROVIDER");
+        QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
 
-        provider = defaultServiceProvider(providerKey ? providerKey : "mediaplayer");
+        provider = defaultServiceProvider(!providerKey.isNull()
+                ? providerKey.constData()
+                : "mediaplayer");
     }
 
     QObject *object = provider ? provider->createObject("com.nokia.qt.MediaPlayer/1.0") : 0;
