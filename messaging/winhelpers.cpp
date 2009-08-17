@@ -696,6 +696,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     }
 
     result = QMessagePrivate::from(newId);
+
+    QByteArray messageBody;
+    QByteArray bodySubType;
     bool hasAttachments = false;
 
     SizedSPropTagArray( 9, msgCols) = { 9, { PR_RECORD_KEY, 
@@ -826,18 +829,17 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     if (HR_SUCCEEDED(rv)) {
         IStream *decompressor(0);
         if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
-            QByteArray data;
-
             ULONG bytes = 0;
             char buffer[BUFSIZ] = { 0 };
             do {
                 decompressor->Read(buffer, BUFSIZ, &bytes);
-                data.append(buffer, bytes);
+                messageBody.append(buffer, bytes);
             } while (bytes == BUFSIZ);
 
             decompressor->Release();
 
-            result.setContent(data);
+            // The RTF may contain HTML - parse that here?
+            bodySubType = "rtf";
         } else {
             *lastError = QMessageStore::ContentInaccessible;
         }
@@ -852,7 +854,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 ULONG bytes = 0;
                 rv = is->Read(data, stg.cbSize.LowPart, &bytes);
                 if (HR_SUCCEEDED(rv)) {
-                    result.setContent(QByteArray(data, bytes));
+                    messageBody = QByteArray(data, bytes);
+                    bodySubType = "plain";
                 } else {
                     *lastError = QMessageStore::ContentInaccessible;
                 }
@@ -873,31 +876,42 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 #define PR_ATTACH_CONTENT_ID PROP_TAG( PT_UNICODE, 0x3712 )
 #endif
 
-    if (hasAttachments) {
-        QMap<uint, QMessageContentContainer> attachments;
+    if (!hasAttachments) {
+        // Make the body the entire content of the message
+        result.setContent(messageBody);
+    } else {
+        // Add the message body data as the first part
+        QMessageContentContainer bodyPart;
+        bodyPart.setContentType("text");
+        bodyPart.setContentSubType(bodySubType);
+        bodyPart.setContent(messageBody);
+        result.appendContent(bodyPart);
 
         // Find any attachments for this message
         IMAPITable *attachmentsTable(0);
         rv = message->GetAttachmentTable(0, &attachmentsTable);
         if (HR_SUCCEEDED(rv)) {
             // Find the properties of these attachments
-            SizedSPropTagArray(6, attCols) = {6, { PR_ATTACH_NUM, 
+            SizedSPropTagArray(7, attCols) = {7, { PR_ATTACH_NUM, 
                                                    PR_ATTACH_EXTENSION, 
                                                    PR_ATTACH_LONG_FILENAME, 
                                                    PR_ATTACH_FILENAME, 
                                                    PR_ATTACH_CONTENT_ID,
-                                                   PR_ATTACH_SIZE }};
+                                                   PR_ATTACH_SIZE,
+                                                   PR_RENDERING_POSITION }};
             LPSRowSet rows(0);
 
             rv = HrQueryAllRows(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL, 0, &rows);
             if (HR_SUCCEEDED(rv)) {
                 for (uint n = 0; n < rows->cRows; ++n) {
-                    uint number(0);
+                    LONG number(0);
                     QString extension;
                     QString filename;
                     QString contentId;
                     LONG size(0);
+                    LONG renderingPosition(0);
 
+                    // If not available, the output tag will not match our requested content tag
                     if (rows->aRow[n].lpProps[0].ulPropTag == PR_ATTACH_NUM) {
                         number = rows->aRow[n].lpProps[0].Value.l;
                     }
@@ -915,25 +929,25 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                     if (rows->aRow[n].lpProps[5].ulPropTag == PR_ATTACH_SIZE) {
                         size = rows->aRow[n].lpProps[5].Value.l;
                     }
+                    if (rows->aRow[n].lpProps[6].ulPropTag == PR_RENDERING_POSITION) {
+                        renderingPosition = rows->aRow[n].lpProps[6].Value.l;
+                    }
+
+                    // number is the identifier needed to access the content
+                    // content-ID may be needed for HTML rendering
+                    // (renderingPosition == -1) indicates attachment rather than inline
 
                     QMessageContentContainer container;
                     container.setContentFileName(filename.toAscii());
                     // ...
 
-                    attachments.insert(number, container);
+                    result.appendContent(container);
                 }
 
                 FreeProws(rows);
             }
         } else {
             *lastError = QMessageStore::ContentInaccessible;
-        }
-
-        if (!attachments.isEmpty()) {
-            QMap<uint, QMessageContentContainer>::const_iterator it = attachments.begin(), end = attachments.end();
-            for ( ; it != end; ++it) {
-                result.appendContent(*it);
-            }
         }
     }
 
