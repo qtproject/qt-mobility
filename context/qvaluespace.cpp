@@ -569,6 +569,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
     void connect(QValueSpaceItem * space)
     {
         if(!connections) {
+            qRegisterMetaType<quintptr>("quintptr");
             connections = new QValueSpaceItemPrivateProxy;
             connections->readers = readers;
             connections->connections.insert(space,1);
