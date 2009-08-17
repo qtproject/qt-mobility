@@ -51,7 +51,7 @@ public:
 
     virtual int currentPosition() const = 0;
     virtual void setCurrentPosition(int position) = 0;
-    virtual void nextPosition(int steps = 1) const = 0;
+    virtual int nextPosition(int steps = 1) const = 0;
     virtual int previousPosition(int steps = 1) const = 0;
 
     virtual void advance() = 0;
