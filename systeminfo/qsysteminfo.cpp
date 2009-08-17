@@ -123,13 +123,6 @@ QT_BEGIN_NAMESPACE
     \value EthMode                 Wired Local Area network.
 
   */
-/*!
-  \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode netMode, QSystemNetworkInfo::CellNetworkStatus netStatus)
-
-  This signal is emitted when network status has changed.
-  \a netMode is the network mode of the changed network.
-  \a netStatus  is the new status of the changed network.
- */
 
 /*!
     \class QSystemDisplayInfo
@@ -154,22 +147,6 @@ QT_BEGIN_NAMESPACE
     \value Removable               Is removable
 */
 
-/*!
-  \fn void QSystemMemoryInfo::memoryCritical(qint32 percent)
-
-  This signal is emitted when memory fall below 3%.
-  \a percent of current charge.
-  */
-
-
- /*!
-    \fn void QSystemMemoryInfo::diskSpaceCritical(QString &driveVolume, qint32 spaceRemaining)
-
-    This signal is emitted when disk space has reached 3% of capacity.
-    \a driveVolume is the volume, drive or disk that has reached critical.
-    \a spaceRemaining is the space remaining in kilobytes,
-
- */
 
 /*!
     \class QSystemDeviceInfo
@@ -177,6 +154,19 @@ QT_BEGIN_NAMESPACE
     \brief The QSystemDeviceInfo class provides access to device information from the system.
 
   */
+/*!
+  \fn void QSystemDeviceInfo::batteryLevelChanged(QSystemDeviceInfo::BatteryLevel level)
+
+  This signal is emitted when battery level has changed.
+  \a level is the new level.
+ */
+
+/*!
+  \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
+
+  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  \a state is the new power state.
+ */
 /*!
     \enum QSystemDeviceInfo::BatteryLevel
     This enum describes the level of the main battery.
@@ -211,15 +201,6 @@ QT_BEGIN_NAMESPACE
     \value CustomProfile           Custom profile.
 
   */
-/*!
-    \enum QSystemDeviceInfo::InputMethods
-    This enum describes the input methods for the device or desktop.
-
-    \value KeysOnly                Has only Keys or keyboard
-    \value TouchOnly               Has only touchscreen
-    \value KeysAndTouch            Has both Keys and touchscreen.
-*/
-
 
 /*!
     \enum QSystemDeviceInfo::SimStatus
@@ -230,12 +211,38 @@ QT_BEGIN_NAMESPACE
     \value DualAvailable           Two SIM cards are available on this device.
     \value Locked                  Device has SIM lock enabled.
 */
-  /*!
+
+/*!
+    \enum QSystemDeviceInfo::InputMethod
+    This enum describes the device method of user input.
+
+    \value Keys               Device has key/buttons.
+    \value Keypad             Device has keypad (1,2,3, etc).
+    \value Keyboard           Device has qwerty keyboard.
+    \value SingleTouch        Device has single touch screen.
+    \value MultiTouch         Device has muti touch screen.
+    \value Mouse              Device has a mouse.
+*/
+
+/*!
+    \enum QSystemScreenSaver::ScreenSaverState
+    This enum describes the state of the screen saver.
+
+    \value UnknownScreenSaverState    Screensaver state is unknown.
+    \value ScreenSaverDisabled        Screensaver is disabled.
+    \value ScreenSaverEnabled         Screensaver is enabled.
+
+*/
+
+
+/*!
     \class QSystemScreenSaver
 
     \brief The QSystemScreenSaver class provides access to screen saver and blanking.
 
   */
+
+
 
  /*!
    Constructs a QSystemInfo with the given \a parent.
@@ -245,6 +252,9 @@ QSystemInfo::QSystemInfo(QObject *parent)
     d = new QSystemInfoPrivate(parent);
 }
 
+/*!
+  Destroys the QSystemInfo object
+*/
 QSystemInfo::~QSystemInfo()
 {
     delete d;
@@ -308,6 +318,9 @@ QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     d = new QSystemNetworkInfoPrivate(parent);
 }
 
+/*!
+  Destroys the QSystemNetworkInfo object.
+ */
 QSystemNetworkInfo::~QSystemNetworkInfo()
 {
     delete d;
@@ -404,11 +417,15 @@ QString QSystemNetworkInfo::operatorName()
 
 // display
  /*!
-   Constructs a QSystemDisplayInfo with the given \a parent.
+   Constructs a QSystemDisplayInfo.
  */
 QSystemDisplayInfo::QSystemDisplayInfo()
 {
 }
+
+/*!
+  Destroys the QSystemDisplayInfo object.
+ */
 QSystemDisplayInfo::~QSystemDisplayInfo()
 {
 }
@@ -450,6 +467,9 @@ QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
   //  connect(d,SIGNAL(newMemoryCardAdded(QString)),this,SIGNAL(newMemoryCard(QString)));
 }
 
+/*!
+  Destroys the QSystemMemoryInfo object.
+*/
 QSystemMemoryInfo::~QSystemMemoryInfo()
 {
     delete d;
@@ -497,6 +517,9 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     d = new QSystemDeviceInfoPrivate(parent);
 }
 
+/*!
+  Destroys the QSystemDeviceInfo object.
+ */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
     delete d;
@@ -612,6 +635,9 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     screenBlankingIsEnabled = screenBlankingEnabled();
 }
 
+/*!
+  Desctoys the QSyatemScreenSaver object.
+ */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
     //if(screenSaverIsEnabled != screenSaverIsEnabled())
@@ -624,6 +650,7 @@ QSystemScreenSaver::~QSystemScreenSaver()
 /*!
     Temporarily sets the screensaver on to QSystemScreenSaver::ScreenSaverState \a b.
 Will be reverted upon destruction of the QSystemScreenSaver object.
+Returns true on success, otherwise false.
 */
 bool QSystemScreenSaver::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b)
 {
@@ -633,6 +660,7 @@ bool QSystemScreenSaver::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverSt
 /*!
     Temporarily sets the screen blanking on to QSystemScreenSaver::ScreenSaverState \a b
 Will be reverted upon destruction of the QSystemScreenSaver object.
+Returns true on success, otherwise false.
 */
 bool QSystemScreenSaver::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b)
 {

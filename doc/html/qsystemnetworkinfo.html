@@ -14,8 +14,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemNetworkInfo Class Reference</h1>
 <p>The QSystemNetworkInfo class provides access to network information from the system. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSystemNetworkInfo&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
-<ul>
+<pre>    #include &lt;QSystemNetworkInfo&gt;</pre><ul>
 <li><a href="qsystemnetworkinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -32,31 +31,22 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#QSystemNetworkInfo">QSystemNetworkInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#dtor.QSystemNetworkInfo">~QSystemNetworkInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint32 </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#cellId">cellId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::CellNetworkStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</a></b> ()</td></tr>
+</table>
+<hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#cellId">cellId</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::CellNetworkStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#isLocationEnabled">isLocationEnabled</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint32 </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint32 </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#operatorName">operatorName</a></b> ()</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -67,7 +57,7 @@
 <p>This enum describes the status of the network connection:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QSystemNetworkInfo::UndefinedStatus</tt></td><td align="center" valign="top"><tt>-1</tt></td><td valign="top">There is no network device, or error.</td></tr>
+<tr><td valign="top"><tt>QSystemNetworkInfo::UndefinedStatus</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">There is no network device, or error.</td></tr>
 <tr><td valign="top"><tt>QSystemNetworkInfo::NoNetworkAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">There is no network available.</td></tr>
 <tr><td valign="top"><tt>QSystemNetworkInfo::EmergencyOnly</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Emergency calls only.</td></tr>
 <tr><td valign="top"><tt>QSystemNetworkInfo::Searching</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Searching for network.</td></tr>
@@ -90,30 +80,29 @@
 <p>The NetworkModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;NetworkMode&gt;. It stores an OR combination of NetworkMode values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QSystemNetworkInfo"></a>QSystemNetworkInfo::QSystemNetworkInfo ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSystemNetworkInfo"></a>QSystemNetworkInfo::QSystemNetworkInfo ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a> with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QSystemNetworkInfo"></a>QSystemNetworkInfo::~QSystemNetworkInfo ()</h3>
-<h3 class="fn"><a name="cellId"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint32-typedef">qint32</a> QSystemNetworkInfo::cellId ()</h3>
+<p>Destroys the <a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a> object.</p>
+<h3 class="fn"><a name="cellId"></a>int QSystemNetworkInfo::cellId ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the Cell ID of the connected tower or based station.</p>
-<h3 class="fn"><a name="currentMobileCountryCode"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QSystemNetworkInfo::currentMobileCountryCode ()</h3>
+<h3 class="fn"><a name="currentMobileCountryCode"></a>QString QSystemNetworkInfo::currentMobileCountryCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the current Mobile Country Code /</p>
-<h3 class="fn"><a name="currentMobileNetworkCode"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QSystemNetworkInfo::currentMobileNetworkCode ()</h3>
+<h3 class="fn"><a name="currentMobileNetworkCode"></a>QString QSystemNetworkInfo::currentMobileNetworkCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the current Mobile Network Code</p>
 <h3 class="fn"><a name="getCellNetworkStatus"></a><a href="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::CellNetworkStatus</a> QSystemNetworkInfo::getCellNetworkStatus ()</h3>
 <p>Returns the status of the cell network.</p>
-<h3 class="fn"><a name="homeMobileCountryCode"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QSystemNetworkInfo::homeMobileCountryCode ()</h3>
+<h3 class="fn"><a name="homeMobileCountryCode"></a>QString QSystemNetworkInfo::homeMobileCountryCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the home Mobile Network Code</p>
-<h3 class="fn"><a name="homeMobileNetworkCode"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QSystemNetworkInfo::homeMobileNetworkCode ()</h3>
+<h3 class="fn"><a name="homeMobileNetworkCode"></a>QString QSystemNetworkInfo::homeMobileNetworkCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the home Mobile Country Code</p>
-<h3 class="fn"><a name="isLocationEnabled"></a>bool QSystemNetworkInfo::isLocationEnabled () const</h3>
-<p>Returns true if the system has location services, otherwise false.</p>
-<h3 class="fn"><a name="isWLANAccessible"></a>bool QSystemNetworkInfo::isWLANAccessible () const</h3>
+<h3 class="fn"><a name="isWLANAccessible"></a>bool QSystemNetworkInfo::isWLANAccessible ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns true if the system has an accessab;e WLan, otherwise false.</p>
-<h3 class="fn"><a name="locationAreaCode"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint32-typedef">qint32</a> QSystemNetworkInfo::locationAreaCode ()</h3>
-<p>Returns the Location Area Code, in the range of 0 to 65,535.</p>
-<h3 class="fn"><a name="networkSignalStrength"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qint32-typedef">qint32</a> QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
-<p>Returns the strength of the network signal, per network <i>mode</i> , 0 - 100 linear scaling</p>
-<h3 class="fn"><a name="operatorName"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QSystemNetworkInfo::operatorName ()</h3>
+<h3 class="fn"><a name="locationAreaCode"></a>int QSystemNetworkInfo::locationAreaCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the Location Area Code.</p>
+<h3 class="fn"><a name="networkSignalStrength"></a>int QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the strength of the network signal, per network <i>mode</i> , 0 - 100 linear scaling, or -1 in the case of unknown network mode or error.</p>
+<h3 class="fn"><a name="operatorName"></a>QString QSystemNetworkInfo::operatorName ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the name of the operator.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

@@ -14,8 +14,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemScreenSaver Class Reference</h1>
 <p>The QSystemScreenSaver class provides access to screen saver and blanking. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSystemScreenSaver&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
-<ul>
+<pre>    #include &lt;QSystemScreenSaver&gt;</pre><ul>
 <li><a href="qsystemscreensaver-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -35,19 +34,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</a></b> ( QSystemScreenSaver::ScreenSaverState <i>b</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</a></b> ( QSystemScreenSaver::ScreenSaverState <i>b</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -55,11 +41,19 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="ScreenSaverState-enum"></a>enum QSystemScreenSaver::ScreenSaverState</h3>
+<p>This enum describes the state of the screen saver.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QSystemScreenSaver::UnknownScreenSaverState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Screensaver state is unknown.</td></tr>
+<tr><td valign="top"><tt>QSystemScreenSaver::ScreenSaverDisabled</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Screensaver is disabled.</td></tr>
+<tr><td valign="top"><tt>QSystemScreenSaver::ScreenSaverEnabled</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Screensaver is enabled.</td></tr>
+</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QSystemScreenSaver"></a>QSystemScreenSaver::QSystemScreenSaver ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSystemScreenSaver"></a>QSystemScreenSaver::QSystemScreenSaver ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemscreensaver.html">QSystemScreenSaver</a> with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QSystemScreenSaver"></a>QSystemScreenSaver::~QSystemScreenSaver ()</h3>
+<p>Desctoys the QSyatemScreenSaver object.</p>
 <h3 class="fn"><a name="screenBlankingEnabled"></a><a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> QSystemScreenSaver::screenBlankingEnabled ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Gets if screen blanking is enabled or not.</p>
 <p>See also <a href="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</a>().</p>
@@ -67,10 +61,10 @@
 <p>Gets if the screensaver is enabled or not.</p>
 <p>See also <a href="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenBlankingEnabled"></a>bool QSystemScreenSaver::setScreenBlankingEnabled ( <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i> )</h3>
-<p>Temporarily sets the screen blanking on to <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i> Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object.</p>
+<p>Temporarily sets the screen blanking on to <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i> Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
 <p>See also <a href="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenSaverEnabled"></a>bool QSystemScreenSaver::setScreenSaverEnabled ( <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i> )</h3>
-<p>Temporarily sets the screensaver on to <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i>. Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object.</p>
+<p>Temporarily sets the screensaver on to <a href="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverState</a> <i>b</i>. Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
 <p>See also <a href="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

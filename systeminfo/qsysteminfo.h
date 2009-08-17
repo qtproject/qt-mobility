@@ -279,6 +279,11 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
 
+Q_SIGNALS:
+    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
+//    void batteryLevelCritical(qint32);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
+
 private:
     QSystemDeviceInfoPrivate *d;
 };
