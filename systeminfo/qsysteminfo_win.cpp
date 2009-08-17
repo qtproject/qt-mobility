@@ -798,6 +798,14 @@ QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
+#ifdef Q_OS_WINCE
+    SYSTEM_POWER_STATUS_EX statusEx;
+    GetSystemPowerStatusEx(&statusEx, true);
+    if(statusEx.ACLineStatus  == AC_LINE_ONLINE;
+        return QSystemDeviceInfo::WallPower;
+    if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
+        return QSystemDeviceInfo::BatteryPower;
+#endif
 return QSystemDeviceInfo::UnknownPower;
 }
 
@@ -834,7 +842,7 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX statusEx;
     GetSystemPowerStatusEx(&statusEx, true);
-    if(statusEx.BatteryFlag == BATTERY_FLAG_CHARGING)
+    if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
         isCharging = true;
 #endif
     return isCharging;
