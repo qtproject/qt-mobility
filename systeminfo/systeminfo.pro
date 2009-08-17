@@ -4,13 +4,13 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += qsysteminfo.h qsysteminfo_p.h
+HEADERS += qsysteminfo.h qsysteminfo_p.h qsysinfoglobal.h
 SOURCES += qsysteminfo.cpp  
 
 
 win32 {
     SOURCES += qsysteminfo_win.cpp
-LIBS += Wlanapi.lib
+LIBS += Wlanapi.lib Ole32.lib Strmiids.lib Bthprops.lib User32.lib Gdi32.lib
 INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" "C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 }
 

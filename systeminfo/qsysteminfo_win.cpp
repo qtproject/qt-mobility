@@ -32,8 +32,8 @@
 ****************************************************************************/
 #include "qsysteminfo.h"
 #include "qsysteminfo_p.h"
-#include <qt_windows.h>
 
+#include <qt_windows.h>
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -49,10 +49,26 @@
 #include <locale.h>
 //#include <windows.h>
 #include <Wlanapi.h>
-#include <Ntddvdeo.h>
+#include <Wtsapi32.h>
+// #include <afxwin.h>
+
+//#include <Dxva2.lib>
+#include <HighLevelMonitorConfigurationAPI.h>
+#include <Wbemidl.h>
+#include <Bthsdpdef.h>
+#include <BluetoothAPIs.h>
+#include <Dshow.h>
+//#include <Winsock2.h>
 
 #define _WCHAR_T_DEFINED
 #define _TIME64_T_DEFINED
+
+//#include <api/ntddvdeo.h>
+typedef struct _DISPLAY_BRIGHTNESS {
+    UCHAR ucDisplayPolicy;
+    UCHAR ucACBrightness;
+    UCHAR ucDCBrightness;
+} DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -74,15 +90,15 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    QStringList lgList;
     QString rSubKey = "SOFTWARE\\Classes\\MIME\\Database\\Rfc1766";
+    QStringList lgList;
     QSettings languageSetting("HKEY_LOCAL_MACHINE\\" + rSubKey, QSettings::NativeFormat);
     QStringList grp = languageSetting.childKeys();
     for (int i = 0; i < grp.count(); i++) {
         QString lg = languageSetting.value(grp.at(i)).toString().left(2);
         if(!lgList.contains(lg)) {
             lgList <<  lg;
-            qWarning() << lg;
+         //   qWarning() << lg;
         }
     }
     return lgList;
@@ -100,6 +116,9 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     switch(type) {
     case QSystemInfo::Os :
         {
+           OSVERSIONINFO versionInfo;
+           GetVersionEx(&versionInfo);
+           qWarning() << (int)versionInfo.dwMajorVersion << versionInfo.dwMinorVersion << versionInfo.dwBuildNumber << versionInfo.dwPlatformId;
         }
         break;
     case QSystemInfo::QtCore :
@@ -155,10 +174,41 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
+         //   BLUETOOTH_DEVICE_SEARCH_PARAMS searchParams;
+            BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
+            HANDLE radio;
+
+            //BLUETOOTH_DEVICE_INFO btDeviceInfo;
+          //  ZeroMemory(&searchParams, sizeof(BLUETOOTH_DEVICE_SEARCH_PARAMS));
+            if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
+//            if(BluetoothFindFirstDevice(&searchParams, &btDeviceInfo) != NULL) {
+                qWarning() << "available";
+                featureSupported = true;
+            } else {
+                qWarning() << "Not available" << GetLastError();
+            }
         }
-        break;
-    case QSystemInfo::CameraFeature :
+            break;
+        case QSystemInfo::CameraFeature :
         {
+            ICreateDevEnum *pDevEnum = NULL;
+            IEnumMoniker *pEnum = NULL;
+
+            HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
+                                          CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
+                                          reinterpret_cast<void**>(&pDevEnum));
+            if (hr == S_OK) {
+                hr = pDevEnum->CreateClassEnumerator(
+                        CLSID_VideoInputDeviceCategory,
+                        &pEnum, 0);
+                if(hr != S_FALSE) {
+                    qWarning() << "available";
+                    featureSupported = true;
+                    break;
+                } else {
+                    qWarning() << "Not available";
+                }
+            }
         }
         break;
     case QSystemInfo::FmradioFeature :
@@ -222,6 +272,7 @@ QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::getCellNetworkS
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    Q_UNUSED(mode);
     return -1;
 }
 
@@ -297,27 +348,223 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    qint32 brightness;
-    HANDLE display = CreateFile(L"\\\\.\\LCD", FILE_ANY_ACCESS, 0, NULL, OPEN_EXISTING, 0, NULL);
-    if( display != INVALID_HANDLE_VALUE )
-    {
-        DISPLAY_BRIGHTNESS bright;
-        DWORD bytesReturned;
-        if( DeviceIoControl(display, IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS, NULL, 0, &bright, sizeof(bright), &bytesReturned, NULL) ) {
-            if( bytesReturned > 0 ) {
-                brightness = bright.ucACBrightness;
-                qWarning() << bright.ucACBrightness;
+//    Q_UNUSED(screen);
+    qint32 brightness = 0;
+    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+    if(display != INVALID_HANDLE_VALUE) {
+        DISPLAY_BRIGHTNESS brightnessBuffer;
+        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
+        DWORD bytesReturned = 0;
+        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
+                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
+            if(bytesReturned > 0) {
+                brightness = brightnessBuffer.ucACBrightness;
+                qWarning()
+                        << brightnessBuffer.ucDisplayPolicy
+                        << brightnessBuffer.ucDCBrightness
+                        << brightnessBuffer.ucACBrightness
+                        << static_cast<int>(brightnessBuffer.ucACBrightness);
+            } else {
+                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
             }
         }
+
         CloseHandle(display);
+    } else {
+        qWarning() << "invalid handle";
     }
 
-    return brightness;
+
+    // Get the number of physical monitors.
+    // vista only
+//    HMONITOR hMonitor = NULL;
+//
+//    QDesktopWidget wid;
+//
+//    HWND hWnd = wid.screen(screen)->winId();
+//    DWORD cPhysicalMonitors = 1;
+//    LPPHYSICAL_MONITOR pPhysicalMonitors = NULL;
+//
+//    // Get the monitor handle.
+//    hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
+//    if(hMonitor == NULL) {
+//        qWarning() << "NULL";
+//    }
+//    bool bSuccess = GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &cPhysicalMonitors);
+////    if (bSuccess) {
+//        // Allocate the array of PHYSICAL_MONITOR structures.
+//        pPhysicalMonitors = (LPPHYSICAL_MONITOR)malloc(
+//                cPhysicalMonitors* sizeof(PHYSICAL_MONITOR));
+//
+//        if (pPhysicalMonitors != NULL) {
+//            bSuccess = GetPhysicalMonitorsFromHMONITOR(
+//                    hMonitor, cPhysicalMonitors, pPhysicalMonitors);
+//
+//            DWORD pdwMonitorCapabilities = 0;
+//            DWORD pdwSupportedColorTemperatures = 0;
+//
+//            GetMonitorCapabilities(hMonitor, &pdwMonitorCapabilities, &pdwSupportedColorTemperatures);
+//           // qWarning() << pdwMonitorCapabilities;
+//
+//            if (pdwMonitorCapabilities & MC_CAPS_BRIGHTNESS) {
+//                qWarning() << "XXXXXXXXXXXXXXXX has brightness";
+//            } else {
+//                qWarning() << "XXXXXXXXXXXXXXXX NO brightness";
+//
+//            }
+// GetMonitorBrightness
+//
+//            // Close the monitor handles.
+//            bSuccess = DestroyPhysicalMonitors(
+//                    cPhysicalMonitors,
+//                    pPhysicalMonitors);
+//
+//            // Free the array.
+//            free(pPhysicalMonitors);
+//        } else {
+//            qWarning() << "XXXXXXXXXXXXXX" << GetLastError();
+//        }
+
+//    } else {
+//        qWarning() << "not successful" << GetLastError();
+//    }
+
+    //GetMonitorBrightness
+    //////////////////////////////////
+
+#if 0 //vista only
+HRESULT hres;
+hres = CoInitializeEx(0, COINIT_MULTITHREADED);
+    if (hres == S_FALSE) {
+        qWarning() << "Failed to initialize COM library. Error code = 0x" << hex << hres;
+        return -1;
+    }
+
+////////////////
+IWbemLocator *pLoc = NULL;
+
+    hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator, (LPVOID *) &pLoc);
+
+    if (FAILED(hres)) {
+        qWarning() << "Failed to create IWbemLocator object." << " Err code = 0x"<< hex << hres;
+        CoUninitialize();
+        return -1;
+    }
+
+///////////
+IWbemServices *pSvc = NULL;
+
+    // Connect to the local root\cimv2 namespace
+    // and obtain pointer pSvc to make IWbemServices calls.
+    hres = pLoc->ConnectServer(
+        L"root\\wmi",NULL,NULL,0,NULL,0,0,&pSvc);
+
+    if (hres != WBEM_S_NO_ERROR){
+        qWarning() << "Could not connect. Error code = 0x" << hex << hres;
+        pLoc->Release();
+        CoUninitialize();
+        return -1;
+    }
+
+/////////////////////
+ hres = CoSetProxyBlanket(
+       pSvc,                        // Indicates the proxy to set
+       RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
+       RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
+       NULL,                        // Server principal name
+       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx
+       RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+       NULL,                        // client identity
+       EOAC_NONE                    // proxy capabilities
+    );
+
+    if (FAILED(hres)) {
+        qWarning() << "Could not set proxy blanket. Error code = 0x"
+            << hex << hres;
+        pSvc->Release();
+        pLoc->Release();
+        CoUninitialize();
+        return -1;
+    }
+////////////////////////
+    IEnumWbemClassObject* pEnumerator = NULL;
+    BSTR bstrWQL = SysAllocString(L"WQL");
+    BSTR bstrQuery = SysAllocString(L"SELECT * FROM WmiMonitorBrightness");
+//    BSTR bstrQuery = SysAllocString(L"SELECT * FROM Win32_OperatingSystem");
+
+    hres = pSvc->ExecQuery(
+            bstrWQL,
+            bstrQuery,
+            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+            NULL,
+            &pEnumerator);
+
+    if (hres != WBEM_S_NO_ERROR){
+        qWarning() << "Query for monitor brightness failed."
+            << " Error code = 0x"
+            << hex << hres;
+        pSvc->Release();
+        pLoc->Release();
+        pEnumerator->Release();
+        CoUninitialize();
+        return -1;
+    }
+    ///////////////////////
+    IWbemClassObject *pclsObj;
+    ULONG uReturn = 0;
+
+    while (pEnumerator) {
+        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
+                                       &pclsObj, &uReturn);
+        if(hr != WBEM_S_NO_ERROR) {
+
+            qWarning() << "enumerating monitor brightness failed."
+                    << " Error code = 0x"
+                    << hex << hres << hr << GetLastError();
+
+        }
+
+        if(0 == uReturn){
+            break;
+        }
+
+        VARIANT vtProp;
+        // Get the value of the Name property
+
+        hr = pclsObj->Get(L"CurrentBrightness", 0, &vtProp, 0, 0);
+        qWarning() << " brightness : " << vtProp.bVal;
+        //        hr = pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
+        //        qWarning() << " brightness : " << vtProp.bstrVal;
+        VariantClear(&vtProp);
+        pclsObj->Release();
+    }
+
+    pSvc->Release();
+    pLoc->Release();
+    pEnumerator->Release();
+    CoUninitialize();
+#endif
+    //////////////////////////////////
+
+    return -1;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
+    QDesktopWidget wid;
+    HWND hWnd = wid.screen(screen)->winId();
+    HDC deviceContextHandle = GetDC(hWnd);
+    int bpp = GetDeviceCaps(deviceContextHandle ,BITSPIXEL);
+    int planes = GetDeviceCaps(deviceContextHandle, PLANES);
+    qWarning() << planes << bpp;
+    if(planes > 1) {
+        bpp = 1 << planes;
+    }
+    ReleaseDC(NULL, deviceContextHandle);
+
     Q_UNUSED(screen);
+    return bpp;
 }
 
 bool QSystemDisplayInfoPrivate::isScreenLockOn()
@@ -338,30 +585,106 @@ QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
+    qint64 freeBytes;
+    qint64 totalBytes;
+    qint64 totalFreeBytes;
+
+    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
+//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    if(!ok)
+        totalFreeBytes = -1;
+    return totalFreeBytes;
 }
 
 qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
+    qint64 freeBytes;
+    qint64 totalBytes;
+    qint64 totalFreeBytes;
+
+    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
+//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    if(!ok)
+        totalBytes = -1;
+    return totalBytes;
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
 {
-    return QSystemMemoryInfo::Internal;
+    Q_UNUSED(driveVolume);
+    uint result =   GetDriveType(driveVolume.utf16());
+    qWarning() << result;
+    switch(result) {
+    case 0:
+    case 1: //unknown
+  return QSystemMemoryInfo::NoVolume;
+        break;
+    case 2://removable
+        return QSystemMemoryInfo::Removable;
+        break;
+    case 3:   //fixed
+        return QSystemMemoryInfo::Internal;
+        break;
+    case 4: //remote:
+        break;
+    case 5: //cdrom
+        return QSystemMemoryInfo::Removable;
+        break;
+    case 6: //ramdisk
+        break;
+    };
+  return QSystemMemoryInfo::NoVolume;
 }
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
-}
+    HANDLE fndHld = INVALID_HANDLE_VALUE;
+    WCHAR volumeName[MAX_PATH] = L"";
+    QStringList drivesList;
+    bool ok;
+    fndHld = FindFirstVolumeW(volumeName, ARRAYSIZE(volumeName));
+//    qWarning() <<"First volume"<< QString::fromStdWString(VolumeName);
 
-void QSystemMemoryInfoPrivate::getMountEntries()
-{
+    DWORD count = MAX_PATH + 1;
+    PWCHAR pathNames = (PWCHAR) new BYTE [count * sizeof(WCHAR)];
+
+//    if ( !pathNames )  {
+//        //  If memory can't be allocated, return.
+//        return QStringList();
+//    }
+
+    ok = GetVolumePathNamesForVolumeNameW( volumeName, pathNames, count, &count );
+
+    QString drive =  QString::fromWCharArray(pathNames);
+    if(!drivesList.contains(drive))
+        drivesList << drive;
+
+    for (;;)   {
+        ok = FindNextVolumeW(fndHld, volumeName, ARRAYSIZE(volumeName));
+        if ( !ok )  {
+            break;
+        }
+
+        ok = GetVolumePathNamesForVolumeNameW( volumeName, pathNames, count, &count );
+
+        QString drive =  QString::fromWCharArray(pathNames);
+        if(!drivesList.contains(drive))
+            drivesList << drive;
+        if ( !ok )  {
+            if (GetLastError() != ERROR_NO_MORE_FILES)  {
+                break;
+            }
+        }
+    }
+    FindVolumeClose(fndHld);
+    fndHld = INVALID_HANDLE_VALUE;
+    return drivesList;
 }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
-    halIsAvailable = halAvailable();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -375,7 +698,14 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
 
 QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
 {
+    QSystemDeviceInfo::InputMethod methods;
     return methods;
+}
+
+
+QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
+{
+return QSystemDeviceInfo::UnknownPower;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -407,6 +737,7 @@ QString QSystemDeviceInfoPrivate::productName()
 
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
 {
+    bool isCharging = false;
     return isCharging;
 }
 
