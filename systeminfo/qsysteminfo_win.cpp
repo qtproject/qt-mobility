@@ -66,7 +66,7 @@
 #include <vibrate.h>
 #include <Led_drvr.h>
 #include <simmgr.h>
-
+#include <Ifapi.h>
 #endif
 //#include <Winsock2.h>
 
@@ -313,22 +313,36 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             HRESULT result = SimInitialize(0,NULL,NULL,&handle);
             if(result == S_OK) {
                 featureSupported = true;
+                SimDeinitialize(handle);
             }
 #else
 #endif
         }
         break;
     case QSystemInfo::LocationFeature :
+        {
+#ifdef Q_OS_WINCE
+            HLOCATION location;
+            location = LocationOpen(LOCATION_FRAMEWORK_VERSION_CURRENT,NULL,0);
+            if(location != NULL) {
+                featureSupported = true;
+                LocationClose(location);
+            }
+#else
+#endif
+        }
         break;
     case QSystemInfo::VideoOutFeature :
         {
+           //IOCTL_VIDEO_QUERY_AVAIL_MODES
+//VIDEO_MODE_INFORMATION vInfo;
         }
         break;
     case QSystemInfo::HapticsFeature:
         break;
     case QSystemInfo::UnknownFeature :
     default:
-        featureSupported = true;
+        featureSupported = false;
         break;
     };
     return featureSupported;
