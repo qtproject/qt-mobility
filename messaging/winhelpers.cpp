@@ -753,6 +753,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         *lastError = QMessageStore::ContentInaccessible;
     }
 
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
     // Extract the recipients for the message
     IMAPITable *recipientsTable(0);
     rv = message->GetRecipientTable(0, &recipientsTable);
@@ -809,6 +812,57 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
+
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    // See if this message has HTML body (encoded in RTF)
+    IStream *is(0);
+    rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+    if (HR_SUCCEEDED(rv)) {
+        IStream *decompressor(0);
+        if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
+            QByteArray data;
+
+            ULONG bytes = 0;
+            char buffer[BUFSIZ] = { 0 };
+            do {
+                decompressor->Read(buffer, BUFSIZ, &bytes);
+                data.append(buffer, bytes);
+            } while (bytes == BUFSIZ);
+
+            decompressor->Release();
+
+            result.setContent(data);
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
+    } else {
+        // Fall back to a text body
+        rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+        if (HR_SUCCEEDED(rv)) {
+            STATSTG stg = { 0 };
+            rv = is->Stat(&stg, STATFLAG_NONAME);
+            if (HR_SUCCEEDED(rv)) {
+                char *data = new char[stg.cbSize.LowPart];
+                ULONG bytes = 0;
+                rv = is->Read(data, stg.cbSize.LowPart, &bytes);
+                if (HR_SUCCEEDED(rv)) {
+                    result.setContent(QByteArray(data, bytes));
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                }
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+            }
+        }
+    }
+
+    if (is)
+        is->Release();
+
+    if (*lastError != QMessageStore::NoError)
+        return result;
 
     message->Release();
     return result;
