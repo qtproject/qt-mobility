@@ -133,4 +133,11 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QValueSpace}
     \o \l{QAbstractValueSpaceLayer}
 \endlist
+
+\section2 Examples
+
+\list
+   \o \l{publish-subscribe}{Publish & Subscribe}
+\endlist
+
 */
