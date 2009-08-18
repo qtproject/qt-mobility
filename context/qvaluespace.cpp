@@ -420,16 +420,16 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 }
 
 /*!
-    \macro QVALUESPACE_APPLICATION_LAYER
+    \macro QVALUESPACE_SHAREDMEMORY_LAYER
     \relates QValueSpace
 
-    The UUID of the Application Layer as a QUuid.  The actual UUID value is
+    The UUID of the Shared Memory Layer as a QUuid.  The actual UUID value is
     {d81199c1-6f60-4432-934e-0ce4d37ef252}.
 
     This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Application Layer.
+    space object to publish its values in the Shared Memory Layer.
 
-    You can test if the Application Layer is available by checking if the list returned by
+    You can test if the Shared Memory Layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
 */
 
