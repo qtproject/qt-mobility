@@ -73,6 +73,7 @@ public:
     QSize sizeHint() const;
 
 public Q_SLOTS:
+    void setVisible(bool visible);
     void setDisplayMode(DisplayMode mode);
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -92,6 +93,7 @@ protected:
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 protected:
     QVideoWidgetPrivate *d_ptr;
@@ -99,7 +101,6 @@ protected:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
-    Q_PRIVATE_SLOT(d_func(), void _q_fullscreenWindowDone());
 };
 
 #endif
