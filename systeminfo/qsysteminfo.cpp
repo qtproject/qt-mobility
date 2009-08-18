@@ -581,7 +581,7 @@ QString QSystemDeviceInfo::productName()
 /*!
     Returns the battery charge level as percentage 1 - 100 scale
 */
-QSystemDeviceInfo::BatteryLevel QSystemDeviceInfo::batteryLevel() const
+int QSystemDeviceInfo::batteryLevel() const
 {
     return d->batteryLevel();
 }

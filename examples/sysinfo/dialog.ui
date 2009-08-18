@@ -292,13 +292,6 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="3" colspan="2">
-        <widget class="QLabel" name="manufacturerLabel">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_21">
          <property name="text">
@@ -454,6 +447,13 @@
         <widget class="QLabel" name="label_25">
          <property name="text">
           <string>Input method:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="manufacturerLabel">
+         <property name="text">
+          <string>TextLabel</string>
          </property>
         </widget>
        </item>
