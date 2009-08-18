@@ -39,6 +39,10 @@
 #include <qmessagecontentcontainerid.h>
 #include <qmessageid.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 class QMessage;
 class QMessageContentContainerPrivate;
 
@@ -79,6 +83,10 @@ public:
 
     static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
     static QList<QByteArray> preferredCharsets();
+
+#ifdef Q_OS_WIN
+    static QMessageContentContainer from(const QMessageId &id, ULONG number);
+#endif
 
 #ifdef QMESSAGING_OPTIONAL
     virtual void setContentType(const QByteArray &data);

@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEWINHELPERPRIVATE_H
 #define QMESSAGEWINHELPERPRIVATE_H
+#include <QPair>
 #include <QSharedPointer>
 #include <QString>
 #include <QByteArray>
@@ -47,6 +48,14 @@ class MapiSession;
 typedef QSharedPointer<MapiFolder> MapiFolderPtr;
 typedef QSharedPointer<MapiStore> MapiStorePtr;
 typedef QSharedPointer<MapiSession> MapiSessionPtr;
+
+namespace WinHelpers {
+
+typedef QPair<QMessageId, ULONG> AttachmentLocator;
+
+QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &l);
+
+}
 
 QString QStringFromLpctstr(LPCTSTR lpszValue);
 
@@ -130,6 +139,7 @@ public:
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
+    QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }
 
 private:

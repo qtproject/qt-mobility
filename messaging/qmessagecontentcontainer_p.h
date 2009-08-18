@@ -43,6 +43,10 @@ class QMessageContentContainerPrivate
 public:
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
         : q_ptr(contentContainer),
+          _message(0),
+#ifdef Q_OS_WIN
+          _attachmentNumber(0),
+#endif
 	  _available(false),
 	  _size(0),
           _attachments(0)
@@ -56,6 +60,11 @@ public:
 
     QMessageContentContainer *q_ptr;
     QMessage *_message;
+
+#ifdef Q_OS_WIN
+    QMessageId _containingMessageId;
+    ULONG _attachmentNumber;
+#endif
 
     QByteArray _type;
     QByteArray _subType;

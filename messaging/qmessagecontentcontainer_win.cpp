@@ -32,6 +32,33 @@
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
 #include "qmessagecontentcontainer_p.h"
+#include "winhelpers_p.h"
+
+namespace WinHelpers {
+
+QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &loc)
+{
+    return QMessageContentContainer::from(loc.first, loc.second);
+}
+
+}
+
+namespace {
+
+QByteArray attachmentContent(const QMessageId &id, ULONG number)
+{
+    QByteArray result;
+
+    MapiSession session;
+    if (session.isValid()) {
+        QMessageStore::ErrorCode error(QMessageStore::NoError);
+        result = session.attachmentData(&error, id, number);
+    }
+
+    return result;
+}
+
+}
 
 QMessageContentContainer::QMessageContentContainer()
     : d_ptr(new QMessageContentContainerPrivate(this))
@@ -134,7 +161,11 @@ QString QMessageContentContainer::decodedTextContent() const
 
 QByteArray QMessageContentContainer::decodedContent() const
 {
-    return QByteArray(); // stub
+    if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
+        d_ptr->_content = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
+    }
+
+    return d_ptr->_content;
 }
 
 QString QMessageContentContainer::decodedContentFileName() const
@@ -370,5 +401,14 @@ void QMessageContentContainer::removeContent(const QMessageContentContainerId &i
             }
         }
     }
+}
+
+QMessageContentContainer QMessageContentContainer::from(const QMessageId &id, ULONG number)
+{
+    QMessageContentContainer result;
+    result.d_ptr->_containingMessageId = id;
+    result.d_ptr->_attachmentNumber = number;
+    result.d_ptr->_available = true;
+    return result;
 }
 

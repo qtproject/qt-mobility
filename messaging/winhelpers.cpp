@@ -660,6 +660,27 @@ QMessageAddress createAddress(const QString &name, const QString &address)
     return result;
 }
 
+QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
+{
+    QByteArray result;
+    STATSTG stg = { 0 };
+    HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+    if (HR_SUCCEEDED(rv)) {
+        char *data = new char[stg.cbSize.LowPart];
+        ULONG bytes = 0;
+        rv = is->Read(data, stg.cbSize.LowPart, &bytes);
+        if (HR_SUCCEEDED(rv)) {
+            result = QByteArray(data, bytes);
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
+    } else {
+        *lastError = QMessageStore::ContentInaccessible;
+    }
+
+    return result;
+}
+
 }
 
 QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
@@ -847,21 +868,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         // Fall back to a text body
         rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
         if (HR_SUCCEEDED(rv)) {
-            STATSTG stg = { 0 };
-            rv = is->Stat(&stg, STATFLAG_NONAME);
-            if (HR_SUCCEEDED(rv)) {
-                char *data = new char[stg.cbSize.LowPart];
-                ULONG bytes = 0;
-                rv = is->Read(data, stg.cbSize.LowPart, &bytes);
-                if (HR_SUCCEEDED(rv)) {
-                    messageBody = QByteArray(data, bytes);
-                    bodySubType = "plain";
-                } else {
-                    *lastError = QMessageStore::ContentInaccessible;
-                }
-            } else {
-                *lastError = QMessageStore::ContentInaccessible;
-            }
+            messageBody = readStream(lastError, is);
+            bodySubType = "plain";
         }
     }
 
@@ -914,7 +922,11 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                     // If not available, the output tag will not match our requested content tag
                     if (rows->aRow[n].lpProps[0].ulPropTag == PR_ATTACH_NUM) {
                         number = rows->aRow[n].lpProps[0].Value.l;
+                    } else {
+                        // We can't access this part...
+                        continue;
                     }
+
                     if (rows->aRow[n].lpProps[1].ulPropTag == PR_ATTACH_EXTENSION) {
                         extension = QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ);
                     }
@@ -933,13 +945,22 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                         renderingPosition = rows->aRow[n].lpProps[6].Value.l;
                     }
 
-                    // number is the identifier needed to access the content
-                    // content-ID may be needed for HTML rendering
-                    // (renderingPosition == -1) indicates attachment rather than inline
+                    WinHelpers::AttachmentLocator locator(id, number);
 
-                    QMessageContentContainer container;
+                    QMessageContentContainer container(WinHelpers::fromLocator(locator));
                     container.setContentFileName(filename.toAscii());
-                    // ...
+                    // No setSize() ?
+
+                    if (!contentId.isEmpty()) {
+                        container.setHeaderField("Content-ID", contentId.toAscii());
+                    }
+                    if (renderingPosition == -1) {
+                        QByteArray value("attachment");
+                        if (!filename.isEmpty()) {
+                            value.append("; filename=" + filename.toAscii());
+                        }
+                        container.setHeaderField("Content-Disposition", value);
+                    }
 
                     result.appendContent(container);
                 }
@@ -948,6 +969,47 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
             }
         } else {
             *lastError = QMessageStore::ContentInaccessible;
+        }
+    }
+
+    message->Release();
+    return result;
+}
+
+QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+{
+    QByteArray result;
+
+    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
+    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
+    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
+    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    LPMESSAGE message;
+    QMessageStore::ErrorCode ignoredError;
+    if (openEntry(&ignoredError, entryId, &message) != S_OK) {
+        MapiFolderPtr parentFolder(mapiStore->findFolder(lastError, folderRecordKey));
+        if (*lastError != QMessageStore::NoError)
+            return result;
+
+        entryId = parentFolder->messageEntryId(lastError, messageRecordKey);
+        if (!entryId.count() || (openEntry(lastError, entryId, &message) != S_OK)) {
+            *lastError = QMessageStore::InvalidId;
+            return result;
+        }
+    }
+
+    LPATTACH attachment(0);
+    HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
+    if (HR_SUCCEEDED(rv)) {
+        IStream *is(0);
+        rv = attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+        if (HR_SUCCEEDED(rv)) {
+            result = readStream(lastError, is);
+            is->Release();
         }
     }
 
