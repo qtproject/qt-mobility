@@ -56,6 +56,10 @@
 #include <pthread.h>
 #endif
 
+#ifdef Q_OS_WIN
+#include <QThread>
+#endif
+
 static bool terminateRequested = false;
 
 class VSExplorer : public QObject
@@ -108,28 +112,21 @@ private:
 static VSExplorer * vse = 0;
 
 class LineInput :
-#ifdef USE_READLINE
+#if defined(USE_READLINE) || defined(Q_OS_WIN)
     public QThread
 #else
     public QObject
 #endif
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     LineInput();
 
 signals:
     void line(const QString &);
 
-#ifndef USE_READLINE
-private slots:
-    void readyRead();
-
-private:
-    QFile ts;
-    QSocketNotifier * sock;
-
-#else
+#if defined(USE_READLINE)
 protected:
     virtual bool event(QEvent *);
     virtual void run();
@@ -137,6 +134,19 @@ protected:
 private:
     QMutex mutex;
     QWaitCondition wait;
+#elif defined(Q_OS_WIN)
+protected:
+    void run();
+
+private:
+    QFile ts;
+#else
+private slots:
+    void readyRead();
+
+private:
+    QFile ts;
+    QSocketNotifier *sock;
 #endif
 };
 
@@ -532,14 +542,7 @@ extern "C" {
 
 LineInput::LineInput()
 {
-#ifndef USE_READLINE
-    ts.open(stdin, QIODevice::ReadOnly);
-    sock = new QSocketNotifier(ts.handle(), QSocketNotifier::Read, this);
-    QObject::connect(sock, SIGNAL(activated(int)), this, SLOT(readyRead()));
-
-    fprintf(stdout, "%s > ", vse->itemName().constData());
-    fflush(stdout);
-#else
+#if defined(USE_READLINE)
     rl_completion_append_character = '\0';
     rl_attempted_completion_function = item_completion;
     rl_completer_quote_characters = "\"";
@@ -548,10 +551,25 @@ LineInput::LineInput()
     QObject::connect(this, SIGNAL(finished()), qApp, SLOT(quit()));
     QObject::connect(this, SIGNAL(terminated()), qApp, SLOT(quit()));
     start();
+#elif defined(Q_OS_WIN)
+    ts.open(stdin, QIODevice::ReadOnly);
+    QObject::connect(this, SIGNAL(finished()), qApp, SLOT(quit()));
+    QObject::connect(this, SIGNAL(terminated()), qApp, SLOT(quit()));
+    start();
+
+    fprintf(stdout, "%s > ", vse->itemName().constData());
+    fflush(stdout);
+#else
+    ts.open(stdin, QIODevice::ReadOnly);
+    sock = new QSocketNotifier(ts.handle(), QSocketNotifier::Read, this);
+    QObject::connect(sock, SIGNAL(activated(int)), this, SLOT(readyRead()));
+
+    fprintf(stdout, "%s > ", vse->itemName().constData());
+    fflush(stdout);
 #endif
 }
 
-#ifndef USE_READLINE
+#if !defined(USE_READLINE) && !defined(Q_OS_WIN)
 void LineInput::readyRead()
 {
     QByteArray line = ts.readLine();
@@ -736,6 +754,20 @@ void LineInput::run()
 }
 #endif
 
+#ifdef Q_OS_WIN
+void LineInput::run()
+{
+    while (!terminateRequested) {
+        fprintf(stdout, "%s > ", vse->itemName().constData());
+        fflush(stdout);
+
+        QByteArray l = ts.readLine();
+        emit line(QString::fromLocal8Bit(l.constData(), l.length()));
+    }
+}
+
+#endif
+
 void usage(char * app)
 {
     fprintf(stderr, "Usage: %s [-s] [-d]\n", app);
@@ -801,8 +833,13 @@ int main(int argc, char ** argv)
         LineInput li;
 
 
+#ifdef Q_OS_WIN
+        QObject::connect(&li, SIGNAL(line(QString)),
+                         vse, SLOT(processLine(QString)), Qt::BlockingQueuedConnection);
+#else
         QObject::connect(&li, SIGNAL(line(QString)),
                          vse, SLOT(processLine(QString)));
+#endif
 
         int rv = app.exec();
         delete vse;
