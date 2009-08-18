@@ -165,7 +165,8 @@ void QContactManagerData::loadFactories()
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
 
-        /* Code from docs.. */
+        qDebug() << "Plugin paths:" << paths;
+        /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
             QDir pluginsDir(paths.at(i));
 #if defined(Q_OS_WIN)
@@ -178,7 +179,7 @@ void QContactManagerData::loadFactories()
                  pluginsDir.cdUp();
              }
 #endif
-            if (pluginsDir.cd(QLatin1String("plugins")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins")))) {
+            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {
@@ -187,7 +188,7 @@ void QContactManagerData::loadFactories()
             }
         }
 
-        /* Now discover some other plugins */
+        /* Now discover the dynamic plugins */
         for (int i=0; i < plugins.count(); i++) {
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());

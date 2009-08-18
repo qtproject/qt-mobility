@@ -5,7 +5,7 @@
 ######################################################################
 
 TEMPLATE = lib
-CONFIG += plugin testcase
+CONFIG += plugin
 TARGET = $$qtLibraryTarget(contacts_sendemailactionfactory)
 
 PLUGIN_SUBDIR=dummyplugin/plugins
@@ -21,6 +21,4 @@ LIBS += -lQtContacts
 HEADERS += sendemailaction_p.h
 SOURCES += sendemailaction.cpp
 
-symbian{
-	TARGET.EPOCALLOWDLLDATA = 1
-}
+include(../../contacts_plugins.pri)

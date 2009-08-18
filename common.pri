@@ -17,6 +17,9 @@ win32|mac {
     }
 }
 
+# Make sure this goes everywhere we need it
+symbian: load(data_caging_paths)
+
 CONFIG(debug, debug|release) {
     SUBDIRPART = Debug
 } else {
@@ -31,50 +34,64 @@ CONTACTS_BACKENDS = memory invalid
 OUTPUT_DIR = $$PWD
 SOURCE_DIR = $$PWD
 
-# Default plugin subdirectory
-isEmpty(PLUGIN_SUBDIR): PLUGIN_SUBDIR=plugins
-
 #test whether we have a unit test
 !testcase {
+    # Normal library/plugin/example code
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
         DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
     } else {
-        DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
+        # This is where plugins get built
+        DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins
+
+        # This is where we install to
+        target.path = $$[QT_INSTALL_PLUGINS]/contacts
+        INSTALLS += target
+
+        # And since we're a plugin, add the base lib path to the lib dirs
         LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against base dir as well
     }
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
 
 } else {
+    # Unit test code (no plugins! test plugins are just normal plugins installed elsewhere)
     QT *= testlib
     CONFIG += console
     CONFIG -= app_bundle
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
-    !plugin {
-        DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
-    } else {
-        DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
-    }
+    DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
-    LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
     INCLUDEPATH *= $$MOC_DIR
     INCLUDEPATH *= $$RCC_DIR
 
-    # Where test plugins go.
-    TEST_PLUGIN_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
+    LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
 }
 
-# Where normal plugins go
-PLUGIN_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
-
 # Add files for deployment
-CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtContacts.dll
-wince:CONTACTS_DEPLOYMENT.path = /Windows
-CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR/*.dll
-CONTACTS_PLUGINS_DEPLOYMENT.path = ./plugins
-DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
+wince {
+    # Main library
+    CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtContacts.dll
+    CONTACTS_DEPLOYMENT.path = /Windows
+
+    # Plugins (app local currently)
+    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR/*.dll
+    CONTACTS_PLUGINS_DEPLOYMENT.path = ./plugins
+
+    DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
+}
+symbian {
+    # Main library
+    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
+    CONTACTS_DEPLOYMENT.path = \sys\bin
+
+    # Engine plugins
+    CONTACTS_PLUGINS_DEPLOYMENT.sources = contacts_*.dll
+    CONTACTS_PLUGINS_DEPLOYMENT.path = \resource\qtmobility\plugins\contacts
+
+    DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
+}
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR

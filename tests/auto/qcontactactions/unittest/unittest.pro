@@ -13,7 +13,10 @@ INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/
 
 LIBS += -lQtContacts
 
-QCONTACTACTIONS_PLUGINS_DEPLOY.sources = $$TEST_PLUGIN_DIR/*.dll
-QCONTACTACTIONS_PLUGINS_DEPLOY.path = ./plugins
+# App local deployment
+symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll
+wince:QCONTACTACTION_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contacts_sendemailactionfactory.dll
 
-DEPLOYMENT += QCONTACTACTIONS_PLUGINS_DEPLOY
+QCONTACTACTION_PLUGINS_DEPLOY.path = ./plugins/contacts
+
+DEPLOYMENT += QCONTACTACTION_PLUGINS_DEPLOY

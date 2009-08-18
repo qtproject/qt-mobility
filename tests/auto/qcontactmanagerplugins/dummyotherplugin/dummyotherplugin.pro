@@ -14,6 +14,4 @@ include(../../../../common.pri)
 
 SOURCES += dummyotherplugin.cpp
     
-symbian {
-	TARGET.EPOCALLOWDLLDATA = 1
-}
+include(../../contacts_plugins.pri)

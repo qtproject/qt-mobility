@@ -21,6 +21,4 @@ LIBS += -lQtContacts
 
 INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
     
-symbian{
-	TARGET.EPOCALLOWDLLDATA = 1
-}
+include(../../contacts_plugins.pri)

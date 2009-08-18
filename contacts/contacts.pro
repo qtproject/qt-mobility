@@ -64,14 +64,15 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian {
-	TARGET.EPOCALLOWDLLDATA = 1
-    
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = CAP_GENERAL_DLL
+
     deploy.path = /
-    headers.sources = $$PUBLIC_HEADERS
-    headers.path = epoc32/include
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
 
-# This is for new exporting system coming in garden
+    # This is for new exporting system coming in garden
     for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
 }
 

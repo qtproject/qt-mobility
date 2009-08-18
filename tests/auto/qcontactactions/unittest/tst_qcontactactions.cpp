@@ -86,10 +86,10 @@ public:
 };
 
 /* Statically import it (and a duplicate copy of it, purely for testing purposes) */
-Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactory, DummyStaticActionFactory);
-Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactory);
-Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactorycopy, DummyStaticActionFactory);
-Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy);
+Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactory, DummyStaticActionFactory)
+Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactory)
+Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactorycopy, DummyStaticActionFactory)
+Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy)
 
 tst_QContactActions::tst_QContactActions()
 {
