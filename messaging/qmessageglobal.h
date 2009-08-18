@@ -4,7 +4,7 @@
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtMultiMESSAGING module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
