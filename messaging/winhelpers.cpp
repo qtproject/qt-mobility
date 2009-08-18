@@ -938,6 +938,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
     if (!hasAttachments) {
         // Make the body the entire content of the message
+        result.setContentType("text");
+        result.setContentSubType(bodySubType);
         result.setContent(messageBody);
     } else {
         // Add the message body data as the first part
@@ -945,6 +947,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         bodyPart.setContentType("text");
         bodyPart.setContentSubType(bodySubType);
         bodyPart.setContent(messageBody);
+
+        result.setContentType("multipart");
+        result.setContentSubType("related");
         result.appendContent(bodyPart);
 
         // Find any attachments for this message
@@ -1001,7 +1006,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
                     QMessageContentContainer container(WinHelpers::fromLocator(locator));
                     container.setContentFileName(filename.toAscii());
-                    // No setSize() ?
+                    // TODO: No setSize() ?
 
                     if (!extension.isEmpty()) {
                         QByteArray contentType(contentTypeFromExtension(extension));
