@@ -958,7 +958,7 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
     return isCharging;
 }
 
-QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
     float level = 0.0;
@@ -1017,18 +1017,10 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
     }
     if(level != 0 && levelWhenFull != 0) {
         level = level / levelWhenFull * 100;
-        if(level < 4) {
-            return QSystemDeviceInfo::BatteryCritical;
-        } else if (level < 11) {
-            return QSystemDeviceInfo::BatteryVeryLow;
-        } else if (level < 41) {
-            return QSystemDeviceInfo::BatteryLow;
-        } else {
-            return QSystemDeviceInfo::BatteryNormal;
-        }
+        return level;
     }
 
-    return QSystemDeviceInfo::NoBatteryLevel;
+    return 0;
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
