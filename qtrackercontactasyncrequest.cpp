@@ -16,6 +16,7 @@
 #include <QtTracker/ontologies/nco.h>
 
 #include "qcontact.h"
+#include "qcontactdetails.h"
 #include "qcontactrequests.h"
 #include "qtrackercontactasyncrequest.h"
 using namespace SopranoLive;
@@ -36,7 +37,6 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             Q_UNUSED(filter)
             Q_UNUSED(sorting)
 
-            QList<QUniqueId> ids;
             RDFVariable RDFContact =
                     RDFVariable::fromType<nco::PersonContact>();
             RDFSelect quer;
@@ -51,6 +51,41 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
 
             break;
         }
+        case QContactAbstractRequest::ContactFetch:
+        {
+            QContactFetchRequest* r =
+                    static_cast<QContactFetchRequest*> (req);
+            QContactFilter filter = r->filter();
+            QList<QContactSortOrder> sorting = r->sorting();
+            QStringList fetchOnlyDetails = r->definitionRestrictions();
+            Q_UNUSED(filter)
+            Q_UNUSED(sorting)
+            Q_UNUSED(fetchOnlyDetails)
+
+            QList<QUniqueId> ids;
+            RDFVariable RDFContact =
+                    RDFVariable::fromType<nco::PersonContact>();
+            RDFSelect quer;
+
+
+            quer.addColumn("contact_uri", RDFContact);
+            quer.addColumn("contactId",
+                    RDFContact.property<nco::contactUID> ());
+            quer.addColumn("firstname",
+                    RDFContact.property<nco::nameGiven> ());
+            quer.addColumn("secondname",
+                    RDFContact.property<nco::nameFamily> ());
+            quer.addColumn("photo",
+                    RDFContact.property<nco::photo> ());
+
+            query = ::tracker()->modelQuery(quer);
+            // need to store LiveNodes in order to receive notification from model
+            QObject::connect(query.model(), SIGNAL(modelUpdated()), this,
+                    SLOT(contactsReady()));
+
+            break;
+        }
+
             // implement the rest
         default:
             break;
@@ -72,6 +107,34 @@ void QTrackerContactAsyncRequest::modelUpdated()
     for(int i = 0; i < query->rowCount(); i++)
     {
         result.append(query->index(i, 1).data().toUInt());
+    }
+
+    if (engine)
+        engine->updateRequest(req, result, QContactManager::NoError, QList<
+                QContactManager::Error> (), QContactAbstractRequest::Finished,
+                false);
+}
+
+void QTrackerContactAsyncRequest::contactsReady()
+{
+    // fastest way to get this working. refactor
+    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (
+            parent());
+    QList<QContact> result;
+    for(int i = 0; i < query->rowCount(); i++)
+    {
+        QContact contact;
+        contact.setId(query->index(i, 1).data().toUInt());
+        QContactName name;
+        name.setFirst(query->index(i, 2).data().toString());
+        name.setLast(query->index(i, 3).data().toString());
+        contact.saveDetail(&name);
+
+        QContactAvatar avatar;
+        avatar.setAvatar(query->index(i, 4).data().toString());
+        contact.saveDetail(&avatar);
+
+        result.append(contact);
     }
 
     if (engine)

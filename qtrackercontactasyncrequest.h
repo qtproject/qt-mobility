@@ -32,6 +32,7 @@ public:
     virtual ~QTrackerContactAsyncRequest();
 public slots:
     void modelUpdated();
+    void contactsReady();
 
 protected:
     QContactAbstractRequest* req;

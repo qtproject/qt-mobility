@@ -104,7 +104,6 @@ void copyDetailData(const Live<nco::PersonContact>& ncoContact, QContactName& na
     name.setMiddle     ( ncoContact->getNameAdditional() );
     name.setLast       ( ncoContact->getNameFamily() );
     name.setSuffix     ( ncoContact->getNameHonorificSuffix() );
-    qDebug()<<Q_FUNC_INFO<<name.values();
     setSubType( ncoContact, name );
 }
 
@@ -253,6 +252,8 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
         presence.setValue(QContactPresence::FieldNickname, imAccount->getImNickname());
         presence.setValue(QContactPresence::FieldPresence, imAccount->getImStatus());
         presence.setValue(QContactPresence::FieldStatusMessage, imAccount->getImStatusMessage());
+        qcontact.saveDetail(&presence);
+
     }
 
     foreach( Live< rdfs::Resource > url, ncoContact->getUrls() ) { //Home homepage urls
