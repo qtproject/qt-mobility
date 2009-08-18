@@ -941,6 +941,34 @@ void tst_QValueSpaceItem::removeValue()
     delete rel_object;
 }
 
+void tst_QValueSpaceItem::ipcRemoveKey()
+{
+#if defined(QT_NO_PROCESS)
+    QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
+#else
+    QProcess process;
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    process.start("vsiTestLackey", QStringList() << "-ipcRemoveKey");
+    QVERIFY(process.waitForStarted());
+
+    QValueSpaceItem item("/ipcRemoveKey");
+
+    // Wait for lackey to set "value" to 100.
+    QTRY_COMPARE(item.value("value", 5).toInt(), 100);
+
+    ChangeListener listener;
+    QSignalSpy changeSpy(&listener, SIGNAL(baseChanged()));
+
+    QObject::connect(&item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
+
+    // Wait for lackey to delete key "/ipcRemoveKey".
+    QTRY_COMPARE(changeSpy.count(), 1);
+
+    QVERIFY(item.subPaths().isEmpty());
+    QCOMPARE(item.value("value", 6).toInt(), 6);
+#endif
+}
+
 void tst_QValueSpaceItem::ipcSetValue()
 {
 #if defined(QT_NO_PROCESS)

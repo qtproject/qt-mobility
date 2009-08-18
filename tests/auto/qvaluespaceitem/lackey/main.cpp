@@ -49,7 +49,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    enum Function { IpcTests, IpcSetValue, IpcInterestNotification };
+    enum Function { IpcTests, IpcSetValue, IpcInterestNotification, IpcRemoveKey };
 
     Controller(Function function)
         : QObject(0), index(0), abortCode(0)
@@ -77,9 +77,15 @@ public:
             }
             break;
         case IpcInterestNotification:
-            object = new QValueSpaceObject("/ipcInterestNotification");
+            object = new QValueSpaceObject("/ipcInterestNotification", QUuid(), this);
             connect(object, SIGNAL(itemNotify(QByteArray,bool)),
                     this, SLOT(itemNotify(QByteArray,bool)));
+            break;
+        case IpcRemoveKey:
+            object = new QValueSpaceObject("/ipcRemoveKey", QUuid(), this);
+            object->setAttribute("value", 100);
+            object->sync();
+            QTimer::singleShot(TIMEOUT, this, SLOT(removeKey()));
             break;
         }
     }
@@ -166,6 +172,15 @@ private slots:
         }
     }
 
+    void removeKey()
+    {
+        if (object) {
+            delete object;
+            object = 0;
+        }
+        QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
+    }
+
 private:
     QValueSpaceObject* object;
     QValueSpaceItem *item;
@@ -188,6 +203,9 @@ int main(int argc, char** argv)
             break;
         } else if (arg == "-ipcInterestNotification") {
             function = Controller::IpcInterestNotification;
+            break;
+        } else if (arg == "-ipcRemoveKey") {
+            function = Controller::IpcRemoveKey;
             break;
         }
     }

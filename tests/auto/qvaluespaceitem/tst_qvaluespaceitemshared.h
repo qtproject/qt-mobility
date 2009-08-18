@@ -56,6 +56,7 @@ private slots:
     void setValue();
     void ipcSetValue();
     void removeValue();
+    void ipcRemoveKey();
     void interestNotification_data();
     void interestNotification();
     void ipcInterestNotification();

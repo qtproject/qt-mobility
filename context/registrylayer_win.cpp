@@ -799,7 +799,22 @@ void RegistryLayer::emitHandleChanged(HKEY key)
                                           event, true);
 
     if (result != ERROR_SUCCESS) {
-        qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+        if (result == ERROR_KEY_DELETED) {
+            CloseHandle(event);
+
+            QList<RegistryHandle *> changedHandles = hKeys.keys(key);
+
+            for (int i = 0; i < changedHandles.count(); ++i)
+                hKeys.remove(changedHandles.at(i));
+
+            RegCloseKey(key);
+
+            for (int i = 0; i < changedHandles.count(); ++i)
+                setProperty(Handle(changedHandles.at(i)), Publish);
+        } else {
+            qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+        }
+
         return;
     }
 
