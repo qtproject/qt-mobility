@@ -34,6 +34,8 @@
 #include "qmessagecontentcontainer_p.h"
 #include "winhelpers_p.h"
 
+#include <QTextCodec>
+
 namespace WinHelpers {
 
 QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &loc)
@@ -53,6 +55,33 @@ QByteArray attachmentContent(const QMessageId &id, ULONG number)
     if (session.isValid()) {
         QMessageStore::ErrorCode error(QMessageStore::NoError);
         result = session.attachmentData(&error, id, number);
+    }
+
+    return result;
+}
+
+QString attachmentTextContent(const QMessageId &id, ULONG number, const QByteArray &charset)
+{
+    QString result;
+
+    MapiSession session;
+    if (session.isValid()) {
+        QMessageStore::ErrorCode error(QMessageStore::NoError);
+        QByteArray data = session.attachmentData(&error, id, number);
+
+        if (error == QMessageStore::NoError) {
+            // Convert attachment data to string form
+            QTextCodec *codec;
+            if (!charset.isEmpty()) {
+                codec = QTextCodec::codecForName(charset);
+            } else {
+                codec = QTextCodec::codecForLocale();
+            }
+
+            if (codec) {
+                result = codec->toUnicode(data);
+            }
+        }
     }
 
     return result;
@@ -156,7 +185,11 @@ uint QMessageContentContainer::size() const
 
 QString QMessageContentContainer::decodedTextContent() const
 {
-    return QString::null; // stub
+    if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentNumber != 0) {
+        d_ptr->_textContent = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
+    }
+
+    return d_ptr->_textContent;
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
@@ -170,12 +203,16 @@ QByteArray QMessageContentContainer::decodedContent() const
 
 QString QMessageContentContainer::decodedContentFileName() const
 {
-    return QString(); // stub
+    return QString();
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    Q_UNUSED(out)
+    if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
+        d_ptr->_content = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
+    }
+
+    out.writeRawData(d_ptr->_content.constData(), d_ptr->_content.length());
 }
 
 #ifdef QMESSAGING_OPTIONAL
