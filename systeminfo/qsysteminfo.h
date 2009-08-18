@@ -256,7 +256,7 @@ public:
     static QString productName(); //internal name
 
 // ????
-    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+    int batteryLevel() const;
     bool isBatteryCharging();
 
     enum Profile {

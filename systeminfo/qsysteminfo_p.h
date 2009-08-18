@@ -153,7 +153,7 @@ public:
 
     QSystemDeviceInfo::InputMethods getInputMethodType();
 
-    QSystemDeviceInfo::BatteryLevel batteryLevel() const;
+    int  batteryLevel() const;
 
     QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();

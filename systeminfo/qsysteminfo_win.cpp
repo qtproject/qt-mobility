@@ -53,6 +53,9 @@
 #include <Wlanapi.h>
 #include <Wtsapi32.h>
 // #include <afxwin.h>
+#include <initguid.h>
+#include <BatClass.h>
+#include <Setupapi.h>
 
 //#include <Dxva2.lib>
 #include <HighLevelMonitorConfigurationAPI.h>
@@ -758,58 +761,44 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
     bool isCharging = false;
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX statusEx;
-    GetSystemPowerStatusEx(&statusEx, true);
+    if(GetSystemPowerStatusEx(&statusEx, true)) {
     if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
         isCharging = true;
+}
 #else
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
-    if(v.toUInt() == 6) {
-        isCharging = true;
+        SYSTEM_POWER_STATUS status;
+    if(GetSystemPowerStatus( &status) ) {
+        qWarning() << status.ACLineStatus << status.BatteryFlag << status.BatteryLifePercent;
+        if(status.ACLineStatus == 1) {
+            isCharging = true;
+        }
+    } else {
+       qWarning() << "Battery status failed";
     }
 #endif
     return isCharging;
 }
 
-QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel() const
 {
 #ifdef Q_OS_WINCE
-    SYSTEM_POWER_STATUS_EX statusEx;
-    GetSystemPowerStatusEx(&statusEx, true);
-    switch(statusEx.BatteryFlag) {
-    case BATTERY_FLAG_HIGH:
-        return QSystemDeviceInfo::BatteryNormal;
-        break;
-    case BATTERY_FLAG_LOW:
-        return QSystemDeviceInfo::BatteryLow;
-        break;
-    case BATTERY_FLAG_CRITICAL:
-        return QSystemDeviceInfo::BatteryCritical;
-        break;
-    case BATTERY_FLAG_CHARGING:
-    case BATTERY_FLAG_UNKNOWN:
-    case BATTERY_FLAG_NO_BATTERY:
-        return QSystemDeviceInfo::NoBatteryLevel;
-        break;
-   };
+    SYSTEM_POWER_STATUS_EX status;
+    if(GetSystemPowerStatusEx(&statusEx, true) ) {
+        qWarning() <<"battery level" <</* status.ACLineStatus << status.BatteryFlag <<*/ status.BatteryLifePercent;
+        return status.BatteryLifePercent;
+} else {
+       qWarning() << "Battery status failed";
+    }
 #else
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
-    switch(v.toUInt()) {
-    case 3: //full
-        return QSystemDeviceInfo::BatteryNormal;
-        break;
-    case 4: //low
-        return QSystemDeviceInfo::BatteryLow;
-        break;
-    case 5: //critical
-        return QSystemDeviceInfo::BatteryCritical;
-        break;
-    };
+    SYSTEM_POWER_STATUS status;
+    if(GetSystemPowerStatus( &status) ) {
+        qWarning() <<"battery level" <</* status.ACLineStatus << status.BatteryFlag <<*/ status.BatteryLifePercent;
+        return status.BatteryLifePercent;
+} else {
+       qWarning() << "Battery status failed";
+    }
 #endif
-    return QSystemDeviceInfo::NoBatteryLevel;
+    return 0;
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()

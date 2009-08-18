@@ -23,9 +23,13 @@ win32 {
         Gdi32.lib \
         Ws2_32.lib \
         Wbemuuid.lib \
-        Oleaut32.lib
+        Oleaut32.lib \
+        Setupapi.lib
+
     INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
-        "C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
+        "C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
+        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
+
     wince*:LIBS += aygshell.lib \
         Nleddrv.lib \
         cellcore.lib \
