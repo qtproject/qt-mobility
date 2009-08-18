@@ -752,3 +752,15 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
     Signal emitted when focus \a status changed.
 */
 
+/*!
+    \fn void QCamera::flashReady(bool ready)
+
+    Signal emitted when flash status changed, flash is ready if \a ready true.
+*/
+
+/*!
+    \fn void QCamera::zoomValueChanged(double value)
+
+    Signal emitted when zoom value changes to new \a value.
+*/
+

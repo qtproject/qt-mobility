@@ -118,7 +118,7 @@ Q_SIGNALS:
     void stateChanged(QCamera::State);
 
     void flashReady(bool);
-    void focusStatusChanged(QCamera::FocusStatus);
+    void focusStatusChanged(QCamera::FocusStatus status);
     void zoomValueChanged(double);
     void exposureLocked();
     void focusLocked();

@@ -44,6 +44,8 @@ class QMediaRecorderControl : public QAbstractMediaControl
 {
 Q_OBJECT
 public:
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+
     virtual ~QMediaRecorderControl();
 
     virtual QMediaSink sink() const = 0;

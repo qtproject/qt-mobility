@@ -484,7 +484,7 @@ bool QCameraControl::isFocusLocked() const
 */
 
 /*!
-    \fn void QCameraControl::focusStatusChanged(FocusStatus status)
+    \fn void QCameraControl::focusStatusChanged(QCamera::FocusStatus status)
 
     Signal emitted when focus \a status changed.
 */
@@ -502,17 +502,15 @@ bool QCameraControl::isFocusLocked() const
 */
 
 /*!
-    \fn void QCameraControl::focusStatusChanged(int status)
-
-    Signal emitted when focus \a status changed.
-*/
-
-/*!
     \fn void QCameraControl::zoomValueChanged(double zoom)
 
     Signal emitted when \a zoom value changed.
 */
 
+/*!
+    \fn void QCameraControl::stateChanged(QCamera::State state)
 
+    Signal emitted when \a state changes state.
+*/
 
 

@@ -75,7 +75,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
-    \property duration
+    \property QMediaRecorderControl::duration
     \brief Current duration in milliseconds.
 */
 

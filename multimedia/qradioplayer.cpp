@@ -386,6 +386,12 @@ QRadioService* createRadioService(QMediaServiceProvider *provider)
 */
 
 /*!
+    \fn void QRadioPlayer::signalStrengthChanged(int signalStrength)
+
+    Signal emitted when signal strength changes to new value \a signalStrength.
+*/
+
+/*!
     \enum QRadioPlayer::Band
 
     \value AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
