@@ -76,7 +76,7 @@ wince {
     CONTACTS_DEPLOYMENT.path = /Windows
 
     # Plugins (app local currently)
-    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR/*.dll
+    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/*.dll
     CONTACTS_PLUGINS_DEPLOYMENT.path = ./plugins
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT

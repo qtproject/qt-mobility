@@ -8,8 +8,6 @@ TEMPLATE = lib
 CONFIG += plugin testcase
 TARGET = $$qtLibraryTarget(contacts_testdummycopy)
 
-# Stick it somewhere else so it doesn't get picked up by default
-PLUGIN_SUBDIR=dummyplugin/plugins
 include(../../../../common.pri)
 
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummycopy
