@@ -39,6 +39,8 @@
 #include "qmessageaccount_p.h"
 #include "qmessagesortkey_p.h"
 #include <qdebug.h>
+#include <shlwapi.h>
+#include <shlguid.h>
 
 // TODO Retrieve message count, and hasSubfolders flag for message folders.
 // TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
@@ -674,8 +676,58 @@ QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
         } else {
             *lastError = QMessageStore::ContentInaccessible;
         }
+
+        delete [] data;
     } else {
         *lastError = QMessageStore::ContentInaccessible;
+    }
+
+    return result;
+}
+
+QByteArray contentTypeFromExtension(const QString &extension)
+{
+    QByteArray result("application/octet-stream");
+
+    if (!extension.isEmpty()) {
+        IQueryAssociations *associations(0);
+        HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
+        if (HR_SUCCEEDED(rv)) {
+            // Create the extension string to search for
+            wchar_t *ext = new wchar_t[extension.length() + 2];
+            wchar_t *v = ext;
+            if (!extension.startsWith('.')) {
+                *v++ = '.';
+            }
+
+            QString::const_iterator it = extension.begin(), end = extension.end();
+            for ( ; it != end; ++it) {
+                *v++ = (*it).unicode();
+            }
+
+            rv = associations->Init(0, ext, 0, 0);
+            if (HR_SUCCEEDED(rv)) {
+                // Find the length of the content-type string
+                DWORD length = 0;
+                rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, 0, &length);
+                if ((rv == S_FALSE) && length) {
+                    // Retrieve the string
+                    wchar_t *buffer = new wchar_t[length + 1];
+                    rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, buffer, &length);
+                    if (rv == S_OK) {
+                        result.clear();
+                        for (wchar_t *v = buffer; length > 0; ++v, --length) {
+                            result.append(*v & 0xff);
+                        }
+                    }
+
+                    delete [] buffer;
+                }
+            }
+
+            delete [] ext;
+            associations->Release();
+        }
     }
 
     return result;
@@ -951,6 +1003,18 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                     container.setContentFileName(filename.toAscii());
                     // No setSize() ?
 
+                    if (!extension.isEmpty()) {
+                        QByteArray contentType(contentTypeFromExtension(extension));
+                        if (!contentType.isEmpty()) {
+                            int index = contentType.indexOf('/');
+                            if (index != -1) {
+                                container.setContentType(contentType.left(index));
+                                container.setContentSubType(contentType.mid(index + 1));
+                            } else {
+                                container.setContentType(contentType);
+                            }
+                        }
+                    }
                     if (!contentId.isEmpty()) {
                         container.setHeaderField("Content-ID", contentId.toAscii());
                     }

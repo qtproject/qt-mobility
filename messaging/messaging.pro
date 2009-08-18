@@ -128,7 +128,7 @@ SOURCES += winhelpers.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 
-LIBS += mapi32.lib 
+LIBS += mapi32.lib shlwapi.lib
 }
 } else {
 # QMF headers must be located at $QMF_INCLUDEDIR
