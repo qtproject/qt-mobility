@@ -32,6 +32,8 @@
 ****************************************************************************/
 #include "qsysteminfo.h"
 #include "qsysteminfo_p.h"
+#include "wmihelper.h"
+
 
 #include <qt_windows.h>
 #include <QStringList>
@@ -94,7 +96,7 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
-{
+{////Win32_Product Language
     return QString(setlocale(LC_ALL,NULL)).left(2);
 }
 
@@ -231,18 +233,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::IrFeature :
         {
-            WORD      WSAVerReq = MAKEWORD(1,1);
-            WSADATA      WSAData;
-
-            if (WSAStartup(WSAVerReq, &WSAData) == 0) {
-                // wrong winsock dlls?
-
-                SOCKET ServSock;
-                if ((ServSock = socket(AF_IRDA, SOCK_STREAM, 0)) != INVALID_SOCKET) {
-                    featureSupported = true;
-                }  else {
-//                    qWarning() << WSAGetLastError();
-                }
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_InfraredDevice", "ConfigManagerErrorCode");
+            if(v.toUInt() == 1) {
+                featureSupported = true;
             }
         }
         break;
@@ -271,7 +266,13 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::UsbFeature :
         {
-            //IOCTL_INTERNAL_USB_GET_CONTROLLER_NAME
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_USBHub", "ConfigManagerErrorCode");
+            qWarning() << v.toUInt();
+            if(v.toUInt() == 0) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::VibFeature :
@@ -287,24 +288,31 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::WlanFeature :
         {
-            qWarning() << "wlan";
-            DWORD clientVersion;
-            HANDLE handle;
-            DWORD result = WlanOpenHandle(1, 0, &clientVersion, &handle);
-            if (result == ERROR_SUCCESS) {
-                WLAN_INTERFACE_INFO_LIST *interfaceList;
-                DWORD result = WlanEnumInterfaces(handle, 0, &interfaceList);
-                if (result == ERROR_SUCCESS) {
-                    qWarning() << interfaceList->dwNumberOfItems;
-                    if(interfaceList->dwNumberOfItems > 1) {
-                        featureSupported = true;
-                    }
-                } else {
-                    qWarning()  <<"2 not success" << result;
-                }
-            } else {
-                qWarning() << "1 not success"<< result;
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkAdapter", "AdapterType");
+            qWarning() << v.toString();
+            if(v.toString() == "Wireless") {
+                featureSupported = true;
             }
+//            qWarning() << "wlan";
+//            DWORD clientVersion;
+//            HANDLE handle;
+//            DWORD result = WlanOpenHandle(1, 0, &clientVersion, &handle);
+//            if (result == ERROR_SUCCESS) {
+//                WLAN_INTERFACE_INFO_LIST *interfaceList;
+//                DWORD result = WlanEnumInterfaces(handle, 0, &interfaceList);
+//                if (result == ERROR_SUCCESS) {
+//                    qWarning() << interfaceList->dwNumberOfItems;
+//                    if(interfaceList->dwNumberOfItems > 1) {
+//                        featureSupported = true;
+//                    }
+//                } else {
+//                    qWarning()  <<"2 not success" << result;
+//                }
+//            } else {
+//                qWarning() << "1 not success"<< result;
+//            }
         }
         break;
     case QSystemInfo::SimFeature :
@@ -442,31 +450,37 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-//    Q_UNUSED(screen);
-    qint32 brightness = 0;
-    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
-    if(display != INVALID_HANDLE_VALUE) {
-        DISPLAY_BRIGHTNESS brightnessBuffer;
-        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
-        DWORD bytesReturned = 0;
-        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
-                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
-            if(bytesReturned > 0) {
-                brightness = brightnessBuffer.ucACBrightness;
-                qWarning()
-                        << brightnessBuffer.ucDisplayPolicy
-                        << brightnessBuffer.ucDCBrightness
-                        << brightnessBuffer.ucACBrightness
-                        << static_cast<int>(brightnessBuffer.ucACBrightness);
-            } else {
-                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
-            }
-        }
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/wmi", "WmiMonitorBrightness", "CurrentBrightness");
+    qWarning() << v.toUInt();
+    return v.toUInt();
 
-        CloseHandle(display);
-    } else {
-        qWarning() << "invalid handle";
-    }
+    //    Q_UNUSED(screen);
+//    qint32 brightness = 0;
+//    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+//    if(display != INVALID_HANDLE_VALUE) {
+//        DISPLAY_BRIGHTNESS brightnessBuffer;
+//        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
+//        DWORD bytesReturned = 0;
+//        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
+//                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
+//            if(bytesReturned > 0) {
+//                brightness = brightnessBuffer.ucACBrightness;
+//                qWarning()
+//                        << brightnessBuffer.ucDisplayPolicy
+//                        << brightnessBuffer.ucDCBrightness
+//                        << brightnessBuffer.ucACBrightness
+//                        << static_cast<int>(brightnessBuffer.ucACBrightness);
+//            } else {
+//                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
+//            }
+//        }
+//
+//        CloseHandle(display);
+//    } else {
+//        qWarning() << "invalid handle";
+//    }
 
 
     // Get the number of physical monitors.
@@ -526,121 +540,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     //GetMonitorBrightness
     //////////////////////////////////
 
-#if 0 //vista only
-HRESULT hres;
-hres = CoInitializeEx(0, COINIT_MULTITHREADED);
-    if (hres == S_FALSE) {
-        qWarning() << "Failed to initialize COM library. Error code = 0x" << hex << hres;
-        return -1;
-    }
-
-////////////////
-IWbemLocator *pLoc = NULL;
-
-    hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
-        IID_IWbemLocator, (LPVOID *) &pLoc);
-
-    if (FAILED(hres)) {
-        qWarning() << "Failed to create IWbemLocator object." << " Err code = 0x"<< hex << hres;
-        CoUninitialize();
-        return -1;
-    }
-
-///////////
-IWbemServices *pSvc = NULL;
-
-    // Connect to the local root\cimv2 namespace
-    // and obtain pointer pSvc to make IWbemServices calls.
-    hres = pLoc->ConnectServer(
-        L"root\\wmi",NULL,NULL,0,NULL,0,0,&pSvc);
-
-    if (hres != WBEM_S_NO_ERROR){
-        qWarning() << "Could not connect. Error code = 0x" << hex << hres;
-        pLoc->Release();
-        CoUninitialize();
-        return -1;
-    }
-
-/////////////////////
- hres = CoSetProxyBlanket(
-       pSvc,                        // Indicates the proxy to set
-       RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
-       RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
-       NULL,                        // Server principal name
-       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx
-       RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
-       NULL,                        // client identity
-       EOAC_NONE                    // proxy capabilities
-    );
-
-    if (FAILED(hres)) {
-        qWarning() << "Could not set proxy blanket. Error code = 0x"
-            << hex << hres;
-        pSvc->Release();
-        pLoc->Release();
-        CoUninitialize();
-        return -1;
-    }
-////////////////////////
-    IEnumWbemClassObject* pEnumerator = NULL;
-    BSTR bstrWQL = SysAllocString(L"WQL");
-    BSTR bstrQuery = SysAllocString(L"SELECT * FROM WmiMonitorBrightness");
-//    BSTR bstrQuery = SysAllocString(L"SELECT * FROM Win32_OperatingSystem");
-
-    hres = pSvc->ExecQuery(
-            bstrWQL,
-            bstrQuery,
-            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-            NULL,
-            &pEnumerator);
-
-    if (hres != WBEM_S_NO_ERROR){
-        qWarning() << "Query for monitor brightness failed."
-            << " Error code = 0x"
-            << hex << hres;
-        pSvc->Release();
-        pLoc->Release();
-        pEnumerator->Release();
-        CoUninitialize();
-        return -1;
-    }
-    ///////////////////////
-    IWbemClassObject *pclsObj;
-    ULONG uReturn = 0;
-
-    while (pEnumerator) {
-        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
-                                       &pclsObj, &uReturn);
-        if(hr != WBEM_S_NO_ERROR) {
-
-            qWarning() << "enumerating monitor brightness failed."
-                    << " Error code = 0x"
-                    << hex << hres << hr << GetLastError();
-
-        }
-
-        if(0 == uReturn){
-            break;
-        }
-
-        VARIANT vtProp;
-        // Get the value of the Name property
-
-        hr = pclsObj->Get(L"CurrentBrightness", 0, &vtProp, 0, 0);
-        qWarning() << " brightness : " << vtProp.bVal;
-        //        hr = pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
-        //        qWarning() << " brightness : " << vtProp.bstrVal;
-        VariantClear(&vtProp);
-        pclsObj->Release();
-    }
-
-    pSvc->Release();
-    pLoc->Release();
-    pEnumerator->Release();
-    CoUninitialize();
-#endif
-    //////////////////////////////////
-
     return -1;
 }
 
@@ -657,7 +556,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     }
     ReleaseDC(NULL, deviceContextHandle);
 
-    Q_UNUSED(screen);
     return bpp;
 }
 
@@ -805,6 +703,15 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         return QSystemDeviceInfo::WallPower;
     if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
         return QSystemDeviceInfo::BatteryPower;
+#else
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
+    if(v.toUInt() == 1) {
+        return QSystemDeviceInfo::BatteryPower;
+    } else {
+        return QSystemDeviceInfo::WallPower;
+    }
 #endif
 return QSystemDeviceInfo::UnknownPower;
 }
@@ -823,16 +730,26 @@ QString QSystemDeviceInfoPrivate::imsi()
 
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    return QString();
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystem", "Manufacturer");
+    return v.toString();
 }
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return QString();
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystem", "Model");
+    return v.toString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystemProduct", "Name");
+    return v.toString();
     return QString();
 }
 
@@ -844,6 +761,13 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
     GetSystemPowerStatusEx(&statusEx, true);
     if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
         isCharging = true;
+#else
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
+    if(v.toUInt() == 6) {
+        isCharging = true;
+    }
 #endif
     return isCharging;
 }
@@ -858,7 +782,7 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
         return QSystemDeviceInfo::BatteryNormal;
         break;
     case BATTERY_FLAG_LOW:
-        return QSystemDeviceInfo::Low;
+        return QSystemDeviceInfo::BatteryLow;
         break;
     case BATTERY_FLAG_CRITICAL:
         return QSystemDeviceInfo::BatteryCritical;
@@ -869,6 +793,21 @@ QSystemDeviceInfo::BatteryLevel QSystemDeviceInfoPrivate::batteryLevel() const
         return QSystemDeviceInfo::NoBatteryLevel;
         break;
    };
+#else
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
+    switch(v.toUInt()) {
+    case 3: //full
+        return QSystemDeviceInfo::BatteryNormal;
+        break;
+    case 4: //low
+        return QSystemDeviceInfo::BatteryLow;
+        break;
+    case 5: //critical
+        return QSystemDeviceInfo::BatteryCritical;
+        break;
+    };
 #endif
     return QSystemDeviceInfo::NoBatteryLevel;
 }
@@ -893,7 +832,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
     }
     SimDeinitialize(handle);
 
-#else
+#endif
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
