@@ -109,7 +109,7 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
 
     QMessageSortKeyPrivate *d(key.d_ptr);
     if (d && !d->_fieldOrderList.isEmpty()) {
-        if (d->_fieldOrderList.first().first == Qt::DescendingOrder)
+        if (d->_fieldOrderList.first().second == Qt::DescendingOrder)
             order = TABLE_SORT_DESCEND;
         switch (d->_fieldOrderList.first().first)
         {
